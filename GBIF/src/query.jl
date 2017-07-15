@@ -23,7 +23,7 @@ function check_occurrences_parameters!(q::Dict)
     "scientificName", "locality", "stateProvince", "waterBody", "taxonKey",
     "kingdomKey", "phylumKey", "classKey", "orderKey", "familyKey", "genusKey",
     "subGenusKey", "speciesKey", "year", "establishmentMeans", "repatriated",
-    "typeStatus", "facet", "facetMincount", "facetMultiselect"
+    "typeStatus", "facet", "facetMincount", "facetMultiselect", "limit", "offset"
 
   for (k, v) in q
     if !(k ∈ allowed_fields)

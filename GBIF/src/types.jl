@@ -15,6 +15,10 @@ struct Occurrence
   precision::Union{AbstractFloat, Void}
   date::DateTime
   issues::Array{Symbol,1}
+  taxonKey::Integer
+  rank::Symbol
+  class::Symbol
+  name::AbstractString
 end
 
 """
@@ -32,6 +36,10 @@ function Occurrence(o::Dict{String, Any})
     get(o, "decimalLongitude", nothing),
     get(o, "precision", nothing),
     DateTime(o["eventDate"][1:19]),
-    o["issues"]
+    o["issues"],
+    o["taxonKey"],
+    o["taxonRank"],
+    o["class"],
+    o["scientificName"]
   )
 end

@@ -12,6 +12,6 @@ include("types.jl")
 export Occurrence
 
 include("occurrence.jl")
-export occurrence
+export occurrence, occurrences
 
 end # module

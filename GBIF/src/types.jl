@@ -1,27 +1,37 @@
-type Taxon
-end
-
-type Coordinates
-  latitude::AbstractFloat
-  longitude::AbstractFloat
-  precision::AbstractFloat
-  datum::AbstractString
-end
-
 """
 **Represents an occurrence in the GBIF format**
 
 This is currently a subset of all the fields.
 """
-type Occurrence
+struct Occurrence
   key::Integer
-  datasetKey::AbstractString
-  publishingOrgKey::AbstractString
-  publishingCountry::AbstractString
+  datasetKey::String
+  publishingOrgKey::String
+  publishingCountry::String
   basisOfRecord::Symbol
-  individualCount::Integer
-  taxon::Taxon
-  coordinates::Coordinates
+  individualCount::Union{Integer, Void}
+  latitude::Union{AbstractFloat, Void}
+  longitude::Union{AbstractFloat, Void}
+  precision::Union{AbstractFloat, Void}
   date::DateTime
   issues::Array{Symbol,1}
+end
+
+"""
+**Generates an occurrence from the JSON response of GBIF**
+"""
+function Occurrence(o::Dict{String, Any})
+  return Occurrence(
+    o["key"],
+    o["datasetKey"],
+    o["publishingOrgKey"],
+    o["publishingCountry"],
+    o["basisOfRecord"],
+    get(o, "individualCount", nothing),
+    get(o, "decimalLatitude", nothing),
+    get(o, "decimalLongitude", nothing),
+    get(o, "precision", nothing),
+    DateTime(o["eventDate"][1:19]),
+    o["issues"]
+  )
 end

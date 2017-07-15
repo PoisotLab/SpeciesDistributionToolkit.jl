@@ -4,11 +4,15 @@
 function occurrence(key::Union{String, Integer})
   occ_url = gbifurl * "occurrence/" * string(key)
   occ_key_req = Requests.get(occ_url)
-  return Requests.json(occ_key_req)
+  return Occurrence(Requests.json(occ_key_req))
 end
 
 """
 **Search for occurrences**
+
+This function will return the latest occurrences -- usually 20, but this is
+entirely determined by the server default page size. This is mostly useful to
+get a few results fast.
 """
 function occurrences()
   occ_s_url = gbifurl * "occurrence/search"

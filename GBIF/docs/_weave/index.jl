@@ -23,3 +23,8 @@ length(sp_set.occurrences)
 qualitycontrol!(sp_set)
 length(sp_set.occurrences)
 
+
+function is_from_canada(o::Occurrence)
+  get(o, "publishingCountry", nothing) == "CA"
+end
+

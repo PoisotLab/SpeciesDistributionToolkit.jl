@@ -24,9 +24,13 @@ occurrence(1425221362)
 
 ~~~~
 GBIF.Occurrence(1425221362, "9ea87732-b88e-488d-a02b-3dc6e9b885e0", "46fec3
-80-8e1d-11dd-8679-b8a03c50a862", "NO", :HUMAN_OBSERVATION, 1, 59.423621, 11
-.040923, nothing, 2017-01-07T00:00:00, Symbol[:GEODETIC_DATUM_ASSUMED_WGS84
-], 5219173, :SPECIES, :Mammalia, "Canis lupus Linnaeus, 1758")
+80-8e1d-11dd-8679-b8a03c50a862", "NO", "NO", "Norway", :HUMAN_OBSERVATION, 
+1, 59.423621, 11.040923, nothing, nothing, "WGS84", 2017-01-07T00:00:00, Sy
+mbol[:GEODETIC_DATUM_ASSUMED_WGS84], 5219173, 1, 44, 359, 732, 9701, 521914
+2, 5219173, "Animalia", "Chordata", "Mammalia", "Carnivora", "Canidae", "Ca
+nis", "Canis lupus", :SPECIES, "Canis lupus Linnaeus, 1758", "Canis", "Ulv"
+, "Åse Paulsen Thon", "http://creativecommons.org/licenses/by/4.0/legalcod
+e")
 ~~~~
 
 
@@ -44,22 +48,43 @@ fieldnames(Occurrence)
 
 
 ~~~~
-15-element Array{Symbol,1}:
+36-element Array{Symbol,1}:
  :key              
  :datasetKey       
  :publishingOrgKey 
  :publishingCountry
+ :countryCode      
+ :country          
  :basisOfRecord    
  :individualCount  
  :latitude         
  :longitude        
  :precision        
+ :uncertainty      
+ :geodetic         
  :date             
  :issues           
  :taxonKey         
- :rank             
+ :kingdomKey       
+ :phylumKey        
+ :classKey         
+ :orderKey         
+ :familyKey        
+ :genusKey         
+ :speciesKey       
+ :kingdom          
+ :phylum           
  :class            
- :name
+ :order            
+ :family           
+ :genus            
+ :species          
+ :rank             
+ :name             
+ :generic          
+ :vernacular       
+ :observer         
+ :license
 ~~~~
 
 
@@ -141,7 +166,7 @@ length(sp_set.occurrences)
 
 
 ~~~~
-232
+231
 ~~~~
 
 
@@ -153,3 +178,14 @@ is a quite stringent filter, and may not be what is needed. The
 `qualitycontrol!` function modifies an `Occurrences` object. If used from the
 REPL with the `verbose` keyword set to `true`, this will tell you how many
 records are left after each step.
+
+It is easy to define custom filters -- for example, a filter that would only
+keep species from Canada, could be defined as:
+
+~~~~{.julia}
+function is_from_canada(o::Occurrence)
+  get(o, "publishingCountry", nothing) == "CA"
+end
+~~~~~~~~~~~~~
+
+

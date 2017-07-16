@@ -9,9 +9,12 @@ const gbifurl = "http://api.gbif.org/v1/"
 include("query.jl")
 
 include("types.jl")
-export Occurrence
+export Occurrence, Occurrences
 
 include("occurrence.jl")
 export occurrence, occurrences
+
+include("paging.jl")
+export next!
 
 end # module

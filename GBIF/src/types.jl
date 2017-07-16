@@ -43,3 +43,14 @@ function Occurrence(o::Dict{String, Any})
     o["scientificName"]
   )
 end
+
+
+"""
+**...***
+"""
+mutable struct Occurrences
+  offset::Integer
+  count::Integer
+  query::Union{Dict,Void}
+  occurrences::Array{Occurrence, 1}
+end

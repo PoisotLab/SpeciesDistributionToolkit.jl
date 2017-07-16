@@ -17,7 +17,16 @@ get a few results fast.
 function occurrences()
   occ_s_url = gbifurl * "occurrence/search"
   occ_s_req = Requests.get(occ_s_url)
-  return Requests.json(occ_s_req)
+  if occ_s_req.status == 200
+    body = Requests.json(occ_s_req)
+    occ = map(Occurrence, body["results"])
+    return Occurrences(
+      body["offset"],
+      body["count"],
+      nothing,
+      occ
+    )
+  end
 end
 
 """
@@ -27,5 +36,14 @@ function occurrences(q::Dict)
   check_occurrences_parameters!(q)
   occ_s_url = gbifurl * "occurrence/search"
   occ_s_req = Requests.get(occ_s_url, query=q)
-  return Requests.json(occ_s_req)
+  if occ_s_req.status == 200
+    body = Requests.json(occ_s_req)
+    occ = map(Occurrence, body["results"])
+    return Occurrences(
+      body["offset"],
+      body["count"],
+      q,
+      occ
+    )
+  end
 end

@@ -19,3 +19,7 @@ length(sp_set.occurrences)
 complete!(sp_set)
 length(sp_set.occurrences)
 
+
+qualitycontrol!(sp_set)
+length(sp_set.occurrences)
+

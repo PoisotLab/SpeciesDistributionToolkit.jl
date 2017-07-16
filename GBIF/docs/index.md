@@ -115,3 +115,41 @@ length(sp_set.occurrences)
 ~~~~
 
 
+
+
+
+## Filtering data based on quality
+
+There are a number of filters for data quality. All of these functions take an
+occurrence as an input, and return `true` if it passes, and `false` if it
+doesn't.
+
+| function                        | purpose                                 |
+|:--------------------------------|:----------------------------------------|
+| `have_both_coordinates`         | both latitude and longitude are present |
+| `have_neither_zero_coordinates` | the coordinate of the point is not 0,0  |
+| `have_no_zero_coordinates`      | one of the coordinates can be 0.0       |
+| `have_no_issues`                | the occurrence has no known issue       |
+
+An efficient way to apply these filters is to use the `qualitycontrol!`
+function:
+
+~~~~{.julia}
+qualitycontrol!(sp_set)
+length(sp_set.occurrences)
+~~~~~~~~~~~~~
+
+
+~~~~
+232
+~~~~
+
+
+
+
+
+By default, it will apply `have_no_issues` to the observations. Note that this
+is a quite stringent filter, and may not be what is needed. The
+`qualitycontrol!` function modifies an `Occurrences` object. If used from the
+REPL with the `verbose` keyword set to `true`, this will tell you how many
+records are left after each step.

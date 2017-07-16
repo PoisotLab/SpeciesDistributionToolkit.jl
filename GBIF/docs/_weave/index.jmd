@@ -82,3 +82,12 @@ is a quite stringent filter, and may not be what is needed. The
 `qualitycontrol!` function modifies an `Occurrences` object. If used from the
 REPL with the `verbose` keyword set to `true`, this will tell you how many
 records are left after each step.
+
+It is easy to define custom filters -- for example, a filter that would only
+keep species from Canada, could be defined as:
+
+~~~julia
+function is_from_canada(o::Occurrence)
+  get(o, "publishingCountry", nothing) == "CA"
+end
+~~~

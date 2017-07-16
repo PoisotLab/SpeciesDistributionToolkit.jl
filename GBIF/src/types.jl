@@ -95,3 +95,21 @@ mutable struct Occurrences
   query::Union{Dict,Void}
   occurrences::Array{Occurrence, 1}
 end
+
+import Base.length, Base.getindex, Base.endof
+
+function length(o::Occurrences)
+  length(o.occurrences)
+end
+
+function getindex(o::Occurrences, i::Int64)
+  o.occurrences[i]
+end
+
+function getindex(o::Occurrences, r::UnitRange{Int64})
+  o.occurrences[r]
+end
+
+function endof(o::Occurrences)
+  endof(o.occurrences)
+end

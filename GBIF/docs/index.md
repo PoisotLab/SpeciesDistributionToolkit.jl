@@ -82,8 +82,8 @@ sp_set = occurrences(gimme_some_species)
 
 The first line is a series of filters, and the second line uses the
 `occurrences` function to retrieve data. By default, only the first 20 results
-are returned. We can look at the `sp_set.count` value to see that there are, in
-fact true records.
+are returned. We can look at the `sp_set.count` value to see that there are more
+records.
 
 We can keep growing this object by looking at the next page:
 

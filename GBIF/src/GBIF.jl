@@ -15,6 +15,6 @@ include("occurrence.jl")
 export occurrence, occurrences
 
 include("paging.jl")
-export next!
+export next!, complete!
 
 end # module

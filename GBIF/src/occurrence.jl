@@ -20,12 +20,15 @@ function occurrences()
   if occ_s_req.status == 200
     body = Requests.json(occ_s_req)
     occ = map(Occurrence, body["results"])
+    maxocc = body["count"] > 200000 ? 200000 : body["count"]
     return Occurrences(
       body["offset"],
-      body["count"],
+      maxocc,
       nothing,
       occ
     )
+  else
+    warn("Non-OK status returned: ", occ_s_req.status)
   end
 end
 
@@ -39,9 +42,10 @@ function occurrences(q::Dict)
   if occ_s_req.status == 200
     body = Requests.json(occ_s_req)
     occ = map(Occurrence, body["results"])
+    maxocc = body["count"] > 200000 ? 200000 : body["count"]
     return Occurrences(
       body["offset"],
-      body["count"],
+      maxocc,
       q,
       occ
     )

@@ -6,8 +6,8 @@ This is currently a subset of all the fields.
 struct Occurrence
   key::Integer
   datasetKey::String
-  publishingOrgKey::String
-  publishingCountry::String
+  publishingOrgKey::Union{String, Void}
+  publishingCountry::Union{String, Void}
   basisOfRecord::Symbol
   individualCount::Union{Integer, Void}
   latitude::Union{AbstractFloat, Void}
@@ -28,8 +28,8 @@ function Occurrence(o::Dict{String, Any})
   return Occurrence(
     o["key"],
     o["datasetKey"],
-    o["publishingOrgKey"],
-    o["publishingCountry"],
+    get(o, "publishingOrgKey", nothing),
+    get(o, "publishingCountry", nothing),
     o["basisOfRecord"],
     get(o, "individualCount", nothing),
     get(o, "decimalLatitude", nothing),

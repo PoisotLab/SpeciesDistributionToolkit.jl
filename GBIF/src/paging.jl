@@ -6,6 +6,7 @@ function next!(o::Occurrences)
     info("All occurences for this query have been returned")
   else
     o.query["offset"] = length(o.occurrences)
+    o.query["limit"] = get(o.query, "limit", 20)
     if (o.query["offset"] + o.query["limit"]) > o.count
       o.query["limit"] = o.count - o.query["offset"]
     end

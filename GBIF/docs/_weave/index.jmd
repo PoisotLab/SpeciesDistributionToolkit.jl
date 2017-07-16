@@ -1,0 +1,25 @@
+# GBIF wrapper for Julia
+
+The aim of this module is to provide a *simple* way to get data about species
+occurrences from [GBIF]. It comes with a minimal number of functions and types.
+
+[GBIF]: http://gbif.org/
+
+```{julia}
+using GBIF
+```
+
+To get a single occurrence of known ID, use
+
+~~~julia
+occurrence(1425221362)
+~~~
+
+Note that the object returned is of the `Occurrence` type -- this provides a
+simple mapping on the raw output from GBIF API, and adds some parsing.
+
+The fields that are part of `Occurrence` are
+
+~~~julia
+fieldnames(Occurrence)
+~~~

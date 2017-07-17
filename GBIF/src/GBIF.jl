@@ -4,7 +4,7 @@ using Requests
 using JSON
 
 const gbifurl = "http://api.gbif.org/v1/"
-const gbifenum = Dict(
+const gbifenums = Dict(
   "basisOfRecord" => [
     "FOSSIL_SPECIMEN",
     "HUMAN_OBSERVATION",

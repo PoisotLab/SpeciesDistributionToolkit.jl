@@ -106,7 +106,7 @@ mutable struct Occurrences
   occurrences::Array{Occurrence, 1}
 end
 
-import Base.length, Base.getindex, Base.endof
+import Base.length, Base.getindex, Base.endof, Base.start, Base.done, Base.next
 
 function length(o::Occurrences)
   length(o.occurrences)
@@ -122,6 +122,18 @@ end
 
 function endof(o::Occurrences)
   endof(o.occurrences)
+end
+
+function start(o::Occurrences)
+  start(o.occurrences)
+end
+
+function done(o::Occurrences, i::Int64)
+  done(o.occurrences, i::Int64)
+end
+
+function next(o::Occurrences, i::Int64)
+  next(o.occurrences, i::Int64)
 end
 
 """

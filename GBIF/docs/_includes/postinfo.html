@@ -1,7 +1,0 @@
-<p>{{ page.date | date: "%Y/%m/%d" }} &middot; {% for au in page.author %}{{ au }}{% if forloop.index == forloop.length %}{% else %}, {% endif %}{% endfor %}</p>
-
-<p><a class="readmore" href="{{ page.url }}">{{ page.title }}</a></p>
-
-<p>Keywords: {% for t in page.tags %}
-<span class="tag">{{ t }}</span>
-{% endfor %}</p>

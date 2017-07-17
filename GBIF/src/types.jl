@@ -19,7 +19,7 @@ struct Occurrence
   geodetic::Union{AbstractString, Void}
   date::DateTime
   issues::Array{Symbol,1}
-  taxonKey::Integer
+  taxonKey::Union{Integer, Void}
   kingdomKey::Union{Integer, Void}
   phylumKey::Union{Integer, Void}
   classKey::Union{Integer, Void}
@@ -62,7 +62,7 @@ function Occurrence(o::Dict{String, Any})
     get(o, "geodeticDatum", nothing),
     DateTime(o["eventDate"][1:19]),
     o["issues"],
-    o["taxonKey"],
+    get(o, "taxonKey", nothing),
     get(o, "kingdomKey", nothing),
     get(o, "phylumKey", nothing),
     get(o, "classKey", nothing),

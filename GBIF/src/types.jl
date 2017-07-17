@@ -122,3 +122,11 @@ end
 function endof(o::Occurrences)
   endof(o.occurrences)
 end
+
+"""
+**Show several occurrences**
+"""
+function show(io::IO, o::Occurrences)
+  qstring = o.query == nothing ? "no query" : "a custom query"
+  println(io, "A list of occurrences with $qstring - $(length(o)) out of $(o.count)")
+end

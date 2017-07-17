@@ -128,7 +128,7 @@ end
 **Show several occurrences**
 """
 function show(io::IO, o::Occurrences)
-  cstring = o.cleand ? "filtered" : ""
+  cstring = o.cleaned ? "filtered" : ""
   qstring = o.query == nothing ? "no query" : "a custom query"
   println(io, "A $(cstring) list of occurrences with $qstring - $(length(o)) out of $(o.count)")
 end

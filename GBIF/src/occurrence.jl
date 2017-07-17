@@ -25,6 +25,7 @@ function occurrences()
       body["offset"],
       maxocc,
       nothing,
+      false,
       occ
     )
   else
@@ -49,6 +50,7 @@ function occurrences(q::Dict)
       body["offset"],
       maxocc,
       q,
+      false,
       occ
     )
   end

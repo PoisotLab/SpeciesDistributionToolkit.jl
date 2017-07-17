@@ -5,10 +5,13 @@ This function will overwrite the current set of results, and reset all searches.
 """
 function restart!(o::Occurrences)
   if o.cleaned == true
-    o = o.q ? occurences(o.q) : occurences()
+    q = o.query == nothing ? occurrences() : occurrences(o.query)
+    o.cleaned = false
+    o.count = q.count
+    o.offset = q.offset
+    o.occurrences = deepcopy(q.occurrences)
   end
 end
-
 
 """
 **Get the next page of results**

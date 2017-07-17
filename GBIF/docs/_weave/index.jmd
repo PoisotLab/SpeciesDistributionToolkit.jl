@@ -1,14 +1,13 @@
----
-layout: page
-title: Home
----
-
 # GBIF wrapper for Julia
 
 The aim of this module is to provide a *simple* way to get data about species
 occurrences from [GBIF]. It comes with a minimal number of functions and types.
 
 [GBIF]: http://gbif.org/
+
+For an example application, see [this notebook][birds].
+
+[birds]: https://nbviewer.jupyter.org/github/EcoJulia/GBIF.jl/blob/master/docs/ukbirds.nbconvert.ipynb
 
 ~~~julia
 using GBIF

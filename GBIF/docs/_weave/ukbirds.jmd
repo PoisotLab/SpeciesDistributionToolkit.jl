@@ -1,9 +1,4 @@
----
-layout: page
-title: House sparrow example
----
-
-# Case study -- birds from the UK
+# GBIF.jl case study -- birds from the UK
 
 In this example, we will build a map of the observations of birds from the
 United Kingdom.

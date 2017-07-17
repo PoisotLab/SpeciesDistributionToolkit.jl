@@ -86,6 +86,15 @@ function Occurrence(o::Dict{String, Any})
   )
 end
 
+import Base.show
+
+"""
+**Show an occurrence**
+"""
+function show(io::IO, o::Occurrence)
+  println(io, "GBIF $(o.key)\t$(o.name)")
+end
+
 """
 **...***
 """

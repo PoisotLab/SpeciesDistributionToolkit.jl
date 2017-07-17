@@ -1,3 +1,8 @@
+---
+layout: page
+title: Home
+---
+
 # GBIF wrapper for Julia
 
 The aim of this module is to provide a *simple* way to get data about species

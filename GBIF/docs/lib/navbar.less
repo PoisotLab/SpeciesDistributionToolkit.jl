@@ -1,0 +1,77 @@
+// main: ./style.less
+
+.navbar {
+  ul {
+    padding-left: 0px;
+    padding-top: 1em;
+  }
+  ul > li {
+    line-height: 26px;
+    list-style: none;
+    margin-bottom: 8px;
+    a {
+      text-decoration: none;
+      text-transform: uppercase;
+      color: @base;
+    }
+  }
+  .hicon > i{
+    display: inline-box;
+    width: 26px !important;
+    height:26px !important;
+    line-height: 26px !important;
+    background-color: @light;
+    color: white;
+    border-radius: 13px;
+    text-align: center;
+  }
+  // Icons colors
+  #ahome {
+    &:hover { .hicon > i {
+        background-color: @blue;
+      } }
+    &.active { .hicon > i {
+        background-color: @light-blue;
+      } }
+  }
+  #abird {
+    &:hover { .hicon > i {
+        background-color: @green;
+      } }
+    &.active { .hicon > i {
+        background-color: @light-green;
+      } }
+  }
+  #aresearch {
+    &:hover { .hicon > i {
+        background-color: @purple;
+      } }
+    &.active { .hicon > i {
+        background-color: @light-purple;
+      } }
+  }
+  #ablog {
+    &:hover { .hicon > i {
+        background-color: @cyan;
+      } }
+    &.active { .hicon > i {
+        background-color: @light-cyan;
+      } }
+  }
+  #apapers {
+    &:hover { .hicon > i {
+        background-color: @orange;
+      } }
+    &.active { .hicon > i {
+        background-color: @light-orange;
+      } }
+  }
+  #acolophon {
+    &:hover { .hicon > i {
+        background-color: @red;
+      } }
+    &.active { .hicon > i {
+        background-color: @light-red;
+      } }
+  }
+}

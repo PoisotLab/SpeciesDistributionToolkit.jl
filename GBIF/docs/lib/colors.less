@@ -1,0 +1,41 @@
+// main: ./style.less
+
+// Color definitions
+@accent: 9%;
+
+@text: rgb(63, 63, 63);
+
+// Main highlight color
+@base: rgb(149, 148, 147);
+@dark: darken(@base, 1.5*@accent);
+@light: lighten(@base, 1.5*@accent);
+
+
+// Links
+@lcolor: hsv(190, 80%, 70%);
+@lcolor_hover: darken(@lcolor, @accent);
+@lcolor_visited: lighten(@lcolor, @accent);
+
+// Color for code highlighting
+
+@inline_code_color: rgb(140, 130, 150);
+
+@desaturate: 9%;
+@lighten: 7%;
+
+@L: 64%;
+
+// Base colors
+@orange: hsl(25, 85%, @L);
+@green: hsv(110, 85%, @L);
+@blue: hsv(195, 85%, @L);
+@purple: hsv(260, 40%, @L);
+@cyan: hsv(170, 85%, @L);
+@red: hsv(350, 85%, @L);
+
+@light-purple: lighten(desaturate(@purple, @desaturate), @lighten);
+@light-blue: lighten(desaturate(@blue, @desaturate), @lighten);
+@light-green: lighten(desaturate(@green, @desaturate), @lighten);
+@light-orange: lighten(desaturate(@orange, @desaturate), @lighten);
+@light-cyan: lighten(desaturate(@cyan, @desaturate), @lighten);
+@light-red: lighten(desaturate(@red, @desaturate), @lighten);

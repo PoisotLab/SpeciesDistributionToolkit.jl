@@ -1,3 +1,8 @@
+---
+layout: page
+title: House sparrow example
+---
+
 # Case study -- birds from the UK
 
 In this example, we will build a map of the observations of birds from the
@@ -69,7 +74,13 @@ package to help us.
 
 ~~~~{.julia}
 using Plots
+pyplot() # Feel free to replace by your favorite backend
 ~~~~~~~~~~~~~
+
+
+~~~~
+Plots.PyPlotBackend()
+~~~~
 
 
 
@@ -86,7 +97,7 @@ histogram(by_month,
 ~~~~~~~~~~~~~
 
 
-![](figures/ukbirds_6_1.png)\ 
+![](/figures/ukbirds_6_1.png)
 
 
 
@@ -103,7 +114,7 @@ yaxis!("Latitude")
 ~~~~~~~~~~~~~
 
 
-![](figures/ukbirds_7_1.png)\ 
+![](/figures/ukbirds_7_1.png)
 
 
 

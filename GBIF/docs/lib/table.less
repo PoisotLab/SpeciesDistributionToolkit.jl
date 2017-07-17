@@ -1,0 +1,17 @@
+// main: ./style.less
+
+table {
+  .sans;
+  border-collapse: collapse;
+  td, th {
+    padding: 6px !important;
+  }
+  tr:nth-child(even) {background: lighten(@light, 20%);}
+  tr:nth-child(odd) {background: white;}
+  thead tr {
+    background-color: @light !important;
+    color: white;
+    font-weight: 400 !important;
+  }
+  border-bottom: 1px solid lighten(@light, 15%);
+}

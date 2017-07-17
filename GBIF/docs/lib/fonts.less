@@ -1,0 +1,45 @@
+// main: ./style.less
+
+body {
+  font-size: 16px;
+}
+
+// General p and ul options
+p, li, ul, a, h1, h2, h3, h4, h5, h6 {
+  -webkit-text-stroke: 1px rgba(0,0,0,0.1);
+  .sans;
+}
+
+strong {
+  font-weight: 700;
+}
+
+// Code
+code, pre {
+  .mono;
+  font-size: 1em;
+}
+
+// Code blocks
+pre > code{
+  font-size: 0.9em;
+  span {.mono;}
+}
+
+// Content
+.content {
+  p, li, ul {
+    color: @text;
+    line-height: 180%;
+  }
+  h1 {
+    font-size: 1.3em;
+    font-weight: 400;
+    color: @dark;
+  }
+  h2 {
+    font-size: 1.2em;
+    color: @base;
+    font-weight: 400;
+  }
+}

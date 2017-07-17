@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+  {% include head.html %}
+</head>
+<body>
+
+  <!-- .container is main centered wrapper -->
+
+  <div class="container">
+
+    <div class="sidebar">
+
+      <img src="/logo.png" height=100/>
+      <h1>{{ site.title }}</h1>
+      <h2>{{ site.subtitle }}</h2>
+      {% include menu.html %}
+
+      {% if page.author %}
+      <div class="postinfo">
+        {% include postinfo.html %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="content"><a id="pagetop"></a>
+      {{ content }}
+    </div>
+
+  </div>
+
+
+  <script type="text/javascript">
+  $('body').flowtype({
+    minFont : 13,
+    maxFont : 16
+  });
+  </script>
+
+</body>
+
+</html>

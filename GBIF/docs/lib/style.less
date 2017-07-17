@@ -1,0 +1,125 @@
+// out: ../css/styles.css, sourcemap: true, compress: true
+
+// custom styles, using less
+// Timothée Poisot
+// February 2015 or something
+
+// Typefaces
+@import "typefaces.less";
+
+// Colors
+@import "colors.less";
+
+// Typography
+@import "fonts.less";
+
+// Code highlighting
+@import "highlight.less";
+
+// Tables
+@import "table.less";
+
+html, body {
+  background-color: rgb(255, 255, 255);
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+p:first-child {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+a {
+  text-decoration: none;
+  color: @lcolor;
+  &:hover {
+    color: @lcolor_hover;
+  }
+  &:visited {
+    color: @lcolor_visited;
+  }
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0px auto;
+}
+
+.sidebar {
+  background-color: rgb(255, 255, 255);
+}
+
+.content {
+  background-color: rgb(255, 255, 255);
+}
+
+.content, .sidebar {
+  padding: 1.3em;
+  box-sizing: border-box;
+}
+
+.entry {
+  margin-bottom: 80px;
+}
+
+.inlist {
+  margin-bottom: 3em;
+  .post-title {
+    font-weight: 600;
+    .sans;
+    .readmore {
+      padding-left: 1em;
+    }
+  }
+}
+
+// Navbar
+@import "navbar.less";
+
+.postinfo {
+  display: none;
+}
+
+// Sidebar
+.sidebar {
+  h1 {
+    color: @dark;
+    margin-bottom: 0em;
+    font-size: 1.2em;
+  }
+  h2 {
+    color: @light;
+    margin-top: 0em;
+    font-size: 1.0em;
+  }
+}
+
+// Bibliography
+i{
+  &.bibitem {
+    line-height: 12px;
+    font-size: 12px !important;
+  }
+}
+
+// HR
+hr {
+  background-color: @light;
+  border: 0px solid white;
+  width: 10%;
+  height: 1px;
+  margin: 3em auto;
+}
+
+// Blockquote
+blockquote {
+  p {
+    color: @base !important;
+  }
+}
+
+// Page layout (responsive)
+@media (min-width: 1000px){
+  @import "screen.less";
+}

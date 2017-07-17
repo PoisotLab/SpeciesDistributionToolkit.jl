@@ -18,6 +18,7 @@ complete!(uk_birds)
 
 
 using Plots
+pyplot() # Feel free to replace by your favorite backend
 
 
 obs_dates = map(x -> x.date, uk_birds.occurrences)

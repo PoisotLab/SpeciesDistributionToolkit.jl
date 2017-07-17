@@ -9,7 +9,7 @@ function restart!(o::Occurrences)
     o.cleaned = false
     o.count = q.count
     o.offset = q.offset
-    o.occurrences = deepcopy(q.occurrences)
+    o.occurrences = q.occurrences
   end
 end
 
@@ -40,7 +40,11 @@ end
 **Get all pages of results**
 """
 function complete!(o::Occurrences)
-  while length(o.occurrences) < o.count
-    next!(o)
+  if o.cleaned
+    warn("A filtered list of occurences cannot be resumed - object unchanged")
+  else
+    while length(o.occurrences) < o.count
+      next!(o)
+    end
   end
 end

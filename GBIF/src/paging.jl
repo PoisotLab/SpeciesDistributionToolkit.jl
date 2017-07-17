@@ -1,7 +1,22 @@
 """
+**Restart a query that was previously filtered**
+
+This function will overwrite the current set of results, and reset all searches.
+"""
+function restart!(o::Occurrences)
+  if o.cleaned == true
+    o = o.q ? occurences(o.q) : occurences()
+  end
+end
+
+
+"""
 **Get the next page of results**
 """
 function next!(o::Occurrences)
+  if o.cleaned
+    error("A filtered list of occurences cannot be resumed")
+  end
   if length(o.occurrences) == o.count
     info("All occurences for this query have been returned")
   else

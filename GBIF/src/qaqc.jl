@@ -31,6 +31,10 @@ end
 
 By default, this removes all observations with issues -- which is going to
 remove a lot of observations.
+
+Note that once a series of occurrences have been put through this function, it
+is impossible to call `next!` or `complete!` on them. On the other hand,
+`restart!` will work.
 """
 function qualitycontrol!{T<:Function}(o::Occurrences; filters::Array{T,1}=[have_no_issues], verbose::Bool=true)
   if verbose
@@ -42,4 +46,5 @@ function qualitycontrol!{T<:Function}(o::Occurrences; filters::Array{T,1}=[have_
       info(length(o.occurrences), " records left after ", f)
     end
   end
+  o.cleaned=true
 end

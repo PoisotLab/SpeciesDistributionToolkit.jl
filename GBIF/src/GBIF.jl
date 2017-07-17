@@ -15,7 +15,7 @@ include("occurrence.jl")
 export occurrence, occurrences
 
 include("paging.jl")
-export next!, complete!
+export next!, complete!, restart!
 
 include("qaqc.jl")
 export have_both_coordinates, have_neither_zero_coordinates, have_no_zero_coordinates, have_no_issues

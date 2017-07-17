@@ -102,6 +102,7 @@ mutable struct Occurrences
   offset::Integer
   count::Integer
   query::Union{Dict,Void}
+  cleaned::Bool
   occurrences::Array{Occurrence, 1}
 end
 
@@ -127,6 +128,7 @@ end
 **Show several occurrences**
 """
 function show(io::IO, o::Occurrences)
+  cstring = o.cleand ? "filtered" : ""
   qstring = o.query == nothing ? "no query" : "a custom query"
-  println(io, "A list of occurrences with $qstring - $(length(o)) out of $(o.count)")
+  println(io, "A $(cstring) list of occurrences with $qstring - $(length(o)) out of $(o.count)")
 end

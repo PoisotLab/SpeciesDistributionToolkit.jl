@@ -96,7 +96,7 @@ function show(io::IO, o::Occurrence)
 end
 
 """
-**...***
+**List of occurrences and metadata***
 """
 mutable struct Occurrences
   offset::Integer

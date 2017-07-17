@@ -1,5 +1,5 @@
 """
-**Get the next page of the results**
+**Get the next page of results**
 """
 function next!(o::Occurrences)
   if length(o.occurrences) == o.count

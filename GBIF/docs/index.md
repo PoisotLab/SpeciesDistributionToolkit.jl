@@ -28,7 +28,7 @@ occurrence(1425221362)
 
 ~~~~
 GBIF.Occurrence(1425221362, "9ea87732-b88e-488d-a02b-3dc6e9b885e0", "46fec3
-80-8e1d-11dd-8679-b8a03c50a862", "NO", "NO", "Norway", :HUMAN_OBSERVATION, 
+80-8e1d-11dd-8679-b8a03c50a862", "NO", "NO", "Norway", :HUMAN_OBSERVATION,
 1, 59.423621, 11.040923, nothing, nothing, "WGS84", 2017-01-07T00:00:00, Sy
 mbol[:GEODETIC_DATUM_ASSUMED_WGS84], 5219173, 1, 44, 359, 732, 9701, 521914
 2, 5219173, "Animalia", "Chordata", "Mammalia", "Carnivora", "Canidae", "Ca
@@ -55,7 +55,7 @@ fieldnames(Occurrence)
 36-element Array{Symbol,1}:
  :key              
  :datasetKey       
- :publishingOrgKey 
+ :publishingOrgKey
  :publishingCountry
  :countryCode      
  :country          
@@ -191,5 +191,3 @@ function is_from_canada(o::Occurrence)
   get(o, "publishingCountry", nothing) == "CA"
 end
 ~~~~~~~~~~~~~
-
-

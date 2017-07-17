@@ -12,7 +12,7 @@ end
 
 This function will return the latest occurrences -- usually 20, but this is
 entirely determined by the server default page size. This is mostly useful to
-get a few results fast.
+get a few results fast for illustration purposes.
 """
 function occurrences()
   occ_s_url = gbifurl * "occurrence/search"
@@ -34,6 +34,8 @@ end
 
 """
 **Search for occurrences**
+
+Returns occurrences that correspond to a filter, given in `q` as a dictionary.
 """
 function occurrences(q::Dict)
   check_occurrences_parameters!(q)

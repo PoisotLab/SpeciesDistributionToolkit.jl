@@ -101,7 +101,7 @@ end
 mutable struct Occurrences
   offset::Integer
   count::Integer
-  query::Union{Dict,Void}
+  query::Union{Dict{String,Any},Void}
   cleaned::Bool
   occurrences::Array{Occurrence, 1}
 end

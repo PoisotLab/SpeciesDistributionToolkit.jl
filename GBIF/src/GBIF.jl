@@ -2,6 +2,7 @@ module GBIF
 
 using Requests
 using JSON
+using DataFrames
 
 const gbifurl = "http://api.gbif.org/v1/"
 const gbifenums = Dict(
@@ -96,7 +97,10 @@ include("paging.jl")
 export next!, complete!, restart!
 
 include("qaqc.jl")
-export have_both_coordinates, have_neither_zero_coordinates, have_no_zero_coordinates, have_no_issues
+export have_both_coordinates, have_neither_zero_coordinates,
+  have_no_zero_coordinates, have_no_issues, have_ok_coordinates
 export qualitycontrol!
+
+include("dataframe.jl")
 
 end # module

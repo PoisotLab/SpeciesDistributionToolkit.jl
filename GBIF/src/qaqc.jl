@@ -27,6 +27,19 @@ function have_no_issues(o::Occurrence)
 end
 
 """
+**No coordinates issues except rounding and WGS84 assumption**
+"""
+function have_ok_coordinates(o::Occurrence)
+  ok = true
+  for i in o.issues
+    if !(i in [:COORDINATE_ROUNDED, :GEODETIC_DATUM_ASSUMED_WGS84])
+      ok = false
+    end
+  end
+  return ok
+end
+
+"""
 **Cleans a search output**
 
 By default, this removes all observations with issues -- which is going to

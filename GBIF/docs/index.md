@@ -7,7 +7,7 @@ occurrences from [GBIF]. It comes with a minimal number of functions and types.
 
 For an example application, see [this notebook][birds].
 
-[birds]: https://nbviewer.jupyter.org/github/EcoJulia/GBIF.jl/blob/master/docs/ukbirds.nbconvert.ipynb
+[birds]: https://nbviewer.jupyter.org/github/EcoJulia/GBIF.jl/blob/master/docs/notebooks/gbif_ukbirds.ipynb
 
 ~~~~{.julia}
 using GBIF

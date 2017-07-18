@@ -103,4 +103,7 @@ export qualitycontrol!
 
 include("dataframe.jl")
 
+include("species.jl")
+export species
+
 end # module

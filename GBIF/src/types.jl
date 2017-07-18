@@ -6,8 +6,15 @@ This is currently a subset of all the fields.
 struct Occurrence
   key::Integer
   datasetKey::String
+  dataset::Union{String, Void}
   publishingOrgKey::Union{AbstractString, Void}
   publishingCountry::Union{AbstractString, Void}
+  institutionCode::Union{AbstractString, Void}
+  protocol::Union{AbstractString, Void}
+  crawled::Union{DateTime, Void}
+  parsed::Union{DateTime, Void}
+  modified::Union{DateTime, Void}
+  interpreted::Union{DateTime, Void}
   countryCode::Union{AbstractString, Void}
   country::Union{AbstractString, Void}
   basisOfRecord::Symbol
@@ -17,7 +24,7 @@ struct Occurrence
   precision::Union{AbstractFloat, Void}
   uncertainty::Union{AbstractFloat, Void}
   geodetic::Union{AbstractString, Void}
-  date::DateTime
+  date::Union{DateTime, Void}
   issues::Array{Symbol,1}
   taxonKey::Union{Integer, Void}
   kingdomKey::Union{Integer, Void}
@@ -34,12 +41,22 @@ struct Occurrence
   family::Union{AbstractString, Void}
   genus::Union{AbstractString, Void}
   species::Union{AbstractString, Void}
-  rank::Symbol
-  name::AbstractString
+  rank::Union{String, Void}
   generic::Union{AbstractString, Void}
+  epithet::Union{AbstractString, Void}
   vernacular::Union{AbstractString, Void}
+  scientific::Union{AbstractString, Void}
   observer::Union{AbstractString, Void}
   license::Union{AbstractString, Void}
+end
+
+function format_date(o, d)
+  t = get(o, d, nothing)
+  if t == nothing
+    return nothing
+  else
+    DateTime(t[1:19])
+  end
 end
 
 """
@@ -49,8 +66,15 @@ function Occurrence(o::Dict{String, Any})
   return Occurrence(
     o["key"],
     o["datasetKey"],
+    get(o, "datasetName", nothing),
     get(o, "publishingOrgKey", nothing),
     get(o, "publishingCountry", nothing),
+    get(o, "institutionCode", nothing),
+    get(o, "protocol", nothing),
+    format_date(o, "lastCrawled"),
+    format_date(o, "lastParsed"),
+    format_date(o, "modified"),
+    format_date(o, "lastInterpreted"),
     get(o, "countryCode", nothing),
     get(o, "country", nothing),
     o["basisOfRecord"],
@@ -60,7 +84,7 @@ function Occurrence(o::Dict{String, Any})
     get(o, "precision", nothing),
     get(o, "coordinateUncertaintyInMeters", nothing),
     get(o, "geodeticDatum", nothing),
-    DateTime(o["eventDate"][1:19]),
+    format_date(o, "eventDate"),
     o["issues"],
     get(o, "taxonKey", nothing),
     get(o, "kingdomKey", nothing),
@@ -77,10 +101,11 @@ function Occurrence(o::Dict{String, Any})
     get(o, "family", nothing),
     get(o, "genus", nothing),
     get(o, "species", nothing),
-    o["taxonRank"],
-    o["scientificName"],
+    get(o, "taxonRank", nothing),
     get(o, "genericName", nothing),
+    get(o, "specificEpithet", nothing),
     get(o, "vernacularName", nothing),
+    get(o, "scientificName", nothing),
     get(o, "recordedBy", nothing),
     get(o, "license", nothing)
   )

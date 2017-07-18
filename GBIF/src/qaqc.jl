@@ -27,14 +27,30 @@ function have_no_issues(o::Occurrence)
 end
 
 """
+**No coordinates issues except rounding and WGS84 assumption**
+"""
+function have_ok_coordinates(o::Occurrence)
+  ok = true
+  for i in o.issues
+    if !(i in [:COORDINATE_ROUNDED, :GEODETIC_DATUM_ASSUMED_WGS84])
+      ok = false
+    end
+  end
+  return ok
+end
+
+"""
 **Cleans a search output**
 
 By default, this removes all observations with issues -- which is going to
-remove a lot of observations.
+remove a lot of observations. Potentially *all* the observations, in fact.
 
 Note that once a series of occurrences have been put through this function, it
 is impossible to call `next!` or `complete!` on them. On the other hand,
 `restart!` will work.
+
+For this reason, it is recommended to create a copy of the `Occurrences` object
+before applying quality control on it.
 """
 function qualitycontrol!{T<:Function}(o::Occurrences; filters::Array{T,1}=[have_no_issues], verbose::Bool=true)
   if verbose

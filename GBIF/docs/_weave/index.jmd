@@ -22,7 +22,8 @@ occurrence(1425221362)
 ~~~
 
 Note that the object returned is of the `Occurrence` type -- this provides a
-simple mapping on the raw output from GBIF API, and adds some parsing.
+simple mapping on the interpreted output from GBIF API, and adds some parsing
+(like dates).
 
 The fields that are part of `Occurrence` are
 
@@ -49,7 +50,7 @@ We can keep growing this object by looking at the next page:
 
 ~~~julia
 next!(sp_set)
-length(sp_set.occurrences)
+length(sp_set)
 ~~~
 
 Of course this can rapidly get tedious, so we can complete the entire request at
@@ -57,7 +58,15 @@ once:
 
 ~~~julia
 complete!(sp_set)
-length(sp_set.occurrences)
+length(sp_set)
+~~~
+
+All `Occurrences` objects are iterators, so we can apply functions like `map`,
+and `filter` to them -- for example, to get the list of countries in which we
+have observations:
+
+~~~julia
+map(x -> x.country, sp_set) |> unique |> sort
 ~~~
 
 ## Filtering data based on quality
@@ -78,7 +87,7 @@ function:
 
 ~~~julia
 qualitycontrol!(sp_set)
-length(sp_set.occurrences)
+length(sp_set)
 ~~~
 
 By default, it will apply `have_no_issues` to the observations. Note that this
@@ -94,4 +103,12 @@ keep species from Canada, could be defined as:
 function is_from_canada(o::Occurrence)
   get(o, "publishingCountry", nothing) == "CA"
 end
+~~~
+
+If we are unhappy with the results after quality control, we can restart the
+data query:
+
+~~~{julia;eval=false}
+restart!(sp_set)
+complete!(sp_set)
 ~~~

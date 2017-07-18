@@ -13,17 +13,25 @@ sp_set = occurrences(gimme_some_species)
 
 
 next!(sp_set)
-length(sp_set.occurrences)
+length(sp_set)
 
 
 complete!(sp_set)
-length(sp_set.occurrences)
+length(sp_set)
+
+
+map(x -> x.country, sp_set) |> unique |> sort
 
 
 qualitycontrol!(sp_set)
-length(sp_set.occurrences)
+length(sp_set)
 
 
 function is_from_canada(o::Occurrence)
   get(o, "publishingCountry", nothing) == "CA"
 end
+
+
+restart!(sp_set)
+complete!(sp_set)
+

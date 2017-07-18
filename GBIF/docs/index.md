@@ -27,14 +27,7 @@ occurrence(1425221362)
 
 
 ~~~~
-GBIF.Occurrence(1425221362, "9ea87732-b88e-488d-a02b-3dc6e9b885e0", "46fec3
-80-8e1d-11dd-8679-b8a03c50a862", "NO", "NO", "Norway", :HUMAN_OBSERVATION,
-1, 59.423621, 11.040923, nothing, nothing, "WGS84", 2017-01-07T00:00:00, Sy
-mbol[:GEODETIC_DATUM_ASSUMED_WGS84], 5219173, 1, 44, 359, 732, 9701, 521914
-2, 5219173, "Animalia", "Chordata", "Mammalia", "Carnivora", "Canidae", "Ca
-nis", "Canis lupus", :SPECIES, "Canis lupus Linnaeus, 1758", "Canis", "Ulv"
-, "Åse Paulsen Thon", "http://creativecommons.org/licenses/by/4.0/legalcod
-e")
+GBIF 1425221362	Canis lupus Linnaeus, 1758
 ~~~~
 
 
@@ -42,7 +35,8 @@ e")
 
 
 Note that the object returned is of the `Occurrence` type -- this provides a
-simple mapping on the raw output from GBIF API, and adds some parsing.
+simple mapping on the interpreted output from GBIF API, and adds some parsing
+(like dates).
 
 The fields that are part of `Occurrence` are
 
@@ -55,7 +49,7 @@ fieldnames(Occurrence)
 36-element Array{Symbol,1}:
  :key              
  :datasetKey       
- :publishingOrgKey
+ :publishingOrgKey 
  :publishingCountry
  :countryCode      
  :country          
@@ -118,7 +112,7 @@ We can keep growing this object by looking at the next page:
 
 ~~~~{.julia}
 next!(sp_set)
-length(sp_set.occurrences)
+length(sp_set)
 ~~~~~~~~~~~~~
 
 
@@ -135,12 +129,49 @@ once:
 
 ~~~~{.julia}
 complete!(sp_set)
-length(sp_set.occurrences)
+length(sp_set)
 ~~~~~~~~~~~~~
 
 
 ~~~~
 1012
+~~~~
+
+
+
+
+
+All `Occurrences` objects are iterators, so we can apply functions like `map`,
+and `filter` to them -- for example, to get the list of countries in which we
+have observations:
+
+~~~~{.julia}
+map(x -> x.country, sp_set) |> unique |> sort
+~~~~~~~~~~~~~
+
+
+~~~~
+20-element Array{String,1}:
+ "Australia"                
+ "Belgium"                  
+ "Denmark"                  
+ "Ecuador"                  
+ "Estonia"                  
+ "French Guiana"            
+ "Hungary"                  
+ "Iran, Islamic Republic of"
+ "Israel"                   
+ "Mexico"                   
+ "Mongolia"                 
+ "Norway"                   
+ "Pakistan"                 
+ "Palestine, State Of"      
+ "Philippines"              
+ "Poland"                   
+ "Saudi Arabia"             
+ "Sweden"                   
+ "United Kingdom"           
+ "United States"
 ~~~~
 
 
@@ -165,7 +196,7 @@ function:
 
 ~~~~{.julia}
 qualitycontrol!(sp_set)
-length(sp_set.occurrences)
+length(sp_set)
 ~~~~~~~~~~~~~
 
 
@@ -191,3 +222,17 @@ function is_from_canada(o::Occurrence)
   get(o, "publishingCountry", nothing) == "CA"
 end
 ~~~~~~~~~~~~~
+
+
+
+
+
+If we are unhappy with the results after quality control, we can restart the
+data query:
+
+~~~~{.julia}
+
+restart!(sp_set)
+complete!(sp_set)
+~~~~~~~~~~~~~
+

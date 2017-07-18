@@ -24,9 +24,19 @@ qualitycontrol!(set)
 @test set.cleaned == true
 
 # We can't continue requests on a filtered set
-@test_warn "A filtered list" next!(set)
-@test_warn "A filtered list" complete!(set)
+@test_warn "A filtered list of occurences cannot be resumed - object unchanged" next!(set)
+@test_warn "A filtered list of occurences cannot be resumed - object unchanged" complete!(set)
 
 # But we can restart it
 restart!(set)
 @test set.cleaned == false
+
+# Filtering with wrong parameters
+qpars = Dict("country" => "ABC")
+@test_warn "country code" GBIF.check_occurrences_parameters!(qpars)
+
+qpars = Dict("years" => "1234")
+@test_warn "not a supported field" GBIF.check_occurrences_parameters!(qpars)
+
+qpars = Dict("establishmentMeans" => "LOLWUT")
+@test_warn "values in establishmentMeans were invalid" GBIF.check_occurrences_parameters!(qpars)

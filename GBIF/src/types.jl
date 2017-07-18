@@ -19,7 +19,7 @@ struct Occurrence
   geodetic::Union{AbstractString, Void}
   date::DateTime
   issues::Array{Symbol,1}
-  taxonKey::Integer
+  taxonKey::Union{Integer, Void}
   kingdomKey::Union{Integer, Void}
   phylumKey::Union{Integer, Void}
   classKey::Union{Integer, Void}
@@ -62,7 +62,7 @@ function Occurrence(o::Dict{String, Any})
     get(o, "geodeticDatum", nothing),
     DateTime(o["eventDate"][1:19]),
     o["issues"],
-    o["taxonKey"],
+    get(o, "taxonKey", nothing),
     get(o, "kingdomKey", nothing),
     get(o, "phylumKey", nothing),
     get(o, "classKey", nothing),
@@ -101,12 +101,12 @@ end
 mutable struct Occurrences
   offset::Integer
   count::Integer
-  query::Union{Dict,Void}
+  query::Union{Dict{String,Any},Void}
   cleaned::Bool
   occurrences::Array{Occurrence, 1}
 end
 
-import Base.length, Base.getindex, Base.endof
+import Base.length, Base.getindex, Base.endof, Base.start, Base.done, Base.next
 
 function length(o::Occurrences)
   length(o.occurrences)
@@ -122,6 +122,18 @@ end
 
 function endof(o::Occurrences)
   endof(o.occurrences)
+end
+
+function start(o::Occurrences)
+  start(o.occurrences)
+end
+
+function done(o::Occurrences, i::Int64)
+  done(o.occurrences, i::Int64)
+end
+
+function next(o::Occurrences, i::Int64)
+  next(o.occurrences, i::Int64)
 end
 
 """

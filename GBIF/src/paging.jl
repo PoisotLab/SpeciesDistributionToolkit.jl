@@ -9,7 +9,7 @@ function restart!(o::Occurrences)
     o.cleaned = false
     o.count = q.count
     o.offset = q.offset
-    o.occurrences = deepcopy(q.occurrences)
+    o.occurrences = q.occurrences
   end
 end
 
@@ -23,7 +23,7 @@ function next!(o::Occurrences)
     if length(o.occurrences) == o.count
       info("All occurences for this query have been returned")
     else
-      o.query["offset"] = length(o.occurrences)
+      o.query["offset"] = length(o)
       o.query["limit"] = get(o.query, "limit", 20)
       if (o.query["offset"] + o.query["limit"]) > o.count
         o.query["limit"] = o.count - o.query["offset"]
@@ -40,7 +40,11 @@ end
 **Get all pages of results**
 """
 function complete!(o::Occurrences)
-  while length(o.occurrences) < o.count
-    next!(o)
+  if o.cleaned
+    warn("A filtered list of occurences cannot be resumed - object unchanged")
+  else
+    while length(o.occurrences) < o.count
+      next!(o)
+    end
   end
 end

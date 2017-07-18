@@ -2,8 +2,87 @@ module GBIF
 
 using Requests
 using JSON
+using DataFrames
 
 const gbifurl = "http://api.gbif.org/v1/"
+const gbifenums = Dict(
+  "basisOfRecord" => [
+    "FOSSIL_SPECIMEN",
+    "HUMAN_OBSERVATION",
+    "LITERATURE",
+    "LIVING_SPECIMEN",
+    "MACHINE_OBSERVATION",
+    "MATERIAL_SAMPLE",
+    "OBSERVATION",
+    "PRESERVED_SPECIMEN",
+    "UNKNOWN"
+  ],
+  "continent" => [
+    "AFRICA",
+    "ANTARCTICA",
+    "ASIA",
+    "EUROPE",
+    "NORTH_AMERICA",
+    "OCEANIA",
+    "SOUTH_AMERICA"
+  ],
+  "establishmentMeans" => [
+    "INTRODUCED",
+    "INVASIVE",
+    "MANAGED",
+    "NATIVE",
+    "NATURALISED",
+    "UNCERTAIN"
+  ],
+  "issue" => [
+    "BASIS_OF_RECORD_INVALID",
+    "CONTINENT_COUNTRY_MISMATCH",
+    "CONTINENT_DERIVED_FROM_COORDINATES",
+    "CONTINENT_INVALID",
+    "COORDINATE_INVALID",
+    "COORDINATE_OUT_OF_RANGE",
+    "COORDINATE_PRECISION_INVALID",
+    "COORDINATE_REPROJECTED",
+    "COORDINATE_REPROJECTION_FAILED",
+    "COORDINATE_REPROJECTION_SUSPICIOUS",
+    "COORDINATE_ROUNDED",
+    "COORDINATE_UNCERTAINTY_METERS_INVALID",
+    "COUNTRY_COORDINATE_MISMATCH",
+    "COUNTRY_DERIVED_FROM_COORDINATES",
+    "COUNTRY_INVALID",
+    "COUNTRY_MISMATCH",
+    "DEPTH_MIN_MAX_SWAPPED",
+    "DEPTH_NON_NUMERIC",
+    "DEPTH_NOT_METRIC",
+    "DEPTH_UNLIKELY",
+    "ELEVATION_MIN_MAX_SWAPPED",
+    "ELEVATION_NON_NUMERIC",
+    "ELEVATION_NOT_METRIC",
+    "ELEVATION_UNLIKELY",
+    "GEODETIC_DATUM_ASSUMED_WGS84",
+    "GEODETIC_DATUM_INVALID",
+    "IDENTIFIED_DATE_INVALID",
+    "IDENTIFIED_DATE_UNLIKELY",
+    "INDIVIDUAL_COUNT_INVALID",
+    "INTERPRETATION_ERROR",
+    "MODIFIED_DATE_INVALID",
+    "MODIFIED_DATE_UNLIKELY",
+    "MULTIMEDIA_DATE_INVALID",
+    "MULTIMEDIA_URI_INVALID",
+    "PRESUMED_NEGATED_LATITUDE",
+    "PRESUMED_NEGATED_LONGITUDE",
+    "PRESUMED_SWAPPED_COORDINATE",
+    "RECORDED_DATE_INVALID",
+    "RECORDED_DATE_MISMATCH",
+    "RECORDED_DATE_UNLIKELY",
+    "REFERENCES_URI_INVALID",
+    "TAXON_MATCH_FUZZY",
+    "TAXON_MATCH_HIGHERRANK",
+    "TAXON_MATCH_NONE",
+    "TYPE_STATUS_INVALID",
+    "ZERO_COORDINATE"
+  ]
+ )
 
 # package code goes here
 include("query.jl")
@@ -18,7 +97,10 @@ include("paging.jl")
 export next!, complete!, restart!
 
 include("qaqc.jl")
-export have_both_coordinates, have_neither_zero_coordinates, have_no_zero_coordinates, have_no_issues
+export have_both_coordinates, have_neither_zero_coordinates,
+  have_no_zero_coordinates, have_no_issues, have_ok_coordinates
 export qualitycontrol!
+
+include("dataframe.jl")
 
 end # module

@@ -32,4 +32,26 @@ function check_occurrences_parameters!(q::Dict)
     end
   end
 
+  # Country must be a two-letters country code
+  if "country" ∈ keys(q)
+    if length(q["country"]) != 2
+      warn(q["country"], " is not a two letter country code -- will be dropped from the queryset")
+      delete!(q, "country")
+    end
+  end
+
+  # Latitude and longitudes
+  # TODO lat -90/90 lon -180/180, can be "min,max"
+
+  # ENUMs
+  for (k, v) in q
+    if k ∈ keys(gbifenums)
+      okvals = filter(x -> x ∈ gbifenums[k], v)
+      if length(okvals) != length(v)
+        warn("Some values in ", k, " were invalid -- will be dropped from the queryset")
+      end
+      q[k] = okvals
+    end
+  end
+
 end

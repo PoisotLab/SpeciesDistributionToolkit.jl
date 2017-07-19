@@ -10,7 +10,8 @@ tests = Dict{String,String}(
   "paging" => "paging.jl",
   "methods" => "methods.jl",
   "quality control" => "qualitycontrol.jl",
-  "species retrieval" => "species.jl"
+  "species retrieval" => "species.jl",
+  "export to DataFrame" => "dataframe.jl"
 )
 
 for (name,test) in tests
@@ -20,6 +21,7 @@ for (name,test) in tests
   catch e
     anyerrors = true
     println("\033[1m\033[31m×\033[0m\t$(name)")
+    println("\033[1m\033[38m→\033[0m\ttest/$(test)")
     showerror(STDOUT, e, backtrace())
     println()
   end

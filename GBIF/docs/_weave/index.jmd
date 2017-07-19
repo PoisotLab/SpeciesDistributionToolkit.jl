@@ -28,6 +28,7 @@ the `occurrence/search` endpoint. Taxonomic API support will come later.
 
 ## How to contribute
 
-Please read the [Code of Conduct][CoC].
+Please read the [Code of Conduct][CoC] and the [contributing guidelines][contr].
 
 [CoC]: https://github.com/EcoJulia/GBIF.jl/blob/master/CODE_OF_CONDUCT.md
+[contr]: https://github.com/EcoJulia/GBIF.jl/blob/master/CONTRIBUTING.md

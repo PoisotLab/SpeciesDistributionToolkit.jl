@@ -20,9 +20,12 @@ function next!(o::Occurrences)
   if o.cleaned
     warn("A filtered list of occurences cannot be resumed - object unchanged")
   else
-    if length(o.occurrences) == o.count
+    if length(o) == o.count
       info("All occurences for this query have been returned")
     else
+      if o.query == nothing
+        o.query = Dict{String,Any}()
+      end
       o.query["offset"] = length(o)
       o.query["limit"] = get(o.query, "limit", 20)
       if (o.query["offset"] + o.query["limit"]) > o.count

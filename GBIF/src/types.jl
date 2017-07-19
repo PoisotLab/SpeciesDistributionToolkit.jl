@@ -117,7 +117,7 @@ import Base.show
 **Show an occurrence**
 """
 function show(io::IO, o::Occurrence)
-  println(io, "GBIF $(o.key)\t$(o.name)")
+  println(io, "GBIF $(o.key)\t$(o.generic)")
 end
 
 """

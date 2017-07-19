@@ -1,0 +1,17 @@
+{
+   "title": "GBIF.jl",
+   "description": "Interact with the GBIF API from Julia",
+   "grants": [
+      {}
+   ],
+   "upload_type": "software",
+   "creators": [
+      {
+         "affiliation": "Université de Montréal",
+         "name": "Poisot, Timothée",
+         "orcid": "0000-0002-0735-5184"
+      }
+   ],
+   "access_right": "open",
+   "license": "mit-license"
+}

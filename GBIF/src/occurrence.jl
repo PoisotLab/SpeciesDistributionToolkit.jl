@@ -25,8 +25,9 @@ function occurrences()
       body["offset"],
       maxocc,
       nothing,
-      false,
-      occ
+      view(occ, collect(1:length(occ))),
+      occ,
+      ones(Bool, length(occ))
     )
   else
     warn("Non-OK status returned: ", occ_s_req.status)
@@ -50,8 +51,10 @@ function occurrences(q::Dict)
       body["offset"],
       maxocc,
       q,
-      false,
-      occ
+      occ,
+      view(occ, collect(1:length(occ))),
+      occ,
+      ones(Bool, length(occ))
     )
   end
 end

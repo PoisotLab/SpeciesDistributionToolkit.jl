@@ -117,7 +117,7 @@ import Base.show
 **Show an occurrence**
 """
 function show(io::IO, o::Occurrence)
-  println(io, "GBIF $(o.key)\t$(o.generic)")
+  println(io, "GBIF $(o.key)\t$(o.species)\t()$(o.country)")
 end
 
 """
@@ -127,8 +127,9 @@ mutable struct Occurrences
   offset::Integer
   count::Integer
   query::Union{Dict{String,Any},Void}
-  cleaned::Bool
-  occurrences::Array{Occurrence, 1}
+  occurrences # TODO be explicit on the type
+  raw::Array{Occurrence, 1}
+  show::Array{Bool,1}
 end
 
 import Base.length, Base.getindex, Base.endof, Base.start, Base.done, Base.next
@@ -153,19 +154,17 @@ function start(o::Occurrences)
   start(o.occurrences)
 end
 
-function done(o::Occurrences, i::Int64)
-  done(o.occurrences, i::Int64)
+function done(o::Occurrences, i::Any)
+  done(o.occurrences, i)
 end
 
-function next(o::Occurrences, i::Int64)
-  next(o.occurrences, i::Int64)
+function next(o::Occurrences, i::Any)
+  next(o.occurrences, i)
 end
 
 """
 **Show several occurrences**
 """
 function show(io::IO, o::Occurrences)
-  cstring = o.cleaned ? "filtered" : ""
-  qstring = o.query == nothing ? "no query" : "a custom query"
-  println(io, "A $(cstring) list of occurrences with $qstring - $(length(o)) out of $(o.count)")
+  println(io, "GBIF records: viewing $(length(o)) of $(length(o.raw)) out of $(o.count)")
 end

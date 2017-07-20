@@ -42,25 +42,37 @@ end
 """
 **Cleans a search output**
 
-By default, this removes all observations with issues -- which is going to
-remove a lot of observations. Potentially *all* the observations, in fact.
-
-Note that once a series of occurrences have been put through this function, it
-is impossible to call `next!` or `complete!` on them. On the other hand,
-`restart!` will work.
-
-For this reason, it is recommended to create a copy of the `Occurrences` object
-before applying quality control on it.
+UPDATE
 """
 function qualitycontrol!{T<:Function}(o::Occurrences; filters::Array{T,1}=[have_no_issues], verbose::Bool=true)
+  keep = ones(Bool, length(o.raw))
   if verbose
-    info("Starting quality control with ", length(o.occurrences), " records")
+    info("Starting quality control with ", length(o.raw), " records")
   end
   for f in filters
-    o.occurrences = filter(f, o.occurrences)
+    keep_f = map(f, o.occurrences)
+    keep = keep .* keep_f
     if verbose
-      info(length(o.occurrences), " records left after ", f)
+      info(count(keep), " records left after ", f)
     end
   end
-  o.cleaned=true
+  o.show = keep
+  update!(o)
+end
+
+"""
+**Show all occurrences**
+
+This function reverses the action of `qualitycontrol!`.
+"""
+function showall!(o::Occurrences)
+  o.show = ones(Bool, length(o.raw))
+  o.occurrences = view(o.raw, o.show)
+end
+
+"""
+**Update the view of occurrences**
+"""
+function update!(o::Occurrences)
+  o.occurrences = view(o.raw, o.show)
 end

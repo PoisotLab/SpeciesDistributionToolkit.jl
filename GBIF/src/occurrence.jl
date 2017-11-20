@@ -51,7 +51,6 @@ function occurrences(q::Dict)
       body["offset"],
       maxocc,
       q,
-      occ,
       view(occ, collect(1:length(occ))),
       occ,
       ones(Bool, length(occ))

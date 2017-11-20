@@ -127,7 +127,7 @@ mutable struct Occurrences
   offset::Integer
   count::Integer
   query::Union{Dict{String,Any},Void}
-  occurrences # TODO be explicit on the type
+  occurrences::SubArray{GBIF.Occurrence,1,Array{GBIF.Occurrence,1},Tuple{Array{Int64,1}},false} # TODO be explicit on the type
   raw::Array{Occurrence, 1}
   show::Array{Bool,1}
 end

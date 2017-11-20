@@ -1,5 +1,4 @@
-# Documentation example
+# Access GBIF data
 
-``` @docs
-occurrence(key::Union{String, Integer})
-```
+This package offers access to GBIF data, specifically occurrences, and taxonomic
+information. There are some built-in data-cleaning routines.

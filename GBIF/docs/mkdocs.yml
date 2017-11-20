@@ -2,6 +2,7 @@ site_name:        GBIF.jl
 repo_url:         https://github.com/EcoJulia/GBIF.jl
 site_description: Access to GBIF data
 site_author:      Timothée Poisot
+theme: mkdocs
 
 extra_css:
   - assets/Documenter.css
@@ -10,5 +11,15 @@ extra_javascript:
   - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML
   - assets/mathjaxhelper.js
 
+docs_dir: build
+
+markdown_extensions:
+  - extra
+  - tables
+  - fenced_code
+  - mdx_math
+
 pages:
   - Home: index.md
+  - Occurrences: occurrences.md
+  - Quality control: qaqc.md

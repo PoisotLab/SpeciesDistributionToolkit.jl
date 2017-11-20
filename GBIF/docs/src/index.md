@@ -1,5 +1,5 @@
 # Documentation example
 
-```@docs
+``` @docs
 occurrence(key::Union{String, Integer})
 ```

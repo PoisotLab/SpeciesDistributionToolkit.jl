@@ -2,8 +2,6 @@
 
 ```@docs
 qualitycontrol!
-showall!
-update!
 ```
 
 ```@docs

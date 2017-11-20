@@ -7,11 +7,9 @@ module TestOccurrences
   set = occurrences(qpars)
   @test typeof(set) == Occurrences
   @test length(set) == 20
-  @test set.cleaned == false
 
   set2 = occurrences()
   @test typeof(set2) == Occurrences
   @test length(set2) == 20
-  @test set.cleaned == false
 
 end

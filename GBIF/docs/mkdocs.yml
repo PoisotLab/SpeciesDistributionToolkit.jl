@@ -18,8 +18,9 @@ markdown_extensions:
   - tables
   - fenced_code
   - mdx_math
+  - codehilite
 
 pages:
   - Home: index.md
-  - Occurrences: occurrences.md
-  - Quality control: qaqc.md
+  - Getting data: occurrences.md
+  - Filtering records: qaqc.md

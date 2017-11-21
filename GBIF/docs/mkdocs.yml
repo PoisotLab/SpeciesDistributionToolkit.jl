@@ -35,4 +35,5 @@ markdown_extensions:
 pages:
   - Home: index.md
   - Getting data: occurrences.md
+  - Using queries: queries.md
   - Filtering records: qaqc.md

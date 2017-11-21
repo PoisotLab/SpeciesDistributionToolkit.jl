@@ -7,7 +7,7 @@ makedocs(
 )
 
 deploydocs(
-    deps   = Deps.pip("mkdocs", "python-markdown-math", "mkdocs-cinder"),
+    deps   = Deps.pip("mkdocs", "python-markdown-math", "mkdocs-material"),
     repo = "github.com/EcoJulia/GBIF.jl.git",
     julia = "0.6",
     osname = "linux"

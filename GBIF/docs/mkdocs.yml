@@ -2,7 +2,17 @@ site_name:        GBIF.jl
 repo_url:         https://github.com/EcoJulia/GBIF.jl
 site_description: Access to GBIF data
 site_author:      Timothée Poisot
-theme: yeti
+theme:
+  name: 'material'
+  palette:
+    primary: 'orange'
+    accent: 'amber'
+  font:
+    text: 'Overpass'
+    code: 'Overpass Mono'
+
+repo_name: 'EcoJulia/GBIF.jl'
+repo_url: 'https://github.com/EcoJulia/GBIF.jl'
 
 extra_css:
   - assets/Documenter.css
@@ -14,11 +24,13 @@ extra_javascript:
 docs_dir: build
 
 markdown_extensions:
+  - admonition
   - extra
   - tables
   - fenced_code
   - mdx_math
-  - codehilite
+  - codehilite:
+      guess_lang: false
 
 pages:
   - Home: index.md

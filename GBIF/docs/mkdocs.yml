@@ -2,7 +2,6 @@ site_name:        GBIF.jl
 repo_url:         https://github.com/EcoJulia/GBIF.jl
 site_description: Access to GBIF data
 site_author:      Timothée Poisot
-<<<<<<< HEAD
 theme:
   name: 'material'
   palette:
@@ -14,9 +13,6 @@ theme:
 
 repo_name: 'EcoJulia/GBIF.jl'
 repo_url: 'https://github.com/EcoJulia/GBIF.jl'
-=======
-theme: readthedocs
->>>>>>> a737250b3692b3488f8af738c8dae438eee1c505
 
 extra_css:
   - assets/Documenter.css

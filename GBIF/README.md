@@ -9,16 +9,6 @@ API.
 [![codecov](https://codecov.io/gh/EcoJulia/GBIF.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/EcoJulia/GBIF.jl)
 [![Latest documentation](https://img.shields.io/badge/documentation-latest-blue.svg)](https://ecojulia.github.io/GBIF.jl/latest/)
 
-## Vignettes
-
-| Example                       |                           Link |
-|:------------------------------|-------------------------------:|
-| Mapping bird occurrences      |   [Jupyter notebook][nb_birds] |
-| Integration with `DataFrames` | [Jupyter notebook][nb_species] |
-
-[nb_birds]: https://nbviewer.jupyter.org/github/EcoJulia/GBIF.jl/blob/master/docs/notebooks/ukbirds.ipynb
-[nb_species]: https://nbviewer.jupyter.org/github/EcoJulia/GBIF.jl/blob/master/docs/notebooks/species.ipynb
-
 ## Package overview
 
 - get a single occurrence (`occurrence`)

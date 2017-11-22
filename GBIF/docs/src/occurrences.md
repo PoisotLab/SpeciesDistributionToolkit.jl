@@ -51,5 +51,5 @@ The `Occurrences` type can be converted into a `DataFrame` for easy export and
 filtering.
 
 ```@docs
-DataFrame(o::Occurrences)
+DataFrames.DataFrame(o::Occurrences)
 ```

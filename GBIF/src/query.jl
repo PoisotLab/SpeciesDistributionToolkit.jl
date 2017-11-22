@@ -4,9 +4,9 @@
 This is used internally.
 
 Everything this function does is derived from the GBIF API documentation,
-including the values for enum types. This modifies the queryset. Filters that
-are not allowed are removed, and filters that have incorrect values are dropped
-too.
+including (and especially) the values for enum types. This modifies the
+queryset. Filters that are not allowed are removed, and filters that have
+incorrect values are dropped too.
 
 This feels like the most conservative option -- the user can always filter the
 results when they are returned.

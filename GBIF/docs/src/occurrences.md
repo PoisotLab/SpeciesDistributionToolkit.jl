@@ -38,10 +38,18 @@ for single_occ in o
 end
 ~~~
 
-
 ## Batch-download of occurrences
 
 ```@docs
 next!
 complete!
+```
+
+## Exporting results
+
+The `Occurrences` type can be converted into a `DataFrame` for easy export and
+filtering.
+
+```@docs
+DataFrame(o::Occurrences)
 ```

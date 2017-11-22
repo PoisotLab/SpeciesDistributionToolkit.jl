@@ -1,5 +1,8 @@
 """
 **Return an interpreted occurrence given its key**
+
+
+The key can be given as a string or as an integer.
 """
 function occurrence(key::Union{String, Integer})
   occ_url = gbifurl * "occurrence/" * string(key)
@@ -12,7 +15,7 @@ end
 
 This function will return the latest occurrences -- usually 20, but this is
 entirely determined by the server default page size. This is mostly useful to
-get a few results fast for illustration purposes.
+get a few results rapidly for illustration purposes.
 """
 function occurrences()
   occ_s_url = gbifurl * "occurrence/search"
@@ -38,6 +41,9 @@ end
 **Search for occurrences**
 
 Returns occurrences that correspond to a filter, given in `q` as a dictionary.
+When first called, this function will return the latest 20 hits (or whichever
+default page size GBIF uses). Future occurrences can be queried with `next!` or
+`complete!`.
 """
 function occurrences(q::Dict)
   check_occurrences_parameters!(q)

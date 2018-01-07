@@ -3,6 +3,7 @@ module GBIF
 using Requests
 using JSON
 using DataFrames
+using Query
 
 const gbifurl = "http://api.gbif.org/v1/"
 const gbifenums = Dict(

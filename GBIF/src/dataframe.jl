@@ -15,7 +15,7 @@ end
 import Base.convert
 
 """
-**Convert a series of occurrences into a DataFrame** 
+**Convert a series of occurrences into a DataFrame**
 """
 function convert(::Type{DataFrame}, o::Occurrences)
   return DataFrame(o)

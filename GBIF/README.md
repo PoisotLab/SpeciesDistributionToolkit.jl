@@ -9,6 +9,8 @@ API.
 [![codecov](https://codecov.io/gh/EcoJulia/GBIF.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/EcoJulia/GBIF.jl)
 [![Latest documentation](https://img.shields.io/badge/documentation-latest-blue.svg)](https://ecojulia.github.io/GBIF.jl/latest/)
 
+[GBIF]: http://gbif.org/
+
 ## Package overview
 
 - get a single occurrence (`occurrence`)

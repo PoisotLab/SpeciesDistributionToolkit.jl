@@ -1,7 +1,9 @@
 """
 **Represents an occurrence in the GBIF format**
 
-This is currently a subset of all the fields.
+This is currently a subset of all the fields. This `struct` is *not* mutable --
+this ensures that the objects returned from the GBIF database are never modified
+by the user.
 """
 struct Occurrence
   key::Integer

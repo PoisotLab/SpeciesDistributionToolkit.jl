@@ -1,7 +1,6 @@
 """
 **Return an interpreted occurrence given its key**
 
-
 The key can be given as a string or as an integer.
 """
 function occurrence(key::Union{String, Integer})

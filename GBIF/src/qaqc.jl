@@ -60,7 +60,13 @@ end
 """
 **Cleans a search output**
 
-UPDATE
+This function loops through all records, and applies the filters to it. Filters
+are built-in or user-defined functions that return `true` when the record
+needs to be kept, and `false` when it needs to be discarded.
+
+It is important to note that the records are *not actually removed*: they
+are masked from user view. This means that you can try different filtering
+strategies without having to re-query GBIF.
 """
 function qualitycontrol!{T<:Function}(o::Occurrences; filters::Array{T,1}=[have_no_issues], verbose::Bool=true)
   keep = ones(Bool, length(o.raw))

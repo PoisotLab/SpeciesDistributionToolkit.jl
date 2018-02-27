@@ -3,6 +3,10 @@ import Missings.missing
 
 """
 **Export the occurrences as a data frame**
+
+This function will loop through all the fields in occurrences, and aggregate
+them in a dataframe. In the case where a value is not specified for a given
+field, the `missing` value/type will be used.
 """
 function DataFrame(o::Occurrences)
   d = DataFrame()

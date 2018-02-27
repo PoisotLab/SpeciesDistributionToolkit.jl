@@ -1,9 +1,8 @@
 # GBIF wrapper for Julia
 
-This is a (work in progress) project to provide an interface to the [GBIF] API
-from Julia. Current efforts focus on querying and exporting occurrences through
-the `occurrence/search` endpoint. There is partial support for the taxonomic
-API.
+This is project offers an interface to the [GBIF] search API from
+Julia. Current efforts focus on querying and exporting occurrences through the
+`occurrence/search` endpoint. There is partial support for the taxonomic API.
 
 [![Build Status](https://travis-ci.org/EcoJulia/GBIF.jl.svg?branch=master)](https://travis-ci.org/EcoJulia/GBIF.jl)
 [![codecov](https://codecov.io/gh/EcoJulia/GBIF.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/EcoJulia/GBIF.jl)
@@ -16,9 +15,10 @@ API.
 - get a single occurrence (`occurrence`)
 - look for multiple occurrences (`occurrences`)
 - paging function (`next!`, `restart!`, `complete!`)
-- quality control (`qualitycontrol!`)
+- quality control (`qualitycontrol!`) and arbitrary filters
 - export to data frame (`DataFrames`)
 - species and taxon lookup (`species`)
+- integration with the `Query` package
 
 ## How to contribute
 

@@ -5,7 +5,7 @@ This is currently a subset of all the fields. This `struct` is *not* mutable --
 this ensures that the objects returned from the GBIF database are never modified
 by the user.
 """
-struct Occurrence
+struct GBIFRecord
   key::Integer
   datasetKey::String
   dataset::Union{String, Void}
@@ -118,14 +118,14 @@ import Base.show
 """
 **Show an occurrence**
 """
-function show(io::IO, o::Occurrence)
+function show(io::IO, o::GBIFRecord)
   println(io, "GBIF $(o.key)\t$(o.species)\t()$(o.country)")
 end
 
 """
 **List of occurrences and metadata***
 """
-mutable struct Occurrences
+mutable struct GBIFRecords
   offset::Integer
   count::Integer
   query::Union{Dict{String,Any},Void}
@@ -136,37 +136,37 @@ end
 
 import Base.length, Base.getindex, Base.endof, Base.start, Base.done, Base.next
 
-function length(o::Occurrences)
+function length(o::GBIFRecords)
   length(o.occurrences)
 end
 
-function getindex(o::Occurrences, i::Int64)
+function getindex(o::GBIFRecords, i::Int64)
   o.occurrences[i]
 end
 
-function getindex(o::Occurrences, r::UnitRange{Int64})
+function getindex(o::GBIFRecords, r::UnitRange{Int64})
   o.occurrences[r]
 end
 
-function endof(o::Occurrences)
+function endof(o::GBIFRecords)
   endof(o.occurrences)
 end
 
-function start(o::Occurrences)
+function start(o::GBIFRecords)
   start(o.occurrences)
 end
 
-function done(o::Occurrences, i::Any)
+function done(o::GBIFRecords, i::Any)
   done(o.occurrences, i)
 end
 
-function next(o::Occurrences, i::Any)
+function next(o::GBIFRecords, i::Any)
   next(o.occurrences, i)
 end
 
 """
 **Show several occurrences**
 """
-function show(io::IO, o::Occurrences)
+function show(io::IO, o::GBIFRecords)
   println(io, "GBIF records: viewing $(length(o)) of $(length(o.raw)) out of $(o.count)")
 end

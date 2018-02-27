@@ -1,4 +1,5 @@
 import DataFrames.DataFrame
+import Missings.missing
 
 """
 **Export the occurrences as a data frame**

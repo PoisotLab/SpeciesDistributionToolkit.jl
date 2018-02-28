@@ -45,7 +45,7 @@ default page size GBIF uses). Future occurrences can be queried with `next!` or
 `complete!`.
 """
 function occurrences(q::Dict)
-  check_record_parameters!(q)
+  check_records_parameters!(q)
   occ_s_url = gbifurl * "occurrence/search"
   occ_s_req = Requests.get(occ_s_url, query=q)
   if occ_s_req.status == 200

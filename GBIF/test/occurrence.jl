@@ -5,7 +5,7 @@ module TestOccurrence
 
   k = 1425221362
   o = occurrence(k)
-  @test typeof(o) == Occurrence
+  @test typeof(o) == GBIFRecord
   @test o.key == k
 
 end

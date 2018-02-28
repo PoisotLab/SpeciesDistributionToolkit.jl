@@ -3,7 +3,7 @@ module TestSpecies
   using GBIF
   using Base.Test
 
-  iver = species("Iris versicolor", rank=:SPECIES)
+  iver = taxon("Iris versicolor", rank=:SPECIES)
 
   @test iver["canonicalName"] == "Iris versicolor"
 

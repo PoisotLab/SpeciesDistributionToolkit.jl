@@ -7,5 +7,5 @@ occurrences(q::Dict)
 ## Internal checks for query parameters
 
 ```@docs
-GBIF.check_occurrences_parameters!(q::Dict)
+GBIF.check_records_parameters!(q::Dict)
 ```

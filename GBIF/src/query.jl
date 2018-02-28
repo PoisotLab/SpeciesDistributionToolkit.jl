@@ -11,7 +11,7 @@ incorrect values are dropped too.
 This feels like the most conservative option -- the user can always filter the
 results when they are returned.
 """
-function check_occurrences_parameters!(q::Dict)
+function check_record_parameters!(q::Dict)
 
   # List of fields from GBIF
   allowed_fields = "q", "basisOfRecord", "catalogNumber", "collectionCode",

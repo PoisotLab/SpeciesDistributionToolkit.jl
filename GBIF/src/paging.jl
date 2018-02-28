@@ -5,7 +5,7 @@ This function will retrieve the next page of results. By default, it will walk
 through queries 20 at a time. This can be modified by changing the
 `.query["limit"]` value, to any value *below* 200.
 """
-function next!(o::Occurrences)
+function next!(o::GBIFRecords)
   if length(o) == o.count
     info("All occurences for this query have been returned")
   else
@@ -37,7 +37,7 @@ of requests both from your end and on the GBIF infrastructure.
 Internally, this function is simply calling `next!` until all records are
 exhausted. 
 """
-function complete!(o::Occurrences)
+function complete!(o::GBIFRecords)
   while length(o.occurrences) < o.count
     next!(o)
   end

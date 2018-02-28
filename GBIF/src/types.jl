@@ -64,8 +64,8 @@ end
 """
 **Generates an occurrence from the JSON response of GBIF**
 """
-function Occurrence(o::Dict{String, Any})
-  return Occurrence(
+function GBIFRecord(o::Dict{String, Any})
+  return GBIFRecord(
     o["key"],
     o["datasetKey"],
     get(o, "datasetName", nothing),
@@ -129,8 +129,8 @@ mutable struct GBIFRecords
   offset::Integer
   count::Integer
   query::Union{Dict{String,Any},Void}
-  occurrences::SubArray{GBIF.Occurrence,1,Array{GBIF.Occurrence,1},Tuple{Array{Int64,1}},false} # TODO be explicit on the type
-  raw::Array{Occurrence, 1}
+  occurrences::SubArray{GBIF.GBIFRecord,1,Array{GBIF.GBIFRecord,1},Tuple{Array{Int64,1}},false} # TODO be explicit on the type
+  raw::Array{GBIFRecord, 1}
   show::Array{Bool,1}
 end
 

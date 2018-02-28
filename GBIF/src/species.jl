@@ -1,7 +1,7 @@
 """
-**Get information about a species**
+**Get information about a taxon at any level**
 """
-function species(name::String;
+function taxon(name::String;
   rank::Union{Symbol,Void}=:SPECIES, strict::Bool=true, verbose::Bool=false,
   kingdom::Union{String, Void}=nothing, phylum::Union{String, Void}=nothing, class::Union{String, Void}=nothing,
   order::Union{String, Void}=nothing, family::Union{String, Void}=nothing, genus::Union{String, Void}=nothing)
@@ -47,6 +47,8 @@ function species(name::String;
   if sp_s_req.status == 200
     body = Requests.json(sp_s_req)
     return body
+  else
+     warn("unable to retrieve taxon $(name) (error $(sp_s_req.status))")
   end
 
 end

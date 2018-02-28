@@ -4,7 +4,7 @@
 This filter will only retain occurrences that have *both* a latitude and a
 longitude field.
 """
-function have_both_coordinates(o::Occurrence)
+function have_both_coordinates(o::GBIFRecord)
   !(isa(o.latitude, Void)&isa(o.latitude, Void))
 end
 
@@ -13,7 +13,7 @@ end
 
 This filter will only retain occurrences that are *not* at the (0,0) coordinate.
 """
-function have_neither_zero_coordinates(o::Occurrence)
+function have_neither_zero_coordinates(o::GBIFRecord)
   !((o.latitude==0.0)&(o.longitude==0.0))
 end
 
@@ -23,7 +23,7 @@ end
 This filter will only retain occurrences that have *at most* one coordinate
 being exactly 0.0.
 """
-function have_no_zero_coordinates(o::Occurrence)
+function have_no_zero_coordinates(o::GBIFRecord)
   !((o.latitude==0.0)|(o.longitude==0.0))
 end
 
@@ -36,7 +36,7 @@ rare to have GBIF records with absolutely no issues. Its use is discouraged.
 By design, it is the default argument for `qualitycontrol!` -- it's your job to
 decide precisely which filters you need to use.
 """
-function have_no_issues(o::Occurrence)
+function have_no_issues(o::GBIFRecord)
   length(o.issues) == 0
 end
 
@@ -47,7 +47,7 @@ This filter will retain observations that have no issues, with the exception of
 assuming WGS84 projection (which a large number of GBIF records do), and rounded
 coordinates (same thing). It is a reasonable filter for most use cases.
 """
-function have_ok_coordinates(o::Occurrence)
+function have_ok_coordinates(o::GBIFRecord)
   ok = true
   for i in o.issues
     if !(i in [:COORDINATE_ROUNDED, :GEODETIC_DATUM_ASSUMED_WGS84])
@@ -68,7 +68,7 @@ It is important to note that the records are *not actually removed*: they
 are masked from user view. This means that you can try different filtering
 strategies without having to re-query GBIF.
 """
-function qualitycontrol!{T<:Function}(o::Occurrences; filters::Array{T,1}=[have_no_issues], verbose::Bool=true)
+function qualitycontrol!{T<:Function}(o::GBIFRecords; filters::Array{T,1}=[have_no_issues], verbose::Bool=true)
   keep = ones(Bool, length(o.raw))
   if verbose
     info("Starting quality control with ", length(o.raw), " records")
@@ -90,7 +90,7 @@ end
 This function reverses the action of `qualitycontrol!`. It will unmask all
 records that have been removed under the current filters.
 """
-function showall!(o::Occurrences)
+function showall!(o::GBIFRecords)
   o.show = ones(Bool, length(o.raw))
   o.occurrences = view(o.raw, o.show)
 end
@@ -100,6 +100,6 @@ end
 
 This function is used internally by `qualitycontrol!` to act on the view.
 """
-function update!(o::Occurrences)
+function update!(o::GBIFRecords)
   o.occurrences = view(o.raw, o.show)
 end

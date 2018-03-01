@@ -92,7 +92,7 @@ include("types.jl")
 export GBIFRecord, GBIFRecords
 
 include("species.jl")
-export GBIFTaxon
+export taxon
 
 include("occurrence.jl")
 export occurrence, occurrences

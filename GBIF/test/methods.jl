@@ -5,7 +5,7 @@ module TestMethods
 
   set = occurrences()
 
-  @test typeof(set[1]) == Occurrence
+  @test typeof(set[1]) == GBIFRecord
   @test length(set[1:4]) == 4
 
 end

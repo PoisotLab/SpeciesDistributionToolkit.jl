@@ -3,6 +3,7 @@ module GBIF
 using Requests
 using JSON
 using DataFrames
+using Query
 
 const gbifurl = "http://api.gbif.org/v1/"
 const gbifenums = Dict(
@@ -88,7 +89,10 @@ const gbifenums = Dict(
 include("query.jl")
 
 include("types.jl")
-export Occurrence, Occurrences
+export GBIFRecord, GBIFRecords
+
+include("species.jl")
+export taxon
 
 include("occurrence.jl")
 export occurrence, occurrences
@@ -102,8 +106,5 @@ export have_both_coordinates, have_neither_zero_coordinates,
 export qualitycontrol!, showall!, update!
 
 include("dataframe.jl")
-
-include("species.jl")
-export species
 
 end # module

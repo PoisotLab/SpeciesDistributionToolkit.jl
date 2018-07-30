@@ -23,7 +23,6 @@ Pkg.add("GBIF")
 - look for multiple occurrences (`occurrences`)
 - paging function (`next!`, `restart!`, `complete!`)
 - quality control (`qualitycontrol!`) and arbitrary filters
-- export to data frame (`DataFrames`)
 - species and taxon lookup (`species`)
 - integration with the `Query` package
 

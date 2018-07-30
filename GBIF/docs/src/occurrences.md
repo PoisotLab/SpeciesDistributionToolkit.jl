@@ -48,16 +48,6 @@ next!
 complete!
 ```
 
-## Exporting results
-
-Any `GBIFRecords` type can be converted into a `DataFrame` for easy export
-and filtering. This work both by calling `DataFrame` directly on the object,
-or by using the `convert` method.
-
-```@docs
-DataFrames.DataFrame(o::Occurrences)
-```
-
 ## Filtering occurrences after download
 
 The `GBIFRecords` objects can be used with the `Query.jl` package. For example,

@@ -5,8 +5,8 @@ The key can be given as a string or as an integer.
 """
 function occurrence(key::Union{String, Integer})
   occ_url = gbifurl * "occurrence/" * string(key)
-  occ_key_req = Requests.get(occ_url)
-  return GBIFRecord(Requests.json(occ_key_req))
+  occ_key_req = HTTP.get(occ_url)
+  return GBIFRecord(JSON.parse(String(occ_key_req.body)))
 end
 
 """
@@ -18,9 +18,9 @@ get a few results rapidly for illustration purposes.
 """
 function occurrences()
   occ_s_url = gbifurl * "occurrence/search"
-  occ_s_req = Requests.get(occ_s_url)
+  occ_s_req = HTTP.get(occ_s_url)
   if occ_s_req.status == 200
-    body = Requests.json(occ_s_req)
+    body = JSON.parse(String(occ_s_req.body))
     occ = map(GBIFRecord, body["results"])
     maxocc = body["count"] > 200000 ? 200000 : body["count"]
     return GBIFRecords(
@@ -47,9 +47,9 @@ default page size GBIF uses). Future occurrences can be queried with `next!` or
 function occurrences(q::Dict)
   check_records_parameters!(q)
   occ_s_url = gbifurl * "occurrence/search"
-  occ_s_req = Requests.get(occ_s_url, query=q)
+  occ_s_req = HTTP.get(occ_s_url, query=q)
   if occ_s_req.status == 200
-    body = Requests.json(occ_s_req)
+    body = JSON.parse(String(occ_s_req.body))
     occ = map(GBIFRecord, body["results"])
     maxocc = body["count"] > 200000 ? 200000 : body["count"]
     return GBIFRecords(

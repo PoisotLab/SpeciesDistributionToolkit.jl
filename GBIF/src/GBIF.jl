@@ -86,10 +86,13 @@ const gbifenums = Dict(
 # package code goes here
 include("query.jl")
 
-include("types.jl")
+include("types/records.jl")
 export GBIFRecord, GBIFRecords
 
-include("species.jl")
+include("records/iterators.jl")
+include("records/show.jl")
+
+include("taxon.jl")
 export taxon
 
 include("occurrence.jl")

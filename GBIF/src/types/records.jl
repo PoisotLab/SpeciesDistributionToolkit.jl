@@ -8,24 +8,24 @@ by the user.
 struct GBIFRecord
   key::Integer
   datasetKey::String
-  dataset::Union{String, Void}
-  publishingOrgKey::Union{AbstractString, Void}
-  publishingCountry::Union{AbstractString, Void}
-  institutionCode::Union{AbstractString, Void}
-  protocol::Union{AbstractString, Void}
+  dataset::Union{String,Void}
+  publishingOrgKey::Union{AbstractString,Void}
+  publishingCountry::Union{AbstractString,Void}
+  institutionCode::Union{AbstractString,Void}
+  protocol::Union{AbstractString,Void}
   crawled::Union{DateTime, Void}
   parsed::Union{DateTime, Void}
   modified::Union{DateTime, Void}
   interpreted::Union{DateTime, Void}
-  countryCode::Union{AbstractString, Void}
-  country::Union{AbstractString, Void}
+  countryCode::Union{AbstractString,Void}
+  country::Union{AbstractString,Void}
   basisOfRecord::Symbol
   individualCount::Union{Integer, Void}
   latitude::Union{AbstractFloat, Void}
   longitude::Union{AbstractFloat, Void}
   precision::Union{AbstractFloat, Void}
   uncertainty::Union{AbstractFloat, Void}
-  geodetic::Union{AbstractString, Void}
+  geodetic::Union{AbstractString,Void}
   date::Union{DateTime, Void}
   issues::Array{Symbol,1}
   taxonKey::Union{Integer, Void}
@@ -36,20 +36,20 @@ struct GBIFRecord
   familyKey::Union{Integer, Void}
   genusKey::Union{Integer, Void}
   speciesKey::Union{Integer, Void}
-  kingdom::Union{AbstractString, Void}
-  phylum::Union{AbstractString, Void}
-  class::Union{AbstractString, Void}
-  order::Union{AbstractString, Void}
-  family::Union{AbstractString, Void}
-  genus::Union{AbstractString, Void}
-  species::Union{AbstractString, Void}
-  rank::Union{String, Void}
-  generic::Union{AbstractString, Void}
-  epithet::Union{AbstractString, Void}
-  vernacular::Union{AbstractString, Void}
-  scientific::Union{AbstractString, Void}
-  observer::Union{AbstractString, Void}
-  license::Union{AbstractString, Void}
+  kingdom::Union{AbstractString,Void}
+  phylum::Union{AbstractString,Void}
+  class::Union{AbstractString,Void}
+  order::Union{AbstractString,Void}
+  family::Union{AbstractString,Void}
+  genus::Union{AbstractString,Void}
+  species::Union{AbstractString,Void}
+  rank::Union{String,Void}
+  generic::Union{AbstractString,Void}
+  epithet::Union{AbstractString,Void}
+  vernacular::Union{AbstractString,Void}
+  scientific::Union{AbstractString,Void}
+  observer::Union{AbstractString,Void}
+  license::Union{AbstractString,Void}
 end
 
 function format_date(o, d)
@@ -113,15 +113,6 @@ function GBIFRecord(o::Dict{String, Any})
   )
 end
 
-import Base.show
-
-"""
-**Show an occurrence**
-"""
-function show(io::IO, o::GBIFRecord)
-  println(io, "GBIF $(o.key)\t$(o.species)\t()$(o.country)")
-end
-
 """
 **List of occurrences and metadata***
 """
@@ -132,41 +123,4 @@ mutable struct GBIFRecords
   occurrences::SubArray{GBIF.GBIFRecord,1,Array{GBIF.GBIFRecord,1},Tuple{Array{Int64,1}},false} # TODO be explicit on the type
   raw::Array{GBIFRecord, 1}
   show::Array{Bool,1}
-end
-
-import Base.length, Base.getindex, Base.endof, Base.start, Base.done, Base.next
-
-function length(o::GBIFRecords)
-  length(o.occurrences)
-end
-
-function getindex(o::GBIFRecords, i::Int64)
-  o.occurrences[i]
-end
-
-function getindex(o::GBIFRecords, r::UnitRange{Int64})
-  o.occurrences[r]
-end
-
-function endof(o::GBIFRecords)
-  endof(o.occurrences)
-end
-
-function start(o::GBIFRecords)
-  start(o.occurrences)
-end
-
-function done(o::GBIFRecords, i::Any)
-  done(o.occurrences, i)
-end
-
-function next(o::GBIFRecords, i::Any)
-  next(o.occurrences, i)
-end
-
-"""
-**Show several occurrences**
-"""
-function show(io::IO, o::GBIFRecords)
-  println(io, "GBIF records: viewing $(length(o)) of $(length(o.raw)) out of $(o.count)")
 end

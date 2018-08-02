@@ -1,7 +1,7 @@
 using GBIF
-using Base.Test
+using Test
 
-anyerrors = false
+global anyerrors = false
 
 tests = Dict{String,String}(
   "single occurrence functions" => "occurrence.jl",
@@ -10,8 +10,7 @@ tests = Dict{String,String}(
   "paging" => "paging.jl",
   "methods" => "methods.jl",
   "quality control" => "qualitycontrol.jl",
-  "species retrieval" => "species.jl",
-  "export to DataFrame" => "dataframe.jl"
+  "species retrieval" => "species.jl"
 )
 
 for (name,test) in tests

@@ -26,9 +26,9 @@ end
 **Get information about a taxon at any level**
 """
 function taxon(name::String;
-   rank::Union{Symbol,Void}=:SPECIES, strict::Bool=true, verbose::Bool=false,
-   kingdom::Union{String,Void}=nothing, phylum::Union{String,Void}=nothing, class::Union{String,Void}=nothing,
-   order::Union{String,Void}=nothing, family::Union{String,Void}=nothing, genus::Union{String,Void}=nothing)
+   rank::Union{Symbol,Nothing}=:SPECIES, strict::Bool=true, verbose::Bool=false,
+   kingdom::Union{String,Nothing}=nothing, phylum::Union{String,Nothing}=nothing, class::Union{String,Nothing}=nothing,
+   order::Union{String,Nothing}=nothing, family::Union{String,Nothing}=nothing, genus::Union{String,Nothing}=nothing)
    @assert rank ∈ [
       :DOMAIN, :CLASS, :CULTIVAR, :FAMILY, :FORM, :GENUS, :INFORMAL, :ORDER, :PHYLUM,
       :SECTION, :SUBCLASS, :VARIETY, :TRIBE, :KINGDOM, :SUBFAMILY , :SUBFORM,

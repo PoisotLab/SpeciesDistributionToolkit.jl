@@ -1,7 +1,7 @@
 module TestQAQC
 
   using GBIF
-  using Base.Test
+  using Test
 
   set = occurrences()
   qualitycontrol!(set)

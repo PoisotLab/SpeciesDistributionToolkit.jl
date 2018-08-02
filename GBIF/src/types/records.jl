@@ -8,48 +8,48 @@ by the user.
 struct GBIFRecord
   key::Integer
   datasetKey::String
-  dataset::Union{String,Void}
-  publishingOrgKey::Union{AbstractString,Void}
-  publishingCountry::Union{AbstractString,Void}
-  institutionCode::Union{AbstractString,Void}
-  protocol::Union{AbstractString,Void}
-  crawled::Union{DateTime, Void}
-  parsed::Union{DateTime, Void}
-  modified::Union{DateTime, Void}
-  interpreted::Union{DateTime, Void}
-  countryCode::Union{AbstractString,Void}
-  country::Union{AbstractString,Void}
+  dataset::Union{String,Nothing}
+  publishingOrgKey::Union{AbstractString,Nothing}
+  publishingCountry::Union{AbstractString,Nothing}
+  institutionCode::Union{AbstractString,Nothing}
+  protocol::Union{AbstractString,Nothing}
+  crawled::Union{DateTime, Nothing}
+  parsed::Union{DateTime, Nothing}
+  modified::Union{DateTime, Nothing}
+  interpreted::Union{DateTime, Nothing}
+  countryCode::Union{AbstractString,Nothing}
+  country::Union{AbstractString,Nothing}
   basisOfRecord::Symbol
-  individualCount::Union{Integer, Void}
-  latitude::Union{AbstractFloat, Void}
-  longitude::Union{AbstractFloat, Void}
-  precision::Union{AbstractFloat, Void}
-  uncertainty::Union{AbstractFloat, Void}
-  geodetic::Union{AbstractString,Void}
-  date::Union{DateTime, Void}
+  individualCount::Union{Integer, Nothing}
+  latitude::Union{AbstractFloat, Nothing}
+  longitude::Union{AbstractFloat, Nothing}
+  precision::Union{AbstractFloat, Nothing}
+  uncertainty::Union{AbstractFloat, Nothing}
+  geodetic::Union{AbstractString,Nothing}
+  date::Union{DateTime, Nothing}
   issues::Array{Symbol,1}
-  taxonKey::Union{Integer, Void}
-  kingdomKey::Union{Integer, Void}
-  phylumKey::Union{Integer, Void}
-  classKey::Union{Integer, Void}
-  orderKey::Union{Integer, Void}
-  familyKey::Union{Integer, Void}
-  genusKey::Union{Integer, Void}
-  speciesKey::Union{Integer, Void}
-  kingdom::Union{AbstractString,Void}
-  phylum::Union{AbstractString,Void}
-  class::Union{AbstractString,Void}
-  order::Union{AbstractString,Void}
-  family::Union{AbstractString,Void}
-  genus::Union{AbstractString,Void}
-  species::Union{AbstractString,Void}
-  rank::Union{String,Void}
-  generic::Union{AbstractString,Void}
-  epithet::Union{AbstractString,Void}
-  vernacular::Union{AbstractString,Void}
-  scientific::Union{AbstractString,Void}
-  observer::Union{AbstractString,Void}
-  license::Union{AbstractString,Void}
+  taxonKey::Union{Integer, Nothing}
+  kingdomKey::Union{Integer, Nothing}
+  phylumKey::Union{Integer, Nothing}
+  classKey::Union{Integer, Nothing}
+  orderKey::Union{Integer, Nothing}
+  familyKey::Union{Integer, Nothing}
+  genusKey::Union{Integer, Nothing}
+  speciesKey::Union{Integer, Nothing}
+  kingdom::Union{AbstractString,Nothing}
+  phylum::Union{AbstractString,Nothing}
+  class::Union{AbstractString,Nothing}
+  order::Union{AbstractString,Nothing}
+  family::Union{AbstractString,Nothing}
+  genus::Union{AbstractString,Nothing}
+  species::Union{AbstractString,Nothing}
+  rank::Union{String,Nothing}
+  generic::Union{AbstractString,Nothing}
+  epithet::Union{AbstractString,Nothing}
+  vernacular::Union{AbstractString,Nothing}
+  scientific::Union{AbstractString,Nothing}
+  observer::Union{AbstractString,Nothing}
+  license::Union{AbstractString,Nothing}
 end
 
 function format_date(o, d)
@@ -119,7 +119,7 @@ end
 mutable struct GBIFRecords
   offset::Integer
   count::Integer
-  query::Union{Dict{String,Any},Void}
+  query::Union{Dict{String,Any},Nothing}
   occurrences::SubArray{GBIF.GBIFRecord,1,Array{GBIF.GBIFRecord,1},Tuple{Array{Int64,1}},false} # TODO be explicit on the type
   raw::Array{GBIFRecord, 1}
   show::Array{Bool,1}

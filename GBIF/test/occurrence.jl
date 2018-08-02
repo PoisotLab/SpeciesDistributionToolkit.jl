@@ -1,7 +1,7 @@
 module TestOccurrence
 
   using GBIF
-  using Base.Test
+  using Test
 
   k = 1425221362
   o = occurrence(k)

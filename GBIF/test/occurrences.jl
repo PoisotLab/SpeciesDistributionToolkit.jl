@@ -1,7 +1,7 @@
 module TestGBIFRecords
 
   using GBIF
-  using Base.Test
+  using Test
 
   qpars = Dict("scientificName" => "Mus musculus", "year" => 1999, "hasCoordinate" => true)
   set = occurrences(qpars)

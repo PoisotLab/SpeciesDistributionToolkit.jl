@@ -2,6 +2,7 @@ module GBIF
 
 using HTTP
 using JSON
+using Dates
 
 const gbifurl = "http://api.gbif.org/v1/"
 const gbifenums = Dict(
@@ -89,8 +90,8 @@ include("query.jl")
 include("types/records.jl")
 export GBIFRecord, GBIFRecords
 
-include("records/iterators.jl")
-include("records/show.jl")
+include("types/iterators.jl")
+include("types/show.jl")
 
 include("taxon.jl")
 export taxon

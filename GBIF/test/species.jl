@@ -1,7 +1,7 @@
 module TestSpecies
 
   using GBIF
-  using Base.Test
+  using Test
 
   iver = taxon("Iris versicolor", rank=:SPECIES)
 

@@ -120,7 +120,6 @@ mutable struct GBIFRecords
   offset::Integer
   count::Integer
   query::Union{Dict{String,Any},Nothing}
-  occurrences::SubArray{GBIF.GBIFRecord,1,Array{GBIF.GBIFRecord,1},Tuple{Array{Int64,1}},false} # TODO be explicit on the type
-  raw::Array{GBIFRecord, 1}
-  show::Array{Bool,1}
+  occurrences::Vector{GBIFRecord}
+  show::Vector{Bool}
 end

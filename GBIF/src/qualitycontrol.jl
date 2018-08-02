@@ -69,9 +69,9 @@ are masked from user view. This means that you can try different filtering
 strategies without having to re-query GBIF.
 """
 function qualitycontrol!(o::GBIFRecords; filters::Array{T,1}=[have_no_issues], verbose::Bool=true) where {T<:Function}
-  keep = ones(Bool, length(o.raw))
+  keep = ones(Bool, length(o.occurrences))
   if verbose
-    @info "Starting quality control with ", length(o.raw), " records"
+    @info "Starting quality control with $(length(o.occurrences)) records"
   end
   for f in filters
     keep_f = map(f, o.occurrences)
@@ -81,7 +81,6 @@ function qualitycontrol!(o::GBIFRecords; filters::Array{T,1}=[have_no_issues], v
     end
   end
   o.show = keep
-  update!(o)
 end
 
 """
@@ -91,15 +90,5 @@ This function reverses the action of `qualitycontrol!`. It will unmask all
 records that have been removed under the current filters.
 """
 function showall!(o::GBIFRecords)
-  o.show = ones(Bool, length(o.raw))
-  o.occurrences = view(o.raw, o.show)
-end
-
-"""
-**Update the view of occurrences**
-
-This function is used internally by `qualitycontrol!` to act on the view.
-"""
-function update!(o::GBIFRecords)
-  o.occurrences = view(o.raw, o.show)
+  o.show = ones(Bool, length(o.occurrences))
 end

@@ -18,7 +18,7 @@ for (name,test) in tests
     include(test)
     println("\033[1m\033[32m✓\033[0m\t$(name)")
   catch e
-    anyerrors = true
+    global anyerrors = true
     println("\033[1m\033[31m×\033[0m\t$(name)")
     println("\033[1m\033[38m→\033[0m\ttest/$(test)")
     showerror(STDOUT, e, backtrace())

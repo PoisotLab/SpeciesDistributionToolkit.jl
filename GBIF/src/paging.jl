@@ -18,9 +18,8 @@ function next!(o::GBIFRecords)
       o.query["limit"] = o.count - o.query["offset"]
     end
     get_next = GBIF.occurrences(o.query)
-    append!(o.raw, get_next.raw)
+    append!(o.occurrences, get_next.occurrences)
     append!(o.show, get_next.show)
-    update!(o)
     o.offset = length(o.occurrences)
     @assert o.offset == length(o.occurrences)
   end

@@ -60,3 +60,33 @@ function occurrences(q::Dict)
     )
   end
 end
+
+"""
+**Search for occurrences**
+
+Returns occurrences that correspond to a filter, given in `q` as a dictionary.
+When first called, this function will return the latest 20 hits (or whichever
+default page size GBIF uses). Future occurrences can be queried with `next!` or
+`complete!`.
+"""
+function occurrences(t::GBIFTaxon, q::Dict)
+	levels = [:kingdom, :phylum, :class, :order, :family, :genus, :species]
+	for l in levels
+		if getfield(t, l) !== nothing
+			q[String(l)*"Key"] = getfield(t, l).second
+		end
+	end
+	return occurrences(q)
+end
+
+"""
+**Search for occurrences**
+
+Returns occurrences that correspond to a filter, given in `q` as a dictionary.
+When first called, this function will return the latest 20 hits (or whichever
+default page size GBIF uses). Future occurrences can be queried with `next!` or
+`complete!`.
+"""
+function occurrences(t::GBIFTaxon)
+	return occurrences(t, Dict())
+end

@@ -31,7 +31,7 @@ function occurrences()
       ones(Bool, length(occ))
     )
   else
-    warn("Non-OK status returned: ", occ_s_req.status)
+    @error "Non-OK status returned: $(occ_s_req.status)"
   end
 end
 

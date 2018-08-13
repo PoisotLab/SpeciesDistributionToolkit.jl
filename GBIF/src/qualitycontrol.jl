@@ -77,7 +77,7 @@ function qualitycontrol!(o::GBIFRecords; filters::Array{T,1}=[have_no_issues], v
     keep_f = map(f, o.occurrences)
     keep = keep .* keep_f
     if verbose
-      info(count(keep), " records left after ", f)
+      @info "$(count(keep)) records left after $(f)"
     end
   end
   o.show = keep

@@ -6,11 +6,12 @@ global anyerrors = false
 tests = Dict{String,String}(
   "single occurrence functions" => "occurrence.jl",
   "multiple occurrences" => "occurrences.jl",
-  "query cleaning" => "querycleaning.jl",
+#  "query cleaning" => "querycleaning.jl",
   "paging" => "paging.jl",
+  "iteration" => "iteration.jl",
   "methods" => "methods.jl",
   "quality control" => "qualitycontrol.jl",
-  "species retrieval" => "species.jl"
+  "species retrieval" => "taxon.jl"
 )
 
 for (name,test) in tests
@@ -21,8 +22,9 @@ for (name,test) in tests
     global anyerrors = true
     println("\033[1m\033[31m×\033[0m\t$(name)")
     println("\033[1m\033[38m→\033[0m\ttest/$(test)")
-    showerror(STDOUT, e, backtrace())
+    showerror(stdout, e, backtrace())
     println()
+    break
   end
 end
 

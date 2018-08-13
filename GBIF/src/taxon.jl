@@ -1,27 +1,3 @@
-struct GBIFTaxon
-   name
-   scientific
-   status
-   genus
-   family
-   confidence
-   classKey
-   familyKey
-   orderKey
-   usageKey
-   rankclass
-   kingdom
-   species
-   kingdomKey
-   phylum
-   speciesKey
-   order
-   synonym
-   phylumKey
-   genusKey
-end
-
-
 """
 **Get information about a taxon at any level**
 """
@@ -74,8 +50,8 @@ function taxon(name::String;
       matchtype = get(body, "matchType", "WELP...")
       # The first one will catch issues
       matchtype == "WELP..." && throw(ErrorException("Impossible to get information for $(name) at level $(rank)"))
-      matchtype == "NONE" && throw(ErrorException("Impossible to get information for $(name) at level $(rank)"))
-      return body
+      matchtype == "NONE" && throw(ErrorException("No match for $(name) at level $(rank) -- try with strict=false"))
+      return GBIFTaxon(body)
    else
       throw(ErrorException("Impossible to retrieve information for $(name) -- HTML error code $(sp_s_req.status)"))
    end

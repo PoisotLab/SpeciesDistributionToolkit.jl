@@ -7,7 +7,6 @@ Julia. Current efforts focus on querying and exporting occurrences through the
 [![Build Status](https://travis-ci.org/EcoJulia/GBIF.jl.svg?branch=master)](https://travis-ci.org/EcoJulia/GBIF.jl)
 [![codecov](https://codecov.io/gh/EcoJulia/GBIF.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/EcoJulia/GBIF.jl)
 [![Latest documentation](https://img.shields.io/badge/documentation-latest-blue.svg)](https://ecojulia.github.io/GBIF.jl/latest/)
-[![Example](http://pkg.julialang.org/badges/GBIF_0.6.svg)](http://pkg.julialang.org/?pkg=GBIF)
 
 [GBIF]: http://gbif.org/
 
@@ -24,7 +23,6 @@ Pkg.add("GBIF")
 - paging function (`next!`, `restart!`, `complete!`)
 - quality control (`qualitycontrol!`) and arbitrary filters
 - species and taxon lookup (`species`)
-- integration with the `Query` package
 
 ## How to contribute
 

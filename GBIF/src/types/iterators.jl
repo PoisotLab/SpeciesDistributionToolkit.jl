@@ -1,7 +1,22 @@
-import Base.length, Base.getindex, Base.endof, Base.start, Base.done, Base.next
+import Base.length, Base.getindex, Base.iterate
 
 function length(o::GBIFRecords)
   length(o.occurrences)
+end
+
+function iterate(o::GBIFRecords)
+  next = findfirst(o.show)
+  next_next = findfirst(o.show[(next+1):end])+next
+  return (o[next], next_next)
+end
+
+function iterate(o::GBIFRecords, state::Int64)
+  next = findfirst(o.show[(state+1):end])+state
+  return (o[state], next)
+end
+
+function iterate(o::GBIFRecords, state::Nothing)
+  return nothing
 end
 
 function getindex(o::GBIFRecords, i::Int64)
@@ -10,20 +25,4 @@ end
 
 function getindex(o::GBIFRecords, r::UnitRange{Int64})
   o.occurrences[r]
-end
-
-function endof(o::GBIFRecords)
-  endof(o.occurrences)
-end
-
-function start(o::GBIFRecords)
-  start(o.occurrences)
-end
-
-function done(o::GBIFRecords, i::Any)
-  done(o.occurrences, i)
-end
-
-function next(o::GBIFRecords, i::Any)
-  next(o.occurrences, i)
 end

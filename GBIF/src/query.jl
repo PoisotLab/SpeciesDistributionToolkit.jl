@@ -27,7 +27,7 @@ function check_records_parameters!(q::Dict)
 
   for (k, v) in q
     if !(k ∈ allowed_fields)
-      warn(k, " is not a supported field -- will be dropped from the queryset")
+      @warn "$(k) is not a supported field -- will be dropped from the queryset"
       delete!(q, k)
     end
   end
@@ -35,7 +35,7 @@ function check_records_parameters!(q::Dict)
   # Country must be a two-letters country code
   if "country" ∈ keys(q)
     if length(q["country"]) != 2
-      warn(q["country"], " is not a two letter country code -- will be dropped from the queryset")
+      @warn "$(q["country"]) is not a two letter country code -- will be dropped from the queryset"
       delete!(q, "country")
     end
   end
@@ -48,7 +48,7 @@ function check_records_parameters!(q::Dict)
     if k ∈ keys(gbifenums)
       okvals = filter(x -> x ∈ gbifenums[k], v)
       if length(okvals) != length(v)
-        warn("Some values in ", k, " were invalid -- will be dropped from the queryset")
+        @warn "Some values in $(k) were invalid -- will be dropped from the queryset"
       end
       q[k] = okvals
     end

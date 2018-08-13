@@ -62,8 +62,14 @@ function GBIFRecord(o::Dict{String, Any})
             r[l] = nothing
         end
     end
+
+    this_name = o["genericName"]
+    if get(o, "specificEpithet", nothing) !== nothing
+        this_name *= " "*get(o, "specificEpithet", nothing)
+    end
+
     this_record_taxon = GBIFTaxon(
-        o["genericName"],
+        this_name,
         o["scientificName"],
         :ACCEPTED,
         :EXACT,

@@ -11,8 +11,11 @@ function iterate(o::GBIFRecords)
 end
 
 function iterate(o::GBIFRecords, state::Int64)
-  next = findfirst(o.show[(state+1):end])+state
-  return (o[state], next)
+  global next = nothing
+  if state < length(o)
+    next = findfirst(o.show[(state+1):end])+state
+  end
+  next !== nothing ? (return (o[state], next)) : (return (o[state], nothing))
 end
 
 function iterate(o::GBIFRecords, state::Nothing)

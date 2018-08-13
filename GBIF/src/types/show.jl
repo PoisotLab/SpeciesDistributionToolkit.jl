@@ -4,7 +4,7 @@ import Base.show
 **Show an occurrence**
 """
 function show(io::IO, o::GBIFRecord)
-  println(io, "GBIF $(o.key)\t$(o.taxon.name)\t($(o.country))")
+  println(io, "GBIF record $(o.key)\t$(o.taxon.name)\t($(o.country))")
 end
 
 """

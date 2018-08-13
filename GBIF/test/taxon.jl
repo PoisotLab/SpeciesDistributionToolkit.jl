@@ -10,10 +10,9 @@ module TestSpecies
   @test i_sp.species == nothing
 
   iver_occ = occurrences(iver)
-  @info iver_occ
-  for (i, r) in enumerate(iver_occ)
-    @info i
-    @info r
-  end
+  @test typeof(iver_occ) <: GBIFRecords
+
+  iver_occ_spain = occurrences(iver, Dict{Any,Any}("country" => "ES"))
+  @test typeof(iver_occ_spain) <: GBIFRecords
 
 end

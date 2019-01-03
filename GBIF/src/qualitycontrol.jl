@@ -5,7 +5,7 @@ This filter will only retain occurrences that have *both* a latitude and a
 longitude field.
 """
 function have_both_coordinates(o::GBIFRecord)
-  !(isa(o.latitude, Nothing)&isa(o.latitude, Nothing))
+  !(ismissing(o.latitude)&ismissing(o.latitude))
 end
 
 """

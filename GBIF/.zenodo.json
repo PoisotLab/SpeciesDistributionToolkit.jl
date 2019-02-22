@@ -18,8 +18,8 @@
    "license": "mit-license",
    "related_identifiers": [
       {
-         "scheme": "url", 
-         "identifier": "https://github.com/EcoJulia/GBIF.jl", 
+         "scheme": "url",
+         "identifier": "https://github.com/EcoJulia/GBIF.jl",
          "relation": "isIdenticalTo"
       }
    ]

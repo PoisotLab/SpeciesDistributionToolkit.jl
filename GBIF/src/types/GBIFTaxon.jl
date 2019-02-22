@@ -3,13 +3,13 @@ struct GBIFTaxon
    scientific::String
    status::Symbol
    match::Symbol
-   kingdom::Union{Nothing,Pair{String, Int64}}
-   phylum::Union{Nothing,Pair{String, Int64}}
-   class::Union{Nothing,Pair{String, Int64}}
-   order::Union{Nothing,Pair{String, Int64}}
-   family::Union{Nothing,Pair{String, Int64}}
-   genus::Union{Nothing,Pair{String, Int64}}
-   species::Union{Nothing,Pair{String, Int64}}
+   kingdom::Union{Missing, Pair{String, Int64}}
+   phylum::Union{Missing, Pair{String, Int64}}
+   class::Union{Missing, Pair{String, Int64}}
+   order::Union{Missing, Pair{String, Int64}}
+   family::Union{Missing, Pair{String, Int64}}
+   genus::Union{Missing, Pair{String, Int64}}
+   species::Union{Missing, Pair{String, Int64}}
    confidence::Int64
    synonym::Bool
 end
@@ -21,7 +21,7 @@ function GBIFTaxon(o::Dict{String, Any})
       if haskey(o, l)
          r[l] = Pair(o[l], o[l*"Key"])
       else
-         r[l] = nothing
+         r[l] = missing
       end
    end
    return GBIFTaxon(

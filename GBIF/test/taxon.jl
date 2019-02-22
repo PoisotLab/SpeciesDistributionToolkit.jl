@@ -7,7 +7,7 @@ module TestSpecies
   @test iver.species == Pair("Iris versicolor", 5298019)
 
   i_sp = taxon(iver.genus.first; rank=:GENUS, family=iver.family.first, strict=false)
-  @test i_sp.species == nothing
+  @test ismissing(i_sp.species)
 
   iver_occ = occurrences(iver)
   @test typeof(iver_occ) <: GBIFRecords

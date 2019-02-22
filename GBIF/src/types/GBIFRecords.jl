@@ -59,7 +59,7 @@ function GBIFRecord(o::Dict{String, Any})
         if haskey(o, l)
             r[l] = Pair(o[l], o[l*"Key"])
         else
-            r[l] = nothing
+            r[l] = missing
         end
     end
 

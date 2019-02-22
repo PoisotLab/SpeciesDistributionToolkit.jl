@@ -3,6 +3,8 @@ push!(LOAD_PATH, "../src/")
 using Documenter, GBIF
 
 makedocs(
+    sitename = "GBIF wrapper in Julia",
+    authors = "Timothée Poisot",
     modules = [GBIF],
     pages = [
         "Home" => "index.md",

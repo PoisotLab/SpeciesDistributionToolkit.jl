@@ -3,12 +3,15 @@ push!(LOAD_PATH, "../src/")
 using Documenter, GBIF
 
 makedocs(
-    modules = [GBIF]
+    modules = [GBIF],
+    pages = [
+        "Home" => "index.md",
+        "Occurrences" => "occurrences.md",
+        "Queries" => "queries.md",
+        "Filtering records" => "qaqc.md"
+    ]
 )
 
 deploydocs(
-    deps   = Deps.pip("mkdocs", "python-markdown-math", "mkdocs-material"),
-    repo = "github.com/EcoJulia/GBIF.jl.git",
-    julia = "0.6",
-    osname = "linux"
+    repo = "github.com/EcoJulia/GBIF.jl.git"
 )

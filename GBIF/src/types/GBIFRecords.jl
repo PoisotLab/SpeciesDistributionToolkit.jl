@@ -8,41 +8,41 @@ by the user.
 struct GBIFRecord
     key::Integer
     datasetKey::String
-    dataset::Union{String,Nothing}
-    publishingOrgKey::Union{AbstractString,Nothing}
-    publishingCountry::Union{AbstractString,Nothing}
-    institutionCode::Union{AbstractString,Nothing}
-    protocol::Union{AbstractString,Nothing}
-    crawled::Union{DateTime, Nothing}
-    parsed::Union{DateTime, Nothing}
-    modified::Union{DateTime, Nothing}
-    interpreted::Union{DateTime, Nothing}
-    countryCode::Union{AbstractString,Nothing}
-    country::Union{AbstractString,Nothing}
+    dataset::Union{Missing, String}
+    publishingOrgKey::Union{Missing, AbstractString}
+    publishingCountry::Union{Missing, AbstractString}
+    institutionCode::Union{Missing, AbstractString}
+    protocol::Union{Missing, AbstractString}
+    crawled::Union{Missing, DateTime}
+    parsed::Union{Missing, DateTime}
+    modified::Union{Missing, DateTime}
+    interpreted::Union{Missing, DateTime}
+    countryCode::Union{Missing, AbstractString}
+    country::Union{Missing, AbstractString}
     basisOfRecord::Symbol
-    individualCount::Union{Integer, Nothing}
-    latitude::Union{AbstractFloat, Nothing}
-    longitude::Union{AbstractFloat, Nothing}
-    precision::Union{AbstractFloat, Nothing}
-    uncertainty::Union{AbstractFloat, Nothing}
-    geodetic::Union{AbstractString,Nothing}
-    date::Union{DateTime, Nothing}
+    individualCount::Union{Missing, Integer}
+    latitude::Union{Missing, AbstractFloat}
+    longitude::Union{Missing, AbstractFloat}
+    precision::Union{Missing, AbstractFloat}
+    uncertainty::Union{Missing, AbstractFloat}
+    geodetic::Union{Missing, AbstractString}
+    date::Union{Missing, DateTime}
     issues::Array{Symbol,1}
-    taxonKey::Union{Integer, Nothing}
-    rank::Union{String,Nothing}
+    taxonKey::Union{Missing, Integer}
+    rank::Union{Missing, String}
     taxon::GBIFTaxon
-    generic::Union{AbstractString,Nothing}
-    epithet::Union{AbstractString,Nothing}
-    vernacular::Union{AbstractString,Nothing}
-    scientific::Union{AbstractString,Nothing}
-    observer::Union{AbstractString,Nothing}
-    license::Union{AbstractString,Nothing}
+    generic::Union{Missing, AbstractString}
+    epithet::Union{Missing, AbstractString}
+    vernacular::Union{Missing, AbstractString}
+    scientific::Union{Missing, AbstractString}
+    observer::Union{Missing, AbstractString}
+    license::Union{Missing, AbstractString}
 end
 
 function format_date(o, d)
-    t = get(o, d, nothing)
-    if t == nothing
-        return nothing
+    t = get(o, d, missing)
+    if t === nothing || ismissing(t)
+        return missing
     else
         DateTime(t[1:19])
     end
@@ -64,8 +64,8 @@ function GBIFRecord(o::Dict{String, Any})
     end
 
     this_name = o["genericName"]
-    if get(o, "specificEpithet", nothing) !== nothing
-        this_name *= " "*get(o, "specificEpithet", nothing)
+    if !ismissing(get(o, "specificEpithet", missing))
+        this_name *= " "*get(o, "specificEpithet", missing)
     end
 
     this_record_taxon = GBIFTaxon(
@@ -87,35 +87,35 @@ function GBIFRecord(o::Dict{String, Any})
     return GBIFRecord(
     o["key"],
     o["datasetKey"],
-    get(o, "datasetName", nothing),
-    get(o, "publishingOrgKey", nothing),
-    get(o, "publishingCountry", nothing),
-    get(o, "institutionCode", nothing),
-    get(o, "protocol", nothing),
+    get(o, "datasetName", missing),
+    get(o, "publishingOrgKey", missing),
+    get(o, "publishingCountry", missing),
+    get(o, "institutionCode", missing),
+    get(o, "protocol", missing),
     format_date(o, "lastCrawled"),
     format_date(o, "lastParsed"),
     format_date(o, "modified"),
     format_date(o, "lastInterpreted"),
-    get(o, "countryCode", nothing),
-    get(o, "country", nothing),
+    get(o, "countryCode", missing),
+    get(o, "country", missing),
     Symbol(o["basisOfRecord"]),
-    get(o, "individualCount", nothing),
-    get(o, "decimalLatitude", nothing),
-    get(o, "decimalLongitude", nothing),
-    get(o, "precision", nothing),
-    get(o, "coordinateUncertaintyInMeters", nothing),
-    get(o, "geodeticDatum", nothing),
+    get(o, "individualCount", missing),
+    get(o, "decimalLatitude", missing),
+    get(o, "decimalLongitude", missing),
+    get(o, "precision", missing),
+    get(o, "coordinateUncertaintyInMeters", missing),
+    get(o, "geodeticDatum", missing),
     format_date(o, "eventDate"),
     Symbol.(o["issues"]),
-    get(o, "taxonKey", nothing),
-    get(o, "taxonRank", nothing),
+    get(o, "taxonKey", missing),
+    get(o, "taxonRank", missing),
     this_record_taxon,
-    get(o, "genericName", nothing),
-    get(o, "specificEpithet", nothing),
-    get(o, "vernacularName", nothing),
-    get(o, "scientificName", nothing),
-    get(o, "recordedBy", nothing),
-    get(o, "license", nothing)
+    get(o, "genericName", missing),
+    get(o, "specificEpithet", missing),
+    get(o, "vernacularName", missing),
+    get(o, "scientificName", missing),
+    get(o, "recordedBy", missing),
+    get(o, "license", missing)
     )
 end
 

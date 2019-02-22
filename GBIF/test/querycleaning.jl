@@ -1,7 +1,7 @@
 module TestQuery
 
   using GBIF
-  using Base.Test
+  using Test
 
   # Filtering with wrong parameters
   qpars = Dict("country" => "ABC")

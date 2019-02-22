@@ -1,7 +1,7 @@
 module TestPaging
 
   using GBIF
-  using Base.Test
+  using Test
 
   # No query
   set = occurrences()

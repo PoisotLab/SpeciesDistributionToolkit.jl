@@ -5,3 +5,4 @@ deps/deps.jl
 .ipynb_checkpoints
 docs/build
 docs/site
+tags

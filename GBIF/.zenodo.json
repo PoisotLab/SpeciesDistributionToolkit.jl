@@ -1,17 +1,26 @@
 {
-   "title": "GBIF.jl",
-   "description": "Interact with the GBIF API from Julia",
-   "grants": [
-      {}
-   ],
+   "title": "GBIF.jl - a Julia package to access biodiversity data",
+   "description": "Interact with the Global Biodiversity Information Facility API from Julia",
    "upload_type": "software",
    "creators": [
       {
          "affiliation": "Université de Montréal",
          "name": "Poisot, Timothée",
          "orcid": "0000-0002-0735-5184"
+      },
+      {
+         "affiliation": "University of Copenhagen",
+         "name": "Borregaard, Michael",
+         "orcid": "0000-0002-8146-8435"
       }
    ],
    "access_right": "open",
-   "license": "mit-license"
+   "license": "mit-license",
+   "related_identifiers": [
+      {
+         "scheme": "url", 
+         "identifier": "https://github.com/EcoJulia/GBIF.jl", 
+         "relation": "isIdenticalTo"
+      }
+   ]
 }

@@ -1,7 +1,7 @@
 module TestMethods
 
   using GBIF
-  using Base.Test
+  using Test
 
   set = occurrences()
 

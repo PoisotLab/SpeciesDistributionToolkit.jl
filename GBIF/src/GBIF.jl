@@ -1,9 +1,8 @@
 module GBIF
 
-using Requests
+using HTTP
 using JSON
-using DataFrames
-using Query
+using Dates
 
 const gbifurl = "http://api.gbif.org/v1/"
 const gbifenums = Dict(
@@ -88,10 +87,16 @@ const gbifenums = Dict(
 # package code goes here
 include("query.jl")
 
-include("types.jl")
+include("types/GBIFTaxon.jl")
+export GBIFTaxon
+
+include("types/GBIFRecords.jl")
 export GBIFRecord, GBIFRecords
 
-include("species.jl")
+include("types/iterators.jl")
+include("types/show.jl")
+
+include("taxon.jl")
 export taxon
 
 include("occurrence.jl")
@@ -100,11 +105,9 @@ export occurrence, occurrences
 include("paging.jl")
 export next!, complete!
 
-include("qaqc.jl")
+include("qualitycontrol.jl")
 export have_both_coordinates, have_neither_zero_coordinates,
   have_no_zero_coordinates, have_no_issues, have_ok_coordinates
-export qualitycontrol!, showall!, update!
-
-include("dataframe.jl")
+export qualitycontrol!, showall!
 
 end # module

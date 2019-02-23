@@ -29,16 +29,13 @@ occurrence(1425976049)
 
 ```@docs
 occurrences()
+occurrences(t::GBIFTaxon)
 ```
 
 When called with no arguments, this function will return a list of the latest 20
-occurrences recorded in GBIF. Additional arguments can be specified to filter
-some occurrences. They are detailed in the "Using queries" section of this
-manual.
-
-Note that the `GBIFRecords` type, returned by `occurrences`, implements all
-the necessary methods to iterate over collections. For example, this allows
-writing the following:
+occurrences recorded in GBIF. Note that the `GBIFRecords` type, returned by
+`occurrences`, implements all the necessary methods to iterate over collections.
+For example, this allows writing the following:
 
 ~~~ julia
 o = occurrences()
@@ -46,6 +43,13 @@ for single_occ in o
   println(o.taxonKey)
 end
 ~~~
+
+### Query parameters
+
+```@docs
+occurrences(q::Dict)
+occurrences(t::GBIFTaxon, q::Dict)
+```
 
 ### Batch-download of occurrences
 

@@ -128,7 +128,7 @@ end
 """
 **List of occurrences and metadata**
 
-This type has actually very few informations, besides `offset` (the number of
+This type has actually very few information, besides `offset` (the number of
 records already retrieved) and `count` (the total number of records). The
 `query` field stores the query parameters, and `show` is a vector of boolean
 values to decide which of the `GBIFRecord` (stored in `occurrences`) will be

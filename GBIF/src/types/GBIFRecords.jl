@@ -39,6 +39,9 @@ struct GBIFRecord
     license::Union{Missing, AbstractString}
 end
 
+"""
+**Internal function to format dates in records**
+"""
 function format_date(o, d)
     t = get(o, d, missing)
     if t === nothing || ismissing(t)

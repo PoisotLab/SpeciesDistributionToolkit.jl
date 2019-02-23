@@ -1,0 +1,6 @@
+# Retrieving taxa
+
+
+```@docs
+taxon
+```

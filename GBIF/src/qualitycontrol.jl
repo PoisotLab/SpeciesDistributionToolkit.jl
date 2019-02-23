@@ -60,15 +60,18 @@ end
 """
 **Cleans a search output**
 
-This function loops through all records, and applies the filters to it. Filters
+This function loops through all records, and applies the `filters` to it. Filters
 are built-in or user-defined functions that return `true` when the record
 needs to be kept, and `false` when it needs to be discarded.
 
 It is important to note that the records are *not actually removed*: they
 are masked from user view. This means that you can try different filtering
 strategies without having to re-query GBIF.
+
+The optional `filters` argument is an array of functions, each of the functions
+must take a single `GBIFRecord` as an input, and return `true` or `false`.
 """
-function qualitycontrol!(o::GBIFRecords; filters::Array{T,1}=[have_no_issues], verbose::Bool=true) where {T<:Function}
+function qualitycontrol!(o::GBIFRecords; filters::Vector{T}=[have_no_issues], verbose::Bool=true) where {T<:Function}
   keep = ones(Bool, length(o.occurrences))
   if verbose
     @info "Starting quality control with $(length(o.occurrences)) records"

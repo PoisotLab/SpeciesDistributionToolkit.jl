@@ -32,3 +32,19 @@ issues? If this is `true`, then we keep this record. If not, we reject it.
 ```@docs
 showall!
 ```
+
+## Filtering occurrences after download
+
+The `GBIFRecords` objects can be used with the `Query.jl` package. For example,
+to get the observations from France in the most recent 20 observations, we can
+use:
+
+~~~ julia
+using Query
+o = occurrences()
+@from i in o begin
+    @where i.country == "France"
+    @select {i.key, i.species}
+    @collect
+end
+~~~

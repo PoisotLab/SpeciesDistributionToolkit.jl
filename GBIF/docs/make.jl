@@ -8,12 +8,13 @@ makedocs(
     modules = [GBIF],
     pages = [
         "Home" => "index.md",
-        "Data" => [
+        "Getting data" => [
+            "Taxa" => "taxa.md",
             "Occurrences" => "occurrences.md",
-            "Taxa" => "taxa.md"
+            "Queries" => "queries.md",
+            "Filtering records" => "qaqc.md"
         ],
-        "Queries" => "queries.md",
-        "Filtering records" => "qaqc.md"
+        "Types" => "types.md"
     ]
 )
 

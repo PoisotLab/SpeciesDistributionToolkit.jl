@@ -1,6 +1,8 @@
 """
 **Return an interpreted occurrence given its key**
 
+	occurrence(key::Union{String, Integer})
+
 The key can be given as a string or as an integer.
 """
 function occurrence(key::Union{String, Integer})
@@ -10,7 +12,9 @@ function occurrence(key::Union{String, Integer})
 end
 
 """
-**Search for occurrences**
+**Retrieve latest occurrences**
+
+    occurrences()
 
 This function will return the latest occurrences -- usually 20, but this is
 entirely determined by the server default page size. This is mostly useful to
@@ -36,7 +40,9 @@ function occurrences()
 end
 
 """
-**Search for occurrences**
+**Retrieve latest occurrences based on a query**
+
+    occurrences(q::Dict)
 
 Returns occurrences that correspond to a filter, given in `q` as a dictionary.
 When first called, this function will return the latest 20 hits (or whichever
@@ -62,7 +68,9 @@ function occurrences(q::Dict)
 end
 
 """
-**Search for occurrences**
+**Retrieve latest occurrences for a taxon based on a query**
+
+    occurrences(t::GBIFTaxon, q::Dict)
 
 Returns occurrences that correspond to a filter, given in `q` as a dictionary.
 When first called, this function will return the latest 20 hits (or whichever
@@ -80,7 +88,9 @@ function occurrences(t::GBIFTaxon, q::Dict)
 end
 
 """
-**Search for occurrences**
+**Retrieve latest occurrences for a taxon**
+
+    occurrences(t::GBIFTaxon)
 
 Returns occurrences that correspond to a filter, given in `q` as a dictionary.
 When first called, this function will return the latest 20 hits (or whichever

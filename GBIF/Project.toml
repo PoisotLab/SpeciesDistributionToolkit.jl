@@ -1,5 +1,5 @@
 name = "GBIF"
-uuid = "f17ddd58-965f-11e8-340d-55efdb6b85f7"
+uuid = "ee291a33-5a6c-5552-a3c8-0f29a1181037"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 version = "0.1.0"
 

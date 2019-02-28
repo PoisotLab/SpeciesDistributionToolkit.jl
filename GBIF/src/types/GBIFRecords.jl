@@ -4,6 +4,9 @@
 This is currently a subset of all the fields. This `struct` is *not* mutable --
 this ensures that the objects returned from the GBIF database are never modified
 by the user.
+
+The `taxon` field is a `GBIFTaxon` object, and can therefore be manipulated as
+any other `GBIFTaxon`.
 """
 struct GBIFRecord
     key::Integer
@@ -39,6 +42,9 @@ struct GBIFRecord
     license::Union{Missing, AbstractString}
 end
 
+"""
+**Internal function to format dates in records**
+"""
 function format_date(o, d)
     t = get(o, d, missing)
     if t === nothing || ismissing(t)
@@ -120,7 +126,15 @@ function GBIFRecord(o::Dict{String, Any})
 end
 
 """
-**List of occurrences and metadata***
+**List of occurrences and metadata**
+
+This type has actually very few information, besides `offset` (the number of
+records already retrieved) and `count` (the total number of records). The
+`query` field stores the query parameters, and `show` is a vector of boolean
+values to decide which of the `GBIFRecord` (stored in `occurrences`) will be
+displayed.
+
+This type is mutable and fully iterable.
 """
 mutable struct GBIFRecords
     offset::Integer

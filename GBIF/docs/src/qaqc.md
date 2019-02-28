@@ -24,11 +24,27 @@ have_ok_coordinates
 
 Filter functions are all sharing the same declaration: they accept a single
 `GBIFRecord` object as input, and return a boolean as output. Think of the
-filter as a question you ask about the occurrence object. Does it have no
-know issues? If this is `true`, then we keep this record. If not, we reject it.
+filter as a question you ask about the occurrence object. Does it have no know
+issues? If this is `true`, then we keep this record. If not, we reject it.
 
 ## Removing filters
 
 ```@docs
 showall!
 ```
+
+## Filtering occurrences after download
+
+The `GBIFRecords` objects can be used with the `Query.jl` package. For example,
+to get the observations from France in the most recent 20 observations, we can
+use:
+
+~~~ julia
+using Query
+o = occurrences()
+@from i in o begin
+    @where i.country == "France"
+    @select {i.key, i.species}
+    @collect
+end
+~~~

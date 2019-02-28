@@ -58,6 +58,19 @@ function have_ok_coordinates(o::GBIFRecord)
 end
 
 """
+**Filters a series of records on a single criteria**
+
+This function will take the filter function `f` and use it to *mask* the records
+that do not satisfy it. Note that if a record is *already* masked due to the
+application of a previous filter, its status will *not* be modified. The
+application of filters is therefore cumulative.
+"""
+function Base.filter!(f, o::GBIFRecords)
+  keep = map(f, o.occurrences)
+  o.show = o.show .& keep
+end
+
+"""
 **Cleans a search output**
 
 This function loops through all records, and applies the filters to it. Filters
@@ -69,6 +82,7 @@ are masked from user view. This means that you can try different filtering
 strategies without having to re-query GBIF.
 """
 function qualitycontrol!(o::GBIFRecords; filters::Array{T,1}=[have_no_issues], verbose::Bool=true) where {T<:Function}
+  @warn "The qualitycontrol! function is deprecated and will be removed in a future release -- use filter! instead."
   keep = ones(Bool, length(o.occurrences))
   if verbose
     @info "Starting quality control with $(length(o.occurrences)) records"

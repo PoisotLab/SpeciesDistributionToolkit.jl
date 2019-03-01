@@ -64,7 +64,7 @@ function have_ok_coordinates(o::GBIFRecord)
 end
 
 """
-**Filters a series of records on a single criteria**
+**Filters a series of records**
 
 This function will take the filter function `f` and use it to *mask* the records
 that do not satisfy it. Note that if a record is *already* masked due to the
@@ -77,6 +77,11 @@ choice was made because `GBIFRecords` track the position in the API pages, and
 it seemed safer to keep all information. Note that when calling `length` or
 iterating over a `GBIFRecords` object, only the *unmasked* records will be
 shown.
+
+It is possible to apply multiple filters at once, using the following syntax:
+
+    filter!([f1, f2, f3], records)
+
 """
 function Base.filter!(f, o::GBIFRecords)
   keep = map(f, o.occurrences);

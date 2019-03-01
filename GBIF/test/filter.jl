@@ -11,7 +11,7 @@ module TestQAQC
   @test l1 >= length(set)
 
   # Reset queries
-  showall!(set)
+  allrecords!(set)
   @test length(set) == l1
 
   # Using next! and complete! after filter! should work correctly
@@ -21,9 +21,14 @@ module TestQAQC
 
   # Using next! and complete! after filter! should work correctly
   filter!(have_no_issues, set)
-  showall!(set)
+  allrecords!(set)
   next!(set)
   @test length(set) == 3*l1
+
+  # Multiple filters at once
+  allrecords!(set)
+  filter!([have_ok_coordinates, have_neither_zero_coordinates, have_a_date])
+  @test length(set) != 3*l1
 
   # Deprecation for qualitycontrol!
   # @test_warn "deprecated" qualitycontrol!(set; verbose=false)

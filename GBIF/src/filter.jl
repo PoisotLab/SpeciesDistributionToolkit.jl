@@ -71,13 +71,16 @@ that do not satisfy it. Note that if a record is *already* masked due to the
 application of a previous filter, its status will *not* be modified. The
 application of filters is therefore cumulative.
 
-To ensure consistency with the `filter!` function from Base, this function only
-accepts a *single* filter `f` at a time. To apply multiple filters, it is
-necessary to call the function several times.
+Note that while the usual `filter!` function *removes* objects, this one will
+only *mask* them. The objects can be unmasked with `allrecords!`. This design
+choice was made because `GBIFRecords` track the position in the API pages, and
+it seemed safer to keep all information. Note that when calling `length` or
+iterating over a `GBIFRecords` object, only the *unmasked* records will be
+shown.
 """
 function Base.filter!(f, o::GBIFRecords)
-  keep = map(f, o.occurrences)
-  o.show = o.show .& keep
+  keep = map(f, o.occurrences);
+  o.show = o.show .& keep;
 end
 
 """

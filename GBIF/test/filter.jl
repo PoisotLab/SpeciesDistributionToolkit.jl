@@ -27,7 +27,7 @@ module TestQAQC
 
   # Multiple filters at once
   allrecords!(set)
-  filter!([have_ok_coordinates, have_neither_zero_coordinates, have_a_date])
+  filter!([have_ok_coordinates, have_neither_zero_coordinates, have_a_date], set)
   @test length(set) != 3*l1
 
   # Deprecation for qualitycontrol!

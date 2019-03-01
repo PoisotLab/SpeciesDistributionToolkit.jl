@@ -9,7 +9,7 @@ If filters have been applied to this query before, they will be *removed* to
 ensure that the previous and the new occurrences have the same status.
 """
 function next!(o::GBIFRecords)
-  !all(o.show) && showall!(o)
+  !all(o.show) && allrecords!(o)
   if length(o.occurrences) == o.count
     @info "All occurences for this query have been returned"
   else

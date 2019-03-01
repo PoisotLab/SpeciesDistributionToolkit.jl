@@ -6,7 +6,6 @@ global anyerrors = false
 tests = Dict{String,String}(
   "single occurrence functions" => "occurrence.jl",
   "multiple occurrences" => "occurrences.jl",
-#  "query cleaning" => "querycleaning.jl",
   "paging" => "paging.jl",
   "iteration" => "iteration.jl",
   "methods" => "methods.jl",

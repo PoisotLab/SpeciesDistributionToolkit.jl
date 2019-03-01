@@ -105,10 +105,10 @@ export occurrence, occurrences
 include("paging.jl")
 export next!, complete!
 
-include("qualitycontrol.jl")
+include("filter.jl")
 export have_both_coordinates, have_neither_zero_coordinates,
   have_no_zero_coordinates, have_no_issues, have_ok_coordinates,
   have_a_date
-export qualitycontrol!, showall!, filter!
+export qualitycontrol!, showall!, filter!, allrecords!
 
 end # module

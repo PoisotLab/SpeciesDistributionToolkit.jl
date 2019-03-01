@@ -10,7 +10,7 @@ tests = Dict{String,String}(
   "paging" => "paging.jl",
   "iteration" => "iteration.jl",
   "methods" => "methods.jl",
-  "quality control" => "qualitycontrol.jl",
+  "filtering" => "filter.jl",
   "species retrieval" => "taxon.jl"
 )
 

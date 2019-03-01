@@ -109,5 +109,16 @@ This function reverses the action of `filter!`. It will unmask all
 records that have been removed under the current filters.
 """
 function showall!(o::GBIFRecords)
+  @warn "The showall! function is deprecated and will be removed in a future release -- use allrecords! instead."
+  allrecords!(o)
+end
+
+"""
+**Show all occurrences**
+
+This function reverses the action of `filter!`. It will unmask all
+records that have been removed under the current filters.
+"""
+function allrecords!(o::GBIFRecords)
   o.show = ones(Bool, length(o.occurrences))
 end

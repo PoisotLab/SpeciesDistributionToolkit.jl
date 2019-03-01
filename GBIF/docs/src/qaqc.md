@@ -13,7 +13,7 @@ filter!
 ## Removing filters
 
 ```@docs
-showall!
+allrecords!
 ```
 
 ## List of built-in filters

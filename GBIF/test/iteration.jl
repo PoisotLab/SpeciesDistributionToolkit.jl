@@ -19,7 +19,7 @@ module TestIteration
   function is_in_us(o::GBIFRecord)
       o.countryCode == "US"
   end
-  qualitycontrol!(plotor_occ; filters=[is_in_us])
+  filter!(is_in_us, plotor_occ)
   for o in plotor_occ
       @test o.countryCode == "US"
   end

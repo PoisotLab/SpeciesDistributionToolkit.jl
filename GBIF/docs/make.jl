@@ -10,7 +10,7 @@ makedocs(
         "Home" => "index.md",
         "Manual" => [
             "Getting data" => "data.md",
-            "Filtering records" => "qaqc.md"
+            "Filtering records" => "filter.md"
         ],
         "Types" => "types.md"
     ]

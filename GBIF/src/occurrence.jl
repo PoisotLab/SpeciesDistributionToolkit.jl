@@ -40,6 +40,34 @@ function occurrences()
 end
 
 """
+**Retrieve latest occurrences**
+
+    occurrences(query::Pair...)
+
+This function will return the latest occurrences -- usually 20, but this is
+entirely determined by the server default page size. This is mostly useful to
+get a few results rapidly for illustration purposes.
+"""
+function occurrences(query::Pair...)
+  occ_s_url = gbifurl * "occurrence/search"
+  occ_s_req = HTTP.get(occ_s_url; query=query...)
+  if occ_s_req.status == 200
+    body = JSON.parse(String(occ_s_req.body))
+    occ = map(GBIFRecord, body["results"])
+    maxocc = body["count"] > 200000 ? 200000 : body["count"]
+    return GBIFRecords(
+      body["offset"],
+      maxocc,
+      nothing,
+      occ,
+      ones(Bool, length(occ))
+    )
+  else
+    @error "Non-OK status returned: $(occ_s_req.status)"
+  end
+end
+
+"""
 **Retrieve latest occurrences based on a query**
 
     occurrences(q::Dict)

@@ -80,7 +80,7 @@ shown.
 
 It is possible to apply multiple filters at once, using the following syntax:
 
-    filter!([f1, f2, f3], records)
+    filter!.([f1, f2, f3], records)
 
 """
 function Base.filter!(f, o::GBIFRecords)

@@ -81,6 +81,11 @@ function Base.filter!(f, o::GBIFRecords)
 end
 
 """
+**Make records broadcastable**
+"""
+Base.broadcastable(x::GBIFRecords) = Ref(x)
+
+"""
 **Cleans a search output**
 
 This function is deprecated and will be removed in a later release, use

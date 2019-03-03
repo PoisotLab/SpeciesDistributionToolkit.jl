@@ -21,6 +21,7 @@ entirely determined by the server default page size. This is mostly useful to
 get a few results rapidly for illustration purposes.
 """
 function occurrences()
+	@info "no params"
   occ_s_url = gbifurl * "occurrence/search"
   occ_s_req = HTTP.get(occ_s_url)
   if occ_s_req.status == 200
@@ -49,22 +50,24 @@ entirely determined by the server default page size. This is mostly useful to
 get a few results rapidly for illustration purposes.
 """
 function occurrences(query::Pair...)
-  occ_s_url = gbifurl * "occurrence/search"
-  occ_s_req = HTTP.get(occ_s_url; query=query...)
-  if occ_s_req.status == 200
-    body = JSON.parse(String(occ_s_req.body))
-    occ = map(GBIFRecord, body["results"])
-    maxocc = body["count"] > 200000 ? 200000 : body["count"]
-    return GBIFRecords(
-      body["offset"],
-      maxocc,
-      nothing,
-      occ,
-      ones(Bool, length(occ))
-    )
-  else
-    @error "Non-OK status returned: $(occ_s_req.status)"
-  end
+	# TODO
+	# check_records_parameters!(q)
+	occ_s_url = gbifurl * "occurrence/search"
+	occ_s_req = HTTP.get(occ_s_url; query=query)
+	if occ_s_req.status == 200
+		body = JSON.parse(String(occ_s_req.body))
+		occ = map(GBIFRecord, body["results"])
+		maxocc = body["count"] > 200000 ? 200000 : body["count"]
+		return GBIFRecords(
+		body["offset"],
+		maxocc,
+		nothing,
+		occ,
+		ones(Bool, length(occ))
+		)
+	else
+		@error "Non-OK status returned: $(occ_s_req.status)"
+	end
 end
 
 """
@@ -78,21 +81,9 @@ default page size GBIF uses). Future occurrences can be queried with `next!` or
 `complete!`.
 """
 function occurrences(q::Dict)
-  check_records_parameters!(q)
-  occ_s_url = gbifurl * "occurrence/search"
-  occ_s_req = HTTP.get(occ_s_url, query=q)
-  if occ_s_req.status == 200
-    body = JSON.parse(String(occ_s_req.body))
-    occ = map(GBIFRecord, body["results"])
-    maxocc = body["count"] > 200000 ? 200000 : body["count"]
-    return GBIFRecords(
-      body["offset"],
-      maxocc,
-      q,
-      occ,
-      ones(Bool, length(occ))
-    )
-  end
+	@warn "Querying through dictionaries is deprecated and will be removed in a future release -- use Pairs instead."
+	query = [Pair(k,v) for (k,v) in q]
+	return occurrences(query...)
 end
 
 """

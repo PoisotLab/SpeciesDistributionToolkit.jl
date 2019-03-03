@@ -12,11 +12,7 @@ module TestPaging
   @test length(set) == 80
 
   # Queries
-  qpars = Dict{String,Any}(
-    "hasCoordinate" => true,
-    "q" => "Lamellodiscus"
-  )
-  lam = occurrences(qpars)
+  lam = occurrences("hasCoordinate" => true, "q" => "Lamellodiscus")
   exp_count = lam.count
   complete!(lam)
   @test length(lam) == exp_count

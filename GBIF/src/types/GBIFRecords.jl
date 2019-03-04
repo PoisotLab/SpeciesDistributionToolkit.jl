@@ -139,7 +139,7 @@ This type is mutable and fully iterable.
 mutable struct GBIFRecords
     offset::Integer
     count::Integer
-    query::Union{Dict{String,Any},Nothing}
+    query::Union{Vector{Pair},Nothing}
     occurrences::Vector{GBIFRecord}
     show::Vector{Bool}
 end

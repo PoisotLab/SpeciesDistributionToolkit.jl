@@ -42,7 +42,7 @@ struct GBIFTaxon
    family::Union{Missing, Pair{String, Int64}}
    genus::Union{Missing, Pair{String, Int64}}
    species::Union{Missing, Pair{String, Int64}}
-   confidence::Int64
+   confidence::Union{Missing, Int64}
    synonym::Bool
 end
 
@@ -59,8 +59,8 @@ function GBIFTaxon(o::Dict{String, Any})
    return GBIFTaxon(
       o["canonicalName"],
       o["scientificName"],
-      Symbol(o["status"]),
-      Symbol(o["matchType"]),
+      Symbol(get(o, "status", "none")),  # returns :none as default
+      Symbol(get(o, "matchType", "none")),
       r["kingdom"],
       r["phylum"],
       r["class"],
@@ -68,7 +68,7 @@ function GBIFTaxon(o::Dict{String, Any})
       r["family"],
       r["genus"],
       r["species"],
-      o["confidence"],
+      get(o, "confidence", missing),
       o["synonym"]
    )
 end

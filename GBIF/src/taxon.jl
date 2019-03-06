@@ -88,79 +88,14 @@ end
 
 This function will look for a taxon by its taxonID in the GBIF
 reference taxonomy.
-
-Optional arguments are
-
-- `rank::Union{Symbol,Nothing}=:SPECIES` -- the rank of the taxon you want. This
-  is part of a controlled vocabulary, and can only be one of `:DOMAIN`,
-  `:CLASS`, `:CULTIVAR`, `:FAMILY`, `:FORM`, `:GENUS`, `:INFORMAL`, `:ORDER`,
-  `:PHYLUM,`, `:SECTION`, `:SUBCLASS`, `:VARIETY`, `:TRIBE`, `:KINGDOM`,
-  `:SUBFAMILY`, `:SUBFORM`, `:SUBGENUS`, `:SUBKINGDOM`, `:SUBORDER`,
-  `:SUBPHYLUM`, `:SUBSECTION`, `:SUBSPECIES`, `:SUBTRIBE`, `:SUBVARIETY`,
-  `:SUPERCLASS`, `:SUPERFAMILY`, `:SUPERORDER`, and `:SPECIES`
-
-- `strict::Bool=true` -- whether the match should be strict, or fuzzy
-
-- `verbose::Bool=false` -- whether the query should print out information about the reply (not usually useful)
-
-Finally, one can also specify other levels of the taxonomy, using  `kingdom`,
-`phylum`, `class`, `order`, `family`, and `genus`, all of which can either be
-`String` or `Nothing`.
 """
-function mytaxon(id::Int;
-   rank::Union{Symbol,Nothing}=:SPECIES, strict::Bool=true, verbose::Bool=false,
-   kingdom::Union{String,Nothing}=nothing, phylum::Union{String,Nothing}=nothing, class::Union{String,Nothing}=nothing,
-   order::Union{String,Nothing}=nothing, family::Union{String,Nothing}=nothing, genus::Union{String,Nothing}=nothing)
-   @assert rank ∈ [
-      :DOMAIN, :CLASS, :CULTIVAR, :FAMILY, :FORM, :GENUS, :INFORMAL, :ORDER, :PHYLUM,
-      :SECTION, :SUBCLASS, :VARIETY, :TRIBE, :KINGDOM, :SUBFAMILY , :SUBFORM,
-      :SUBGENUS, :SUBKINGDOM, :SUBORDER, :SUBPHYLUM, :SUBSECTION , :SUBSERIES,
-      :SUBSPECIES, :SUBTRIBE, :SUBVARIETY, :SUPERCLASS , :SUPERFAMILY, :SUPERORDER,
-      :SPECIES
-   ]
+function taxon(id::Int)
    args = Dict{String, Any}("id" => id)
-
-   if rank != nothing
-      args["rank"] = String(rank)
-   end
-
-   if kingdom != nothing
-      args["kingdom"] = String(kingdom)
-   end
-
-   if phylum != nothing
-      args["phylum"] = String(phylum)
-   end
-
-   if class != nothing
-      args["class"] = String(class)
-   end
-
-   if order != nothing
-      args["order"] = String(order)
-   end
-
-   if family != nothing
-      args["family"] = String(family)
-   end
-
-   if genus != nothing
-      args["genus"] = String(genus)
-   end
 
    sp_s_url = gbifurl * "species/$id"
    sp_s_req = HTTP.get(sp_s_url, query=args)
    if sp_s_req.status == 200
       body = JSON.parse(String(sp_s_req.body))
-      body["status"] = "ACCEPTED"
-      body["matchType"] = "EXACT"
-      #=  # no match type here
-      # This will throw warnings for various reasons related to matchtypes
-      matchtype = get(body, "matchType", "WELP...")
-      # The first one will catch issues
-      matchtype == "WELP..." && throw(ErrorException("Impossible to get information for taxonID $(id) at level $(rank)"))
-      matchtype == "NONE" && throw(ErrorException("No match for taxonID $(id) at level $(rank) -- try with strict=false"))
-      =#
       return GBIFTaxon(body)
    else
       throw(ErrorException("Impossible to retrieve information for taxonID $(id) -- HTML error code $(sp_s_req.status)"))
@@ -168,4 +103,4 @@ function mytaxon(id::Int;
 
 end
 
-mytaxon(t::Pair) = taxon(t.second)
+taxon(t::Pair) = taxon(t.second)

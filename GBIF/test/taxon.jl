@@ -6,6 +6,8 @@ module TestSpecies
   iver = taxon("Iris versicolor", rank=:SPECIES)
   @test iver.species == Pair("Iris versicolor", 5298019)
 
+  #iver_id = taxon(5298019, rank=:SPECIES)  #TODO COMPLETE TEST
+
   i_sp = taxon(iver.genus.first; rank=:GENUS, family=iver.family.first, strict=false)
   @test ismissing(i_sp.species)
 

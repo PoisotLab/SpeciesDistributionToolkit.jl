@@ -33,8 +33,8 @@ of the taxon/level to its unique key in the GBIF database.
 struct GBIFTaxon
    name::String
    scientific::String
-   status::Symbol
-   match::Symbol
+   status::Union{Missing, Symbol}
+   match::Union{Missing, Symbol}
    kingdom::Union{Missing, Pair{String, Int64}}
    phylum::Union{Missing, Pair{String, Int64}}
    class::Union{Missing, Pair{String, Int64}}
@@ -59,8 +59,8 @@ function GBIFTaxon(o::Dict{String, Any})
    return GBIFTaxon(
       o["canonicalName"],
       o["scientificName"],
-      Symbol(get(o, "status", "none")),  # returns :none as default
-      Symbol(get(o, "matchType", "none")),
+      haskey(o, "status") ? Symbol(o["status"]) : missing,
+      haskey(o, "matchType") ? Symbol(o["matchType"]) : missing,
       r["kingdom"],
       r["phylum"],
       r["class"],

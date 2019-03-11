@@ -80,3 +80,27 @@ function taxon(name::String;
    end
 
 end
+
+"""
+**Get information about a taxon at any level using taxonID**
+
+    taxon(id::Int)
+
+This function will look for a taxon by its taxonID in the GBIF
+reference taxonomy.
+"""
+function taxon(id::Int)
+   args = Dict{String, Any}("id" => id)
+
+   sp_s_url = gbifurl * "species/$id"
+   sp_s_req = HTTP.get(sp_s_url, query=args)
+   if sp_s_req.status == 200
+      body = JSON.parse(String(sp_s_req.body))
+      return GBIFTaxon(body)
+   else
+      throw(ErrorException("Impossible to retrieve information for taxonID $(id) -- HTML error code $(sp_s_req.status)"))
+   end
+
+end
+
+taxon(t::Pair) = taxon(t.second)

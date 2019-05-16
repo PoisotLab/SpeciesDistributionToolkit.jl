@@ -23,8 +23,18 @@ function Base.eachindex(p::T) where {T <: SimpleSDMLayer}
     return eachindex(p.grid)
 end
 
-function Base.getindex(p::T, i...) where {T <: SimpleSDMLayer}
-    return p.grid[i...]
+function Base.getindex(p::T, i::Int64) where {T <: SimpleSDMLayer}
+    return p.grid[i]
+end
+
+function Base.getindex(p::T, i, j) where {T <: SimpleSDMLayer}
+    return T(
+        p.grid[i,j],
+        minimum(longitudes(p)[j])-stride(p)[1],
+        maximum(longitudes(p)[j])+stride(p)[1],
+        minimum(latitudes(p)[i])-stride(p)[2],
+        maximum(latitudes(p)[i])+stride(p)[2]
+        )
 end
 
 function Base.getindex(p::T, longitude::K, latitude::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}

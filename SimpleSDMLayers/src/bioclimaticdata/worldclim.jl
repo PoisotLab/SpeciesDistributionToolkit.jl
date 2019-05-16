@@ -14,6 +14,7 @@ function worldclim(layers::Vector{Int64}; resolution::AbstractString="10", path:
     missing_zip_file = !isfile(joinpath(path, zip_file))
     if missing_files
         if missing_zip_file
+            @info "Downloading $(zip_file)"
             download("http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_$(resolution)m_bio.zip", joinpath(pwd(), path, zip_file))
         end
         zf = ZipFile.Reader(joinpath(pwd(), path, zip_file))
@@ -33,4 +34,4 @@ function worldclim(layers::Vector{Int64}; resolution::AbstractString="10", path:
 
 end
 
-worldclim(layers::Vector{Int64}; x...) = worldclim([i]; x...)
+worldclim(layer::Int64; x...) = worldclim([layer]; x...)

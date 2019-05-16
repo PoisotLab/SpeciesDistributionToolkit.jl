@@ -17,7 +17,6 @@ export latitudes, longitudes
 include(joinpath("lib", "geotiff.jl"))
 export geotiff
 
-
 include(joinpath("bioclimaticdata", "worldclim.jl"))
 export worldclim
 

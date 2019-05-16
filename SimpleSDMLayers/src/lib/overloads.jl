@@ -7,7 +7,7 @@ function Base.size(p::T) where {T <: SimpleSDMLayer}
     return size(p.grid)
 end
 
-function Base.size(p::T; i...) where {T <: SimpleSDMLayer}
+function Base.size(p::T, i...) where {T <: SimpleSDMLayer}
     return size(p.grid, i...)
 end
 

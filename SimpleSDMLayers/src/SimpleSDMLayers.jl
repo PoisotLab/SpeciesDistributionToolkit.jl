@@ -19,5 +19,6 @@ export geotiff
 
 
 include(joinpath("bioclimaticdata", "worldclim.jl"))
+export worldclim
 
 end # module

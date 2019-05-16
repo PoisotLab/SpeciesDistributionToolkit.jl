@@ -32,3 +32,5 @@ function worldclim(layers::Vector{Int64}; resolution::AbstractString="10", path:
     return SimpleSDMPredictor.(data_layers, -180.0, 180.0, -90.0, 90.0)
 
 end
+
+worldclim(layers::Vector{Int64}; x...) = worldclim([i]; x...)

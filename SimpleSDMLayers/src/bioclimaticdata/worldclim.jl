@@ -15,17 +15,18 @@ function worldclim(layers::Vector{Int64}; resolution::AbstractString="10", path:
     if missing_files
         if missing_zip_file
             @info "Downloading $(zip_file)"
-            download("http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_$(resolution)m_bio.zip", joinpath(pwd(), path, zip_file))
+            download("http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_$(resolution)m_bio.zip", joinpath(path, zip_file))
         end
-        zf = ZipFile.Reader(joinpath(pwd(), path, zip_file))
+        zf = ZipFile.Reader(joinpath(path, zip_file))
         for rf in zf.files
             if joinpath(path, rf.name) in paths
                 if !isfile(joinpath(path, rf.name))
-                    @info "Downloading layer $(rf.name)"
+                    @info "Reading layer $(rf.name) from archive"
                     write(joinpath(path, rf.name), read(rf))
                 end
             end
         end
+        close(zf)
     end
 
     data_layers = geotiff.(paths)

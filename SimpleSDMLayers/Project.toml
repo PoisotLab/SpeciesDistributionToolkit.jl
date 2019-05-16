@@ -5,3 +5,4 @@ version = "0.1.0"
 
 [deps]
 GDAL = "add2ef01-049f-52c4-9ee2-e494f65e021a"
+ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"

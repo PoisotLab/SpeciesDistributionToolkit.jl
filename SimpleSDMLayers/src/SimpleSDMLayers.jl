@@ -1,6 +1,7 @@
 module SimpleSDMLayers
 
 using GDAL
+using ZipFile
 
 greet() = print("SimpleSDMLayers is currently UNSTABLE")
 

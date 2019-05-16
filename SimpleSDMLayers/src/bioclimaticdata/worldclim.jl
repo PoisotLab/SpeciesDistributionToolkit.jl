@@ -34,4 +34,4 @@ function worldclim(layers::Vector{Int64}; resolution::AbstractString="10", path:
 
 end
 
-worldclim(layer::Int64; x...) = worldclim([layer]; x...)
+worldclim(layer::Int64; x...) = worldclim([layer]; x...)[1]

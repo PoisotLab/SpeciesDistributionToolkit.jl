@@ -23,7 +23,7 @@ function Base.eachindex(p::T) where {T <: SimpleSDMLayer}
     return eachindex(p.grid)
 end
 
-function Base.getindex(p::T; i...) where {T <: SimpleSDMLayer}
+function Base.getindex(p::T, i...) where {T <: SimpleSDMLayer}
     return p.grid[i...]
 end
 

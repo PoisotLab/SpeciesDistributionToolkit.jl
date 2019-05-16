@@ -1,0 +1,4 @@
+name = "SimpleSDMLayers"
+uuid = "2c645270-77db-11e9-22c3-0f302a89c64c"
+authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
+version = "0.1.0"

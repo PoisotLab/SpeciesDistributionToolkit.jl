@@ -6,6 +6,7 @@ global anyerrors = false
 tests = Dict{String,String}(
                             "construction" => "construction.jl",
                             "basics" => "basics.jl",
+                            "overloads" => "overloads.jl",
                             "worldclim" => "worldclim.jl"
                            )
 

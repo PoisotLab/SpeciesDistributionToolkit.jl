@@ -1,5 +1,11 @@
+"""
+TODO
+"""
 abstract type SimpleSDMLayer end
 
+"""
+TODO
+"""
 struct SimpleSDMPredictor{T,K <: AbstractFloat} <: SimpleSDMLayer
     grid::Matrix{T}
     left::K
@@ -8,6 +14,9 @@ struct SimpleSDMPredictor{T,K <: AbstractFloat} <: SimpleSDMLayer
     top::K
 end
 
+"""
+TODO
+"""
 mutable struct SimpleSDMResponse{T,K <: AbstractFloat} <: SimpleSDMLayer
     grid::Matrix{T}
     left::K

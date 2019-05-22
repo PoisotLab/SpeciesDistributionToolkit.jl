@@ -23,19 +23,22 @@ function Base.eachindex(p::T) where {T <: SimpleSDMLayer}
     return eachindex(p.grid)
 end
 
+"""
+Extracts a  value from a layer by its grid position. 
+"""
 function Base.getindex(p::T, i::Int64) where {T <: SimpleSDMLayer}
     return p.grid[i]
 end
 
 """
-Extracts a series of positions in a layer, and returns a layer corresponding
-to the result. This is essentially a way to rapidly crop a layer to a given
-subset of its extent.
+Extracts a series of positions in a layer, and returns a layer corresponding to
+the result. This is essentially a way to rapidly crop a layer to a given subset
+of its extent. The `i` and `j` arguments are `UnitRange`s (of `Integer`).
 
 The layer returned by this function will have the same type as the layer
 passed as its argument.
 """
-function Base.getindex(p::T, i, j) where {T <: SimpleSDMLayer}
+function Base.getindex(p::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: UnitRange}
     return T(
         p.grid[i,j],
         minimum(longitudes(p)[j])-stride(p)[1],

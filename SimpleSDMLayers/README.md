@@ -3,6 +3,12 @@
 This package offers very simple types and functions to interact with
 bioclimatic data and the output of species distribution models.
 
+For now, installation requires to use the github repo as the package is not tagged yet:
+
+~~~ julia
+] add https://github.com/EcoJulia/SimpleSDMLayers.jl#master
+~~~
+
 ### Type system
 
 All types belong to the abstract `SimpleSDMLayer`, and are organised in the
@@ -32,5 +38,5 @@ example, to get the annual temperature, and annual precipitation:
 temperature, precipitation = worldclim([1,12])
 ~~~
 
-By default, the function will return the layers for the entire globe, and
-they can be cropped later.
+By default, the function will return the layers for the entire globe, and they
+can be cropped later. The layers are returned as `SimpleSDMPredictor` objects.

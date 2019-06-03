@@ -26,6 +26,12 @@ objects can be accessed like normal two-dimensional arrays, in which case
 they return an object of the same type if called with a range, and the value
 if called with a single position.
 
+It is also possible to crop a layer based on a bounding box:
+
+~~~ julia
+p[(left, right), (bottom, top)]
+~~~
+
 ### Bioclimatic data
 
 #### WorldClim 2.0

@@ -19,3 +19,18 @@ Most of the methods are overloads from `Base`. In particular, `SimpleSDMLayer`
 objects can be accessed like normal two-dimensional arrays, in which case
 they return an object of the same type if called with a range, and the value
 if called with a single position.
+
+### Bioclimatic data
+
+#### WorldClim 2.0
+
+The `worldclim` function will get a range, or an array of indices, and return
+the corresponding bioclim 2.0 layers at the specified `resolution`. For
+example, to get the annual temperature, and annual precipitation:
+
+~~~ julia
+temperature, precipitation = worldclim([1,12])
+~~~
+
+By default, the function will return the layers for the entire globe, and
+they can be cropped later.

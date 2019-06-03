@@ -42,7 +42,7 @@ function Base.getindex(p::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: UnitRa
    return T(
             p.grid[i,j],
             minimum(longitudes(p)[j])-stride(p)[1],
-   maximum(longitudes(p)[j])+stride(p)[1],
+            maximum(longitudes(p)[j])+stride(p)[1],
    minimum(latitudes(p)[i])-stride(p)[2],
    maximum(latitudes(p)[i])+stride(p)[2]
   )
@@ -97,4 +97,11 @@ function Base.getindex(p::T, longitudes::Tuple{K,K}, latitudes::Tuple{K,K}) wher
 end
 
 
-
+"""
+Extract a layer based on a second layer -- because the two layers do not
+necesarily have the same origins and/or strides, this does not ensure that
+they can be overlaid, but this is a good first order approximation.
+"""
+function Base.getindex(p1::T1, p2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
+   return p1[(p2.left, p2.right), (p2.bottom, p2.top)]
+end

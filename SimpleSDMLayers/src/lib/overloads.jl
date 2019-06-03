@@ -75,6 +75,26 @@ outside the range are requested, will return `NaN`.
 function Base.getindex(p::T, longitude::K, latitude::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
    i = match_longitude(p, longitude)
    j = match_latitude(p, latitude)
+   isnan(i) && return NaN
+   isnan(j) && return NaN
    return p.grid[j, i]
 end
+
+""" Extracts a series of positions in a layer, and returns a layer
+corresponding to the result. This is essentially a way to rapidly crop a
+layer to a given subset of its extent. The `longitudes` and `latitudes`
+arguments are tuples of floating point values, representing the bounding
+box of the layer to extract.
+
+The layer returned by this function will have the same type as the layer
+passed as its argument.
+"""
+function Base.getindex(p::T, longitudes::Tuple{K,K}, latitudes::Tuple{K,K}) where {T <: SimpleSDMLayer, K <: AbstractFloat}
+   imin, imax = [match_longitude(p, l) for l in longitudes]
+   jmin, jmax = [match_latitude(p, l) for l in latitudes]
+   any(isnan.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
+   return p[jmin:jmax, imin:imax]
+end
+
+
 

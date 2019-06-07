@@ -43,9 +43,9 @@ function Base.getindex(p::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: UnitRa
             p.grid[i,j],
             minimum(longitudes(p)[j])-stride(p)[1],
             maximum(longitudes(p)[j])+stride(p)[1],
-   minimum(latitudes(p)[i])-stride(p)[2],
-   maximum(latitudes(p)[i])+stride(p)[2]
-  )
+            minimum(latitudes(p)[i])-stride(p)[2],
+            maximum(latitudes(p)[i])+stride(p)[2]
+           )
 end
 
 """

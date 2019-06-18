@@ -32,6 +32,15 @@ It is also possible to crop a layer based on a bounding box:
 p[(left, right), (bottom, top)]
 ~~~
 
+If the layer is of the `SimpleSDMResponse` type, it is possible to write to it:
+
+~~~ julia
+p[-74.3, 17.65] = 1.4
+~~~
+
+This is only defined for `SimpleSDMResponse`, and `SimpleSDMPredictor`
+are immutable.
+
 ### Bioclimatic data
 
 #### WorldClim 2.0

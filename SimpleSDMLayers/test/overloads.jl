@@ -27,4 +27,8 @@ end
 @test S[(0.2, 0.6), (0.5, 0.9)].right ≥ 0.6
 @test_throws ArgumentError S[(-1.0, 0.2), (0.3, 0.8)]
 
+Y = SimpleSDMResponse(zeros(Float64, (5,5)), 0.0, 1.0, 0.0, 1.0)
+Y[0.1,0.1] = 0.2
+@test Y[0.1,0.1] == 0.2
+
 end

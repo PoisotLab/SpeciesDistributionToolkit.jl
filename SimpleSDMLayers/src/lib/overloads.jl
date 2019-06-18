@@ -105,3 +105,14 @@ they can be overlaid, but this is a good first order approximation.
 function Base.getindex(p1::T1, p2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
    return p1[(p2.left, p2.right), (p2.bottom, p2.top)]
 end
+
+function Base.setindex!(p::T, v, i...) where {T <: SimpleSDMResponse}
+   @assert typeof(v) == eltype(p.grid)
+   p.grid[i...] = v
+end
+
+function Base.setindex!(p::T, v, lon::Float64, lat::Float64) where {T <: SimpleSDMResponse}
+   i = match_longitude(p, lon)
+   j = match_latitude(p, lat)
+   p[i,j] = v
+end

@@ -115,7 +115,7 @@ end
 function Base.setindex!(p::T, v, lon::Float64, lat::Float64) where {T <: SimpleSDMResponse}
    i = match_longitude(p, lon)
    j = match_latitude(p, lat)
-   p[i,j] = v
+   p[j,i] = v
 end
 
 """

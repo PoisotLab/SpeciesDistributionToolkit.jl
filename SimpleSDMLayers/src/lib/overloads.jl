@@ -121,12 +121,12 @@ end
 """
 Always returns a SimpleSDMResponse
 
-Always returns NaN only, but the type is conserved
+Returns NaN for NaN, and eltype zero for other values
 """
 function Base.similar(l::T) where {T <: SimpleSDMLayer}
    emptygrid = similar(l.grid)
    for i in eachindex(emptygrid)
-      emptygrid[i] = NaN
+      emptygrid[i] = isnan(l.grid[i]) ? NaN : zero(eltype(l.grid))
    end
    return SimpleSDMResponse(emptygrid, l.left, l.right, l.bottom, l.top)
 end

@@ -2,6 +2,7 @@ import Base: size
 import Base: stride
 import Base: eachindex
 import Base: getindex
+import Base: similar
 
 function Base.size(p::T) where {T <: SimpleSDMLayer}
    return size(p.grid)
@@ -115,4 +116,17 @@ function Base.setindex!(p::T, v, lon::Float64, lat::Float64) where {T <: SimpleS
    i = match_longitude(p, lon)
    j = match_latitude(p, lat)
    p[i,j] = v
+end
+
+"""
+Always returns a SimpleSDMResponse
+
+Always returns NaN only, but the type is conserved
+"""
+function Base.similar(l::T) where {T <: SimpleSDMLayer}
+   emptygrid = similar(l.grid)
+   for i in eachindex(emptygrid)
+      emptygrid[i] = NaN
+   end
+   return SimpleSDMResponse(emptygrid, l.left, l.right, l.bottom, l.top)
 end

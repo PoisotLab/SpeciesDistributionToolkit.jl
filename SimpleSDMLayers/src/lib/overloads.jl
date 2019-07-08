@@ -3,6 +3,7 @@ import Base: stride
 import Base: eachindex
 import Base: getindex
 import Base: similar
+import Base: copy
 
 function Base.size(p::T) where {T <: SimpleSDMLayer}
    return size(p.grid)
@@ -129,4 +130,12 @@ function Base.similar(l::T) where {T <: SimpleSDMLayer}
       emptygrid[i] = isnan(l.grid[i]) ? NaN : zero(eltype(l.grid))
    end
    return SimpleSDMResponse(emptygrid, l.left, l.right, l.bottom, l.top)
+end
+
+"""
+Returns the same type
+"""
+function Base.copy(l::T) where {T <: SimpleSDMLayer}
+   copygrid = copy(l.grid)
+   return T(copygrid, l.left, l.right, l.bottom, l.top)
 end

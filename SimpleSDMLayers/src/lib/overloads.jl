@@ -5,6 +5,15 @@ import Base: getindex
 import Base: similar
 import Base: copy
 import Base: eltype
+import Base: convert
+
+function Base.convert(::SimpleSDMResponse, p::T) where {T <: SimpleSDMPredictor}
+   return SimpleSDMResponse(p.grid, p.left, p.right, p.bottom, p.top)
+end
+
+function Base.convert(::SimpleSDMPredictor, p::T) where {T <: SimpleSDMResponse}
+   return SimpleSDMPredictor(p.grid, p.left, p.right, p.bottom, p.top)
+end
 
 function Base.eltype(p::T) where {T <: SimpleSDMLayer}
    return eltype(p.grid)

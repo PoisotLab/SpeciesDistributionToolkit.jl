@@ -33,7 +33,6 @@ p[(left, right), (bottom, top)]
 ~~~
 
 If the layer is of the `SimpleSDMResponse` type, it is possible to write to it:
-
 ~~~ julia
 p[-74.3, 17.65] = 1.4
 ~~~
@@ -55,3 +54,9 @@ temperature, precipitation = worldclim([1,12])
 
 By default, the function will return the layers for the entire globe, and they
 can be cropped later. The layers are returned as `SimpleSDMPredictor` objects.
+
+
+### Plotting
+
+Using the `Plots` package, one can call the `heatmap`, `density` (requires
+`StatsPlots`), and `plot` methods. Note that `plot` defaults to a `heatmap`.

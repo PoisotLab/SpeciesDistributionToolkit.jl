@@ -1,6 +1,7 @@
 module SimpleSDMLayers
 
 using GDAL
+using RecipesBase
 using ZipFile
 
 greet() = print("SimpleSDMLayers is currently UNSTABLE")
@@ -19,5 +20,7 @@ export geotiff
 
 include(joinpath("bioclimaticdata", "worldclim.jl"))
 export worldclim
+
+include(joinpath("recipes", "recipes.jl"))
 
 end # module

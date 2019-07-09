@@ -4,6 +4,11 @@ import Base: eachindex
 import Base: getindex
 import Base: similar
 import Base: copy
+import Base: eltype
+
+function Base.eltype(p::T) where {T <: SimpleSDMLayer}
+   return eltype(p.grid)
+end
 
 function Base.size(p::T) where {T <: SimpleSDMLayer}
    return size(p.grid)

@@ -7,11 +7,11 @@ import Base: copy
 import Base: eltype
 import Base: convert
 
-function Base.convert(::SimpleSDMResponse, p::T) where {T <: SimpleSDMPredictor}
+function Base.convert(::Type{SimpleSDMResponse}, p::T) where {T <: SimpleSDMPredictor}
    return SimpleSDMResponse(p.grid, p.left, p.right, p.bottom, p.top)
 end
 
-function Base.convert(::SimpleSDMPredictor, p::T) where {T <: SimpleSDMResponse}
+function Base.convert(::Type{SimpleSDMPredictor}, p::T) where {T <: SimpleSDMResponse}
    return SimpleSDMPredictor(p.grid, p.left, p.right, p.bottom, p.top)
 end
 

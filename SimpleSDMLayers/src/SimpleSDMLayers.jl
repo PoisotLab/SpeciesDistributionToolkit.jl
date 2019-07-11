@@ -1,11 +1,11 @@
 module SimpleSDMLayers
 
 using GDAL
+using HTTP
 using RecipesBase
 using ZipFile
 
 greet() = print("SimpleSDMLayers is currently UNSTABLE")
-
 
 include(joinpath("lib", "types.jl"))
 export SimpleSDMLayer, SimpleSDMResponse, SimpleSDMPredictor
@@ -20,6 +20,9 @@ export geotiff
 
 include(joinpath("bioclimaticdata", "worldclim.jl"))
 export worldclim
+
+include(joinpath("bioclimaticdata", "chelsa.jl"))
+export bioclim
 
 include(joinpath("recipes", "recipes.jl"))
 

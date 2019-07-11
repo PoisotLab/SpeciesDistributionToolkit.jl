@@ -26,9 +26,9 @@ function geotiff(tiff_file; T::Type=Float64)
         0, 0
         )
 
-    K = zeros(T, (ys, xs))
+    K = zeros(Float64, (ys, xs))
     for (i,r) in enumerate(reverse(1:size(V, 2)))
-        K[i,:] = V[:,r]
+       K[i,:] = float(V[:,r])
     end
 
     this_min = minimum(V)

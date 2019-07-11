@@ -44,12 +44,13 @@ function bioclim(layers::Vector{Int64}; path::AbstractString="assets")
 	for f in filenames
       p = joinpath(path, f)
       if !(isfile(p))
-         res = HTTP.get(url_root * file)
+         res = HTTP.get(url_root * f)
          write(p, res.body)
       end
 	end
-	
-	data_layers = geotiff.(paths)
+
+   paths = [joinpath(path, filename) for filename in filenames]
+	data_layers = geotiff.(paths; T=Int64)
 	return SimpleSDMPredictor.(data_layers, -180.0, 180.0, -90.0, 90.0)
 
 end

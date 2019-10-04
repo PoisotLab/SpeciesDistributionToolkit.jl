@@ -5,7 +5,7 @@
       x --> longitudes(layer)
       y --> latitudes(layer)
       z --> layer.grid
-   else if get(plotattributes, :seriestype, :histogram) in [:histogram, :density]
+   elseif get(plotattributes, :seriestype, :histogram) in [:histogram, :density]
       filter(!isnan, layer.grid)
    end
 end

@@ -1,4 +1,4 @@
-module SLLTestWorldclim
+module SSLTestWorldclim
 using SimpleSDMLayers
 using Test
 

@@ -1,6 +1,6 @@
 function geotiff(tiff_file; T::Type=Float64)
     # Register GDAL drivers
-    GDAL.registerall()
+    GDAL.gdalallregister()
 
     # Load the dataset
     dataset = GDAL.open(tiff_file, GDAL.GA_ReadOnly)

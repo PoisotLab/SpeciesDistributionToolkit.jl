@@ -3,6 +3,10 @@
 This package offers very simple types and functions to interact with
 bioclimatic data and the output of species distribution models.
 
+[![Build Status](https://travis-ci.org/EcoJulia/SimpleSDMLayers.jl.svg?branch=master)](https://travis-ci.org/EcoJulia/SimpleSDMLayers.jl)
+
+### Installation
+
 For now, installation requires to use the github repo as the package is not tagged yet:
 
 ~~~ julia

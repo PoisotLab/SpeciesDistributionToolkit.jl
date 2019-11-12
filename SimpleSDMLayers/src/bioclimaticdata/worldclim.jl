@@ -57,7 +57,12 @@ function worldclim(layers::Vector{Int64}; resolution::AbstractString="10", path:
     if missing_files
         if missing_zip_file
             @info "Downloading $(zip_file)"
-            download("http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_$(resolution)m_bio.zip", joinpath(path, zip_file))
+            url = "http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_$(resolution)m_bio.zip"
+            #download(url, joinpath(path, zip_file))
+            r = HTTP.request("GET", url)
+            open(joinpath(path, zip_file), "w") do f
+                write(f, String(r.body))
+            end
         end
         zf = ZipFile.Reader(joinpath(path, zip_file))
         for rf in zf.files

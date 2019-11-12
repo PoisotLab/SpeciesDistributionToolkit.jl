@@ -3,26 +3,26 @@ function geotiff(tiff_file; T::Type=Float64)
     GDAL.gdalallregister()
 
     # Load the dataset
-    dataset = GDAL.open(tiff_file, GDAL.GA_ReadOnly)
+    dataset = GDAL.gdalopen(tiff_file, GDAL.GA_ReadOnly)
 
     # Band
-    band = GDAL.getrasterband(dataset, 1)
+    band = GDAL.gdalgetrasterband(dataset, 1)
 
     # Matrix
-    xs = GDAL.getrasterxsize(dataset)
-    ys = GDAL.getrasterysize(dataset)
+    xs = GDAL.gdalgetrasterxsize(dataset)
+    ys = GDAL.gdalgetrasterysize(dataset)
 
-    bandtype = GDAL.getrasterdatatype(band)
+    bandtype = GDAL.gdalgetrasterdatatype(band)
 
     V = zeros(T, (xs, ys))
 
-    GDAL.rasterio(
+    GDAL.gdalrasterio(
         band,
         GDAL.GF_Read,
         0, 0, xs, ys,
         pointer(V),
         xs, ys,
-        GDAL.getrasterdatatype(band),
+        GDAL.gdalgetrasterdatatype(band),
         0, 0
         )
 

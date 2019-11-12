@@ -40,7 +40,7 @@ function Base.eachindex(p::T) where {T <: SimpleSDMLayer}
 end
 
 """
-Extracts a  value from a layer by its grid position. 
+Extracts a  value from a layer by its grid position.
 """
 function Base.getindex(p::T, i::Int64) where {T <: SimpleSDMLayer}
    return p.grid[i]
@@ -86,7 +86,7 @@ end
 
 """
 Extracts the value of a layer at a given latitude and longitude. If values
-outside the range are requested, will return `NaN`. 
+outside the range are requested, will return `NaN`.
 """
 function Base.getindex(p::T, longitude::K, latitude::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
    i = match_longitude(p, longitude)
@@ -96,7 +96,8 @@ function Base.getindex(p::T, longitude::K, latitude::K) where {T <: SimpleSDMLay
    return p.grid[j, i]
 end
 
-""" Extracts a series of positions in a layer, and returns a layer
+"""
+Extracts a series of positions in a layer, and returns a layer
 corresponding to the result. This is essentially a way to rapidly crop a
 layer to a given subset of its extent. The `longitudes` and `latitudes`
 arguments are tuples of floating point values, representing the bounding

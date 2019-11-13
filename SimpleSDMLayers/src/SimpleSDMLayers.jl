@@ -24,6 +24,9 @@ export worldclim
 include(joinpath("bioclimaticdata", "chelsa.jl"))
 export bioclim
 
+include(joinpath("operations", "coarsen.jl"))
+export coarsen
+
 include(joinpath("recipes", "recipes.jl"))
 
 end # module

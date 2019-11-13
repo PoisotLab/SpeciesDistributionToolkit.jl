@@ -8,16 +8,12 @@
    end
 end
 
-@recipe function plot(l1::T, l2::T) where {T <: SimpleSDMLayer}
+@recipe function plot(l1::FT, l2::ST) where {FT <: SimpleSDMLayer, ST <: SimpleSDMLayer}
    seriestype --> :scatter
    if get(plotattributes, :seriestype, :scatter) in [:scatter, :histogram2d]
       @assert eltype(l1) <: Number
       @assert eltype(l2) <: Number
-      @assert size(l1) == size(l2)
-      @assert l1.top == l2.top
-      @assert l1.left == l2.left
-      @assert l1.bottom == l2.bottom
-      @assert l1.right == l2.right
+      SimpleSDMLayers.are_compatible(l1, l2)
       valid_i =filter(i -> !(isnan(l1[i])|isnan(l2[i])), eachindex(l1.grid))
       l1.grid[valid_i], l2.grid[valid_i]
    end

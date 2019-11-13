@@ -19,3 +19,11 @@ function longitudes(p::T) where {T <: SimpleSDMLayer}
     centers = range(p.left+grid_size; stop=p.right-grid_size, length=size(p, 2))
     return centers
 end
+
+function are_compatible(l1::FT, l2::ST) where {FT <: SimpleSDMLayer, ST <: SimpleSDMLayer}
+    @assert size(l1) == size(l2)
+    @assert l1.top == l2.top
+    @assert l1.left == l2.left
+    @assert l1.bottom == l2.bottom
+    @assert l1.right == l2.right
+end

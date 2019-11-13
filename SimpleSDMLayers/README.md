@@ -67,5 +67,5 @@ Using the `Plots` package, one can call the `heatmap`, `density` (requires
 
 One can also use `scatter(l1, l2)` where both `l1` and `l2` are layers with the
 same dimensions and bounding box, to get a scatterplot of the values. Only the
-pixels that have non-`NaN` values in *both* layers are shown.
-``
+pixels that have non-`NaN` values in *both* layers are shown. Similarly,
+`histogram2d` works.

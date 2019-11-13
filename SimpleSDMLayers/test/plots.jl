@@ -26,4 +26,9 @@ xaxis!("Temperature")
 yaxis!("Precipitation")
 savefig(joinpath("gallery", "scatter.png"))
 
+histogram2d(temperature, precipitation, leg=false)
+xaxis!("Temperature")
+yaxis!("Precipitation")
+savefig(joinpath("gallery", "scatter-2d.png"))
+
 end

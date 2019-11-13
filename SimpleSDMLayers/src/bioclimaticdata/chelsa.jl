@@ -46,7 +46,7 @@ function bioclim(layers::Vector{Int64}; path::AbstractString="assets")
       if !(isfile(p))
          res = HTTP.request("GET", url_root * f)
 		 open(p, "w") do f
-			 write(f, String(r.body))
+			 write(f, String(res.body))
 		 end
       end
 	end

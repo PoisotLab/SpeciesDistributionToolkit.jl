@@ -7,7 +7,8 @@ tests = Dict{String,String}(
                             "construction" => "construction.jl",
                             "basics" => "basics.jl",
                             "overloads" => "overloads.jl",
-                            "worldclim" => "worldclim.jl"
+                            "worldclim" => "worldclim.jl",
+                            "plotting" => "plots.jl"
                            )
 
 for (name,test) in tests
@@ -27,4 +28,3 @@ end
 if anyerrors
    throw("Tests failed")
 end
-

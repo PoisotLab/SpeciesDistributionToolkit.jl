@@ -87,4 +87,7 @@ Return a single layer from WorldClim 2.0.
 """
 worldclim(layer::Int64; x...) = worldclim([layer]; x...)[1]
 
+"""
+Return a range of layers from WorldClim 2.0.
+"""
 worldclim(layers::UnitRange{Int64}; x...) = worldclim(collect(layers); x...)

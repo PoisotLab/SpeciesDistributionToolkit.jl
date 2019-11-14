@@ -59,7 +59,7 @@ temperature_europe_coarse = coarsen(temperature_europe, Statistics.mean, (2, 2))
 
 One again, we can plot these data:
 
-```@example temps
+```@example temp
 heatmap(temperature_europe_coarse, aspectratio=1, c=:magma, frame=:box)
 ```
 

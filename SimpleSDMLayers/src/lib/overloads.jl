@@ -84,12 +84,14 @@ function Base.getindex(p::T, i::Int64) where {T <: SimpleSDMLayer}
 end
 
 """
+    Base.getindex(p::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: UnitRange}
+
 Extracts a series of positions in a layer, and returns a layer corresponding to
 the result. This is essentially a way to rapidly crop a layer to a given subset
 of its extent. The `i` and `j` arguments are `UnitRange`s (of `Integer`).
 
-The layer returned by this function will have the same type as the layer
-passed as its argument.
+The layer returned by this function will have the same type as the layer passed
+as its argument, but this can be changed using `convert`.
 """
 function Base.getindex(p::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: UnitRange}
    return T(
@@ -122,6 +124,8 @@ function match_longitude(p::T, l::K) where {T <: SimpleSDMLayer, K <: AbstractFl
 end
 
 """
+    Base.getindex(p::T, longitude::K, latitude::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
+
 Extracts the value of a layer at a given latitude and longitude. If values
 outside the range are requested, will return `NaN`.
 """
@@ -134,14 +138,15 @@ function Base.getindex(p::T, longitude::K, latitude::K) where {T <: SimpleSDMLay
 end
 
 """
-Extracts a series of positions in a layer, and returns a layer
-corresponding to the result. This is essentially a way to rapidly crop a
-layer to a given subset of its extent. The `longitudes` and `latitudes`
-arguments are tuples of floating point values, representing the bounding
-box of the layer to extract.
+    Base.getindex(p::T, longitudes::Tuple{K,K}, latitudes::Tuple{K,K}) where {T <: SimpleSDMLayer, K <: AbstractFloat}
 
-The layer returned by this function will have the same type as the layer
-passed as its argument.
+Extracts a series of positions in a layer, and returns a layer corresponding to
+the result. This is essentially a way to rapidly crop a layer to a given subset
+of its extent. The `longitudes` and `latitudes` arguments are tuples of floating
+point values, representing the bounding box of the layer to extract.
+
+The layer returned by this function will have the same type as the layer passed
+as its argument.
 """
 function Base.getindex(p::T, longitudes::Tuple{K,K}, latitudes::Tuple{K,K}) where {T <: SimpleSDMLayer, K <: AbstractFloat}
    imin, imax = [match_longitude(p, l) for l in longitudes]
@@ -152,19 +157,34 @@ end
 
 
 """
-Extract a layer based on a second layer -- because the two layers do not
-necesarily have the same origins and/or strides, this does not ensure that
-they can be overlaid, but this is a good first order approximation.
+    Base.getindex(p1::T1, p2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
+
+Extract a layer based on a second layer. Note that the two layers must be
+*compatible*, which is to say they must have the same bounding box and grid
+size.
 """
 function Base.getindex(p1::T1, p2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
+   SimpleSDMLayers.are_compatible(l1, l2)
    return p1[(p2.left, p2.right), (p2.bottom, p2.top)]
 end
 
+"""
+     Base.setindex!(p::T, v, i...) where {T <: SimpleSDMResponse}
+
+Changes the value of a cell, or a range of cells, as indicated by their grid
+positions.
+"""
 function Base.setindex!(p::T, v, i...) where {T <: SimpleSDMResponse}
    @assert typeof(v) == eltype(p.grid)
    p.grid[i...] = v
 end
 
+"""
+    Base.setindex!(p::T, v, lon::Float64, lat::Float64) where {T <: SimpleSDMResponse}
+
+Changes the values of the cell including the point at the requested latitude and
+longitude.
+"""
 function Base.setindex!(p::T, v, lon::Float64, lat::Float64) where {T <: SimpleSDMResponse}
    i = match_longitude(p, lon)
    j = match_latitude(p, lat)
@@ -172,9 +192,13 @@ function Base.setindex!(p::T, v, lon::Float64, lat::Float64) where {T <: SimpleS
 end
 
 """
-Always returns a SimpleSDMResponse
+    Base.similar(l::T) where {T <: SimpleSDMLayer}
 
-Returns NaN for NaN, and eltype zero for other values
+Returns a `SimpleSDMResponse` of the same dimensions as the original layer, with
+`NaN` in the same positions. The rest of the values are replaced by the output
+of `zero(eltype(p.grid))`, which implies that there must be a way to get a zero
+for the type. If not, the same result can always be achieved through the use of
+`copy`, manual update, and `convert`.
 """
 function Base.similar(l::T) where {T <: SimpleSDMLayer}
    emptygrid = similar(l.grid)
@@ -185,7 +209,9 @@ function Base.similar(l::T) where {T <: SimpleSDMLayer}
 end
 
 """
-Returns the same type
+    Base.copy(l::T) where {T <: SimpleSDMLayer}
+
+Returns a new copy of the layer, which has the same type.
 """
 function Base.copy(l::T) where {T <: SimpleSDMLayer}
    copygrid = copy(l.grid)

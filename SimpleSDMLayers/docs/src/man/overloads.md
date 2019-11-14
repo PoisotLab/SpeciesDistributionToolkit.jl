@@ -7,11 +7,12 @@ directly, and also allow to set and get values using the geographic coordinates
 
 ```@docs
 convert
+copy
 eltype
 size
+strid
 eachindex
 getindex
 setindex!
 similar
-copy
 ```

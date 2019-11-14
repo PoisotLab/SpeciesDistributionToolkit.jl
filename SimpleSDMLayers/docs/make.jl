@@ -9,7 +9,9 @@ makedocs(
         "Simple SDM Layers" => "index.md",
         "Manual" => [
             "Types" => "man/types.md",
-            "Overloads" => "man/overloads.md"
+            "Overloads" => "man/overloads.md",
+            "Other operations" => "man/operations.md",
+            "Plotting" => "man/plotting.md"
         ]
     ]
 )

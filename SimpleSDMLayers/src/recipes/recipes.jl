@@ -1,3 +1,6 @@
+"""
+test 1
+"""
 @recipe function plot(layer::T) where {T <: SimpleSDMLayer}
    seriestype --> :heatmap
    @assert eltype(layer) <: Number
@@ -8,6 +11,9 @@
    end
 end
 
+"""
+test 2
+"""
 @recipe function plot(l1::FT, l2::ST) where {FT <: SimpleSDMLayer, ST <: SimpleSDMLayer}
    seriestype --> :scatter
    if get(plotattributes, :seriestype, :scatter) in [:scatter, :histogram2d]

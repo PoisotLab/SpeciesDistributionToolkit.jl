@@ -1,0 +1,5 @@
+# Plotting
+
+```@docs
+plot
+```

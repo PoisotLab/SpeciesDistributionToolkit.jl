@@ -6,8 +6,10 @@ makedocs(
     sitename = "Simple SDM Layers",
     modules = [SimpleSDMLayers],
     pages = [
+        "Simple SDM Layers" => "index.md",
         "Manual" => [
-            "Types" => "man/types.md"
+            "Types" => "man/types.md",
+            "Overloads" => "man/overloads.md"
         ]
     ]
 )

@@ -7,14 +7,29 @@ import Base: copy
 import Base: eltype
 import Base: convert
 
+"""
+    Base.convert(::Type{SimpleSDMResponse}, p::T) where {T <: SimpleSDMPredictor}
+
+Returns a response with the same grid and bounding box as the predictor.
+"""
 function Base.convert(::Type{SimpleSDMResponse}, p::T) where {T <: SimpleSDMPredictor}
    return SimpleSDMResponse(p.grid, p.left, p.right, p.bottom, p.top)
 end
 
+"""
+    Base.convert(::Type{SimpleSDMPredictor}, p::T) where {T <: SimpleSDMResponse}
+
+Returns a predictor with the same grid and bounding box as the response.
+"""
 function Base.convert(::Type{SimpleSDMPredictor}, p::T) where {T <: SimpleSDMResponse}
    return SimpleSDMPredictor(p.grid, p.left, p.right, p.bottom, p.top)
 end
 
+"""
+    Base.eltype(p::T) where {T <: SimpleSDMLayer}
+
+Returns the type of the values stored in the grid.
+"""
 function Base.eltype(p::T) where {T <: SimpleSDMLayer}
    return eltype(p.grid)
 end

@@ -31,4 +31,9 @@ Y = SimpleSDMResponse(zeros(Float64, (5,5)), 0.0, 1.0, 0.0, 1.0)
 Y[0.1,0.1] = 0.2
 @test Y[0.1,0.1] == 0.2
 
+Z = convert(SimpleSDMPredictor, Y)
+Y[0.1,0.1] = 4.0
+@test Z[0.1,0.1] != Y[0.1,0.1]
+@test Z[0.1,0.1] == 0.2
+
 end

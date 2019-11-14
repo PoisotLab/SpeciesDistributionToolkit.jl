@@ -1,4 +1,6 @@
 """
+    worldclim(layers::Vector{Int64}; resolution::AbstractString="10", path::AbstractString="assets")
+
 Download and prepare WorldClim 2.0 bioclimatic variables, and returns them as
 an array of `SimpleSDMPredictor`s. Layers are called by their number, from 1 to
 19. The list of available layers is given in a table below.
@@ -83,11 +85,15 @@ function worldclim(layers::Vector{Int64}; resolution::AbstractString="10", path:
 end
 
 """
+    worldclim(layer::Int64; x...)
+
 Return a single layer from WorldClim 2.0.
 """
 worldclim(layer::Int64; x...) = worldclim([layer]; x...)[1]
 
 """
+    worldclim(layers::UnitRange{Int64}; x...)
+
 Return a range of layers from WorldClim 2.0.
 """
 worldclim(layers::UnitRange{Int64}; x...) = worldclim(collect(layers); x...)

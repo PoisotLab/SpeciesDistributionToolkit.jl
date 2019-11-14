@@ -1,9 +1,9 @@
 """
     worldclim(layers::Vector{Int64}; resolution::AbstractString="10", path::AbstractString="assets")
 
-Download and prepare WorldClim 2.0 bioclimatic variables, and returns them as
-an array of `SimpleSDMPredictor`s. Layers are called by their number, from 1 to
-19. The list of available layers is given in a table below.
+Download and prepare WorldClim 2.0 bioclimatic variables, and returns them as an
+array of `SimpleSDMPredictor`s. Layers are called by their number, from 1 to 19.
+The list of available layers is given in a table below.
 
 The two keywords are `resolution`, which must be a string, and either `2.5`,
 `5`, or `10`; and `path`, which refers to the path where the function will look
@@ -15,8 +15,8 @@ layers.
 
 It is recommended to *keep* the content of the `path` folder, as it will
 eliminate the need to download and/or extract the tiff files. For example,
-calling `wordlclim(1:19)` will download and extract everything, and future
-calls will be much faster.
+calling `wordlclim(1:19)` will download and extract everything, and future calls
+will be much faster.
 
 | Variable | Description                                                |
 | ------   | ------                                                     |

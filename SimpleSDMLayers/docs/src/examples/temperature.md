@@ -25,7 +25,6 @@ Let's also have a look at the density while we're at it:
 ```@example temp
 density(temperature, frame=:zerolines, c=:grey, fill=(0, :grey, 0.5), leg=false)
 xaxis!("Temperature", (-50,30))
-
 ```
 
 The next step is to clip the data to the region of interest. This requires a the
@@ -49,8 +48,28 @@ In an ideal world, we could want to find a number of cells that is the same both
 for latitude and longitude, and one approach is to finagle our way into a
 correct grid by changing the clipping region.
 
+In this case, we will use a coarsening scale of `(X,Y)`, which gives us a total
+of **Z** cells. Our aggregation function will be `mean` (so we report the
+average temperature across these cells):
+
 ```@example temp
 import Statistics
 temperature_europe_coarse = coarsen(temperature_europe, Statistics.mean, (3, 3))
+```
+
+One again, we can plot these data:
+
+```@example temps
 heatmap(temperature_europe_coarse)
+```
+
+Finally, we can compare our different clipping and approximations to the overal
+dataset:
+
+
+```@example temp
+density(temperature, frame=:zerolines, c=:grey, fill=(0, :grey, 0.5), lab="")
+density!(temperature_europe, c=:black, lab="Raw data")
+density!(temperature_europe_coarse, c=:darkgrey, lab="Average")
+xaxis!("Temperature", (-50,30))
 ```

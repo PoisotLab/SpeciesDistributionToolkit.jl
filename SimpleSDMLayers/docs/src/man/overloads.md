@@ -10,7 +10,7 @@ convert
 copy
 eltype
 size
-strid
+stride
 eachindex
 getindex
 setindex!

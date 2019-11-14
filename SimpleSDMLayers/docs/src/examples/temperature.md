@@ -11,14 +11,22 @@ temperature = worldclim(1)
 
 ```@example temp
 using Plots, StatsPlots
-heatmap(temperature, clim=(-50,50), c=:RdBu)
+heatmap(temperature, c=:magma, frame=:box)
+xaxis!("Longitude")
+yaxis!("Latitude")
 ```
 
 ```@example temp
-density(temperature)
+density(temperature, frame=:zerolines, c=:grey, fill=(0, :grey, 0.5), leg=false)
+xaxis!("Temperature", (-50,30))
+
 ```
 
 We will now clip this data, to focus on the region of interest:
+
+```@example temp
+size(temperature_europe)
+```
 
 ```@example temp
 temperature_europe = temperature[(-10.0,30.0),(30.0,70.0)]

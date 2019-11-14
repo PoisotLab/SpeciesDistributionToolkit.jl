@@ -175,7 +175,7 @@ Changes the value of a cell, or a range of cells, as indicated by their grid
 positions.
 """
 function Base.setindex!(p::T, v, i...) where {T <: SimpleSDMResponse}
-   @assert typeof(v) == eltype(p.grid)
+   @assert typeof(v) <: eltype(p.grid)
    p.grid[i...] = v
 end
 

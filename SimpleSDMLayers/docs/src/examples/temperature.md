@@ -32,8 +32,8 @@ coordinates of the bounding box as two tuples (for longitude and latitude) -- we
 can also make a quick heatmap to see what the region looks like:
 
 ```@example temp
-temperature_europe = temperature[(-10.0,30.0),(30.0,70.0)]
-heatmap(temperature_europe, c=:magma)
+temperature_europe = temperature[(-11.0,31.0),(29.0,71.0)]
+heatmap(temperature_europe, c=:magma, aspectratio=1, frame=:box)
 ```
 
 The next step will be to coarsen these data, which requires to give the number
@@ -60,7 +60,7 @@ temperature_europe_coarse = coarsen(temperature_europe, Statistics.mean, (3, 3))
 One again, we can plot these data:
 
 ```@example temps
-heatmap(temperature_europe_coarse)
+heatmap(temperature_europe_coarse, aspectratio=1, c=:magma, frame=:box)
 ```
 
 Finally, we can compare our different clipping and approximations to the overal

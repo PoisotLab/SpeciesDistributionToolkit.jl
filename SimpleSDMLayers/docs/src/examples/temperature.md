@@ -5,6 +5,7 @@ crop it for Western Europe, and then change the resolution to aggregate the
 data.
 
 ```@example temp
+using SimpleSDMLayers
 temperature = worldclim(1)
 ```
 

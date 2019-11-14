@@ -32,7 +32,7 @@ coordinates of the bounding box as two tuples (for longitude and latitude) -- we
 can also make a quick heatmap to see what the region looks like:
 
 ```@example temp
-temperature_europe = temperature[(-11.0,31.0),(29.0,71.0)]
+temperature_europe = temperature[(-11.0,31.1),(29.0,71.1)]
 heatmap(temperature_europe, c=:magma, aspectratio=1, frame=:box)
 ```
 
@@ -48,13 +48,13 @@ In an ideal world, we could want to find a number of cells that is the same both
 for latitude and longitude, and one approach is to finagle our way into a
 correct grid by changing the clipping region.
 
-In this case, we will use a coarsening scale of `(X,Y)`, which gives us a total
-of **Z** cells. Our aggregation function will be `mean` (so we report the
-average temperature across these cells):
+In this case, we will use a coarsening scale of `(2,2)`, which gives us a total
+of 4 cells in the aggregated result. Our aggregation function will be `mean` (so
+we report the average temperature across these cells):
 
 ```@example temp
 import Statistics
-temperature_europe_coarse = coarsen(temperature_europe, Statistics.mean, (3, 3))
+temperature_europe_coarse = coarsen(temperature_europe, Statistics.mean, (2, 2))
 ```
 
 One again, we can plot these data:
@@ -63,7 +63,7 @@ One again, we can plot these data:
 heatmap(temperature_europe_coarse, aspectratio=1, c=:magma, frame=:box)
 ```
 
-Finally, we can compare our different clipping and approximations to the overal
+Finally, we can compare our different clipping and approximations to the overall
 dataset:
 
 

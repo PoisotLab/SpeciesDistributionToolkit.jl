@@ -7,5 +7,5 @@ makedocs(
 )
 
 deploydocs(
-    repo = "gtihub.com/EcoJulia/SimpleSDMLayers.jl.git"
+    repo = "github.com/EcoJulia/SimpleSDMLayers.jl.git"
 )

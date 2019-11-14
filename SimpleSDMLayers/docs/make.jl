@@ -3,7 +3,13 @@ push!(LOAD_PATH, joinpath("..", "src"))
 using Documenter, SimpleSDMLayers
 
 makedocs(
-    sitename = "Simple SDM Layers"
+    sitename = "Simple SDM Layers",
+    modules = [SimpleSDMLayers],
+    pages = [
+        "Manual" => [
+            "Types" => "man/types.md"
+        ]
+    ]
 )
 
 deploydocs(

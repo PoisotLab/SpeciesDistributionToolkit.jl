@@ -37,11 +37,17 @@ temperature_europe = temperature[(-10.0,30.0),(30.0,70.0)]
 heatmap(temperature_europe, c=:magma)
 ```
 
+The next step will be to coarsen these data, which requires to give the number
+of cells to merge alongside each dimension. This number of cells must be a
+divider of the grid size, which we can view with:
 
 ```@example temp
 size(temperature_europe)
 ```
 
+In an ideal world, we could want to find a number of cells that is the same both
+for latitude and longitude, and one approach is to finagle our way into a
+correct grid by changing the clipping region.
 
 ```@example temp
 import Statistics

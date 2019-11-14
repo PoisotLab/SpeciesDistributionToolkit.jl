@@ -1,4 +1,4 @@
-name: Build documentation
+name: Documentation
 
 on: [push, pull_request]
 
@@ -21,4 +21,6 @@ jobs:
       - name: Build and deploy
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+          TRAVIS_PULL_REQUEST: false
+          TRAVIS_BRANCH: master
         run: julia --project=docs/ docs/make.jl

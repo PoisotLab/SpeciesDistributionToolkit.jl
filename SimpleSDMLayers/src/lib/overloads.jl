@@ -13,7 +13,7 @@ import Base: convert
 Returns a response with the same grid and bounding box as the predictor.
 """
 function Base.convert(::Type{SimpleSDMResponse}, p::T) where {T <: SimpleSDMPredictor}
-   return SimpleSDMResponse(p.grid, p.left, p.right, p.bottom, p.top)
+   return copy(SimpleSDMResponse(p.grid, p.left, p.right, p.bottom, p.top))
 end
 
 """
@@ -22,7 +22,7 @@ end
 Returns a predictor with the same grid and bounding box as the response.
 """
 function Base.convert(::Type{SimpleSDMPredictor}, p::T) where {T <: SimpleSDMResponse}
-   return SimpleSDMPredictor(p.grid, p.left, p.right, p.bottom, p.top)
+   return copy(SimpleSDMPredictor(p.grid, p.left, p.right, p.bottom, p.top))
 end
 
 """
@@ -34,14 +34,31 @@ function Base.eltype(p::T) where {T <: SimpleSDMLayer}
    return eltype(p.grid)
 end
 
+"""
+    Base.size(p::T) where {T <: SimpleSDMLayer}
+
+Returns the size of the grid.
+"""
 function Base.size(p::T) where {T <: SimpleSDMLayer}
    return size(p.grid)
 end
+
+"""
+    Base.size(p::T, i...) where {T <: SimpleSDMLayer}
+
+Returns the size of the grid alongside a dimension.
+"""
 
 function Base.size(p::T, i...) where {T <: SimpleSDMLayer}
    return size(p.grid, i...)
 end
 
+"""
+    Base.stride(p::T; dims::Union{Nothing,Integer}=nothing) where {T <: SimpleSDMLayer}
+
+Returns the stride, *i.e.* the length, of cell dimensions, possibly alongside a
+side of the grid.
+"""
 function Base.stride(p::T; dims::Union{Nothing,Integer}=nothing) where {T <: SimpleSDMLayer}
    lon_stride = (p.right-p.left)/size(p, 2)/2.0
    lat_stride = (p.top-p.bottom)/size(p, 1)/2.0
@@ -50,6 +67,11 @@ function Base.stride(p::T; dims::Union{Nothing,Integer}=nothing) where {T <: Sim
    dims == 2 && return lat_stride
 end
 
+"""
+    Base.eachindex(p::T) where {T <: SimpleSDMLayer}
+
+Returns the index of the grid.
+"""
 function Base.eachindex(p::T) where {T <: SimpleSDMLayer}
    return eachindex(p.grid)
 end
@@ -167,5 +189,5 @@ Returns the same type
 """
 function Base.copy(l::T) where {T <: SimpleSDMLayer}
    copygrid = copy(l.grid)
-   return T(copygrid, l.left, l.right, l.bottom, l.top)
+   return T(copygrid, copy(l.left), copy(l.right), copy(l.bottom), copy(l.top))
 end

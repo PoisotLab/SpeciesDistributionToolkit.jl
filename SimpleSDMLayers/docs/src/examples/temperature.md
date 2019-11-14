@@ -10,7 +10,7 @@ temperature = worldclim(1)
 
 ```@example temp
 using Plots, StatsPlots
-heatmap(temperature, clim=(-50,50), c=:BrBG)
+heatmap(temperature, clim=(-50,50), c=:RdBu)
 ```
 
 ```@example temp

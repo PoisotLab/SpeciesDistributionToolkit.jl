@@ -6,6 +6,8 @@ test 1
    @assert eltype(layer) <: Number
    if get(plotattributes, :seriestype, :heatmap) == :heatmap
       aspect_ratio --> 1
+      xlims --> (minimum(longitudes(layer)),maximum(longitudes(layer)))
+      ylims --> (minimum(latitudes(layer)),maximum(latitudes(layer)))
       longitudes(layer), latitudes(layer), layer.grid
    elseif get(plotattributes, :seriestype, :histogram) in [:histogram, :density]
       filter(!isnan, layer.grid)

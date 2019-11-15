@@ -21,8 +21,8 @@ export geotiff
 include(joinpath("bioclimaticdata", "worldclim.jl"))
 export worldclim
 
-include(joinpath("bioclimaticdata", "chelsa.jl"))
-export bioclim
+#include(joinpath("bioclimaticdata", "chelsa.jl"))
+#export bioclim
 
 include(joinpath("operations", "coarsen.jl"))
 export coarsen

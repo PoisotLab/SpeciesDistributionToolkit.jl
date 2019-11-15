@@ -1,7 +1,19 @@
 """
     coarsen(L::LT, f::FT, d::Tuple{IT,IT}; NaNremove::Bool=true) where {LT <: SimpleSDMLayer, FT <: Function, IT <: Integer}
 
+This function will *aggregate* a layer by merging cells. The function `f` passed
+as its second argument is expected to take an array as input, and return a
+single value of the same type as the values of the layer, or as a floating point
+value. Note that the element type of the returned layer will have type `Any`,
+which is not really pretty, but should serve well enough (and can be changed by
+working on the `grid` field directly if you really need it).
 
+The size of the cells to aggregate is given by the tuple, so that `(2,2)` will
+make groups of two cells vertically and two cells horizontally, for a total of
+four cells.
+
+The `NaNremove` keyword argument is intended to remove `NaN` values before
+applying `f`. It defaults to `true`.
 """
 function coarsen(L::LT, f::FT, d::Tuple{IT,IT}; NaNremove::Bool=true) where {LT <: SimpleSDMLayer, FT <: Function, IT <: Integer}
     cx, cy = d
@@ -26,8 +38,11 @@ function coarsen(L::LT, f::FT, d::Tuple{IT,IT}; NaNremove::Bool=true) where {LT 
         for j in 1:size(newgrid, 2)
             old_j = ((j-1)*cy+1):(j*cy)
             V = vec(L.grid[old_i, old_j])
-            # If there are NaN to remove, then we call filter!
-            !NaNremove || filter!(!isnan, V)
+            # If there are NaN to remove, then we call filter!. NaN only make
+            # sense is the type of the elements of V is a floating point, so we
+            # need to do an additional check to only apply this whenever there
+            # are floating point elements:
+            !NaNremove || filter!(x -> typeof(x)<:AbstractFloat ? !isnan(x) : true, V)
             if length(V) == 0
                 # If nothing is left in V, then the grid gets a NaN
                 # automatically

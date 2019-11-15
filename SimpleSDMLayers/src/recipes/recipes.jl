@@ -5,6 +5,7 @@ test 1
    seriestype --> :heatmap
    @assert eltype(layer) <: Number
    if get(plotattributes, :seriestype, :heatmap) == :heatmap
+      aspect_ratio --> 1
       longitudes(layer), latitudes(layer), layer.grid
    elseif get(plotattributes, :seriestype, :histogram) in [:histogram, :density]
       filter(!isnan, layer.grid)

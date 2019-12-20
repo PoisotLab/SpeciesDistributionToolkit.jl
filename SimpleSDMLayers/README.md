@@ -11,7 +11,13 @@ bioclimatic data and the output of species distribution models.
 
 ### Installation
 
-For now, installation requires to use the github repo as the package is not tagged yet:
+The currently released version of the package can be installed with:
+
+~~~ julia
+] add SimpleSDMLayers
+~~~
+
+The development version of the package can be installed with:
 
 ~~~ julia
 ] add https://github.com/EcoJulia/SimpleSDMLayers.jl#master

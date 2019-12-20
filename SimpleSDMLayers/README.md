@@ -3,7 +3,7 @@
 This package offers very simple types and functions to interact with
 bioclimatic data and the output of species distribution models.
 
-**Documentation** (released version): https://ecojulia.github.io/SimpleSDMLayers.jl/stable/
+**Documentation** (released version): https://ecojulia.github.io/SimpleSDMLayers.jl/stable/   
 **Documentation** (development version): https://ecojulia.github.io/SimpleSDMLayers.jl/dev/
 
 ![](https://github.com/EcoJulia/SimpleSDMLayers.jl/workflows/Unit%20testing/badge.svg)

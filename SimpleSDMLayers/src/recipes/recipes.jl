@@ -4,7 +4,7 @@ test 1
 @recipe function plot(layer::T) where {T <: SimpleSDMLayer}
    seriestype --> :heatmap
    @assert eltype(layer) <: Number
-   if get(plotattributes, :seriestype, :heatmap) == :heatmap
+   if get(plotattributes, :seriestype, :heatmap) in [:heatmap, :contour]
       aspect_ratio --> 1
       xlims --> (minimum(longitudes(layer)),maximum(longitudes(layer)))
       ylims --> (minimum(latitudes(layer)),maximum(latitudes(layer)))

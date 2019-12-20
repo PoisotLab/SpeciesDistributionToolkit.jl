@@ -65,8 +65,9 @@ can be cropped later. The layers are returned as `SimpleSDMPredictor` objects.
 
 ### Plotting
 
-Using the `Plots` package, one can call the `heatmap`, `density` (requires
-`StatsPlots`), and `plot` methods. Note that `plot` defaults to a `heatmap`.
+Using the `Plots` package, one can call the `heatmap`, `contour`, `density`
+(requires `StatsPlots`), and `plot` methods. Note that `plot` defaults to a
+`heatmap`.
 
 One can also use `scatter(l1, l2)` where both `l1` and `l2` are layers with the
 same dimensions and bounding box, to get a scatterplot of the values. Only the

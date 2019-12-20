@@ -12,6 +12,16 @@ plot(temperature, c=:RdYlBu_r, title="Temperature", frame=:box, clim=(-50,50),
     ylabel= "Latitude")
 savefig(joinpath("gallery", "heatmap.png"))
 
+contour(temperature, c=:RdYlBu_r, title="Temperature", frame=:box, clim=(-50,50),
+    xlabel = "Longitude",
+    ylabel= "Latitude")
+savefig(joinpath("gallery", "contour.png"))
+
+contour(temperature, c=:RdYlBu_r, title="Temperature", frame=:box, clim=(-50,50), fill=true,
+    xlabel = "Longitude",
+    ylabel= "Latitude")
+savefig(joinpath("gallery", "filled_contour.png"))
+
 heatmap(coarsen(temperature, minimum, (10,10)), c=:RdYlBu_r, title="Temperature", frame=:box, clim=(-50,50))
 xaxis!("Longitude")
 yaxis!("Latitude")

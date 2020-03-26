@@ -8,7 +8,8 @@ The key can be given as a string or as an integer.
 function occurrence(key::Union{String, Integer})
   occ_url = gbifurl * "occurrence/" * string(key)
   occ_key_req = HTTP.get(occ_url)
-  return GBIFRecord(JSON.parse(String(occ_key_req.body)))
+  result = JSON.parse(String(occ_key_req.body))
+  return GBIFRecord(result)
 end
 
 """
@@ -23,22 +24,16 @@ return the latest recorded occurrences.
 """
 function occurrences(query::Pair...)
 	# TODO check_records_parameters!(query)
-	@info query
 	occ_s_url = gbifurl * "occurrence/search"
-	occ_s_req = HTTP.get(occ_s_url; query=query)
-	@info "req made"
+	occ_s_req = length(query) > 0 ? HTTP.get(occ_s_url; query=query) : HTTP.get(occ_s_url)
 	if occ_s_req.status == 200
-		@info "ok req"
 		body = JSON.parse(String(occ_s_req.body))
-		@info "body done"
-		occ = map(GBIFRecord, body["results"])
-		@info "record mapped"
+		occ = GBIFRecord.(body["results"])
 		maxocc = body["count"] > 200000 ? 200000 : body["count"]
-		@info "preparing records"
 		return GBIFRecords(
 			body["offset"],
 			maxocc,
-			nothing,
+			vcat(query...),
 			occ,
 			ones(Bool, length(occ))
 		)

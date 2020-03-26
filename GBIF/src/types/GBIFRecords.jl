@@ -9,17 +9,13 @@ The `taxon` field is a `GBIFTaxon` object, and can therefore be manipulated as
 any other `GBIFTaxon`.
 """
 struct GBIFRecord
-    key::Integer
-    datasetKey::String
-    dataset::Union{Missing, String}
+    key::Int64
+    datasetKey::AbstractString
+    dataset::Union{Missing, AbstractString}
     publishingOrgKey::Union{Missing, AbstractString}
     publishingCountry::Union{Missing, AbstractString}
     institutionCode::Union{Missing, AbstractString}
     protocol::Union{Missing, AbstractString}
-    crawled::Union{Missing, DateTime}
-    parsed::Union{Missing, DateTime}
-    modified::Union{Missing, DateTime}
-    interpreted::Union{Missing, DateTime}
     countryCode::Union{Missing, AbstractString}
     country::Union{Missing, AbstractString}
     basisOfRecord::Symbol
@@ -32,7 +28,7 @@ struct GBIFRecord
     date::Union{Missing, DateTime}
     issues::Vector{Symbol}
     taxonKey::Union{Missing, Integer}
-    rank::Union{Missing, String}
+    rank::Union{Missing, AbstractString}
     taxon::GBIFTaxon
     generic::Union{Missing, AbstractString}
     epithet::Union{Missing, AbstractString}
@@ -90,10 +86,6 @@ function GBIFRecord(o::Dict{String, Any})
         false
     )
 
-    for k in sort(collect(keys(o)))
-        @info k
-    end
-
     formatted_record =  GBIFRecord(
         o["key"],
         o["datasetKey"],
@@ -102,13 +94,9 @@ function GBIFRecord(o::Dict{String, Any})
         get(o, "publishingCountry", missing),
         get(o, "institutionCode", missing),
         get(o, "protocol", missing),
-        format_date(o, "lastCrawled"),
-        format_date(o, "lastParsed"),
-        format_date(o, "modified"),
-        format_date(o, "lastInterpreted"),
         get(o, "countryCode", missing),
         get(o, "country", missing),
-        Symbol(o["basisOfRecord"]),
+        Symbol(get(o, "basisOfRecord", "UNKNOWN")),
         get(o, "individualCount", missing),
         get(o, "decimalLatitude", missing),
         get(o, "decimalLongitude", missing),
@@ -127,7 +115,6 @@ function GBIFRecord(o::Dict{String, Any})
         get(o, "recordedBy", missing),
         get(o, "license", missing)
     )
-    @info "formatted"
     return formatted_record
 end
 
@@ -145,7 +132,7 @@ This type is mutable and fully iterable.
 mutable struct GBIFRecords
     offset::Integer
     count::Integer
-    query::Union{Vector{Pair},Nothing}
+    query::Union{Vector{Pair}, Nothing}
     occurrences::Vector{GBIFRecord}
     show::Vector{Bool}
 end

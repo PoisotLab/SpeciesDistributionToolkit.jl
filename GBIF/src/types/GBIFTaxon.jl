@@ -31,8 +31,8 @@ of the taxon/level to its unique key in the GBIF database.
 `synonym` - a `Boolean` indicating whether the taxon is a synonym
 """
 struct GBIFTaxon
-   name::String
-   scientific::String
+   name::AbstractString
+   scientific::AbstractString
    status::Symbol
    match::Symbol
    kingdom::Union{Missing, Pair{String, Int64}}

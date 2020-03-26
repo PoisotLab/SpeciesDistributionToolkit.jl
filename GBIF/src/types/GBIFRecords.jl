@@ -30,7 +30,7 @@ struct GBIFRecord
     uncertainty::Union{Missing, AbstractFloat}
     geodetic::Union{Missing, AbstractString}
     date::Union{Missing, DateTime}
-    issues::Array{Symbol,1}
+    issues::Vector{Symbol}
     taxonKey::Union{Missing, Integer}
     rank::Union{Missing, String}
     taxon::GBIFTaxon
@@ -50,7 +50,7 @@ function format_date(o, d)
     if t === nothing || ismissing(t)
         return missing
     else
-        DateTime(t[1:19])
+        return DateTime(t[1:19])
     end
 end
 
@@ -90,39 +90,45 @@ function GBIFRecord(o::Dict{String, Any})
         false
     )
 
-    return GBIFRecord(
-    o["key"],
-    o["datasetKey"],
-    get(o, "datasetName", missing),
-    get(o, "publishingOrgKey", missing),
-    get(o, "publishingCountry", missing),
-    get(o, "institutionCode", missing),
-    get(o, "protocol", missing),
-    format_date(o, "lastCrawled"),
-    format_date(o, "lastParsed"),
-    format_date(o, "modified"),
-    format_date(o, "lastInterpreted"),
-    get(o, "countryCode", missing),
-    get(o, "country", missing),
-    Symbol(o["basisOfRecord"]),
-    get(o, "individualCount", missing),
-    get(o, "decimalLatitude", missing),
-    get(o, "decimalLongitude", missing),
-    get(o, "precision", missing),
-    get(o, "coordinateUncertaintyInMeters", missing),
-    get(o, "geodeticDatum", missing),
-    format_date(o, "eventDate"),
-    Symbol.(o["issues"]),
-    get(o, "taxonKey", missing),
-    get(o, "taxonRank", missing),
-    this_record_taxon,
-    get(o, "genericName", missing),
-    get(o, "specificEpithet", missing),
-    get(o, "vernacularName", missing),
-    get(o, "scientificName", missing),
-    get(o, "recordedBy", missing),
-    get(o, "license", missing)
+    for k in sort(collect(keys(o)))
+        @info k
+    end
+
+    formatted_record =  GBIFRecord(
+        o["key"],
+        o["datasetKey"],
+        get(o, "datasetName", missing),
+        get(o, "publishingOrgKey", missing),
+        get(o, "publishingCountry", missing),
+        get(o, "institutionCode", missing),
+        get(o, "protocol", missing),
+        format_date(o, "lastCrawled"),
+        format_date(o, "lastParsed"),
+        format_date(o, "modified"),
+        format_date(o, "lastInterpreted"),
+        get(o, "countryCode", missing),
+        get(o, "country", missing),
+        Symbol(o["basisOfRecord"]),
+        get(o, "individualCount", missing),
+        get(o, "decimalLatitude", missing),
+        get(o, "decimalLongitude", missing),
+        get(o, "precision", missing),
+        get(o, "coordinateUncertaintyInMeters", missing),
+        get(o, "geodeticDatum", missing),
+        format_date(o, "eventDate"),
+        Symbol.(o["issues"]),
+        get(o, "taxonKey", missing),
+        get(o, "taxonRank", missing),
+        this_record_taxon,
+        get(o, "genericName", missing),
+        get(o, "specificEpithet", missing),
+        get(o, "vernacularName", missing),
+        get(o, "scientificName", missing),
+        get(o, "recordedBy", missing),
+        get(o, "license", missing)
     )
+    @info "formatted"
+    return formatted_record
 end
 
 """

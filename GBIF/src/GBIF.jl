@@ -111,6 +111,7 @@ export taxon
 include("occurrence.jl")
 include("paging.jl")
 export occurrence, occurrences
+export occurrences!
 
 include("filter.jl")
 export have_both_coordinates, have_neither_zero_coordinates,

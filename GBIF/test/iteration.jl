@@ -11,7 +11,7 @@ module TestIteration
   # Example that has some issues
   plotor = taxon("Procyon lotor")
   plotor_occ = occurrences(plotor)
-  next!(plotor_occ)
+  occurrences!(plotor_occ)
   for o in plotor_occ
       @test typeof(o) <: GBIFRecord
       @test o.taxon.species.second == plotor.species.second

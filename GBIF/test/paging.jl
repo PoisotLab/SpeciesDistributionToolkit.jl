@@ -5,16 +5,10 @@ module TestPaging
 
   # No query
   set = occurrences()
-  next!(set)
+  occurrences(set)
   @test length(set) == 40
   set.query["limit"] = 40
-  next!(set)
+  occurrences(set)
   @test length(set) == 80
-
-  # Queries
-  lam = occurrences("hasCoordinate" => true, "q" => "Lamellodiscus")
-  exp_count = lam.count
-  complete!(lam)
-  @test length(lam) == exp_count
 
 end

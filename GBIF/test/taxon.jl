@@ -15,11 +15,11 @@ module TestSpecies
     @test iocc.taxon.species == Pair("Iris versicolor", 5298019)
   end
 
-  iver_occ_spain = occurrences(iver, "country" => "US")
+  iver_occ_spain = occurrences(iver, "country" => "ES")
   @test typeof(iver_occ_spain) <: GBIFRecords
-  for iocc in iver_occ
+  for iocc in iver_occ_spain
     @test iocc.taxon.species == Pair("Iris versicolor", 5298019)
-    @info iocc.country
+    @test iocc.country == "Spain"
   end
 
 end

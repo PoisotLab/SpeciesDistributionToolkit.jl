@@ -1,3 +1,23 @@
+function pairs_to_querystring(query::Pair...)
+	if length(query) == 0
+		return ""
+	else
+		# We start from an empty query string
+		querystring = ""
+		for (i, pair) in enumerate(query)
+			# We build it pairwise for every
+			delim = i == 1 ? "" : "&" # We use & to delimitate the queries
+			# Let's be extra cautious and encode the spaces correctly
+			root = replace(string(pair.first), " " => "%20")
+			stem = replace(string(pair.second), " " => "%20")
+			# Then we can graft the pair string onto the query string
+			pairstring = "$(delim)$(root)=$(stem)"
+			querystring *= pairstring
+		end
+		return querystring
+	end
+end
+
 """
 **Return an interpreted occurrence given its key**
 
@@ -25,7 +45,7 @@ return the latest recorded occurrences.
 function occurrences(query::Pair...)
 	# TODO check_records_parameters!(query)
 	occ_s_url = gbifurl * "occurrence/search"
-	occ_s_req = length(query) > 0 ? HTTP.get(occ_s_url; query=query) : HTTP.get(occ_s_url)
+	occ_s_req = HTTP.get(occ_s_url; query=pairs_to_querystring(query...))
 	if occ_s_req.status == 200
 		body = JSON.parse(String(occ_s_req.body))
 		occ = GBIFRecord.(body["results"])
@@ -42,7 +62,6 @@ function occurrences(query::Pair...)
 	end
 end
 
-
 """
 **Retrieve latest occurrences for a taxon based on a query**
 
@@ -55,8 +74,7 @@ default page size GBIF uses). Future occurrences can be queried with `next!` or
 """
 function occurrences(t::GBIFTaxon, query::Pair...)
 	levels = [:kingdom, :phylum, :class, :order, :family, :genus, :species]
-	filter!(l -> getfield(t, l) !== nothing, levels)
-	level = levels[end]
+	level = levels[findlast(l -> getfield(t, l) !== nothing, levels)]
 	taxon_query = String(level)*"Key" => getfield(t, level).second
 	return occurrences(taxon_query, query...)
 end

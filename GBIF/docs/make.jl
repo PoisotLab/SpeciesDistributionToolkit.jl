@@ -3,7 +3,7 @@ push!(LOAD_PATH, "../src/")
 using Documenter, GBIF
 
 makedocs(
-    sitename = "GBIF wrapper in Julia",
+    sitename = "GBIF occurrences API wrapper in Julia",
     authors = "Timothée Poisot",
     modules = [GBIF],
     pages = [
@@ -17,5 +17,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/EcoJulia/GBIF.jl.git"
+    repo = "github.com/EcoJulia/GBIF.jl.git",
+    psuh_preview = true
 )

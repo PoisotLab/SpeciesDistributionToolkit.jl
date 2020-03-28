@@ -47,13 +47,12 @@ end
 ### Query parameters
 
 ```@docs
-occurrences(q::Dict)
-occurrences(t::GBIFTaxon, q::Dict)
+occurrences(query::Pair...)
+occurrences(t::GBIFTaxon, query::Pair...)
 ```
 
 ### Batch-download of occurrences
 
 ```@docs
-next!
-complete!
+occurrences!
 ```

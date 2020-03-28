@@ -14,7 +14,11 @@ end
 This filter will only retain occurrences that are *not* at the (0,0) coordinate.
 """
 function have_neither_zero_coordinates(o::GBIFRecord)
-  !((o.latitude==0.0)&(o.longitude==0.0))
+  if have_both_coordinates(o)
+    return !((o.latitude==0.0)&(o.longitude==0.0))
+  else
+    return false
+  end
 end
 
 """
@@ -24,7 +28,11 @@ This filter will only retain occurrences that have *at most* one coordinate
 being exactly 0.0.
 """
 function have_no_zero_coordinates(o::GBIFRecord)
-  !((o.latitude==0.0)|(o.longitude==0.0))
+  if have_both_coordinates(o)
+    return !((o.latitude==0.0)|(o.longitude==0.0))
+  else
+    return false
+  end
 end
 
 """
@@ -92,39 +100,6 @@ end
 **Make records broadcastable**
 """
 Base.broadcastable(x::GBIFRecords) = Ref(x)
-
-"""
-**Cleans a search output**
-
-This function is deprecated and will be removed in a later release, use
-`filter!` instead.
-"""
-function qualitycontrol!(o::GBIFRecords; filters::Array{T,1}=[have_no_issues], verbose::Bool=true) where {T<:Function}
-  @warn "The qualitycontrol! function is deprecated and will be removed in a future release -- use filter! instead."
-  keep = ones(Bool, length(o.occurrences))
-  if verbose
-    @info "Starting quality control with $(length(o.occurrences)) records"
-  end
-  for f in filters
-    keep_f = map(f, o.occurrences)
-    keep = keep .* keep_f
-    if verbose
-      @info "$(count(keep)) records left after $(f)"
-    end
-  end
-  o.show = keep
-end
-
-"""
-**Show all occurrences**
-
-This function reverses the action of `filter!`. It will unmask all
-records that have been removed under the current filters.
-"""
-function showall!(o::GBIFRecords)
-  @warn "The showall! function is deprecated and will be removed in a future release -- use allrecords! instead."
-  allrecords!(o)
-end
 
 """
 **Show all occurrences**

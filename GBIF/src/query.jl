@@ -14,7 +14,7 @@ results when they are returned.
 function check_records_parameters!(q::Dict)
 
   # List of fields from GBIF
-  allowed_fields = "q", "basisOfRecord", "catalogNumber", "collectionCode",
+  allowed_fields = ["q", "basisOfRecord", "catalogNumber", "collectionCode",
     "continent", "country", "datasetKey", "decimalLatitude", "decimalLongitude",
     "depth", "elevation", "eventDate", "geometry", "hasCoordinate",
     "hasGeospatialIssue", "institutionCode", "issue", "lastInterpreted",
@@ -23,7 +23,7 @@ function check_records_parameters!(q::Dict)
     "scientificName", "locality", "stateProvince", "waterBody", "taxonKey",
     "kingdomKey", "phylumKey", "classKey", "orderKey", "familyKey", "genusKey",
     "subGenusKey", "speciesKey", "year", "establishmentMeans", "repatriated",
-    "typeStatus", "facet", "facetMincount", "facetMultiselect", "limit", "offset"
+    "typeStatus", "facet", "facetMincount", "facetMultiselect", "limit", "offset"]
 
   for (k, v) in q
     if !(k ∈ allowed_fields)

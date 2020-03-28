@@ -84,6 +84,15 @@ const gbifenums = Dict(
   ]
  )
 
+#=
+HACK this is required because some GBIF strings fail to parse, and I do not know
+why.
+=#
+import Base: convert
+function convert(::Type{AbstractString}, t::T) where {T <: Nothing}
+  return "<nothing>"
+end
+
 # package code goes here
 include("query.jl")
 
@@ -100,10 +109,9 @@ include("taxon.jl")
 export taxon
 
 include("occurrence.jl")
-export occurrence, occurrences
-
 include("paging.jl")
-export next!, complete!
+export occurrence, occurrences
+export occurrences!
 
 include("filter.jl")
 export have_both_coordinates, have_neither_zero_coordinates,

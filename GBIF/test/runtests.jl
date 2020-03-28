@@ -3,24 +3,24 @@ using Test
 
 global anyerrors = false
 
-tests = Dict{String,String}(
+tests = [
   "single occurrence functions" => "occurrence.jl",
   "multiple occurrences" => "occurrences.jl",
+  "species retrieval" => "taxon.jl",
   "paging" => "paging.jl",
   "iteration" => "iteration.jl",
   "methods" => "methods.jl",
-  "filtering" => "filter.jl",
-  "species retrieval" => "taxon.jl"
-)
+  "filtering" => "filter.jl"
+]
 
-for (name,test) in tests
+for test in tests
   try
-    include(test)
-    println("\033[1m\033[32m✓\033[0m\t$(name)")
+    include(test.second)
+    println("\033[1m\033[32m✓\033[0m\t$(test.first)")
   catch e
     global anyerrors = true
-    println("\033[1m\033[31m×\033[0m\t$(name)")
-    println("\033[1m\033[38m→\033[0m\ttest/$(test)")
+    println("\033[1m\033[31m×\033[0m\t$(test.first)")
+    println("\033[1m\033[38m→\033[0m\ttest/$(test.second)")
     showerror(stdout, e, backtrace())
     println()
     break

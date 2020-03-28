@@ -5,20 +5,17 @@ module TestPaging
 
   # No query
   set = occurrences()
-  next!(set)
+  occurrences!(set)
   @test length(set) == 40
-  set.query["limit"] = 40
-  next!(set)
+
+  # No query, different limit
+  set = occurrences("limit" => 40)
+  occurrences!(set)
   @test length(set) == 80
 
-  # Queries
-  qpars = Dict{String,Any}(
-    "hasCoordinate" => true,
-    "q" => "Lamellodiscus"
-  )
-  lam = occurrences(qpars)
-  exp_count = lam.count
-  complete!(lam)
-  @test length(lam) == exp_count
+  # Query and different limit
+  setQ = occurrences(taxon("Iris versicolor", rank=:SPECIES), "limit" => 10)
+  occurrences!(setQ)
+  @test length(setQ) == 20
 
 end

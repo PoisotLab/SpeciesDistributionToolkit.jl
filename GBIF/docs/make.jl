@@ -18,5 +18,5 @@ makedocs(
 
 deploydocs(
     repo = "github.com/EcoJulia/GBIF.jl.git",
-    psuh_preview = true
+    push_preview = true
 )

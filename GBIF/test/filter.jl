@@ -27,7 +27,6 @@ module TestQAQC
 
   # Multiple filters at once
   allrecords!(set)
-  #filter!.([have_ok_coordinates, have_neither_zero_coordinates, have_a_date], set)
   filter!.([have_ok_coordinates, have_a_date], set)
   allrecords!(set)
   filter!.([have_neither_zero_coordinates, have_a_date], set)

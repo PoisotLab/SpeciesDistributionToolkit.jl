@@ -43,7 +43,7 @@ parametes must be given as pairs, and are optional. Omitting the query will
 return the latest recorded occurrences.
 """
 function occurrences(query::Pair...)
-	# TODO check_records_parameters!(query)
+	validate_occurrence_query.(query)
 	occ_s_url = gbifurl * "occurrence/search"
 	occ_s_req = HTTP.get(occ_s_url; query=pairs_to_querystring(query...))
 	if occ_s_req.status == 200

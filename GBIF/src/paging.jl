@@ -20,7 +20,7 @@ function occurrences!(o::GBIFRecords)
     limit_index = findfirst((p) -> string(p.first) == "limit", o.query)
     limit = isnothing(limit_index) ? 20 : o.query[limit_index].second
     if (offset + limit) > o.count
-      deletat!(o.query, limit_index)
+      deleteat!(o.query, limit_index)
       push!(o.query, "limit" => o.count - offset)
     end
     get_next = GBIF.occurrences("offset" => offset, o.query...)

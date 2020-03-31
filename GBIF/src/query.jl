@@ -11,7 +11,7 @@ incorrect values are dropped too.
 This feels like the most conservative option -- the user can always filter the
 results when they are returned.
 """
-function check_records_parameters!(q::Dict)
+function validate_occurrence_query(query::Pair)
 
   # List of fields from GBIF
   allowed_fields = ["q", "basisOfRecord", "catalogNumber", "collectionCode",
@@ -25,18 +25,12 @@ function check_records_parameters!(q::Dict)
     "subGenusKey", "speciesKey", "year", "establishmentMeans", "repatriated",
     "typeStatus", "facet", "facetMincount", "facetMultiselect", "limit", "offset"]
 
-  for (k, v) in q
-    if !(k ∈ allowed_fields)
-      @warn "$(k) is not a supported field -- will be dropped from the queryset"
-      delete!(q, k)
-    end
-  end
+  @assert query.first ∈ allowed_fields
 
   # Country must be a two-letters country code
-  if "country" ∈ keys(q)
-    if length(q["country"]) != 2
-      @warn "$(q["country"]) is not a two letter country code -- will be dropped from the queryset"
-      delete!(q, "country")
+  if query.first == "country"
+    if length(query.second) != 2
+      @error "$(query.second) is not a two letter country code"
     end
   end
 
@@ -44,14 +38,8 @@ function check_records_parameters!(q::Dict)
   # TODO lat -90/90 lon -180/180, can be "min,max"
 
   # ENUMs
-  for (k, v) in q
-    if k ∈ keys(gbifenums)
-      okvals = filter(x -> x ∈ gbifenums[k], v)
-      if length(okvals) != length(v)
-        @warn "Some values in $(k) were invalid -- will be dropped from the queryset"
-      end
-      q[k] = okvals
-    end
+  if query.first ∈ keys(gbifenums)
+    @assert query.second ∈ gbifenums[query.first]
   end
 
 end

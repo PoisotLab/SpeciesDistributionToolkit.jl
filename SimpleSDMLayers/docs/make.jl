@@ -21,5 +21,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/EcoJulia/SimpleSDMLayers.jl.git"
+    repo = "github.com/EcoJulia/SimpleSDMLayers.jl.git",
+    push_preview = true
 )

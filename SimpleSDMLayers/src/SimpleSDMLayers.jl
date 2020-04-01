@@ -27,6 +27,7 @@ export coarsen
 
 include(joinpath("recipes", "recipes.jl"))
 
+using Requires
 function __init__()
     @require GBIF="ee291a33-5a6c-5552-a3c8-0f29a1181037" begin
         @info "GBIF integration loaded"

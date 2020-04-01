@@ -11,8 +11,6 @@ Extracts the value of a layer at a given position for a `GBIFRecord`. If the
 `GBIFRecord` has no latitude or longitude, this will return `NaN`.
 """
 function Base.getindex(p::T, occurrence::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
-   @info occurrence.latitude
-   @info occurrence.longitude
    ismissing(occurrence.latitude) && return NaN
    ismissing(occurrence.longitude) && return NaN
    return p[occurrence.longitude, occurrence.latitude]

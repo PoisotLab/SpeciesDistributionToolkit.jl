@@ -22,7 +22,6 @@ for oc in o
     numboc[oc] += 1
 end
 
-@test sum(numboc) > 1
 @test typeof(convert(Matrix, numboc)) <: Matrix{Integer}
 
 end

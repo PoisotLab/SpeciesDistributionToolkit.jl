@@ -5,8 +5,6 @@ using HTTP
 using RecipesBase
 using ZipFile
 
-greet() = print("SimpleSDMLayers is currently UNSTABLE")
-
 include(joinpath("lib", "types.jl"))
 export SimpleSDMLayer, SimpleSDMResponse, SimpleSDMPredictor
 
@@ -28,5 +26,12 @@ include(joinpath("operations", "coarsen.jl"))
 export coarsen
 
 include(joinpath("recipes", "recipes.jl"))
+
+function __init__()
+    @require GBIF="ee291a33-5a6c-5552-a3c8-0f29a1181037" begin
+        @info "GBIF integration loaded"
+    end
+    include(joinpath("lib", "gbif.jl"))
+end
 
 end # module

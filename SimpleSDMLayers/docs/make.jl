@@ -15,7 +15,8 @@ makedocs(
             "Plotting" => "man/plotting.md"
         ],
         "Examples" => [
-            "Temperature data" => "examples/temperature.md"
+            "Temperature data" => "examples/temperature.md",
+            "GBIF integration" => "examples/gbif.md"
         ]
     ]
 )

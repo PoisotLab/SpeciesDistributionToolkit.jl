@@ -9,7 +9,8 @@ tests = Dict{String,String}(
                             "overloads" => "overloads.jl",
                             "worldclim" => "worldclim.jl",
                             "coarsen" => "coarsen.jl",
-                            "plotting" => "plots.jl"
+                            "plotting" => "plots.jl",
+                            "GBIF" => "gbif.jl"
                            )
 
 for (name,test) in tests

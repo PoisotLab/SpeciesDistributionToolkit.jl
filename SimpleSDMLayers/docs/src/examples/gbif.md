@@ -1,8 +1,11 @@
 # Working with GBIF data
 
 In this example, we will see how we can make the packages `SimpleSDMLayers` and
-`GBIF` interact. We will specifically plot the relationship between temperature
-and precipitation for a few occurrences of the raccoon *Procyon lotor*.
+[the `GBIF.jl` package][gbif] interact. We will specifically plot the
+relationship between temperature and precipitation for a few occurrences of the
+raccoon *Procyon lotor*.
+
+[gbif]: https://ecojulia.github.io/GBIF.jl/dev/
 
 ```@example temp
 using SimpleSDMLayers
@@ -17,6 +20,8 @@ We can get some occurrences for the taxon of interest:
 raccoon = GBIF.taxon("Procyon lotor")
 raccoon_occ = occurrences(raccoon)
 occurrences!(raccoon_occ)
+occurrences!(raccoon_occ)
+filter!(GBIF.have_ok_coordinates, raccoon_occ)
 ```
 
 We can then extract the temperature for the first occurrence:

@@ -14,6 +14,11 @@ temperature = worldclim(1)
 precipitation = worldclim(12)
 ```
 
+```@example temp
+maximum(temperature)
+minimum(temperature)
+```
+
 We can get some occurrences for the taxon of interest:
 
 ```@example temp
@@ -22,10 +27,22 @@ kf_occurrences = occurrences(kingfisher)
 occurrences!(kf_occurrences)
 occurrences!(kf_occurrences)
 filter!(GBIF.have_ok_coordinates, kf_occurrences)
+@info kf_occurrences
 ```
 
 We can then extract the temperature for the first occurrence:
 
 ```@example temp
 temperature[kf_occurrences[1]]
+```
+
+
+```@example temp
+using Plots
+using StatsPlots
+
+temp = [temperature[occ] for occ in kf_occurrences]
+prec = [precipitation[occ] for occ in kf_occurrences]
+
+scatter(temperature, precipitation)
 ```

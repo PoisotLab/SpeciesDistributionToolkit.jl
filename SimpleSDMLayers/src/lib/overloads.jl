@@ -27,6 +27,15 @@ function Base.convert(::Type{SimpleSDMPredictor}, p::T) where {T <: SimpleSDMRes
 end
 
 """
+    Base.convert(::Type{Matrix}, p::T) where {T <: SimpleSDMLayer}
+
+Returns the grid as an array.
+"""
+function Base.convert(::Type{Matrix}, p::T) where {T <: SimpleSDMLayer}
+   return copy(p.grid)
+end
+
+"""
     Base.eltype(p::T) where {T <: SimpleSDMLayer}
 
 Returns the type of the values stored in the grid.

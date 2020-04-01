@@ -21,8 +21,8 @@ numboc = SimpleSDMResponse(zeros(Int64, (20, 20)))
 for oc in o
     numboc[oc] += 1
 end
+
 @test sum(numboc) > 1
-@test mean(numboc) > 0.0
-@info convert(Matrix, numboc)
+@test typeof(convert(Matrix, numboc)) <: Matrix{Integer}
 
 end

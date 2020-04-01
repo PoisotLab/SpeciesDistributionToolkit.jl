@@ -5,8 +5,8 @@ In this example, we will see how we can make the packages `SimpleSDMLayers` and
 and precipitation for a few occurrences of the raccoon *Procyon lotor*.
 
 ```@example temp
-using GBIF
 using SimpleSDMLayers
+using GBIF
 temperature = worldclim(1)
 precipitation = worldclim(12)
 ```
@@ -19,8 +19,9 @@ raccoon_occ = occurrences(raccoon)
 occurrences!(raccoon_occ)
 ```
 
-We can extract the temperature for the first occurrence:
+We can then extract the temperature for the first occurrence:
 
 ```@example temp
-temperature[raccoon_occ[1]]
+first_occurrence = raccoon_occ[1]
+temperature[first_occurrence]
 ```

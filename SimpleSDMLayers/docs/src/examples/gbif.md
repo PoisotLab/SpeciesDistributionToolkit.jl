@@ -14,8 +14,9 @@ precipitation = worldclim(12)
 We can get some occurrences for the taxon of interest:
 
 ```@example temp
-raccoon = GBIFTaxon("Procyon lotor")
+raccoon = GBIF.taxon("Procyon lotor")
 raccoon_occ = occurrences(raccoon)
+occurrences!(raccoon_occ)
 ```
 
 We can extract the temperature for the first occurrence:

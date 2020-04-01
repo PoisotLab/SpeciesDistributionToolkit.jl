@@ -5,8 +5,8 @@ In this example, we will see how we can make the packages `SimpleSDMLayers` and
 and precipitation for a few occurrences of the raccoon *Procyon lotor*.
 
 ```@example temp
-using SimpleSDMLayers
 using GBIF
+using SimpleSDMLayers
 temperature = worldclim(1)
 precipitation = worldclim(12)
 ```

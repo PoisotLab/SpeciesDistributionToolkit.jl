@@ -1,6 +1,9 @@
 # WARNING this file is only loaded if GBIF.jl is also active
 # This all happens thanks to the Requires.jl package
 
+import Base: getindex
+import Base: setindex!
+
 """
     Base.getindex(p::T, occurrence::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
 

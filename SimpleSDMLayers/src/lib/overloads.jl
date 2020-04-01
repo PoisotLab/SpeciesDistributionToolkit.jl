@@ -2,6 +2,7 @@ import Base: size
 import Base: stride
 import Base: eachindex
 import Base: getindex
+import Base: setindex!
 import Base: similar
 import Base: copy
 import Base: eltype

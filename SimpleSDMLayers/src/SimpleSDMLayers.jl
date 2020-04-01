@@ -31,8 +31,8 @@ using Requires
 function __init__()
     @require GBIF="ee291a33-5a6c-5552-a3c8-0f29a1181037" begin
         @info "GBIF integration loaded"
+        include(joinpath(dirname(pathof(GBIF)), "src", "lib", "gbif.jl"))
     end
-    include(joinpath("lib", "gbif.jl"))
 end
 
 end # module

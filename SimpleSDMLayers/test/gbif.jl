@@ -4,24 +4,25 @@ using GBIF
 using Test
 
 temperature = worldclim(1)
-o = GBIF.occurrences()
+
+kingfisher = GBIF.taxon("Megaceryle alcyon", strict=true)
+
+o = GBIF.occurrences(kingfisher)
 filter!(GBIF.have_ok_coordinates, o)
 
 # Extract from a single record
 for oc in o
     @test typeof(temperature[oc]) <: Number
-    @info temperature[oc]
 end
 
 # Modify a value
 numboc = SimpleSDMResponse(zeros(Int64, (20, 20)))
 @info convert(Matrix, numboc)
 for oc in o
-    @info oc
-    @info numboc[oc]
     numboc[oc] += 1
-    @info numboc[oc]
-    @test numboc[oc] >= 1
 end
+@test sum(numboc) > 1
+@test mean(numboc) > 0.0
+@info convert(Matrix, numboc)
 
 end

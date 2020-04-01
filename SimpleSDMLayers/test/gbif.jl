@@ -14,11 +14,14 @@ for oc in o
 end
 
 # Modify a value
-numboc = SimpleSDMResponse(zeros(Int64, (20, 20)), -180., 180., -90., 90.)
+numboc = SimpleSDMResponse(zeros(Int64, (20, 20)))
+@info convert(Matrix, numboc)
 for oc in o
-    numboc[oc] += 1
-    @test numboc[oc] > 0
+    @info oc
     @info numboc[oc]
+    numboc[oc] += 1
+    @info numboc[oc]
+    @test numboc[oc] >= 1
 end
 
 end

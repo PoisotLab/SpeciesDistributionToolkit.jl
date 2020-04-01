@@ -179,12 +179,12 @@ function Base.getindex(p1::T1, p2::T2) where {T1 <: SimpleSDMLayer, T2 <: Simple
 end
 
 """
-     Base.setindex!(p::T, v, i...) where {T <: SimpleSDMResponse}
+     Base.setindex!(p::SimpleSDMResponse{T}, v::T, i...) where {T}
 
 Changes the value of a cell, or a range of cells, as indicated by their grid
 positions.
 """
-function Base.setindex!(p::T, v, i...) where {T <: SimpleSDMResponse}
+function Base.setindex!(p::SimpleSDMResponse{T}, v::T, i...) where {T}
    @assert typeof(v) <: eltype(p.grid)
    p.grid[i...] = v
 end
@@ -195,7 +195,7 @@ end
 Changes the values of the cell including the point at the requested latitude and
 longitude.
 """
-function Base.setindex!(p::T, v, lon::Float64, lat::Float64) where {T <: SimpleSDMResponse}
+function Base.setindex!(p::SimpleSDMResponse{T}, v::T, lon::Float64, lat::Float64) where {T}
    i = match_longitude(p, lon)
    j = match_latitude(p, lat)
    p[j,i] = v

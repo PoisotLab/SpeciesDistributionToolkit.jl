@@ -43,5 +43,5 @@ mutable struct SimpleSDMResponse{T} <: SimpleSDMLayer
 end
 
 function SimpleSDMResponse(grid::Matrix{T}) where {T}
-    return SimpleSDMPredictor(grid, -180., 180., -90., 90.)
+    return SimpleSDMResponse(grid, -180., 180., -90., 90.)
 end

@@ -45,4 +45,3 @@ function clip(p::T, r::GBIF.GBIFRecords)
 
    return p[left=lon_min, right=lon_max, bottom=lat_min, top=lat_max]
 end
-export clip

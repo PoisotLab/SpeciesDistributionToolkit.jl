@@ -27,6 +27,10 @@ export coarsen
 
 include(joinpath("recipes", "recipes.jl"))
 
+# HACK but this fixes the export of clip when GBIF or others are loaded
+clip(p::T) where {T <: SimpleSDMLayer} = nothing
+export clip
+
 function __init__()
     @require GBIF="ee291a33-5a6c-5552-a3c8-0f29a1181037" begin
         @info "GBIF integration loaded"

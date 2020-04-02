@@ -22,7 +22,7 @@ end
 
 @test typeof(S[left=0.2, right=0.6, bottom=0.5, top=1.0]) == typeof(S)
 @test S[left=0.2, right=0.6, bottom=0.5, top=1.0].top == 1.0
-@test S[left=0.2, right=0.6, bottom=0.5, top=1.0].bottom == 0.5
+@test S[left=0.2, right=0.6, bottom=0.5, top=1.0].bottom == 0.4
 @test S[left=0.2, right=0.6, bottom=0.5, top=1.0].right == 0.6
 @test S[left=0.2, right=0.6, bottom=0.5, top=1.0].left == 0.2
 

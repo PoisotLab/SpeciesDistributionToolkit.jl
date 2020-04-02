@@ -101,15 +101,23 @@ the result. This is essentially a way to rapidly crop a layer to a given subset
 of its extent. The `i` and `j` arguments are `UnitRange`s (of `Integer`).
 
 The layer returned by this function will have the same type as the layer passed
-as its argument, but this can be changed using `convert`.
+as its argument, but this can be changed using `convert`. Note that this function
+performs additional checks to ensure that the range is not empty, and to also
+ensure that it does not overflows from the size of the layer.
 """
 function Base.getindex(p::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: UnitRange}
+   i_min = isempty(i) ? max(i.start-1, 1) : i.start
+   i_max = isempty(i) ? max(i.stop+2, size(p, 1)) : i.stop
+   j_min = isempty(j) ? max(j.start-1, 1) : j.start
+   j_max = isempty(j) ? max(j.stop+2, size(p, 2)) : j.stop
+   i_fix = i_min:i_max
+   j_fix = j_min:j_max
    return T(
-            p.grid[i,j],
-            minimum(longitudes(p)[j])-stride(p)[1],
-            maximum(longitudes(p)[j])+stride(p)[1],
-            minimum(latitudes(p)[i])-stride(p)[2],
-            maximum(latitudes(p)[i])+stride(p)[2]
+            p.grid[i_fix,j_fix],
+            minimum(longitudes(p)[j_fix])-stride(p)[1],
+            maximum(longitudes(p)[j_fix])+stride(p)[1],
+            minimum(latitudes(p)[i_fix])-stride(p)[2],
+            maximum(latitudes(p)[i_fix])+stride(p)[2]
            )
 end
 
@@ -148,25 +156,6 @@ function Base.getindex(p::T, longitude::K, latitude::K) where {T <: SimpleSDMLay
 end
 
 """
-    Base.getindex(p::T, longitudes::Tuple{K,K}, latitudes::Tuple{K,K}) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-
-Extracts a series of positions in a layer, and returns a layer corresponding to
-the result. This is essentially a way to rapidly crop a layer to a given subset
-of its extent. The `longitudes` and `latitudes` arguments are tuples of floating
-point values, representing the bounding box of the layer to extract.
-
-The layer returned by this function will have the same type as the layer passed
-as its argument.
-"""
-function Base.getindex(p::T, longitudes::Tuple{K,K}, latitudes::Tuple{K,K}) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-   @warn "Cropping a $(T) with two tuples will be deprecated, please the left, right, bottom, and top arguments instead"
-   imin, imax = [match_longitude(p, l) for l in longitudes]
-   jmin, jmax = [match_latitude(p, l) for l in latitudes]
-   any(isnan.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
-   return p[jmin:jmax, imin:imax]
-end
-
-"""
     Base.getindex(p::T; left::K=nothing, right::K=nothing, top::K=nothing, bottom::K=nothing) where {T <: SimpleSDMLayer, K <: Union{Nothing,AbstractFloat}}
 
 Returns a subset of the argument layer, where the new limits are given by
@@ -190,8 +179,8 @@ Extract a layer based on a second layer. Note that the two layers must be
 size.
 """
 function Base.getindex(p1::T1, p2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
-   SimpleSDMLayers.are_compatible(l1, l2)
-   return p1[(p2.left, p2.right), (p2.bottom, p2.top)]
+   SimpleSDMLayers.are_compatible(p1, p2)
+   return p1[left=p2.left, right=p2.right, bottom=p2.bottom, top=p2.top]
 end
 
 """

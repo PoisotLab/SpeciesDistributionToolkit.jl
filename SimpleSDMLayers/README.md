@@ -6,6 +6,10 @@ bioclimatic data and the output of species distribution models.
 **Documentation** (released version): https://ecojulia.github.io/SimpleSDMLayers.jl/stable/   
 **Documentation** (development version): https://ecojulia.github.io/SimpleSDMLayers.jl/dev/
 
+![CI](https://github.com/EcoJulia/SimpleSDMLayers.jl/workflows/CI/badge.svg?branch=master)
+![Documentation](https://github.com/EcoJulia/SimpleSDMLayers.jl/workflows/Documentation/badge.svg?branch=master)
+
+
 ### Installation
 
 The currently released version of the package can be installed with:

@@ -1,12 +1,13 @@
 push!(LOAD_PATH, joinpath("..", "src"))
 
 using Documenter, SimpleSDMLayers
+using GBIF
 
 makedocs(
     sitename = "Simple SDM Layers",
     modules = [SimpleSDMLayers],
     pages = [
-        "Simple SDM Layers" => "index.md",
+        "Home" => "index.md",
         "Manual" => [
             "Types" => "man/types.md",
             "Overloads" => "man/overloads.md",
@@ -15,7 +16,8 @@ makedocs(
             "Plotting" => "man/plotting.md"
         ],
         "Examples" => [
-            "Temperature data" => "examples/temperature.md"
+            "Temperature data" => "examples/temperature.md",
+            "GBIF integration" => "examples/gbif.md"
         ]
     ]
 )

@@ -2,6 +2,7 @@ import Base: size
 import Base: stride
 import Base: eachindex
 import Base: getindex
+import Base: setindex!
 import Base: similar
 import Base: copy
 import Base: eltype
@@ -23,6 +24,15 @@ Returns a predictor with the same grid and bounding box as the response.
 """
 function Base.convert(::Type{SimpleSDMPredictor}, p::T) where {T <: SimpleSDMResponse}
    return copy(SimpleSDMPredictor(p.grid, p.left, p.right, p.bottom, p.top))
+end
+
+"""
+    Base.convert(::Type{Matrix}, p::T) where {T <: SimpleSDMLayer}
+
+Returns the grid as an array.
+"""
+function Base.convert(::Type{Matrix}, p::T) where {T <: SimpleSDMLayer}
+   return copy(p.grid)
 end
 
 """
@@ -91,15 +101,23 @@ the result. This is essentially a way to rapidly crop a layer to a given subset
 of its extent. The `i` and `j` arguments are `UnitRange`s (of `Integer`).
 
 The layer returned by this function will have the same type as the layer passed
-as its argument, but this can be changed using `convert`.
+as its argument, but this can be changed using `convert`. Note that this function
+performs additional checks to ensure that the range is not empty, and to also
+ensure that it does not overflows from the size of the layer.
 """
 function Base.getindex(p::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: UnitRange}
+   i_min = isempty(i) ? max(i.start-1, 1) : i.start
+   i_max = isempty(i) ? max(i.stop+2, size(p, 1)) : i.stop
+   j_min = isempty(j) ? max(j.start-1, 1) : j.start
+   j_max = isempty(j) ? max(j.stop+2, size(p, 2)) : j.stop
+   i_fix = i_min:i_max
+   j_fix = j_min:j_max
    return T(
-            p.grid[i,j],
-            minimum(longitudes(p)[j])-stride(p)[1],
-            maximum(longitudes(p)[j])+stride(p)[1],
-            minimum(latitudes(p)[i])-stride(p)[2],
-            maximum(latitudes(p)[i])+stride(p)[2]
+            p.grid[i_fix,j_fix],
+            minimum(longitudes(p)[j_fix])-stride(p)[1],
+            maximum(longitudes(p)[j_fix])+stride(p)[1],
+            minimum(latitudes(p)[i_fix])-stride(p)[2],
+            maximum(latitudes(p)[i_fix])+stride(p)[2]
            )
 end
 
@@ -138,23 +156,20 @@ function Base.getindex(p::T, longitude::K, latitude::K) where {T <: SimpleSDMLay
 end
 
 """
-    Base.getindex(p::T, longitudes::Tuple{K,K}, latitudes::Tuple{K,K}) where {T <: SimpleSDMLayer, K <: AbstractFloat}
+    Base.getindex(p::T; left::K=nothing, right::K=nothing, top::K=nothing, bottom::K=nothing) where {T <: SimpleSDMLayer, K <: Union{Nothing,AbstractFloat}}
 
-Extracts a series of positions in a layer, and returns a layer corresponding to
-the result. This is essentially a way to rapidly crop a layer to a given subset
-of its extent. The `longitudes` and `latitudes` arguments are tuples of floating
-point values, representing the bounding box of the layer to extract.
-
-The layer returned by this function will have the same type as the layer passed
-as its argument.
+Returns a subset of the argument layer, where the new limits are given by
+`left`, `right`, `top`, and `bottom`. Up to three of these can be omitted, and
+if so these limits will not be affected.
 """
-function Base.getindex(p::T, longitudes::Tuple{K,K}, latitudes::Tuple{K,K}) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-   imin, imax = [match_longitude(p, l) for l in longitudes]
-   jmin, jmax = [match_latitude(p, l) for l in latitudes]
+function Base.getindex(p::T; left::K=nothing, right::K=nothing, top::K=nothing, bottom::K=nothing) where {T <: SimpleSDMLayer, K <: Union{Nothing,AbstractFloat}}
+   imax = isnothing(right) ? p.right : match_longitude(p, right)
+   imin = isnothing(left) ? p.left : match_longitude(p, left)
+   jmax = isnothing(top) ? p.top : match_latitude(p, top)
+   jmin = isnothing(bottom) ? p.bottom : match_latitude(p, bottom)
    any(isnan.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
    return p[jmin:jmax, imin:imax]
 end
-
 
 """
     Base.getindex(p1::T1, p2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
@@ -164,17 +179,17 @@ Extract a layer based on a second layer. Note that the two layers must be
 size.
 """
 function Base.getindex(p1::T1, p2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
-   SimpleSDMLayers.are_compatible(l1, l2)
-   return p1[(p2.left, p2.right), (p2.bottom, p2.top)]
+   SimpleSDMLayers.are_compatible(p1, p2)
+   return p1[left=p2.left, right=p2.right, bottom=p2.bottom, top=p2.top]
 end
 
 """
-     Base.setindex!(p::T, v, i...) where {T <: SimpleSDMResponse}
+     Base.setindex!(p::SimpleSDMResponse{T}, v::T, i...) where {T}
 
 Changes the value of a cell, or a range of cells, as indicated by their grid
 positions.
 """
-function Base.setindex!(p::T, v, i...) where {T <: SimpleSDMResponse}
+function Base.setindex!(p::SimpleSDMResponse{T}, v::T, i...) where {T}
    @assert typeof(v) <: eltype(p.grid)
    p.grid[i...] = v
 end
@@ -185,7 +200,7 @@ end
 Changes the values of the cell including the point at the requested latitude and
 longitude.
 """
-function Base.setindex!(p::T, v, lon::Float64, lat::Float64) where {T <: SimpleSDMResponse}
+function Base.setindex!(p::SimpleSDMResponse{T}, v::T, lon::Float64, lat::Float64) where {T}
    i = match_longitude(p, lon)
    j = match_latitude(p, lat)
    p[j,i] = v

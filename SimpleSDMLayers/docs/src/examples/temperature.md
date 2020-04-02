@@ -32,7 +32,7 @@ coordinates of the bounding box as two tuples (for longitude and latitude) -- we
 can also make a quick heatmap to see what the region looks like:
 
 ```@example temp
-temperature_europe = temperature[(-11.0,31.1),(29.0,71.1)]
+temperature_europe = temperature[left=-11.0, right=31.1, bottom=29.0, top=71.1]
 heatmap(temperature_europe, c=:magma, aspectratio=1, frame=:box)
 ```
 

@@ -18,22 +18,30 @@ be modified by the analysis. Note that if you are in a bind, the values of the
 `grid` field are not immutable, but don't tell anyone we told you. The correct
 way of handling predictors you need to modify would be to use `convert` methods.
 """
-struct SimpleSDMPredictor{T,K <: AbstractFloat} <: SimpleSDMLayer
+struct SimpleSDMPredictor{T} <: SimpleSDMLayer
     grid::Matrix{T}
-    left::K
-    right::K
-    bottom::K
-    top::K
+    left::AbstractFloat
+    right::AbstractFloat
+    bottom::AbstractFloat
+    top::AbstractFloat
+end
+
+function SimpleSDMPredictor(grid::Matrix{T}) where {T}
+    return SimpleSDMPredictor(grid, -180., 180., -90., 90.)
 end
 
 """
 A response is a `SimpleSDMLayer` that is mutable, and is the usual type to store
 analysis outputs. You can transform a response into a predictor using `convert`.
 """
-mutable struct SimpleSDMResponse{T,K <: AbstractFloat} <: SimpleSDMLayer
+mutable struct SimpleSDMResponse{T} <: SimpleSDMLayer
     grid::Matrix{T}
-    left::K
-    right::K
-    bottom::K
-    top::K
+    left::AbstractFloat
+    right::AbstractFloat
+    bottom::AbstractFloat
+    top::AbstractFloat
+end
+
+function SimpleSDMResponse(grid::Matrix{T}) where {T}
+    return SimpleSDMResponse(grid, -180., 180., -90., 90.)
 end

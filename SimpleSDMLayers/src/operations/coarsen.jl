@@ -39,7 +39,7 @@ function coarsen(L::LT, f::FT, d::Tuple{IT,IT}; NaNremove::Bool=true) where {LT 
             old_j = ((j-1)*cy+1):(j*cy)
             V = vec(L.grid[old_i, old_j])
             # If there are NaN to remove, then we call filter!. NaN only make
-            # sense is the type of the elements of V is a floating point, so we
+            # sense if the type of the elements of V is a floating point, so we
             # need to do an additional check to only apply this whenever there
             # are floating point elements:
             !NaNremove || filter!(x -> typeof(x)<:AbstractFloat ? !isnan(x) : true, V)

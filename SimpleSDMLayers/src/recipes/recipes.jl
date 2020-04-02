@@ -23,7 +23,7 @@ test 2
       @assert eltype(l1) <: Number
       @assert eltype(l2) <: Number
       SimpleSDMLayers.are_compatible(l1, l2)
-      valid_i =filter(i -> !(isnan(l1[i])|isnan(l2[i])), eachindex(l1.grid))
+      valid_i = filter(i -> !(isnan(l1[i])|isnan(l2[i])), eachindex(l1.grid))
       l1.grid[valid_i], l2.grid[valid_i]
    end
 end

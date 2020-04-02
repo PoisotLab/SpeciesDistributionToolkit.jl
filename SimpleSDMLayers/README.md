@@ -43,7 +43,7 @@ if called with a single position.
 It is also possible to crop a layer based on a bounding box:
 
 ~~~ julia
-p[(left, right), (bottom, top)]
+p[left=left, right=right, bottom=bottom, top=top]
 ~~~
 
 If the layer is of the `SimpleSDMResponse` type, it is possible to write to it:

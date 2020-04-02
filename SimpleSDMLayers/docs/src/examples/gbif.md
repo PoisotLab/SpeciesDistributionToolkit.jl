@@ -20,8 +20,8 @@ We can get some occurrences for the taxon of interest:
 kingfisher = GBIF.taxon("Megaceryle alcyon", strict=true)
 kf_occurrences = occurrences(kingfisher)
 
-# We will get four extra rounds of occurrences, to have 100
-for i in 1:5
+# We will get some more occurrences
+for i in 1:9
   occurrences!(kf_occurrences)
 end
 
@@ -50,7 +50,7 @@ function will ad a 5% margin on every side. To get the values of a layer at
 every occurrence in a `GBIFRecord`, we simply pass the records as a position:
 
 ```@example temp
-histogram2d(temperature_clip, precipitation_clip, c=:Greys)
+histogram2d(temperature_clip, precipitation_clip, c=:viridis)
 scatter!(temperature_clip[kf_occurrences], precipitation_clip[kf_occurrences], lab="", c=:white, msc=:orange)
 ```
 

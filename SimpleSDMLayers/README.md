@@ -17,10 +17,10 @@ The currently released version of the package can be installed with:
 ] add SimpleSDMLayers
 ~~~
 
-The development version of the package can be installed with:
+The package is also designed to work with `GBIF`, so you may want to use the following line instead:
 
 ~~~ julia
-] add https://github.com/EcoJulia/SimpleSDMLayers.jl#master
+] add SimpleSDMLayers GBIF
 ~~~
 
 ### Type system

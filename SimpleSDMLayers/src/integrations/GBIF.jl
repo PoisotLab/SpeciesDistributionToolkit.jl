@@ -34,7 +34,7 @@ end
 Returns a clipped version (with a 5% margin) around all occurences in a
 GBIFRecords collection.
 """
-function clip(p::T, r::GBIF.GBIFRecords)
+function clip(p::T, r::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
    occ_latitudes = filter!(ismissing, [o.latitude for o in r])
    occ_longitudes = filter!(ismissing, [o.longitude for o in r])
 

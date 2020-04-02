@@ -17,10 +17,11 @@ end
 
 # Modify a value
 numboc = SimpleSDMResponse(zeros(Int64, (20, 20)))
-@info convert(Matrix, numboc)
 for oc in o
     numboc[oc] += 1
 end
+
+@info typeof(convert(Matrix, numboc))
 
 @test typeof(convert(Matrix, numboc)) <: Matrix{Integer}
 

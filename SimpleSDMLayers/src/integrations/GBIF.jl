@@ -3,7 +3,7 @@
 
 import Base: getindex
 import Base: setindex!
-import SimpleSDMLayers: clip
+import SimpleSDMLayers: clip, latitudes, longitudes
 
 """
     Base.getindex(p::T, occurrence::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
@@ -66,4 +66,22 @@ Returns the values of a layer at all occurrences in a `GBIFRecords` collection.
 """
 function Base.getindex(p::T, records::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
    return [p[records[i]] for i in 1:length(records)]
+end
+
+"""
+    SimpleSDMLayers.latitudes(records::GBIFRecords)
+
+Returns the non-missing latitudes.
+"""
+function SimpleSDMLayers.latitudes(records::GBIFRecords)
+   return filter(!ismissing, [r[i].latitude for i in 1:length(r)])
+end
+
+"""
+    SimpleSDMLayers.longitudes(records::GBIFRecords)
+
+Returns the non-missing longitudes.
+"""
+function SimpleSDMLayers.longitudes(records::GBIFRecords)
+   return filter(!ismissing, [r[i].longitude for i in 1:length(r)])
 end

@@ -49,8 +49,17 @@ on the following notation:
 temp = temperature_clip[kf_occurrences]
 prec = precipitation_clip[kf_occurrences]
 
-scatter(temp, prec)
+histogram2d(temperature_clip, precipitation_clip)
+scatter!(temp, prec, lab="")
 ```
 
 This will return a record of all data for all geo-localized occurrences in a
 `GBIFRecords` collection.
+
+We can also plot the records over space, using the overloads of the `latitudes`
+and `longitudes` functions:
+
+```@example temp
+contour(precipitation_clip, c=:YlGnBu, title="Precipitation", frame=:box, fill=true)
+scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences))
+```

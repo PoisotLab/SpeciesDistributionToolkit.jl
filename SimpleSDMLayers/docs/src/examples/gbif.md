@@ -1,11 +1,9 @@
 # Working with GBIF data
 
 In this example, we will see how we can make the packages `SimpleSDMLayers` and
-[the `GBIF.jl` package][gbif] interact. We will specifically plot the
-relationship between temperature and precipitation for a few occurrences of the
-kingfisher *Megaceryle alcyon*.
-
-[gbif]: https://ecojulia.github.io/GBIF.jl/dev/
+[the `GBIF.jl` package](https://ecojulia.github.io/GBIF.jl/dev/) interact. We
+will specifically plot the relationship between temperature and precipitation
+for a few occurrences of the kingfisher *Megaceryle alcyon*.
 
 ```@example temp
 using SimpleSDMLayers

@@ -15,4 +15,7 @@ eachindex
 getindex
 setindex!
 similar
+sum
+maximum
+minimum
 ```

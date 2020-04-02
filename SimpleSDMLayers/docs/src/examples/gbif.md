@@ -21,7 +21,7 @@ kingfisher = GBIF.taxon("Megaceryle alcyon", strict=true)
 kf_occurrences = occurrences(kingfisher)
 
 # We will get four extra rounds of occurrences, to have 100
-for i in 1:4
+for i in 1:5
   occurrences!(kf_occurrences)
 end
 
@@ -35,30 +35,28 @@ We can then extract the temperature for the first occurrence:
 temperature[kf_occurrences[1]]
 ```
 
-Because we will hardly need all of the surface in the `temperature` and
-`precipitation` objects, we can clip them by the `GBIFRecords` object:
+Of course, it would be unwieldy to do this for every occurrence in our dataset,
+and so we will see a way do it much faster. But first, we do not need the entire
+surface of the planet to perform our analysis, and so we will instead clip the
+layers:
 
 ```@example temp
 temperature_clip = clip(temperature, kf_occurrences)
 precipitation_clip = clip(precipitation, kf_occurrences)
 ```
 
-This will make the future queries faster. By default, the `clip` function will
-ad a 5% margin on every side. We can now loop through the occurrences and
-extract the data at every point, for example with `[temperature_clip[occ] for
-occ in kf_occurrences]`, but this is a little bit tedious. We will instead rely
-on the following notation:
+This will make the future queries a little faster. By default, the `clip`
+function will ad a 5% margin on every side. To get the values of a layer at
+every occurrence in a `GBIFRecord`, we simply pass the records as a position:
 
 ```@example temp
-temp = temperature_clip[kf_occurrences]
-prec = precipitation_clip[kf_occurrences]
-
-histogram2d(temperature_clip, precipitation_clip, c=:BuPu)
-scatter!(temp, prec, lab="", c=:white, msc=:orange)
+histogram2d(temperature_clip, precipitation_clip, c=:Greys)
+scatter!(temperature_clip[kf_occurrences], prlecipitation_clip[kf_occurrences], lab="", c=:white, msc=:orange)
 ```
 
-This will return a record of all data for all geo-localized occurrences in a
-`GBIFRecords` collection.
+This will return a record of all data for all geo-localized occurrences (*i.e.*
+neither the latitude nor the longitude is `missing`) in a `GBIFRecords`
+collection, as an array of the `eltype` of the layer.
 
 We can also plot the records over space, using the overloads of the `latitudes`
 and `longitudes` functions:
@@ -67,3 +65,7 @@ and `longitudes` functions:
 contour(precipitation_clip, c=:YlGnBu, title="Precipitation", frame=:box, fill=true)
 scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), lab="", c=:white, msc=:orange)
 ```
+
+These extensions of `SimpleSDMLayers` functions to work with the `GBIF` package
+are meant to greatly simplify the expression of more complex pipelines, notably
+for actual species distribution modeling.

@@ -159,12 +159,28 @@ The layer returned by this function will have the same type as the layer passed
 as its argument.
 """
 function Base.getindex(p::T, longitudes::Tuple{K,K}, latitudes::Tuple{K,K}) where {T <: SimpleSDMLayer, K <: AbstractFloat}
+   @warn "Cropping a $(T) with two tuples will be deprecated, please the left, right, bottom, and top arguments instead"
    imin, imax = [match_longitude(p, l) for l in longitudes]
    jmin, jmax = [match_latitude(p, l) for l in latitudes]
    any(isnan.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
    return p[jmin:jmax, imin:imax]
 end
 
+"""
+    Base.getindex(p::T; left::K=nothing, right::K=nothing, top::K=nothing, bottom::K=nothing) where {T <: SimpleSDMLayer, K <: Union{Nothing,AbstractFloat}}
+
+Returns a subset of the argument layer, where the new limits are given by
+`left`, `right`, `top`, and `bottom`. Up to three of these can be omitted, and
+if so these limits will not be affected.
+"""
+function Base.getindex(p::T; left::K=nothing, right::K=nothing, top::K=nothing, bottom::K=nothing) where {T <: SimpleSDMLayer, K <: Union{Nothing,AbstractFloat}}
+   imax = isnothing(right) ? p.right : match_longitude(p, right)
+   imin = isnothing(left) ? p.left : match_longitude(p, left)
+   jmax = isnothing(top) ? p.top : match_latitude(p, top)
+   jmin = isnothing(bottom) ? p.bottom : match_latitude(p, bottom)
+   any(isnan.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
+   return p[jmin:jmax, imin:imax]
+end
 
 """
     Base.getindex(p1::T1, p2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}

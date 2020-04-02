@@ -27,3 +27,21 @@ function Base.setindex!(p::SimpleSDMResponse{T}, v::T, occurrence::GBIF.GBIFReco
    ismissing(occurrence.longitude) && return nothing
    setindex!(p, v, occurrence.longitude, occurrence.latitude)
 end
+
+function clip(p::T, r::GBIF.GBIFRecords)
+   occ_latitudes = filter!(ismissing, [o.latitude for o in r])
+   occ_longitudes = filter!(ismissing, [o.longitude for o in r])
+
+   lat_min, lat_max = minimum(occ_latitudes), maximum(occ_latitudes)
+   lon_min, lon_max = minimum(occ_longitudes), maximum(occ_longitudes)
+
+   lat_Δ = lat_max - lat_min
+   lon_Δ = lon_max - lon_min
+
+   lat_max = min(p.top, (0.05*lat_Δ)+lat_max)
+   lat_min = max(p.bottom, (0.05*lat_Δ)-lat_min)
+   lon_max = min(p.right, (0.05*lon_Δ)+lon_max)
+   lon_min = max(p.left, (0.05*lon_Δ)-lon_min)
+
+   return p[left=lon_min, right=lon_max, bottom=lat_min, top=lat_max]
+end

@@ -36,13 +36,23 @@ We can then extract the temperature for the first occurrence:
 temperature[kf_occurrences[1]]
 ```
 
+Because we will hardly need all of the surface in the `temperature` and
+`precipitation` objects, we can clip them by the `GBIFRecords` object:
+
+```@example temp
+temperature_clip = clip(temperature, kf_occurrences)
+precipitation_clip = clip(precipitation, kf_occurrences)
+```
+
+This will make the future queries faster. By default, the `clip` function will
+ad a 5% margin on every side.
 
 ```@example temp
 using Plots
 using StatsPlots
 
-temp = [temperature[occ] for occ in kf_occurrences]
-prec = [precipitation[occ] for occ in kf_occurrences]
+temp = [temperature_clip[occ] for occ in kf_occurrences]
+prec = [precipitation_clip[occ] for occ in kf_occurrences]
 
-scatter(temperature, precipitation)
+scatter(temp, prec)
 ```

@@ -23,4 +23,6 @@ end
 
 @test typeof(convert(Matrix, numboc)) == Array{Int64,2}
 
+@test typeof(clip(temperature, o)) == typeof(temperature)
+
 end

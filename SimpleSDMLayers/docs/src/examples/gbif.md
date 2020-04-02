@@ -10,13 +10,10 @@ kingfisher *Megaceryle alcyon*.
 ```@example temp
 using SimpleSDMLayers
 using GBIF
+using Plots
+using StatsPlots
 temperature = worldclim(1)
 precipitation = worldclim(12)
-```
-
-```@example temp
-maximum(temperature)
-minimum(temperature)
 ```
 
 We can get some occurrences for the taxon of interest:
@@ -45,14 +42,17 @@ precipitation_clip = clip(precipitation, kf_occurrences)
 ```
 
 This will make the future queries faster. By default, the `clip` function will
-ad a 5% margin on every side.
+ad a 5% margin on every side. We can now loop through the occurrences and
+extract the data at every point, for example with `[temperature_clip[occ] for
+occ in kf_occurrences]`, but this is a little bit tedious. We will instead rely
+on the following notation:
 
 ```@example temp
-using Plots
-using StatsPlots
-
-temp = [temperature_clip[occ] for occ in kf_occurrences]
-prec = [precipitation_clip[occ] for occ in kf_occurrences]
+temp = temperature_clip[kf_occurrences]
+prec = precipitation_clip[kf_occurrences]
 
 scatter(temp, prec)
 ```
+
+This will return a record of all data for all geo-localized occurrences in a
+`GBIFRecords` collection.

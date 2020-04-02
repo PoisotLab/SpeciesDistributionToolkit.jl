@@ -53,8 +53,8 @@ on the following notation:
 temp = temperature_clip[kf_occurrences]
 prec = precipitation_clip[kf_occurrences]
 
-histogram2d(temperature_clip, precipitation_clip)
-scatter!(temp, prec, lab="")
+histogram2d(temperature_clip, precipitation_clip, c=:BuPu)
+scatter!(temp, prec, lab="", c=:white, msc=:orange)
 ```
 
 This will return a record of all data for all geo-localized occurrences in a
@@ -64,6 +64,14 @@ We can also plot the records over space, using the overloads of the `latitudes`
 and `longitudes` functions:
 
 ```@example temp
-contour(precipitation_clip, c=:YlGnBu, title="Precipitation", frame=:box, fill=true)
-scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences))
+latitudes(kf_occurrences)
+```
+
+```@example temp
+mean(temperature_clip)
+```
+
+```@example temp
+#contour(precipitation_clip, c=:YlGnBu, title="Precipitation", frame=:box, fill=true)
+#scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences))
 ```

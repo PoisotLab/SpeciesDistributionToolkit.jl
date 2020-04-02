@@ -9,7 +9,6 @@ bioclimatic data and the output of species distribution models.
 ![CI](https://github.com/EcoJulia/SimpleSDMLayers.jl/workflows/CI/badge.svg?branch=master)
 ![Documentation](https://github.com/EcoJulia/SimpleSDMLayers.jl/workflows/Documentation/badge.svg?branch=master)
 
-
 ### Installation
 
 The currently released version of the package can be installed with:

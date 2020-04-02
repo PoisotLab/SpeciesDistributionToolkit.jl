@@ -32,23 +32,31 @@ end
 """
     clip(p::T, r::GBIF.GBIFRecords)
 
-Returns a clipped version (with a 5% margin) around all occurences in a
+Returns a clipped version (with a 15% margin) around all occurences in a
 GBIFRecords collection.
 """
 function SimpleSDMLayers.clip(p::T, r::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
    occ_latitudes = filter(!ismissing, [r[i].latitude for i in 1:length(r)])
    occ_longitudes = filter(!ismissing, [r[i].longitude for i in 1:length(r)])
 
-   lat_min, lat_max = minimum(occ_latitudes), maximum(occ_latitudes)
-   lon_min, lon_max = minimum(occ_longitudes), maximum(occ_longitudes)
+   lat_min = minimum(occ_latitudes)
+   lat_max = maximum(occ_latitudes)
+   lon_min = minimum(occ_longitudes)
+   lon_max = maximum(occ_longitudes)
 
    lat_Δ = lat_max - lat_min
    lon_Δ = lon_max - lon_min
 
-   lat_max = min(p.top, (0.05*lat_Δ)+lat_max)
-   lat_min = max(p.bottom, (0.05*lat_Δ)-lat_min)
-   lon_max = min(p.right, (0.05*lon_Δ)+lon_max)
-   lon_min = max(p.left, (0.05*lon_Δ)-lon_min)
+   lon_stride, lat_stride = stride(p)
+
+   scaling = 0.1
+   lon_s = scaling*lon_Δ < 5lon_stride ? 5lon_stride : scaling*lon_Δ
+   lat_s = scaling*lat_Δ < 5lat_stride ? 5lat_stride : scaling*lat_Δ
+
+   lat_max = min(p.top, lat_s+lat_max)
+   lat_min = max(p.bottom, lat_s-lat_min)
+   lon_max = min(p.right, lon_s+lon_max)
+   lon_min = max(p.left, lon_s-lon_min)
 
    return p[left=lon_min, right=lon_max, bottom=lat_min, top=lat_max]
 end

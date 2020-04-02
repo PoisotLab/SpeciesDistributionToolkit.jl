@@ -64,14 +64,6 @@ We can also plot the records over space, using the overloads of the `latitudes`
 and `longitudes` functions:
 
 ```@example temp
-latitudes(kf_occurrences)
-```
-
-```@example temp
-mean(temperature_clip)
-```
-
-```@example temp
-#contour(precipitation_clip, c=:YlGnBu, title="Precipitation", frame=:box, fill=true)
-#scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences))
+contour(precipitation_clip, c=:YlGnBu, title="Precipitation", frame=:box, fill=true)
+scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), lab="", c=:white, msc=:orange)
 ```

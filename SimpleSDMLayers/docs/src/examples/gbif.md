@@ -51,7 +51,7 @@ every occurrence in a `GBIFRecord`, we simply pass the records as a position:
 
 ```@example temp
 histogram2d(temperature_clip, precipitation_clip, c=:Greys)
-scatter!(temperature_clip[kf_occurrences], prlecipitation_clip[kf_occurrences], lab="", c=:white, msc=:orange)
+scatter!(temperature_clip[kf_occurrences], precipitation_clip[kf_occurrences], lab="", c=:white, msc=:orange)
 ```
 
 This will return a record of all data for all geo-localized occurrences (*i.e.*

@@ -74,7 +74,7 @@ end
 Returns the non-missing latitudes.
 """
 function SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords)
-   return filter(!ismissing, [r[i].latitude for i in 1:length(r)])
+   return filter(!ismissing, [records[i].latitude for i in 1:length(records)])
 end
 
 """
@@ -83,5 +83,5 @@ end
 Returns the non-missing longitudes.
 """
 function SimpleSDMLayers.longitudes(records::GBIF.GBIFRecords)
-   return filter(!ismissing, [r[i].longitude for i in 1:length(r)])
+   return filter(!ismissing, [records[i].longitude for i in 1:length(records)])
 end

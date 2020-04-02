@@ -36,8 +36,8 @@ Returns a clipped version (with a 5% margin) around all occurences in a
 GBIFRecords collection.
 """
 function SimpleSDMLayers.clip(p::T, r::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
-   occ_latitudes = filter(ismissing, [r[i].latitude for i in 1:length(r)])
-   occ_longitudes = filter(ismissing, [r[i].longitude for i in 1:length(r)])
+   occ_latitudes = filter(!ismissing, [r[i].latitude for i in 1:length(r)])
+   occ_longitudes = filter(!ismissing, [r[i].longitude for i in 1:length(r)])
 
    lat_min, lat_max = minimum(occ_latitudes), maximum(occ_latitudes)
    lon_min, lon_max = minimum(occ_longitudes), maximum(occ_longitudes)

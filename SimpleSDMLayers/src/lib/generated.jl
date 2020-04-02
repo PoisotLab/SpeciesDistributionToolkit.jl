@@ -1,10 +1,10 @@
 import Base: maximum, minimum, sum
 import Statistics: mean, median, std
 
-ops = Symbol.(
+ops = Symbol.((
     "Base.sum", "Base.maximum", "Base.minimum",
     "Statistics.mean", "Statistics.median", "Statistics.std"
-    )
+    ))
 
 for op in ops, ty in (:SimpleSDMResponse, :SimpleSDMPredictor)
     eval(quote

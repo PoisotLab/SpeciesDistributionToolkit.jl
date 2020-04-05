@@ -46,7 +46,11 @@ function format_date(o, d)
     if t === nothing || ismissing(t)
         return missing
     else
-        return DateTime(t[1:19])
+        try
+            return DateTime(t[1:19])
+        catch
+            return missing
+        end
     end
 end
 

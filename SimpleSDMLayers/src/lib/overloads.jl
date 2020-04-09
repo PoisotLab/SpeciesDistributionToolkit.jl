@@ -163,10 +163,10 @@ Returns a subset of the argument layer, where the new limits are given by
 if so these limits will not be affected.
 """
 function Base.getindex(p::T; left::K=nothing, right::K=nothing, top::K=nothing, bottom::K=nothing) where {T <: SimpleSDMLayer, K <: Union{Nothing,AbstractFloat}}
-   imax = isnothing(right) ? p.right : match_longitude(p, right)
-   imin = isnothing(left) ? p.left : match_longitude(p, left)
-   jmax = isnothing(top) ? p.top : match_latitude(p, top)
-   jmin = isnothing(bottom) ? p.bottom : match_latitude(p, bottom)
+   imax = match_longitude(p, isnothing(right) ? p.right : right)
+   imin = match_longitude(p, isnothing(left) ? p.left : left)
+   jmax = match_latitude(p, isnothing(top) ? p.top : top)
+   jmin = match_latitude(p, isnothing(bottom) ? p.bottom : bottom)
    any(isnan.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
    return p[jmin:jmax, imin:imax]
 end

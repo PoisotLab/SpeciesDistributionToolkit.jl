@@ -172,6 +172,22 @@ function Base.getindex(p::T; left::Union{N,A}=nothing, right::Union{N,A}=nothing
 end
 
 """
+    Base.getindex(p::T, n::NT) where {T <: SimpleSDMLayer, NT <: NamedTuple}
+
+Returns a subset of the argument layer, where the new limits are given in
+a NamedTuple by `left`, `right`, `top`, and `bottom`, in any order. Up to 
+three of these can be omitted, and if so these limits will not be affected.
+"""
+
+function Base.getindex(p::T, n::NT) where {T <: SimpleSDMLayer, NT <: NamedTuple}
+    l = isdefined(n, :left) ? n.left : nothing
+    r = isdefined(n, :right) ? n.right : nothing
+    t = isdefined(n, :top) ? n.top : nothing
+    b = isdefined(n, :bottom) ? n.bottom : nothing
+    Base.getindex(p; left = l, right = r, top = t, bottom = b)
+end
+
+"""
     Base.getindex(p1::T1, p2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
 
 Extract a layer based on a second layer. Note that the two layers must be

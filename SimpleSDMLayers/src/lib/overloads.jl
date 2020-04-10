@@ -183,7 +183,6 @@ Returns a subset of the argument layer, where the new limits are given in
 a NamedTuple by `left`, `right`, `top`, and `bottom`, in any order. Up to 
 three of these can be omitted, and if so these limits will not be affected.
 """
-
 function Base.getindex(p::T, n::NT) where {T <: SimpleSDMLayer, NT <: NamedTuple}
     l = isdefined(n, :left) ? n.left : nothing
     r = isdefined(n, :right) ? n.right : nothing

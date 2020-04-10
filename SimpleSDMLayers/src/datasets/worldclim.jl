@@ -1,7 +1,7 @@
 """
     worldclim(layers::Vector{T}; resolution::AbstractString="10", path::AbstractString="assets") where {T <: Integer}
 
-Download and prepare WorldClim 2.0 bioclimatic variables, and returns them as an
+Download and prepare WorldClim 2.1 bioclimatic variables, and returns them as an
 array of `SimpleSDMPredictor`s. Layers are called by their number, from 1 to 19.
 The list of available layers is given in a table below.
 
@@ -40,6 +40,7 @@ will be much faster.
 | 18       | Precipitation of Warmest Quarter                           |
 | 19       | Precipitation of Coldest Quarter                           |
 
+Original data: https://www.worldclim.org/data/worldclim21.html
 """
 function worldclim(layers::Vector{T}; resolution::AbstractString="10", path::AbstractString="assets") where {T <: Integer}
     all(1 .≤ layers .≤ 19) || throw(ArgumentError("The number of the layers must all be between 1 and 19"))
@@ -47,7 +48,7 @@ function worldclim(layers::Vector{T}; resolution::AbstractString="10", path::Abs
     resolution ∈ ["2.5", "5", "10"] || throw(ArgumentError("The resolution argument ($(resolution) must be 2.5, 5, or 10"))
 
     codes = [lpad(code, 2, "0") for code in layers]
-    paths = [joinpath(path, "wc2.0_bio_$(resolution)m_$(code).tif") for code in codes]
+    paths = [joinpath(path, "wc2.1_bio_$(resolution)m_$(code).tif") for code in codes]
 
     #=
     Download the files if they are missing. In order of preference, this
@@ -55,12 +56,12 @@ function worldclim(layers::Vector{T}; resolution::AbstractString="10", path::Abs
     if not.
     =#
     missing_files = !all(isfile.(paths))
-    zip_file = "wc2.0_bio$(resolution)m.zip"
+    zip_file = "wc2.1_bio$(resolution)m.zip"
     missing_zip_file = !isfile(joinpath(path, zip_file))
     if missing_files
         if missing_zip_file
             @info "Downloading $(zip_file)"
-            url = "http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_$(resolution)m_bio.zip"
+            url = "http://biogeo.ucdavis.edu/data/worldclim/v2.1/tif/base/wc2.1_$(resolution)m_bio.zip"
             #download(url, joinpath(path, zip_file))
             r = HTTP.request("GET", url)
             open(joinpath(path, zip_file), "w") do f

@@ -3,11 +3,15 @@
 This package offers very simple types and functions to interact with
 bioclimatic data and the output of species distribution models.
 
-**Documentation** (released version): https://ecojulia.github.io/SimpleSDMLayers.jl/stable/   
+[![d_stable](https://img.shields.io/badge/Doc-stable-green?style=flat-square)](https://ecojulia.github.io/SimpleSDMLayers.jl/stable/)
+[![d_latest](https://img.shields.io/badge/Doc-latest-blue?style=flat-square)](https://ecojulia.github.io/SimpleSDMLayers.jl/latest/)
+
 **Documentation** (development version): https://ecojulia.github.io/SimpleSDMLayers.jl/dev/
 
-![CI](https://github.com/EcoJulia/SimpleSDMLayers.jl/workflows/CI/badge.svg?branch=master)
-![Documentation](https://github.com/EcoJulia/SimpleSDMLayers.jl/workflows/Documentation/badge.svg?branch=master)
+![version](https://img.shields.io/github/v/tag/EcoJulia/SimpleSDMLayers.jl?sort=semver&style=flat-square)
+![CI](https://img.shields.io/github/workflow/status/EcoJulia/SimpleSDMLayers.jl/CI?label=CI&style=flat-square)
+![Doc](https://img.shields.io/github/workflow/status/EcoJulia/SimpleSDMLayers.jl/Documentation?label=Doc&style=flat-square)
+![Coverage](https://img.shields.io/codecov/c/github/EcoJulia/SimpleSDMLayers.jl?style=flat-square)
 
 ### Installation
 

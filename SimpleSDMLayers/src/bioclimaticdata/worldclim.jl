@@ -1,5 +1,5 @@
 """
-    worldclim(layers::Vector{Int64}; resolution::AbstractString="10", path::AbstractString="assets")
+    worldclim(layers::Vector{Integer}; resolution::AbstractString="10", path::AbstractString="assets")
 
 Download and prepare WorldClim 2.0 bioclimatic variables, and returns them as an
 array of `SimpleSDMPredictor`s. Layers are called by their number, from 1 to 19.
@@ -41,10 +41,11 @@ will be much faster.
 | 19       | Precipitation of Coldest Quarter                           |
 
 """
-function worldclim(layers::Vector{Int64}; resolution::AbstractString="10", path::AbstractString="assets")
-    @assert all(1 .≤ layers .≤ 19)
+function worldclim(layers::Vector{Integer}; resolution::AbstractString="10", path::AbstractString="assets")
+    all(1 .≤ layers .≤ 19) || throw(ArgumentError("The number of the layers must all be between 1 and 19"))
     isdir(path) || mkdir(path)
-    @assert resolution ∈ ["2.5", "5", "10"]
+    resolution ∈ ["2.5", "5", "10"] || throw(ArgumentError("The resolution argument ($(resolution) must be 2.5, 5, or 10"))
+    
     codes = [lpad(code, 2, "0") for code in layers]
     paths = [joinpath(path, "wc2.0_bio_$(resolution)m_$(code).tif") for code in codes]
 
@@ -85,15 +86,15 @@ function worldclim(layers::Vector{Int64}; resolution::AbstractString="10", path:
 end
 
 """
-    worldclim(layer::Int64; x...)
+    worldclim(layer::Integer; x...)
 
 Return a single layer from WorldClim 2.0.
 """
-worldclim(layer::Int64; x...) = worldclim([layer]; x...)[1]
+worldclim(layer::Integer; x...) = worldclim([layer]; x...)[1]
 
 """
-    worldclim(layers::UnitRange{Int64}; x...)
+    worldclim(layers::UnitRange{Integer}; x...)
 
 Return a range of layers from WorldClim 2.0.
 """
-worldclim(layers::UnitRange{Int64}; x...) = worldclim(collect(layers); x...)
+worldclim(layers::UnitRange{Integer}; x...) = worldclim(collect(layers); x...)

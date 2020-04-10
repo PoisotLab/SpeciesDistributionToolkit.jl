@@ -26,6 +26,15 @@ end
 @test S[left=0.2, right=0.6, bottom=0.5, top=1.0].right ≈ 0.6
 @test S[left=0.2, right=0.6, bottom=0.5, top=1.0].left ≈ 0.2
 
+@test typeof(S[left=0.2, bottom=0.5]) == typeof(S)
+@test S[left=0.2, bottom=0.5].top ≈ 1.0
+@test S[left=0.2, bottom=0.5].bottom ≈ 0.4
+@test S[left=0.2, bottom=0.5].right ≈ 1.0
+@test S[left=0.2, bottom=0.5].left ≈ 0.2
+
+C = (left=0.2, bottom=0.5)
+@test typeof(S[C]) == typeof(S)
+
 Y = SimpleSDMResponse(zeros(Float64, (5,5)), 0.0, 1.0, 0.0, 1.0)
 Y[0.1,0.1] = 0.2
 @test Y[0.1,0.1] == 0.2

@@ -1,3 +1,9 @@
+"""
+    geotiff(tiff_file; T::Type=Float64)
+
+The geotiff function reads a geotiff file, and returns it as a matrix of type
+`T`.
+"""
 function geotiff(tiff_file; T::Type=Float64)
     # Register GDAL drivers
     GDAL.gdalallregister()

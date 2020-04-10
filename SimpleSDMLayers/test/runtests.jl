@@ -8,6 +8,7 @@ tests = Dict{String,String}(
                             "basics" => "basics.jl",
                             "overloads" => "overloads.jl",
                             "worldclim" => "worldclim.jl",
+                            "landcover" => "landcover.jl",
                             "coarsen" => "coarsen.jl",
                             "plotting" => "plots.jl",
                             "GBIF" => "gbif.jl"

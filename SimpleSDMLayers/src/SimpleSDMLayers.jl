@@ -19,8 +19,11 @@ export latitudes, longitudes
 include(joinpath("lib", "geotiff.jl"))
 export geotiff
 
-include(joinpath("bioclimaticdata", "worldclim.jl"))
+include(joinpath("datasets", "worldclim.jl"))
 export worldclim
+
+include(joinpath("datasets", "landcover.jl"))
+export landcover
 
 include(joinpath("operations", "coarsen.jl"))
 export coarsen

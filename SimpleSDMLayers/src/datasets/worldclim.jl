@@ -47,21 +47,16 @@ function worldclim(layers::Vector{T}; resolution::AbstractString="10", path::Abs
     isdir(path) || mkdir(path)
     resolution ∈ ["2.5", "5", "10"] || throw(ArgumentError("The resolution argument ($(resolution) must be 2.5, 5, or 10"))
 
-    codes = [lpad(code, 2, "0") for code in layers]
-    paths = [joinpath(path, "wc2.1_bio_$(resolution)m_$(code).tif") for code in codes]
-
-    #=
-    Download the files if they are missing. In order of preference, this
-    function will extract from the zip file if found, and download the zip file
-    if not.
-    =#
+    paths = [joinpath(path, "wc2.1_$(resolution)m_bio_$(code).tif") for code in layers]
+    @info paths
+    
     missing_files = !all(isfile.(paths))
-    zip_file = "wc2.1_bio$(resolution)m.zip"
+    zip_file = "bioclim_2.1_$(resolution)m.zip"
     missing_zip_file = !isfile(joinpath(path, zip_file))
     if missing_files
         if missing_zip_file
             @info "Downloading $(zip_file)"
-            url = "http://biogeo.ucdavis.edu/data/worldclim/v2.1/tif/base/wc2.1_$(resolution)m_bio.zip"
+            url = "https://biogeo.ucdavis.edu/data/worldclim/v2.1/base/wc2.1_$(resolution)m_bio.zip"
             #download(url, joinpath(path, zip_file))
             r = HTTP.request("GET", url)
             open(joinpath(path, zip_file), "w") do f

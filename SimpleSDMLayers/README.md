@@ -6,8 +6,6 @@ bioclimatic data and the output of species distribution models.
 [![d_stable](https://img.shields.io/badge/Doc-stable-green?style=flat-square)](https://ecojulia.github.io/SimpleSDMLayers.jl/stable/)
 [![d_latest](https://img.shields.io/badge/Doc-latest-blue?style=flat-square)](https://ecojulia.github.io/SimpleSDMLayers.jl/latest/)
 
-**Documentation** (development version): https://ecojulia.github.io/SimpleSDMLayers.jl/dev/
-
 ![version](https://img.shields.io/github/v/tag/EcoJulia/SimpleSDMLayers.jl?sort=semver&style=flat-square)
 ![CI](https://img.shields.io/github/workflow/status/EcoJulia/SimpleSDMLayers.jl/CI?label=CI&style=flat-square)
 ![Doc](https://img.shields.io/github/workflow/status/EcoJulia/SimpleSDMLayers.jl/Documentation?label=Doc&style=flat-square)

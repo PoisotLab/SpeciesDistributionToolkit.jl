@@ -156,13 +156,18 @@ function Base.getindex(p::T, longitude::K, latitude::K) where {T <: SimpleSDMLay
 end
 
 """
-    Base.getindex(p::T; left::K=nothing, right::K=nothing, top::K=nothing, bottom::K=nothing) where {T <: SimpleSDMLayer, K <: Union{Nothing,AbstractFloat}}
+    Base.getindex(p::T; left=nothing, right=nothing, top=nothing, bottom=nothing) where {T <: SimpleSDMLayer, K <: Union{Nothing,AbstractFloat}}
 
 Returns a subset of the argument layer, where the new limits are given by
 `left`, `right`, `top`, and `bottom`. Up to three of these can be omitted, and
 if so these limits will not be affected.
 """
-function Base.getindex(p::T; left::Union{N,A}=nothing, right::Union{N,A}=nothing, top::Union{N,A}=nothing, bottom::Union{N,A}=nothing) where {T <: SimpleSDMLayer, N <: Nothing, A <: AbstractFloat}
+function Base.getindex(p::T; left=nothing, right=nothing, top=nothing, bottom=nothing) where {T <: SimpleSDMLayer}
+   for limit in [left, right, top, bottom]
+      if !isnothing(limit)
+         @assert typeof(limit) <: AbstractFloat
+      end
+   end
    imax = match_longitude(p, isnothing(right) ? p.right : right)
    imin = match_longitude(p, isnothing(left) ? p.left : left)
    jmax = match_latitude(p, isnothing(top) ? p.top : top)

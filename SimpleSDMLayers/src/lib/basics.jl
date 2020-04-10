@@ -1,29 +1,37 @@
 """
-    latitudes(p::T) where {T <: SimpleSDMLayer}
+    latitudes(layer::T) where {T <: SimpleSDMLayer}
 
 Returns an iterator with the latitudes of the SDM layer passed as its argument.
+This returns the latitude at the center of each cell in the grid.
 """
-function latitudes(p::T) where {T <: SimpleSDMLayer}
-    grid_size = stride(p; dims=2)
-    centers = range(p.bottom+grid_size; stop=p.top-grid_size, length=size(p, 1))
+function latitudes(layer::T) where {T <: SimpleSDMLayer}
+    grid_size = stride(layer; dims=2)
+    centers = range(layer.bottom+grid_size; stop=layer.top-grid_size, length=size(layer, 1))
     return centers
 end
 
 """
-    longitudes(p::T) where {T <: SimpleSDMLayer}
+    longitudes(layer::T) where {T <: SimpleSDMLayer}
 
 Returns an iterator with the longitudes of the SDM layer passed as its argument.
+This returns the longitudes at the center of each cell in the grid.
 """
-function longitudes(p::T) where {T <: SimpleSDMLayer}
-    grid_size = stride(p; dims=1)
-    centers = range(p.left+grid_size; stop=p.right-grid_size, length=size(p, 2))
+function longitudes(layer::T) where {T <: SimpleSDMLayer}
+    grid_size = stride(layer; dims=1)
+    centers = range(layer.left+grid_size; stop=layer.right-grid_size, length=size(layer, 2))
     return centers
 end
 
-function are_compatible(l1::FT, l2::ST) where {FT <: SimpleSDMLayer, ST <: SimpleSDMLayer}
-    @assert size(l1) == size(l2)
-    @assert l1.top == l2.top
-    @assert l1.left == l2.left
-    @assert l1.bottom == l2.bottom
-    @assert l1.right == l2.right
+"""
+    _layers_are_compatible(l1::X, l2::Y) where {X <: SimpleSDMLayer, Y <: SimpleSDMLayer}
+
+This returns
+
+"""
+function _layers_are_compatible(l1::X, l2::Y) where {X <: SimpleSDMLayer, Y <: SimpleSDMLayer}
+    size(l1) == size(l2) || throw(ArgumentError("The layers have different sizes"))
+    l1.top == l2.top || throw(ArgumentError("The layers have different top coordinates"))
+    l1.left == l2.left || throw(ArgumentError("The layers have different left coordinates"))
+    l1.bottom == l2.bottom || throw(ArgumentError("The layers have different bottom coordinates"))
+    l1.right == l2.right || throw(ArgumentError("The layers have different right coordinates"))
 end

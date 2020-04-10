@@ -22,7 +22,7 @@ test 2
    if get(plotattributes, :seriestype, :scatter) in [:scatter, :histogram2d]
       @assert eltype(l1) <: Number
       @assert eltype(l2) <: Number
-      SimpleSDMLayers.are_compatible(l1, l2)
+      SimpleSDMLayers._layers_are_compatible(l1, l2)
       valid_i = filter(i -> !(isnan(l1[i])|isnan(l2[i])), eachindex(l1.grid))
       l1.grid[valid_i], l2.grid[valid_i]
    end

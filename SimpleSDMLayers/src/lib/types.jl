@@ -26,6 +26,12 @@ struct SimpleSDMPredictor{T} <: SimpleSDMLayer
     top::AbstractFloat
 end
 
+"""
+    SimpleSDMPredictor(grid::Matrix{T}) where {T}
+
+If only a matrix is given to `SimpleSDMPredictor`, by default we assume that it
+covers the entire range of latitudes and longitudes.
+"""
 function SimpleSDMPredictor(grid::Matrix{T}) where {T}
     return SimpleSDMPredictor(grid, -180., 180., -90., 90.)
 end
@@ -42,6 +48,12 @@ mutable struct SimpleSDMResponse{T} <: SimpleSDMLayer
     top::AbstractFloat
 end
 
+"""
+    SimpleSDMResponse(grid::Matrix{T}) where {T}
+
+If only a matrix is given to `SimpleSDMPredictor`, by default we assume that it
+covers the entire range of latitudes and longitudes.
+"""
 function SimpleSDMResponse(grid::Matrix{T}) where {T}
     return SimpleSDMResponse(grid, -180., 180., -90., 90.)
 end

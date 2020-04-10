@@ -57,7 +57,7 @@ function landcover(layers::Vector{T}; full::Bool=false, path::AbstractString="as
     all(1 .≤ layers .≤ 12) || throw(ArgumentError("The number of the layers must all be between 1 and 12"))
     isdir(path) || mkdir(path)
 
-    layer_information = _landcover_variable_url.(layers)
+    layer_information = _landcover_variable_url.(layers, full)
 
     data_layers = []
 

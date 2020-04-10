@@ -125,7 +125,7 @@ end
 Given a layer and a latitude, returns NaN if the latitude is outside the
 range, or the grid index containing this latitude if it is within range
 """
-function match_latitude(p::T, l::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
+function _match_latitude(p::T, l::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
    l > p.top && return NaN
    l < p.bottom && return NaN
    return findmin(abs.(l .- latitudes(p)))[2]
@@ -135,7 +135,7 @@ end
 Given a layer and a longitude, returns NaN if the longitude is outside the
 range, or the grid index containing this longitude if it is within range
 """
-function match_longitude(p::T, l::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
+function _match_longitude(p::T, l::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
    l > p.right && return NaN
    l < p.left && return NaN
    return findmin(abs.(l .- longitudes(p)))[2]
@@ -148,8 +148,8 @@ Extracts the value of a layer at a given latitude and longitude. If values
 outside the range are requested, will return `NaN`.
 """
 function Base.getindex(p::T, longitude::K, latitude::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-   i = match_longitude(p, longitude)
-   j = match_latitude(p, latitude)
+   i = _match_longitude(p, longitude)
+   j = _match_latitude(p, latitude)
    isnan(i) && return NaN
    isnan(j) && return NaN
    return p.grid[j, i]
@@ -168,10 +168,10 @@ function Base.getindex(p::T; left=nothing, right=nothing, top=nothing, bottom=no
          @assert typeof(limit) <: AbstractFloat
       end
    end
-   imax = match_longitude(p, isnothing(right) ? p.right : right)
-   imin = match_longitude(p, isnothing(left) ? p.left : left)
-   jmax = match_latitude(p, isnothing(top) ? p.top : top)
-   jmin = match_latitude(p, isnothing(bottom) ? p.bottom : bottom)
+   imax = _match_longitude(p, isnothing(right) ? p.right : right)
+   imin = _match_longitude(p, isnothing(left) ? p.left : left)
+   jmax = _match_latitude(p, isnothing(top) ? p.top : top)
+   jmin = _match_latitude(p, isnothing(bottom) ? p.bottom : bottom)
    any(isnan.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
    return p[jmin:jmax, imin:imax]
 end
@@ -221,8 +221,8 @@ Changes the values of the cell including the point at the requested latitude and
 longitude.
 """
 function Base.setindex!(p::SimpleSDMResponse{T}, v::T, lon::Float64, lat::Float64) where {T}
-   i = match_longitude(p, lon)
-   j = match_latitude(p, lat)
+   i = _match_longitude(p, lon)
+   j = _match_latitude(p, lat)
    p[j,i] = v
 end
 

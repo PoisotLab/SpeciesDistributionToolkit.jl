@@ -22,6 +22,8 @@ function geotiff(tiff_file; T::Type=Float64)
 
     V = zeros(T, (xs, ys))
 
+    @info "Made V"
+
     GDAL.gdalrasterio(
         band,
         GDAL.GF_Read,
@@ -32,10 +34,14 @@ function geotiff(tiff_file; T::Type=Float64)
         0, 0
         )
 
-    K = zeros(Float64, (ys, xs))
+    @info "Got V"
+
+    K = zeros(T, (ys, xs))
     for (i,r) in enumerate(reverse(1:size(V, 2)))
-       K[i,:] = float(V[:,r])
+       K[i,:] = V[:,r]
     end
+
+    @info "Got K"
 
     this_min = minimum(V)
 

@@ -13,11 +13,11 @@ for op in ops, ty in (:SimpleSDMResponse, :SimpleSDMPredictor)
 
         Applies `$($op)` to an object of type `$($ty)`. This function has been
         automatically generated. Note that this function is only applied to the
-        non-`NaN` elements of the layer, and has no method to work on the `dims`
+        non-`nothing` elements of the layer, and has no method to work on the `dims`
         keyword; the grid itself can be extracted with `convert(Matrix, l)`.
         """
         function $op(l::$ty{T}) where {T <: Number}
-            return $op(filter(!isnan, l.grid))
+            return $op(filter(!isnothing, l.grid))
         end
     end)
 end

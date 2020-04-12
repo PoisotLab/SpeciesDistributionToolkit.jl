@@ -21,27 +21,20 @@ function geotiff(tiff_file; T::Type=Float64)
     bandtype = GDAL.gdalgetrasterdatatype(band)
 
     V = zeros(T, (xs, ys))
-
-    @info "Made V"
-
     GDAL.gdalrasterio(
         band,
         GDAL.GF_Read,
         0, 0, xs, ys,
         pointer(V),
         xs, ys,
-        GDAL.gdalgetrasterdatatype(band),
+        bandtype,
         0, 0
-        )
+    )
 
-    @info "Got V"
-
-    K = zeros(Union{T,nothing}, (ys, xs))
+    K = Array{Union{Nothing,T},2}(undef, ys, xs)
     for (i,r) in enumerate(reverse(1:size(V, 2)))
        K[i,:] = V[:,r]
     end
-
-    @info "Got K"
 
     this_min = minimum(V)
 

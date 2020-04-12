@@ -22,21 +22,10 @@ struct SimpleSDMPredictor{T} <: SimpleSDMLayer
     right::AbstractFloat
     bottom::AbstractFloat
     top::AbstractFloat
-    function SimpleSDMPredictor(grid::Matrix{T}, l::K, r::K, b::K, t::K) where {T, K<:AbstractFloat}
-        return new{T}(convert(Matrix{Union{Nothing,T}}, grid), l, r, b, t)
+    function SimpleSDMPredictor(grid::Matrix{Union{Nothing,T}}, l::K, r::K, b::K, t::K) where {T, K<:AbstractFloat}
+        return new{T}(grid, l, r, b, t)
     end
 end
-
-"""
-    SimpleSDMPredictor(grid::Matrix{T}) where {T}
-
-If only a matrix is given to `SimpleSDMPredictor`, by default we assume that it
-covers the entire range of latitudes and longitudes.
-"""
-function SimpleSDMPredictor(grid::Matrix{T}) where {T}
-    return SimpleSDMPredictor(grid, -180.0, 180.0, -90.0, 90.0)
-end
-
 
 """
 A response is a `SimpleSDMLayer` that is mutable, and is the usual type to store
@@ -48,17 +37,27 @@ mutable struct SimpleSDMResponse{T} <: SimpleSDMLayer
     right::AbstractFloat
     bottom::AbstractFloat
     top::AbstractFloat
-    function SimpleSDMResponse(grid::Matrix{T}, l::K, r::K, b::K, t::K) where {T, K<:AbstractFloat}
-        return new{T}(convert(Matrix{Union{Nothing,T}}, grid), l, r, b, t)
+    function SimpleSDMResponse(grid::Matrix{Union{Nothing,T}}, l::K, r::K, b::K, t::K) where {T, K<:AbstractFloat}
+        return new{T}(grid, l, r, b, t)
     end
 end
 
-"""
-    SimpleSDMResponse(grid::Matrix{T}) where {T}
+# Begin code generation for the constructors
 
-If only a matrix is given to `SimpleSDMResponse`, by default we assume that it
-covers the entire range of latitudes and longitudes.
-"""
-function SimpleSDMResponse(grid::Matrix{T}) where {T}
-    return SimpleSDMResponse(grid, -180.0, 180.0, -90.0, 90.0)
+simplesdm_types = (:SimpleSDMResponse, :SimpleSDMPredictor)
+
+for simplesdm_type in simplesdm_types
+    eval(quote
+        function $simplesdm_type(grid::Matrix{Union{Nothing,T}}) where {T}
+            return $simplesdm_type(grid, -180.0, 180.0, -90.0, 90.0)
+        end
+
+        function $simplesdm_type(grid::Matrix{T}) where {T}
+            return $simplesdm_type(convert(Matrix{Union{Nothing,T}}, grid), -180.0, 180.0, -90.0, 90.0)
+        end
+
+        function $simplesdm_type(grid::Matrix{T}, l::K, r::K, b::K, t::K) where {T, K<:AbstractFloat}
+            return $simplesdm_type(convert(Matrix{Union{Nothing,T}}, grid), l, r, b, t)
+        end
+    end)
 end

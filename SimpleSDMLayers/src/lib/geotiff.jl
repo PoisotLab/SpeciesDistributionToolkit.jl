@@ -36,7 +36,7 @@ function geotiff(tiff_file; T::Type=Float64)
 
     @info "Got V"
 
-    K = zeros(T, (ys, xs))
+    K = zeros(Union{T,nothing}, (ys, xs))
     for (i,r) in enumerate(reverse(1:size(V, 2)))
        K[i,:] = V[:,r]
     end
@@ -46,7 +46,7 @@ function geotiff(tiff_file; T::Type=Float64)
     this_min = minimum(V)
 
     for i in eachindex(K)
-        K[i] = K[i] > this_min ? K[i] : NaN
+        K[i] = K[i] > this_min ? K[i] : nothing
     end
 
     return K

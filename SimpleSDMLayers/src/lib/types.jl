@@ -4,10 +4,8 @@ All types in the package are part of the abstract type `SimpleSDMLayer`. A
 `left`, `right`, `bottom` and `top` are floating point numbers specifying the
 bounding box.
 
-It is assumed that the missing values will be represented as `NaN`, so the
-"natural" type for the values of `grid` are floating points, but it is possible
-to use any other type `T` by having `grid` contain `Union{T,Float64}` (for
-example).
+It is assumed that the missing values will be represented as `nothing`, so
+internally the matrix will have type `Union{T, Nothing}`.
 """
 abstract type SimpleSDMLayer end
 
@@ -19,11 +17,14 @@ be modified by the analysis. Note that if you are in a bind, the values of the
 way of handling predictors you need to modify would be to use `convert` methods.
 """
 struct SimpleSDMPredictor{T} <: SimpleSDMLayer
-    grid::Matrix{T}
+    grid::Matrix{Union{Nothing,T}}
     left::AbstractFloat
     right::AbstractFloat
     bottom::AbstractFloat
     top::AbstractFloat
+    function SimpleSDMPredictor(grid::Matrix{T}, l::K, r::K, b::K, t::K) where {T, K<:AbstractFloat}
+        return new{T}(convert(Matrix{Union{Nothing,T}}, grid), l, r, b, t)
+    end
 end
 
 """
@@ -33,27 +34,31 @@ If only a matrix is given to `SimpleSDMPredictor`, by default we assume that it
 covers the entire range of latitudes and longitudes.
 """
 function SimpleSDMPredictor(grid::Matrix{T}) where {T}
-    return SimpleSDMPredictor(grid, -180., 180., -90., 90.)
+    return SimpleSDMPredictor(grid, -180.0, 180.0, -90.0, 90.0)
 end
+
 
 """
 A response is a `SimpleSDMLayer` that is mutable, and is the usual type to store
 analysis outputs. You can transform a response into a predictor using `convert`.
 """
 mutable struct SimpleSDMResponse{T} <: SimpleSDMLayer
-    grid::Matrix{T}
+    grid::Matrix{Union{Nothing,T}}
     left::AbstractFloat
     right::AbstractFloat
     bottom::AbstractFloat
     top::AbstractFloat
+    function SimpleSDMResponse(grid::Matrix{T}, l::K, r::K, b::K, t::K) where {T, K<:AbstractFloat}
+        return new{T}(convert(Matrix{Union{Nothing,T}}, grid), l, r, b, t)
+    end
 end
 
 """
     SimpleSDMResponse(grid::Matrix{T}) where {T}
 
-If only a matrix is given to `SimpleSDMPredictor`, by default we assume that it
+If only a matrix is given to `SimpleSDMResponse`, by default we assume that it
 covers the entire range of latitudes and longitudes.
 """
 function SimpleSDMResponse(grid::Matrix{T}) where {T}
-    return SimpleSDMResponse(grid, -180., 180., -90., 90.)
+    return SimpleSDMResponse(grid, -180.0, 180.0, -90.0, 90.0)
 end

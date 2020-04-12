@@ -57,7 +57,6 @@ function worldclim(layers::Vector{T}; resolution::AbstractString="10", path::Abs
         if missing_zip_file
             @info "Downloading $(zip_file)"
             url = "https://biogeo.ucdavis.edu/data/worldclim/v2.1/base/wc2.1_$(resolution)m_bio.zip"
-            #download(url, joinpath(path, zip_file))
             r = HTTP.request("GET", url)
             open(joinpath(path, zip_file), "w") do f
                 write(f, String(r.body))
@@ -77,7 +76,7 @@ function worldclim(layers::Vector{T}; resolution::AbstractString="10", path::Abs
 
     data_layers = geotiff.(paths)
 
-    return SimpleSDMPredictor.(data_layers, -180.0, 180.0, -90.0, 90.0)
+    return SimpleSDMPredictor.(data_layers)
 
 end
 

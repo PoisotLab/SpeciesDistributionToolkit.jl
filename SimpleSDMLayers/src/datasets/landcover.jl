@@ -69,10 +69,10 @@ function landcover(layers::Vector{T}; full::Bool=false, path::AbstractString="as
                 write(layerfile, String(layerrequest.body))
             end
         end
-        push!(data_layers, geotiff(joinpath(path, model_pair.first)), T=UInt8)
+        push!(data_layers, geotiff(joinpath(path, model_pair.first); T=UInt8))
     end
 
-    return SimpleSDMPredictor.(data_layers, -180.0, 180.0, -90.0, 90.0)
+    return SimpleSDMPredictor.(data_layers)
 end
 
 """

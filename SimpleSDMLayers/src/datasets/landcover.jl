@@ -78,13 +78,17 @@ end
 """
     landcover(layer::T; x...) where {T <: Integer}
 
-Return a single layer from EarthEnv landcover
+This function returns a single layer from the *EarthEnv* landcover dataset.
+Because the layers are quite large due to their resolution (and despite being
+represented as `UInt64`), it is a good idea to rely on this function first and
+foremost. Calling the method with a range or array can lead to an
+`OutOfMemory()` error, notably on machines with limited specifications.
 """
 landcover(layer::T; x...) where {T <: Integer} = first(landcover([layer]; x...))
 
 """
     landcover(layers::UnitRange{T}; x...) where {T <: Integer}
 
-Return a range of layers from EarthEnv landcover
+Return a range of layers from EarthEnv landcover. 
 """
 landcover(layers::UnitRange{T}; x...) where {T <: Integer} = landcover(collect(layers); x...)

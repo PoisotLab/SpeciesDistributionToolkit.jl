@@ -10,25 +10,25 @@ working on the `grid` field directly if you really need it).
 
 The size of the cells to aggregate is given by the tuple, so that `(2,2)` will
 make groups of two cells vertically and two cells horizontally, for a total of
-four cells.
-
-The `NaNremove` keyword argument is intended to remove `NaN` values before
-applying `f`. It defaults to `true`.
+four cells. By default, the cells containing `nothing` will be *ignored*.
 """
-function coarsen(L::LT, f::FT, d::Tuple{IT,IT}; NaNremove::Bool=true) where {LT <: SimpleSDMLayer, FT <: Function, IT <: Integer}
+function coarsen(L::LT, f::FT, d::Tuple{IT,IT}) where {LT <: SimpleSDMLayer, FT <: Function, IT <: Integer}
     cx, cy = d
     CX, CY = size(L)
+    
     # Check that the arguments are compatible with the size of the grid
-    mod(CX, cx) == 0 || throw(ArgumentError("The number of cells to aggregate must be compatible with the number of rows"))
-    mod(CY, cy) == 0 || throw(ArgumentError("The number of cells to aggregate must be compatible with the number of columns"))
+    mod(CX, cx) == 0 || throw(ArgumentError("The number of cells to aggregate ($(cx)) must be compatible with the number of rows ($(CX))"))
+    mod(CY, cy) == 0 || throw(ArgumentError("The number of cells to aggregate ($(cy)) must be compatible with the number of columns ($(CY))"))
+    
     # Then we create a new grid, full of undefined values of the same type as
     # the elements of L
     nx = convert(Int64, CX/cx)
     ny = convert(Int64, CY/cy)
-    # NOTE The union type here is not really pretty, but very much necessary to
-    # play nicely with NaN values. This needs to be replaced by a better
-    # solution eventually.
-    newgrid = Array{Union{eltype(L),Float64},2}(undef, (nx, ny))
+    
+    # This is not the best type here, of course, but I'm not sure how to get a
+    # better idea _before_.
+    newgrid = Array{Any}(undef, (nx, ny))
+
     # At this point, we do not need to create the new SimpleSDMLayer object, as
     # it can be a SimpleSDMPredictor which is not mutable. Instead, it is better
     # to work directly on the grid. We will iterate directly on the new grid,
@@ -38,20 +38,16 @@ function coarsen(L::LT, f::FT, d::Tuple{IT,IT}; NaNremove::Bool=true) where {LT 
         for j in 1:size(newgrid, 2)
             old_j = ((j-1)*cy+1):(j*cy)
             V = vec(L.grid[old_i, old_j])
-            # If there are NaN to remove, then we call filter!. NaN only make
-            # sense if the type of the elements of V is a floating point, so we
-            # need to do an additional check to only apply this whenever there
-            # are floating point elements:
-            !NaNremove || filter!(x -> typeof(x)<:AbstractFloat ? !isnan(x) : true, V)
-            if length(V) == 0
-                # If nothing is left in V, then the grid gets a NaN
-                # automatically
-                newgrid[i,j] = NaN
-            else
-                newgrid[i,j] = f(V)
-            end
+    
+            # We remove the nothing values from the grid
+            filter!(!isnothing, V)
+
+            # If there is nothing left in V, we return nothing -- if not, we return f(V)
+            newgrid[i,j] = length(V) == 0 ? nothing : f(V)
+
         end
     end
-    # Now that everything is done, we can return an object of the same type as L
-    return LT(newgrid, L.left, L.right, L.bottom, L.top)
+    # Now that everything is done, we can return an object of the correct type
+    NT = LT <: SimpleSDMPredictor ? SimpleSDMPredictor : SimpleSDMResponse
+    return NT(newgrid, L.left, L.right, L.bottom, L.top)
 end

@@ -9,7 +9,9 @@ lc1and2 = landcover([1,2])
 lc3 = landcover(3)
 @test typeof(lc3) <: SimpleSDMPredictor
 
-lcrange = landcover(1:5)
+@info eltype(lc3)
+
+lcrange = landcover(1:2)
 @test eltype(lcrange) <: SimpleSDMPredictor
 
 end

@@ -125,8 +125,47 @@ export qualitycontrol!, showall!, filter!, allrecords!
 function __init__()
   @require DataFrames="a93c6f00-e57d-5684-b7b6-d8193f3e46c0" begin
   @info "Loading DataFrames support for GBIF.jl"
+    format_gbif_entity(t::Missing) = missing
+    format_gbif_entity(t::Pair{String,Int64}) = t.first
     function DataFrame(records::GBIFRecords)
-
+      output = DataFrame(
+        id = Int64[],
+        name = Union{Missing,AbstractString}[],
+        dataset = Union{Missing,AbstractString}[],
+        publishing_country = Union{Missing, AbstractString}[],
+        country = Union{Missing, AbstractString}[],
+        latitude = Union{Missing, AbstractFloat}[],
+        longitude = Union{Missing, AbstractFloat}[],
+        date = Union{Missing, DateTime}[],
+        rank = Union{Missing, AbstractString}[],
+        observer = Union{Missing, AbstractString}[],
+        license = Union{Missing, AbstractString}[],
+        kingdom = Union{Missing,Symbol}[],
+        phylum = Union{Missing,Symbol}[],
+        class = Union{Missing,Symbol}[],
+        order = Union{Missing,Symbol}[],
+        family = Union{Missing,Symbol}[],
+        genus = Union{Missing,Symbol}[],
+        species = Union{Missing,Symbol}[]
+      )
+      for occ in records
+        push!(
+          output,
+          (
+            occ.id, occ.taxon.name, occ.dataset, occ.publishingCountry,
+            occ.country, occ.latitude, occ.longitude,
+            occ.date, occ.rank, occ.observer, occ.license,
+            format_gbif_entity(occ.taxon.kingdom),
+            format_gbif_entity(occ.taxon.phylum),
+            format_gbif_entity(occ.taxon.class),
+            format_gbif_entity(occ.taxon.order),
+            format_gbif_entity(occ.taxon.family),
+            format_gbif_entity(occ.taxon.genus),
+            format_gbif_entity(occ.taxon.species)
+          )
+        )
+      end
+      return output
     end
   end
 end

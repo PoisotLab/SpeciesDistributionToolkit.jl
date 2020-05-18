@@ -4,6 +4,9 @@ module TestDataFrames
   using DataFrames
   using Test
 
-  
+  df = DataFrame(occurrences())
+
+  @test typeof(df) <: DataFrame
+
 
 end

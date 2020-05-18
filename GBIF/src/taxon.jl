@@ -18,14 +18,15 @@ Optional arguments are
 
 - `strict::Bool=true` -- whether the match should be strict, or fuzzy
 
-- `verbose::Bool=false` -- whether the query should print out information about the reply (not usually useful)
-
 Finally, one can also specify other levels of the taxonomy, using  `kingdom`,
 `phylum`, `class`, `order`, `family`, and `genus`, all of which can either be
 `String` or `Nothing`.
+
+If a match is found, the result will be given as a `GBIFTaxon`. If not, this
+function will return `nothing` and give a warning.
 """
 function taxon(name::String;
-   rank::Union{Symbol,Nothing}=:SPECIES, strict::Bool=true, verbose::Bool=false,
+   rank::Union{Symbol,Nothing}=:SPECIES, strict::Bool=true,
    kingdom::Union{String,Nothing}=nothing, phylum::Union{String,Nothing}=nothing, class::Union{String,Nothing}=nothing,
    order::Union{String,Nothing}=nothing, family::Union{String,Nothing}=nothing, genus::Union{String,Nothing}=nothing)
    @assert rank ∈ [
@@ -35,7 +36,7 @@ function taxon(name::String;
       :SUBSPECIES, :SUBTRIBE, :SUBVARIETY, :SUPERCLASS , :SUPERFAMILY, :SUPERORDER,
       :SPECIES
    ]
-   args = Dict{String, Any}("name" => name, "strict" => strict, "verbose" => verbose)
+   args = Dict{String, Any}("name" => name, "strict" => strict)
 
    if rank != nothing
       args["rank"] = String(rank)

@@ -8,5 +8,5 @@ using GBIF
 using DataFrames
 
 bats = GBIF.taxon("Chiroptera"; strict=false)
-first(DataFrame(bats), 5)
+first(DataFrame(occurrences(bats)), 5)
 ```

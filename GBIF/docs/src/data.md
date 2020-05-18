@@ -37,12 +37,13 @@ occurrences recorded in GBIF. Note that the `GBIFRecords` type, returned by
 `occurrences`, implements all the necessary methods to iterate over collections.
 For example, this allows writing the following:
 
-~~~ julia
+```@example
+using GBIF
 o = occurrences()
 for single_occ in o
   println(o.taxonKey)
 end
-~~~
+```
 
 ### Query parameters
 
@@ -51,8 +52,23 @@ occurrences(query::Pair...)
 occurrences(t::GBIFTaxon, query::Pair...)
 ```
 
+For example, we can get the data on observations of bats between -30 and 30 of
+latitudes using the following syntax:
+
+```@example
+using GBIF
+bats = GBIF.taxon("Chiroptera"; strict=false)
+occurrences(bats, "latitude" => (-30.0, 30.0))
+```
+
 ### Batch-download of occurrences
 
 ```@docs
 occurrences!
+```
+
+```@example
+using GBIF
+can_most_recent = occurrences("hasCoordinate" => true, "country" => "CA")
+occurrences!(can_most_recent)
 ```

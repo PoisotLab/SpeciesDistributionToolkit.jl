@@ -20,10 +20,10 @@ occurrence
 
 This can be used to retrieve occurrence `1425976049`, with
 
-~~~ julia
+```@example
 using GBIF
 occurrence(1425976049)
-~~~
+```
 
 ### Multiple occurrences
 

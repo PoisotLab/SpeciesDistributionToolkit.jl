@@ -5,7 +5,7 @@ function format_querypair_stem(stem::Tuple{T,T}) where {T <: Number}
 	if (M <= m )
 		throw(ArgumentError("Range queries must be formatted as min,max"))
 	end
-	return replace(string(m)*","*string(M), " " => %20)
+	return replace(string(m)*","*string(M), " " => "%20")
 end
 
 

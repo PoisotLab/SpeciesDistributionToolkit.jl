@@ -58,8 +58,8 @@ latitudes using the following syntax:
 ```@example
 using GBIF
 bats = GBIF.taxon("Chiroptera"; strict=false)
-for oc in occurrences(bats, "decimalLatitude" => (-30.0, 30.0))
-  println("$(occ.taxon) -- latitude = $(occ.latitude)")
+for occ in occurrences(bats, "decimalLatitude" => (-30.0, 30.0))
+  println("$(occ.scientific) -- latitude = $(occ.latitude)")
 end
 ```
 

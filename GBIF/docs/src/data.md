@@ -41,7 +41,7 @@ For example, this allows writing the following:
 using GBIF
 o = occurrences()
 for single_occ in o
-  println(single_occ)
+  print(single_occ)
 end
 ```
 
@@ -58,7 +58,9 @@ latitudes using the following syntax:
 ```@example
 using GBIF
 bats = GBIF.taxon("Chiroptera"; strict=false)
-occurrences(bats, "decimalLatitude" => (-30.0, 30.0))
+for oc in occurrences(bats, "decimalLatitude" => (-30.0, 30.0))
+  println("$(occ.taxon) -- latitude = $(occ.latitude)")
+end
 ```
 
 ### Batch-download of occurrences

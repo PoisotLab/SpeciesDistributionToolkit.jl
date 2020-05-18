@@ -18,11 +18,11 @@ associated with observations of occurrences.
 occurrence
 ```
 
-This can be used to retrieve occurrence `1425976049`, with
+This can be used to retrieve occurrence `1258202889`, with
 
 ```@example
 using GBIF
-occurrence(1425976049)
+occurrence(1258202889)
 ```
 
 ### Multiple occurrences
@@ -41,7 +41,7 @@ For example, this allows writing the following:
 using GBIF
 o = occurrences()
 for single_occ in o
-  println(o.taxonKey)
+  println(single_occ)
 end
 ```
 

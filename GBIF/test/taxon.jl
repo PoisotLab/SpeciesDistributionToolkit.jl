@@ -14,6 +14,8 @@ module TestSpecies
   i_sp = taxon(iver.genus.first; rank=:GENUS, family=iver.family.first, strict=false)
   @test ismissing(i_sp.species)
 
+  @test typeof(occurrences(i_sp)) <: GBIFRecords
+
   iver_occ = occurrences(iver)
   @test typeof(iver_occ) <: GBIFRecords
   for iocc in iver_occ

@@ -127,7 +127,7 @@ function __init__()
   @info "Loading DataFrames support for GBIF.jl"
     format_gbif_entity(t::Missing) = missing
     format_gbif_entity(t::Pair{String,Int64}) = t.first
-    function DataFrame(records::GBIFRecords)
+    function DataFrames.DataFrame(records::GBIFRecords)
       output = DataFrame(
         id = Int64[],
         name = Union{Missing,AbstractString}[],

@@ -14,7 +14,7 @@ module TestGBIFRecords
   @test length(set2) == 20
 
   # Version using ranged pairs
-  set3 = occurrences("scientificName" => "Mus musculus", "year" => 1999, "hasCoordinate" => true, "latitude" => (0.0,50.0))
+  set3 = occurrences("scientificName" => "Mus musculus", "year" => 1999, "hasCoordinate" => true, "decimalLatitude" => (0.0,50.0))
   @test typeof(set3) == GBIFRecords
   @test length(set3) == 20
 

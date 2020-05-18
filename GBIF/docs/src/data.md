@@ -58,7 +58,7 @@ latitudes using the following syntax:
 ```@example
 using GBIF
 bats = GBIF.taxon("Chiroptera"; strict=false)
-occurrences(bats, "latitude" => (-30.0, 30.0))
+occurrences(bats, "decimalLatitude" => (-30.0, 30.0))
 ```
 
 ### Batch-download of occurrences

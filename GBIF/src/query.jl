@@ -25,7 +25,9 @@ function validate_occurrence_query(query::Pair)
     "subGenusKey", "speciesKey", "year", "establishmentMeans", "repatriated",
     "typeStatus", "facet", "facetMincount", "facetMultiselect", "limit", "offset"]
 
-  @assert query.first ∈ allowed_fields
+  if !(query.first ∈ allowed_fields)
+    @error "The $(query.first) parameter is not allowed by the GBIF API"
+  end
 
   # Country must be a two-letters country code
   if query.first == "country"

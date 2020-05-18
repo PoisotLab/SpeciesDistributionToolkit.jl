@@ -10,7 +10,8 @@ makedocs(
         "Home" => "index.md",
         "Manual" => [
             "Getting data" => "data.md",
-            "Filtering records" => "filter.md"
+            "Filtering records" => "filter.md",
+            "DataFrames.jl support" => "dataframes.md"
         ],
         "Types" => "types.md"
     ]

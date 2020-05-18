@@ -93,7 +93,8 @@ function convert(::Type{AbstractString}, t::T) where {T <: Nothing}
   return "<nothing>"
 end
 
-# package code goes here
+# Load the main functions
+
 include("query.jl")
 
 include("types/GBIFTaxon.jl")
@@ -118,5 +119,15 @@ export have_both_coordinates, have_neither_zero_coordinates,
   have_no_zero_coordinates, have_no_issues, have_ok_coordinates,
   have_a_date
 export qualitycontrol!, showall!, filter!, allrecords!
+
+# Extends with DataFrames functionalities
+function __init__()
+  @require DataFrames="a93c6f00-e57d-5684-b7b6-d8193f3e46c0" begin
+  @info "Loading DataFrames support for GBIF.jl"
+    function DataFrame(records::GBIFRecords)
+      
+    end
+  end
+end
 
 end # module

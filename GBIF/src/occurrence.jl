@@ -74,7 +74,7 @@ default page size GBIF uses). Future occurrences can be queried with `next!` or
 """
 function occurrences(t::GBIFTaxon, query::Pair...)
 	levels = [:kingdom, :phylum, :class, :order, :family, :genus, :species]
-	level = levels[findlast(l -> getfield(t, l) !== nothing, levels)]
+	level = levels[findlast(l -> getfield(t, l) !== missing, levels)]
 	taxon_query = String(level)*"Key" => getfield(t, level).second
 	return occurrences(taxon_query, query...)
 end

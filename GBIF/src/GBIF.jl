@@ -167,6 +167,7 @@ function __init__()
       end
       return output
     end
+    export DataFrame
   end
 end
 

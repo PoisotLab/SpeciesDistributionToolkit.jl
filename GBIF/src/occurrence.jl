@@ -1,3 +1,14 @@
+format_querypair_stem(stem::Any) = replace(string(stem), " " => "%20")
+
+function format_querypair_stem(stem::Tuple{T,T}) where {T <: Number}
+	m, M = stem
+	if (M <= m )
+		throw(ArgumentError("Range queries must be formatted as min,max"))
+	end
+	return replace(string(m)*","*string(M), " " => %20)
+end
+
+
 function pairs_to_querystring(query::Pair...)
 	if length(query) == 0
 		return ""
@@ -9,7 +20,7 @@ function pairs_to_querystring(query::Pair...)
 			delim = i == 1 ? "" : "&" # We use & to delimitate the queries
 			# Let's be extra cautious and encode the spaces correctly
 			root = replace(string(pair.first), " " => "%20")
-			stem = replace(string(pair.second), " " => "%20")
+			stem = format_querypair_stem(pair.second)
 			# Then we can graft the pair string onto the query string
 			pairstring = "$(delim)$(root)=$(stem)"
 			querystring *= pairstring
@@ -49,7 +60,7 @@ function occurrences(query::Pair...)
 	if occ_s_req.status == 200
 		body = JSON.parse(String(occ_s_req.body))
 		occ = GBIFRecord.(body["results"])
-		maxocc = body["count"] > 200000 ? 200000 : body["count"]
+		maxocc = body["count"] > 100000 ? 100000 : body["count"]
 		return GBIFRecords(
 			body["offset"],
 			maxocc,

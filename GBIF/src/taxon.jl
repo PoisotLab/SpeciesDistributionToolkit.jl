@@ -72,13 +72,20 @@ function taxon(name::String;
       # This will throw warnings for various reasons related to matchtypes
       matchtype = get(body, "matchType", "WELP...")
       # The first one will catch issues
-      matchtype == "WELP..." && throw(ErrorException("Impossible to get information for $(name) at level $(rank)"))
-      matchtype == "NONE" && throw(ErrorException("No match for $(name) at level $(rank) -- try with strict=false"))
+      if matchtype == "WELP..."
+         @warn "Impossible to get information for $(name) at level $(rank)"
+         return nothing
+      end
+      if matchtype == "NONE"
+         @warn "No match for $(name) at level $(rank) -- try with strict=false"
+         return nothing
+      end
       return GBIFTaxon(body)
    else
-      throw(ErrorException("Impossible to retrieve information for $(name) -- HTML error code $(sp_s_req.status)"))
+      @warn "Impossible to retrieve information for $(name) -- HTML error code $(sp_s_req.status)"
+      return nothing
    end
-
+   return nothing
 end
 
 """

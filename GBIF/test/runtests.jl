@@ -6,6 +6,7 @@ global anyerrors = false
 tests = [
   "single occurrence functions" => "occurrence.jl",
   "multiple occurrences" => "occurrences.jl",
+  "data frame support" => "dataframes.jl",
   "species retrieval" => "taxon.jl",
   "paging" => "paging.jl",
   "iteration" => "iteration.jl",

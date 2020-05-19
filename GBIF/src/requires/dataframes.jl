@@ -7,11 +7,11 @@ import DataFrames: DataFrame
 
 function DataFrames.DataFrame(records::GBIFRecords)
   output = DataFrame(
-    id = Int64[],
+    key = Int64[],
     name = Union{Missing,AbstractString}[],
     dataset = Union{Missing,AbstractString}[],
-    publishing_country = Union{Missing, AbstractString}[],
-    country = Union{Missing, AbstractString}[],
+    published_in = Union{Missing, AbstractString}[],
+    observed_in = Union{Missing, AbstractString}[],
     latitude = Union{Missing, AbstractFloat}[],
     longitude = Union{Missing, AbstractFloat}[],
     date = Union{Missing, DateTime}[],
@@ -31,7 +31,7 @@ function DataFrames.DataFrame(records::GBIFRecords)
       output,
       (
         occ.key, occ.taxon.name, occ.dataset, occ.publishingCountry,
-        occ.country, occ.latitude, occ.longitude,
+        occ.countryCode, occ.latitude, occ.longitude,
         occ.date, occ.rank, occ.observer, occ.license,
         format_gbif_entity(occ.taxon.kingdom),
         format_gbif_entity(occ.taxon.phylum),

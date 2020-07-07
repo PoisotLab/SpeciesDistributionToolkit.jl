@@ -115,12 +115,6 @@ include("paging.jl")
 export occurrence, occurrences
 export occurrences!
 
-include("filter.jl")
-export have_both_coordinates, have_neither_zero_coordinates,
-  have_no_zero_coordinates, have_no_issues, have_ok_coordinates,
-  have_a_date
-export qualitycontrol!, showall!, filter!, allrecords!
-
 # Extends with DataFrames functionalities
 function __init__()
   @require DataFrames="a93c6f00-e57d-5684-b7b6-d8193f3e46c0" include("requires/dataframes.jl")

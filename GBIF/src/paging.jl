@@ -11,7 +11,6 @@ ensure that the previous and the new occurrences have the same status, but only
 for records that have already been retrieved.
 """
 function occurrences!(o::GBIFRecords)
-  !all(o.show) && allrecords!(o)
   if length(o) == o.count
     @info "All occurences for this query have been returned"
   else
@@ -29,7 +28,6 @@ function occurrences!(o::GBIFRecords)
     start = length(o)+1
     stop = start + length(retrieved) - 1
     o.occurrences[start:stop] = retrieved
-    o.show[start:stop] .= true
     o.offset = length(o)
   end
 end

@@ -1,51 +1,46 @@
 # Filtering observations
 
-Within a `GBIFRecord` object, the occurrences themselves are stored in a view.
-A view is basically an array that can be masked, so it is possible to retain
-all of the raw data, while only presenting the data that pass filtering.
+The filtering of `GBIFRecords` is best done using the `Query.jl` package, on the
+`view` of the records object.
 
-## Apply filters to the data
+This can be one way to generate a `DataFrame`, by selecting the required columns:
 
-```@docs
-filter!
-```
-
-## Removing filters
-
-```@docs
-allrecords!
-```
-
-## List of built-in filters
-
-```@docs
-have_both_coordinates
-have_neither_zero_coordinates
-have_no_zero_coordinates
-have_no_issues
-have_ok_coordinates
-have_a_date
-```
-
-## Making your own filters
-
-Filter functions are all sharing the same declaration: they accept a single
-`GBIFRecord` object as input, and return a boolean as output. Think of the
-filter as a question you ask about the occurrence object. Does it have no know
-issues? If this is `true`, then we keep this record. If not, we reject it.
-
-## Filtering occurrences after download
-
-The `GBIFRecords` objects can be used with the `Query.jl` package. For example,
-to get the observations from France in the most recent 20 observations, we can
-use:
-
-~~~ julia
+```@example
+using GBIF
+using DataFrames
 using Query
-o = occurrences()
-@from i in o begin
-    @where i.country == "France"
-    @select {i.key, i.species}
+
+t = taxon("Carnivora", strict=false)
+set = occurrences(t)
+for rep in 1:10
+    occurrences!(set)
+end
+
+tdf = view(set) |>
+    @filter(_.rank == "SPECIES") |>
+    @map({_.taxon.name, _.country}) |>
+    DataFrame
+
+tdf
+```
+
+Alternatively, this can allow to select only some records in an array:
+
+```@example
+using GBIF
+using DataFrames
+using Query
+
+set = occurrences()
+for rep in 1:10
+    occurrences!(set)
+end
+
+tdf = for s in view(set) begin
+    @where s.rank == "SPECIES"
+    @select s
     @collect
 end
-~~~
+
+tdf
+```

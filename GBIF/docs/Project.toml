@@ -1,6 +1,7 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Query = "1a8c2f83-1ff3-5112-b086-8aa67b057ba1"
 
 [compat]
 Documenter = "0.24"

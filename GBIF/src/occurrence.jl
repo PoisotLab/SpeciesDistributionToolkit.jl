@@ -70,15 +70,12 @@ function occurrences(query::Pair...)
 	retrieved, offset, of_max = _internal_occurrences_getter(query...)
 	if !isnothing(retrieved)
 		store = Vector{GBIFRecord}(undef, of_max)
-		mask = zeros(Bool, of_max)
-		mask[1:length(retrieved)] .= true
 		store[1:length(retrieved)] = retrieved
 		return GBIFRecords(
 			offset,
 			of_max,
 			vcat(query...),
-			store,
-			mask
+			store
 		)
 	else
 		@error "Nothing retrieved"

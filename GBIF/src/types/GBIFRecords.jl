@@ -133,11 +133,8 @@ end
 
 This type has actually very few information, besides `offset` (the number of
 records already retrieved) and `count` (the total number of records). The
-`query` field stores the query parameters, and `show` is a vector of boolean
-values to decide which of the `GBIFRecord` (stored in `occurrences`) will be
-displayed.
-
-This type is mutable and fully iterable.
+`query` field stores the query parameters. This type is mutable and fully
+iterable.
 
 The `occurrences` field is pre-allocated, meaning that it will contain `#undef`
 elements up to the total number of hits on GBIF. When iterating, this is taken
@@ -149,5 +146,4 @@ mutable struct GBIFRecords
     count::Integer
     query::Union{Vector{Pair}, Nothing}
     occurrences::Vector{GBIFRecord}
-    show::Vector{Bool}
 end

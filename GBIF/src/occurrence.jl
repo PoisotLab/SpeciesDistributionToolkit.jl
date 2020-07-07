@@ -49,9 +49,9 @@ function _internal_occurrences_getter(query::Pair...)
 	occ_s_req = HTTP.get(occ_s_url; query=pairs_to_querystring(query...))
 	if occ_s_req.status == 200
 		body = JSON.parse(String(occ_s_req.body))
-		maxocc = body["count"] > 100000 ? 100000 : body["count"]
+		of_max = body["count"] > 100000 ? 100000 : body["count"]
 		this_rec = GBIFRecord.(body["results"])
-		return (this_rec, offset, max_occ)
+		return (this_rec, body["offset"], of_max)
 	end
 	return (nothing, nothing, nothing)
 end

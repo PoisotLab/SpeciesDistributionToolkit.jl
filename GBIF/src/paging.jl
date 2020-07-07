@@ -18,18 +18,18 @@ function occurrences!(o::GBIFRecords)
     if o.query == nothing
       o.query = Dict{String,Any}()
     end
-    offset = length(o.occurrences)
+    offset = length(o)
     limit_index = findfirst((p) -> string(p.first) == "limit", o.query)
     limit = isnothing(limit_index) ? 20 : o.query[limit_index].second
     if (offset + limit) > o.count
       deleteat!(o.query, limit_index)
       push!(o.query, "limit" => o.count - offset)
     end
-    get_next = GBIF.occurrences("offset" => offset, o.query...)
-    @info offset
-    append!(o.occurrences, get_next.occurrences)
-    append!(o.show, get_next.show)
-    o.offset = length(o.occurrences)
-    @assert o.offset == length(o.occurrences)
+    retrieved, offset, of_max = _internal_occurrences_getter(o.query...)
+    start = length(o)+1
+    stop = start + length(retrieved) - 1
+    o.occurrences[start:stop] = retrieved
+    o.show[start:stop] .= true
+    o.offset = length(o)
   end
 end

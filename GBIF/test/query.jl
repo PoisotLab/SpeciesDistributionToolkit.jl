@@ -1,8 +1,8 @@
 module TestQuery
 
   using GBIF
-  using Query
   using DataFrames
+  using Query
   using Test
 
   t = taxon("Carnivora", strict=false)
@@ -16,13 +16,4 @@ module TestQuery
 
   @test typeof(tdf) <: DataFrame
 
-  tdf2 = for s in view(set) begin
-    @where s.rank == "SPECIES"
-    @select s
-    @collect
-  end
-
-  @test typeof(tdf2) <: Vector{GBIFRecord}
-
-end
 end

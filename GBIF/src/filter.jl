@@ -108,5 +108,7 @@ This function reverses the action of `filter!`. It will unmask all
 records that have been removed under the current filters.
 """
 function allrecords!(o::GBIFRecords)
-  o.show = ones(Bool, length(o.occurrences))
+  for i in o.show
+    o.show = isassigned(o.occurrences, i)
+  end
 end

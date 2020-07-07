@@ -7,11 +7,12 @@ through queries 20 at a time. This can be modified by changing the
 by GBIF for the queries.
 
 If filters have been applied to this query before, they will be *removed* to
-ensure that the previous and the new occurrences have the same status.
+ensure that the previous and the new occurrences have the same status, but only
+for records that have already been retrieved.
 """
 function occurrences!(o::GBIFRecords)
   !all(o.show) && allrecords!(o)
-  if length(o.occurrences) == o.count
+  if length(o) == o.count
     @info "All occurences for this query have been returned"
   else
     if o.query == nothing
@@ -25,6 +26,7 @@ function occurrences!(o::GBIFRecords)
       push!(o.query, "limit" => o.count - offset)
     end
     get_next = GBIF.occurrences("offset" => offset, o.query...)
+    @info offset
     append!(o.occurrences, get_next.occurrences)
     append!(o.show, get_next.show)
     o.offset = length(o.occurrences)

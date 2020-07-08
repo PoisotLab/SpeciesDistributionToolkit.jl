@@ -13,7 +13,8 @@ makedocs(
             "Types" => "types.md"
         ],
         "Examples" => [
-            "Northen cardinal" => "examples/cardinal.md"
+            "Northern cardinal" => "examples/cardinal.md",
+            "Bats rank-abundance" => "examples/bats.md"
         ]
     ]
 )

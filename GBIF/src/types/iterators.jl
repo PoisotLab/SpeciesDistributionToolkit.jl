@@ -1,8 +1,12 @@
-import Base.length, Base.getindex, Base.iterate, Base.view
+import Base.length, Base.getindex, Base.iterate, Base.view, Base.size
 
 function view(o::GBIFRecords)
     defined = filter(i -> isassigned(o.occurrences, i), eachindex(o.occurrences))
     view(o.occurrences, defined)
+end
+
+function size(o::GBIFRecords)
+    length(o.occurrences)
 end
 
 function length(o::GBIFRecords)

@@ -4,10 +4,13 @@ authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 version = "0.2.4"
 
 [deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+Query = "1a8c2f83-1ff3-5112-b086-8aa67b057ba1"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
+StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
 
 [compat]
 HTTP = "0.8"

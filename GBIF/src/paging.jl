@@ -28,6 +28,5 @@ function occurrences!(o::GBIFRecords)
     start = length(o)+1
     stop = start + length(retrieved) - 1
     o.occurrences[start:stop] = retrieved
-    o.offset = length(o)
   end
 end

@@ -26,6 +26,7 @@ struct GBIFRecord
     uncertainty::Union{Missing, AbstractFloat}
     geodetic::Union{Missing, AbstractString}
     date::Union{Missing, DateTime}
+    identified::Union{Missing, DateTime}
     issues::Vector{Symbol}
     taxonKey::Union{Missing, Integer}
     rank::Union{Missing, AbstractString}
@@ -114,6 +115,7 @@ function GBIFRecord(o::Dict{String, Any})
         get(o, "coordinateUncertaintyInMeters", missing),
         get(o, "geodeticDatum", missing),
         format_date(o, "eventDate"),
+        format_date(o, "dateIdentified"),
         Symbol.(o["issues"]),
         get(o, "taxonKey", missing),
         get(o, "taxonRank", missing),
@@ -131,10 +133,8 @@ end
 """
 **List of occurrences and metadata**
 
-This type has actually very few information, besides `offset` (the number of
-records already retrieved) and `count` (the total number of records). The
-`query` field stores the query parameters. This type is mutable and fully
-iterable.
+This type has actually very few information: the `query` field stores the query
+parameters. This type is mutable and fully iterable.
 
 The `occurrences` field is pre-allocated, meaning that it will contain `#undef`
 elements up to the total number of hits on GBIF. When iterating, this is taken
@@ -142,8 +142,6 @@ care of automatically, but this needs to be accounted for if writing code that
 accesses this field directly.
 """
 mutable struct GBIFRecords
-    offset::Integer
-    count::Integer
     query::Union{Vector{Pair}, Nothing}
     occurrences::Vector{GBIFRecord}
 end

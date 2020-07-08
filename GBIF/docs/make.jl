@@ -10,10 +10,11 @@ makedocs(
         "Home" => "index.md",
         "Manual" => [
             "Getting data" => "data.md",
-            "Query.jl support" => "filter.md",
-            "DataFrames.jl support" => "dataframes.md"
+            "Types" => "types.md"
         ],
-        "Types" => "types.md"
+        "Examples" => [
+            "Mammals of Quebec" => "examples/mammals.md"
+        ]
     ]
 )
 

@@ -72,8 +72,6 @@ function occurrences(query::Pair...)
 		store = Vector{GBIFRecord}(undef, of_max)
 		store[1:length(retrieved)] = retrieved
 		return GBIFRecords(
-			offset,
-			of_max,
 			vcat(query...),
 			store
 		)

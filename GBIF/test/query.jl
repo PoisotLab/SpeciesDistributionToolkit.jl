@@ -5,7 +5,7 @@ module TestQuery
   using Query
   using Test
 
-  t = taxon("Carnivora", strict=false)
+  t = taxon("Mammalia", strict=false)
   set = occurrences(t)
   [occurrences!(set) for i in 1:10]
 

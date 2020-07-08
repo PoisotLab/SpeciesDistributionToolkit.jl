@@ -1,4 +1,4 @@
-# Mammals in Québec
+# Observations of Northern Cardinal over time
 
 In this example, we will look at the number of observations of the *Cardinalis
 cardinalis* observed in Québec in 2012 and 2013, sort the observations by date,
@@ -16,7 +16,7 @@ using Dates
 We can get the taxonomic object for *Cardinalis cardinalis*:
 
 ```@example qc
-sp_code = taxon("Odocoileus virginianus", rank = :SPECIES)
+sp_code = taxon("Cardinalis cardinalis", rank = :SPECIES)
 ```
 
 With this object created, we can define a rough bounding box for Québec, and
@@ -31,7 +31,7 @@ obs_qc = occurrences(
     "hasCoordinate" => "true",
     "decimalLatitude" => lat,
     "decimalLongitude" => lon,
-    "year" => (2010, 2020)
+    "year" => (2012, 2013)
 )
 ```
 
@@ -39,13 +39,21 @@ Because the query parameters are going to remain within the `obs_qc` variable,
 all we need to do is call `occurrences!` on this variable until all occurrences
 (of which there are `size(obs_qc)`) are retrieved.
 
-```@example
+```@example qc
 while length(obs_qc) < size(obs_qc)
     occurrences!(obs_qc)
 end
 ```
 
-```@example
+At the end of this loop, the `obs_qc` object will have all of the occurrences.
+It is directly iterable, so we do not need to do anything specific to use it in
+a `for` loop - but if we want to get an array of `GBIFRecord`, we can use
+`collect(view(obs_qc))`.
+
+The next step is to actually convert the data into a form where we can plot
+them, and this showcases how the package can be used with `Query`:
+
+```@example qc
 d = obs_qc |>
   @filter(_.rank == "SPECIES") |>
   @filter(_.country == "Canada") |>
@@ -56,6 +64,5 @@ d = obs_qc |>
   @thenby(_.year) |>
   DataFrame
 
-theme(:default)
-@df d plot(:month, :obs, group=:year, palette=cgrad(:cividis, :year))
+@df d plot(:month, :obs, group=:year)
 ```

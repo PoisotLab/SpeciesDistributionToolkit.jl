@@ -15,6 +15,10 @@ makedocs(
         "Examples" => [
             "Northern cardinal" => "examples/cardinal.md",
             "Bats rank-abundance" => "examples/bats.md"
+        ],
+        "Code performance" => [
+            "Traceur results" => "benchmark/traceur.md",
+            "Benchmark" => "benchmark/benchmark.md"
         ]
     ]
 )

@@ -5,4 +5,5 @@ to the disk, and then read locally.
 
 ```@docs
 worldclim
+landcover
 ```

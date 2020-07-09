@@ -1,13 +1,19 @@
 # Access GBIF data with Julia
 
-This package offers access to biodiversity data through the Global Biodiversity
-Information Facility ([GBIF](https://www.gbif.org/)) API. The package currently
-supports access to occurrence information, and limited support for taxonomic
-information.
+This package offers access to biodiversity data stored by the Global
+Biodiversity Information Facility ([GBIF](https://www.gbif.org/)). The package
+currently offers a wrapper around the search API (to retrieve information on
+occurrences), and a limited wrapper around the species API (to retrieve the
+identifier of taxa).
+
+The focus on the package is on retrieving data; filtering and data analysis
+should be done using other packages from the Julia ecosystem. In particular, we
+provide support for `DataFrames` and `Query` (and therefore the rest of the
+"queryverse").
 
 ## Getting started
 
-The package can be installed from the Julia console:
+The latest release of the package can be installed from the Julia console:
 
 ~~~ julia
 Pkg.add("GBIF")
@@ -21,9 +27,7 @@ using GBIF
 
 ## Core features
 
-This package is a wrapper around the "search" API for occurrences, as well as
-the taxonomy API of GBIF. The core functions are `occurrences` and `taxon`. In
-previous releases of the package, there were a number a data cleaning routines -
-because the Julia ecosystem has powerful packages to do this, they have been
-removed, and we suggest to use either `Query.jl` directly, or to access a subset
-of the information through the integration with `DataFrames.jl`.
+- get taxonomic information using the `taxon` function
+- retrieve a single occurrence as a `GBIFRecord` using `occurrence`
+- search for multiple occurrences as a `GBIFRecords` according to a query using the `occurrences` function, and page through the results with `occurrences!`
+- `GBIFRecords` are fully iterable

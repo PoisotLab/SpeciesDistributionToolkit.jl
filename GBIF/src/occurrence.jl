@@ -65,6 +65,9 @@ This function will return the latest occurrences matching the queries -- usually
 20, but this is entirely determined by the server default page size. The query
 parametes must be given as pairs, and are optional. Omitting the query will
 return the latest recorded occurrences.
+
+The arguments accepted as queries are the one documented on the [GBIF
+API](https://www.gbif.org/developer/occurrence) website.
 """
 function occurrences(query::Pair...)
 	retrieved, offset, of_max = _internal_occurrences_getter(query...)

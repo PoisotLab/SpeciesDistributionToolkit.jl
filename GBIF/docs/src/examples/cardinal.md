@@ -1,7 +1,7 @@
 # Observations of Northern Cardinal over time
 
 In this example, we will use the `GBIF` package to compare the number of
-observations of a species over two years. Specifically, we will look at records of the Northern Cardinal (*Cardinalis cardinalis*) in Québec, from 2012 to 2013. This example will allow us to highlight how `GBIFRecords` can be used with `Query`, to select records and transform them.
+observations of a species over two years. Specifically, we will look at records of the Northern Cardinal (*Cardinalis cardinalis*) in Québec, from 2011 to 2013. This example will allow us to highlight how `GBIFRecords` can be used with `Query`, to select records and transform them.
 
 ```@example qc
 using GBIF
@@ -38,7 +38,7 @@ obs_qc = occurrences(
     "hasCoordinate" => "true",
     "decimalLatitude" => lat,
     "decimalLongitude" => lon,
-    "year" => (2012, 2013)
+    "year" => (2011, 2013)
 )
 ```
 

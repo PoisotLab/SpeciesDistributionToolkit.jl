@@ -12,7 +12,7 @@ max33 = coarsen(S, maximum, (3,3))
 @test max33.grid == [15 33; 18 36]
 
 # Coarsen should play nicely with the non-float types
-M = SimpleSDMResponse(["a" NaN "b" "c"; "d" "e" "f" "g"; "d" "e" NaN "g"; NaN "x" "y" "z"], 0.0, 1.0, 0.0, 1.0)
+M = SimpleSDMResponse(["a" nothing "b" "c"; "d" "e" "f" "g"; "d" "e" nothing "g"; nothing "x" "y" "z"], 0.0, 1.0, 0.0, 1.0)
 @test coarsen(M, x -> reduce(*, x), (2,2)).grid == ["ade" "bfcg"; "dex" "ygz"]
 
 end

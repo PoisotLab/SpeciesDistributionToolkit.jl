@@ -5,7 +5,7 @@ function _landcover_variable_url(variable_index::T, full::Bool) where { T<: Inte
     if full
         return "landcover_full_$(variable_index).tif" => "https://data.earthenv.org/consensus_landcover/with_DISCover/consensus_full_class_$(variable_index).tif"
     end
-    return "landcover_reduced_$(variable_index).tif" => "https://data.earthenv.org/consensus_landcover/without_DISCover/Consensus_reduced_class_$(variable_index).tif" 
+    return "landcover_reduced_$(variable_index).tif" => "https://data.earthenv.org/consensus_landcover/without_DISCover/Consensus_reduced_class_$(variable_index).tif"
 end
 
 """
@@ -26,9 +26,6 @@ included. Quoting from the reference website:
 > consensus land cover dataset for most applications. However, the reduced
 > version may provide an alternative for applications in regions with large land
 > cover change in the past two decades.
-
-Internally, this function will download the main zip file for the required
-version of the data, extract it, and parse the required layers.
 
 It is recommended to *keep* the content of the `path` folder, as it will
 eliminate the need to download and/or extract the tiff files. For example,
@@ -80,7 +77,7 @@ end
 
 This function returns a single layer from the *EarthEnv* landcover dataset.
 Because the layers are quite large due to their resolution (and despite being
-represented as `UInt64`), it is a good idea to rely on this function first and
+represented as `UInt8`), it is a good idea to rely on this function first and
 foremost. Calling the method with a range or array can lead to an
 `OutOfMemory()` error, notably on machines with limited specifications.
 """
@@ -89,6 +86,6 @@ landcover(layer::T; x...) where {T <: Integer} = first(landcover([layer]; x...))
 """
     landcover(layers::UnitRange{T}; x...) where {T <: Integer}
 
-Return a range of layers from EarthEnv landcover. 
+Return a range of layers from EarthEnv landcover.
 """
 landcover(layers::UnitRange{T}; x...) where {T <: Integer} = landcover(collect(layers); x...)

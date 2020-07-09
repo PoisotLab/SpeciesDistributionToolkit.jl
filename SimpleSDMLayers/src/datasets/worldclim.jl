@@ -49,7 +49,7 @@ function worldclim(layers::Vector{T}; resolution::AbstractString="10", path::Abs
 
     paths = [joinpath(path, "wc2.1_$(resolution)m_bio_$(code).tif") for code in layers]
     @info paths
-    
+
     missing_files = !all(isfile.(paths))
     zip_file = "bioclim_2.1_$(resolution)m.zip"
     missing_zip_file = !isfile(joinpath(path, zip_file))

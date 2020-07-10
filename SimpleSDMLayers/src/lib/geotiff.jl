@@ -1,47 +1,21 @@
 """
     geotiff(tiff_file; T::Type=Float64)
 
-The geotiff function reads a geotiff file, and returns it as a matrix of type
-`T`.
+The geotiff function reads a geotiff file, and returns it as a matrix of the correct type.
 """
 function geotiff(tiff_file; T::Type=Float64)
-    # Register GDAL drivers
-    GDAL.gdalallregister()
-
-    # Load the dataset
-    dataset = GDAL.gdalopen(tiff_file, GDAL.GA_ReadOnly)
-
-    # Band
-    band = GDAL.gdalgetrasterband(dataset, 1)
-
-    # Matrix
-    xs = GDAL.gdalgetrasterxsize(dataset)
-    ys = GDAL.gdalgetrasterysize(dataset)
-
-    bandtype = GDAL.gdalgetrasterdatatype(band)
-
-    V = zeros(T, (xs, ys))
-    GDAL.gdalrasterio(
-        band,
-        GDAL.GF_Read,
-        0, 0, xs, ys,
-        pointer(V),
-        xs, ys,
-        bandtype,
-        0, 0
-    )
-
-    K = Array{Union{Nothing,T},2}(undef, ys, xs)
-    for (i,r) in enumerate(reverse(1:size(V, 2)))
-       K[i,:] = V[:,r]
+    ArchGDAL.read(tiff_file) do dataset
+        band = ArchGDAL.getband(dataset, 1)
+        width = ArchGDAL.width(dataset)
+        height = ArchGDAL.height(dataset)
+        pixel_type = ArchGDAL.pixeltype(band)
+        buffer = Matrix{pixel_type}(undef, width, height)
+        ArchGDAL.read!(dataset, buffer, 1)
     end
 
-    this_min = minimum(V)
+    buffer = rotl90(convert(Matrix{Union{Nothing,eltype(buffer)}}, buffer))
+    buffer[buffer .== minimum(buffer)] .= nothing
 
-    for i in eachindex(K)
-        K[i] = K[i] > this_min ? K[i] : nothing
-    end
-
-    return K
+    return buffer
 
 end

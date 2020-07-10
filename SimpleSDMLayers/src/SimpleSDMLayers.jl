@@ -1,6 +1,6 @@
 module SimpleSDMLayers
 
-using GDAL
+using ArchGDAL
 using HTTP
 using RecipesBase
 using ZipFile

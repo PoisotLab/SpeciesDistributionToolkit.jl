@@ -7,6 +7,7 @@ tests = [
    "construction" => "construction.jl",
    "basics" => "basics.jl",
    "overloads" => "overloads.jl",
+   "generated" => "generated.jl",
    "worldclim" => "worldclim.jl",
    #"landcover" => "landcover.jl",
    "coarsen" => "coarsen.jl",

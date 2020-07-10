@@ -48,7 +48,6 @@ function worldclim(layers::Vector{T}; resolution::AbstractString="10", path::Abs
     resolution ∈ ["2.5", "5", "10"] || throw(ArgumentError("The resolution argument ($(resolution) must be 2.5, 5, or 10"))
 
     paths = [joinpath(path, "wc2.1_$(resolution)m_bio_$(code).tif") for code in layers]
-    @info paths
 
     missing_files = !all(isfile.(paths))
     zip_file = "bioclim_2.1_$(resolution)m.zip"

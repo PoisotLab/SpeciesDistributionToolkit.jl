@@ -4,8 +4,10 @@ authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 version = "0.3.0"
 
 [deps]
+ArchGDAL = "c9ce4bd3-c3d5-55b8-8973-c0e20141b8c3"
 GDAL = "add2ef01-049f-52c4-9ee2-e494f65e021a"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"

@@ -5,14 +5,16 @@ ops = Dict(
 
 for op in ops
     mod = op.first
-    for fun in op.second
-        @info fun
+    if mod != :Base
         eval(quote
             using $mod
+        end)
+    end
+    for fun in op.second
+        eval(quote
             import $mod: $fun
         end)
         for ty in (:SimpleSDMResponse, :SimpleSDMPredictor)
-            @info ty
             eval(quote
             """
                 $($mod).$($fun)(l::$($ty){T}) where {T <: Number}

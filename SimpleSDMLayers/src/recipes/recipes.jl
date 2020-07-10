@@ -9,6 +9,9 @@ test 1
       ylims --> (minimum(latitudes(layer)),maximum(latitudes(layer)))
       lg = copy(layer.grid)
       lg[lg.==nothing] .= NaN
+      @info type(lg)
+      @info eltype(lg)
+      @info lg
       longitudes(layer), latitudes(layer), lg
    elseif get(plotattributes, :seriestype, :histogram) in [:histogram, :density]
       filter(!isnothing, layer.grid)

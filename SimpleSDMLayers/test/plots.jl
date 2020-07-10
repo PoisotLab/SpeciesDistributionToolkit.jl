@@ -7,17 +7,17 @@ temperature, precipitation = worldclim([1,12])
 
 ispath("gallery") || mkpath("gallery")
 
-plot(temperature, c=:RdYlBu, title="Temperature", frame=:box, clim=(-50,50),
+plot(temperature, c=:magma, title="Temperature", frame=:box,
     xlabel = "Longitude",
     ylabel= "Latitude")
 savefig(joinpath("gallery", "heatmap.png"))
 
-contour(temperature, c=:RdYlBu, title="Temperature", frame=:box, clim=(-50,50),
+contour(temperature, c=:viridis, title="Temperature", frame=:box,
     xlabel = "Longitude",
     ylabel= "Latitude")
 savefig(joinpath("gallery", "contour.png"))
 
-contour(temperature, c=:RdYlBu, title="Temperature", frame=:box, clim=(-50,50), fill=true,
+contour(temperature, c=:cividis, title="Temperature", frame=:box, clim=(-50,50), fill=true,
     xlabel = "Longitude",
     ylabel= "Latitude")
 savefig(joinpath("gallery", "filled_contour.png"))

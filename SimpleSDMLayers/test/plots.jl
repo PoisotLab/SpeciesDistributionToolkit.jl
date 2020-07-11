@@ -23,8 +23,6 @@ contour(temperature, c=:cividis, title="Temperature", frame=:box, clim=(-50,50),
 savefig(joinpath("gallery", "filled_contour.png"))
 
 cmap = coarsen(temperature, minimum, (10,10))
-@info cmap
-@info eltype(cmap)
 heatmap(cmap, c=:RdYlBu, title="Temperature", frame=:box)
 xaxis!("Longitude")
 yaxis!("Latitude")

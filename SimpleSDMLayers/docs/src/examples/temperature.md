@@ -15,7 +15,7 @@ visualize these data:
 
 ```@example temp
 using Plots, StatsPlots
-heatmap(temperature, c=:magma, frame=:box)
+heatmap(temperature, c=:cividis, frame=:box)
 xaxis!("Longitude")
 yaxis!("Latitude")
 ```
@@ -33,7 +33,7 @@ can also make a quick heatmap to see what the region looks like:
 
 ```@example temp
 temperature_europe = temperature[left=-11.0, right=31.1, bottom=29.0, top=71.1]
-heatmap(temperature_europe, c=:magma, aspectratio=1, frame=:box)
+heatmap(temperature_europe, c=:cividis, aspectratio=1, frame=:box)
 ```
 
 The next step will be to coarsen these data, which requires to give the number
@@ -60,7 +60,7 @@ temperature_europe_coarse = coarsen(temperature_europe, Statistics.mean, (2, 2))
 One again, we can plot these data:
 
 ```@example temp
-heatmap(temperature_europe_coarse, aspectratio=1, c=:magma, frame=:box)
+heatmap(temperature_europe_coarse, aspectratio=1, c=:cividis, frame=:box)
 ```
 
 Finally, we can compare our different clipping and approximations to the overall

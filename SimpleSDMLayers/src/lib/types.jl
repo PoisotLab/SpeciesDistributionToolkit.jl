@@ -59,5 +59,9 @@ for simplesdm_type in simplesdm_types
         function $simplesdm_type(grid::Matrix{T}, l::K, r::K, b::K, t::K) where {T, K<:AbstractFloat}
             return $simplesdm_type(convert(Matrix{Union{Nothing,T}}, grid), l, r, b, t)
         end
+
+        function $simplesdm_type(grid::Matrix{T}, L::K) where {T, K<:SimpleSDMLayer}
+            return $simplesdm_type(convert(Matrix{Union{Nothing,T}}, grid), L.left, L.right, L.bottom, L.top)
+        end
     end)
 end

@@ -29,7 +29,8 @@ include(joinpath("datasets", "landcover.jl"))
 export landcover
 
 include(joinpath("operations", "coarsen.jl"))
-export coarsen
+include(joinpath("operations", "sliding.jl"))
+export coarsen, slidingwindow
 
 include(joinpath("recipes", "recipes.jl"))
 

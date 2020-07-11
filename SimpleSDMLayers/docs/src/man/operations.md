@@ -2,6 +2,7 @@
 
 ```@docs
 coarsen
+slidingwindow
 latitudes
 longitudes
 clip

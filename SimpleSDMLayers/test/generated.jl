@@ -10,8 +10,8 @@ S = SimpleSDMPredictor(M, 0.0, 1.0, 0.0, 1.0)
 
 using Statistics
 
-@test mean(S) == mean(M)
-@test std(S) == std(M)
-@test median(S) == median(M)
+@test mean(S) ≈ mean(M)
+@test std(S) ≈ std(M)
+@test median(S) ≈ median(M)
 
 end

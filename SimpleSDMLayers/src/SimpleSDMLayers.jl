@@ -22,6 +22,9 @@ export geotiff
 include(joinpath("datasets", "worldclim.jl"))
 export worldclim
 
+include(joinpath("datasets", "chelsa.jl"))
+export bioclim
+
 include(joinpath("datasets", "landcover.jl"))
 export landcover
 

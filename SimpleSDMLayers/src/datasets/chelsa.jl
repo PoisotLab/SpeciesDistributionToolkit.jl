@@ -6,6 +6,11 @@ from 1 to 19. The list of available layers is given in a table below.
 The keyword argument is `path`, which refers to the path where the function
 will look for the geotiff files.
 
+Note that these files are *large* due the fine resolution of the data, and for
+this reason this function will return the *integer* version of the layers. Also
+note that the bioclim data are only available for the V1 of CHELSA, and are not
+from the V2.
+
 It is recommended to *keep* the content of the `path` folder, as it will
 eliminate the need to download the tiff files (which are quite large). For
 example, calling `bioclim(1:19)` will download and everything, and future
@@ -39,7 +44,7 @@ function bioclim(layers::Vector{Int64}; path::AbstractString="assets")
 	isdir(path) || mkdir(path)
 	codes = [lpad(code, 2, "0") for code in layers]
 	filenames = ["CHELSA_bio10_$(lpad(code, 2, '0')).tif" for code in codes]
-	url_root = "https://www.wsl.ch/lud/chelsa/data/bioclim/integer/"
+	url_root = "ftp://envidatrepo.wsl.ch/uploads/chelsa/chelsa_V1/bioclim/integer/"
 
 	for f in filenames
       p = joinpath(path, f)
@@ -51,7 +56,7 @@ function bioclim(layers::Vector{Int64}; path::AbstractString="assets")
       end
 	end
 	paths = [joinpath(path, filename) for filename in filenames]
-	data_layers = geotiff.(paths; T=Int64)
+	data_layers = geotiff.(paths)
 	return SimpleSDMPredictor.(data_layers, -180.0, 180.0, -90.0, 90.0)
 
 end

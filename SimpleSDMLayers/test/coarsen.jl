@@ -15,4 +15,9 @@ max33 = coarsen(S, maximum, (3,3))
 M = SimpleSDMResponse(["a" nothing "b" "c"; "d" "e" "f" "g"; "d" "e" nothing "g"; nothing "x" "y" "z"], 0.0, 1.0, 0.0, 1.0)
 @test coarsen(M, x -> reduce(*, x), (2,2)).grid == ["ade" "bfcg"; "dex" "ygz"]
 
+# Should work on a real-world example
+temperature = worldclim(1)
+t_coarse = coarsen(temperature, minimum, (10, 10))
+@test typeof(t_coarse) <: SimpleSDMPredictor
+
 end

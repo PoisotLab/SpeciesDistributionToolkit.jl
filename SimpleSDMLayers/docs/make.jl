@@ -2,6 +2,7 @@ push!(LOAD_PATH, joinpath("..", "src"))
 
 using Documenter, SimpleSDMLayers
 using GBIF
+using Statistics
 
 makedocs(
     sitename = "Simple SDM Layers",

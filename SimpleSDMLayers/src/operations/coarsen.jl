@@ -25,12 +25,11 @@ function coarsen(L::LT, f::FT, d::Tuple{IT,IT}) where {LT <: SimpleSDMLayer, FT 
     mod(CY, cy) == 0 || throw(ArgumentError("The number of cells to aggregate ($(cy)) must be compatible with the number of columns ($(CY))"))
 
     # Then we create a new grid, full of undefined values of the same type as
-    # the elements of L
+    # the elements of L. This is not the best type here, of course, but I'm not
+    # sure how to get a better idea _before_. This will all be converted to the
+    # more compact type possible at the end, before returning a layer.
     nx = convert(Int64, CX/cx)
     ny = convert(Int64, CY/cy)
-
-    # This is not the best type here, of course, but I'm not sure how to get a
-    # better idea _before_.
     newgrid = Array{Any}(undef, (nx, ny))
 
     # At this point, we do not need to create the new SimpleSDMLayer object, as
@@ -41,7 +40,13 @@ function coarsen(L::LT, f::FT, d::Tuple{IT,IT}) where {LT <: SimpleSDMLayer, FT 
         old_i = ((i-1)*cx+1):(i*cx)
         for j in 1:size(newgrid, 2)
             old_j = ((j-1)*cy+1):(j*cy)
-            V = vec(L.grid[old_i, old_j])
+
+            # This operation is super-duper important because it is the only
+            # thing that makes the function work for some types - why it would
+            # be the case is beyond me, but it turned out that being explicit
+            # about converting things to a vector keep Julia happy, and my sense
+            # of self worth is directly tied to how little error messages I get.
+            V = convert(Vector, vec(L.grid[old_i, old_j]))
 
             # We remove the nothing values from the grid
             filter!(!isnothing, V)
@@ -52,15 +57,9 @@ function coarsen(L::LT, f::FT, d::Tuple{IT,IT}) where {LT <: SimpleSDMLayer, FT 
         end
     end
 
-    @info typeof(newgrid)
-    @info eltype(newgrid)
-
     # Now we change the type
     internal_types = unique(typeof.(newgrid))
     newgrid = convert(Matrix{Union{internal_types...}}, newgrid)
-
-    @info typeof(newgrid)
-    @info eltype(newgrid)
 
     # Now that everything is done, we can return an object of the correct type
     NT = LT <: SimpleSDMPredictor ? SimpleSDMPredictor : SimpleSDMResponse

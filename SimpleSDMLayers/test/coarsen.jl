@@ -1,6 +1,7 @@
 module SSLTestCoarsen
 using SimpleSDMLayers
 using Test
+using Statistics
 
 M = convert(Matrix, reshape(1:36, (6,6)))
 S = SimpleSDMPredictor(M, 0.0, 1.0, 0.0, 1.0)
@@ -15,9 +16,11 @@ max33 = coarsen(S, maximum, (3,3))
 M = SimpleSDMResponse(["a" nothing "b" "c"; "d" "e" "f" "g"; "d" "e" nothing "g"; nothing "x" "y" "z"], 0.0, 1.0, 0.0, 1.0)
 @test coarsen(M, x -> reduce(*, x), (2,2)).grid == ["ade" "bfcg"; "dex" "ygz"]
 
-# Should work on a real-world example
+# Should work on a real-world example for a series of functions
 temperature = worldclim(1)
-t_coarse = coarsen(temperature, minimum, (10, 10))
-@test typeof(t_coarse) <: SimpleSDMPredictor
+for f in [minimum, maximum, mean, median]
+    t_coarse = coarsen(temperature, f, (10, 10))
+    @test typeof(t_coarse) <: SimpleSDMPredictor
+end
 
 end

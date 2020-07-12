@@ -43,6 +43,11 @@ yaxis!("Precipitation")
 savefig(joinpath("gallery", "scatter-2d.png"))
 
 chelsa1 = bioclim(1; left=-5.0, right=7.0, bottom=30.0, top=45.0)
+n_chelsa1 = zeros(Float32, size(chelsa1));
+for (i,e) in enumerate(chelsa1.grid)
+  n_chelsa1[i] = isnothing(e) ? NaN : float32(e)
+end
+chelsa1 = SimpleSDMPredictor(n_chelsa1, chelsa1)
 plot(chelsa1, c=:heat, title="Temperature", frame=:box,
     xlabel = "Longitude",
     ylabel= "Latitude")

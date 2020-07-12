@@ -16,16 +16,16 @@ include(joinpath("lib", "generated.jl"))
 include(joinpath("lib", "basics.jl"))
 export latitudes, longitudes
 
-include(joinpath("lib", "geotiff.jl"))
-export geotiff
+include(joinpath("datasets", "sources.jl"))
+include(joinpath("datasets", "download_layer.jl"))
+export EarthEnv, WorldClim, BioClim
 
+include(joinpath("datasets", "geotiff.jl"))
 include(joinpath("datasets", "worldclim.jl"))
-export worldclim
-
 include(joinpath("datasets", "chelsa.jl"))
-export bioclim
-
 include(joinpath("datasets", "landcover.jl"))
+export worldclim
+export bioclim
 export landcover
 
 include(joinpath("operations", "coarsen.jl"))
@@ -34,7 +34,15 @@ export coarsen, slidingwindow
 
 include(joinpath("recipes", "recipes.jl"))
 
-# HACK but this fixes the export of clip when GBIF or others are loaded
+# This next bit is about being able to change the path for raster assets
+# globally, which avoids duplication this argument across multiple functions.
+_layers_assets_path = joinpath(pwd(), "assets")
+function assets_path()
+    isdir(SimpleSDMLayers._layers_assets_path) || mkdir(SimpleSDMLayers._layers_assets_path)
+    return SimpleSDMLayers._layers_assets_path
+end
+
+# Fixes the export of clip when GBIF or others are loaded
 clip(::T) where {T <: SimpleSDMLayer} = nothing
 export clip
 

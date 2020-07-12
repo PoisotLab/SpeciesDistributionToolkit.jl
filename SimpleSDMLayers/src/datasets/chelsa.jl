@@ -39,31 +39,3 @@ calls will be much faster.
 | 19       | Precipitation of Coldest Quarter                           |
 
 """
-function bioclim(layers::Vector{Int64}; path::AbstractString="assets", left=-180.0, right=180.0, bottom=-90.0, top=90.0)
-	@assert all(1 .≤ layers .≤ 19)
-	isdir(path) || mkdir(path)
-	codes = [lpad(code, 2, "0") for code in layers]
-	filenames = ["CHELSA_bio10_$(lpad(code, 2, '0')).tif" for code in codes]
-	url_root = "ftp://envidatrepo.wsl.ch/uploads/chelsa/chelsa_V1/bioclim/integer/"
-
-	for f in filenames
-      p = joinpath(path, f)
-      if !(isfile(p))
-         res = HTTP.request("GET", url_root * f)
-		 open(p, "w") do f
-			 write(f, String(res.body))
-		 end
-      end
-	end
-	paths = [joinpath(path, filename) for filename in filenames]
-	data_layers = geotiff.(SimpleSDMPredictor, paths; left=left, right=right, top=top, bottom=bottom)
-	return data_layers
-
-end
-
-"""
-Return a single layer of bioclim variables from the CHELSA database.
-"""
-bioclim(layer::Int64; x...) = first(bioclim([layer]; x...))
-
-bioclim(layers::UnitRange{Int64}; x...) = bioclim(collect(layers); x...)

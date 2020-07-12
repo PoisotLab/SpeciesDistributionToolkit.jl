@@ -1,12 +1,3 @@
-"""
-Get the correct URL for a variable with or without discover, returns a pair filename => url
-"""
-function _landcover_variable_url(variable_index::T, full::Bool) where { T<: Integer}
-    if full
-        return "landcover_full_$(variable_index).tif" => "https://data.earthenv.org/consensus_landcover/with_DISCover/consensus_full_class_$(variable_index).tif"
-    end
-    return "landcover_reduced_$(variable_index).tif" => "https://data.earthenv.org/consensus_landcover/without_DISCover/Consensus_reduced_class_$(variable_index).tif"
-end
 
 """
     landcover(layers::Vector{T}; full::Bool=false, path::AbstractString="assets") where {T <: Integer}
@@ -50,43 +41,3 @@ keeping the models stored is particularly important.
 
 These data are released under a CC-BY-NC license to Tuanmu & Jetz.
 """
-function landcover(layers::Vector{T}; full::Bool=false, path::AbstractString="assets", left=-180.0, right=180.0, bottom=-90.0, top=90.0) where {T <: Integer}
-    all(1 .≤ layers .≤ 12) || throw(ArgumentError("The number of the layers must all be between 1 and 12"))
-    isdir(path) || mkdir(path)
-
-    layer_information = _landcover_variable_url.(layers, full)
-
-    data_layers = []
-
-    for model_pair in layer_information
-        if !isfile(joinpath(path, model_pair.first))
-            @info "Downloading $(model_pair.first)"
-            layerrequest = HTTP.request("GET", model_pair.second)
-            open(joinpath(path, model_pair.first), "w") do layerfile
-                write(layerfile, String(layerrequest.body))
-            end
-        end
-        push!(data_layers, geotiff(SimpleSDMPredictor, joinpath(path, model_pair.first); left=left, right=right, top=top, bottom=bottom))
-    end
-
-    return data_layers
-
-end
-
-"""
-    landcover(layer::T; x...) where {T <: Integer}
-
-This function returns a single layer from the *EarthEnv* landcover dataset.
-Because the layers are quite large due to their resolution (and despite being
-represented as `UInt8`), it is a good idea to rely on this function first and
-foremost. Calling the method with a range or array can lead to an
-`OutOfMemory()` error, notably on machines with limited specifications.
-"""
-landcover(layer::T; x...) where {T <: Integer} = first(landcover([layer]; x...))
-
-"""
-    landcover(layers::UnitRange{T}; x...) where {T <: Integer}
-
-Return a range of layers from EarthEnv landcover.
-"""
-landcover(layers::UnitRange{T}; x...) where {T <: Integer} = landcover(collect(layers); x...)

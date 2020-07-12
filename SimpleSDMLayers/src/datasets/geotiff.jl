@@ -19,12 +19,13 @@ The first argument is the type of the `SimpleSDMLayer` to be returned.
 """
 function geotiff(
     ::Type{LT},
+    ::Type{ST},
     tiff_file;
     left::T = -180.0,
     right::T = 180.0,
     bottom::T = -90.0,
     top::T = 90.0,
-) where {LT<:SimpleSDMLayer,T<:Number}
+) where {LT<:SimpleSDMLayer,ST<:SimpleSDMSource,T<:Number}
 
     # We do a bunch of checking that the required bounding box is not out of bounds
     # for the range of latitudes and longitudes.

@@ -42,4 +42,10 @@ xaxis!("Temperature")
 yaxis!("Precipitation")
 savefig(joinpath("gallery", "scatter-2d.png"))
 
+chelsa1 = bioclim(1; left=-5.0, right=7.0, bottom=30.0, top=45.0)
+plot(chelsa1, c=:heat, title="Temperature", frame=:box,
+    xlabel = "Longitude",
+    ylabel= "Latitude")
+savefig(joinpath("gallery", "chelsa-heatmap.png"))
+
 end

@@ -53,4 +53,15 @@ plot(chelsa1, c=:heat, title="Temperature", frame=:box,
     ylabel= "Latitude")
 savefig(joinpath("gallery", "chelsa-heatmap.png"))
 
+lc1 = landcover(1; left=-5.0, right=7.0, bottom=30.0, top=45.0)
+n_lc1 = zeros(Float32, size(lc1));
+for (i,e) in enumerate(lc1.grid)
+  n_lc1[i] = isnothing(e) ? NaN : Float32(e)
+end
+lc1 = SimpleSDMPredictor(n_lc1, lc1)
+plot(lc1, c=:terrain, title="Landcover class 1", frame=:box,
+    xlabel = "Longitude",
+    ylabel= "Latitude")
+savefig(joinpath("gallery", "lc-heatmap.png"))
+
 end

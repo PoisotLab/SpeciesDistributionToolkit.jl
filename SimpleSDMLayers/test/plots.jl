@@ -17,7 +17,7 @@ contour(temperature, c=:viridis, title="Temperature", frame=:box,
     ylabel= "Latitude")
 savefig(joinpath("gallery", "contour.png"))
 
-contour(temperature, c=:cividis, title="Temperature", frame=:box, clim=(-50,50), fill=true,
+contour(temperature, c=:cividis, title="Temperature", frame=:box, fill=true,
     xlabel = "Longitude",
     ylabel= "Latitude")
 savefig(joinpath("gallery", "filled_contour.png"))

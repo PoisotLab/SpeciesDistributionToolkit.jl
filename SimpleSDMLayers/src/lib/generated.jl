@@ -36,7 +36,7 @@ whole = Dict(
     :Base => [:abs, :sqrt, :log, :log2, :log10, :log1p, :exp, :exp2, :exp10, :expm1]
 )
 
-for op in ops
+for op in whole
     mod = op.first
     if mod != :Base
         eval(quote

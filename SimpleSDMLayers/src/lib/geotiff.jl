@@ -1,27 +1,74 @@
-"""
-    geotiff(tiff_file; left::T=-180.0, right::T=180.0, bottom::T=-90.0, top::T=90.0) where {T <: Number}
+function _find_span(n, m, M, pos)
+    pos > M && return nothing
+    pos < m && return nothing
+    stride = (M - m) / n
+    centers = (m + 0.5stride):stride:(M-0.5stride)
+    span_pos = last(findmin(abs.(pos .- centers)))
+    return (stride, centers[span_pos], span_pos)
+end
 
-The geotiff function reads a geotiff file, and returns it as a matrix of the correct type.
 """
-function geotiff(tiff_file; left::T=-180.0, right::T=180.0, bottom::T=-90.0, top::T=90.0) where {T <: Number}
+    geotiff(::Type{LT}, tiff_file; left::T=-180.0, right::T=180.0, bottom::T=-90.0, top::T=90.0) where {LT <: SimpleSDMLayer, T <: Number}
+
+The geotiff function reads a geotiff file, and returns it as a matrix of the
+correct type. The optional arguments `left`, `right`, `bottom`, and `left` are
+defining the bounding box to read from the file. This is particularly useful if
+you want to get a small subset from large files.
+
+The first argument is the type of the `SimpleSDMLayer` to be returned.
+"""
+function geotiff(
+    ::Type{LT},
+    tiff_file;
+    left::T = -180.0,
+    right::T = 180.0,
+    bottom::T = -90.0,
+    top::T = 90.0,
+) where {LT<:SimpleSDMLayer,T<:Number}
+
+    # We do a bunch of checking that the required bounding box is not out of bounds
+    # for the range of latitudes and longitudes.
     @assert right > left
     @assert top > bottom
     @assert left <= 180.0
     @assert right >= -180.0
     @assert top <= 90.0
     @assert bottom >= -90.0
+
+    # This next block is reading the geotiff file, but also making sure that we
+    # clip the file correctly to avoid reading more than we need.
     ArchGDAL.read(tiff_file) do dataset
+
+        # The data we need is pretty much always going to be stored in the first
+        # band, so this is what we will get for now. Note that this is not
+        # reading the data yet, just retrieving the metadata.
         band = ArchGDAL.getband(dataset, 1)
+
+        # This next bit of information is crucial, as it will allow us to assign
+        # a matrix of the correct size, but also to get the right latitudes and
+        # longitudes.
         width = ArchGDAL.width(dataset)
         height = ArchGDAL.height(dataset)
+
+        global lon_stride, lat_stride
+        global left_pos, right_pos
+        global bottom_pos, top_pos
+
+        lon_stride, left_pos, min_width = _find_span(width, -180.0, 180.0, left)
+        _, right_pos, max_width = _find_span(width, -180.0, 180.0, right)
+
+        lat_stride, bottom_pos, min_height = _find_span(height, -90.0, 90.0, -bottom)
+        _, top_pos, max_height = _find_span(height, -90.0, 90.0, -top)
+
+        # We are now ready to initialize a matrix of the correct type.
         pixel_type = ArchGDAL.pixeltype(band)
-        buffer = Matrix{pixel_type}(undef, width, height)
-        ArchGDAL.read!(dataset, buffer, 1)
+        buffer = Matrix{pixel_type}(undef, length(max_height:min_height), length(min_width:max_width))
+        ArchGDAL.read!(dataset, buffer, 1, max_height:min_height, min_width:max_width)
     end
 
-    buffer = rotl90(convert(Matrix{Union{Nothing,eltype(buffer)}}, buffer))
-    buffer[buffer .== minimum(buffer)] .= nothing
+    buffer = convert(Matrix{Union{Nothing,eltype(buffer)}}, rotl90(buffer))
+    buffer[findall(buffer .== minimum(buffer))] .= nothing
 
-    return buffer
+    return LT(buffer, left_pos-0.5lon_stride, right_pos+0.5lon_stride, -bottom_pos+0.5lat_stride, -top_pos-0.5lat_stride)
 
 end

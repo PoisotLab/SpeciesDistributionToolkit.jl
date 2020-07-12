@@ -48,10 +48,21 @@ simplesdm_types = (:SimpleSDMResponse, :SimpleSDMPredictor)
 
 for simplesdm_type in simplesdm_types
     eval(quote
+        """
+            $($simplesdm_type)(grid::Matrix{Union{Nothing,T}}) where {T}
+
+        Returns a `$($simplesdm_type)` spanning the entire globe.
+        """
         function $simplesdm_type(grid::Matrix{Union{Nothing,T}}) where {T}
             return $simplesdm_type(grid, -180.0, 180.0, -90.0, 90.0)
         end
 
+        """
+            $($simplesdm_type)(grid::Matrix{Union{Nothing,T}}) where {T}
+
+        Returns a `$($simplesdm_type)` spanning the entire globe by converting to the
+        correct type, *i.e.* with `Nothing` as an acceptable value.
+        """
         function $simplesdm_type(grid::Matrix{T}) where {T}
             return $simplesdm_type(convert(Matrix{Union{Nothing,T}}, grid), -180.0, 180.0, -90.0, 90.0)
         end

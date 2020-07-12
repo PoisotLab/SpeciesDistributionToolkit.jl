@@ -42,7 +42,7 @@ will be much faster.
 
 Original data: https://www.worldclim.org/data/worldclim21.html
 """
-function worldclim(layers::Vector{T}; resolution::AbstractString="10", path::AbstractString="assets") where {T <: Integer}
+function worldclim(layers::Vector{T}; resolution::AbstractString="10", path::AbstractString="assets", left=-180.0, right=180.0, bottom=-90.0, top=90.0) where {T <: Integer}
     all(1 .≤ layers .≤ 19) || throw(ArgumentError("The number of the layers must all be between 1 and 19"))
     isdir(path) || mkdir(path)
     resolution ∈ ["2.5", "5", "10"] || throw(ArgumentError("The resolution argument ($(resolution) must be 2.5, 5, or 10"))
@@ -73,22 +73,21 @@ function worldclim(layers::Vector{T}; resolution::AbstractString="10", path::Abs
         close(zf)
     end
 
-    data_layers = geotiff.(paths)
-
-    return SimpleSDMPredictor.(data_layers)
+    data_layers = geotiff.(SimpleSDMPredictor, paths; left=left, right=right, top=top, bottom=bottom)
+    return data_layers
 
 end
 
 """
     worldclim(layer::T; x...) where {T <: Integer}
 
-Return a single layer from WorldClim 2.0.
+Return a single layer from WorldClim 2.1.
 """
 worldclim(layer::T; x...) where {T <: Integer} = first(worldclim([layer]; x...))
 
 """
     worldclim(layers::UnitRange{T}; x...) where {T <: Integer}
 
-Return a range of layers from WorldClim 2.0.
+Return a range of layers from WorldClim 2.1.
 """
 worldclim(layers::UnitRange{T}; x...) where {T <: Integer} = worldclim(collect(layers); x...)

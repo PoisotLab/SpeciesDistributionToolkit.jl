@@ -39,7 +39,7 @@ calls will be much faster.
 | 19       | Precipitation of Coldest Quarter                           |
 
 """
-function bioclim(layers::Vector{Int64}; path::AbstractString="assets")
+function bioclim(layers::Vector{Int64}; path::AbstractString="assets", left=-180.0, right=180.0, bottom=-90.0, top=90.0)
 	@assert all(1 .≤ layers .≤ 19)
 	isdir(path) || mkdir(path)
 	codes = [lpad(code, 2, "0") for code in layers]
@@ -56,8 +56,8 @@ function bioclim(layers::Vector{Int64}; path::AbstractString="assets")
       end
 	end
 	paths = [joinpath(path, filename) for filename in filenames]
-	data_layers = geotiff.(paths)
-	return SimpleSDMPredictor.(data_layers, -180.0, 180.0, -90.0, 90.0)
+	data_layers = geotiff.(SimpleSDMPredictor, paths; left=left, right=right, top=top, bottom=bottom)
+	return data_layers
 
 end
 

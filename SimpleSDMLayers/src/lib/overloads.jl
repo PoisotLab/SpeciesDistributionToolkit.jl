@@ -7,7 +7,7 @@ import Base: similar
 import Base: copy
 import Base: eltype
 import Base: convert
-import Broadcast: broadcast
+import Base.Broadcast: broadcast
 
 """
     Base.convert(::Type{SimpleSDMResponse}, layer::T) where {T <: SimpleSDMPredictor}
@@ -261,7 +261,7 @@ end
 
 TODO
 """
-function Broadcast.broadcast(f, L::LT) where {LT <: SimpleSDMLayer}
+function Base.Broadcast.broadcast(f, L::LT) where {LT <: SimpleSDMLayer}
     newgrid = Array{Any}(nothing, size(L))
     N = SimpleSDMResponse(newgrid, L)
     v = filter(!isnothing, L.grid)

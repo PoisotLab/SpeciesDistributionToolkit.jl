@@ -50,7 +50,7 @@ keeping the models stored is particularly important.
 
 These data are released under a CC-BY-NC license to Tuanmu & Jetz.
 """
-function landcover(layers::Vector{T}; full::Bool=false, path::AbstractString="assets") where {T <: Integer}
+function landcover(layers::Vector{T}; full::Bool=false, path::AbstractString="assets", left=-180.0, right=180.0, bottom=-90.0, top=90.0) where {T <: Integer}
     all(1 .≤ layers .≤ 12) || throw(ArgumentError("The number of the layers must all be between 1 and 12"))
     isdir(path) || mkdir(path)
 
@@ -66,10 +66,11 @@ function landcover(layers::Vector{T}; full::Bool=false, path::AbstractString="as
                 write(layerfile, String(layerrequest.body))
             end
         end
-        push!(data_layers, geotiff(joinpath(path, model_pair.first); T=UInt8))
+        push!(data_layers, geotiff(SimpleSDMPredictor, joinpath(path, model_pair.first); left=left, right=right, top=top, bottom=bottom))
     end
 
-    return SimpleSDMPredictor.(data_layers)
+    return data_layers
+
 end
 
 """

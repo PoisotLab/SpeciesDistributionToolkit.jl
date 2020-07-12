@@ -48,7 +48,7 @@ for (i,e) in enumerate(chelsa1.grid)
   n_chelsa1[i] = isnothing(e) ? NaN : Float32(e)
 end
 chelsa1 = SimpleSDMPredictor(n_chelsa1, chelsa1)
-plot(chelsa1, c=:heat, title="Temperature", frame=:box,
+plot(chelsa1, c=:heat, title="Temperature from CHELSA", frame=:box,
     xlabel = "Longitude",
     ylabel= "Latitude")
 savefig(joinpath("gallery", "chelsa-heatmap.png"))
@@ -63,5 +63,11 @@ plot(lc1, c=:terrain, title="Landcover class 1", frame=:box,
     xlabel = "Longitude",
     ylabel= "Latitude")
 savefig(joinpath("gallery", "lc-heatmap.png"))
+
+wc1 = worldclim(1; left=-5.0, right=7.0, bottom=30.0, top=45.0)
+plot(wc1, c=:heat, title="Temperature from worldclim", frame=:box,
+    xlabel = "Longitude",
+    ylabel= "Latitude")
+savefig(joinpath("gallery", "worldclim-heatmap.png"))
 
 end

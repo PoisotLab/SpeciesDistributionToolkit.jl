@@ -13,5 +13,6 @@ averaged = slidingwindow(isothermality, Statistics.mean, 100.0)
 ```
 
 ```@example slide
-plot(averaged, fill=true, lw=0.0, c=:alpine)
+plot(isothermality, c=:alpine)
+contour!(average, c=:white, lw=2.0)
 ```

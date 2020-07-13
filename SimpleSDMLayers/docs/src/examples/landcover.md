@@ -21,7 +21,7 @@ type, and then we can then fill these values using a simple rule:
 ```@example urban
 n_urban_grid = zeros(Float32, size(urban));
 for (i,e) in enumerate(urban.grid)
-  n_urban_grid[i] = isnothing(e) ? NaN : float32(e)
+  n_urban_grid[i] = isnothing(e) ? NaN : Float32(e)
 end
 ```
 

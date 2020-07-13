@@ -14,4 +14,7 @@ using Statistics
 @test std(S) ≈ std(M)
 @test median(S) ≈ median(M)
 
+M = ones(Float64, (5, 10))
+@test typeof(sqrt(M)) <: SimpleSDMLayer
+
 end

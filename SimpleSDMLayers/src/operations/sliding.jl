@@ -49,6 +49,7 @@ function slidingwindow(L::LT, f::FT, d::IT) where {LT <: SimpleSDMLayer, FT <: F
 
     internal_types = unique(typeof.(N.grid))
     N.grid = convert(Matrix{Union{internal_types...}}, N.grid)
+    N = typeof(L) <: SimpleSDMPredictor ? convert(SimpleSDMPredictor, N) : N
 
     return N
 end

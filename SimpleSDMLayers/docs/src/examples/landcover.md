@@ -36,5 +36,5 @@ Note that this uses a shortcut where the bounding box from a new
 
 ```@example urban
 using Plots
-heatmap(urban)
+heatmap(urban, c=:terrain)
 ```

@@ -14,6 +14,8 @@ end
 WorldClim() = WorldClim(10.0)
 
 struct BioClim <: SimpleSDMSource end
+longitudes(::Type{BioClim}) = [-180.0001388888, 179.9998611111]
+latitudes(::Type{BioClim}) = [-90.0001388888, 83.9998611111]
 
 struct EarthEnv <: SimpleSDMSource
     full::Bool

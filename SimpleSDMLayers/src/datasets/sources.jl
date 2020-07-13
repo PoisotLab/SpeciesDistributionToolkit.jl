@@ -22,5 +22,5 @@ struct EarthEnv <: SimpleSDMSource
 end
 
 EarthEnv() = EarthEnv(false)
-latitudes(::Type{EarthEnv}) = [-90.0, 90.0]
-longitudes(::Type{EarthEnv}) = [-156.0, 180.0]
+latitudes(::Type{EarthEnv}) = [-56.0, 90.0]
+longitudes(::Type{EarthEnv}) = [-180.0, 180.0]

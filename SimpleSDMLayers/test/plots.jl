@@ -7,6 +7,40 @@ temperature, precipitation = worldclim([1,12])
 
 ispath("gallery") || mkpath("gallery")
 
+chelsa1 = bioclim(1; left=-11.0, right=31.1, bottom=29.0, top=71.1)
+n_chelsa1 = zeros(Float32, size(chelsa1));
+for (i,e) in enumerate(chelsa1.grid)
+  n_chelsa1[i] = isnothing(e) ? NaN : Float32(e)
+end
+chelsa1 = SimpleSDMPredictor(n_chelsa1, chelsa1)
+plot(chelsa1, c=:heat, title="Temperature from CHELSA", frame=:box,
+    xlabel = "Longitude",
+    ylabel= "Latitude")
+savefig(joinpath("gallery", "range-comparison-chelsa.png"))
+
+wc1 = worldclim(1; left=-11.0, right=31.1, bottom=29.0, top=71.1)
+plot(wc1, c=:heat, title="Temperature from worldclim @ 10", frame=:box,
+    xlabel = "Longitude",
+    ylabel= "Latitude")
+savefig(joinpath("gallery", "range-comparison-worldclim-10.png"))
+
+wc1 = worldclim(1; resolution=5.0, left=-11.0, right=31.1, bottom=29.0, top=71.1)
+plot(wc1, c=:heat, title="Temperature from worldclim @ 5", frame=:box,
+    xlabel = "Longitude",
+    ylabel= "Latitude")
+savefig(joinpath("gallery", "range-comparison-worldclim-5.png"))
+
+lc1 = landcover(1; left=-11.0, right=31.1, bottom=29.0, top=71.1)
+n_lc1 = zeros(Float32, size(lc1));
+for (i,e) in enumerate(lc1.grid)
+  n_lc1[i] = isnothing(e) ? NaN : Float32(e)
+end
+lc1 = SimpleSDMPredictor(n_lc1, lc1)
+plot(lc1, c=:terrain, title="Landcover class 1", frame=:box,
+    xlabel = "Longitude",
+    ylabel= "Latitude")
+savefig(joinpath("gallery", "range-comparison-landcover.png"))
+
 plot(temperature, c=:magma, title="Temperature", frame=:box,
     xlabel = "Longitude",
     ylabel= "Latitude")
@@ -42,33 +76,5 @@ histogram2d(temperature, precipitation, leg=false)
 xaxis!("Temperature")
 yaxis!("Precipitation")
 savefig(joinpath("gallery", "scatter-2d.png"))
-
-chelsa1 = bioclim(1; left=-8.0, right=8.0, bottom=35.0, top=52.0)
-n_chelsa1 = zeros(Float32, size(chelsa1));
-for (i,e) in enumerate(chelsa1.grid)
-  n_chelsa1[i] = isnothing(e) ? NaN : Float32(e)
-end
-chelsa1 = SimpleSDMPredictor(n_chelsa1, chelsa1)
-plot(chelsa1, c=:heat, title="Temperature from CHELSA", frame=:box,
-    xlabel = "Longitude",
-    ylabel= "Latitude")
-savefig(joinpath("gallery", "chelsa-heatmap.png"))
-
-lc1 = landcover(1; left=-8.0, right=8.0, bottom=35.0, top=52.0)
-n_lc1 = zeros(Float32, size(lc1));
-for (i,e) in enumerate(lc1.grid)
-  n_lc1[i] = isnothing(e) ? NaN : Float32(e)
-end
-lc1 = SimpleSDMPredictor(n_lc1, lc1)
-plot(lc1, c=:terrain, title="Landcover class 1", frame=:box,
-    xlabel = "Longitude",
-    ylabel= "Latitude")
-savefig(joinpath("gallery", "lc-heatmap.png"))
-
-wc1 = worldclim(1; left=-8.0, right=8.0, bottom=35.0, top=52.0)
-plot(wc1, c=:heat, title="Temperature from worldclim", frame=:box,
-    xlabel = "Longitude",
-    ylabel= "Latitude")
-savefig(joinpath("gallery", "worldclim-heatmap.png"))
 
 end

@@ -54,18 +54,21 @@ function geotiff(
         lon_stride, left_pos, min_width = _find_span(width, minimum(longitudes(ST)), maximum(longitudes(ST)), left)
         _, right_pos, max_width = _find_span(width, minimum(longitudes(ST)), maximum(longitudes(ST)), right)
 
-        lat_stride, bottom_pos, min_height = _find_span(height, minimum(latitudes(ST)), maximum(latitudes(ST)), -bottom)
-        _, top_pos, max_height = _find_span(height, minimum(latitudes(ST)), maximum(latitudes(ST)), -top)
+
+        lat_stride, top_pos, max_height = _find_span(height, minimum(latitudes(ST)), maximum(latitudes(ST)), top)
+        _, bottom_pos, min_height = _find_span(height, minimum(latitudes(ST)), maximum(latitudes(ST)), bottom)
+
+        max_height, min_height = height .- (min_height, max_height) .+ 1
 
         # We are now ready to initialize a matrix of the correct type.
         pixel_type = ArchGDAL.pixeltype(band)
-        buffer = Matrix{pixel_type}(undef, length(max_height:min_height), length(min_width:max_width))
-        ArchGDAL.read!(dataset, buffer, 1, max_height:min_height, min_width:max_width)
+        buffer = Matrix{pixel_type}(undef, length(min_height:max_height), length(min_width:max_width))
+        ArchGDAL.read!(dataset, buffer, 1, min_height:max_height, min_width:max_width)
     end
 
     buffer = convert(Matrix{Union{Nothing,eltype(buffer)}}, rotl90(buffer))
     buffer[findall(buffer .== minimum(buffer))] .= nothing
 
-    return LT(buffer, left_pos-0.5lon_stride, right_pos+0.5lon_stride, -bottom_pos+0.5lat_stride, -top_pos-0.5lat_stride)
+    return LT(buffer, left_pos-0.5lon_stride, right_pos+0.5lon_stride, bottom_pos+0.5lat_stride, top_pos-0.5lat_stride)
 
 end

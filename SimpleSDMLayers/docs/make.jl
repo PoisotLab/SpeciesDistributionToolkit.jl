@@ -19,6 +19,7 @@ makedocs(
         "Examples" => [
             "Temperature data" => "examples/temperature.md",
             "GBIF integration" => "examples/gbif.md",
+            "Sliding window analysis" => "examples/slidingwindow.md",
             "Landcover" => "examples/landcover.md"
         ]
     ]

@@ -15,6 +15,7 @@ using Statistics
 @test median(S) ≈ median(M)
 
 M = ones(Float64, (5, 10))
-@test typeof(sqrt(M)) <: SimpleSDMLayer
+S = SimpleSDMPredictor(M, 0.0, 1.0, 0.0, 1.0)
+@test typeof(sqrt(S)) <: SimpleSDMLayer
 
 end

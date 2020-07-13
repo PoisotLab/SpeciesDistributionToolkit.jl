@@ -31,10 +31,6 @@ function geotiff(
     # for the range of latitudes and longitudes.
     @assert right > left
     @assert top > bottom
-    @assert left <= 180.0
-    @assert right >= -180.0
-    @assert top <= 90.0
-    @assert bottom >= -90.0
 
     # This next block is reading the geotiff file, but also making sure that we
     # clip the file correctly to avoid reading more than we need.

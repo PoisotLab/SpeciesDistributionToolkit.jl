@@ -55,11 +55,11 @@ function geotiff(
         global left_pos, right_pos
         global bottom_pos, top_pos
 
-        lon_stride, left_pos, min_width = _find_span(width, -180.0, 180.0, left)
-        _, right_pos, max_width = _find_span(width, -180.0, 180.0, right)
+        lon_stride, left_pos, min_width = _find_span(width, minimum(longitudes(ST)), maximum(longitudes(ST)), left)
+        _, right_pos, max_width = _find_span(width, minimum(longitudes(ST)), maximum(longitudes(ST)), right)
 
-        lat_stride, bottom_pos, min_height = _find_span(height, -90.0, 90.0, -bottom)
-        _, top_pos, max_height = _find_span(height, -90.0, 90.0, -top)
+        lat_stride, bottom_pos, min_height = _find_span(height, minimum(latitudes(ST)), maximum(latitudes(ST)), -bottom)
+        _, top_pos, max_height = _find_span(height, minimum(latitudes(ST)), maximum(latitudes(ST)), -top)
 
         # We are now ready to initialize a matrix of the correct type.
         pixel_type = ArchGDAL.pixeltype(band)

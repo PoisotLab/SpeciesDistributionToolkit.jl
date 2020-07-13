@@ -21,6 +21,7 @@ include(joinpath("datasets", "download_layer.jl"))
 export EarthEnv, WorldClim, BioClim
 
 include(joinpath("datasets", "geotiff.jl"))
+include(joinpath("datasets", "raster.jl"))
 include(joinpath("datasets", "worldclim.jl"))
 include(joinpath("datasets", "chelsa.jl"))
 include(joinpath("datasets", "landcover.jl"))

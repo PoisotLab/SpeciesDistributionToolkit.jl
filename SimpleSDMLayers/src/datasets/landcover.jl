@@ -41,3 +41,9 @@ keeping the models stored is particularly important.
 
 These data are released under a CC-BY-NC license to Tuanmu & Jetz.
 """
+function landcover(layer::Integer; full::Bool=false, left=nothing, right=nothing, bottom=nothing, top=nothing)
+    return raster(SimpleSDMPredictor, EarthEnv(full), layer=layer, left=left, right=right, bottom=bottom, top=top)
+end
+
+landcover(layers::Vector{T}; args...) where {T <: Integer} = [landcover(l; args...) for l in layers]
+landcover(layers::UnitRange{T}; args...) where {T <: Integer} = [landcover(l; args...) for l in layers]

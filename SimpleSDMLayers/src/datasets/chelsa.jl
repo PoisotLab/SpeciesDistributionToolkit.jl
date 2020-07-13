@@ -39,3 +39,9 @@ calls will be much faster.
 | 19       | Precipitation of Coldest Quarter                           |
 
 """
+function bioclim(layer::Integer; left=nothing, right=nothing, bottom=nothing, top=nothing)
+    return raster(SimpleSDMPredictor, BioClim(), layer=layer, left=left, right=right, bottom=bottom, top=top)
+end
+
+bioclim(layers::Vector{T}; args...) where {T <: Integer} = [bioclim(l; args...) for l in layers]
+bioclim(layers::UnitRange{T}; args...) where {T <: Integer} = [bioclim(l; args...) for l in layers]

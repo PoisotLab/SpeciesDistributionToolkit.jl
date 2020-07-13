@@ -1,13 +1,13 @@
 """
-    worldclim(layers::Vector{T}; resolution::AbstractString="10", path::AbstractString="assets") where {T <: Integer}
+    worldclim(layer::Integer; resolution::Float64=10.0, left=nothing, right=nothing, bottom=nothing, top=nothing)
 
-Download and prepare WorldClim 2.1 bioclimatic variables, and returns them as an
-array of `SimpleSDMPredictor`s. Layers are called by their number, from 1 to 19.
-The list of available layers is given in a table below.
+Download and prepare a WorldClim 2.1 bioclimatic variable, and returns it as an
+`SimpleSDMPredictor`. Layers are called by their number, from 1 to 19. The list
+of available layers is given in a table below.
 
-The two keywords are `resolution`, which must be a string, and either `2.5`,
-`5`, or `10`; and `path`, which refers to the path where the function will look
-for the zip and geotiff files.
+The keywords are `resolution`, which must be a floating point value, and either
+`2.5`, `5.0`, or `10.0`, as well as optionally `left`, `right`, `bottom`, and
+`top`, which will allow to only load parts of the data.
 
 Internally, this function will download the main zip file for the required
 resolution from the WordlClim website, extract it, and parse the required
@@ -42,3 +42,9 @@ will be much faster.
 
 Original data: https://www.worldclim.org/data/worldclim21.html
 """
+function worldclim(layer::Integer; resolution::Float64=10.0, left=nothing, right=nothing, bottom=nothing, top=nothing)
+    return raster(SimpleSDMPredictor, WorldClim(resolution), layer=layer, left=left, right=right, bottom=bottom, top=top)
+end
+
+worldclim(layers::Vector{T}; args...) where {T <: Integer} = [worldclim(l; args...) for l in layers]
+worldclim(layers::UnitRange{T}; args...) where {T <: Integer} = [worldclim(l; args...) for l in layers]

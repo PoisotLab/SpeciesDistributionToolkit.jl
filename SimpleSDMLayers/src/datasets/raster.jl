@@ -1,8 +1,8 @@
-function raster(::type{IT}, source::ST; layer::Integer=1, left=nothing, right=nothing, bottom=nothing, top=nothing) where {IT <: SimpleSDMLayer, LT <: SimpleSDMSource}
-    file = download_layer(x, layer)
-    left = isnothing(left) ? minimum(longitudes(ST))
-    right = isnothing(right) ? maximum(longitudes(ST))
-    bottom = isnothing(bottom) ? minimum(latitudes(ST))
-    top = isnothing(top) ? maximum(latitudes(ST))
+function raster(::Type{IT}, source::ST; layer::Integer=1, left=nothing, right=nothing, bottom=nothing, top=nothing) where {IT <: SimpleSDMLayer, ST <: SimpleSDMSource}
+    file = download_layer(source, layer)
+    left = isnothing(left) ? minimum(longitudes(ST)) : left
+    right = isnothing(right) ? maximum(longitudes(ST)) : right
+    bottom = isnothing(bottom) ? minimum(latitudes(ST)) : bottom
+    top = isnothing(top) ? maximum(latitudes(ST)) : top
     return geotiff(IT, ST, file; left=left, right=right, bottom=bottom, top=top)
 end

@@ -1,7 +1,7 @@
 abstract type SimpleSDMSource end
 
-latitudes(::T) where {T <: SimpleSDMSource} = [-90.0, 90.0]
-longitudes(::T) where {T <: SimpleSDMSource} = [-180.0, 180.0]
+latitudes(::Type{T}) where {T <: SimpleSDMSource} = [-90.0, 90.0]
+longitudes(::Type{T}) where {T <: SimpleSDMSource} = [-180.0, 180.0]
 
 struct WorldClim <: SimpleSDMSource
     resolution::AbstractFloat
@@ -20,5 +20,5 @@ struct EarthEnv <: SimpleSDMSource
 end
 
 EarthEnv() = EarthEnv(false)
-latitudes(::EarthEnv) = [-90.0, 90.0]
-longitudes(::EarthEnv) = [-156.0, 180.0]
+latitudes(::Type{EarthEnv}) = [-90.0, 90.0]
+longitudes(::Type{EarthEnv}) = [-156.0, 180.0]

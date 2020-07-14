@@ -64,7 +64,7 @@ function nonan_variance(x)
     v = filter(!isnan, x)
     length(v) == 0 && return NaN
     return Statistics.var(v)
-
+end
 ```
 
 ```@example cons

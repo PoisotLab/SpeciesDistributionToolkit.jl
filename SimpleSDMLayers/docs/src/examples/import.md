@@ -9,6 +9,9 @@ for a few occurrences of the kingfisher *Megaceryle alcyon*.
 using SimpleSDMLayers
 using Plots
 
+#Coin en bas à gauche : -75.17734,45.34523
+#Coin en haut à droite : -72.36486,47.38457
+
 file = joinpath(dirname(pathof(SimpleSDMLayers)), "..", "data", "connectivity.tiff")
 struct MyConnectivityMap <: SimpleSDMLayers.SimpleSDMSource end
 SimpleSDMLayers.latitudes(::Type{MyConnectivityMap}) = (-10.0, 10.0)

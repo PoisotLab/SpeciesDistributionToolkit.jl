@@ -62,7 +62,6 @@ end
 function shannon(x)
     v = filter(!isnan, x)
     length(v) == 0 && return NaN
-    push!(v, 100-sum(v))
     return -sum(v.*log2.(v))
 end
 ```

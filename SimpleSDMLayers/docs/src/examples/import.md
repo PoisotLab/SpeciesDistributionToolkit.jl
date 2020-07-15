@@ -9,8 +9,8 @@ for a few occurrences of the kingfisher *Megaceryle alcyon*.
 using SimpleSDMLayers
 using Plots
 
-file = joinpath(dirname(pathof(SimpleSDMLayers)), "data", "connectivity.tiff")
-struct MyConnectivityMap <: SimpleSDMLayers.SimpleSDMSource nd
+file = joinpath(dirname(pathof(SimpleSDMLayers)), "..", "data", "connectivity.tiff")
+struct MyConnectivityMap <: SimpleSDMLayers.SimpleSDMSource end
 SimpleSDMLayers.latitudes(::Type{MyConnectivityMap}) = (-10.0, 10.0)
 SimpleSDMLayers.longitudes(::Type{MyConnectivityMap}) = (-20.0, 20.0)
 mp = SimpleSDMLayers.raster(SimpleSDMResponse, MyConnectivityMap(), file)

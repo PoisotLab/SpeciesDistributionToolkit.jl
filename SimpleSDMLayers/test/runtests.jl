@@ -8,6 +8,7 @@ tests = [
    "basics" => "basics.jl",
    "overloads" => "overloads.jl",
    "generated" => "generated.jl",
+   "import" => "dataread.jl",
    "worldclim" => "worldclim.jl",
    "landcover" => "landcover.jl",
    "chelsa" => "chelsa.jl",

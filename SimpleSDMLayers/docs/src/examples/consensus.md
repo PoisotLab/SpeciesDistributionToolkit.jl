@@ -8,7 +8,6 @@ box:
 ```@example cons
 using SimpleSDMLayers
 using Plots
-using Statistics
 
 bbox = (left=8.25, right=10.0, bottom=41.2, top=43.2)
 ```
@@ -60,24 +59,25 @@ function get_most_common_landuse(f)
     return last(findmax(f))
 end
 
-function nonan_variance(x)
+function shannon(x)
     v = filter(!isnan, x)
     length(v) == 0 && return NaN
-    return Statistics.var(v)
+    push!(v, 100-sum(v))
+    return -sum(v.*log2(v))
 end
 ```
 
 ```@example cons
 consensus = mapslices(get_most_common_landuse, use; dims=3)[:,:,1]
-variance = mapslices(nonan_variance, use; dims=3)[:,:,1]
+entropy = mapslices(shannon, use; dims=3)[:,:,1]
 
 consensus = SimpleSDMResponse(consensus, lc)
-variance = SimpleSDMResponse(variance, lc)
+entropy = SimpleSDMResponse(entropy, lc)
 ```
 
 ```@example cons
 p1 = plot(consensus, c=:Paired_11, frame=:grid)
-p2 = plot(variance, c=:Greys, frame=:grid)
+p2 = plot(entropy, c=:Greys, frame=:grid)
 
 plot(p1, p2, size=(900, 400))
 ```

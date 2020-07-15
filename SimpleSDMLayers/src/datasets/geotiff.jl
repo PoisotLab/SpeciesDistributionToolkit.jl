@@ -21,11 +21,16 @@ function geotiff(
     ::Type{LT},
     ::Type{ST},
     tiff_file;
-    left::T = -180.0,
-    right::T = 180.0,
-    bottom::T = -90.0,
-    top::T = 90.0,
-) where {LT<:SimpleSDMLayer,ST<:SimpleSDMSource,T<:Number}
+    left = nothing,
+    right = nothing,
+    bottom = nothing,
+    top = nothing,
+) where {LT<:SimpleSDMLayer,ST<:SimpleSDMSource}
+
+    left = isnothing(left) ? minimum(longitudes(ST)) : left
+    right = isnothing(right) ? maximum(longitudes(ST)) : right
+    bottom = isnothing(bottom) ? minimum(latitudes(ST)) : bottom
+    top = isnothing(top) ? maximum(latitudes(ST)) : top
 
     # We do a bunch of checking that the required bounding box is not out of bounds
     # for the range of latitudes and longitudes.
@@ -54,7 +59,6 @@ function geotiff(
         lon_stride, left_pos, min_width = _find_span(width, minimum(longitudes(ST)), maximum(longitudes(ST)), left)
         _, right_pos, max_width = _find_span(width, minimum(longitudes(ST)), maximum(longitudes(ST)), right)
 
-
         lat_stride, top_pos, max_height = _find_span(height, minimum(latitudes(ST)), maximum(latitudes(ST)), top)
         _, bottom_pos, min_height = _find_span(height, minimum(latitudes(ST)), maximum(latitudes(ST)), bottom)
 
@@ -62,7 +66,7 @@ function geotiff(
 
         # We are now ready to initialize a matrix of the correct type.
         pixel_type = ArchGDAL.pixeltype(band)
-        buffer = Matrix{pixel_type}(undef, length(min_height:max_height), length(min_width:max_width))
+        buffer = Matrix{pixel_type}(undef, length(min_width:max_width), length(min_height:max_height))
         ArchGDAL.read!(dataset, buffer, 1, min_height:max_height, min_width:max_width)
     end
 

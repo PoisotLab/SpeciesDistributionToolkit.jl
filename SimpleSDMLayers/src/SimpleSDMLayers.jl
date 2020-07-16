@@ -37,7 +37,7 @@ include(joinpath("recipes", "recipes.jl"))
 
 # This next bit is about being able to change the path for raster assets
 # globally, which avoids duplication this argument across multiple functions.
-_layers_assets_path = joinpath(pwd(), "assets")
+_layers_assets_path = "assets"
 function assets_path()
     isdir(SimpleSDMLayers._layers_assets_path) || mkdir(SimpleSDMLayers._layers_assets_path)
     return SimpleSDMLayers._layers_assets_path

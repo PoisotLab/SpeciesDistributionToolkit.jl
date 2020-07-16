@@ -240,7 +240,7 @@ the use of `copy`, manual update, and `convert`.
 function Base.similar(layer::T) where {T <: SimpleSDMLayer}
    emptygrid = similar(layer.grid)
    for i in eachindex(emptygrid)
-      emptygrid[i] = isnothing(layer.grid[i]) ? nothing : zero(eltype(layer.grid))
+      emptygrid[i] = isnothing(layer.grid[i]) ? nothing : zero(eltype(layer.grid[i]))
    end
    return SimpleSDMResponse(emptygrid, layer.left, layer.right, layer.bottom, layer.top)
 end

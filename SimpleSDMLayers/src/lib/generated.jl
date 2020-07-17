@@ -1,3 +1,5 @@
+## Single layer overloads
+
 ops = Dict(
     :Base => [:sum, :maximum, :minimum, :extrema],
     :Statistics => [:mean, :median, :std]
@@ -62,3 +64,34 @@ for op in whole
         end
     end
 end
+
+## Multiple layers overloads
+
+for fun in (:min, :max)
+    mod = :Base
+    eval(quote
+            import $mod: $fun
+        end)
+    for ty in (:SimpleSDMResponse, :SimpleSDMPredictor)
+        eval(quote
+            """
+                $($mod).$($fun)(l::$($ty){T}) where {T <: Number}
+
+            Applies `$($fun)` (from `$($mod)`) to every pair of cell from
+            two `$($ty)` and returns the result as a new `SimpleSDMResponse`
+            layer. Note that `$($fun)` is only applied to the pairs without a
+            `nothing` element, and returns `nothing` for the pairs with one. 
+            This function has been automatically generated.
+            """
+            function $mod.$fun(l1::$ty{T}, l2::$ty{T}) where {T <: Number}
+                SimpleSDMLayers._layers_are_compatible(l1, l2)
+                nl = similar(l1)
+                for i in eachindex(nl.grid)
+                    nl.grid[i] = any(isnothing.([l1[i], l2[i]])) ? nothing : $mod.$fun(l1[i], l2[i])
+                end
+                return nl
+            end
+        end)
+    end
+end
+

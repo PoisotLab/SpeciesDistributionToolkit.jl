@@ -67,7 +67,7 @@ end
 
 ## Multiple layers overloads
 
-for fun in (:min, :max)
+for fun in (:min, :max, :+, :-, :*, :/)
     mod = :Base
     eval(quote
             import $mod: $fun

@@ -7,6 +7,7 @@ import Base: similar
 import Base: copy
 import Base: eltype
 import Base: convert
+import Base.Broadcast: broadcast
 
 """
     Base.convert(::Type{SimpleSDMResponse}, layer::T) where {T <: SimpleSDMPredictor}
@@ -112,7 +113,8 @@ function Base.getindex(layer::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: Un
    j_max = isempty(j) ? max(j.stop+2, size(layer, 2)) : j.stop
    i_fix = i_min:i_max
    j_fix = j_min:j_max
-   return T(
+   RT = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
+   return RT(
             layer.grid[i_fix,j_fix],
             minimum(longitudes(layer)[j_fix])-stride(layer)[1],
             maximum(longitudes(layer)[j_fix])+stride(layer)[1],
@@ -180,7 +182,7 @@ end
     Base.getindex(layer::T, n::NT) where {T <: SimpleSDMLayer, NT <: NamedTuple}
 
 Returns a subset of the argument layer, where the new limits are given in
-a NamedTuple by `left`, `right`, `top`, and `bottom`, in any order. Up to 
+a NamedTuple by `left`, `right`, `top`, and `bottom`, in any order. Up to
 three of these can be omitted, and if so these limits will not be affected.
 """
 function Base.getindex(layer::T, n::NT) where {T <: SimpleSDMLayer, NT <: NamedTuple}
@@ -230,15 +232,15 @@ end
     Base.similar(l::T) where {T <: SimpleSDMLayer}
 
 Returns a `SimpleSDMResponse` of the same dimensions as the original layer, with
-`NaN` in the same positions. The rest of the values are replaced by the output
-of `zero(eltype(layer.grid))`, which implies that there must be a way to get a zero
-for the type. If not, the same result can always be achieved through the use of
-`copy`, manual update, and `convert`.
+`nothing` in the same positions. The rest of the values are replaced by the
+output of `zero(eltype(layer.grid))`, which implies that there must be a way to
+get a zero for the type. If not, the same result can always be achieved through
+the use of `copy`, manual update, and `convert`.
 """
 function Base.similar(layer::T) where {T <: SimpleSDMLayer}
    emptygrid = similar(layer.grid)
    for i in eachindex(emptygrid)
-      emptygrid[i] = isnan(layer.grid[i]) ? NaN : zero(eltype(layer.grid))
+      emptygrid[i] = isnothing(layer.grid[i]) ? nothing : zero(eltype(layer.grid[i]))
    end
    return SimpleSDMResponse(emptygrid, layer.left, layer.right, layer.bottom, layer.top)
 end
@@ -250,5 +252,25 @@ Returns a new copy of the layer, which has the same type.
 """
 function Base.copy(layer::T) where {T <: SimpleSDMLayer}
    copygrid = copy(layer.grid)
-   return T(copygrid, copy(layer.left), copy(layer.right), copy(layer.bottom), copy(layer.top))
+   RT = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
+   return RT(copygrid, copy(layer.left), copy(layer.right), copy(layer.bottom), copy(layer.top))
+end
+
+"""
+   Broadcast.broadcast(f, L::LT) where {LT <: SimpleSDMLayer}
+
+TODO
+"""
+function Base.Broadcast.broadcast(f, L::LT) where {LT <: SimpleSDMLayer}
+    newgrid = Array{Any}(nothing, size(L))
+    N = SimpleSDMResponse(newgrid, L)
+    v = filter(!isnothing, L.grid)
+    fv = f.(v)
+    N.grid[findall(!isnothing, L.grid)] .= fv
+
+    internal_types = unique(typeof.(N.grid))
+    N.grid = convert(Matrix{Union{internal_types...}}, N.grid)
+
+    RT = LT <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
+    return RT(N.grid, N)
 end

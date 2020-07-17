@@ -2,6 +2,7 @@ push!(LOAD_PATH, joinpath("..", "src"))
 
 using Documenter, SimpleSDMLayers
 using GBIF
+using Statistics
 
 makedocs(
     sitename = "Simple SDM Layers",
@@ -17,7 +18,11 @@ makedocs(
         ],
         "Examples" => [
             "Temperature data" => "examples/temperature.md",
-            "GBIF integration" => "examples/gbif.md"
+            "GBIF integration" => "examples/gbif.md",
+            "Importing raster data" => "examples/import.md",
+            "Sliding window analysis" => "examples/slidingwindow.md",
+            "Landcover data" => "examples/landcover.md",
+            "Landcover consensus" => "examples/consensus.md"
         ]
     ]
 )

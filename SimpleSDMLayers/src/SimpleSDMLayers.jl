@@ -1,6 +1,6 @@
 module SimpleSDMLayers
 
-using GDAL
+using ArchGDAL
 using HTTP
 using RecipesBase
 using ZipFile
@@ -16,18 +16,34 @@ include(joinpath("lib", "generated.jl"))
 include(joinpath("lib", "basics.jl"))
 export latitudes, longitudes
 
-include(joinpath("lib", "geotiff.jl"))
-export geotiff
+include(joinpath("datasets", "sources.jl"))
+include(joinpath("datasets", "download_layer.jl"))
+export EarthEnv, WorldClim, BioClim
 
-include(joinpath("bioclimaticdata", "worldclim.jl"))
+include(joinpath("datasets", "geotiff.jl"))
+include(joinpath("datasets", "raster.jl"))
+include(joinpath("datasets", "worldclim.jl"))
+include(joinpath("datasets", "chelsa.jl"))
+include(joinpath("datasets", "landcover.jl"))
 export worldclim
+export bioclim
+export landcover
 
 include(joinpath("operations", "coarsen.jl"))
-export coarsen
+include(joinpath("operations", "sliding.jl"))
+export coarsen, slidingwindow
 
 include(joinpath("recipes", "recipes.jl"))
 
-# HACK but this fixes the export of clip when GBIF or others are loaded
+# This next bit is about being able to change the path for raster assets
+# globally, which avoids duplication this argument across multiple functions.
+_layers_assets_path = "assets"
+function assets_path()
+    isdir(SimpleSDMLayers._layers_assets_path) || mkdir(SimpleSDMLayers._layers_assets_path)
+    return SimpleSDMLayers._layers_assets_path
+end
+
+# Fixes the export of clip when GBIF or others are loaded
 clip(::T) where {T <: SimpleSDMLayer} = nothing
 export clip
 

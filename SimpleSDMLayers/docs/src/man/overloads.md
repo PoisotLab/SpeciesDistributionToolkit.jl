@@ -22,6 +22,12 @@ Base.maximum
 Base.minimum
 ```
 
+## From `Broadcast`
+
+```@docs
+broadcast
+```
+
 ## From `Statistics`
 
 ```@docs

@@ -27,4 +27,12 @@ R = SimpleSDMPredictor(M)
 @test R.top == 90.
 @test R.bottom == -90.
 
+# Construction for a matrix of nothing and values
+M = Matrix{Union{Nothing,Float64}}(nothing, (3,5))
+R = SimpleSDMResponse(M)
+@test R.left == -180.
+@test R.right == 180.
+@test R.top == 90.
+@test R.bottom == -90.
+
 end

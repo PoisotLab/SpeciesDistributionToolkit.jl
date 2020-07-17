@@ -21,7 +21,7 @@ for oc in o
     numboc[oc] += 1
 end
 
-@test typeof(convert(Matrix, numboc)) == Array{Int64,2}
+@test typeof(convert(Matrix, numboc)) == Matrix{Union{Int64,Nothing}}
 
 @test typeof(clip(temperature, o)) == typeof(temperature)
 

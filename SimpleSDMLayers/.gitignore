@@ -2,6 +2,7 @@
 *.jl.cov
 *.jl.*.cov
 
+assets
 test/assets
 test/gallery
 

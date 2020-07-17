@@ -93,11 +93,32 @@ for fun in (:min, :max)
 end
 
 for fun in (:mean, :std)
+    mod = :Statistics
     eval(quote
-        function $op(layers::Array{T}) where {T <: SimpleSDMLayer}
-            newgrid = $op(map(x -> x.grid, layers))
-            newlayer = SimpleSDMResponse(newgrid, layers[1].left, layers[1].right, layers[1].bottom, layers[1].top)
-            return newlayer
+            using $mod
+        end)
+    eval(quote
+    """
+        $($mod).$($fun)(layers::Array{T}) where {T <: SimpleSDMLayer}
+        Applies `$($fun)` (from `$($mod)`) to the elements in corresponding
+        positions from the different layers (similar to
+        `mean(a::Array{Matrix})`) and returns the result as a new
+        `SimpleSDMResponse` layer. Note that `$($fun)` is only applied to the
+        positions  without a `nothing` element and returns `nothing` for the pairs with one. 
+        This function has been automatically generated.
+    """
+        function $mod.$fun(layers::Array{T}) where {T <: SimpleSDMLayer}
+            SimpleSDMLayers._layers_are_compatible(layers)
+            grids = map(x -> x.grid, layers)
+
+            indx_notnothing = findall.(!isnothing, grids)
+            unique!(indx_notnothing)
+            indx_notnothing = reduce(intersect, indx_notnothing)
+            
+            newgrid = Array{eltype(layers[1])}(nothing, size(layers[1]))
+            newgrid[indx_notnothing] = $mod.$fun(map(x -> x[indx_notnothing], grids))
+            
+            return SimpleSDMResponse(newgrid, layers[1])
         end
     end)
 end

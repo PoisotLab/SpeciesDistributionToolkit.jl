@@ -92,3 +92,12 @@ for fun in (:min, :max)
     end)
 end
 
+for fun in (:mean, :std)
+    eval(quote
+        function $op(layers::Array{T}) where {T <: SimpleSDMLayer}
+            newgrid = $op(map(x -> x.grid, layers))
+            newlayer = SimpleSDMResponse(newgrid, layers[1].left, layers[1].right, layers[1].bottom, layers[1].top)
+            return newlayer
+        end
+    end)
+end

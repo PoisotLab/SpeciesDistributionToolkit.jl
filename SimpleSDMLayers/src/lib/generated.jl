@@ -85,7 +85,7 @@ for fun in (:min, :max)
             SimpleSDMLayers._layers_are_compatible(l1, l2)
             nl = similar(l1)
             for i in eachindex(nl.grid)
-                nl.grid[i] = any(isnothing.([l1[i], l2[i]])) ? nothing : $mod.$fun(l1[i], l2[i])
+                nl.grid[i] = isnothing(l1[i]) || isnothing(l2[i]) ? nothing : $mod.$fun(l1[i], l2[i])
             end
             return nl
         end

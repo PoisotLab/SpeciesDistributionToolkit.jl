@@ -52,7 +52,7 @@ for op in whole
             """
                 $($mod).$($fun)(l::$($ty){T}) where {T <: Number}
 
-            Applies `$($fun)` (from `$($mod)`) to every cell wihtin a `$($ty)`, as long as
+            Applies `$($fun)` (from `$($mod)`) to every cell within a `$($ty)`, as long as
             this cell is not `nothing`. This function has been automatically generated.
             """
             function $mod.$fun(l::$ty{T}) where {T <: Number}

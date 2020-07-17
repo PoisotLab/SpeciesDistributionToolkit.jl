@@ -1,5 +1,5 @@
 ops = Dict(
-    :Base => [:sum, :maximum, :minimum],
+    :Base => [:sum, :maximum, :minimum, :extrema],
     :Statistics => [:mean, :median, :std]
     )
 

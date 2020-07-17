@@ -20,6 +20,7 @@ similar
 Base.sum
 Base.maximum
 Base.minimum
+Base.extrema
 ```
 
 ## From `Broadcast`

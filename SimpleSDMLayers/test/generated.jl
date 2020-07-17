@@ -7,6 +7,7 @@ S = SimpleSDMPredictor(M, 0.0, 1.0, 0.0, 1.0)
 
 @test maximum(S) ≤ 1.0
 @test minimum(S) ≥ 0.0
+@test extrema(S) == (minimum(S), maximum(S))
 
 using Statistics
 

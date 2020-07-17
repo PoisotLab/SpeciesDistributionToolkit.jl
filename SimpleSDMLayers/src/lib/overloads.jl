@@ -269,8 +269,7 @@ function Base.Broadcast.broadcast(f, L::LT) where {LT <: SimpleSDMLayer}
     N.grid[findall(!isnothing, L.grid)] .= fv
 
     internal_types = unique(typeof.(N.grid))
-    N.grid = convert(Matrix{Union{internal_types...}}, N.grid)
 
     RT = LT <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
-    return RT(N.grid, N)
+    return RT(convert(Matrix{Union{internal_types...}}, N.grid), N)
 end

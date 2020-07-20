@@ -6,7 +6,7 @@ import Base: setindex!
 import SimpleSDMLayers: clip, latitudes, longitudes
 
 """
-    Base.getindex(p::T, r::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
+    Base.getindex(layer::T, df::DataFrames.DataFrame; latitude = :latitude, longitude = :longitude) where {T <: SimpleSDMLayer}
 
 Returns the values of a layer at all occurrences in a `DataFrame`.
 """
@@ -17,7 +17,7 @@ function Base.getindex(layer::T, df::DataFrames.DataFrame; latitude = :latitude,
 end
 
 """
-    clip(p::T, r::DataFrames.DataFrame)
+    function clip(layer::T, df::DataFrames.DataFrame; latitude = :latitude, longitude = :longitude) where {T <: SimpleSDMLayer}
 
 Returns a clipped version (with a 10% margin) around all occurences in a
 `DataFrame`.

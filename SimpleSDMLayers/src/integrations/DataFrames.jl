@@ -45,3 +45,34 @@ function SimpleSDMLayers.clip(layer::T, df::DataFrames.DataFrame; latitude = :la
 
    return layer[left=lon_min, right=lon_max, bottom=lat_min, top=lat_max]
 end
+
+"""
+    DataFrames.DataFrame(layer::T) where {T <: SimpleSDMLayer}
+
+Returns a DataFrame from a `SimpleSDMLayer` element, with columns for latitudes,
+longitudes and grid values.
+"""
+function DataFrames.DataFrame(layer::T; kw...) where {T <: SimpleSDMLayer}
+    lats = repeat(latitudes(layer), outer = size(layer, 2))
+    lons = repeat(longitudes(layer), inner = size(layer, 1))
+    return DataFrames.DataFrame(latitude = lats, longitudes = lons, values = vec(layer.grid); kw...)
+end
+
+"""
+    DataFrames.DataFrame(layers::Array{SimpleSDMLayer})
+
+Returns a single DataFrame from an `Array` of compatible`SimpleSDMLayer`
+elements, with every layer as a column, as well as columns for latitudes and longitudes.
+"""
+function DataFrames.DataFrame(layers::Array{T}; kw...) where {T <: SimpleSDMLayer}
+    l1 = layers[1]
+    all(x -> SimpleSDMLayers._layers_are_compatible(x, l1), layers)
+    
+    lats = repeat(latitudes(l1), outer = size(l1, 2))
+    lons = repeat(longitudes(l1), inner = size(l1, 1))
+    values = mapreduce(x -> vec(x.grid), hcat, layers)
+    
+    df = DataFrames.DataFrame(hcat(lats, lons, values); kw...)
+    DataFrames.rename!(df, [:latitude, :longitude, Symbol.("x", eachindex(layers))...])
+    return df
+end

@@ -115,8 +115,11 @@ for fun in (:mean, :std)
             unique!(indx_notnothing)
             indx_notnothing = reduce(intersect, indx_notnothing)
             
-            newgrid = Array{eltype(layers[1])}(nothing, size(layers[1]))
+            newgrid = Array{Any}(nothing, size(layers[1]))
             newgrid[indx_notnothing] = $mod.$fun(map(x -> x[indx_notnothing], grids))
+            
+            internal_types = unique(typeof.(newgrid))
+            newgrid = convert(Matrix{Union{internal_types...}}, newgrid)
             
             return SimpleSDMResponse(newgrid, layers[1])
         end

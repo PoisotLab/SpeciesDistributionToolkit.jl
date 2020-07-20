@@ -55,7 +55,7 @@ longitudes and grid values.
 function DataFrames.DataFrame(layer::T; kw...) where {T <: SimpleSDMLayer}
     lats = repeat(latitudes(layer), outer = size(layer, 2))
     lons = repeat(longitudes(layer), inner = size(layer, 1))
-    return DataFrames.DataFrame(latitude = lats, longitudes = lons, values = vec(layer.grid); kw...)
+    return DataFrames.DataFrame(latitude = lats, longitude = lons, values = vec(layer.grid); kw...)
 end
 
 """

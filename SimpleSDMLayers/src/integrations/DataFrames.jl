@@ -15,3 +15,15 @@ function Base.getindex(l::T, df::DataFrames.DataFrame; latitude = :latitude, lon
     lons = df[:, longitude]
     return [l[lon, lat] for (lon, lat) in zip(lons, lats)]
 end
+
+"""
+    Base.setindex!(p::T, v, occurrence::GBIFRecord) where {T <: SimpleSDMResponse}
+
+Changes the values of the cell including the point at the requested latitude and
+longitude.
+"""
+function Base.setindex!(l::SimpleSDMResponse{T}, values::Array{T}, df::DataFrames.DataFrame; latitude = :latitude, longitude = :longitude) where {T}
+    lats = df[:, latitude]
+    lons = df[:, longitude]
+    [setindex!(l, v, lon, lat) for (v, lon, lat) in zip(values, lons, lats)]
+end

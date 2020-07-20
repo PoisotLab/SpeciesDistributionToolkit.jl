@@ -10,8 +10,9 @@ import SimpleSDMLayers: clip, latitudes, longitudes
 
 Returns the values of a layer at all occurrences in a `DataFrame`.
 """
-function Base.getindex(l::T, df::DataFrames.DataFrame; latitude = :latitude, longitude = :longitude) where {T <: SimpleSDMLayer}
+function Base.getindex(layer::T, df::DataFrames.DataFrame; latitude = :latitude, longitude = :longitude) where {T <: SimpleSDMLayer}
     lats = df[:, latitude]
     lons = df[:, longitude]
-    return [l[lon, lat] for (lon, lat) in zip(lons, lats)]
+    return [layer[lon, lat] for (lon, lat) in zip(lons, lats)]
+end
 end

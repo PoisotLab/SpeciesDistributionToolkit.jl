@@ -76,3 +76,27 @@ function DataFrames.DataFrame(layers::Array{T}; kw...) where {T <: SimpleSDMLaye
     DataFrames.rename!(df, [:latitude, :longitude, Symbol.("x", eachindex(layers))...])
     return df
 end
+
+"""
+    SimpleSDMResponse(df::DataFrame, layer::T) where {T <: SimpleSDMLayer}
+
+Returns a `SimpleSDMResponse` from a `DataFrame`.
+"""
+function SimpleSDMResponse(df::DataFrames.DataFrame, col::Symbol, layer::SimpleSDMLayer; latitude = :latitude, longitude = :longitude)
+    lats = df[:, latitude]
+    lons = df[:, longitude]
+
+    uniquelats = unique(lats)
+    uniquelons = unique(lons)
+
+    lats_idx = [SimpleSDMLayers._match_latitude(layer, lat) for lat in lats]
+    lons_idx = [SimpleSDMLayers._match_longitude(layer, lon) for lon in lons]
+
+    grid = Array{Any}(nothing, size(layer))
+    for (lat, lon, value) in zip(lats_idx, lons_idx, df[:, col])
+        grid[lat, lon] = value
+    end
+
+    internal_types = unique(typeof.(grid))
+    return SimpleSDMResponse(Array{Union{internal_types...}}(grid), layer)
+end

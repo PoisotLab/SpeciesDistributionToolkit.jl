@@ -38,5 +38,5 @@ function _layers_are_compatible(l1::X, l2::Y) where {X <: SimpleSDMLayer, Y <: S
 end
 
 function _layers_are_compatible(layers::Array{T}) where {T <: SimpleSDMLayer}
-    all(x -> _layers_are_compatible(x, layers[1]), layers)
+    reduce(_layers_are_compatible, layers)
 end

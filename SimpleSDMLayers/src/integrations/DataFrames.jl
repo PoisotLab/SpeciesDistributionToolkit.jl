@@ -77,30 +77,36 @@ function DataFrames.DataFrame(layers::Array{T}; kw...) where {T <: SimpleSDMLaye
     return df
 end
 
-"""
-    SimpleSDMResponse(df::DataFrame, layer::T) where {T <: SimpleSDMLayer}
+for ty in (:SimpleSDMResponse, :SimpleSDMPredictor)
+    eval(
+        quote
+            """
+                $($ty)(df::DataFrame, col::Symbol, layer::T; latitude::Symbol = :latitude, longitude::Symbol = :longitude) where {T <: SimpleSDMLayer}
 
-Returns a `SimpleSDMResponse` from a `DataFrame`.
-"""
-function SimpleSDMResponse(df::DataFrames.DataFrame, col::Symbol, layer::SimpleSDMLayer; latitude = :latitude, longitude = :longitude)
-    lats = df[:, latitude]
-    lons = df[:, longitude]
-
-    uniquelats = unique(lats)
-    uniquelons = unique(lons)
-
-    grid = Array{Any}(nothing, size(layer))
-
-    if uniquelats == latitudes(layer) && uniquelons == longitudes(layer)
-        grid[:] = df[:, col]
-    else
-        lats_idx = [SimpleSDMLayers._match_latitude(layer, lat) for lat in lats]
-        lons_idx = [SimpleSDMLayers._match_longitude(layer, lon) for lon in lons]
-        for (lat, lon, value) in zip(lats_idx, lons_idx, df[:, col])
-            grid[lat, lon] = value
-        end
-    end
-
-    internal_types = unique(typeof.(grid))
-    return SimpleSDMResponse(Array{Union{internal_types...}}(grid), layer)
+            Returns a `$($ty)` from a `DataFrame`.
+            """
+            function SimpleSDMLayers.$ty(df::DataFrames.DataFrame, col::Symbol, layer::SimpleSDMLayer; latitude::Symbol = :latitude, longitude::Symbol = :longitude)
+                lats = df[:, latitude]
+                lons = df[:, longitude]
+            
+                uniquelats = unique(lats)
+                uniquelons = unique(lons)
+            
+                grid = Array{Any}(nothing, size(layer))
+            
+                if uniquelats == latitudes(layer) && uniquelons == longitudes(layer)
+                    grid[:] = df[:, col]
+                else
+                    lats_idx = [SimpleSDMLayers._match_latitude(layer, lat) for lat in lats]
+                    lons_idx = [SimpleSDMLayers._match_longitude(layer, lon) for lon in lons]
+                    for (lat, lon, value) in zip(lats_idx, lons_idx, df[:, col])
+                        grid[lat, lon] = value
+                    end
+                end
+            
+                internal_types = unique(typeof.(grid))
+                return SimpleSDMLayers.$ty(Array{Union{internal_types...}}(grid), layer)
+            end
+        end,
+    )
 end

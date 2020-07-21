@@ -72,8 +72,9 @@ function DataFrames.DataFrame(layers::Array{T}; kw...) where {T <: SimpleSDMLaye
     lons = repeat(longitudes(l1), inner = size(l1, 1))
     values = mapreduce(x -> vec(x.grid), hcat, layers)
     
-    df = DataFrames.DataFrame(hcat(lats, lons, values); kw...)
-    DataFrames.rename!(df, [:latitude, :longitude, Symbol.("x", eachindex(layers))...])
+    df = DataFrames.DataFrame(values; kw...)
+    insertcols!(df, 1, :latitude => lats)
+    insertcols!(df, 1, :longitude => lons)
     return df
 end
 

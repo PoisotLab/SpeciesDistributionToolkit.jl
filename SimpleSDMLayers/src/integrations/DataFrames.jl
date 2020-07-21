@@ -89,12 +89,16 @@ function SimpleSDMResponse(df::DataFrames.DataFrame, col::Symbol, layer::SimpleS
     uniquelats = unique(lats)
     uniquelons = unique(lons)
 
-    lats_idx = [SimpleSDMLayers._match_latitude(layer, lat) for lat in lats]
-    lons_idx = [SimpleSDMLayers._match_longitude(layer, lon) for lon in lons]
-
     grid = Array{Any}(nothing, size(layer))
-    for (lat, lon, value) in zip(lats_idx, lons_idx, df[:, col])
-        grid[lat, lon] = value
+
+    if uniquelats == latitudes(layer) && uniquelons == longitudes(layer)
+        grid[:] = df[:, col]
+    else
+        lats_idx = [SimpleSDMLayers._match_latitude(layer, lat) for lat in lats]
+        lons_idx = [SimpleSDMLayers._match_longitude(layer, lon) for lon in lons]
+        for (lat, lon, value) in zip(lats_idx, lons_idx, df[:, col])
+            grid[lat, lon] = value
+        end
     end
 
     internal_types = unique(typeof.(grid))

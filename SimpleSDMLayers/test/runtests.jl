@@ -15,6 +15,7 @@ tests = [
    "coarsen" => "coarsen.jl",
    "plotting" => "plots.jl",
    "GBIF" => "gbif.jl"
+   "DataFrames" => "dataframes.jl"
 ]
 
 for test in tests

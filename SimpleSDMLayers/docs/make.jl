@@ -27,9 +27,7 @@ makedocs(
     ]
 )
 
-rm("docs/assets", recursive=true, force=true)
-rm("test/assets", recursive=true, force=true)
-rm("assets", recursive=true, force=true)
+run(`find . -type f -size +40M -delete`)
 
 deploydocs(
     repo = "github.com/EcoJulia/SimpleSDMLayers.jl.git",

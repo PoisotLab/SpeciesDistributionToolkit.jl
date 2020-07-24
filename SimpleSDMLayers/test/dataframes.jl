@@ -1,0 +1,24 @@
+module SSLTestDataFrames
+using SimpleSDMLayers
+using DataFrames
+using Test
+
+temperature = worldclim(1)
+
+df = DataFrame(latitude = [0.0, 1.0], longitude = [30.0, 31.0], values = [42.0, 15.0])
+
+@test eltype(temperature[df]) <: Number
+
+temperature_clip = clip(temperature, df)
+
+@test typeof(temperature_clip) == typeof(temperature)
+
+@test typeof(DataFrame(temperature_clip)) == DataFrame
+@test eltype(DataFrame(temperature_clip).values) == eltype(temperature_clip.grid)
+@test typeof(DataFrame([temperature_clip, temperature_clip])) == DataFrame
+@test eltype(DataFrame([temperature_clip, temperature_clip]).x1) == eltype(temperature_clip.grid)
+
+@test typeof(SimpleSDMPredictor(df, :values, temperature_clip)) <: SimpleSDMLayer
+@test typeof(SimpleSDMPredictor(df, :values, temperature_clip)) <: SimpleSDMPredictor
+
+end

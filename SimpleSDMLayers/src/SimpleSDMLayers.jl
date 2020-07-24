@@ -52,6 +52,11 @@ function __init__()
         @info "GBIF integration loaded"
         include(joinpath(dirname(pathof(SimpleSDMLayers)), "integrations", "GBIF.jl"))
     end
+    @require DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0" begin
+        @info "DataFrames integration loaded"
+        include(joinpath(dirname(pathof(SimpleSDMLayers)), "integrations", "DataFrames.jl"))
+    end
+
 end
 
 end # module

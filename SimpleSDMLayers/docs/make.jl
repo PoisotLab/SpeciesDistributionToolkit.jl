@@ -27,6 +27,8 @@ makedocs(
     ]
 )
 
+rm("assets", recursive=true, force=true)
+
 deploydocs(
     repo = "github.com/EcoJulia/SimpleSDMLayers.jl.git",
     push_preview = true

@@ -23,7 +23,6 @@ Pkg.add("GBIF")
 - get a single occurrence (`occurrence`)
 - look for multiple occurrences (`occurrences`)
 - paging function to get the next batch of occurrences (`occurrences!`)
-- quality control (`filter!`) and arbitrary filters
 - species and taxon lookup (`species`)
 
 ## How to contribute

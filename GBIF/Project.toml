@@ -1,7 +1,7 @@
 name = "GBIF"
 uuid = "ee291a33-5a6c-5552-a3c8-0f29a1181037"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "0.2.4"
+version = "0.3.0"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
@@ -17,7 +17,8 @@ julia = "1.3"
 
 [extras]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Query = "1a8c2f83-1ff3-5112-b086-8aa67b057ba1"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "DataFrames"]
+test = ["Test", "DataFrames", "Query"]

@@ -1,7 +1,11 @@
 [deps]
-Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Query = "1a8c2f83-1ff3-5112-b086-8aa67b057ba1"
+StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
 
 [compat]
-Documenter = "0.24"
 DataFrames = "0.21"
+Documenter = "0.25"
+Query = "0.12"
+StatsPlots = "0.14"

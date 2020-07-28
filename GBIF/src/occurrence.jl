@@ -43,6 +43,19 @@ function occurrence(key::Union{String, Integer})
   return GBIFRecord(result)
 end
 
+function _internal_occurrences_getter(query::Pair...)
+	validate_occurrence_query.(query)
+	occ_s_url = gbifurl * "occurrence/search"
+	occ_s_req = HTTP.get(occ_s_url; query=pairs_to_querystring(query...))
+	if occ_s_req.status == 200
+		body = JSON.parse(String(occ_s_req.body))
+		of_max = body["count"] > 100000 ? 100000 : body["count"]
+		this_rec = GBIFRecord.(body["results"])
+		return (this_rec, body["offset"], of_max)
+	end
+	return (nothing, nothing, nothing)
+end
+
 """
 **Retrieve latest occurrences based on a query**
 
@@ -52,24 +65,21 @@ This function will return the latest occurrences matching the queries -- usually
 20, but this is entirely determined by the server default page size. The query
 parametes must be given as pairs, and are optional. Omitting the query will
 return the latest recorded occurrences.
+
+The arguments accepted as queries are the one documented on the [GBIF
+API](https://www.gbif.org/developer/occurrence) website.
 """
 function occurrences(query::Pair...)
-	validate_occurrence_query.(query)
-	occ_s_url = gbifurl * "occurrence/search"
-	occ_s_req = HTTP.get(occ_s_url; query=pairs_to_querystring(query...))
-	if occ_s_req.status == 200
-		body = JSON.parse(String(occ_s_req.body))
-		occ = GBIFRecord.(body["results"])
-		maxocc = body["count"] > 100000 ? 100000 : body["count"]
+	retrieved, offset, of_max = _internal_occurrences_getter(query...)
+	if !isnothing(retrieved)
+		store = Vector{GBIFRecord}(undef, of_max)
+		store[1:length(retrieved)] = retrieved
 		return GBIFRecords(
-			body["offset"],
-			maxocc,
 			vcat(query...),
-			occ,
-			ones(Bool, length(occ))
+			store
 		)
 	else
-		@error "Non-OK status returned: $(occ_s_req.status)"
+		@error "Nothing retrieved"
 	end
 end
 

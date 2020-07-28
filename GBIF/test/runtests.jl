@@ -4,14 +4,14 @@ using Test
 global anyerrors = false
 
 tests = [
+  "species retrieval" => "taxon.jl",
   "single occurrence functions" => "occurrence.jl",
   "multiple occurrences" => "occurrences.jl",
-  "data frame support" => "dataframes.jl",
-  "species retrieval" => "taxon.jl",
   "paging" => "paging.jl",
   "iteration" => "iteration.jl",
   "methods" => "methods.jl",
-  "filtering" => "filter.jl"
+  "data frame support" => "dataframes.jl",
+  "query support" => "query.jl"
 ]
 
 for test in tests

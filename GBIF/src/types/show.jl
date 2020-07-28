@@ -19,7 +19,7 @@ end
 Displays the total number, and the number of currently unmasked records.
 """
 function show(io::IO, o::GBIFRecords)
-  println(io, "GBIF records: viewing $(length(o)) [out of $(o.count)]")
+  println(io, "GBIF records: downloaded $(length(o)) out of $(size(o))")
 end
 
 """

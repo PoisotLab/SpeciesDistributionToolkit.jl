@@ -56,6 +56,9 @@ scatter!(temperature_clip[kf_occurrences], precipitation_clip[kf_occurrences], l
 This will return a record of all data for all geo-localized occurrences (*i.e.*
 neither the latitude nor the longitude is `missing`) in a `GBIFRecords`
 collection, as an array of the `eltype` of the layer.
+Note that the layer values can be `nothing`, in which case you might need to
+run `filter(!isnothing, temperature_clip[kf_occurrences]` for it to work with 
+the plotting functions.
 
 We can also plot the records over space, using the overloads of the `latitudes`
 and `longitudes` functions:
@@ -119,5 +122,5 @@ We can finally plot the values in a similar way:
 ```@example temp
 filter!(x -> !isnothing(x.temperature) && !isnothing(x.precipitation), climate_df);
 histogram2d(climate_df.temperature, climate_df.precipitation, c=:viridis)
-scatter!(temperature_clip[kf_df], precipitation_clip[kf_occurrences], lab="", c=:white, msc=:orange)
+scatter!(temperature_clip[kf_df], precipitation_clip[kf_df], lab="", c=:white, msc=:orange)
 ```

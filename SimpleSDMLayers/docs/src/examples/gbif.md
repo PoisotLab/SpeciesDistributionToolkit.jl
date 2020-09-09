@@ -18,14 +18,13 @@ We can get some occurrences for the taxon of interest:
 
 ```@example temp
 kingfisher = GBIF.taxon("Megaceryle alcyon", strict=true)
-kf_occurrences = occurrences(kingfisher)
+kf_occurrences = occurrences(kingfisher, "hasCoordinate" => "true")
 
 # We will get some more occurrences
 for i in 1:9
   occurrences!(kf_occurrences)
 end
 
-filter!(GBIF.have_ok_coordinates, kf_occurrences)
 @info kf_occurrences
 ```
 

@@ -7,8 +7,7 @@ temperature = worldclim(1)
 
 kingfisher = GBIF.taxon("Megaceryle alcyon", strict=true)
 
-o = GBIF.occurrences(kingfisher)
-filter!(GBIF.have_ok_coordinates, o)
+o = GBIF.occurrences(kingfisher, "hasCoordinate" => "true")
 
 # Extract from a single record
 for oc in o

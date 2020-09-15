@@ -28,6 +28,17 @@ aas-journal:
 
 # Summary
 
+Many analyses in Ecology and Biogeography require the use of geo-referenced 
+data on species distribution, hence a tight integration between environmental  
+data, species occurrence data, and spatial coordinates. Species distribution
+models (SDMs), for instance, aim to predict where environmental conditions
+are suitable for a given species on continuous geographic scales. Thus, it
+requires an efficient way to access species occurrence and environmental data,
+as well as a solid framework on which to build analyses based on occurrence
+data. Here we present GBIF.jl and SimpleSDMLayers.jl, two packages in the Julia
+language providing access to popular data sources for species occurrence and
+environmental conditions, as well as a framework and type-system on which to
+build SDM analyses.
 
 # Statement of need 
 

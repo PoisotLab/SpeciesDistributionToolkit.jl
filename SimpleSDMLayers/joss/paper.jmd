@@ -28,10 +28,12 @@ aas-journal:
 
 <div style="text-align: justify">
 
+<!-- Text is hard wrapped at 80 characters and after each sentence -->
+
 # Summary
 
 Many analyses in Ecology and Biogeography require the use of geo-referenced 
-data on species distribution, hence a tight integration between environmental  
+data on species distribution, hence a tight integration between environmental 
 data, species occurrence data, and spatial coordinates.
 Species distribution models (SDMs), for instance, aim to predict where
 environmental conditions are suitable for a given species on continuous
@@ -44,22 +46,43 @@ language providing access to popular data sources for species occurrence and
 environmental conditions, as well as a framework and type-system on which to
 build SDM analyses.
 
-# Statement of need 
+# Statement of need
 
-Analyses in Ecology and Biogeography often require the use of geo-referenced
-data on species occurrences and environmental variables.
-This is especially true in the Species Distribution Modelling (SDM) field, where
-most studies aim at predicting where a species should be found based on
-environmental data.
+Species distribution modelling (SDM) is an increasingly growing field in Ecology
+and Biogeography, with many applications in biodiversity assessment, management,
+and conservation (Araujo et al. 2019).
+Most SDM models aim at predicting a species distribution in space based on
+environmental data and information on where the species was previously seen.
+Hence, SDM studies require a tight and efficient integration between
+geo-referenced environmental and species occurrence data.
 However, such data are complex to handle and often require specialized GIS
 (geographic information systems) software, different from the programming
 languages used on a common basis for data analyses.
-Hence, there is a need for efficient tools to manipulate bioclimatic data within
-programming languages themselves.
+There is a need for efficient tools to manipulate bioclimatic data in all
+programming languages.
 Here, we present `SimpleSDMLayers.jl`, a package to facilitate manipulation of
 geo-referenced data in _Julia_, primarily for species distribution modelling.
 This package is also tightly integrated with `GBIF.jl`, which allows easy access
 to the GBIF database, a common data source in SDM studies.
+
+The _R_ language has been the most widely used programming language in Ecology
+in recent years and thus many efficient packages and tools have been developed
+for species distribution modelling.
+For instance, the package `raster` can be used to manipulate raster format data
+(for example climatic or land use data), `dismo` implements many common SDM
+models and provides access to common climatic data sources, and `rgbif` provides
+access to the GBIF database, a common source of species occurrence data in SDM
+studies.
+Yet, few SDM resources currently exist for the _Julia_ language, a promising new
+language especially efficient for numerical computing.
+There are currently packages such as `GDAL.jl` and `ArchGDAL.jl` to manipulate
+raster data; however these are lower level implementations than what is
+typically used by most ecologists and lack the most common layer manipulation
+features in SDM studies, as well as an easy access to common data sources.
+`SimpleSDMLayers.jl` is higher level implementation aimed at species
+distribution modelling, building on `ArchGDAL.jl`, and including support for
+common manipulation operations and built-in access to environmental data
+sources.
 
 - Need for occurrence data
   - Covered by `rgbif` in _R_

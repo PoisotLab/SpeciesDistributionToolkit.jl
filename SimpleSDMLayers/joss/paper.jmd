@@ -56,8 +56,12 @@ However, such data are complex to handle and often require specialized GIS
 languages used on a common basis for data analyses.
 There is a need for efficient tools to manipulate bioclimatic data in all
 programming languages.
+
 Here, we present `SimpleSDMLayers.jl`, a package to facilitate manipulation of
 geo-referenced data in _Julia_, primarily for species distribution modelling.
+The package implements an easy framework and type structures to manipulate the
+data, and also provides access to some of the most common data sources for SDM
+studies. 
 This package is also tightly integrated with `GBIF.jl`, which allows easy access
 to the GBIF database, a common data source in SDM studies.
 
@@ -76,33 +80,28 @@ language especially efficient for numerical computing.
 There are currently packages such as `GDAL.jl` and `ArchGDAL.jl` to manipulate
 raster data; however these are lower level implementations than what is
 typically used by most ecologists and lack the most common layer manipulation
-features in SDM studies, as well as an easy access to common data sources.
+features in SDM studies.
 `SimpleSDMLayers.jl` is higher level implementation aimed at species
 distribution modelling, building on `ArchGDAL.jl`, and including support for
-common manipulation operations and built-in access to environmental data
-sources.
-
-- Need for occurrence data
-  - Covered by `rgbif` in _R_
-  - Popularity of GBIF
-- Need for WorldClim & environmental data
-  - Covered by `dismo` in _R_
-  - (no built-in models though $\rightarrow$ should we add BioClim or not)
-  - Popularity of WorldClim variables in the SDM field
-- Need for easy-to-manipulate layer format for species distribution modelling
-  - ~kinda covered by `layer` in _R_
-  - Layer manipulation workflow
-  - Simpler & more efficient than `GDAL` or `ArchGDAL` for ecologists
-- SDMs also know as HSMs (habitat suitability models)
-- GIS functionality --> easier access all in Julia, data preparation, data
-  analysis/manipulation/modelling in one place, etc. (better productivity)
-- Araujo et al. 2019 for the increase in SDM studies
-
-# Citations
-
-# Figures
+common manipulation operations 
+`SimpleSDMLayers.jl` also offers an built-in access to some of the most common data
+sources in SDM studies, such as the WorldClim 2.1 climatic data (the most common
+source of climate data in SDM studies, Booth et al. 2014) and the EarthEnv
+land cover data.
 
 # Example
+
+As an example of a use-case, let's consider an example where someone wants to
+perform a study in Europe and requires climatic data.
+First, SimpleSDMLayers.jl allows to load WorldClim data in just one call, which
+produces a layer for the whole world.
+Then, a few of the common operations supported by SimpleSDMLayers.jl are 1)
+clipping the layer to region of interest (Europe) in this case; 2) coarsening
+the  resolution by averaging groups of cells for large scale analyses; and 3)
+performing sliding window operations to aggregate values for each site based on
+a certain radius.
+A result of these operations can be found in figure 1.
+
 
 ```julia
 ## Preparation
@@ -132,6 +131,16 @@ p3 = plot(temperature_slided)
 p = plot(p1, p2, p3, layout = grid(1, 3, widths = [0.29, 0.29, 0.405]), 
          frame = :box, ticks = false, colorbar = [false false true])
 ```
+
+For an even more concrete example, let's focus on the case of a single species,
+the Belted Kingfisher in this case.
+GBIF.jl first allows us to retrieve the latest occurrences from the GBIF
+database.
+Then, SimpleSDMLayers.jl integrates this data and can combine it with the
+environmental layers, allowing to clip the layers to the extent of the
+occurrences.
+Finally, it is very straightforward to create a map of the occurrences that also
+displays environmental data.
 
 ```julia
 

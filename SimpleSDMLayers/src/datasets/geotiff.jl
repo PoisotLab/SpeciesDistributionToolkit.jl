@@ -73,6 +73,6 @@ function geotiff(
     buffer = convert(Matrix{Union{Nothing,eltype(buffer)}}, rotl90(buffer))
     buffer[findall(buffer .== minimum(buffer))] .= nothing
 
-    return LT(buffer, left_pos-0.5lon_stride, right_pos+0.5lon_stride, bottom_pos+0.5lat_stride, top_pos-0.5lat_stride)
+    return LT(buffer, left_pos-0.5lon_stride, right_pos+0.5lon_stride, bottom_pos-0.5lat_stride, top_pos+0.5lat_stride)
 
 end

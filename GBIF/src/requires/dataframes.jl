@@ -3,7 +3,7 @@
 format_gbif_entity(t::Missing) = missing
 format_gbif_entity(t::Pair{String,Int64}) = t.first
 
-import DataFrames: DataFrame
+import .DataFrames: DataFrame
 
 function DataFrames.DataFrame(records::GBIFRecords)
   output = DataFrame(

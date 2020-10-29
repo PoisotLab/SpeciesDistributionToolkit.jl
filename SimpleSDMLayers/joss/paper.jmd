@@ -94,7 +94,37 @@ land cover data.
 As an example of a use-case, consider an example where someone wants to
 perform a study in Europe and requires climatic data.
 First, SimpleSDMLayers.jl allows to load WorldClim data in just one call, which
-produces a layer for the whole world.
+produces by default a layer for the whole world.
+
+```julia
+using SimpleSDMLayers
+
+# Get world temperature data
+temperature = worldclim(1)
+```
+
+The layer is made of a `grid` element, which contains the temperature data as a 
+simple `Array` easily manipulable, and of `left`, `right`, `bottom`, `top`
+elements representing the bounding coordinates of the layer. 
+
+```julia
+# Display data grid
+temperature.grid
+```
+
+```julia
+# All longitudes range
+longitudes(temperature)
+```
+
+`SimpleSDMLayers.jl` also makes it very simple to plot and visualize the layer
+as a map.
+
+```julia
+using Plots
+plot(temperature)
+```
+
 Then, a few of the common operations supported by SimpleSDMLayers.jl are 1)
 clipping the layer to region of interest (Europe) in this case; 2) coarsening
 the  resolution by averaging groups of cells for large scale analyses; and 3)
@@ -104,7 +134,12 @@ A result of these operations can be found in figure 1.
 
 
 ```julia
-
+# Clip to Europe
+temperature_europe = temperature_world[left=-11.2, right=30.6, bottom=29.2, top=71.0];
+# Coarsen resolution
+temperature_coarse = coarsen(temperature_europe, Statistics.mean, (4, 4))
+# Sliding window averaging
+temperature_slided = slidingwindow(temperature_europe, Statistics.mean, 100.0)
 ```
 
 For an even more concrete example, let's focus on the case of a single species,

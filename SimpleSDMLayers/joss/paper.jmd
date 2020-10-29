@@ -91,7 +91,7 @@ land cover data.
 
 # Example
 
-As an example of a use-case, let's consider an example where someone wants to
+As an example of a use-case, consider an example where someone wants to
 perform a study in Europe and requires climatic data.
 First, SimpleSDMLayers.jl allows to load WorldClim data in just one call, which
 produces a layer for the whole world.

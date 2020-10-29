@@ -28,9 +28,11 @@ bibliography: paper.bib
 
 # Summary
 
-Many analyses in Ecology and Biogeography require the use of geo-referenced 
-data on species distribution, hence a tight integration between environmental 
-data, species occurrence data, and spatial coordinates.
+Predicting where species should be found in space is a common question in
+Ecology and Biogeography.
+Many analyses in Ecology and Biogeography require the use of geo-referenced data
+on species distribution, hence a tight integration between environmental data,
+species occurrence data, and spatial coordinates.
 Species distribution models (SDMs), for instance, aim to predict where
 environmental conditions are suitable for a given species on continuous
 geographic scales. 
@@ -38,15 +40,15 @@ Thus, it requires an efficient way to access species occurrence and
 environmental data, as well as a solid framework on which to build analyses
 based on occurrence data. 
 Here we present `SimpleSDMLayers.jl` and `GBIF.jl`, two packages in the _Julia_
-language implementing a framework and type-system on which to build SDM 
-analyses, as well as providing access to popular data sources for species 
+language implementing a framework and type-system on which to build SDM
+analyses, as well as providing access to popular data sources for species
 occurrence and environmental conditions.
 
 # Statement of need
 
 Species distribution modelling (SDM) is an increasingly growing field in Ecology
 and Biogeography, with many applications in biodiversity assessment, management,
-and conservation (Araujo et al. 2019).
+and conservation [@ArauAnde19].
 Most SDM models aim at predicting a species distribution in space based on
 environmental data and information on where the species was previously seen.
 Hence, SDM studies require a tight and efficient integration between
@@ -67,27 +69,30 @@ to the GBIF database, a common data source in SDM studies.
 
 # State of the field
 
-The _R_ language has been the most widely used programming language in Ecology
-in recent years and thus many efficient packages and tools have been developed
-for species distribution modelling.
-For instance, the package `raster` can be used to manipulate raster format data
-(for example climatic or land use data), `dismo` implements many common SDM
-models and provides access to common climatic data sources, and `rgbif` provides
-access to the GBIF database, a common source of species occurrence data in SDM
+The _R_ language [@RCo20] has become the most widely used programming language
+in Ecology in recent years, especially in spatial ecology studies [@LaiLort19].
+Therefore, many efficient packages and tools for species distribution modelling
+have been developed in _R_.
+For instance, the package `raster` [@Hijm20] can be used to manipulate raster
+format data (for example climatic or land use data), `dismo` [@HijmPhil17]
+implements many common SDM models and provides access to common climatic data
+sources, and `rgbif` [@ChamBarv20] provides access to the GBIF database, a
+common source of species occurrence data in SDM studies.
+Yet, few SDM resources currently exist for the _Julia_ language [@BezaEdel17], a
+promising new language especially efficient for numerical computing.
+There are currently packages such as
+[`GDAL.jl`](https://github.com/JuliaGeo/GDAL.jl) and
+[`ArchGDAL.jl`](https://github.com/yeesian/ArchGDAL.jl) to manipulate raster
+data; however these are lower level implementations than what is typically used
+by most ecologists and lack the most common layer manipulation features in SDM
 studies.
-Yet, few SDM resources currently exist for the _Julia_ language, a promising new
-language especially efficient for numerical computing.
-There are currently packages such as `GDAL.jl` and `ArchGDAL.jl` to manipulate
-raster data; however these are lower level implementations than what is
-typically used by most ecologists and lack the most common layer manipulation
-features in SDM studies.
 `SimpleSDMLayers.jl` is higher level implementation aimed at species
 distribution modelling, building on `ArchGDAL.jl`, and including support for
-common manipulation operations 
-`SimpleSDMLayers.jl` also offers an built-in access to some of the most common data
-sources in SDM studies, such as the WorldClim 2.1 climatic data (the most common
-source of climate data in SDM studies, Booth et al. 2014) and the EarthEnv
-land cover data.
+common manipulation operations.
+`SimpleSDMLayers.jl` also offers an built-in access to some of the most common
+data sources in SDM studies, such as the WorldClim 2.1 climatic data (the most
+common source of climate data in SDM studies, @BootNix14) and the EarthEnv land
+cover data.
 
 # Example
 

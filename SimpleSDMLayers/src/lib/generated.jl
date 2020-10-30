@@ -79,6 +79,7 @@ for fun in (:min, :max, :+, :-, :*, :/)
         quote
             """
                 $($mod).$($fun)(l1::SimpleSDMLayer, l2::SimpleSDMLayer)
+
             Applies `$($fun)` (from `$($mod)`) to every pair of cells from
             two `SimpleSDMLayers` and returns the result as a new `SimpleSDMResponse`
             layer. Note that `$($fun)` is only applied to the pairs without a
@@ -107,12 +108,13 @@ for fun in (:mean, :std)
         quote
             """
                 $($mod).$($fun)(layers::Array{T}) where {T <: SimpleSDMLayer}
-                Applies `$($fun)` (from `$($mod)`) to the elements in corresponding
-                positions from the different layers (similar to
-                `mean(a::Array{Matrix})`) and returns the result as a new
-                `SimpleSDMResponse` layer. Note that `$($fun)` is only applied to the
-                positions  without a `nothing` element and returns `nothing` for the pairs with one.
-                This function has been automatically generated.
+            
+            Applies `$($fun)` (from `$($mod)`) to the elements in corresponding
+            positions from the different layers (similar to
+            `mean(a::Array{Matrix})`) and returns the result as a new
+            `SimpleSDMResponse` layer. Note that `$($fun)` is only applied to
+            the positions  without a `nothing` element and returns `nothing` for
+            the pairs with one. This function has been automatically generated.
             """
             function $mod.$fun(layers::Array{T}) where {T<:SimpleSDMLayer}
                 SimpleSDMLayers._layers_are_compatible(layers)

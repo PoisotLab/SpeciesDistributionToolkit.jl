@@ -1,4 +1,6 @@
 """
+    bioclim(layer::Integer; left=nothing, right=nothing, bottom=nothing, top=nothing)
+
 Download and prepare bioclim layers from the CHELSA database, and returns
 them as an array of `SimpleSDMPredictor`s. Layers are called by their number,
 from 1 to 19. The list of available layers is given in a table below.

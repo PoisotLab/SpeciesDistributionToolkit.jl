@@ -17,7 +17,7 @@ function Base.getindex(layer::T, df::DataFrames.DataFrame; latitude = :latitude,
 end
 
 """
-    function clip(layer::T, df::DataFrames.DataFrame; latitude = :latitude, longitude = :longitude) where {T <: SimpleSDMLayer}
+    clip(layer::T, df::DataFrames.DataFrame; latitude = :latitude, longitude = :longitude) where {T <: SimpleSDMLayer}
 
 Returns a clipped version (with a 10% margin) around all occurences in a
 `DataFrame`.

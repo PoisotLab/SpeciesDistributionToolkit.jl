@@ -1,6 +1,5 @@
 ---
-title: 'SimpleSDMLayers.jl and GBIF.jl: A Framework for Species 
-Distribution Modelling in Julia'
+title: 'SimpleSDMLayers.jl and GBIF.jl: A Framework for Species Distribution Modelling in Julia'
 tags:
   - Julia
   - ecology
@@ -8,7 +7,7 @@ tags:
   - GBIF
   - species distribution modelling
 authors:
-  - name: Gabriel Dansereau^[Correspondance to gabriel.dansereau@umontreal.ca]
+  - name: Gabriel Dansereau^[Correspondance to gabriel.dansereau\@umontreal.ca]
     orcid: 0000-0002-2212-3584
     affiliation: 1 # (Multiple affiliations must be quoted)
   - name: Timothée Poisot
@@ -139,6 +138,7 @@ plot(temperature)
 # Feature overview
 
 `SimpleSDMLayers.jl` implements the following features: 
+
 - **Overloads for common functions**: The `SimpleSDMLayer` types are implemented
   along with overloads for many common functions and operations, such as
   subsetting, changing values, copying, and iterating. Therefore, the layers and

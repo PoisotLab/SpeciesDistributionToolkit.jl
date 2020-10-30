@@ -1,25 +1,24 @@
 ---
-affiliations:
-  - name: "Département de sciences biologiques, Université de Montréal"
-    index: 1
-title: |
-    SimpleSDMLayers.jl and GBIF.jl: A Framework for Species
-    Distribution Modelling in Julia
+title: 'SimpleSDMLayers.jl and GBIF.jl: A Framework for Species Distribution Modelling in Julia'
 tags:
-  - "Julia"
-  - "ecology"
-  - "biogeography"
-  - "GBIF"
-  - "species distribution modelling"
-date: "9 September 2020"
+  - Julia
+  - ecology
+  - biogeography
+  - GBIF
+  - species distribution modelling
 authors:
-  - name: "Gabriel Dansereau^[Correspondance to gabriel.dansereau@umontreal.ca]"
-    orcid: "0000-0002-2212-3584"
+  - name: Gabriel Dansereau^[Correspondance to gabriel.dansereau\@umontreal.ca]
+    orcid: 0000-0002-2212-3584
+    affiliation: 1 # (Multiple affiliations must be quoted)
+  - name: Timothée Poisot
+    orcid: 0000-0002-0735-5184
     affiliation: 1
-  - name: "Timothée Poisot"
-    orcid: "0000-0002-0735-5184"
-    affiliation: 1
-bibliography: "paper.bib"
+affiliations:
+ - name: Département de sciences biologiques, Université de Montréal
+   index: 1
+date: 9 September 2020
+bibliography: paper.bib
+
 ---
 
 
@@ -183,6 +182,7 @@ plot(temperature)
 # Feature overview
 
 `SimpleSDMLayers.jl` implements the following features: 
+
 - **Overloads for common functions**: The `SimpleSDMLayer` types are implemented
   along with overloads for many common functions and operations, such as
   subsetting, changing values, copying, and iterating. Therefore, the layers and

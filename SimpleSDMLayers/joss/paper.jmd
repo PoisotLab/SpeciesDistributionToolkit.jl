@@ -140,32 +140,32 @@ plot(temperature)
 
 `SimpleSDMLayers.jl` implements the following features: 
 - **Overloads for common functions**: The `SimpleSDMLayer` types are implemented
-along with overloads for many common functions and operations, such as subsetting,
-changing values, copying, and iterating. 
-Therefore, the layers and the raster values stored in the `grid` field can
-be manipulated as easily as any `Array`, without losing their spatial aspect. 
+  along with overloads for many common functions and operations, such as
+  subsetting, changing values, copying, and iterating. Therefore, the layers and
+  the raster values stored in the `grid` field can be manipulated as easily as
+  any `Array`, without losing their spatial aspect. 
 - **Statistical operations on layer values**: Common operations can be
-performed directly on the layer values without worrying about the underlying
-structure (for example, sum, minimum, maximum, mean, median).
+  performed directly on the layer values without worrying about the underlying
+  structure (for example, sum, minimum, maximum, mean, median).
 - **Statistical operations on multiple layers**: Operations can also be
-performed between layers to produce a new layer, just as `Arrays`, as long as
-they share the same coordinates. For instance, two layers can be added or
-subtracted, and calling `mean()` will produce a new layer with the mean value
-per pixel.
+  performed between layers to produce a new layer, just as `Arrays`, as long as
+  they share the same coordinates. For instance, two layers can be added or
+  subtracted, and calling `mean()` will produce a new layer with the mean value
+  per pixel.
 - **Spatial operations**: `SimpleSDMLayers.jl` implements spatial operations
-such as clipping a layer to given coordinates, coarsening the resolution by
-grouping values, and performing sliding window operations given a certain
-radius.
+  such as clipping a layer to given coordinates, coarsening the resolution by
+  grouping values, and performing sliding window operations given a certain
+  radius.
 - **Datasets supported**: The package provides access to climate data
-at different resolutions from WorldClim 2.1 and CHELSA, as well as land cover
-data from EarthEnv. Custom raster data can be loaded as well.
+  at different resolutions from WorldClim 2.1 and CHELSA, as well as land cover
+  data from EarthEnv. Custom raster data can be loaded as well.
 - **Plotting recipes**: Default recipes are implemented for the `SimpleSDMLayer`
-types, allowing to directely map them, view the grid values data as histograms
-and density plots, or compare layers as 2-dimensional histograms.
+  types, allowing to directely map them, view the grid values data as histograms
+  and density plots, or compare layers as 2-dimensional histograms.
 - **Integration with GBIF.jl (and DataFrames.jl)**: `SimpleSDMLayer.jl` is well
-integrated with `GBIF.jl`, allowing to clip layers based on the occurrence data.
-Both also offer an integration with `DataFrames.jl` to easily convert
-environmental and occurrence data to a table format.
+  integrated with `GBIF.jl`, allowing to clip layers based on the occurrence data.
+  Both also offer an integration with `DataFrames.jl` to easily convert
+  environmental and occurrence data to a table format.
 
 # Examples
 

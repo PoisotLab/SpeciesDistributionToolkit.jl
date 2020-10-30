@@ -79,6 +79,7 @@ for fun in (:min, :max, :+, :-, :*, :/)
         quote
             """
                 $($mod).$($fun)(l1::SimpleSDMLayer, l2::SimpleSDMLayer)
+
             Applies `$($fun)` (from `$($mod)`) to every pair of cells from
             two `SimpleSDMLayers` and returns the result as a new `SimpleSDMResponse`
             layer. Note that `$($fun)` is only applied to the pairs without a

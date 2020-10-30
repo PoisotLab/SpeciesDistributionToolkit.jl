@@ -69,7 +69,7 @@ function Base.getindex(p::T, records::GBIF.GBIFRecords) where {T <: SimpleSDMLay
 end
 
 """
-    SimpleSDMLayers.latitudes(records::GBIFRecords)
+    latitudes(records::GBIFRecords)
 
 Returns the non-missing latitudes.
 """
@@ -78,7 +78,7 @@ function SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords)
 end
 
 """
-    SimpleSDMLayers.longitudes(records::GBIFRecords)
+    longitudes(records::GBIFRecords)
 
 Returns the non-missing longitudes.
 """

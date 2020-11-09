@@ -17,7 +17,7 @@ affiliations:
  - name: Département de sciences biologiques, Université de Montréal
    index: 1
 date: 9 September 2020
-bibliography: paper.bib
+bibliography: [paper.bib]
 
 ---
 
@@ -47,7 +47,7 @@ occurrence and environmental conditions.
 
 Species distribution modelling (SDM) is an increasingly growing field in Ecology
 and Biogeography, with many applications in biodiversity assessment, management,
-and conservation [@ArauAnde19].
+and conservation [@Araujo2019StaDis].
 Most SDM models aim at predicting a species distribution in space based on
 environmental data and information on where the species was previously seen.
 Hence, SDM studies require a tight and efficient integration between
@@ -62,18 +62,19 @@ all programming languages, specifically oriented towards species distribution
 modelling.
 
 <!-- This kind-of covers the "State of the field" section -->
-In recent years, _R_ [@RCo20] has become the most widely used programming
-language in Ecology, especially in spatial ecology studies [@LaiLort19].
+In recent years, _R_ [@RCoreTeam2020RLan] has become the most widely used
+programming language in Ecology, especially in spatial ecology studies
+[@Lai2019EvaPop].
 Hence, many efficient packages and tools for species distribution modelling
 have been developed in _R_.
-For instance, the package `raster` [@Hijm20] can be used to manipulate raster
-format data (for example climatic or land use data), `dismo` [@HijmPhil17]
-implements many SDM models and provides access to common climatic data
-sources, and `rgbif` [@ChamBarv20] provides access to the GBIF database, a
-common source of species occurrence data in SDM studies.
-Yet, few SDM resources currently exist for the _Julia_ language [@BezaEdel17],
-although its speed and efficiency at numerical computing could be very useful in
-SDMs.
+For instance, the package `raster` [@Hijmans2020RasGeo] can be used to
+manipulate raster format data (for example climatic or land use data), `dismo`
+[@Hijmans2017DisSpe] implements many SDM models and provides access to common
+climatic data sources, and `rgbif` [@Chamberlain2020RgbInt] provides access to
+the GBIF database, a common source of species occurrence data in SDM studies.
+Yet, few SDM resources currently exist for the _Julia_ language
+[@Bezanson2017JulFre], although its speed and efficiency at numerical computing
+could be very useful in SDMs.
 There are currently packages such as
 [`GDAL.jl`](https://github.com/JuliaGeo/GDAL.jl) and
 [`ArchGDAL.jl`](https://github.com/yeesian/ArchGDAL.jl) to manipulate raster
@@ -89,7 +90,7 @@ The package implements simple type structures to manipulate the data, and is
 meant to be a flexible framework on which to build complex SDM analyses. 
 `SimpleSDMLayers.jl` also offers an built-in access to some of the most common
 data sources in SDM studies, such as the WorldClim 2.1 climatic data, which is
-the most common source of climate data in SDM studies [@BootNix14].
+the most common source of climate data in SDM studies [@Booth2014BioFir].
 The package is also tightly integrated with `GBIF.jl`, which allows easy access
 to the GBIF database, a common data source for the species occurrences.
 Both `SimpleSDMLayers.jl` and `GBIF.jl` are part of the _EcoJulia_ organization,

@@ -137,9 +137,15 @@ temperature.grid
 `SimpleSDMLayers.jl` then makes it very simple to plot and visualize the layer
 as a map using `Plots.jl`.
 
-```julia
+```julia; eval = false
 using Plots
 plot(temperature)
+```
+
+```julia; echo = false 
+using Plots
+plot(temperature, xguide = "Longitude", yguide = "Latitude", 
+     colorbar_title = "Average Temperature (°C)")
 ```
 
 # Feature overview
@@ -229,7 +235,16 @@ The occurrences' coordinates can also be extracted using the `longitudes()` and
 Using these, we can easily create a map of the occurrences by overlaying them on
 top of the clipped environmental layer.
 
-```julia
+```julia; eval = false
+# Clip layer to occurrences
+temperature_clip = clip(temperature, kf_occurrences)
+
+# Plot occurrences
+contour(temperature_clip, fill = true)
+scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences))
+```
+
+```julia; echo = false
 # Clip layer to occurrences
 temperature_clip = clip(temperature, kf_occurrences)
 

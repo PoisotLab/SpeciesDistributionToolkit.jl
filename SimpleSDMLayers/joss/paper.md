@@ -1,24 +1,24 @@
 ---
-affiliations:
-  - name: "Département de sciences biologiques, Université de Montréal"
-    index: 1
-title: "SimpleSDMLayers.jl and GBIF.jl: A Framework for Species Distribution Modeling in Julia"
+title: 'SimpleSDMLayers.jl and GBIF.jl: A Framework for Species Distribution Modeling in Julia'
 tags:
-  - "Julia"
-  - "ecology"
-  - "biogeography"
-  - "GBIF"
-  - "species distribution modeling"
-date: "13 November 2020"
+  - Julia
+  - ecology
+  - biogeography
+  - GBIF
+  - species distribution modeling
 authors:
-  - name: "Gabriel Dansereau^[Correspondance to gabriel.dansereau\@umontreal.ca]"
-    orcid: "0000-0002-2212-3584"
+  - name: Gabriel Dansereau^[Correspondance to gabriel.dansereau\@umontreal.ca]
+    orcid: 0000-0002-2212-3584
+    affiliation: 1 # (Multiple affiliations must be quoted)
+  - name: Timothée Poisot
+    orcid: 0000-0002-0735-5184
     affiliation: 1
-  - name: "Timothée Poisot"
-    orcid: "0000-0002-0735-5184"
-    affiliation: 1
-bibliography:
-  - "paper.bib"
+affiliations:
+ - name: Département de sciences biologiques, Université de Montréal
+   index: 1
+date: 13 November 2020
+bibliography: [paper.bib]
+
 ---
 
 

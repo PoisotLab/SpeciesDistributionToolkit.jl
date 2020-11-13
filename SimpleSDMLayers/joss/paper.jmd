@@ -79,7 +79,7 @@ data; however these are lower-level implementations than what is typically used
 by most ecologists and they lack support for common layer manipulation.
 Generalized Linear Models ([GLM.jl](https://github.com/JuliaStats/GLM.jl)), 
 Random Forests ([DecisionTrees.jl](https://github.com/bensadeghi/DecisionTree.jl)), 
-Neural Networks, and other commonly used models have excellent implementations
+Neural Networks ([Flux.jl](https://github.com/FluxML/Flux.jl)), and other commonly used models have excellent implementations
 in _Julia_, although not oriented towards species distribution modeling and
 raster format data.
 

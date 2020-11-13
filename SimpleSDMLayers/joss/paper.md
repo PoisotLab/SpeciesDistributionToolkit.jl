@@ -182,7 +182,7 @@ using Plots
 plot(temperature)
 ```
 
-![Map of the average annual temperature data from WorldClim 2.1, accessed as a layer through SimpleSDMLayers.jl](figures/paper_4_1.png)
+![Map of the average annual temperature data from WorldClim 2.1, accessed as a layer through SimpleSDMLayers.jl](figures/paper_temp_1.png)
 
 
 
@@ -235,7 +235,8 @@ layers, which can then be plotted as shown previously.
 ```julia
 using Statistics
 # Clip to Europe
-temperature_europe = temperature[left = -11.2, right = 30.6, bottom = 29.1, top = 71.0]
+temperature_europe = temperature[left = -11.2, right = 30.6, 
+                                 bottom = 29.1, top = 71.0]
 # Coarsen resolution
 temperature_coarse = coarsen(temperature_europe, Statistics.mean, (4, 4))
 # Sliding window averaging
@@ -292,7 +293,7 @@ contour(temperature_clip, fill = true)
 scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences))
 ```
 
-![Latest Belted Kingfisher occurrences from the GBIF database displayed over the temperature data through the integration between SimpleSDMLayers.jl and GBIF.jl](figures/paper_8_1.png)
+![Latest Belted Kingfisher occurrences from the GBIF database displayed over the temperature data through the integration between SimpleSDMLayers.jl and GBIF.jl](figures/paper_gbif_1.png)
 
 
 

@@ -142,7 +142,7 @@ using Plots
 plot(temperature)
 ```
 
-```julia; echo = false 
+```julia; echo = false; fig_cap = "Map of the average annual temperature data from WorldClim 2.1, accessed as a layer through SimpleSDMLayers.jl"
 using Plots
 plot(temperature, xguide = "Longitude", yguide = "Latitude", 
      colorbar_title = "Average Temperature (°C)")
@@ -244,8 +244,8 @@ contour(temperature_clip, fill = true)
 scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences))
 ```
 
-```julia; echo = false
-# Clip layer to occurrences
+```julia; echo = false; fig_cap = "Latest Belted Kingfisher occurrences from the GBIF database displayed over the temperature data through the integration between SimpleSDMLayers.jl and GBIF.jl"
+# Clip layer tooccurrences
 temperature_clip = clip(temperature, kf_occurrences)
 
 # Plot occurrences

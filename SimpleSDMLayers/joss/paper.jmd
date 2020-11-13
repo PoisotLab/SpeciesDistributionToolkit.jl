@@ -1,11 +1,11 @@
 ---
-title: 'SimpleSDMLayers.jl and GBIF.jl: A Framework for Species Distribution Modelling in Julia'
+title: 'SimpleSDMLayers.jl and GBIF.jl: A Framework for Species Distribution Modeling in Julia'
 tags:
   - Julia
   - ecology
   - biogeography
   - GBIF
-  - species distribution modelling
+  - species distribution modeling
 authors:
   - name: Gabriel Dansereau^[Correspondance to gabriel.dansereau\@umontreal.ca]
     orcid: 0000-0002-2212-3584
@@ -16,28 +16,26 @@ authors:
 affiliations:
  - name: Département de sciences biologiques, Université de Montréal
    index: 1
-date: 9 September 2020
+date: 13 November 2020
 bibliography: [paper.bib]
 
 ---
 
 <div style="text-align: justify">
 
-<!-- Text is hard wrapped at 80 characters and after each sentence -->
-
 # Summary
 
 Predicting where species should be found in space is a common question in
 Ecology and Biogeography.
 Species distribution models (SDMs), for instance, aim to predict where
-environmental conditions are suitable for a given species on continuous
+environmental conditions are suitable for a given species, often on continuous
 geographic scales.
-Such analyses require the use of geo-referenced data on species distribution
-coupled with climate or land cover informations, hence a tight integration
+Such analyses require the use of geo-referenced data on species distributions
+coupled with climate or land cover information, hence a tight integration
 between environmental data, species occurrence data, and spatial coordinates.
-Thus, it requires an efficient way to access species occurrence and
-environmental data within the same software, as well as a solid framework on
-which to build analyses based on occurrence data.
+Thus, it requires an efficient way to access these different data types within
+the same software, as well as a flexible framework on which to build various
+analysis workflows.
 Here we present `SimpleSDMLayers.jl` and `GBIF.jl`, two packages in the _Julia_
 language implementing a framework and type-system on which to build SDM
 analyses, as well as providing access to popular data sources for species
@@ -45,7 +43,7 @@ occurrence and environmental conditions.
 
 # Statement of need
 
-Species distribution modelling (SDM) is an increasingly growing field in Ecology
+Species distribution modeling (SDM) is an increasingly growing field in Ecology
 and Biogeography, with many applications in biodiversity assessment, management,
 and conservation [@Araujo2019StaDis].
 Most SDM models aim at predicting a species distribution in space based on
@@ -55,53 +53,61 @@ geo-referenced environmental and species occurrence data.
 However, such data are complex to handle and often require different software:
 climate and land use data are stored as layers in raster files, then visualized
 and manipulated in specialized GIS (geographic information systems) software,
-while occurrence data are stored in tables and spreadsheets sent through data
-analysis and statistics-oriented tools or programming languages.
-There is therefore a need for efficient tools to manipulate bioclimatic data in
-all programming languages, specifically oriented towards species distribution
-modelling.
+while occurrence data are stored in tables and spreadsheets, then manipulated in
+data analysis and statistics-oriented tools or programming languages.
+There is therefore a need for efficient tools to manipulate bioclimatic data, 
+specifically oriented towards species distribution modeling.
 
-<!-- This kind-of covers the "State of the field" section -->
 In recent years, _R_ [@RCoreTeam2020RLan] has become the most widely used
 programming language in Ecology, especially in spatial ecology studies
 [@Lai2019EvaPop].
-Hence, many efficient packages and tools for species distribution modelling
+Hence, many efficient packages and tools for species distribution modeling
 have been developed in _R_.
 For instance, the package `raster` [@Hijmans2020RasGeo] can be used to
 manipulate raster format data (for example climatic or land use data), `dismo`
 [@Hijmans2017DisSpe] implements many SDM models and provides access to common
 climatic data sources, and `rgbif` [@Chamberlain2020RgbInt] provides access to
 the GBIF database, a common source of species occurrence data in SDM studies.
-Yet, few SDM resources currently exist for the _Julia_ language
-[@Bezanson2017JulFre], although its speed and efficiency at numerical computing
-could be very useful in SDMs.
+In comparison, few specific SDM resources currently exist for the _Julia_ language
+[@Bezanson2017JulFre], although SDM models could benefit from its speed,
+efficiency and ease of writing (removing the need to rewrite functions in other
+languages for higher performance, as in _R_).
 There are currently packages such as
 [`GDAL.jl`](https://github.com/JuliaGeo/GDAL.jl) and
 [`ArchGDAL.jl`](https://github.com/yeesian/ArchGDAL.jl) to manipulate raster
-data; however these are lower level implementations than what is typically used
-by most ecologists and they support for common layer manipulation features in
-SDM studies.
+data; however these are lower-level implementations than what is typically used
+by most ecologists and they lack support for common layer manipulation.
+Generalized Linear Models ([GLM.jl](https://github.com/JuliaStats/GLM.jl)), 
+Random Forests ([DecisionTrees.jl](https://github.com/bensadeghi/DecisionTree.jl)), 
+Neural Networks, and other commonly used models have excellent implementations
+in _Julia_, although not oriented towards species distribution modeling and
+raster format data.
 
 `SimpleSDMLayers.jl` is a package to facilitate manipulation of geo-referenced
-raster data in _Julia_, aimed specifically at species distribution modelling.
-It is a higher level implementation, building on `ArchGDAL.jl`, that is easier
-to use and provides support for common SDM operations.
-The package implements simple type structures to manipulate the data, and is
-meant to be a flexible framework on which to build complex SDM analyses. 
+raster data in _Julia_, aimed specifically at species distribution modeling.
+It is a higher-level implementation, building on `ArchGDAL.jl`, that is easier
+to use and provides support for common SDM operations (see _Feature Overview_
+section below).
+The package implements simple type structures to manipulate the input and output
+data of SDM models, and is meant to be a flexible framework on which to build
+more complex analyses.
+While it does not implement SDM models in itself, we believe the package is a
+step that will make _Julia_ more popular for species distribution modeling, and
+lead to the development of more complete implementations.
 `SimpleSDMLayers.jl` also offers an built-in access to some of the most common
 data sources in SDM studies, such as the WorldClim 2.1 climatic data, which is
 the most common source of climate data in SDM studies [@Booth2014BioFir].
 The package is also tightly integrated with `GBIF.jl`, which allows easy access
-to the GBIF database, a common data source for the species occurrences.
+to the GBIF database, a common data source for species occurrences.
 Both `SimpleSDMLayers.jl` and `GBIF.jl` are part of the _EcoJulia_ organization,
 whose aim is to integrate a variety of packages for ecological analyses in
 _Julia_.
 
 # Basic structure
 
-The core structure implemented in the package is the `SimpleSDMLayer` type, with
-two variants, `SimpleSDMPredictor` and `SimpleSDMResponse`, depending if the
-layer is meant to be mutable or not.
+The core structure implemented in `SimpleSDMLayers.jl` is the `SimpleSDMLayer`
+type, with two variants, `SimpleSDMPredictor` and `SimpleSDMResponse`, depending
+if the layer is meant to be mutable or not.
 
 A `SimpleSDMLayer` element is made of a `grid` field, which contains the raster
 data as a simple `Array` (matrix) of any type, easily manipulable. 
@@ -161,11 +167,12 @@ plot(temperature)
   at different resolutions from WorldClim 2.1 and CHELSA, as well as land cover
   data from EarthEnv. Custom raster data can be loaded as well.
 - **Plotting recipes**: Default recipes are implemented for the `SimpleSDMLayer`
-  types, allowing to directely map them, view the grid values data as histograms
+  types, allowing to directly map them, view the grid values data as histograms
   and density plots, or compare layers as 2-dimensional histograms.
 - **Integration with GBIF.jl (and DataFrames.jl)**: `SimpleSDMLayer.jl` is well
-  integrated with `GBIF.jl`, allowing to clip layers based on the occurrence data.
-  Both also offer an integration with `DataFrames.jl` to easily convert
+  integrated with `GBIF.jl`, allowing to clip layers based on the occurrence
+  data, as well as to map occurrences by displaying them over the layers.
+  Both packages also offer an integration with `DataFrames.jl` to easily convert
   environmental and occurrence data to a table format.
 
 # Examples
@@ -202,10 +209,14 @@ p = plot(p1, p2, p3, layout = grid(1, 3, widths = [0.29, 0.29, 0.405]),
 
 ### GBIF integration
 
-As an example of the integration between `SimpleSDMLayers.jl` and `GBIF.jl`,
-lets focus on the case of a single species, the Belted Kingfisher (_Megaceryle alcyon_).
+The following example shows how the integration between `SimpleSDMLayers.jl` and
+`GBIF.jl` allows to easily map the occurrences on any species in GBIF.
+The species represented in this example is the Belted Kingfisher 
+(_Megaceryle alcyon_).
+
 `GBIF.jl` first allows us to retrieve the latest occurrences from the GBIF
-database.
+database. Note that the element returned here uses the `GBIFRecords` format,
+which contains the metadata associated to each GBIF occurrence.
 
 ```julia
 using GBIF
@@ -219,18 +230,20 @@ end
 kf_occurrences
 ```
 
-Then, `SimpleSDMLayers.jl` integrates this data and can combine it with the
-environmental layers, allowing to clip the layers to the extent of the
-occurrences.
-Finally, it is very straightforward to create a map of the occurrences by
-overlaying them on top of the environmental data.
+`SimpleSDMLayers.jl` then provides a simple integration between the occurrence
+data and the environmental layers, allowing to clip the layers to the spatial 
+extent of the occurrences in a single call with the `clip()``function.
+The occurrences' coordinates can also be extracted using the `longitudes()` and
+`latitudes()` functions.
+Using these, we can easily create a map of the occurrences by overlaying them on
+top of the clipped environmental layer.
 
 ```julia
 # Clip layer to occurrences
 temperature_clip = clip(temperature, kf_occurrences)
 
 # Plot occurrences
-contour(temperature_clip, fill=true, colorbar_title = "Average temperature (°C)",
+contour(temperature_clip, fill = true, colorbar_title = "Average temperature (°C)",
                   xguide = "Longitude", yguide = "Latitude")
 scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), 
          label = "Kingfisher occurrences", legend = :bottomleft, 
@@ -239,5 +252,10 @@ scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences),
 
 # Acknowledgements
 
+We would like to thank all contributors to the _EcoJulia_ organization for their
+help in developing this series of packages for ecological research. 
+Funding was provided by Fonds de recherche du Québec - Nature et technologies
+(FRQNT), the Canadian Foundation for Innovation and the Natural Sciences
+Engineering Research Council of Canada (NSERC).
 
 # References

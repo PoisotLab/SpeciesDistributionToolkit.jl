@@ -38,9 +38,9 @@ Thus, it requires an efficient way to access these different data types within
 the same software, as well as a flexible framework on which to build various
 analysis workflows.
 Here we present `SimpleSDMLayers.jl` and `GBIF.jl`, two packages in the _Julia_
-language implementing a framework and type-system on which to build SDM
+language implementing a simple framework and type-system on which to build SDM
 analyses, as well as providing access to popular data sources for species
-occurrence and environmental conditions.
+occurrences and environmental conditions.
 
 # Statement of need
 
@@ -302,7 +302,7 @@ scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences))
 We would like to thank all contributors to the _EcoJulia_ organization for their
 help in developing this series of packages for ecological research. 
 Funding was provided by Fonds de recherche du Québec - Nature et technologies
-(FRQNT), the Canadian Foundation for Innovation and the Natural Sciences
-Engineering Research Council of Canada (NSERC).
+(FRQNT) and the Computational Biodiversity Science and Services (BIOS²) training
+program.
 
 # References

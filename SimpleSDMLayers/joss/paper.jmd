@@ -186,9 +186,9 @@ possible to : 1) clipping the layer a region of interest (Europe for instance);
 analyses; and 3) performing sliding window operations to aggregate values for
 each site based on a certain radius. 
 Each of these operations can be performed in a single command and returns new
-layers, which can then be plotted.
+layers, which can then be plotted as shown previously.
 
-```julia
+```julia; eval = false
 using Statistics
 # Clip to Europe
 temperature_europe = temperature[left = -11.2, right = 30.6, bottom = 29.1, top = 71.0]
@@ -196,15 +196,6 @@ temperature_europe = temperature[left = -11.2, right = 30.6, bottom = 29.1, top 
 temperature_coarse = coarsen(temperature_europe, Statistics.mean, (4, 4))
 # Sliding window averaging
 temperature_slided = slidingwindow(temperature_europe, Statistics.mean, 100.0)
-```
-
-```julia; echo = false
-## Easily plot
-p1 = plot(temperature_europe)
-p2 = plot(temperature_coarse)
-p3 = plot(temperature_slided)
-p = plot(p1, p2, p3, layout = grid(1, 3, widths = [0.29, 0.29, 0.405]), 
-         frame = :box, ticks = false, colorbar = [false false true])
 ```
 
 ### GBIF integration

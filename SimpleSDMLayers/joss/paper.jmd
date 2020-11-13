@@ -135,14 +135,14 @@ temperature.grid
 ```
 
 `SimpleSDMLayers.jl` then makes it very simple to plot and visualize the layer
-as a map using `Plots.jl`.
+as a map using `Plots.jl` (\autoref{fig:temp}).
 
 ```julia; eval = false
 using Plots
 plot(temperature)
 ```
 
-```julia; echo = false; label = "temp"; fig_cap = "Map of the average annual temperature data from WorldClim 2.1, accessed as a layer through SimpleSDMLayers.jl"
+```julia; echo = false; label = "temp"; fig_cap = "Map of the average annual temperature data from WorldClim 2.1, accessed as a layer through SimpleSDMLayers.jl\\label{fig:temp}"
 using Plots
 plot(temperature, xguide = "Longitude", yguide = "Latitude", 
      colorbar_title = "Average Temperature (°C)")
@@ -234,7 +234,7 @@ extent of the occurrences in a single call with the `clip()``function.
 The occurrences' coordinates can also be extracted using the `longitudes()` and
 `latitudes()` functions.
 Using these, we can easily create a map of the occurrences by overlaying them on
-top of the clipped environmental layer.
+top of the clipped environmental layer (\autoref{fig:gbif}).
 
 ```julia; eval = false
 # Clip layer to occurrences
@@ -245,7 +245,7 @@ contour(temperature_clip, fill = true)
 scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences))
 ```
 
-```julia; echo = false; label = "gbif"; fig_cap = "Latest Belted Kingfisher occurrences from the GBIF database displayed over the temperature data through the integration between SimpleSDMLayers.jl and GBIF.jl"
+```julia; echo = false; label = "gbif"; fig_cap = "Latest Belted Kingfisher occurrences from the GBIF database displayed over the temperature data through the integration between SimpleSDMLayers.jl and GBIF.jl\\label{fig:gbif}"
 # Clip layer tooccurrences
 temperature_clip = clip(temperature, kf_occurrences)
 

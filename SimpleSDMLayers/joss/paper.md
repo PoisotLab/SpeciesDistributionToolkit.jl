@@ -1,24 +1,24 @@
 ---
-title: 'SimpleSDMLayers.jl and GBIF.jl: A Framework for Species Distribution Modeling in Julia'
-tags:
-  - Julia
-  - ecology
-  - biogeography
-  - GBIF
-  - species distribution modeling
-authors:
-  - name: Gabriel Dansereau^[Correspondance to gabriel.dansereau\@umontreal.ca]
-    orcid: 0000-0002-2212-3584
-    affiliation: 1 # (Multiple affiliations must be quoted)
-  - name: Timothée Poisot
-    orcid: 0000-0002-0735-5184
-    affiliation: 1
 affiliations:
- - name: Département de sciences biologiques, Université de Montréal
-   index: 1
-date: 13 November 2020
-bibliography: [paper.bib]
-
+  - name: "Département de sciences biologiques, Université de Montréal"
+    index: 1
+title: "SimpleSDMLayers.jl and GBIF.jl: A Framework for Species Distribution Modeling in Julia"
+tags:
+  - "Julia"
+  - "ecology"
+  - "biogeography"
+  - "GBIF"
+  - "species distribution modeling"
+date: "13 November 2020"
+authors:
+  - name: "Gabriel Dansereau^[Correspondance to gabriel.dansereau\@umontreal.ca]"
+    orcid: "0000-0002-2212-3584"
+    affiliation: 1
+  - name: "Timothée Poisot"
+    orcid: "0000-0002-0735-5184"
+    affiliation: 1
+bibliography:
+  - "paper.bib"
 ---
 
 
@@ -175,14 +175,14 @@ temperature.grid
 
 
 `SimpleSDMLayers.jl` then makes it very simple to plot and visualize the layer
-as a map using `Plots.jl`.
+as a map using `Plots.jl` (\autoref{fig:temp}).
 
 ```julia
 using Plots
 plot(temperature)
 ```
 
-![Map of the average annual temperature data from WorldClim 2.1, accessed as a layer through SimpleSDMLayers.jl](figures/paper_temp_1.png)
+![Map of the average annual temperature data from WorldClim 2.1, accessed as a layer through SimpleSDMLayers.jl\label{fig:temp}](figures/paper_temp_1.png)
 
 
 
@@ -282,7 +282,7 @@ extent of the occurrences in a single call with the `clip()``function.
 The occurrences' coordinates can also be extracted using the `longitudes()` and
 `latitudes()` functions.
 Using these, we can easily create a map of the occurrences by overlaying them on
-top of the clipped environmental layer.
+top of the clipped environmental layer (\autoref{fig:gbif}).
 
 ```julia
 # Clip layer to occurrences
@@ -293,7 +293,7 @@ contour(temperature_clip, fill = true)
 scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences))
 ```
 
-![Latest Belted Kingfisher occurrences from the GBIF database displayed over the temperature data through the integration between SimpleSDMLayers.jl and GBIF.jl](figures/paper_gbif_1.png)
+![Latest Belted Kingfisher occurrences from the GBIF database displayed over the temperature data through the integration between SimpleSDMLayers.jl and GBIF.jl\label{fig:gbif}](figures/paper_gbif_1.png)
 
 
 

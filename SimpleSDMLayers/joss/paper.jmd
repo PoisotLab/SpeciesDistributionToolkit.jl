@@ -230,7 +230,7 @@ kf_occurrences
 
 `SimpleSDMLayers.jl` then provides a simple integration between the occurrence
 data and the environmental layers, allowing to clip the layers to the spatial 
-extent of the occurrences in a single call with the `clip()``function.
+extent of the occurrences in a single call with the `clip()` function.
 The occurrences' coordinates can also be extracted using the `longitudes()` and
 `latitudes()` functions.
 Using these, we can easily create a map of the occurrences by overlaying them on

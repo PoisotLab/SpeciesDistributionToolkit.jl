@@ -34,7 +34,7 @@ function occurrences!(o::GBIFRecords)
   if length(o) == size(o)
     @info "All occurences for this query have been returned"
   else
-    if o.query == nothing
+    if isnothing(o.query)
       o.query = Dict{String,Any}()
     end
     _internal_offset_update!(o)

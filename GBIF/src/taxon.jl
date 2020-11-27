@@ -38,31 +38,31 @@ function taxon(name::String;
    ]
    args = Dict{String, Any}("name" => name, "strict" => strict)
 
-   if rank != nothing
+   if !isnothing(rank)
       args["rank"] = String(rank)
    end
 
-   if kingdom != nothing
+   if !isnothing(kingdom)
       args["kingdom"] = String(kingdom)
    end
 
-   if phylum != nothing
+   if !isnothing(phylum)
       args["phylum"] = String(phylum)
    end
 
-   if class != nothing
+   if !isnothing(class)
       args["class"] = String(class)
    end
 
-   if order != nothing
+   if !isnothing(order)
       args["order"] = String(order)
    end
 
-   if family != nothing
+   if !isnothing(family)
       args["family"] = String(family)
    end
 
-   if genus != nothing
+   if !isnothing(genus)
       args["genus"] = String(genus)
    end
 

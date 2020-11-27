@@ -7,3 +7,4 @@ docs/build
 docs/site
 tags
 Manifest.toml
+.vscode

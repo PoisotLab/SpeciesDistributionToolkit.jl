@@ -38,34 +38,14 @@ function taxon(name::String;
    ]
    args = Dict{String, Any}("name" => name, "strict" => strict)
 
-   if !isnothing(rank)
-      args["rank"] = String(rank)
-   end
-
-   if !isnothing(kingdom)
-      args["kingdom"] = String(kingdom)
-   end
-
-   if !isnothing(phylum)
-      args["phylum"] = String(phylum)
-   end
-
-   if !isnothing(class)
-      args["class"] = String(class)
-   end
-
-   if !isnothing(order)
-      args["order"] = String(order)
-   end
-
-   if !isnothing(family)
-      args["family"] = String(family)
-   end
-
-   if !isnothing(genus)
-      args["genus"] = String(genus)
-   end
-
+   isnothing(rank) || (args["rank"] = String(rank))
+   isnothing(kingdom) || (args["kingdom"] = String(kingdom))
+   isnothing(phylum) || (args["phylum"] = String(phylum))
+   isnothing(class) || (args["class"] = String(class))
+   isnothing(order) || (args["order"] = String(order))
+   isnothing(family) || (args["family"] = String(family))
+   isnothing(genus) || (args["genus"] = String(genus))
+   
    sp_s_url = gbifurl * "species/match"
    sp_s_req = HTTP.get(sp_s_url, query=args)
    if sp_s_req.status == 200

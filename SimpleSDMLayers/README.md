@@ -82,3 +82,10 @@ One can also use `scatter(l1, l2)` where both `l1` and `l2` are layers with the
 same dimensions and bounding box, to get a scatterplot of the values. Only the
 pixels that have non-`NaN` values in *both* layers are shown. Similarly,
 `histogram2d` works.
+
+## How to contribute
+
+Please read the [Code of Conduct][CoC] and the [contributing guidelines][contr].
+
+[CoC]: https://github.com/EcoJulia/SimpleSDMLayers.jl/blob/master/CODE_OF_CONDUCT.md
+[contr]: https://github.com/EcoJulia/SimpleSDMLayers.jl/blob/master/CONTRIBUTING.md

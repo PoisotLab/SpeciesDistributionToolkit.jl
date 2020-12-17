@@ -3,13 +3,7 @@
 We are looking forward to changes and improvement to this package. Before you
 contribute, please read the [Code of Conduct][CoC].
 
-[CoC]: https://github.com/EcoJulia/GBIF.jl/blob/master/CODE_OF_CONDUCT.md
-
-## Recognition model
-
-Before submitting a pull request, please add your name and information *in
-alphabetic order* (after the first name) to `.zenodo.json`. You will get
-credited as an author of the *next* release of the package.
+[CoC]: https://github.com/EcoJulia/SimpleSDMLayers.jl/blob/master/CODE_OF_CONDUCT.md
 
 ## Repository structure
 
@@ -25,7 +19,7 @@ credited as an author of the *next* release of the package.
 - write a *vignette* -- used `GBIF.jl` to do something? Put a Jupyter notebook in `docs/notebooks`, and add it to the README
 - improve the *documentation* -- all functions have a `docstring` where they are declared, and improving them is a great way to get started
 
-[issue]: https://github.com/EcoJulia/GBIF.jl/issues
+[issue]: https://github.com/EcoJulia/SimpleSDMLayers.jl/issues
 
 ## Setting up your environment
 

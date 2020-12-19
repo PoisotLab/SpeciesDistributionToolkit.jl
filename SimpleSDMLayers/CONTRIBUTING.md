@@ -9,14 +9,11 @@ contribute, please read the [Code of Conduct][CoC].
 
 - `src` contains all the functions, types, and methods
 - `tests` contains the unit tests and some integration tests
-- `docs` contains the documentation
-  1. please use `julia docs/_weave/make.jl` to update the webpage and the README
-  2. the notebooks go in `notebook` (also compile them, and update the README)
 
 ## Don't know where to start?
 
 - report a *bug* or suggest an *improvement* -- open an [issue] on *GitHub*
-- write a *vignette* -- used `GBIF.jl` to do something? Put a Jupyter notebook in `docs/notebooks`, and add it to the README
+- write a *vignette* -- used `SimpleSDMLayers.jl` to do something? You can add it to `docs/src/examples`!
 - improve the *documentation* -- all functions have a `docstring` where they are declared, and improving them is a great way to get started
 
 [issue]: https://github.com/EcoJulia/SimpleSDMLayers.jl/issues
@@ -50,7 +47,7 @@ integrated rapidly. The general workflow is as follows:
 
 1. Fork the repository (see *Branches, etc.* below)
 2. Create an *explicitly named branch* from `develop` (if present) or `master`
-3. Create a pull request *even if you haven't pushed code yet*
+3. Create a pull request *as soon as you make the first commit*
 4. Be as explicit as possible on your goals
 5. Do not squash / rebase commits while you work -- we will do so when merging
 

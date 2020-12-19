@@ -34,3 +34,5 @@ test/gallery/heatmap.png
 test/gallery/heatmap_scaledown.png
 test/gallery/scatter-2d.png
 test/gallery/scatter.png
+
+.vscode/settings.json

@@ -56,7 +56,7 @@ function download_layer(::BioClim, layer::Integer)
     path = SimpleSDMLayers.assets_path()
     layer = lpad(layer, 2, "0")
     filename = "CHELSA_bio10_$(layer).tif"
-    url_root = "ftp://envidatrepo.wsl.ch/uploads/chelsa/chelsa_V1/climatologies/bio/"
+    url_root = "ftp://envicloud.wsl.ch/chelsa/chelsa_V1/climatologies/bio/"
 
     filepath = joinpath(path, filename)
     if !(isfile(filepath))

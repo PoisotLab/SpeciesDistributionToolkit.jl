@@ -11,6 +11,8 @@ bioclimatic data and the output of species distribution models.
 ![Doc](https://img.shields.io/github/workflow/status/EcoJulia/SimpleSDMLayers.jl/Documentation?label=Doc&style=flat-square)
 ![Coverage](https://img.shields.io/codecov/c/github/EcoJulia/SimpleSDMLayers.jl?style=flat-square)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4420377.svg)](https://doi.org/10.5281/zenodo.4420377)
+
 ### Installation
 
 The currently released version of the package can be installed with:

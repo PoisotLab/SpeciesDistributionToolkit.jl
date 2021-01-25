@@ -94,7 +94,7 @@ more complex analyses.
 While it does not implement SDM models in itself, we believe the package is a
 step that will make _Julia_ more popular for species distribution modeling, and
 lead to the development of more complete implementations.
-`SimpleSDMLayers.jl` also offers an built-in access to some of the most common
+`SimpleSDMLayers.jl` also offers built-in access to some of the most common
 data sources in SDM studies, such as the WorldClim 2.1 climatic data, which is
 the most common source of climate data in SDM studies [@Booth2014BioFir].
 The package is also tightly integrated with `GBIF.jl`, which allows easy access
@@ -187,9 +187,9 @@ plot(temperature, xguide = "Longitude", yguide = "Latitude",
 
 To illustrate a few of the spatial operations supported by `SimpleSDMLayers.jl`,
 the following code reuses the previous `temperature` layer, and shows how it is
-possible to : 1) clipping the layer a region of interest (Europe for instance);
-2) coarsening the  resolution by averaging groups of cells for large scale
-analyses; and 3) performing sliding window operations to aggregate values for
+possible to : 1) clip the layer a region of interest (Europe for instance);
+2) coarsen the  resolution by averaging groups of cells for large scale
+analyses; and 3) perform sliding window operations to aggregate values for
 each site based on a certain radius. 
 Each of these operations can be performed in a single command and returns new
 layers, which can then be plotted as shown previously.

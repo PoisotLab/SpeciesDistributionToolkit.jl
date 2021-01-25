@@ -56,7 +56,7 @@ climate and land use data are stored as layers in raster files, then visualized
 and manipulated in specialized GIS (geographic information systems) software,
 while occurrence data are stored in tables and spreadsheets, then manipulated in
 data analysis and statistics-oriented tools or programming languages.
-There is therefore a need for efficient tools to manipulate bioclimatic data, 
+Therefore, there is a need for efficient tools to manipulate bioclimatic data, 
 specifically oriented towards species distribution modeling.
 
 In recent years, _R_ [@RCoreTeam2020RLan] has become the most widely used
@@ -76,8 +76,8 @@ languages for higher performance, as in _R_).
 There are currently packages such as
 [`GDAL.jl`](https://github.com/JuliaGeo/GDAL.jl) and
 [`ArchGDAL.jl`](https://github.com/yeesian/ArchGDAL.jl) to manipulate raster
-data; however these are lower-level implementations than what is typically used
-by most ecologists and they lack support for common layer manipulation.
+data; however, these are lower-level implementations than what is typically used
+by most ecologists, and they lack support for common layer manipulation.
 Generalized Linear Models ([GLM.jl](https://github.com/JuliaStats/GLM.jl)), 
 Random Forests ([DecisionTrees.jl](https://github.com/bensadeghi/DecisionTree.jl)), 
 Neural Networks ([Flux.jl](https://github.com/FluxML/Flux.jl)), and other commonly used models have excellent implementations
@@ -85,7 +85,7 @@ in _Julia_, although not oriented towards species distribution modeling and
 raster format data.
 
 `SimpleSDMLayers.jl` is a package to facilitate manipulation of geo-referenced
-raster data in _Julia_, aimed specifically at species distribution modeling.
+raster data in _Julia_, specifically aimed at species distribution modeling.
 It is a higher-level implementation, building on `ArchGDAL.jl`, that is easier
 to use and provides support for common SDM operations (see _Feature Overview_
 section below).
@@ -95,7 +95,7 @@ more complex analyses.
 While it does not implement SDM models in itself, we believe the package is a
 step that will make _Julia_ more popular for species distribution modeling, and
 lead to the development of more complete implementations.
-`SimpleSDMLayers.jl` also offers an built-in access to some of the most common
+`SimpleSDMLayers.jl` also offers built-in access to some of the most common
 data sources in SDM studies, such as the WorldClim 2.1 climatic data, which is
 the most common source of climate data in SDM studies [@Booth2014BioFir].
 The package is also tightly integrated with `GBIF.jl`, which allows easy access
@@ -112,7 +112,7 @@ if the layer is meant to be mutable or not.
 
 A `SimpleSDMLayer` element is made of a `grid` field, which contains the raster
 data as a simple `Array` (matrix) of any type, easily manipulable. 
-It also contains the fields `left`, `right`, `bottom` and `top`, representing
+It also contains the fields `left`, `right`, `bottom`, and `top`, representing
 the bounding coordinates of the layer. 
 
 To illustrate this structure, the following code loads a layer of WorldClim 2.1
@@ -211,7 +211,7 @@ plot(temperature)
   at different resolutions from WorldClim 2.1 and CHELSA, as well as land cover
   data from EarthEnv. Custom raster data can be loaded as well.
 - **Plotting recipes**: Default recipes are implemented for the `SimpleSDMLayer`
-  types, allowing to directly map them, view the grid values data as histograms
+  types, allowing to directly map them, view the grid data as histograms
   and density plots, or compare layers as 2-dimensional histograms.
 - **Integration with GBIF.jl (and DataFrames.jl)**: `SimpleSDMLayer.jl` is well
   integrated with `GBIF.jl`, allowing to clip layers based on the occurrence
@@ -225,9 +225,9 @@ plot(temperature)
 
 To illustrate a few of the spatial operations supported by `SimpleSDMLayers.jl`,
 the following code reuses the previous `temperature` layer, and shows how it is
-possible to : 1) clipping the layer a region of interest (Europe for instance);
-2) coarsening the  resolution by averaging groups of cells for large scale
-analyses; and 3) performing sliding window operations to aggregate values for
+possible to : 1) clip the layer to a region of interest (Europe for instance);
+2) coarsen the  resolution by averaging groups of cells for large scale
+analyses; and 3) perform sliding window operations to aggregate values for
 each site based on a certain radius. 
 Each of these operations can be performed in a single command and returns new
 layers, which can then be plotted as shown previously.
@@ -248,7 +248,7 @@ temperature_slided = slidingwindow(temperature_europe, Statistics.mean, 100.0)
 ### GBIF integration
 
 The following example shows how the integration between `SimpleSDMLayers.jl` and
-`GBIF.jl` allows to easily map the occurrences on any species in GBIF.
+`GBIF.jl` allows to easily map the occurrences of any species in GBIF.
 The species represented in this example is the Belted Kingfisher 
 (_Megaceryle alcyon_).
 
@@ -277,12 +277,13 @@ GBIF records: downloaded 200 out of 100000
 
 
 `SimpleSDMLayers.jl` then provides a simple integration between the occurrence
-data and the environmental layers, allowing to clip the layers to the spatial 
-extent of the occurrences in a single call with the `clip()` function.
-The occurrences' coordinates can also be extracted using the `longitudes()` and
-`latitudes()` functions.
-Using these, we can easily create a map of the occurrences by overlaying them on
-top of the clipped environmental layer (\autoref{fig:gbif}).
+data and the environmental layers.
+The layers can be clipped to the spatial extent of the occurrences in a single
+call using the `clip()` function.
+The occurrences' coordinates can also be extracted with `longitudes()` and
+`latitudes()`.
+Using these functions, we can easily create a map of the occurrences by
+overlaying them on top of the clipped environmental layer (\autoref{fig:gbif}).
 
 ```julia
 # Clip layer to occurrences

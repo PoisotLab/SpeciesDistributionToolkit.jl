@@ -122,6 +122,7 @@ By default, this will return a layer with the values for the whole world if no
 bounding coordinates are specified.
 
 ```julia
+# Load package
 using SimpleSDMLayers
 
 # Get world temperature data
@@ -158,7 +159,7 @@ temperature.grid
  -31.7635    -32.4307    -33.7036       -34.9522    -33.6282    -32.3038
  -33.7063    -36.0738    -39.2075       -40.6438    -37.3938    -34.3026
  -33.9768    -34.7016    -35.8662       -37.2408    -36.0364    -34.5988
-   ⋮                                 ⋱                          
+                                                                
     nothing     nothing     nothing        nothing     nothing     nothing
     nothing     nothing     nothing        nothing     nothing     nothing
     nothing     nothing     nothing        nothing     nothing     nothing

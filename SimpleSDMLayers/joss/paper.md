@@ -17,7 +17,7 @@ affiliations:
  - name: Département de sciences biologiques, Université de Montréal
    index: 1
 date: 13 November 2020
-bibliography: [paper.bib]
+bibliography: paper.bib
 
 ---
 

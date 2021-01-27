@@ -1,4 +1,4 @@
-## Simple layers for Species Distributions Modelling
+## Simple Layers for Species Distributions Modelling
 
 This package offers very simple types and functions to interact with
 bioclimatic data and the output of species distribution models.
@@ -12,6 +12,11 @@ bioclimatic data and the output of species distribution models.
 ![Coverage](https://img.shields.io/codecov/c/github/EcoJulia/SimpleSDMLayers.jl?style=flat-square)
 
 [![DOI](https://zenodo.org/badge/187030040.svg)](https://zenodo.org/badge/latestdoi/187030040)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02872/status.svg)](https://doi.org/10.21105/joss.02872)
+
+![gbif_figure](./joss/figures/paper_gbif_1.png)
+
+Curious to know more? Have a look at our [paper in Journal of Open Source Software](https://doi.org/10.21105/joss.02872), our [JuliaCon poster](https://github.com/gabrieldansereau/juliacon-2020-poster/blob/master/juliacon-poster.pdf), our [NextJournal demo notebook](https://nextjournal.com/gabrieldansereau/SimpleSDMLayers-JuliaCon2020-demo/), and our [extended documentation](https://ecojulia.github.io/SimpleSDMLayers.jl/stable/), or keep reading for a quick overview.
 
 ### Installation
 
@@ -60,10 +65,10 @@ are immutable.
 
 ### Bioclimatic data
 
-#### WorldClim 2.0
+#### WorldClim 2.1
 
 The `worldclim` function will get a range, or an array of indices, and return
-the corresponding bioclim 2.0 layers at the specified `resolution`. For
+the corresponding bioclim 2.1 layers at the specified `resolution`. For
 example, to get the annual temperature, and annual precipitation:
 
 ~~~ julia
@@ -79,6 +84,12 @@ can be cropped later. The layers are returned as `SimpleSDMPredictor` objects.
 Using the `Plots` package, one can call the `heatmap`, `contour`, `density`
 (requires `StatsPlots`), and `plot` methods. Note that `plot` defaults to a
 `heatmap`.
+
+~~~ julia
+plot(temperature)
+~~~
+
+![temperature_figure](./joss/figures/paper_temp_1.png)
 
 One can also use `scatter(l1, l2)` where both `l1` and `l2` are layers with the
 same dimensions and bounding box, to get a scatterplot of the values. Only the

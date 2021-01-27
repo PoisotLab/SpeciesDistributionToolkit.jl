@@ -1,9 +1,6 @@
 {
    "title": "Simple layers for species distribution modeling and bioclimatic data",
    "description": "This package offers very simple types and functions to interact with bioclimatic data and the output of species distribution models.",
-   "grants": [
-      {}
-   ],
    "upload_type": "software",
    "creators": [
       {

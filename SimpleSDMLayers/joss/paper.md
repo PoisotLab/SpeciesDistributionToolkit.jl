@@ -27,7 +27,7 @@ bibliography: paper.bib
 # Summary
 
 Predicting where species should be found in space is a common question in
-Ecology and Biogeography.
+ecology and biogeography.
 Species distribution models (SDMs), for instance, aim to predict where
 environmental conditions are suitable for a given species, often on continuous
 geographic scales.
@@ -44,8 +44,8 @@ occurrences and environmental conditions.
 
 # Statement of need
 
-Species distribution modeling (SDM) is an increasingly growing field in Ecology
-and Biogeography, with many applications in biodiversity assessment, management,
+Species distribution modeling (SDM) is an increasingly growing field in ecology
+and biogeography, with many applications in biodiversity assessment, management,
 and conservation [@Araujo2019StaDis].
 Most SDM models aim at predicting a species distribution in space based on
 environmental data and information on where the species was previously seen.
@@ -60,7 +60,7 @@ Therefore, there is a need for efficient tools to manipulate bioclimatic data,
 specifically oriented towards species distribution modeling.
 
 In recent years, _R_ [@RCoreTeam2020RLan] has become the most widely used
-programming language in Ecology, especially in spatial ecology studies
+programming language in ecology, especially in spatial ecology studies
 [@Lai2019EvaPop].
 Hence, many efficient packages and tools for species distribution modeling
 have been developed in _R_.
@@ -78,9 +78,9 @@ There are currently packages such as
 [`ArchGDAL.jl`](https://github.com/yeesian/ArchGDAL.jl) to manipulate raster
 data; however, these are lower-level implementations than what is typically used
 by most ecologists, and they lack support for common layer manipulation.
-Generalized Linear Models ([GLM.jl](https://github.com/JuliaStats/GLM.jl)), 
-Random Forests ([DecisionTrees.jl](https://github.com/bensadeghi/DecisionTree.jl)), 
-Neural Networks ([Flux.jl](https://github.com/FluxML/Flux.jl)), and other commonly used models have excellent implementations
+generalized linear models ([GLM.jl](https://github.com/JuliaStats/GLM.jl)), 
+random forests ([DecisionTrees.jl](https://github.com/bensadeghi/DecisionTree.jl)), 
+neural networks ([Flux.jl](https://github.com/FluxML/Flux.jl)), and other commonly used models have excellent implementations
 in _Julia_, although not oriented towards species distribution modeling and
 raster format data.
 
@@ -250,7 +250,7 @@ temperature_slided = slidingwindow(temperature_europe, Statistics.mean, 100.0)
 
 The following example shows how the integration between `SimpleSDMLayers.jl` and
 `GBIF.jl` allows to easily map the occurrences of any species in GBIF.
-The species represented in this example is the Belted Kingfisher 
+The species represented in this example is the belted kingfisher 
 (_Megaceryle alcyon_).
 
 `GBIF.jl` first allows us to retrieve the latest occurrences from the GBIF
@@ -295,7 +295,7 @@ contour(temperature_clip, fill = true)
 scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences))
 ```
 
-![Latest Belted Kingfisher occurrences from the GBIF database displayed over the temperature data through the integration between SimpleSDMLayers.jl and GBIF.jl\label{fig:gbif}](figures/paper_gbif_1.png)
+![Latest belted kingfisher occurrences from the GBIF database displayed over the temperature data through the integration between SimpleSDMLayers.jl and GBIF.jl\label{fig:gbif}](figures/paper_gbif_1.png)
 
 
 

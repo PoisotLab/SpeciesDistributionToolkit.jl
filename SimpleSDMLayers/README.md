@@ -14,7 +14,10 @@ bioclimatic data and the output of species distribution models.
 [![DOI](https://zenodo.org/badge/187030040.svg)](https://zenodo.org/badge/latestdoi/187030040)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.02872/status.svg)](https://doi.org/10.21105/joss.02872)
 
-![gbif_figure](./joss/figures/paper_gbif_1.png)
+<p align="center">
+  <img align = "center" src="./joss/figures/paper_gbif_1.png"
+       title = "SimpleSDMLayers.jl & GBIF.jl example">
+</p>
 
 Curious to know more? Have a look at our [paper in Journal of Open Source Software](https://doi.org/10.21105/joss.02872), our [JuliaCon poster](https://github.com/gabrieldansereau/juliacon-2020-poster/blob/master/juliacon-poster.pdf), our [NextJournal demo notebook](https://nextjournal.com/gabrieldansereau/SimpleSDMLayers-JuliaCon2020-demo/), and our [extended documentation](https://ecojulia.github.io/SimpleSDMLayers.jl/stable/), or keep reading for a quick overview.
 
@@ -89,7 +92,10 @@ Using the `Plots` package, one can call the `heatmap`, `contour`, `density`
 plot(temperature)
 ~~~
 
-![temperature_figure](./joss/figures/paper_temp_1.png)
+<p align="center">
+  <img align = "center" src="./joss/figures/paper_temp_1.png"
+       title = "Temperature map">
+</p>
 
 One can also use `scatter(l1, l2)` where both `l1` and `l2` are layers with the
 same dimensions and bounding box, to get a scatterplot of the values. Only the

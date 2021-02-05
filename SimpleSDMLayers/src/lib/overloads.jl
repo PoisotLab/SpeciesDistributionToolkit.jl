@@ -7,6 +7,7 @@ import Base: similar
 import Base: copy
 import Base: eltype
 import Base: convert
+import Base: collect
 import Base.Broadcast: broadcast
 
 """
@@ -272,4 +273,13 @@ function Base.Broadcast.broadcast(f, L::LT) where {LT <: SimpleSDMLayer}
 
     RT = LT <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
     return RT(convert(Matrix{Union{internal_types...}}, N.grid), N)
+end
+
+"""
+    Base.collect(l::T) where {T <: SimpleSDMLayer}
+
+Returns the non-`nothing` values of a layer.
+"""
+function Base.collect(l::T) where {T <: SimpleSDMLayer}
+    v = filter(!isnothing, l.grid)    
 end

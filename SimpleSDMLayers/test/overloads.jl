@@ -44,4 +44,8 @@ Y[0.1,0.1] = 4.0
 @test Z[0.1,0.1] != Y[0.1,0.1]
 @test Z[0.1,0.1] == 0.2
 
+Z = convert(SimpleSDMPredictor, Y)
+V = collect(Z)
+@test typeof(V) == Vector{eltype(Z)}
+
 end

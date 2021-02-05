@@ -5,8 +5,8 @@ test 1
    seriestype --> :heatmap
    if get(plotattributes, :seriestype, :heatmap) in [:heatmap, :contour]
       aspect_ratio --> 1
-      xlims --> (minimum(longitudes(layer)),maximum(longitudes(layer)))
-      ylims --> (minimum(latitudes(layer)),maximum(latitudes(layer)))
+      xlims --> extrema(longitudes(layer))
+      ylims --> extrema(latitudes(layer))
       lg = copy(layer.grid)
       replace!(lg, nothing => NaN)
       longitudes(layer), latitudes(layer), lg

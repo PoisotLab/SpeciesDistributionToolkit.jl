@@ -8,10 +8,10 @@ test 1
       xlims --> (minimum(longitudes(layer)),maximum(longitudes(layer)))
       ylims --> (minimum(latitudes(layer)),maximum(latitudes(layer)))
       lg = copy(layer.grid)
-      lg[lg.==nothing] .= NaN
+      replace!(lg, nothing => NaN)
       longitudes(layer), latitudes(layer), lg
    elseif get(plotattributes, :seriestype, :histogram) in [:histogram, :density]
-      filter(!isnothing, layer.grid)
+      collect(layer)
    end
 end
 
@@ -22,7 +22,7 @@ test 2
    seriestype --> :scatter
    if get(plotattributes, :seriestype, :scatter) in [:scatter, :histogram2d]
       SimpleSDMLayers._layers_are_compatible(l1, l2)
-      valid_i = filter(i -> !(isnothing(l1[i])|isnothing(l2[i])), eachindex(l1.grid))
+      valid_i = findall(!.(isnothing.(l1).&isnothing.(l2)))
       l1.grid[valid_i], l2.grid[valid_i]
    end
 end

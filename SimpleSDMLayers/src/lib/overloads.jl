@@ -281,5 +281,6 @@ end
 Returns the non-`nothing` values of a layer.
 """
 function Base.collect(l::T) where {T <: SimpleSDMLayer}
-    v = filter(!isnothing, l.grid)    
+    v = filter(!isnothing, l.grid)
+    return convert(Vector{eltype(l)}, v)    
 end

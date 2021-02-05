@@ -293,5 +293,5 @@ Returns a grid the same size as the layer with the positions containing
 `nothing` set to true.
 """
 function Base.isnothing(l::T) where {T <: SimpleSDMLayer}
-    return isnothing.(l..grid)
+    return isnothing.(l.grid)
 end

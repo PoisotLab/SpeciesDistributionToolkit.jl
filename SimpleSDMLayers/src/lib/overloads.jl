@@ -323,10 +323,10 @@ left/right coordinates match. This will automatically re-order the layers if the
 second is to the left the first.
 """
 function Base.hcat(l1::T, l2::T) where {T <: SimpleSDMLayer}
-   (l2.right == l1.left) || return hcat(l2, l1)
-   (l1.top == l2.top) && throw(ArgumentError("The two layers passed to hcat must have the same top coordinate"))
-   (l1.bottom == l2.bottom) && throw(ArgumentError("The two layers passed to hcat must have the same bottom coordinate"))
-   (stride(l1) == stride(l2)) && throw(ArgumentError("The two layers passed to hcat must have the same stride"))
+    (l1.top == l2.top) || throw(ArgumentError("The two layers passed to hcat must have the same top coordinate"))
+    (l1.bottom == l2.bottom) || throw(ArgumentError("The two layers passed to hcat must have the same bottom coordinate"))
+    (stride(l1) == stride(l2)) || throw(ArgumentError("The two layers passed to hcat must have the same stride"))
+    (l2.right == l1.left) && return hcat(l2, l1)
    new_grid = hcat(l1.grid, l2.grid)
    return T(new_grid, l1.left, l2.right, l1.top, l1.bottom)
 end

@@ -10,6 +10,8 @@ import Base: convert
 import Base: collect
 import Base: isnothing
 import Base.Broadcast: broadcast
+import Base: hcat
+import Base: vcat
 
 """
     Base.convert(::Type{SimpleSDMResponse}, layer::T) where {T <: SimpleSDMPredictor}
@@ -294,4 +296,37 @@ Returns a grid the same size as the layer with the positions containing
 """
 function Base.isnothing(l::T) where {T <: SimpleSDMLayer}
     return isnothing.(l.grid)
+end
+
+"""
+    Base.vcat(l1::T, l2::T) where {T <: SimpleSDMLayers}
+
+Adds the second layer *under* the first one, assuming the strides and left/right
+coordinates match. This will automatically re-order the layers if the second is
+above the first.
+"""
+function Base.vcat(l1::T, l2::T) where {T <: SimpleSDMLayer}
+    (l1.left == l2.left) || throw(ArgumentError("The two layers passed to vcat must have the same left coordinate"))
+    (l1.right == l2.right) || throw(ArgumentError("The two layers passed to vcat must have the same right coordinate"))
+    (stride(l1) == stride(l2)) || throw(ArgumentError("The two layers passed to vcat must have the same stride"))
+    (l2.top == l1.bottom) && return vcat(l2, l1)
+   new_grid = vcat(l1.grid, l2.grid)
+   RT = T <: SimpleSDMPredictor ? SimpleSDMPredictor : SimpleSDMResponse
+   return RT(new_grid, l1.left, l1.right, l1.top, l2.bottom)
+end
+
+"""
+    Base.hcat(l1::T, l2::T) where {T <: SimpleSDMLayers}
+
+Adds the second layer *to the right of* the first one, assuming the strides and
+left/right coordinates match. This will automatically re-order the layers if the
+second is to the left the first.
+"""
+function Base.hcat(l1::T, l2::T) where {T <: SimpleSDMLayer}
+   (l2.right == l1.left) || return hcat(l2, l1)
+   (l1.top == l2.top) && throw(ArgumentError("The two layers passed to hcat must have the same top coordinate"))
+   (l1.bottom == l2.bottom) && throw(ArgumentError("The two layers passed to hcat must have the same bottom coordinate"))
+   (stride(l1) == stride(l2)) && throw(ArgumentError("The two layers passed to hcat must have the same stride"))
+   new_grid = hcat(l1.grid, l2.grid)
+   return T(new_grid, l1.left, l2.right, l1.top, l1.bottom)
 end

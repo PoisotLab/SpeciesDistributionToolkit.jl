@@ -6,4 +6,5 @@ slidingwindow
 latitudes
 longitudes
 clip
+mask
 ```

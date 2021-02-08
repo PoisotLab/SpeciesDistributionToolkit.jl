@@ -31,7 +31,8 @@ export landcover
 
 include(joinpath("operations", "coarsen.jl"))
 include(joinpath("operations", "sliding.jl"))
-export coarsen, slidingwindow
+include(joinpath("operations", "mask.jl"))
+export coarsen, slidingwindow, mask
 
 include(joinpath("recipes", "recipes.jl"))
 

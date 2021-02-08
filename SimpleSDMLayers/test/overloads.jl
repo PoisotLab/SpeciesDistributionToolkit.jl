@@ -48,10 +48,10 @@ Z = convert(SimpleSDMPredictor, Y)
 V = collect(Z)
 @test typeof(V) == Vector{eltype(Z)}
 
-l1 = worldclim(1, left=0.0, right=10.0, bottom=0.0, right=10.0)
-l2 = worldclim(1, left=0.0, right=10.0, bottom=10.0, right=20.0)
-l3 = worldclim(1, left=10.0, right=20.0, bottom=0.0, right=10.0)
-l4 = worldclim(1, left=10.0, right=20.0, bottom=10.0, right=20.0)
+l1 = worldclim(1, left=0.0, right=10.0, bottom=0.0, top=10.0)
+l2 = worldclim(1, left=0.0, right=10.0, bottom=10.0, top=20.0)
+l3 = worldclim(1, left=10.0, right=20.0, bottom=0.0, top=10.0)
+l4 = worldclim(1, left=10.0, right=20.0, bottom=10.0, top=20.0)
 
 ml1 = hcat(l1, l3)
 vl1 = vcat(l1, l2)

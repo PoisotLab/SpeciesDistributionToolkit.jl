@@ -250,6 +250,21 @@ function Base.similar(layer::T) where {T <: SimpleSDMLayer}
 end
 
 """
+    Base.similar(::Type{TC}, l::T) where {TC <: Any, T <: SimpleSDMLayer}
+
+Returns a `SimpleSDMResponse` of the same dimensions as the original layer, with
+`nothing` in the same positions. The rest of the values are replaced by the
+output of `zero(TC)`, which implies that there must be a way to get a zero for
+the type. If not, the same result can always be achieved through the use of
+`copy`, manual update, and `convert`.
+"""
+function Base.similar(::Type{TC}, layer::T) where {TC <: Any, T <: SimpleSDMLayer}
+   emptygrid = convert(Matrix{Union{Nothing,TC}}, zeros(TC, size(layer)))
+   emptygrid[findall(isnothing, layer.grid)] .= nothing
+   return SimpleSDMResponse(emptygrid, layer.left, layer.right, layer.bottom, layer.top)
+end
+
+"""
     Base.copy(l::T) where {T <: SimpleSDMLayer}
 
 Returns a new copy of the layer, which has the same type.

@@ -57,7 +57,7 @@ l4 = worldclim(1, left=10.0, right=20.0, bottom=10.0, top=20.0)
 ml1 = hcat(l1, l3)
 vl1 = vcat(l1, l2)
 ml2 = hcat(l2, l4)
-vl2 = hcat(l3, l4)
+vl2 = vcat(l3, l4)
 
 @test all(vcat(ml1, ml2).grid == hcat(vl1, vl2).grid)
 

@@ -22,7 +22,7 @@ test 2
     seriestype --> :scatter
     if get(plotattributes, :seriestype, :scatter) in [:scatter, :histogram2d]
         SimpleSDMLayers._layers_are_compatible(l1, l2)
-        valid_i = findall(.!isnothing(l1) .& .!isnothing(l2))
+        valid_i = findall(.!isnothing.(l1.grid) .& .!isnothing.(l2.grid))
         l1.grid[valid_i], l2.grid[valid_i]
     end
 end

@@ -11,7 +11,6 @@ directly, and also allow to set and get values using the geographic coordinates
 convert
 copy
 collect
-isnothing
 eltype
 size
 stride

@@ -8,7 +8,6 @@ import Base: copy
 import Base: eltype
 import Base: convert
 import Base: collect
-import Base: isnothing
 import Base.Broadcast: broadcast
 import Base: hcat
 import Base: vcat
@@ -301,16 +300,6 @@ Returns the non-`nothing` values of a layer.
 function Base.collect(l::T) where {T <: SimpleSDMLayer}
     v = filter(!isnothing, l.grid)
     return convert(Vector{eltype(l)}, v)    
-end
-
-"""
-    Base.isnothing(l::T) where {T <: SimpleSDMLayer}
-
-Returns a grid the same size as the layer with the positions containing
-`nothing` set to true.
-"""
-function Base.isnothing(l::T) where {T <: SimpleSDMLayer}
-    return isnothing.(l.grid)
 end
 
 """

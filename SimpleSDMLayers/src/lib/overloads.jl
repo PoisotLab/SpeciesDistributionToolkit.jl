@@ -7,7 +7,10 @@ import Base: similar
 import Base: copy
 import Base: eltype
 import Base: convert
+import Base: collect
 import Base.Broadcast: broadcast
+import Base: hcat
+import Base: vcat
 
 """
     Base.convert(::Type{SimpleSDMResponse}, layer::T) where {T <: SimpleSDMPredictor}
@@ -246,6 +249,21 @@ function Base.similar(layer::T) where {T <: SimpleSDMLayer}
 end
 
 """
+    Base.similar(::Type{TC}, l::T) where {TC <: Any, T <: SimpleSDMLayer}
+
+Returns a `SimpleSDMResponse` of the same dimensions as the original layer, with
+`nothing` in the same positions. The rest of the values are replaced by the
+output of `zero(TC)`, which implies that there must be a way to get a zero for
+the type. If not, the same result can always be achieved through the use of
+`copy`, manual update, and `convert`.
+"""
+function Base.similar(::Type{TC}, layer::T) where {TC <: Any, T <: SimpleSDMLayer}
+   emptygrid = convert(Matrix{Union{Nothing,TC}}, zeros(TC, size(layer)))
+   emptygrid[findall(isnothing, layer.grid)] .= nothing
+   return SimpleSDMResponse(emptygrid, layer.left, layer.right, layer.bottom, layer.top)
+end
+
+"""
     Base.copy(l::T) where {T <: SimpleSDMLayer}
 
 Returns a new copy of the layer, which has the same type.
@@ -272,4 +290,48 @@ function Base.Broadcast.broadcast(f, L::LT) where {LT <: SimpleSDMLayer}
 
     RT = LT <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
     return RT(convert(Matrix{Union{internal_types...}}, N.grid), N)
+end
+
+"""
+    Base.collect(l::T) where {T <: SimpleSDMLayer}
+
+Returns the non-`nothing` values of a layer.
+"""
+function Base.collect(l::T) where {T <: SimpleSDMLayer}
+    v = filter(!isnothing, l.grid)
+    return convert(Vector{eltype(l)}, v)    
+end
+
+"""
+    Base.vcat(l1::T, l2::T) where {T <: SimpleSDMLayers}
+
+Adds the second layer *under* the first one, assuming the strides and left/right
+coordinates match. This will automatically re-order the layers if the second is
+above the first.
+"""
+function Base.vcat(l1::T, l2::T) where {T <: SimpleSDMLayer}
+    (l1.left == l2.left) || throw(ArgumentError("The two layers passed to vcat must have the same left coordinate"))
+    (l1.right == l2.right) || throw(ArgumentError("The two layers passed to vcat must have the same right coordinate"))
+    all(stride(l1) .≈ stride(l2)) || throw(ArgumentError("The two layers passed to vcat must have the same stride"))
+    (l2.top == l1.bottom) && return vcat(l2, l1)
+    new_grid = vcat(l1.grid, l2.grid)
+    RT = T <: SimpleSDMPredictor ? SimpleSDMPredictor : SimpleSDMResponse
+    return RT(new_grid, l1.left, l1.right, l1.top, l2.bottom)
+end
+
+"""
+    Base.hcat(l1::T, l2::T) where {T <: SimpleSDMLayers}
+
+Adds the second layer *to the right of* the first one, assuming the strides and
+left/right coordinates match. This will automatically re-order the layers if the
+second is to the left the first.
+"""
+function Base.hcat(l1::T, l2::T) where {T <: SimpleSDMLayer}
+    (l1.top == l2.top) || throw(ArgumentError("The two layers passed to hcat must have the same top coordinate"))
+    (l1.bottom == l2.bottom) || throw(ArgumentError("The two layers passed to hcat must have the same bottom coordinate"))
+    all(stride(l1) .≈ stride(l2)) || throw(ArgumentError("The two layers passed to hcat must have the same stride"))
+    (l2.right == l1.left) && return hcat(l2, l1)
+    new_grid = hcat(l1.grid, l2.grid)
+    RT = T <: SimpleSDMPredictor ? SimpleSDMPredictor : SimpleSDMResponse
+    return RT(new_grid, l1.left, l2.right, l1.top, l1.bottom)
 end

@@ -1,6 +1,6 @@
 function _get_asc_field(lines, field, type)
     field_line = first(filter(line -> startswith(line, field), lines))
-    return parse(type, last(split(field_line, " "))), findfirst(startswith(field), lines)
+    return parse(type, last(split(field_line, " "))), findfirst(line -> startswith(line, field), lines)
 end
 
 """

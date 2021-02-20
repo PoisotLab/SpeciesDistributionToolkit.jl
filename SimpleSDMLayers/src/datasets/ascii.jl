@@ -33,7 +33,6 @@ function ascii(file::AbstractString, datatype::Type{T}=Float64) where {T <: Numb
             grid[i] = nothing
         end
     end
-    @info ncols, nrows, cs
     return SimpleSDMPredictor(grid, xl, xl+cs*2ncols, yl, yl+cs*2nrows)
 end
 

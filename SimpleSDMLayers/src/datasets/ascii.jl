@@ -66,4 +66,9 @@ function ascii(layer::SimpleSDMPredictor{T}, file::AbstractString; nodata::T=con
             write(io, "\n")
         end
     end
+    return file
+end
+
+function ascii(layer::SimpleSDMPredictor{T}, file::AbstractString; nodata::T=convert(T, -9999)) where {T <: Number}
+    return ascii(convert(SimpleSDMResponse, layer), file; nodata=nodata)
 end

@@ -80,6 +80,7 @@ function Base.stride(layer::T; dims::Union{Nothing,Integer}=nothing) where {T <:
    dims == 1 && return lon_stride
    dims == 2 && return lat_stride
 end
+Base.stride(layer::T, i::Int) where {T<:SimpleSDMLayer} = stride(layer; dims=i)
 
 """
     Base.eachindex(layer::T) where {T <: SimpleSDMLayer}

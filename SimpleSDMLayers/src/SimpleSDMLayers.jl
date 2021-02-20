@@ -16,6 +16,8 @@ include(joinpath("lib", "generated.jl"))
 include(joinpath("lib", "basics.jl"))
 export latitudes, longitudes
 
+include(joinpath("lib", "iteration.jl"))
+
 include(joinpath("datasets", "sources.jl"))
 include(joinpath("datasets", "download_layer.jl"))
 export EarthEnv, WorldClim, BioClim

@@ -1,5 +1,5 @@
 function _get_asc_field(lines, field, type)
-    field_line = first(filter(line -> startswith(field, line), lines))
+    field_line = first(filter(line -> startswith(line, field), lines))
     return parse(type, last(split(field_line, " "))), findfirst(startswith(field), lines)
 end
 
@@ -47,7 +47,6 @@ function ascii(layer::SimpleSDMPredictor{T}, file::AbstractString; nodata::T=con
         throw(DimensionMismatch("The cells of the layer to write must be square (i.e. both values of stride must be equal)"))
     end
     open(file, "w") do io 
-        
         write(io, "ncols $(size(layer, 2))\n")
         write(io, "nrows $(size(layer, 1))\n")
         write(io, "cellsize $(stride(layer)[1])\n")

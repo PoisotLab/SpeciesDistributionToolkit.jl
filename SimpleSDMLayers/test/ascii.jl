@@ -18,7 +18,6 @@ U = SimpleSDMLayers.ascii("test.asc")
 @test S.bottom == U.bottom
 @test S.right == U.right
 @test S.top == U.top
-@test s
 @test size(S) == size(U)
 
 rm("test.asc")

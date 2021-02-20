@@ -7,8 +7,8 @@ M = convert(Matrix{Union{Nothing,Float64}}, M)
 M[rand(Bool, size(M))] .= nothing
 S = SimpleSDMPredictor(M, 0.0, 2.0, 0.0, 1.0)
 
-ascii(S, "test.asc")
-U = ascii("test.asc")
+SimpleSDMLayers.ascii(S, "test.asc")
+U = SimpleSDMLayers.ascii("test.asc")
 
 @test isfile("test.asc")
 @test all(S.grid .== U.grid)

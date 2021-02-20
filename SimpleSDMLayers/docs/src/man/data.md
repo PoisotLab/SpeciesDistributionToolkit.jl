@@ -25,5 +25,5 @@ landcover
 ## ASCII files
 
 ```@docs
-ascii
+SimpleSDMLayers.ascii
 ```

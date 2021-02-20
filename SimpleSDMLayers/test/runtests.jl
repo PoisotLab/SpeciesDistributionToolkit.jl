@@ -9,6 +9,7 @@ tests = [
    "overloads" => "overloads.jl",
    "generated" => "generated.jl",
    "import" => "dataread.jl",
+   "ascii" => "ascii.jl",
    "worldclim" => "worldclim.jl",
    "landcover" => "landcover.jl",
    "chelsa" => "chelsa.jl",

@@ -21,3 +21,9 @@ bioclim
 ```@docs
 landcover
 ```
+
+## ASCII files
+
+```@docs
+ascii
+```

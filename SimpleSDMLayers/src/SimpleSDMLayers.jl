@@ -27,9 +27,8 @@ include(joinpath("datasets", "raster.jl"))
 include(joinpath("datasets", "worldclim.jl"))
 include(joinpath("datasets", "chelsa.jl"))
 include(joinpath("datasets", "landcover.jl"))
-export worldclim
-export bioclim
-export landcover
+include(joinpath("datasets", "ascii.jl"))
+export worldclim, bioclim, landcover
 
 include(joinpath("operations", "coarsen.jl"))
 include(joinpath("operations", "sliding.jl"))

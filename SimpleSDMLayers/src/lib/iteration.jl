@@ -9,7 +9,7 @@ function Base.iterate(layer::T) where {T <: SimpleSDMLayer}
 end
 
 function Base.iterate(layer::T, state) where {T <: SimpleSDMLayer}
-    state == prod(size(S)) && return nothing
+    state == prod(size(layer)) && return nothing
     idx = findnext(!isnothing, layer.grid, CartesianIndices(layer.grid)[state+1])
     isnothing(idx) && return nothing
     return (layer[idx], LinearIndices(layer.grid)[idx])

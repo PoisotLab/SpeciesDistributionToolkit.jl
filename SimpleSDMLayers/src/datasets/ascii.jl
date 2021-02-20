@@ -69,6 +69,6 @@ function ascii(layer::SimpleSDMPredictor{T}, file::AbstractString; nodata::T=con
     return file
 end
 
-function ascii(layer::SimpleSDMPredictor{T}, file::AbstractString; nodata::T=convert(T, -9999)) where {T <: Number}
-    return ascii(convert(SimpleSDMResponse, layer), file; nodata=nodata)
+function ascii(layer::SimpleSDMResponse{T}, file::AbstractString; nodata::T=convert(T, -9999)) where {T <: Number}
+    return ascii(convert(SimpleSDMPredictor, layer), file; nodata=nodata)
 end

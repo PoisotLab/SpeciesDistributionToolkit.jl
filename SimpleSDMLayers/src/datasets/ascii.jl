@@ -25,7 +25,6 @@ function ascii(file::AbstractString, datatype::Type{T}=Float64) where {T <: Numb
     for line_id in data_start:data_end
         M[:,nrows-(line_id-(data_start))] = parse.(datatype, split(lines[line_id]))
     end
-    println(permutedims(M))
     # Put data in the grid
     grid = convert(Matrix{Union{datatype,Nothing}}, permutedims(M))
     for i in eachindex(M)

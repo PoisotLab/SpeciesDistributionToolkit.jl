@@ -300,7 +300,7 @@ Returns the non-`nothing` values of a layer.
 """
 function Base.collect(l::T) where {T <: SimpleSDMLayer}
     v = filter(!isnothing, l.grid)
-    return convert(Vector{eltype(l)}, v)    
+    return convert(Vector{typeof(v[1])}, v)    
 end
 
 """
@@ -335,4 +335,13 @@ function Base.hcat(l1::T, l2::T) where {T <: SimpleSDMLayer}
     new_grid = hcat(l1.grid, l2.grid)
     RT = T <: SimpleSDMPredictor ? SimpleSDMPredictor : SimpleSDMResponse
     return RT(new_grid, l1.left, l2.right, l1.top, l1.bottom)
+end
+
+"""
+    quantile(layer::T, p) where {T <: SimpleSDMLayer}
+
+Returns the quantiles of `layer` at `p`, using `Statistics.quantile`.
+"""
+function Statistics.quantile(layer::T, p) where {T <: SimpleSDMLayer}
+    return quantile(collect(layer), p)
 end

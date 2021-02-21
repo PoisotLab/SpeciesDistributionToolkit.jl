@@ -25,7 +25,6 @@ function ascii(file::AbstractString, datatype::Type{T}=Float64) where {T <: Numb
     for line_id in data_start:data_end
         M[:,nrows-(line_id-(data_start))] = parse.(datatype, split(lines[line_id]))
     end
-    println(permutedims(M))
     # Put data in the grid
     grid = convert(Matrix{Union{datatype,Nothing}}, permutedims(M))
     for i in eachindex(M)
@@ -67,6 +66,11 @@ function ascii(layer::SimpleSDMPredictor{T}, file::AbstractString; nodata::T=con
     return file
 end
 
+"""
+    ascii(layer::SimpleSDMResponse{T}, file::AbstractString; nodata::T=convert(T, -9999)) where {T <: Number}
+
+Writes a `layer` to a grid file, with a given `nodata` value. The layer must store numbers.
+"""
 function ascii(layer::SimpleSDMResponse{T}, file::AbstractString; nodata::T=convert(T, -9999)) where {T <: Number}
     return ascii(convert(SimpleSDMPredictor, layer), file; nodata=nodata)
 end

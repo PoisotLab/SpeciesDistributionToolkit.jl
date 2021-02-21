@@ -9,6 +9,7 @@ tests = [
    "basics" => "basics.jl",
    "overloads" => "overloads.jl",
    "iteration" => "iteration.jl",
+   "rescale" => "rescale.jl",
    "generated" => "generated.jl",
    "import" => "dataread.jl",
    "worldclim" => "worldclim.jl",

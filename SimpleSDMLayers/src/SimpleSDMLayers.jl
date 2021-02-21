@@ -5,6 +5,7 @@ using HTTP
 using RecipesBase
 using ZipFile
 using Requires
+using Statistics
 
 include(joinpath("lib", "types.jl"))
 export SimpleSDMLayer, SimpleSDMResponse, SimpleSDMPredictor
@@ -33,7 +34,8 @@ export worldclim, bioclim, landcover
 include(joinpath("operations", "coarsen.jl"))
 include(joinpath("operations", "sliding.jl"))
 include(joinpath("operations", "mask.jl"))
-export coarsen, slidingwindow, mask
+include(joinpath("operations", "rescale.jl"))
+export coarsen, slidingwindow, mask, rescale!, rescale
 
 include(joinpath("recipes", "recipes.jl"))
 

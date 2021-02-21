@@ -42,4 +42,5 @@ broadcast
 Statistics.mean
 Statistics.median
 Statistics.std
+Statistics.quantile
 ```

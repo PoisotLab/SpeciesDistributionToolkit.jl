@@ -46,7 +46,7 @@ Y[0.1,0.1] = 4.0
 
 Z = convert(SimpleSDMPredictor, Y)
 V = collect(Z)
-@test typeof(V) == Vector{eltype(Z)}
+@test typeof(V) == Vector{Float64}
 
 # hcat / vcat
 l1 = worldclim(1, left=0.0, right=10.0, bottom=0.0, top=10.0)

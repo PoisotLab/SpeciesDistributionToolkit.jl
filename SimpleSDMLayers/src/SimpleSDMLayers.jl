@@ -5,6 +5,7 @@ using HTTP
 using RecipesBase
 using ZipFile
 using Requires
+using Statistics
 
 include(joinpath("lib", "types.jl"))
 export SimpleSDMLayer, SimpleSDMResponse, SimpleSDMPredictor

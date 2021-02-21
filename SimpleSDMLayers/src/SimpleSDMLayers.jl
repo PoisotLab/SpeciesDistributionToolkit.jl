@@ -34,7 +34,7 @@ include(joinpath("operations", "coarsen.jl"))
 include(joinpath("operations", "sliding.jl"))
 include(joinpath("operations", "mask.jl"))
 include(joinpath("operations", "rescale.jl"))
-export coarsen, slidingwindow, mask, rescale!
+export coarsen, slidingwindow, mask, rescale!, rescale
 
 include(joinpath("recipes", "recipes.jl"))
 

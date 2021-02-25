@@ -34,7 +34,6 @@ function mosaic(f::TF, layers::Vector{T}) where {TF <: Function, T <: SimpleSDML
     n_right = maximum([layer.right for layer in layers])
     n_bottom = minimum([layer.bottom for layer in layers])
     n_top = maximum([layer.top for layer in layers])
-    @info n_left, n_right, n_bottom, n_top
     
     # Get the gridsize
     nr = round(Int64, (n_top - n_bottom)/2stride(layers[1])[1])

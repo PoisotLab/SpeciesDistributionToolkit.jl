@@ -48,10 +48,9 @@ function mosaic(f::TF, layers::Vector{T}) where {TF <: Function, T <: SimpleSDML
     for lat in latitudes(L)
         for lon in longitudes(L)
             V = [layer[lon, lat] for layer in layers]
-            filter!(v -> !(isnan(v)|isnothing(v)), V)
-            if length(V) == 0
-                continue
-            end
+            filter!(!isnothing, V)
+            filter!(!isnan, V)
+            length(V) == 0 && continue
             L[lon, lat] = convert(itypes[1], f(V))
         end
     end

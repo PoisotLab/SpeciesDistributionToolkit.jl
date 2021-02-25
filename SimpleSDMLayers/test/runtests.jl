@@ -10,6 +10,7 @@ tests = [
    "overloads" => "overloads.jl",
    "iteration" => "iteration.jl",
    "rescale" => "rescale.jl",
+   "mosaic" => "mosaic.jl",
    "generated" => "generated.jl",
    "import" => "dataread.jl",
    "worldclim" => "worldclim.jl",

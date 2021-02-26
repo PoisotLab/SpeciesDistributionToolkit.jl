@@ -145,8 +145,8 @@ Given a layer and a longitude, returns `nothing` if the longitude is outside the
 range, or the grid index containing this longitude if it is within range
 """
 function _match_longitude(layer::T, lon::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-   lon > layer.right && return NaN
-   lon < layer.left && return NaN
+   lon > layer.right && return nothing
+   lon < layer.left && return nothing
    return ceil(Integer, (lon - layer.left)/2stride(layer,1))
 end
 

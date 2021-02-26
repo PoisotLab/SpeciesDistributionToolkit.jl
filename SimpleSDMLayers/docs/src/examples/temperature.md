@@ -23,7 +23,7 @@ yaxis!("Latitude")
 Let's also have a look at the density while we're at it:
 
 ```@example temp
-density(temperature, frame=:zerolines, c=:grey, fill=(0, :grey, 0.5), leg=false)
+density(temperature, frame=:zerolines, c=:grey, fill=(0, :grey, 0.2), leg=false)
 xaxis!("Temperature", (-50,30))
 ```
 
@@ -32,7 +32,7 @@ coordinates of the bounding box as two tuples (for longitude and latitude) -- we
 can also make a quick heatmap to see what the region looks like:
 
 ```@example temp
-temperature_europe = temperature[left=-11.0, right=31.1, bottom=29.0, top=71.1]
+temperature_europe = temperature[left=-11.0, right=31.4, bottom=29.0, top=71.2]
 heatmap(temperature_europe, c=:cividis, aspectratio=1, frame=:box)
 ```
 
@@ -48,13 +48,13 @@ In an ideal world, we could want to find a number of cells that is the same both
 for latitude and longitude, and one approach is to finagle our way into a
 correct grid by changing the clipping region.
 
-In this case, we will use a coarsening scale of `(2,2)`, which gives us a total
-of 4 cells in the aggregated result. Our aggregation function will be `mean` (so
-we report the average temperature across these cells):
+In this case, we will use a coarsening scale of `(5,5)`, which gives us a total
+of 25 cells in the aggregated result. Our aggregation function will be `mean`
+(so we report the average temperature across these cells):
 
 ```@example temp
 import Statistics
-temperature_europe_coarse = coarsen(temperature_europe, Statistics.mean, (2, 2))
+temperature_europe_coarse = coarsen(temperature_europe, Statistics.mean, (5, 5))
 ```
 
 One again, we can plot these data:

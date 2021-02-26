@@ -63,6 +63,6 @@ vl2 = vcat(l3, l4)
 
 # typed similar
 c2 = similar(Bool, l1)
-@test eltype(c2) == Union{Nothing,Bool}
+@test eltype(c2) == Bool
 
 end

@@ -5,9 +5,8 @@ Returns an iterator with the latitudes of the SDM layer passed as its argument.
 This returns the latitude at the center of each cell in the grid.
 """
 function latitudes(layer::T) where {T <: SimpleSDMLayer}
-    grid_size = stride(layer; dims=2)
-    centers = range(layer.bottom+grid_size; stop=layer.top-grid_size, length=size(layer, 1))
-    return centers
+    grid_size = stride(layer, 2)
+    return range(layer.bottom+grid_size; stop=layer.top-grid_size, length=size(layer, 1))
 end
 
 """
@@ -17,9 +16,8 @@ Returns an iterator with the longitudes of the SDM layer passed as its argument.
 This returns the longitudes at the center of each cell in the grid.
 """
 function longitudes(layer::T) where {T <: SimpleSDMLayer}
-    grid_size = stride(layer; dims=1)
-    centers = range(layer.left+grid_size; stop=layer.right-grid_size, length=size(layer, 2))
-    return centers
+    grid_size = stride(layer, 1)
+    return range(layer.left+grid_size; stop=layer.right-grid_size, length=size(layer, 2))
 end
 
 """
@@ -38,5 +36,5 @@ function _layers_are_compatible(l1::X, l2::Y) where {X <: SimpleSDMLayer, Y <: S
 end
 
 function _layers_are_compatible(layers::Array{T}) where {T <: SimpleSDMLayer}
-    all(x -> _layers_are_compatible(x, layers[1]), layers)
+    all(layer -> _layers_are_compatible(layer, layers[1]), layers)
 end

@@ -54,31 +54,28 @@ Base.eltype(::SimpleSDMPredictor{T}) where {T} = T
 
 Returns the size of the grid.
 """
-function Base.size(layer::T) where {T <: SimpleSDMLayer}
-   return size(layer.grid)
-end
+Base.size(layer::T) where {T <: SimpleSDMLayer} = size(layer.grid)
+
 
 """
     Base.size(layer::T, i...) where {T <: SimpleSDMLayer}
 
 Returns the size of the grid alongside a dimension.
 """
+Base.size(layer::T, i...) where {T <: SimpleSDMLayer} = size(layer.grid, i...)
 
-function Base.size(layer::T, i...) where {T <: SimpleSDMLayer}
-   return size(layer.grid, i...)
-end
 
 """
     Base.stride(layer::T; dims::Union{Nothing,Integer}=nothing) where {T <: SimpleSDMLayer}
 
-Returns the stride, *i.e.* the length, of cell dimensions, possibly alongside a
-side of the grid. The first position is the length of the *longitude* cells, the
-second the *latitude*.
+Returns the stride, *i.e.* half the length, of cell dimensions, possibly
+alongside a side of the grid. The first position is the length of the
+*longitude* cells, the second the *latitude*.
 """
 function Base.stride(layer::T; dims::Union{Nothing,Integer}=nothing) where {T <: SimpleSDMLayer}
-   lon_stride = (layer.right-layer.left)/size(layer, 2)/2.0
-   lat_stride = (layer.top-layer.bottom)/size(layer, 1)/2.0
-   dims == nothing && return (lon_stride, lat_stride)
+   lon_stride = (layer.right-layer.left)/2.0size(layer, 2)
+   lat_stride = (layer.top-layer.bottom)/2.0size(layer, 1)
+   isnothing(dims) && return (lon_stride, lat_stride)
    dims == 1 && return lon_stride
    dims == 2 && return lat_stride
 end
@@ -89,16 +86,14 @@ Base.stride(layer::T, i::Int) where {T<:SimpleSDMLayer} = stride(layer; dims=i)
 
 Returns the index of the grid.
 """
-function Base.eachindex(layer::T) where {T <: SimpleSDMLayer}
-   return eachindex(layer.grid)
-end
+Base.eachindex(layer::T) where {T <: SimpleSDMLayer} = eachindex(layer.grid)
+
 
 """
 Extracts a  value from a layer by its grid position.
 """
-function Base.getindex(layer::T, i::Int64) where {T <: SimpleSDMLayer}
-   return layer.grid[i]
-end
+Base.getindex(layer::T, i::Int64) where {T <: SimpleSDMLayer} = layer.grid[i]
+
 
 """
     Base.getindex(layer::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: UnitRange}
@@ -122,10 +117,10 @@ function Base.getindex(layer::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: Un
    RT = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
    return RT(
             layer.grid[i_fix,j_fix],
-            minimum(longitudes(layer)[j_fix])-stride(layer)[1],
-            maximum(longitudes(layer)[j_fix])+stride(layer)[1],
-            minimum(latitudes(layer)[i_fix])-stride(layer)[2],
-            maximum(latitudes(layer)[i_fix])+stride(layer)[2]
+            minimum(longitudes(layer)[j_fix])-stride(layer,1),
+            maximum(longitudes(layer)[j_fix])+stride(layer,1),
+            minimum(latitudes(layer)[i_fix])-stride(layer,2),
+            maximum(latitudes(layer)[i_fix])+stride(layer,2)
            )
 end
 
@@ -136,7 +131,7 @@ range, or the grid index containing this latitude if it is within range
 function _match_latitude(layer::T, lat::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
    lat > layer.top && return nothing
    lat < layer.bottom && return nothing
-   return ceil(Integer, (lat - layer.bottom)/2stride(layer,2))
+   return round(Integer, (lat - layer.bottom)*(size(layer,1)-1)+1)
 end
 
 
@@ -147,7 +142,7 @@ range, or the grid index containing this longitude if it is within range
 function _match_longitude(layer::T, lon::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
    lon > layer.right && return nothing
    lon < layer.left && return nothing
-   return ceil(Integer, (lon - layer.left)/2stride(layer,1))
+   return round(Integer, (lon - layer.left)*(size(layer,2)-1)+1)
 end
 
 """
@@ -181,7 +176,8 @@ function Base.getindex(layer::T; left=nothing, right=nothing, top=nothing, botto
    imin = _match_longitude(layer, isnothing(left) ? layer.left : left)
    jmax = _match_latitude(layer, isnothing(top) ? layer.top : top)
    jmin = _match_latitude(layer, isnothing(bottom) ? layer.bottom : bottom)
-   any(isnan.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
+   any(isnothing.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
+   # Note that this is LATITUDE first
    return layer[jmin:jmax, imin:imax]
 end
 

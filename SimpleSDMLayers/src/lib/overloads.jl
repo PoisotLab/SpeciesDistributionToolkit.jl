@@ -72,7 +72,8 @@ end
     Base.stride(layer::T; dims::Union{Nothing,Integer}=nothing) where {T <: SimpleSDMLayer}
 
 Returns the stride, *i.e.* the length, of cell dimensions, possibly alongside a
-side of the grid.
+side of the grid. The first position is the length of the *longitude* cells, the
+second the *latitude*.
 """
 function Base.stride(layer::T; dims::Union{Nothing,Integer}=nothing) where {T <: SimpleSDMLayer}
    lon_stride = (layer.right-layer.left)/size(layer, 2)/2.0
@@ -129,36 +130,37 @@ function Base.getindex(layer::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: Un
 end
 
 """
-Given a layer and a latitude, returns NaN if the latitude is outside the
+Given a layer and a latitude, returns `nothing` if the latitude is outside the
 range, or the grid index containing this latitude if it is within range
 """
 function _match_latitude(layer::T, lat::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-   lat > layer.top && return NaN
-   lat < layer.bottom && return NaN
-   return findmin(abs.(lat .- latitudes(layer)))[2]
+   lat > layer.top && return nothing
+   lat < layer.bottom && return nothing
+   return ceil(Integer, (lat - layer.bottom)/2stride(layer,2))
 end
 
+
 """
-Given a layer and a longitude, returns NaN if the longitude is outside the
+Given a layer and a longitude, returns `nothing` if the longitude is outside the
 range, or the grid index containing this longitude if it is within range
 """
 function _match_longitude(layer::T, lon::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
    lon > layer.right && return NaN
    lon < layer.left && return NaN
-   return findmin(abs.(lon .- longitudes(layer)))[2]
+   return ceil(Integer, (lon - layer.left)/2stride(layer,1))
 end
 
 """
     Base.getindex(layer::T, longitude::K, latitude::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
 
 Extracts the value of a layer at a given latitude and longitude. If values
-outside the range are requested, will return `NaN`.
+outside the range are requested, will return `nothing`.
 """
 function Base.getindex(layer::T, longitude::K, latitude::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
    i = _match_longitude(layer, longitude)
    j = _match_latitude(layer, latitude)
-   isnan(i) && return NaN
-   isnan(j) && return NaN
+   isnothing(i) && return nothing
+   isnothing(j) && return nothing
    return layer.grid[j, i]
 end
 

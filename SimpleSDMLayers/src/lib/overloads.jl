@@ -131,7 +131,7 @@ range, or the grid index containing this latitude if it is within range
 function _match_latitude(layer::T, lat::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
    lat > layer.top && return nothing
    lat < layer.bottom && return nothing
-   return round(Integer, (lat - layer.bottom)*(size(layer,1)-1)+1)
+   return floor(Integer, (lat - layer.bottom)*(size(layer,1)-1)/(layer.top-layer.bottom)+1)
 end
 
 
@@ -142,7 +142,7 @@ range, or the grid index containing this longitude if it is within range
 function _match_longitude(layer::T, lon::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
    lon > layer.right && return nothing
    lon < layer.left && return nothing
-   return round(Integer, (lon - layer.left)*(size(layer,2)-1)+1)
+   return floor(Integer, (lon - layer.left)*(size(layer,2)-1)/(layer.right-layer.left)+1)
 end
 
 """

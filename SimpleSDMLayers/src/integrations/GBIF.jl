@@ -9,11 +9,11 @@ import SimpleSDMLayers: clip, latitudes, longitudes
     Base.getindex(p::T, occurrence::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
 
 Extracts the value of a layer at a given position for a `GBIFRecord`. If the
-`GBIFRecord` has no latitude or longitude, this will return `NaN`.
+`GBIFRecord` has no latitude or longitude, this will return `nothing`.
 """
 function Base.getindex(p::T, occurrence::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
-   ismissing(occurrence.latitude) && return NaN
-   ismissing(occurrence.longitude) && return NaN
+   ismissing(occurrence.latitude) && return nothing
+   ismissing(occurrence.longitude) && return nothing
    return p[occurrence.longitude, occurrence.latitude]
 end
 
@@ -64,8 +64,8 @@ end
 
 Returns the values of a layer at all occurrences in a `GBIFRecords` collection.
 """
-function Base.getindex(p::T, records::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
-   return [p[records[i]] for i in 1:length(records)]
+function Base.getindex(layer::T, records::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
+   return convert(Vector{SimpleSDMLayers._inner_type(layer)}, filter(!isnothing, [layer[records[i]] for i in 1:length(records)]))
 end
 
 """

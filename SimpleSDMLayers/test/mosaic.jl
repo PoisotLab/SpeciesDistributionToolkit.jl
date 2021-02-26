@@ -10,10 +10,10 @@ n2 = fill(2.0, 5, 5)
 s2 = SimpleSDMResponse(n2, 1., 3., 1., 3.)
 
 n3 = fill(3.0, 10, 10)
-s3 = SimpleSDMResponse(n3, -1.5, 2.5, 1.5, 5.5)
+s3 = SimpleSDMResponse(n3, -1.8, 2.2, 1.4, 5.4)
 
 n4 = fill(4.0, 5, 3)
-s4 = SimpleSDMResponse(n4, 3., 4.2, 3., 5.)
+s4 = SimpleSDMResponse(n4, 3.0, 4.2, 3.0, 5.0)
 
 # Test
 L = mosaic(mean, [s1, s2, s3, s4])

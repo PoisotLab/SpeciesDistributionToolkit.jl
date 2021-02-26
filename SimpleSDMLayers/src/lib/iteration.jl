@@ -1,3 +1,6 @@
+Base.IteratorSize(::Type{T}) where {T <: SimpleSDMLayer} = Base.HasLength()
+Base.IteratorEltype(::Type{T}) where {T <: SimpleSDMLayer} = Base.HasEltype()
+
 function Base.getindex(layer::T, i::CartesianIndex{2}) where {T <: SimpleSDMLayer}
     return layer.grid[i]
 end

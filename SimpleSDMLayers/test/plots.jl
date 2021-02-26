@@ -19,7 +19,7 @@ plot(chelsa1, c=:heat, title="Temperature from CHELSA", frame=:box,
 savefig(joinpath("gallery", "range-comparison-chelsa.png"))
 
 wc1 = worldclim(1; left=-11.0, right=31.1, bottom=29.0, top=71.1)
-plot(wc1, c=:heat, title="Temperature from worldclim @ 10", frame=:box,
+plot(wc1, c=:heat, title="Temperature from worldclim @ 10", frame=:box,
     xlabel = "Longitude",
     ylabel= "Latitude")
 savefig(joinpath("gallery", "range-comparison-worldclim-10.png"))
@@ -76,5 +76,17 @@ histogram2d(temperature, precipitation, leg=false)
 xaxis!("Temperature")
 yaxis!("Precipitation")
 savefig(joinpath("gallery", "scatter-2d.png"))
+
+t_europe = worldclim(1; left=-11.0, right=31.1, bottom=29.0, top=71.1)
+
+wireframe(t_europe, c=:thermal, title="Temperature",
+    xlabel = "Longitude",
+    ylabel= "Latitude", camera=(30, 30))
+savefig(joinpath("gallery", "persp_30_30.png"))
+
+wireframe(t_europe, c=:thermal, title="Temperature",
+    xlabel = "Longitude",
+    ylabel= "Latitude", camera=(40, 20))
+savefig(joinpath("gallery", "persp_40_20.png"))
 
 end

@@ -21,7 +21,7 @@ function mosaic(f::TF, layers::Vector{T}) where {TF <: Function, T <: SimpleSDML
     end
     
     # Check the types
-    itypes = [SimpleSDMLayers._inner_type(layer) for layer in layers]
+    itypes = eltype.(layers)
     if length(unique(itypes)) > 1
         @warn """
         The numeric types of the layers are not unique, this can cause performance issues.
@@ -36,11 +36,11 @@ function mosaic(f::TF, layers::Vector{T}) where {TF <: Function, T <: SimpleSDML
     n_top = maximum([layer.top for layer in layers])
     
     # Get the gridsize
-    nr = round(Int64, (n_top - n_bottom)/2stride(layers[1])[1])
-    nc = round(Int64, (n_right - n_left)/2stride(layers[1])[2])
+    nr = round(Int64, (n_top - n_bottom)/2stride(layers[1],1))
+    nc = round(Int64, (n_right - n_left)/2stride(layers[1],2))
     
     # Prepare the grid
-    grid = fill(nothing, nr, nc)
+    grid = fill(nothing, nc, nr)
     grid = convert(Matrix{Union{Nothing,itypes[1]}}, grid)
     L = SimpleSDMResponse(grid, n_left, n_right, n_bottom, n_top)
 

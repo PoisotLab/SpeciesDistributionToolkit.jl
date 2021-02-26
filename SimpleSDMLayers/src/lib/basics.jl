@@ -6,7 +6,7 @@ This returns the latitude at the center of each cell in the grid.
 """
 function latitudes(layer::T) where {T <: SimpleSDMLayer}
     grid_size = stride(layer, 2)
-    return range(layer.bottom+grid_size; stop=layer.top-grid_size, length=size(layer, 1))
+    return (layer.bottom+grid_size):2grid_size:(layer.top-grid_size)
 end
 
 """
@@ -17,7 +17,7 @@ This returns the longitudes at the center of each cell in the grid.
 """
 function longitudes(layer::T) where {T <: SimpleSDMLayer}
     grid_size = stride(layer, 1)
-    return range(layer.left+grid_size; stop=layer.right-grid_size, length=size(layer, 2))
+    return (layer.left+grid_size):2grid_size:(layer.right-grid_size)
 end
 
 """

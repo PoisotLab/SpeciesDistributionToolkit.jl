@@ -44,23 +44,13 @@ function mosaic(f::TF, layers::Vector{T}) where {TF <: Function, T <: SimpleSDML
     grid = convert(Matrix{Union{Nothing,itypes[1]}}, grid)
     L = SimpleSDMResponse(grid, n_left, n_right, n_bottom, n_top)
 
-    stride(L)
-
-    @info n_top - n_bottom
-    @info nr
-    @info n_right - n_left
-    @info nc
-
     # Fill in the information
     for lat in latitudes(L)
-        @info lat
-        @info SimpleSDMLayers._match_latitude(L, lat)
         for lon in longitudes(L)
             V = [layer[lon, lat] for layer in layers]
             filter!(!isnothing, V)
             filter!(!isnan, V)
             length(V) == 0 && continue
-            @info lon, lat
             L[lon, lat] = convert(itypes[1], f(V))
         end
     end

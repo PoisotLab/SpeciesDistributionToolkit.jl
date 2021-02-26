@@ -12,7 +12,6 @@ for i in eachindex(S)
    @test S[i] == M[i]
 end
 
-
 @test typeof(S[0.2, 0.6]) == eltype(M)
 @test isnothing(S[1.2, 0.3])
 @test isnothing(S[1.2, 1.3])
@@ -24,7 +23,7 @@ end
 @test S[left=0.2, right=0.6, bottom=0.5, top=1.0].top ≈ 1.0
 @test S[left=0.2, right=0.6, bottom=0.5, top=1.0].bottom ≈ 0.4
 @test S[left=0.2, right=0.6, bottom=0.5, top=1.0].right ≈ 0.6
-@test S[left=0.2, right=0.6, bottom=0.5, top=1.0].left ≈ 0.2
+@test S[left=0.19, right=0.6, bottom=0.5, top=1.0].left <= 0.2
 
 @test typeof(S[left=0.2, bottom=0.5]) == typeof(S)
 @test S[left=0.2, bottom=0.5].top ≈ 1.0

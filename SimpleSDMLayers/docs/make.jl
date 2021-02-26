@@ -25,7 +25,7 @@ makedocs(
             "Landcover consensus" => "examples/consensus.md"
         ],
         "Building SDMs" => [
-            "BIOCLIM from scract" => "sdm/bioclim.md"
+            "BIOCLIM from scratch" => "sdm/bioclim.md"
         ]
     ]
 )

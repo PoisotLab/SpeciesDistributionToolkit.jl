@@ -40,13 +40,14 @@ function Base.convert(::Type{Matrix}, layer::T) where {T <: SimpleSDMLayer}
 end
 
 """
-    Base.eltype(layer::T) where {T <: SimpleSDMLayer}
+    Base.eltype(layer::SimpleSDMLayer{T}) where {T}
 
-Returns the type of the values stored in the grid.
+Returns the type of the values stored in the grid, where the `Nothing` type is
+omitted.
 """
-function Base.eltype(layer::T) where {T <: SimpleSDMLayer}
-   return eltype(layer.grid)
-end
+Base.eltype(::SimpleSDMResponse{T}) where {T} = T
+Base.eltype(::SimpleSDMPredictor{T}) where {T} = T
+
 
 """
     Base.size(layer::T) where {T <: SimpleSDMLayer}

@@ -29,14 +29,15 @@ have data.
 This function is currently relatively slow. Performance improvements will arrive
 at some point.
 """
-function slidingwindow(L::LT, f::FT, d::IT) where {LT <: SimpleSDMLayer, FT <: Function, IT <: Number}
-    newgrid = Array{Any}(nothing, size(L))
-    N = SimpleSDMResponse(newgrid, L)
+function slidingwindow(layer::LT, f::FT, d::IT) where {LT <: SimpleSDMLayer, FT <: Function, IT <: Number}
+    return_type = typeof(f(collect(layer)[1:min(3, length(layer))]))
+    newgrid = convert(Matrix{Union{Nothing,return_type}}, fill(nothing, size(layer)))
+    N = SimpleSDMResponse(newgrid, layer)
     pixels = []
-    for lat in latitudes(L)
-        for lon in longitudes(L)
-            if !isnothing(L[lon,lat])
-                push!(pixels, (lon, lat) => L[lon,lat])
+    for lat in latitudes(layer)
+        for lon in longitudes(layer)
+            if !isnothing(layer[lon,lat])
+                push!(pixels, (lon, lat) => layer[lon,lat])
             end
         end
     end
@@ -49,7 +50,7 @@ function slidingwindow(L::LT, f::FT, d::IT) where {LT <: SimpleSDMLayer, FT <: F
 
     internal_types = unique(typeof.(N.grid))
     N.grid = convert(Matrix{Union{internal_types...}}, N.grid)
-    N = typeof(L) <: SimpleSDMPredictor ? convert(SimpleSDMPredictor, N) : N
+    N = typeof(layer) <: SimpleSDMPredictor ? convert(SimpleSDMPredictor, N) : N
 
     return N
 end

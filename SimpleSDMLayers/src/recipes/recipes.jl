@@ -2,23 +2,25 @@
 test 1
 """
 @recipe function plot(layer::T) where {T <: SimpleSDMLayer}
-   seriestype --> :heatmap
-   if get(plotattributes, :seriestype, :heatmap) in [:heatmap, :contour, :surface]
-      aspect_ratio --> 1
-      xlims --> extrema(longitudes(layer))
-      ylims --> extrema(latitudes(layer))
-      lg = copy(layer.grid)
-      replace!(lg, nothing => NaN)
-      longitudes(layer), latitudes(layer), lg
-   elseif get(plotattributes, :seriestype, :histogram) in [:histogram, :density]
-      collect(layer)
-   end
+    eltype(layer) <: Number || throw(ArgumentError("Plotting is only supported for layers with number values ($(eltype(layer)))"))
+    seriestype --> :heatmap
+    if get(plotattributes, :seriestype, :heatmap) in [:heatmap, :contour, :surface]
+        aspect_ratio --> 1
+        xlims --> extrema(longitudes(layer))
+        ylims --> extrema(latitudes(layer))
+        lg = copy(layer.grid)
+        replace!(lg, nothing => NaN)
+        longitudes(layer), latitudes(layer), lg
+    elseif get(plotattributes, :seriestype, :histogram) in [:histogram, :density]
+        collect(layer)
+    end
 end
 
 """
 test 2
 """
 @recipe function plot(l1::FT, l2::ST) where {FT <: SimpleSDMLayer, ST <: SimpleSDMLayer}
+    eltype(layer) <: Number || throw(ArgumentError("Plotting is only supported for layers with number values ($(eltype(layer)))"))
     seriestype --> :scatter
     if get(plotattributes, :seriestype, :scatter) in [:scatter, :histogram2d]
         SimpleSDMLayers._layers_are_compatible(l1, l2)

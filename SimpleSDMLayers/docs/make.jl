@@ -23,6 +23,9 @@ makedocs(
             "Sliding window analysis" => "examples/slidingwindow.md",
             "Landcover data" => "examples/landcover.md",
             "Landcover consensus" => "examples/consensus.md"
+        ],
+        "Building SDMs" => [
+            "BIOCLIM from scract" => "sdm/bioclim.md"
         ]
     ]
 )

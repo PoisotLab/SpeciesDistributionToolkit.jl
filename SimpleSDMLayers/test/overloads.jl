@@ -14,9 +14,9 @@ end
 
 
 @test typeof(S[0.2, 0.6]) == eltype(M)
-@test isnan(S[1.2, 0.3])
-@test isnan(S[1.2, 1.3])
-@test isnan(S[0.2, 1.3])
+@test isnothing(S[1.2, 0.3])
+@test isnothing(S[1.2, 1.3])
+@test isnothing(S[0.2, 1.3])
 
 @test typeof(S[1:2, 5:7]) == typeof(S)
 

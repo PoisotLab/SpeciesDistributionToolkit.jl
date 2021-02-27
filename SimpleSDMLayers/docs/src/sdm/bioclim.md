@@ -14,9 +14,9 @@ using Statistics
 We can get some occurrences for the taxon of interest:
 
 ```@example bioclim
-serval = GBIF.taxon("Leptailurus serval", strict=true)
-obs = occurrences(serval, "hasCoordinate" => "true", "continent" => "AFRICA", "decimalLongitude"=>(-30,40))
-while length(obs) < 240
+serval = GBIF.taxon("Carnegiea gigantea", strict=true)
+obs = occurrences(serval, "hasCoordinate" => "true")
+while length(obs) < size(obs)
     occurrences!(obs)
 end
 ```
@@ -28,15 +28,15 @@ the bounding box for the observations - just to make sure that we will have
 something large enough, we will add a 2 degrees padding around it:
 
 ```@example bioclim
-left, right = extrema([o.longitude for o in obs]) .+ (-5,5)
-bottom, top = extrema([o.latitude for o in obs]) .+ (-5,5)
+left, right = extrema([o.longitude for o in obs]) .+ (-2,2)
+bottom, top = extrema([o.latitude for o in obs]) .+ (-2,2)
 ```
 
 With this information in hand, we can start getting our variables. In this
 example, we will focus on variables related to temperature:
 
 ```@example bioclim
-predictors = worldclim([1,2,3,4]; left=left, right=right, bottom=bottom, top=top)
+predictors = bioclim(left=left, right=right, bottom=bottom, top=top)
 ```
 
 The point of BIOCLIM (the model, not the dataset) is that the score assigned to

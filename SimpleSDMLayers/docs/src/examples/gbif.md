@@ -72,55 +72,23 @@ These extensions of `SimpleSDMLayers` functions to work with the `GBIF` package
 are meant to greatly simplify the expression of more complex pipelines, notably
 for actual species distribution modeling.
 
-## DataFrames support
-
-Note that both `SimpleSDMLayers.jl` and `GBIF.jl` offer an (optional)
-integration with the `DataFrames.jl` package.
-Hence, the example above could also be approached with a `DataFrame`-centered
-workflow.
-
-For example, after getting occurrences through `GBIF.jl`, we can convert them
-to a `DataFrame`:
-
 ```@example temp
-using DataFrames
-kf_df = DataFrame(kf_occurrences);
-last(kf_df, 5)
+contour(precipitation_clip, c=:YlGnBu, title="Precipitation", frame=:box, fill=true)
+scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), lab="", c=:white, msc=:orange)
 ```
 
-We can then extract the temperature values for all the occurrences:
+We can finally make a presence/absence map:
 
 ```@example temp
-temperature[kf_df]
+presabs = mask(precipitation_clip, kf_occurrences)
+plot(presabs)
 ```
 
-Or we can clip the layers according to the occurrences:
+This can be useful if we want to add a buffer around the observations - for
+example, we can add a 50km buffer around all observations:
 
 ```@example temp
-clip(temperature, kf_df)
+buffered = slidingwindow(presabs, maximum, 50.0)
+plot(buffered)
 ```
 
-We can also export all the values from a layer to a `DataFrame` with their
-corresponding coordinates: 
-
-```@example temp
-temperature_df = DataFrame(temperature_clip);
-last(temperature_df, 5)
-```
-
-Or do so with multiple layers at the same time:
-
-```@example temp
-climate_clip = [temperature_clip, precipitation_clip]
-climate_df = DataFrame(climate_clip);
-rename!(climate_df, :x1 => :temperature, :x2 => :precipitation);
-last(climate_df, 5)
-```
-
-We can finally plot the values in a similar way:
-
-```@example temp
-filter!(x -> !isnothing(x.temperature) && !isnothing(x.precipitation), climate_df);
-histogram2d(climate_df.temperature, climate_df.precipitation, c=:viridis)
-scatter!(temperature_clip[kf_df], precipitation_clip[kf_df], lab="", c=:white, msc=:orange)
-```

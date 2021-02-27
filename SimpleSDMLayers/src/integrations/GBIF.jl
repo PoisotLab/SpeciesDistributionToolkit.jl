@@ -11,33 +11,24 @@ import SimpleSDMLayers: clip, latitudes, longitudes, mask!, mask
 Extracts the value of a layer at a given position for a `GBIFRecord`. If the
 `GBIFRecord` has no latitude or longitude, this will return `nothing`.
 """
-function Base.getindex(p::T, occurrence::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
+function Base.getindex(layer::T, occurrence::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
    ismissing(occurrence.latitude) && return nothing
    ismissing(occurrence.longitude) && return nothing
-   return p[occurrence.longitude, occurrence.latitude]
+   return layer[occurrence.longitude, occurrence.latitude]
 end
 
 """
     Base.setindex!(p::T, v, occurrence::GBIFRecord) where {T <: SimpleSDMResponse}
 
 Changes the values of the cell including the point at the requested latitude and
-longitude.
+longitude. **Be careful**, this function will not update a cell that has
+`nothing`.
 """
-function Base.setindex!(p::SimpleSDMResponse{T}, v::T, occurrence::GBIF.GBIFRecord) where {T}
+function Base.setindex!(layer::SimpleSDMResponse{T}, v::T, occurrence::GBIF.GBIFRecord) where {T}
    ismissing(occurrence.latitude) && return nothing
    ismissing(occurrence.longitude) && return nothing
-   setindex!(p, v, occurrence.longitude, occurrence.latitude)
-end
-
-"""
-    Base.setindex!(p::T, v, records::GBIFRecords) where {T <: SimpleSDMResponse}
-
-Changes the values of the cell including the point for all the records.
-"""
-function Base.setindex!(p::SimpleSDMResponse{T}, v::T, records::GBIF.GBIFRecords) where {T}
-   ismissing(occurrence.latitude) && return nothing
-   ismissing(occurrence.longitude) && return nothing
-   setindex!(p, v, occurrence.longitude, occurrence.latitude)
+   isnothing(layer[record]) && return nothing
+   setindex!(layer, v, occurrence.longitude, occurrence.latitude)
 end
 
 """
@@ -103,7 +94,9 @@ Fills a layer (most likely created with `similar`) so that the values are `true`
 if an occurrence is found in the cell, `false` if not.
 """
 function mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Bool}
-    layer[records] .= true
+    for record in records
+        layer[record] = true
+    end
     return layer
 end
 
@@ -114,7 +107,9 @@ Fills a layer (most likely created with `similar`) so that the values reflect
 the number of occurrences in the cell.
 """
 function mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Number}
-    layer[records] .+= one(T)
+    for record in records
+        layer[record] = layer[record] + one(T)
+    end
     return layer
 end
 

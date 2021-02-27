@@ -13,7 +13,7 @@ function _internal_limit_update!(o::GBIFRecords)
   limit_index = findfirst((p) -> string(p.first) == "limit", o.query)
   limit = isnothing(limit_index) ? 20 : o.query[limit_index].second
   if (length(o) + limit) > size(o)
-    deleteat!(o.query, limit_index)
+    isnothing(limit_index) || deleteat!(o.query, limit_index)
     push!(o.query, "limit" => size(o) - length(o))
   end
 end

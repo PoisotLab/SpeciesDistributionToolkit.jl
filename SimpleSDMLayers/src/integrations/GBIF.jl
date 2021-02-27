@@ -3,7 +3,7 @@
 
 import Base: getindex
 import Base: setindex!
-import SimpleSDMLayers: clip, latitudes, longitudes
+import SimpleSDMLayers: clip, latitudes, longitudes, mask!, mask
 
 """
     Base.getindex(p::T, occurrence::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
@@ -84,4 +84,41 @@ Returns the non-missing longitudes.
 """
 function SimpleSDMLayers.longitudes(records::GBIF.GBIFRecords)
    return filter(!ismissing, [records[i].longitude for i in 1:length(records)])
+end
+
+"""
+    mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: AbstractBool}
+
+Changes the second layer so that the positions for which the first layer is zero
+(of the appropriate type) or `nothing` are set to `nothing`. This is mostly
+useful in cases where you have a `Bool` layer.
+"""
+function mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T1 <: AbstractBool}
+    layer[records] .= true
+    return layer
+end
+
+"""
+    mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: AbstractBool}
+
+Changes the second layer so that the positions for which the first layer is zero
+(of the appropriate type) or `nothing` are set to `nothing`. This is mostly
+useful in cases where you have a `Bool` layer.
+"""
+function mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T1 <: Number}
+    layer[records] .+= convert(eltype(layer), 1)
+    return layer
+end
+
+"""
+    mask(l1::T1, l2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
+
+Returns a copy of the second layer in which the positions for which the first
+layer is zero (of the appropriate type) or `nothing` are set to `nothing`. This
+is mostly useful in cases where you have a `Bool` layer.
+"""
+function mask(layer::SimpleSDMLayer, records::GBIF.GBIFRecords, element_type::Type=Bool)
+    returnlayer = similar(layer, element_type)
+    mask!(returnlayer, records)
+    return returnlayer
 end

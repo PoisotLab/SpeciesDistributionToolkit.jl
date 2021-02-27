@@ -89,33 +89,31 @@ end
 """
     mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: AbstractBool}
 
-Changes the second layer so that the positions for which the first layer is zero
-(of the appropriate type) or `nothing` are set to `nothing`. This is mostly
-useful in cases where you have a `Bool` layer.
+Fills a layer (most likely created with `similar`) so that the values are `true`
+if an occurrence is found in the cell, `false` if not.
 """
-function mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T1 <: AbstractBool}
+function mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Bool}
     layer[records] .= true
     return layer
 end
 
 """
-    mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: AbstractBool}
+    mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Number}
 
-Changes the second layer so that the positions for which the first layer is zero
-(of the appropriate type) or `nothing` are set to `nothing`. This is mostly
-useful in cases where you have a `Bool` layer.
+Fills a layer (most likely created with `similar`) so that the values reflect
+the number of occurrences in the cell.
 """
-function mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T1 <: Number}
-    layer[records] .+= convert(eltype(layer), 1)
+function mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Number}
+    layer[records] .+= one(T)
     return layer
 end
 
 """
-    mask(l1::T1, l2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
+    mask(layer::SimpleSDMLayer, records::GBIF.GBIFRecords, element_type::Type=Bool)
 
-Returns a copy of the second layer in which the positions for which the first
-layer is zero (of the appropriate type) or `nothing` are set to `nothing`. This
-is mostly useful in cases where you have a `Bool` layer.
+Create a new layer storing information about the presence of occurrences in the
+cells, either counting (numeric types) or presence-absence-ing (boolean types)
+them.
 """
 function mask(layer::SimpleSDMLayer, records::GBIF.GBIFRecords, element_type::Type=Bool)
     returnlayer = similar(layer, element_type)

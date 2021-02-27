@@ -11,24 +11,24 @@ import SimpleSDMLayers: clip, latitudes, longitudes, mask!, mask
 Extracts the value of a layer at a given position for a `GBIFRecord`. If the
 `GBIFRecord` has no latitude or longitude, this will return `nothing`.
 """
-function Base.getindex(layer::T, occurrence::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
-   ismissing(occurrence.latitude) && return nothing
-   ismissing(occurrence.longitude) && return nothing
-   return layer[occurrence.longitude, occurrence.latitude]
+function Base.getindex(layer::T, record::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
+   ismissing(record.latitude) && return nothing
+   ismissing(record.longitude) && return nothing
+   return layer[record.longitude, record.latitude]
 end
 
 """
-    Base.setindex!(p::T, v, occurrence::GBIFRecord) where {T <: SimpleSDMResponse}
+    Base.setindex!(p::T, v, record::GBIFRecord) where {T <: SimpleSDMResponse}
 
 Changes the values of the cell including the point at the requested latitude and
 longitude. **Be careful**, this function will not update a cell that has
 `nothing`.
 """
-function Base.setindex!(layer::SimpleSDMResponse{T}, v::T, occurrence::GBIF.GBIFRecord) where {T}
-   ismissing(occurrence.latitude) && return nothing
-   ismissing(occurrence.longitude) && return nothing
+function Base.setindex!(layer::SimpleSDMResponse{T}, v::T, record::GBIF.GBIFRecord) where {T}
+   ismissing(record.latitude) && return nothing
+   ismissing(record.longitude) && return nothing
    isnothing(layer[record]) && return nothing
-   setindex!(layer, v, occurrence.longitude, occurrence.latitude)
+   setindex!(layer, v, record.longitude, record.latitude)
 end
 
 """

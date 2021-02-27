@@ -18,4 +18,12 @@ module TestGBIFRecords
   @test typeof(set3) == GBIFRecords
   @test length(set3) == 20
 
+  # Version with the full query - this one has about 250 records
+  serval = GBIF.taxon("Leptailurus serval", strict=true)
+  obs = occurrences(serval, "hasCoordinate" => "true", "continent" => "AFRICA", "decimalLongitude"=>(-30,40))
+  while length(obs) < size(obs)
+    occurrences!(obs)
+  end
+  @test length(obs) == size(obs)
+
 end

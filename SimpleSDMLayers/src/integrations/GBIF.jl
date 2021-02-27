@@ -30,6 +30,17 @@ function Base.setindex!(p::SimpleSDMResponse{T}, v::T, occurrence::GBIF.GBIFReco
 end
 
 """
+    Base.setindex!(p::T, v, records::GBIFRecords) where {T <: SimpleSDMResponse}
+
+Changes the values of the cell including the point for all the records.
+"""
+function Base.setindex!(p::SimpleSDMResponse{T}, v::T, records::GBIF.GBIFRecords) where {T}
+   ismissing(occurrence.latitude) && return nothing
+   ismissing(occurrence.longitude) && return nothing
+   setindex!(p, v, occurrence.longitude, occurrence.latitude)
+end
+
+"""
     clip(p::T, r::GBIF.GBIFRecords)
 
 Returns a clipped version (with a 10% margin) around all occurences in a

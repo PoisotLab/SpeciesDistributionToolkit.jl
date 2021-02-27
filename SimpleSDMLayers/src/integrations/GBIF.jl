@@ -5,6 +5,24 @@ import Base: getindex
 import Base: setindex!
 import SimpleSDMLayers: clip, latitudes, longitudes, mask!, mask
 
+SimpleSDMLayers.longitudes(record::GBIF.GBIFRecord) = record.longitude
+SimpleSDMLayers.latitudes(record::GBIF.GBIFRecord) = record.latitude
+
+"""
+    latitudes(records::GBIFRecords)
+
+Returns the non-missing latitudes.
+"""
+SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords) = filter(!ismissing, [latitudes(record) for record in records])
+
+"""
+    longitudes(records::GBIFRecords)
+
+Returns the non-missing longitudes.
+"""
+SimpleSDMLayers.longitudes(records::GBIF.GBIFRecords) = filter(!ismissing, [longitudes(record) for record in records])
+
+
 """
     Base.getindex(p::T, occurrence::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
 
@@ -38,13 +56,11 @@ Returns a clipped version (with a 10% margin) around all occurences in a
 GBIFRecords collection.
 """
 function SimpleSDMLayers.clip(layer::T, records::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
-   occ_latitudes = filter(!ismissing, [records[i].latitude for i in 1:length(records)])
-   occ_longitudes = filter(!ismissing, [records[i].longitude for i in 1:length(records)])
+   occ_latitudes = latitudes(records)
+   occ_longitudes = longitudes(records)
 
-   lat_min = minimum(occ_latitudes)
-   lat_max = maximum(occ_latitudes)
-   lon_min = minimum(occ_longitudes)
-   lon_max = maximum(occ_longitudes)
+   lat_min, lat_max = extrema(occ_latitudes)
+   lon_min, lon_max = extrema(occ_longitudes)
 
    lat_Δ = abs(lat_max - lat_min)
    lon_Δ = abs(lon_max - lon_min)
@@ -53,10 +69,10 @@ function SimpleSDMLayers.clip(layer::T, records::GBIF.GBIFRecords) where {T <: S
    lon_s = scaling*lon_Δ
    lat_s = scaling*lat_Δ
 
-   lat_max = min(p.top, lat_max+lat_s)
-   lat_min = max(p.bottom, lat_min-lat_s)
-   lon_max = min(p.right, lon_max+lon_s)
-   lon_min = max(p.left, lon_min-lon_s)
+   lat_max = min(layer.top, lat_max+lat_s)
+   lat_min = max(layer.bottom, lat_min-lat_s)
+   lon_max = min(layer.right, lon_max+lon_s)
+   lon_min = max(layer.left, lon_min-lon_s)
 
    return layer[left=lon_min, right=lon_max, bottom=lat_min, top=lat_max]
 end
@@ -67,25 +83,8 @@ end
 Returns the values of a layer at all occurrences in a `GBIFRecords` collection.
 """
 function Base.getindex(layer::T, records::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
-   return convert(Vector{SimpleSDMLayers._inner_type(layer)}, filter(!isnothing, [layer[records[i]] for i in 1:length(records)]))
+   return convert(Vector{eltype(layer)}, filter(!isnothing, [layer[records[i]] for i in 1:length(records)]))
 end
-
-SimpleSDMLayers.longitudes(record::GBIF.GBIFRecord) = record.longitude
-SimpleSDMLayers.latitudes(record::GBIF.GBIFRecord) = record.latitude
-
-"""
-    latitudes(records::GBIFRecords)
-
-Returns the non-missing latitudes.
-"""
-SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords) = filter(!ismissing, [latitudes(record) for record in records])
-
-"""
-    longitudes(records::GBIFRecords)
-
-Returns the non-missing longitudes.
-"""
-SimpleSDMLayers.longitudes(records::GBIF.GBIFRecords) = filter(!ismissing, [longitudes(record) for record in records])
 
 """
     mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: AbstractBool}

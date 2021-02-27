@@ -1,6 +1,6 @@
 @info "Loading DataFrames support for GBIF.jl"
 
-format_gbif_entity(t::Missing) = missing
+format_gbif_entity(::Missing) = missing
 format_gbif_entity(t::Pair{String,Int64}) = t.first
 
 import .DataFrames: DataFrame

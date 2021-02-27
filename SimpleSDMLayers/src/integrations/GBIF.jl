@@ -18,7 +18,7 @@ function Base.getindex(layer::T, record::GBIF.GBIFRecord) where {T <: SimpleSDML
 end
 
 """
-    Base.setindex!(p::T, v, record::GBIFRecord) where {T <: SimpleSDMResponse}
+    Base.setindex!(layer::T, v, record::GBIFRecord) where {T <: SimpleSDMResponse}
 
 Changes the values of the cell including the point at the requested latitude and
 longitude. **Be careful**, this function will not update a cell that has
@@ -32,14 +32,14 @@ function Base.setindex!(layer::SimpleSDMResponse{T}, v::T, record::GBIF.GBIFReco
 end
 
 """
-    clip(p::T, r::GBIF.GBIFRecords)
+    clip(layer::T, records::GBIF.GBIFRecords)
 
 Returns a clipped version (with a 10% margin) around all occurences in a
 GBIFRecords collection.
 """
-function SimpleSDMLayers.clip(p::T, r::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
-   occ_latitudes = filter(!ismissing, [r[i].latitude for i in 1:length(r)])
-   occ_longitudes = filter(!ismissing, [r[i].longitude for i in 1:length(r)])
+function SimpleSDMLayers.clip(layer::T, records::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
+   occ_latitudes = filter(!ismissing, [records[i].latitude for i in 1:length(records)])
+   occ_longitudes = filter(!ismissing, [records[i].longitude for i in 1:length(records)])
 
    lat_min = minimum(occ_latitudes)
    lat_max = maximum(occ_latitudes)
@@ -58,11 +58,11 @@ function SimpleSDMLayers.clip(p::T, r::GBIF.GBIFRecords) where {T <: SimpleSDMLa
    lon_max = min(p.right, lon_max+lon_s)
    lon_min = max(p.left, lon_min-lon_s)
 
-   return p[left=lon_min, right=lon_max, bottom=lat_min, top=lat_max]
+   return layer[left=lon_min, right=lon_max, bottom=lat_min, top=lat_max]
 end
 
 """
-    Base.getindex(p::T, r::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
+    Base.getindex(layer::T, records::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
 
 Returns the values of a layer at all occurrences in a `GBIFRecords` collection.
 """
@@ -78,14 +78,14 @@ SimpleSDMLayers.latitudes(record::GBIF.GBIFRecord) = record.latitude
 
 Returns the non-missing latitudes.
 """
-SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords) = filter(!ismissing, [latitudes(record) for i in 1:length(records)])
+SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords) = filter(!ismissing, [latitudes(record) for record in records])
 
 """
     longitudes(records::GBIFRecords)
 
 Returns the non-missing longitudes.
 """
-SimpleSDMLayers.longitudes(records::GBIF.GBIFRecords) = filter(!ismissing, [longitudes(record) for i in 1:length(records)])
+SimpleSDMLayers.longitudes(records::GBIF.GBIFRecords) = filter(!ismissing, [longitudes(record) for record in records])
 
 """
     mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: AbstractBool}

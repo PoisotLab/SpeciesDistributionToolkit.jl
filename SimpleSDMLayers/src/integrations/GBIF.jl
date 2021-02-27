@@ -68,23 +68,22 @@ function Base.getindex(layer::T, records::GBIF.GBIFRecords) where {T <: SimpleSD
    return convert(Vector{SimpleSDMLayers._inner_type(layer)}, filter(!isnothing, [layer[records[i]] for i in 1:length(records)]))
 end
 
+SimpleSDMLayers.longitudes(record::GBIF.GBIFRecord) = record.longitude
+SimpleSDMLayers.latitudes(record::GBIF.GBIFRecord) = record.latitude
+
 """
     latitudes(records::GBIFRecords)
 
 Returns the non-missing latitudes.
 """
-function SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords)
-   return filter(!ismissing, [records[i].latitude for i in 1:length(records)])
-end
+SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords) = filter(!ismissing, [latitudes(record) for i in 1:length(records)])
 
 """
     longitudes(records::GBIFRecords)
 
 Returns the non-missing longitudes.
 """
-function SimpleSDMLayers.longitudes(records::GBIF.GBIFRecords)
-   return filter(!ismissing, [records[i].longitude for i in 1:length(records)])
-end
+SimpleSDMLayers.longitudes(records::GBIF.GBIFRecords) = filter(!ismissing, [longitudes(record) for i in 1:length(records)])
 
 """
     mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: AbstractBool}
@@ -120,3 +119,4 @@ function mask(layer::SimpleSDMLayer, records::GBIF.GBIFRecords, element_type::Ty
     mask!(returnlayer, records)
     return returnlayer
 end
+

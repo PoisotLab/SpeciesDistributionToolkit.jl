@@ -14,16 +14,15 @@ using Statistics
 We can get some occurrences for the taxon of interest:
 
 ```@example bioclim
-serval = GBIF.taxon("Carnegiea gigantea", strict=true)
-obs = occurrences(serval, "hasCoordinate" => "true")
+carnegiea = GBIF.taxon("Carnegiea gigantea", strict=true)
+obs = occurrences(carnegiea, "hasCoordinate" => "true", "decimalLatitude" => (26.78, 34.80), "decimalLongitude" => (-114.0,-109.3))
 while length(obs) < size(obs)
     occurrences!(obs)
 end
 ```
 
-This query uses a range for the longitude because despite restricting the
-continent to Africa, some invalid records make it through (this is a GBIF
-problem, not a package problem). Before we get the layers, we will figure out
+This query uses a range for the longitude and latitude, so as to make sure that
+we get a relatively small region. Before we get the layers, we will figure out
 the bounding box for the observations - just to make sure that we will have
 something large enough, we will add a 2 degrees padding around it:
 
@@ -33,7 +32,8 @@ bottom, top = extrema([o.latitude for o in obs]) .+ (-2,2)
 ```
 
 With this information in hand, we can start getting our variables. In this
-example, we will focus on variables related to temperature:
+example, we will take all bioclim variables, as taken from the CHELSA database,
+with a really good 30 arc seconds resolution.
 
 ```@example bioclim
 predictors = bioclim(left=left, right=right, bottom=bottom, top=top)

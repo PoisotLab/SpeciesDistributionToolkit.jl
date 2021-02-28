@@ -9,17 +9,17 @@ test 1
         aspect_ratio --> 1
         xlims --> extrema(longitudes(layer))
         ylims --> extrema(latitudes(layer))
-        lg = copy(layer.grid)
+        lg = copy(K.grid)
         replace!(lg, nothing => NaN)
         lg = convert(Matrix{Float64}, lg)
         longitudes(layer), latitudes(layer), lg
     elseif get(plotattributes, :seriestype, :histogram) in [:histogram, :density]
-        collect(layer)
+        collect(K)
     elseif get(plotattributes, :seriestype, :surface) in [:surface, :wireframe]
         aspect_ratio --> 1
         xlims --> extrema(longitudes(layer))
         ylims --> extrema(latitudes(layer))
-        lg = copy(layer.grid)
+        lg = copy(K.grid)
         replace!(lg, nothing => minimum(layer))
         lg = convert(Matrix{Float64}, lg)
         longitudes(layer), latitudes(layer), lg

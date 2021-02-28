@@ -13,6 +13,11 @@ import Base: hcat
 import Base: vcat
 import Base: show
 
+"""
+    Base.show(io::IO, layer::T) where {T <: SimpleSDMLayer}
+
+Shows a textual representation of the layer.
+"""
 function Base.show(io::IO, layer::T) where {T <: SimpleSDMLayer}
     itype = eltype(layer)
     otype = T <: SimpleSDMPredictor ? "predictor" : "response"

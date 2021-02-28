@@ -45,6 +45,14 @@ function Base.convert(::Type{SimpleSDMPredictor}, layer::T) where {T <: SimpleSD
    return copy(SimpleSDMPredictor(layer.grid, layer.left, layer.right, layer.bottom, layer.top))
 end
 
+"""
+    Base.convert(::Type{T}, layer::TL) where {T, TL <: SimpleSDMLayer}
+
+Returns a copy of the layer with the same type (response or predictor), but the
+element type has been changed to `T`. This function is *extremely useful*
+(required, in fact) for plotting, as the `nothing` values are changed to `NaN`
+in the heatmaps.
+"""
 function Base.convert(::Type{T}, layer::TL) where {T, TL <: SimpleSDMLayer}
     new = similar(layer, T)
     new.grid[.!isnothing.(layer.grid)] .= convert.(T, layer.grid[.!isnothing.(layer.grid)])

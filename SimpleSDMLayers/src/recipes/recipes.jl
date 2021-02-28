@@ -3,6 +3,7 @@ test 1
 """
 @recipe function plot(layer::T) where {T <: SimpleSDMLayer}
     eltype(layer) <: Number || throw(ArgumentError("Plotting is only supported for layers with number values ($(eltype(layer)))"))
+    K = convert(Float64, layer)
     seriestype --> :heatmap
     if get(plotattributes, :seriestype, :heatmap) in [:heatmap, :contour]
         aspect_ratio --> 1

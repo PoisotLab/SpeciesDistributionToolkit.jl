@@ -118,9 +118,9 @@ end
 Fills a layer (most likely created with `similar`) so that the values are `true`
 if an occurrence is found in the cell, `false` if not.
 """
-function mask!(layer::SimpleSDMResponse{T}, df::DataFrames.DataFrame) where {T <: Bool}
-    lons = df.longitude
-    lats = df.latitude
+function mask!(layer::SimpleSDMResponse{T}, df::DataFrames.DataFrame; latitude::Symbol = :latitude, longitude::Symbol = :longitude) where {T <: Bool}
+    lons = df[!, longitude]
+    lats = df[!, latitude]
     for (lon, lat) in zip(lons, lats)
         layer[lon, lat] = true
     end
@@ -133,9 +133,9 @@ end
 Fills a layer (most likely created with `similar`) so that the values reflect
 the number of occurrences in the cell.
 """
-function mask!(layer::SimpleSDMResponse{T}, df::DataFrames.DataFrame) where {T <: Number}
-    lons = df.longitude
-    lats = df.latitude
+function mask!(layer::SimpleSDMResponse{T}, df::DataFrames.DataFrame; latitude::Symbol = :latitude, longitude::Symbol = :longitude) where {T <: Number}
+    lons = df[!, longitude]
+    lats = df[!, latitude]
     for (lon, lat) in zip(lons, lats)
         layer[lon, lat] = layer[lon, lat] + one(T)
     end
@@ -149,8 +149,8 @@ Create a new layer storing information about the presence of occurrences in the
 cells, either counting (numeric types) or presence-absence-ing (boolean types)
 them.
 """
-function mask(layer::SimpleSDMLayer, df::DataFrames.DataFrame, element_type::Type=Bool)
+function mask(layer::SimpleSDMLayer, df::DataFrames.DataFrame, element_type::Type=Bool; latitude::Symbol = :latitude, longitude::Symbol = :longitude)
     returnlayer = similar(layer, element_type)
-    mask!(returnlayer, df)
+    mask!(returnlayer, df, latitude = latitude, longitude = longitude)
     return returnlayer
 end

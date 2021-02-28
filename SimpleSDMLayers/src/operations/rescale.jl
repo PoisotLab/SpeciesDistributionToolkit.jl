@@ -31,6 +31,7 @@ Copying version of `rescale!`.
 function rescale(layer::TI, template::TJ) where {TI <: SimpleSDMLayer, TJ <: SimpleSDMLayer}
     l = copy(layer)
     return rescale!(l, extrema(template))
+    return l
 end
 
 """
@@ -40,7 +41,8 @@ Copying version of `rescale!`.
 """
 function rescale(layer::TI, t::Tuple{T,T}) where {TI <: SimpleSDMLayer, T <: Number}
     l = copy(layer)
-    return rescale!(l, t)
+    rescale!(l, t)
+    return l
 end
 
 
@@ -67,5 +69,6 @@ Copying version of `rescale!`.
 """
 function rescale(layer::T, p::Vector{TI}) where {T <: SimpleSDMLayer, TI <: AbstractFloat}
     l = copy(layer)
-    return rescale!(l, p)
+    rescale!(l, p)
+    return l
 end

@@ -14,9 +14,13 @@ using Statistics
 We can get some occurrences for the taxon of interest:
 
 ```@example bioclim
-carnegiea = GBIF.taxon("Carnegiea gigantea", strict=true)
-obs = occurrences(carnegiea, "hasCoordinate" => "true", "decimalLatitude" => (26.78, 34.80), "decimalLongitude" => (-114.0,-109.3))
-while length(obs) < size(obs)
+obs = occurrences(
+    GBIF.taxon("Alces alces", strict=true),
+    "hasCoordinate" => "true",
+    "continent" => "EUROPE",
+    "limit" => 50
+)
+while length(obs) < 500
     occurrences!(obs)
 end
 ```
@@ -32,11 +36,11 @@ bottom, top = extrema([o.latitude for o in obs]) .+ (-2,2)
 ```
 
 With this information in hand, we can start getting our variables. In this
-example, we will take all bioclim variables, as taken from the CHELSA database,
-with a really good 30 arc seconds resolution.
+example, we will take all worldclim data, at the default 10 arc minute
+resolution:
 
 ```@example bioclim
-predictors = bioclim(left=left, right=right, bottom=bottom, top=top)
+predictors = worldclim(1:19; left=left, right=right, bottom=bottom, top=top)
 ```
 
 The point of BIOCLIM (the model, not the dataset) is that the score assigned to
@@ -84,17 +88,17 @@ Just because we may want to visualize this result in a transformed way, *i.e.*
 by looking at the quantiles of suitability, we can call the `rescale!` function:
 
 ```@example bioclim
-rescale!(prediction, collect(0.0:0.01:1.0))
+rescale!(prediction, collect(0.0:0.1:1.0))
 ```
 
 This map can be plotted as we would normally do:
 
 ```@example bioclim
-plot(prediction, frame=:box, clim=(0,1), c=:davos)
+plot(prediction, frame=:box, clim=(0,1), c=:bamako)
 scatter!([(o.longitude, o.latitude) for o in obs], ms=4, c=:orange, lab="")
 xaxis!("Longitude")
 yaxis!("Latitude")
 ```
 
-This model is not impressive *at all*, but this is an illustration of the ways
-we can use the functions from SimpleSDMLayers to build pipelines.
+And there it is! A simple way to write the BIOCLIM model by building on the
+integration between SimpleSDMLayers and GBIF.

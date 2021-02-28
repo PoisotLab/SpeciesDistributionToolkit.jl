@@ -64,4 +64,7 @@ vl2 = vcat(l3, l4)
 c2 = similar(l1, Bool)
 @test eltype(c2) == Bool
 
+@test eltype(convert(Int64, c2)) == Int64
+@test eltype(convert(Float32, c2)) == Float32
+
 end

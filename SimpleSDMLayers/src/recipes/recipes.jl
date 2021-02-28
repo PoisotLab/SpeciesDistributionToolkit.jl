@@ -3,13 +3,12 @@ test 1
 """
 @recipe function plot(layer::T) where {T <: SimpleSDMLayer}
     eltype(layer) <: Number || throw(ArgumentError("Plotting is only supported for layers with number values ($(eltype(layer)))"))
-    K = convert(Float64, layer)
     seriestype --> :heatmap
     if get(plotattributes, :seriestype, :heatmap) in [:heatmap, :contour]
         aspect_ratio --> 1
         xlims --> extrema(longitudes(layer))
         ylims --> extrema(latitudes(layer))
-        lg = copy(K.grid)
+        lg = copy(layer.grid)
         replace!(lg, nothing => NaN)
         lg = convert(Matrix{Float64}, lg)
         longitudes(layer), latitudes(layer), lg
@@ -19,7 +18,7 @@ test 1
         aspect_ratio --> 1
         xlims --> extrema(longitudes(layer))
         ylims --> extrema(latitudes(layer))
-        lg = copy(K.grid)
+        lg = copy(layer.grid)
         replace!(lg, nothing => minimum(layer))
         lg = convert(Matrix{Float64}, lg)
         longitudes(layer), latitudes(layer), lg

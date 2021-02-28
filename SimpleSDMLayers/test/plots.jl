@@ -94,7 +94,7 @@ a = convert(Matrix{Union{Bool,Nothing}}, a)
 a[rand(eachindex(a), 100)] .= nothing
 S = SimpleSDMResponse(a)
 
-plot(S)
+plot(convert(Int64, S))
 savefig(joinpath("gallery", "booltype.png"))
 
 end

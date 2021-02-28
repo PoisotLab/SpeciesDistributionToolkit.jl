@@ -129,8 +129,9 @@ looks for columns named `:latitude` and `:longitude` by default, but these can
 be changed using the `latitude` and `longitude` arguments.
 """
 function mask!(layer::SimpleSDMResponse{T}, df::DataFrames.DataFrame; latitude::Symbol = :latitude, longitude::Symbol = :longitude) where {T <: Bool}
-    lons = df[!, longitude]
-    lats = df[!, latitude]
+    uniquedf = unique(df, [longitude, latitude])
+    lons = uniquedf[!, longitude]
+    lats = uniquedf[!, latitude]
     for (lon, lat) in zip(lons, lats)
         layer[lon, lat] = true
     end

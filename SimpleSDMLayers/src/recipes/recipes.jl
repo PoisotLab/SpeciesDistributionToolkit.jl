@@ -13,7 +13,7 @@ test 1
         lg = convert(Matrix{Float64}, lg)
         longitudes(layer), latitudes(layer), lg
     elseif get(plotattributes, :seriestype, :histogram) in [:histogram, :density]
-        collect(K)
+        collect(layer)
     elseif get(plotattributes, :seriestype, :surface) in [:surface, :wireframe]
         aspect_ratio --> 1
         xlims --> extrema(longitudes(layer))

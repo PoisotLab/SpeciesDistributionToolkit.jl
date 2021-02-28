@@ -8,7 +8,9 @@ import SimpleSDMLayers: clip, latitudes, longitudes
 """
     Base.getindex(layer::T, df::DataFrames.DataFrame; latitude = :latitude, longitude = :longitude) where {T <: SimpleSDMLayer}
 
-Returns the values of a layer at all occurrences in a `DataFrame`.
+Returns the values of a layer at all occurrences in a `DataFrame`. Note that the
+function looks for columns named `:latitude` and `:longitude` by default, but
+these can be changed using the `latitude` and `longitude` arguments.
 """
 function Base.getindex(layer::T, df::DataFrames.DataFrame; latitude = :latitude, longitude = :longitude) where {T <: SimpleSDMLayer}
     lats = df[:, latitude]
@@ -20,7 +22,9 @@ end
     clip(layer::T, df::DataFrames.DataFrame; latitude = :latitude, longitude = :longitude) where {T <: SimpleSDMLayer}
 
 Returns a clipped version (with a 10% margin) around all occurences in a
-`DataFrame`.
+`DataFrame`. Note that the function looks for columns named `:latitude` and
+`:longitude` by default, but these can be changed using the `latitude` and
+`longitude` arguments.
 """
 function SimpleSDMLayers.clip(layer::T, df::DataFrames.DataFrame; latitude = :latitude, longitude = :longitude) where {T <: SimpleSDMLayer}
    occ_latitudes = filter(!ismissing, df[:, latitude])
@@ -84,7 +88,11 @@ for ty in (:SimpleSDMResponse, :SimpleSDMPredictor)
             """
                 $($ty)(df::DataFrame, col::Symbol, layer::T; latitude::Symbol = :latitude, longitude::Symbol = :longitude) where {T <: SimpleSDMLayer}
 
-            Returns a `$($ty)` from a `DataFrame`.
+            Returns a `$($ty)` from a `DataFrame`. This requires to select a
+            column to be returned as a layer, as well as an existing layer from
+            which to copy the dimensions. Note that the function looks for
+            columns named `:latitude` and `:longitude` by default, but these can
+            changed using the `latitude` and `longitude` arguments.
             """
             function SimpleSDMLayers.$ty(df::DataFrames.DataFrame, col::Symbol, layer::SimpleSDMLayer; latitude::Symbol = :latitude, longitude::Symbol = :longitude)
                 lats = df[:, latitude]
@@ -116,7 +124,9 @@ end
     mask!(layer::SimpleSDMResponse{T}, records::DataFrames.DataFrame) where {T <: AbstractBool}
 
 Fills a layer (most likely created with `similar`) so that the values are `true`
-if an occurrence is found in the cell, `false` if not.
+if an occurrence is found in the cell, `false` if not. Note that the function
+looks for columns named `:latitude` and `:longitude` by default, but these can
+be changed using the `latitude` and `longitude` arguments.
 """
 function mask!(layer::SimpleSDMResponse{T}, df::DataFrames.DataFrame; latitude::Symbol = :latitude, longitude::Symbol = :longitude) where {T <: Bool}
     lons = df[!, longitude]
@@ -131,7 +141,9 @@ end
     mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Number}
 
 Fills a layer (most likely created with `similar`) so that the values reflect
-the number of occurrences in the cell.
+the number of occurrences in the cell. Note that the function looks for columns
+named `:latitude` and `:longitude` by default, but these can be changed using
+the `latitude` and `longitude` arguments.
 """
 function mask!(layer::SimpleSDMResponse{T}, df::DataFrames.DataFrame; latitude::Symbol = :latitude, longitude::Symbol = :longitude) where {T <: Number}
     lons = df[!, longitude]
@@ -147,7 +159,9 @@ end
 
 Create a new layer storing information about the presence of occurrences in the
 cells, either counting (numeric types) or presence-absence-ing (boolean types)
-them.
+them. Note that the function looks for columns named `:latitude` and
+`:longitude` by default, but these can be changed using the `latitude` and
+`longitude` arguments.
 """
 function mask(layer::SimpleSDMLayer, df::DataFrames.DataFrame, element_type::Type=Bool; latitude::Symbol = :latitude, longitude::Symbol = :longitude)
     returnlayer = similar(layer, element_type)

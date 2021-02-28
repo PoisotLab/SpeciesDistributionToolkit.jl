@@ -1,6 +1,4 @@
-function haversine(p1, p2; R=6371.0)
-    lon1, lat1 = p1
-    lon2, lat2 = p2
+function haversine(lon1, lat1, lon2, lat2; R=6371.0)
     φ1 = lat1 * π/180.0
     φ2 = lat2 * π/180.0
     Δφ = (lat2-lat1) * π/180.0
@@ -9,6 +7,8 @@ function haversine(p1, p2; R=6371.0)
     c = 2.0 * atan(sqrt(a), sqrt(1.0-a))
     return R*c
 end
+
+haversine(p1, p2; R=6371.0) = haversine(p1..., p2...; R=R)
 
 """
     slidingwindow(L::LT, f::FT, d::IT) where {LT <: SimpleSDMLayer, FT <: Function, IT <: Number}
@@ -30,27 +30,24 @@ This function is currently relatively slow. Performance improvements will arrive
 at some point.
 """
 function slidingwindow(layer::LT, f::FT, d::IT) where {LT <: SimpleSDMLayer, FT <: Function, IT <: Number}
+    # We infer the return type from a call to the function on the first three elements
     return_type = typeof(f(collect(layer)[1:min(3, length(layer))]))
-    newgrid = convert(Matrix{Union{Nothing,return_type}}, fill(nothing, size(layer)))
-    N = SimpleSDMResponse(newgrid, layer)
-    pixels = []
-    for lat in latitudes(layer)
-        for lon in longitudes(layer)
-            if !isnothing(layer[lon,lat])
-                push!(pixels, (lon, lat) => layer[lon,lat])
-            end
-        end
+
+    # New layer using typed similar
+    N = similar(layer, return_type)
+
+    # Store latitudes and longitudes
+    _lat, _lon = latitudes(layer), longitudes(layer)
+
+    # Pre-allocation of a vector of pairs containing the pixel and the 
+    filled_positions = CartesianIndices(layer.grid)[findall(!isnothing, layer.grid)]
+
+    # We then filter in the occupied positions
+    for pos in filled_positions
+        neighbors = filter(p -> haversine((_lon[Tuple(pos)[2]], _lat[Tuple(pos)[1]]), (_lon[Tuple(p)[2]], _lat[Tuple(p)[1]])) < d, filled_positions)
+        N.grid[pos] = f(layer.grid[neighbors])
     end
 
-    for p1 in pixels
-        ok = filter(p2 -> haversine(p2.first, p1.first) < d, pixels)
-        val = [p2.second for p2 in ok]
-        N[p1.first...] = f(val)
-    end
-
-    #internal_types = unique(typeof.(N.grid))
-    #N.grid = convert(Matrix{Union{internal_types...}}, N.grid)
-    N = typeof(layer) <: SimpleSDMPredictor ? convert(SimpleSDMPredictor, N) : N
-
+    # And we return the object
     return N
 end

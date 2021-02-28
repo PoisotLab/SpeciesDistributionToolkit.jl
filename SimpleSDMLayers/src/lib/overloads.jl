@@ -21,10 +21,9 @@ Shows a textual representation of the layer.
 function Base.show(io::IO, layer::T) where {T <: SimpleSDMLayer}
     itype = eltype(layer)
     otype = T <: SimpleSDMPredictor ? "predictor" : "response"
-    print(io, """SDM $(otype) with $(itype) values
-    $(size(layer,1)) × $(size(layer,2))
-    lat.: $(extrema(latitudes(layer)))
-    lon.: $(extrema(longitudes(layer)))""")
+    print(io, """SDM $(otype) → $(size(layer,1))×$(size(layer,2)) grid with $(length(layer)) $(itype)-valued cells
+    Latitudes\t$(extrema(latitudes(layer)))
+    Longitudes\t$(extrema(longitudes(layer)))""")
 end
 
 """

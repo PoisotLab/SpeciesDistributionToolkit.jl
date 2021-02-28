@@ -14,7 +14,6 @@ makedocs(
             "Overloads" => "man/overloads.md",
             "Other operations" => "man/operations.md",
             "Data" => "man/data.md",
-            "Plotting" => "man/plotting.md"
         ],
         "Examples" => [
             "Temperature data" => "examples/temperature.md",

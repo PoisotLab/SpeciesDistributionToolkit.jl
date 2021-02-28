@@ -11,6 +11,21 @@ import Base: collect
 import Base.Broadcast: broadcast
 import Base: hcat
 import Base: vcat
+import Base: show
+
+"""
+    Base.show(io::IO, layer::T) where {T <: SimpleSDMLayer}
+
+Shows a textual representation of the layer.
+"""
+function Base.show(io::IO, layer::T) where {T <: SimpleSDMLayer}
+    itype = eltype(layer)
+    otype = T <: SimpleSDMPredictor ? "predictor" : "response"
+    print(io, """SDM $(otype) with $(itype) values
+    $(size(layer,1)) × $(size(layer,2))
+    lat.: $(extrema(latitudes(layer)))
+    lon.: $(extrema(longitudes(layer)))""")
+end
 
 """
     Base.convert(::Type{SimpleSDMResponse}, layer::T) where {T <: SimpleSDMPredictor}
@@ -28,6 +43,20 @@ Returns a predictor with the same grid and bounding box as the response.
 """
 function Base.convert(::Type{SimpleSDMPredictor}, layer::T) where {T <: SimpleSDMResponse}
    return copy(SimpleSDMPredictor(layer.grid, layer.left, layer.right, layer.bottom, layer.top))
+end
+
+"""
+    Base.convert(::Type{T}, layer::TL) where {T <: Number, TL <: SimpleSDMLayer}
+
+Returns a copy of the layer with the same type (response or predictor), but the
+element type has been changed to `T` (which must be a number). This function is
+*extremely useful* (required, in fact) for plotting, as the `nothing` values are
+changed to `NaN` in the heatmaps.
+"""
+function Base.convert(::Type{T}, layer::TL) where {T <: Number, TL <: SimpleSDMLayer}
+    new = similar(layer, T)
+    new.grid[.!isnothing.(layer.grid)] .= convert.(T, layer.grid[.!isnothing.(layer.grid)])
+    return new
 end
 
 """

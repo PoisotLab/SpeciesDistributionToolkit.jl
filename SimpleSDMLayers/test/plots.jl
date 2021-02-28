@@ -89,4 +89,12 @@ wireframe(t_europe, c=:thermal, title="Temperature",
     ylabel= "Latitude", camera=(40, 20))
 savefig(joinpath("gallery", "persp_40_20.png"))
 
+a = rand(Bool, 100, 100)
+a = convert(Matrix{Union{Bool,Nothing}}, a)
+a[rand(eachindex(a), 100)] .= nothing
+S = SimpleSDMResponse(a)
+
+plot(convert(Float64, S))
+savefig(joinpath("gallery", "booltype.png"))
+
 end

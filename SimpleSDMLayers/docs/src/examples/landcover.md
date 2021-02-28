@@ -12,9 +12,9 @@ urban = landcover(9; left=-11.0, right=31.1, bottom=29.0, top=71.1)
 ```
 
 This dataset is returning data as `UInt8` (as it represents a proportion of the
-pixel occupied by the type), but this is not something that can be plotted efficiently. So in the
-next step, we will manipulate this object a little bit to have something more
-workable.
+pixel occupied by the type), but this is not something that can be plotted
+efficiently. So in the next step, we will manipulate this object a little bit to
+have something more workable.
 
 Let's start by preparing a new grid, with the same dimensions, but a friendlier
 type, and then we can then fill these values using a simple rule of using either
@@ -23,7 +23,7 @@ type, and then we can then fill these values using a simple rule of using either
 ```@example urban
 n_urban_grid = zeros(Float32, size(urban));
 for (i,e) in enumerate(urban.grid)
-  n_urban_grid[i] = isnothing(e) ? NaN : Float32(e)
+  n_urban_grid[i] = isnothing(e) ? NaN32 : Float32(e)
 end
 ```
 
@@ -39,5 +39,5 @@ this done, we can show the results:
 
 ```@example urban
 using Plots
-heatmap(urban, c=:terrain)
+heatmap(urban, c=:berlin)
 ```

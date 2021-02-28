@@ -14,7 +14,6 @@ makedocs(
             "Overloads" => "man/overloads.md",
             "Other operations" => "man/operations.md",
             "Data" => "man/data.md",
-            "Plotting" => "man/plotting.md"
         ],
         "Examples" => [
             "Temperature data" => "examples/temperature.md",
@@ -23,6 +22,9 @@ makedocs(
             "Sliding window analysis" => "examples/slidingwindow.md",
             "Landcover data" => "examples/landcover.md",
             "Landcover consensus" => "examples/consensus.md"
+        ],
+        "Building SDMs" => [
+            "BIOCLIM from scratch" => "sdm/bioclim.md"
         ]
     ]
 )

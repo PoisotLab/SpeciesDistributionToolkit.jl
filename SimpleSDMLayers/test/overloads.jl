@@ -12,11 +12,10 @@ for i in eachindex(S)
    @test S[i] == M[i]
 end
 
-
 @test typeof(S[0.2, 0.6]) == eltype(M)
-@test isnan(S[1.2, 0.3])
-@test isnan(S[1.2, 1.3])
-@test isnan(S[0.2, 1.3])
+@test isnothing(S[1.2, 0.3])
+@test isnothing(S[1.2, 1.3])
+@test isnothing(S[0.2, 1.3])
 
 @test typeof(S[1:2, 5:7]) == typeof(S)
 
@@ -24,7 +23,7 @@ end
 @test S[left=0.2, right=0.6, bottom=0.5, top=1.0].top ≈ 1.0
 @test S[left=0.2, right=0.6, bottom=0.5, top=1.0].bottom ≈ 0.4
 @test S[left=0.2, right=0.6, bottom=0.5, top=1.0].right ≈ 0.6
-@test S[left=0.2, right=0.6, bottom=0.5, top=1.0].left ≈ 0.2
+@test S[left=0.19, right=0.6, bottom=0.5, top=1.0].left <= 0.2
 
 @test typeof(S[left=0.2, bottom=0.5]) == typeof(S)
 @test S[left=0.2, bottom=0.5].top ≈ 1.0
@@ -62,7 +61,10 @@ vl2 = vcat(l3, l4)
 @test all(vcat(ml1, ml2).grid == hcat(vl1, vl2).grid)
 
 # typed similar
-c2 = similar(Bool, l1)
-@test eltype(c2) == Union{Nothing,Bool}
+c2 = similar(l1, Bool)
+@test eltype(c2) == Bool
+
+@test eltype(convert(Int64, c2)) == Int64
+@test eltype(convert(Float32, c2)) == Float32
 
 end

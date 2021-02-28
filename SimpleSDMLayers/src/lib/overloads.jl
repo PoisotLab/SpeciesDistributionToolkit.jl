@@ -11,6 +11,21 @@ import Base: collect
 import Base.Broadcast: broadcast
 import Base: hcat
 import Base: vcat
+import Base: show
+
+"""
+    Base.show(io::IO, layer::T) where {T <: SimpleSDMLayer}
+
+Shows a textual representation of the layer.
+"""
+function Base.show(io::IO, layer::T) where {T <: SimpleSDMLayer}
+    itype = eltype(layer)
+    otype = T <: SimpleSDMPredictor ? "predictor" : "response"
+    print(io, """SDM $(otype) with $(itype) values
+    $(size(layer,1)) × $(size(layer,2))
+    lat.: $(extrema(latitudes(layer)))
+    lon.: $(extrema(longitudes(layer)))""")
+end
 
 """
     Base.convert(::Type{SimpleSDMResponse}, layer::T) where {T <: SimpleSDMPredictor}
@@ -31,6 +46,20 @@ function Base.convert(::Type{SimpleSDMPredictor}, layer::T) where {T <: SimpleSD
 end
 
 """
+    Base.convert(::Type{T}, layer::TL) where {T <: Number, TL <: SimpleSDMLayer}
+
+Returns a copy of the layer with the same type (response or predictor), but the
+element type has been changed to `T` (which must be a number). This function is
+*extremely useful* (required, in fact) for plotting, as the `nothing` values are
+changed to `NaN` in the heatmaps.
+"""
+function Base.convert(::Type{T}, layer::TL) where {T <: Number, TL <: SimpleSDMLayer}
+    new = similar(layer, T)
+    new.grid[.!isnothing.(layer.grid)] .= convert.(T, layer.grid[.!isnothing.(layer.grid)])
+    return new
+end
+
+"""
     Base.convert(::Type{Matrix}, layer::T) where {T <: SimpleSDMLayer}
 
 Returns the grid as an array.
@@ -40,43 +69,42 @@ function Base.convert(::Type{Matrix}, layer::T) where {T <: SimpleSDMLayer}
 end
 
 """
-    Base.eltype(layer::T) where {T <: SimpleSDMLayer}
+    Base.eltype(layer::SimpleSDMLayer{T}) where {T}
 
-Returns the type of the values stored in the grid.
+Returns the type of the values stored in the grid, where the `Nothing` type is
+omitted.
 """
-function Base.eltype(layer::T) where {T <: SimpleSDMLayer}
-   return eltype(layer.grid)
-end
+Base.eltype(::SimpleSDMResponse{T}) where {T} = T
+Base.eltype(::SimpleSDMPredictor{T}) where {T} = T
+
 
 """
     Base.size(layer::T) where {T <: SimpleSDMLayer}
 
 Returns the size of the grid.
 """
-function Base.size(layer::T) where {T <: SimpleSDMLayer}
-   return size(layer.grid)
-end
+Base.size(layer::T) where {T <: SimpleSDMLayer} = size(layer.grid)
+
 
 """
     Base.size(layer::T, i...) where {T <: SimpleSDMLayer}
 
 Returns the size of the grid alongside a dimension.
 """
+Base.size(layer::T, i...) where {T <: SimpleSDMLayer} = size(layer.grid, i...)
 
-function Base.size(layer::T, i...) where {T <: SimpleSDMLayer}
-   return size(layer.grid, i...)
-end
 
 """
     Base.stride(layer::T; dims::Union{Nothing,Integer}=nothing) where {T <: SimpleSDMLayer}
 
-Returns the stride, *i.e.* the length, of cell dimensions, possibly alongside a
-side of the grid.
+Returns the stride, *i.e.* half the length, of cell dimensions, possibly
+alongside a side of the grid. The first position is the length of the
+*longitude* cells, the second the *latitude*.
 """
 function Base.stride(layer::T; dims::Union{Nothing,Integer}=nothing) where {T <: SimpleSDMLayer}
-   lon_stride = (layer.right-layer.left)/size(layer, 2)/2.0
-   lat_stride = (layer.top-layer.bottom)/size(layer, 1)/2.0
-   dims == nothing && return (lon_stride, lat_stride)
+   lon_stride = (layer.right-layer.left)/2.0size(layer, 2)
+   lat_stride = (layer.top-layer.bottom)/2.0size(layer, 1)
+   isnothing(dims) && return (lon_stride, lat_stride)
    dims == 1 && return lon_stride
    dims == 2 && return lat_stride
 end
@@ -87,16 +115,14 @@ Base.stride(layer::T, i::Int) where {T<:SimpleSDMLayer} = stride(layer; dims=i)
 
 Returns the index of the grid.
 """
-function Base.eachindex(layer::T) where {T <: SimpleSDMLayer}
-   return eachindex(layer.grid)
-end
+Base.eachindex(layer::T) where {T <: SimpleSDMLayer} = eachindex(layer.grid)
+
 
 """
 Extracts a  value from a layer by its grid position.
 """
-function Base.getindex(layer::T, i::Int64) where {T <: SimpleSDMLayer}
-   return layer.grid[i]
-end
+Base.getindex(layer::T, i::Int64) where {T <: SimpleSDMLayer} = layer.grid[i]
+
 
 """
     Base.getindex(layer::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: UnitRange}
@@ -120,44 +146,45 @@ function Base.getindex(layer::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: Un
    RT = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
    return RT(
             layer.grid[i_fix,j_fix],
-            minimum(longitudes(layer)[j_fix])-stride(layer)[1],
-            maximum(longitudes(layer)[j_fix])+stride(layer)[1],
-            minimum(latitudes(layer)[i_fix])-stride(layer)[2],
-            maximum(latitudes(layer)[i_fix])+stride(layer)[2]
+            minimum(longitudes(layer)[j_fix])-stride(layer,1),
+            maximum(longitudes(layer)[j_fix])+stride(layer,1),
+            minimum(latitudes(layer)[i_fix])-stride(layer,2),
+            maximum(latitudes(layer)[i_fix])+stride(layer,2)
            )
 end
 
 """
-Given a layer and a latitude, returns NaN if the latitude is outside the
+Given a layer and a latitude, returns `nothing` if the latitude is outside the
 range, or the grid index containing this latitude if it is within range
 """
 function _match_latitude(layer::T, lat::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-   lat > layer.top && return NaN
-   lat < layer.bottom && return NaN
-   return findmin(abs.(lat .- latitudes(layer)))[2]
+   lat > layer.top && return nothing
+   lat < layer.bottom && return nothing
+   return last(findmin(abs.(lat .- latitudes(layer))))
 end
 
+
 """
-Given a layer and a longitude, returns NaN if the longitude is outside the
+Given a layer and a longitude, returns `nothing` if the longitude is outside the
 range, or the grid index containing this longitude if it is within range
 """
 function _match_longitude(layer::T, lon::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-   lon > layer.right && return NaN
-   lon < layer.left && return NaN
-   return findmin(abs.(lon .- longitudes(layer)))[2]
+   lon > layer.right && return nothing
+   lon < layer.left && return nothing
+   return last(findmin(abs.(lon .- longitudes(layer))))
 end
 
 """
     Base.getindex(layer::T, longitude::K, latitude::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
 
 Extracts the value of a layer at a given latitude and longitude. If values
-outside the range are requested, will return `NaN`.
+outside the range are requested, will return `nothing`.
 """
 function Base.getindex(layer::T, longitude::K, latitude::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
    i = _match_longitude(layer, longitude)
    j = _match_latitude(layer, latitude)
-   isnan(i) && return NaN
-   isnan(j) && return NaN
+   isnothing(i) && return nothing
+   isnothing(j) && return nothing
    return layer.grid[j, i]
 end
 
@@ -178,7 +205,8 @@ function Base.getindex(layer::T; left=nothing, right=nothing, top=nothing, botto
    imin = _match_longitude(layer, isnothing(left) ? layer.left : left)
    jmax = _match_latitude(layer, isnothing(top) ? layer.top : top)
    jmin = _match_latitude(layer, isnothing(bottom) ? layer.bottom : bottom)
-   any(isnan.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
+   any(isnothing.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
+   # Note that this is LATITUDE first
    return layer[jmin:jmax, imin:imax]
 end
 
@@ -233,24 +261,7 @@ function Base.setindex!(layer::SimpleSDMResponse{T}, v::T, lon::Float64, lat::Fl
 end
 
 """
-    Base.similar(l::T) where {T <: SimpleSDMLayer}
-
-Returns a `SimpleSDMResponse` of the same dimensions as the original layer, with
-`nothing` in the same positions. The rest of the values are replaced by the
-output of `zero(eltype(layer.grid))`, which implies that there must be a way to
-get a zero for the type. If not, the same result can always be achieved through
-the use of `copy`, manual update, and `convert`.
-"""
-function Base.similar(layer::T) where {T <: SimpleSDMLayer}
-   emptygrid = similar(layer.grid)
-   for i in eachindex(emptygrid)
-      emptygrid[i] = isnothing(layer.grid[i]) ? nothing : zero(eltype(layer.grid[i]))
-   end
-   return SimpleSDMResponse(emptygrid, layer.left, layer.right, layer.bottom, layer.top)
-end
-
-"""
-    Base.similar(::Type{TC}, l::T) where {TC <: Any, T <: SimpleSDMLayer}
+    Base.similar(layer::T, ::Type{TC}) where {TC <: Any, T <: SimpleSDMLayer}
 
 Returns a `SimpleSDMResponse` of the same dimensions as the original layer, with
 `nothing` in the same positions. The rest of the values are replaced by the
@@ -258,10 +269,24 @@ output of `zero(TC)`, which implies that there must be a way to get a zero for
 the type. If not, the same result can always be achieved through the use of
 `copy`, manual update, and `convert`.
 """
-function Base.similar(::Type{TC}, layer::T) where {TC <: Any, T <: SimpleSDMLayer}
+function Base.similar(layer::T, ::Type{TC}) where {TC <: Any, T <: SimpleSDMLayer}
    emptygrid = convert(Matrix{Union{Nothing,TC}}, zeros(TC, size(layer)))
    emptygrid[findall(isnothing, layer.grid)] .= nothing
    return SimpleSDMResponse(emptygrid, layer.left, layer.right, layer.bottom, layer.top)
+end
+
+
+"""
+    Base.similar(layer::T) where {T <: SimpleSDMLayer}
+
+Returns a `SimpleSDMResponse` of the same dimensions as the original layer, with
+`nothing` in the same positions. The rest of the values are replaced by the
+output of `zero(element_type)`, which implies that there must be a way to get a
+zero for the type. If not, the same result can always be achieved through the
+use of `copy`, manual update, and `convert`.
+"""
+function Base.similar(layer::T) where {T <: SimpleSDMLayer}
+   return similar(layer, eltype(layer))
 end
 
 """

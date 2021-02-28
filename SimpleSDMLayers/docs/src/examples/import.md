@@ -60,5 +60,5 @@ qmap = broadcast(qfunc, mp)
 Finally, we are ready for plotting:
 
 ```@example temp
-plot(qmap, frame=:grid, c=:YlGnBu)
+plot(qmap, frame=:grid, c=:cork, clim=(0,1))
 ```

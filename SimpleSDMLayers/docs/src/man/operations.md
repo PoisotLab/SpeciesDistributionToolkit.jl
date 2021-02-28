@@ -9,4 +9,5 @@ clip
 mask
 rescale!
 rescale
+mosaic
 ```

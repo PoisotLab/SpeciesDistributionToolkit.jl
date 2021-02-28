@@ -9,19 +9,17 @@ for a few occurrences of the kingfisher *Megaceryle alcyon*.
 using SimpleSDMLayers
 using GBIF
 using Plots
-using StatsPlots
-temperature = worldclim(1)
-precipitation = worldclim(12)
+using Statistics
+temperature, precipitation = worldclim([1,12])
 ```
 
 We can get some occurrences for the taxon of interest:
 
 ```@example temp
 kingfisher = GBIF.taxon("Megaceryle alcyon", strict=true)
-kf_occurrences = occurrences(kingfisher, "hasCoordinate" => "true")
+kf_occurrences = occurrences(kingfisher, "hasCoordinate" => "true", "decimalLatitude" => (0.0, 65.0), "decimalLongitude" => (-180.0, -50.0), "limit" => 200)
 
-# We will get some more occurrences
-for i in 1:9
+for i in 1:4
   occurrences!(kf_occurrences)
 end
 
@@ -64,63 +62,30 @@ We can also plot the records over space, using the overloads of the `latitudes`
 and `longitudes` functions:
 
 ```@example temp
-contour(precipitation_clip, c=:YlGnBu, title="Precipitation", frame=:box, fill=true)
-scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), lab="", c=:white, msc=:orange)
+contour(temperature_clip, c=:alpine, title="Precipitation", frame=:box, fill=true)
+scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), lab="", c=:white, msc=:orange, ms=2)
 ```
 
 These extensions of `SimpleSDMLayers` functions to work with the `GBIF` package
 are meant to greatly simplify the expression of more complex pipelines, notably
 for actual species distribution modeling.
 
-## DataFrames support
-
-Note that both `SimpleSDMLayers.jl` and `GBIF.jl` offer an (optional)
-integration with the `DataFrames.jl` package.
-Hence, the example above could also be approached with a `DataFrame`-centered
-workflow.
-
-For example, after getting occurrences through `GBIF.jl`, we can convert them
-to a `DataFrame`:
+We can finally make a layer with the number of observations per cells:
 
 ```@example temp
-using DataFrames
-kf_df = DataFrame(kf_occurrences);
-last(kf_df, 5)
+presabs = mask(precipitation_clip, kf_occurrences, Float32)
 ```
 
-We can then extract the temperature values for all the occurrences:
+Because the cells are rather small, and there are few observations, this is not
+necessarily going to be very informative - to get a better sense of the
+distribution of observations, we can get the average number of observations in a
+radius of 100km around each cell (we will do so for a zoomed-in part of the map
+to save time):
 
 ```@example temp
-temperature[kf_df]
+zoom = presabs[left=-100., right=-75.0, top=43.0, bottom=20.0]
+buffered = slidingwindow(zoom, Statistics.mean, 100.0)
+plot(buffered, c=:lapaz, legend=false, frame=:box)
+scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), lab="", c=:white, msc=:orange, ms=2, alpha=0.5)
 ```
 
-Or we can clip the layers according to the occurrences:
-
-```@example temp
-clip(temperature, kf_df)
-```
-
-We can also export all the values from a layer to a `DataFrame` with their
-corresponding coordinates: 
-
-```@example temp
-temperature_df = DataFrame(temperature_clip);
-last(temperature_df, 5)
-```
-
-Or do so with multiple layers at the same time:
-
-```@example temp
-climate_clip = [temperature_clip, precipitation_clip]
-climate_df = DataFrame(climate_clip);
-rename!(climate_df, :x1 => :temperature, :x2 => :precipitation);
-last(climate_df, 5)
-```
-
-We can finally plot the values in a similar way:
-
-```@example temp
-filter!(x -> !isnothing(x.temperature) && !isnothing(x.precipitation), climate_df);
-histogram2d(climate_df.temperature, climate_df.precipitation, c=:viridis)
-scatter!(temperature_clip[kf_df], precipitation_clip[kf_df], lab="", c=:white, msc=:orange)
-```

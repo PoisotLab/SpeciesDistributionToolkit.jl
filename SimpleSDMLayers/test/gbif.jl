@@ -24,4 +24,15 @@ end
 
 @test typeof(clip(temperature, o)) == typeof(temperature)
 
+clpred = clip(temperature, o)
+
+mbool = mask(clpred, o, Bool)
+@test eltype(mbool) == Bool
+
+mfloat = mask(clpred, o, Float64)
+@test eltype(mfloat) == Float64
+
+@test sum(mfloat) >= sum(mbool)
+@test sum(mfloat) == length(o)
+
 end

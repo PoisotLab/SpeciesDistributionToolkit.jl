@@ -5,11 +5,13 @@ global anyerrors = false
 
 tests = [
    "construction" => "construction.jl",
-   "ascii" => "ascii.jl",
    "basics" => "basics.jl",
+   "matching" => "matching.jl",
    "overloads" => "overloads.jl",
+   "ascii" => "ascii.jl",
    "iteration" => "iteration.jl",
    "rescale" => "rescale.jl",
+   "mosaic" => "mosaic.jl",
    "generated" => "generated.jl",
    "import" => "dataread.jl",
    "worldclim" => "worldclim.jl",

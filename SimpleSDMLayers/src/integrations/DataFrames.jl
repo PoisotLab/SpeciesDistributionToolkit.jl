@@ -13,8 +13,8 @@ function looks for columns named `:latitude` and `:longitude` by default, but
 these can be changed using the `latitude` and `longitude` arguments.
 """
 function Base.getindex(layer::T, df::DataFrames.DataFrame; latitude = :latitude, longitude = :longitude) where {T <: SimpleSDMLayer}
-    lats = df[:, latitude]
-    lons = df[:, longitude]
+    lats = df[!, latitude]
+    lons = df[!, longitude]
     return [layer[lon, lat] for (lon, lat) in zip(lons, lats)]
 end
 
@@ -27,8 +27,8 @@ Returns a clipped version (with a 10% margin) around all occurences in a
 `longitude` arguments.
 """
 function SimpleSDMLayers.clip(layer::T, df::DataFrames.DataFrame; latitude = :latitude, longitude = :longitude) where {T <: SimpleSDMLayer}
-   occ_latitudes = filter(!ismissing, df[:, latitude])
-   occ_longitudes = filter(!ismissing, df[:, longitude])
+   occ_latitudes = filter(!ismissing, df[!, latitude])
+   occ_longitudes = filter(!ismissing, df[!, longitude])
 
    lat_min = minimum(occ_latitudes)
    lat_max = maximum(occ_latitudes)
@@ -54,7 +54,7 @@ end
     DataFrames.DataFrame(layer::T) where {T <: SimpleSDMLayer}
 
 Returns a DataFrame from a `SimpleSDMLayer` element, with columns for latitudes,
-longitudes and grid values.
+longitudes and grid values. 
 """
 function DataFrames.DataFrame(layer::T; kw...) where {T <: SimpleSDMLayer}
     lats = repeat(latitudes(layer), outer = size(layer, 2))
@@ -95,8 +95,8 @@ for ty in (:SimpleSDMResponse, :SimpleSDMPredictor)
             changed using the `latitude` and `longitude` arguments.
             """
             function SimpleSDMLayers.$ty(df::DataFrames.DataFrame, col::Symbol, layer::SimpleSDMLayer; latitude::Symbol = :latitude, longitude::Symbol = :longitude)
-                lats = df[:, latitude]
-                lons = df[:, longitude]
+                lats = df[!, latitude]
+                lons = df[!, longitude]
             
                 uniquelats = unique(lats)
                 uniquelons = unique(lons)

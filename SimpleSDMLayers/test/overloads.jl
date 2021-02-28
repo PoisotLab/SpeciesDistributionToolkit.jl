@@ -61,7 +61,7 @@ vl2 = vcat(l3, l4)
 @test all(vcat(ml1, ml2).grid == hcat(vl1, vl2).grid)
 
 # typed similar
-c2 = similar(Bool, l1)
+c2 = similar(l1, Bool)
 @test eltype(c2) == Bool
 
 end

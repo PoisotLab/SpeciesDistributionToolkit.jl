@@ -248,24 +248,7 @@ function Base.setindex!(layer::SimpleSDMResponse{T}, v::T, lon::Float64, lat::Fl
 end
 
 """
-    Base.similar(l::T) where {T <: SimpleSDMLayer}
-
-Returns a `SimpleSDMResponse` of the same dimensions as the original layer, with
-`nothing` in the same positions. The rest of the values are replaced by the
-output of `zero(eltype(layer.grid))`, which implies that there must be a way to
-get a zero for the type. If not, the same result can always be achieved through
-the use of `copy`, manual update, and `convert`.
-"""
-function Base.similar(layer::T) where {T <: SimpleSDMLayer}
-   emptygrid = similar(layer.grid)
-   for i in eachindex(emptygrid)
-      emptygrid[i] = isnothing(layer.grid[i]) ? nothing : zero(eltype(layer.grid[i]))
-   end
-   return SimpleSDMResponse(emptygrid, layer.left, layer.right, layer.bottom, layer.top)
-end
-
-"""
-    Base.similar(::Type{TC}, l::T) where {TC <: Any, T <: SimpleSDMLayer}
+    Base.similar(layer::T, ::Type{TC}) where {TC <: Any, T <: SimpleSDMLayer}
 
 Returns a `SimpleSDMResponse` of the same dimensions as the original layer, with
 `nothing` in the same positions. The rest of the values are replaced by the
@@ -273,10 +256,24 @@ output of `zero(TC)`, which implies that there must be a way to get a zero for
 the type. If not, the same result can always be achieved through the use of
 `copy`, manual update, and `convert`.
 """
-function Base.similar(::Type{TC}, layer::T) where {TC <: Any, T <: SimpleSDMLayer}
+function Base.similar(layer::T, ::Type{TC}) where {TC <: Any, T <: SimpleSDMLayer}
    emptygrid = convert(Matrix{Union{Nothing,TC}}, zeros(TC, size(layer)))
    emptygrid[findall(isnothing, layer.grid)] .= nothing
    return SimpleSDMResponse(emptygrid, layer.left, layer.right, layer.bottom, layer.top)
+end
+
+
+"""
+    Base.similar(layer::T) where {T <: SimpleSDMLayer}
+
+Returns a `SimpleSDMResponse` of the same dimensions as the original layer, with
+`nothing` in the same positions. The rest of the values are replaced by the
+output of `zero(element_type)`, which implies that there must be a way to get a
+zero for the type. If not, the same result can always be achieved through the
+use of `copy`, manual update, and `convert`.
+"""
+function Base.similar(layer::T) where {T <: SimpleSDMLayer}
+   return similar(layer, eltype(layer))
 end
 
 """

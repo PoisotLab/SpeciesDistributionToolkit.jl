@@ -1,5 +1,5 @@
-_inner_type(l::SimpleSDMResponse{T}) where {T <: Any} = T
-_inner_type(l::SimpleSDMPredictor{T}) where {T <: Any} = T
+_inner_type(::SimpleSDMResponse{T}) where {T <: Any} = T
+_inner_type(::SimpleSDMPredictor{T}) where {T <: Any} = T
 
 """
     mask!(l1::T1, l2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}

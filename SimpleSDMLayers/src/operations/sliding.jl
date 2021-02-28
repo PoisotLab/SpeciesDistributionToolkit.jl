@@ -43,7 +43,7 @@ function slidingwindow(layer::LT, f::FT, d::IT) where {LT <: SimpleSDMLayer, FT 
     end
 
     for p1 in pixels
-        ok = filter(p2 -> haversine(p2.first, p1.first) < 100.0, pixels)
+        ok = filter(p2 -> haversine(p2.first, p1.first) < d, pixels)
         val = [p2.second for p2 in ok]
         N[p1.first...] = f(val)
     end

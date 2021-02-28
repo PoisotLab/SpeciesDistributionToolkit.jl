@@ -9,19 +9,17 @@ for a few occurrences of the kingfisher *Megaceryle alcyon*.
 using SimpleSDMLayers
 using GBIF
 using Plots
-using StatsPlots
-temperature = worldclim(1)
-precipitation = worldclim(12)
+using Statistics
+temperature, precipitation = worldclim([1,12])
 ```
 
 We can get some occurrences for the taxon of interest:
 
 ```@example temp
 kingfisher = GBIF.taxon("Megaceryle alcyon", strict=true)
-kf_occurrences = occurrences(kingfisher, "hasCoordinate" => "true")
+kf_occurrences = occurrences(kingfisher, "hasCoordinate" => "true", "decimalLatitude" => (0.0, 65.0), "decimalLongitude" => (-180.0, -50.0), "limit" => 200)
 
-# We will get some more occurrences
-for i in 1:9
+for i in 1:4
   occurrences!(kf_occurrences)
 end
 
@@ -64,31 +62,30 @@ We can also plot the records over space, using the overloads of the `latitudes`
 and `longitudes` functions:
 
 ```@example temp
-contour(precipitation_clip, c=:YlGnBu, title="Precipitation", frame=:box, fill=true)
-scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), lab="", c=:white, msc=:orange)
+contour(temperature_clip, c=:alpine, title="Precipitation", frame=:box, fill=true)
+scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), lab="", c=:white, msc=:orange, ms=2)
 ```
 
 These extensions of `SimpleSDMLayers` functions to work with the `GBIF` package
 are meant to greatly simplify the expression of more complex pipelines, notably
 for actual species distribution modeling.
 
+We can finally make a layer with the number of observations per cells:
+
 ```@example temp
-contour(precipitation_clip, c=:YlGnBu, title="Precipitation", frame=:box, fill=true)
-scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), lab="", c=:white, msc=:orange)
+presabs = mask(precipitation_clip, kf_occurrences, Float32)
 ```
 
-We can finally make a presence/absence map:
+Because the cells are rather small, and there are few observations, this is not
+necessarily going to be very informative - to get a better sense of the
+distribution of observations, we can get the average number of observations in a
+radius of 100km around each cell (we will do so for a zoomed-in part of the map
+to save time):
 
 ```@example temp
-presabs = mask(precipitation_clip, kf_occurrences)
-plot(presabs)
-```
-
-This can be useful if we want to add a buffer around the observations - for
-example, we can add a 50km buffer around all observations:
-
-```@example temp
-buffered = slidingwindow(presabs, maximum, 50.0)
-plot(buffered)
+zoom = presabs[left=-100., right=-75.0, top=43.0, bottom=20.0]
+buffered = slidingwindow(zoom, Statistics.mean, 100.0)
+plot(buffered, c=:lapaz, legend=false, frame=:box)
+scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), lab="", c=:white, msc=:orange, ms=2, alpha=0.5)
 ```
 

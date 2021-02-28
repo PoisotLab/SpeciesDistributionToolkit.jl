@@ -69,13 +69,20 @@ c2 = similar(l1, Bool)
 
 # replacement
 s1 = SimpleSDMResponse(collect(reshape(1:9, 3, 3)))
-replace!(s1, 1 => 2, 3 => 2)
+@test length(s1) == 9
+replace!(s1, 1 => 2, 3 => 2, 9 => nothing)
+@test length(s1) == 8
 @test s1.grid[1,1] == 2
-@test s1.grid[1,3] == 2
+@test s1.grid[3,1] == 2
+@test s1.grid[1,3] == 7
+@test isnothing(s1.grid[3,3])
 
 s1 = SimpleSDMPredictor(collect(reshape(1:9, 3, 3)))
-s2 = replace(s1, 1 => 2, 3 => 2)
+@test length(s1) == 9
+s2 = replace(s1, 1 => 2, 3 => 2, 9 => nothing)
+@test length(s2) == 8
 @test s2.grid[1,1] == 2
-@test s2.grid[1,3] == 2
+@test s2.grid[3,1] == 2
+@test s2.grid[1,3] == 7
 
 end

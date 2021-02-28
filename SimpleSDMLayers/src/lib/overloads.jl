@@ -391,7 +391,7 @@ Replaces the elements of `layer` according to a series of pairs. Copies the
 layer as a response before.
 """
 function Base.replace(layer::T, old_new::Pair...) where {T <: SimpleSDMPredictor}
-    destination = convert(SimpleSDMResponse, layer)
+    destination = SimpleSDMResponse(copy(layer.grid), layer)
     replace!(destination, old_new...)
     return destination
 end

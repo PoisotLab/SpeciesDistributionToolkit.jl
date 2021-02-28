@@ -18,6 +18,8 @@ eachindex
 getindex
 setindex!
 similar
+replace
+replace!
 Base.sum
 Base.maximum
 Base.minimum

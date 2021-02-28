@@ -67,4 +67,15 @@ c2 = similar(l1, Bool)
 @test eltype(convert(Int64, c2)) == Int64
 @test eltype(convert(Float32, c2)) == Float32
 
+# replacement
+s1 = SimpleSDMResponse(collect(reshape(1:9, 3, 3)))
+replace!(s1, 1 => 2, 3 => 2)
+@test s1[1,1] == 2
+@test s1[1,3] == 2
+
+s1 = SimpleSDMPredictor(collect(reshape(1:9, 3, 3)))
+s2 = replace(s1, 1 => 2, 3 => 2)
+@test s2[1,1] == 2
+@test s2[1,3] == 2
+
 end

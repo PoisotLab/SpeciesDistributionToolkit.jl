@@ -3,6 +3,8 @@ import Base: stride
 import Base: eachindex
 import Base: getindex
 import Base: setindex!
+import Base: replace
+import Base: replace!
 import Base: similar
 import Base: copy
 import Base: eltype
@@ -359,6 +361,39 @@ function Base.hcat(l1::T, l2::T) where {T <: SimpleSDMLayer}
     new_grid = hcat(l1.grid, l2.grid)
     RT = T <: SimpleSDMPredictor ? SimpleSDMPredictor : SimpleSDMResponse
     return RT(new_grid, l1.left, l2.right, l1.top, l1.bottom)
+end
+
+"""
+    Base.replace!(layer::T, old_new::Pair...) where {T <: SimpleSDMResponse}
+
+Replaces the elements of `layer` according to a series of pairs. In place.
+"""
+function Base.replace!(layer::T, old_new::Pair...) where {T <: SimpleSDMResponse}
+    replace!(layer.grid, old_new...)
+    return layer
+end
+
+"""
+    Base.replace(layer::T, old_new::Pair...) where {T <: SimpleSDMResponse}
+
+Replaces the elements of `layer` according to a series of pairs. Returns a copy.
+"""
+function Base.replace(layer::T, old_new::Pair...) where {T <: SimpleSDMResponse}
+    destination = copy(layer)
+    replace!(destination, old_new...)
+    return destination
+end
+
+"""
+    Base.replace!(layer::T, old_new::Pair...) where {T <: SimpleSDMResponse}
+
+Replaces the elements of `layer` according to a series of pairs. Copies the
+layer as a response before.
+"""
+function Base.replace(layer::T, old_new::Pair...) where {T <: SimpleSDMPredictor}
+    destination = convert(SimpleSDMResponse, layer)
+    replace!(destination, old_new...)
+    return destination
 end
 
 """

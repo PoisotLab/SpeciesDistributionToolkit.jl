@@ -19,7 +19,7 @@ doesn't matter), but you can generally specify other names with `latitude =
 
 So let's start by getting our data:
 
-```julia
+```@example dataframes
 # Load packages
 using SimpleSDMLayers
 using GBIF
@@ -49,14 +49,14 @@ Once the data is loaded, we can easily convert the environmental layers to a
 `DataFrame` with the corresponding coordinates. We can do this for a single
 layer:
 
-```julia
+```@example dataframes
 temperature_df = DataFrame(temperature)
 first(temperature_df, 5)
 ```
 
 Or for multiple layers at the same time:
 
-```julia
+```@example dataframes
 env_layers = [temperature, precipitation]
 env_df = DataFrame(env_layers)
 rename!(env_df, :x1 => :temperature, :x2 => :precipitation)
@@ -66,20 +66,20 @@ first(env_df, 5)
 `GBIF.jl` allows us to convert a set of occurrences to a `DataFrame` just as
 easily:
 
-```julia
+```@example dataframes
 kf_df = DataFrame(kf_occurrences)
 last(kf_df, 5)
 ```
 
 We can then extract the temperature values for all the occurrences.
 
-```julia
+```@example dataframes
 temperature[kf_df]
 ```
 
 Or we can clip the layers according to the occurrences:
 
-```julia
+```@example dataframes
 temperature_clip = clip(temperature, kf_df)
 precipitation_clip = clip(precipitation, kf_df)
 ```
@@ -87,7 +87,7 @@ precipitation_clip = clip(precipitation, kf_df)
 In case your `DataFrame` has different column names for the coordinates, for
 example `:lat` and `:lon`, you can clip it like this:
 
-```julia
+```@example dataframes
 kf_df_shortnames = rename(kf_df, :latitude => :lat, :longitude => :lon)
 clip(temperature, kf_df_shortnames; latitude = :lat, longitude = :lon)
 ```
@@ -96,7 +96,7 @@ We can finally plot the layer and occurrence values in a similar way to any
 `DataFrame` or `Array`. Since there are often many `nothing` values in
 the layers, it might be necessary to use `filter!` first:
 
-```julia
+```@example dataframes
 filter!(x -> !isnothing(x.temperature) && !isnothing(x.precipitation), env_df);
 histogram2d(env_df.temperature, env_df.precipitation, c = :viridis)
 scatter!(temperature_clip[kf_df], precipitation_clip[kf_df], 
@@ -105,7 +105,7 @@ scatter!(temperature_clip[kf_df], precipitation_clip[kf_df],
 
 To plot the occurrence values over space, you can use:
 
-```julia
+```@example dataframes
 contour(temperature_clip, c = :alpine, title = "Temperature", 
         frame = :box, fill = true)
 scatter!(kf_df.longitude, kf_df.latitude, 
@@ -114,7 +114,7 @@ scatter!(kf_df.longitude, kf_df.latitude,
 
 We can finally make a layer with the number of observations per cells:
 
-```julia
+```@example dataframes
 abundance = mask(precipitation_clip, kf_occurrences, Float32)
 ```
 
@@ -125,7 +125,7 @@ to first plot a background layer with a uniform colour, covering the whole area
 to visualize, then plot the occurrence layer on top using a different colour
 scale.
 
-```julia
+```@example dataframes
 abundance_nozeros = replace(abundance, 0 => nothing)
 plot(precipitation_clip, c = :lightgrey)
 plot!(abundance_nozeros, c = :viridis, clim = extrema(abundance_nozeros))
@@ -137,7 +137,7 @@ get a better sense of the distribution of observations, we can get the average
 number of observations in a radius of 100km around each cell (we will do so for
 a zoomed-in part of the map to save time):
 
-```julia
+```@example dataframes
 zoom = abundance[left = -100.0, right = -75.0, top = 43.0, bottom = 20.0]
 buffered = slidingwindow(zoom, Statistics.mean, 100.0)
 plot(buffered, c = :lapaz, legend = false, frame = :box)

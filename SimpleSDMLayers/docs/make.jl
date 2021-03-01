@@ -18,6 +18,7 @@ makedocs(
         "Examples" => [
             "Temperature data" => "examples/temperature.md",
             "GBIF integration" => "examples/gbif.md",
+            "DataFrames integration" => "examples/dataframes.md",
             "Importing raster data" => "examples/import.md",
             "Sliding window analysis" => "examples/slidingwindow.md",
             "Landcover data" => "examples/landcover.md",

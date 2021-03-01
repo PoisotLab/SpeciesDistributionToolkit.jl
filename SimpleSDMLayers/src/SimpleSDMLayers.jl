@@ -72,11 +72,11 @@ export clip
 function __init__()
     @require GBIF="ee291a33-5a6c-5552-a3c8-0f29a1181037" begin
         @info "GBIF integration loaded"
-        include(joinpath(dirname(pathof(SimpleSDMLayers)), "integrations", "GBIF.jl"))
+        include("integrations/GBIF.jl")
     end
     @require DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0" begin
         @info "DataFrames integration loaded"
-        include(joinpath(dirname(pathof(SimpleSDMLayers)), "integrations", "DataFrames.jl"))
+        include("integrations/DataFrames.jl")
     end
 
 end

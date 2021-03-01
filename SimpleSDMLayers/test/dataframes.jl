@@ -21,4 +21,13 @@ temperature_clip = clip(temperature, df)
 @test typeof(SimpleSDMPredictor(df, :values, temperature_clip)) <: SimpleSDMLayer
 @test typeof(SimpleSDMPredictor(df, :values, temperature_clip)) <: SimpleSDMPredictor
 
+mbool = mask(temperature_clip, df, Bool)
+@test eltype(mbool) == Bool
+
+mfloat = mask(temperature_clip, df, Float64)
+@test eltype(mfloat) == Float64
+
+@test sum(mfloat) >= sum(mbool)
+@test sum(mfloat) == nrow(df)
+
 end

@@ -47,20 +47,24 @@ end
 
 Once the data is loaded, we can easily convert the environmental layers to a
 `DataFrame` with the corresponding coordinates. We can do this for a single
-layer:
+layer or for multiple layers at the same time:
 
 ```@example dataframes
+# Single layer
 temperature_df = DataFrame(temperature)
-first(temperature_df, 5)
-```
-
-Or for multiple layers at the same time:
-
-```@example dataframes
+# Multiple layers
 env_layers = [temperature, precipitation]
 env_df = DataFrame(env_layers)
 rename!(env_df, :x1 => :temperature, :x2 => :precipitation)
 first(env_df, 5)
+```
+
+Note that the resulting `DataFrame` will include the values set to `nothing` in
+the layers. We might want to remove those rows using `filter!`:
+
+```@example dataframes
+filter!(x -> !isnothing(x.temperature) && !isnothing(x.precipitation), env_df);
+last(env_df, 5)
 ```
 
 `GBIF.jl` allows us to convert a set of occurrences to a `DataFrame` just as
@@ -93,12 +97,10 @@ clip(temperature, kf_df_shortnames; latitude = :lat, longitude = :lon)
 ```
 
 We can finally plot the layer and occurrence values in a similar way to any
-`DataFrame` or `Array`. Since there are often many `nothing` values in
-the layers, it might be necessary to use `filter!` first:
+`DataFrame` or `Array`.
 
 ```@example dataframes
-filter!(x -> !isnothing(x.temperature) && !isnothing(x.precipitation), env_df);
-histogram2d(env_df.temperature, env_df.precipitation, c = :viridis)
+histogram2d(temperature_clip, precipitation_clip, c = :viridis)
 scatter!(temperature_clip[kf_df], precipitation_clip[kf_df], 
          lab= "", c = :white, msc = :orange)
 ```

@@ -87,6 +87,15 @@ function Base.getindex(layer::T, records::GBIF.GBIFRecords) where {T <: SimpleSD
 end
 
 """
+    Base.getindex(layer::T, records::Vector{GBIF.GBIFRecord}) where {T <: SimpleSDMLayer}
+
+Returns the values of a layer at all occurrences in a `GBIFRecord` array.
+"""
+function Base.getindex(layer::T, records::Vector{GBIF.GBIFRecord}) where {T <: SimpleSDMLayer}
+   return [layer[record] for record in records]
+end
+
+"""
     mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: AbstractBool}
 
 Fills a layer (most likely created with `similar`) so that the values are `true`
@@ -94,7 +103,9 @@ if an occurrence is found in the cell, `false` if not.
 """
 function mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Bool}
     for record in records
-        layer[record] = true
+        if !isnothing(layer[record])
+            layer[record] = true
+        end
     end
     return layer
 end
@@ -107,7 +118,9 @@ the number of occurrences in the cell.
 """
 function mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Number}
     for record in records
-        layer[record] = layer[record] + one(T)
+        if !isnothing(layer[record])
+            layer[record] = layer[record] + one(T)
+        end
     end
     return layer
 end

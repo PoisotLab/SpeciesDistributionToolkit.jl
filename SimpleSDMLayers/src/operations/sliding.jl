@@ -39,7 +39,7 @@ function slidingwindow(layer::LT, f::FT, d::IT) where {LT <: SimpleSDMLayer, FT 
     # Store latitudes and longitudes
     _lat, _lon = latitudes(layer), longitudes(layer)
 
-    # Pre-allocation of a vector of pairs containing the pixel and the 
+    # Vector of all positions with a value
     filled_positions = CartesianIndices(layer.grid)[findall(!isnothing, layer.grid)]
 
     # We then filter in the occupied positions

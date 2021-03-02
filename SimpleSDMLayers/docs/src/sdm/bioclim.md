@@ -31,8 +31,8 @@ the bounding box for the observations - just to make sure that we will have
 something large enough, we will add a 2 degrees padding around it:
 
 ```@example bioclim
-left, right = extrema([o.longitude for o in obs]) .+ (-2,2)
-bottom, top = extrema([o.latitude for o in obs]) .+ (-2,2)
+left, right = extrema([o.longitude for o in obs]) .+ (-5,5)
+bottom, top = extrema([o.latitude for o in obs]) .+ (-5,5)
 ```
 
 With this information in hand, we can start getting our variables. In this
@@ -40,7 +40,8 @@ example, we will take all worldclim data, at the default 10 arc minute
 resolution:
 
 ```@example bioclim
-predictors = worldclim(1:19; left=left, right=right, bottom=bottom, top=top)
+predictors = worldclim(1:19; left=left, right=right, bottom=bottom, top=top);
+first(predictors)
 ```
 
 The point of BIOCLIM (the model, not the dataset) is that the score assigned to
@@ -49,7 +50,7 @@ therefore, we need to measure the cumulative density function for every pixel in
 every variable.
 
 ```@example bioclim
-_pixel_score(x) = x > 0.5 ? 1.0-x : 2.0x
+_pixel_score(x) = 2.0(x > 0.5 ? 1.0-x : x)
 
 function SDM(layer::T, observations::GBIFRecords) where {T <: SimpleSDMLayer}
     qf = ecdf(layer[observations]) # We only want the observed values
@@ -88,13 +89,22 @@ Just because we may want to visualize this result in a transformed way, *i.e.*
 by looking at the quantiles of suitability, we can call the `rescale!` function:
 
 ```@example bioclim
-rescale!(prediction, collect(0.0:0.1:1.0))
+rescale!(prediction, collect(0.0:0.01:1.0))
+```
+
+As this map now represents the quantiles of suitability, we may want to remove
+the lower 5%. For this, we need to create a boolean mask, which we can do by
+broadcasting a conditional:
+
+```@example bioclim
+cutoff = broadcast(x -> x > 0.05, prediction)
 ```
 
 This map can be plotted as we would normally do:
 
 ```@example bioclim
-plot(prediction, frame=:box, clim=(0,1), c=:bamako)
+plot(prediction, frame=:box, c=:lightgrey) # Just plot a uniform background
+plot!(mask(cutoff, predcition), clim=(0,1), c=:bamako)
 scatter!([(o.longitude, o.latitude) for o in obs], ms=4, c=:orange, lab="")
 xaxis!("Longitude")
 yaxis!("Latitude")

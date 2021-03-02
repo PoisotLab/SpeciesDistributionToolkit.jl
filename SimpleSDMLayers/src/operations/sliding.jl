@@ -29,7 +29,7 @@ have data.
 This function is currently relatively slow. Performance improvements will arrive
 at some point.
 """
-function slidingwindow(layer::LT, f::FT, d::IT; threaded::Bool=true) where {LT <: SimpleSDMLayer, FT <: Function, IT <: Number}
+function slidingwindow(layer::LT, f::FT, d::IT; threaded::Bool=Threads.nthreads()>1) where {LT <: SimpleSDMLayer, FT <: Function, IT <: Number}
     # We infer the return type from a call to the function on the first three elements
     return_type = typeof(f(collect(layer)[1:min(3, length(layer))]))
 
@@ -44,12 +44,12 @@ function slidingwindow(layer::LT, f::FT, d::IT; threaded::Bool=true) where {LT <
 
     # We then filter in the occupied positions
     if threaded
-        for pos in filled_positions
+        Threads.@threads for pos in filled_positions
             neighbors = filter(p -> haversine((_lon[Tuple(pos)[2]], _lat[Tuple(pos)[1]]), (_lon[Tuple(p)[2]], _lat[Tuple(p)[1]])) < d, filled_positions)
             N.grid[pos] = f(layer.grid[neighbors])
         end
     else
-        Threads.@threads for pos in filled_positions
+        for pos in filled_positions
             neighbors = filter(p -> haversine((_lon[Tuple(pos)[2]], _lat[Tuple(pos)[1]]), (_lon[Tuple(p)[2]], _lat[Tuple(p)[1]])) < d, filled_positions)
             N.grid[pos] = f(layer.grid[neighbors])
         end

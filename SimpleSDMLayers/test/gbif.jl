@@ -10,7 +10,7 @@ kingfisher = GBIF.taxon("Megaceryle alcyon", strict=true)
 o = GBIF.occurrences(kingfisher, "hasCoordinate" => "true")
 
 # Array of occurrences is the same thing as occurrences collection
-@test temperature[o] == temperature[o.occurrences]
+@test temperature[o] == temperature[o.occurrences[1:length(o)]]
 
 # Extract from a single record
 for oc in o

@@ -20,7 +20,7 @@ obs = occurrences(
     "continent" => "EUROPE",
     "limit" => 50
 )
-while length(obs) < 500
+while length(obs) < min(2000, size(obs))
     occurrences!(obs)
 end
 ```

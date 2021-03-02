@@ -103,8 +103,8 @@ cutoff = broadcast(x -> x > 0.05, prediction)
 This map can be plotted as we would normally do:
 
 ```@example bioclim
-plot(prediction, frame=:box, c=:lightgrey) # Just plot a uniform background
-plot!(mask(cutoff, predcition), clim=(0,1), c=:bamako)
+plot(prediction, frame=:box, c=:lightgrey) # Plot a uniform background
+plot!(mask(cutoff, prediction), clim=(0,1), c=:bamako)
 scatter!([(o.longitude, o.latitude) for o in obs], ms=4, c=:orange, lab="")
 xaxis!("Longitude")
 yaxis!("Latitude")

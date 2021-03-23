@@ -50,7 +50,6 @@ function ascii(layer::SimpleSDMPredictor{T}, file::AbstractString; nodata::T=con
         write(io, "cellsize $(stride(layer)[1])\n")
         write(io, "xllcorner $(layer.left)\n")
         write(io, "yllcorner $(layer.bottom)\n")
-        write(io, "yllcorner $(layer.bottom)\n")
         write(io, "nodata_value $(nodata)\n")
         for row in reverse(1:size(layer.grid, 1))
             for el in layer.grid[row,:]

@@ -22,39 +22,18 @@ geotiff file, where values are floating point numbers representing connectivity.
 file = joinpath(dirname(pathof(SimpleSDMLayers)), "..", "data", "connectivity.tiff")
 ```
 
-To import this file as a `SimpleSDMLayer`, we need to create a type
-(`MyConnectivityMap`), and declare a method for `latitudes` and `longitudes` for
-this type, where the output is the range of latitudes and longitudes. This might
-seem cumbersome, but remember: it can be automated, and if you do not declare a
-`latitude` and `longitude` method, it will be assumed that the raster covers the
-entire globe. From a end-user perspective, it also removes the need to pass the
-bounding box of your layer as an argument, and to focus instead of the region of
-interest.
+To import this file as a `SimpleSDMLayer`, we need to call the `geotiff`
+function, which assumes a WGS84 projection:
 
 ```@example temp
-struct MyConnectivityMap <: SimpleSDMLayers.SimpleSDMSource end
-SimpleSDMLayers.latitudes(::Type{MyConnectivityMap}) = (45.34523, 47.38457)
-SimpleSDMLayers.longitudes(::Type{MyConnectivityMap}) = (-75.17734,-72.36486)
-```
-
-Now that this is done, we can read this file as a `SimpleSDMResponse` using the
-`raster` function:
-
-```@example temp
-mp = SimpleSDMLayers.raster(SimpleSDMResponse, MyConnectivityMap(), file)
+mp = geotiff(SimpleSDMPredictor, file)
 ```
 
 Because this file has raw values, which are not necessarily great for plotting,
-we will transform it to quantiles, using the `StatsBase.ecdf` function.
+we will transform it to quantiles, using the `rescale` function.
 
 ```@example temp
-qfunc = ecdf(convert(Vector{Float64}, filter(!isnothing, mp.grid)))
-```
-
-And we can now broadcast this function to the layer:
-
-```@example temp
-qmap = broadcast(qfunc, mp)
+qmap = rescale!(mp, collect(0.0:0.01:1.0))
 ```
 
 Finally, we are ready for plotting:

@@ -68,19 +68,17 @@ are immutable.
 
 ### Bioclimatic data
 
-#### WorldClim 2.1
-
-The `worldclim` function will get a range, or an array of indices, and return
-the corresponding bioclim 2.1 layers at the specified `resolution`. For
-example, to get the annual temperature, and annual precipitation:
-
-~~~ julia
-temperature, precipitation = worldclim([1,12])
-~~~
-
-By default, the function will return the layers for the entire globe, and they
-can be cropped later. The layers are returned as `SimpleSDMPredictor` objects.
-
+| Data provider | Dataset                | Layers | Source                             | Future models | Future scenarios             |
+| ------------- | ---------------------- | ------ | ---------------------------------- | ------------- | ---------------------------- |
+| `EarthEnv`    | `Landcover`            | 12     | [EarthEnv][earthenv-landcover]     |               |                              |
+| `EarthEnv`    | `HabitatHeterogeneity` | 14     | [EarthEnv][earthenv-texture]       |               |                              |
+| `WorldClim`   | `BioClim`              | 19     | [WorldClim 2.1][worldclim-current] | `CMIP6`       | `SharedSocioeconomicPathway` |
+| `CHELSA`      | `BioClim`              | 12     | [CHELSA][chelsa-bioclim]           |               |                              |
+ 
+[earthenv-landcover]: http://www.earthenv.org/landcover
+[earthenv-texture]: http://www.earthenv.org/texture
+[worldclim-current]: https://www.worldclim.org/data/worldclim21.html
+[chelsa-bioclim]: http://chelsa-climate.org/
 
 ### Plotting
 

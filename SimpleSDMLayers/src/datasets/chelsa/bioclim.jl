@@ -1,3 +1,8 @@
+function SimpleSDMPredictor(::Type{CHELSA}, ::Type{BioClim}, layer::Integer=1; kwargs...)
+    file = _get_raster(CHELSA, BioClim, layer)
+    return geotiff(SimpleSDMPredictor, file; kwargs...)
+end
+
 """
     bioclim(layer::Integer; left=nothing, right=nothing, bottom=nothing, top=nothing)
 

@@ -20,6 +20,10 @@ U = SimpleSDMLayers.ascii("test.asc")
 @test S.top == U.top
 @test size(S) == size(U)
 
+geotiff(U, "test.tiff")
+@test isfile("test.tiff")
+
 rm("test.asc")
+rm("test.tiff")
 
 end

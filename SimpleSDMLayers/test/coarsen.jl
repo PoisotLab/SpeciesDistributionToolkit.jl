@@ -17,7 +17,7 @@ M = SimpleSDMResponse(["a" nothing "b" "c"; "d" "e" "f" "g"; "d" "e" nothing "g"
 @test coarsen(M, x -> reduce(*, x), (2,2)).grid == ["ade" "bfcg"; "dex" "ygz"]
 
 # Should work on a real-world example for a series of functions
-temperature = SimpleSDMResponse(WorldClim, BioClim, 1)
+temperature = SimpleSDMPredictor(WorldClim, BioClim, 1)
 for f in [minimum, maximum, mean, median]
     t_coarse = coarsen(temperature, f, (10, 10))
     @test typeof(t_coarse) <: SimpleSDMPredictor

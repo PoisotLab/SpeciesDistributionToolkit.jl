@@ -65,3 +65,11 @@ function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, mod::CMIP6, fut:
     file = _get_raster(WorldClim, BioClim, mod, fut, resolution, year)
     return geotiff(SimpleSDMPredictor, file, layer; kwargs...)
 end
+
+function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, mod::CMIP6, fut::SharedSocioeconomicPathway, layers::Vector{T}; kwargs...) where {T <: Integer}
+    return [SimpleSDMPredictor(WorldClim, BioClim, mod, fut, l; kwargs...) for l in layers]
+end
+
+function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, mod::CMIP6, fut::SharedSocioeconomicPathway, layers::UnitRange{T}; kwargs...) where {T <: Integer}
+    return SimpleSDMPredictor(WorldClim, BioClim, mod, fut, collect(layers); kwargs...)
+end

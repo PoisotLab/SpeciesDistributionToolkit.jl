@@ -26,6 +26,13 @@ export geotiff
 include(joinpath("datasets", "types.jl"))
 export WorldClim, CHELSA, EarthEnv
 export BioClim, LandCover, HabitatHeterogeneity
+export CMIP6, SharedSocioeconomicPathway
+for s in instances(CMIP6)
+    @eval export $(Symbol(s))
+end
+for s in instances(SharedSocioeconomicPathway)
+    @eval export $(Symbol(s))
+end 
 
 include(joinpath("datasets", "chelsa", "download.jl"))
 include(joinpath("datasets", "chelsa", "bioclim.jl"))

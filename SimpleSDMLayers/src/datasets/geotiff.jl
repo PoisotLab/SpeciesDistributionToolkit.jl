@@ -19,7 +19,8 @@ The first argument is the type of the `SimpleSDMLayer` to be returned.
 """
 function geotiff(
     ::Type{LT},
-    file::AbstractString;
+    file::AbstractString,
+    bandnumber::Integer=1;
     left = -180.0,
     right = 180.0,
     bottom = -90.0,
@@ -36,9 +37,8 @@ function geotiff(
         wkt = ArchGDAL.getproj(dataset)
 
         # The data we need is pretty much always going to be stored in the first
-        # band, so this is what we will get for now. Note that this is not
-        # reading the data yet, just retrieving the metadata.
-        band = ArchGDAL.getband(dataset, 1)
+        # band, but this is not the case for the future WorldClim data.
+        band = ArchGDAL.getband(dataset, bandnumber)
         T = ArchGDAL.pixeltype(band)
         nodata = convert(T, ArchGDAL.getnodatavalue(band))
 
@@ -71,7 +71,7 @@ function geotiff(
 
         # We are now ready to initialize a matrix of the correct type.
         buffer = Matrix{T}(undef, length(min_width:max_width), length(min_height:max_height))
-        ArchGDAL.read!(dataset, buffer, 1, min_height:max_height, min_width:max_width)
+        ArchGDAL.read!(dataset, buffer, bandnumber, min_height:max_height, min_width:max_width)
         buffer = convert(Matrix{Union{Nothing,eltype(buffer)}}, rotl90(buffer))
         replace!(buffer, nodata => nothing)
         LT(buffer, left_pos-0.5lon_stride, right_pos+0.5lon_stride, bottom_pos-0.5lat_stride, top_pos+0.5lat_stride)

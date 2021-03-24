@@ -6,7 +6,6 @@ function _get_raster(::Type{WorldClim}, ::Type{BioClim}, layer::Integer, resolut
     path = joinpath(SimpleSDMLayers._layers_assets_path, _rasterpath(WorldClim), _rasterpath(BioClim), res[resolution])
     isdir(path) || mkpath(path)
 
-
     output_file = joinpath(path, "wc2.1_$(res[resolution])m_bio_$(layer).tif")
     zip_file = joinpath(path, "bioclim_2.1_$(res[resolution])m.zip")
 
@@ -30,4 +29,31 @@ function _get_raster(::Type{WorldClim}, ::Type{BioClim}, layer::Integer, resolut
     end
 
     return joinpath(path, file_to_read.name)
+end
+
+function _get_raster(::Type{WorldClim}, ::Type{BioClim}, mod::CMIP6, fut::SharedSocioeconomicPathway, resolution=10.0, year="2021-2040")
+    res = Dict(2.5 => "2.5", 5.0 => "5", 10.0 => "10")
+
+    path = joinpath(SimpleSDMLayers._layers_assets_path, _rasterpath(WorldClim), _rasterpath(BioClim), _rasterpath(mod), _rasterpath(fut), year, res[resolution])
+    isdir(path) || mkpath(path)
+
+    zip_file = joinpath(path, "$(res[resolution])m_$(_rasterpath(mod))_$(_rasterpath(fut)).zip")
+    if !isfile(path)
+        if !isfile(zip_file)
+            root = "https://biogeo.ucdavis.edu/data/worldclim/v2.1/fut/"
+            stem = "$(res[resolution])m/wc2.1_$(res[resolution])m_bioc_$(_rasterpath(mod))_$(_rasterpath(fut))_$(year).zip"
+            r = HTTP.request("GET", root * stem)
+            open(zip_file, "w") do f
+                write(f, String(r.body))
+            end
+        end
+        zf = ZipFile.Reader(zip_file)
+        file_to_read = only(zf.files)
+        if !isfile(joinpath(path, "stack.tif"))
+            write(joinpath(path, "stack.tif"), read(file_to_read))
+        end
+        close(zf)
+    end
+
+    return joinpath(path, "stack.tif")
 end

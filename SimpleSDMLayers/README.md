@@ -80,6 +80,10 @@ are immutable.
 [worldclim-current]: https://www.worldclim.org/data/worldclim21.html
 [chelsa-bioclim]: http://chelsa-climate.org/
 
+When downloaded (using `SimpleSDMPredictor`), the layers are stored either in an
+`assets` subfolder of the current project (strongly advised against), or at the
+location determined by the `SDMLAYERS_PATH` environment variable.
+
 ### Plotting
 
 Using the `Plots` package, one can call the `heatmap`, `contour`, `density`

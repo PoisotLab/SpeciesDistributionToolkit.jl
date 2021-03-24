@@ -119,8 +119,9 @@ function geotiff(layer::SimpleSDMPredictor{T}, file::AbstractString; nodata::T=c
         # Write !
         ArchGDAL.write(dataset, file, driver=ArchGDAL.getdriver("GTiff"), options=["COMPRESS=LZW"])
     end
+    return file
 end
 
 function geotiff(layer::SimpleSDMResponse{T}, file::AbstractString; nodata::T=convert(T, -9999)) where {T <: Number}
-    geotiff(convert(SimpleSDMPredictor, layer), file; nodata=nodata)
+    return geotiff(convert(SimpleSDMPredictor, layer), file; nodata=nodata)
 end

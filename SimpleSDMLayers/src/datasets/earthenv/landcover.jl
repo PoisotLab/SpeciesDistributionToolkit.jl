@@ -41,9 +41,15 @@ keeping the models stored is particularly important.
 
 These data are released under a CC-BY-NC license to Tuanmu & Jetz.
 """
-function landcover(layer::Integer; full::Bool=false, left=nothing, right=nothing, bottom=nothing, top=nothing)
-    return raster(SimpleSDMPredictor, EarthEnv(full), layer=layer, left=left, right=right, bottom=bottom, top=top)
+function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{LandCover}, layer::Integer=1; full::Bool=false, kwargs...)
+    file = _get_raster(EarthEnv, LandCover, layer, full)
+    return geotiff(SimpleSDMPredictor, file; kwargs...)
 end
 
-landcover(layers::Vector{T}; args...) where {T <: Integer} = [landcover(l; args...) for l in layers]
-landcover(layers::UnitRange{T}; args...) where {T <: Integer} = [landcover(l; args...) for l in layers]
+function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{LandCover}, layers::Vector{T}; kwargs...) where {T <: Integer}
+    return [SimpleSDMPredictor(EarthEnv, LandCover, l; kwargs...) for l in layers]
+end
+
+function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{LandCover}, layers::UnitRange{T}; kwargs...) where {T <: Integer}
+    return SimpleSDMPredictor(EarthEnv, LandCover, collect(layers); kwargs...)
+end

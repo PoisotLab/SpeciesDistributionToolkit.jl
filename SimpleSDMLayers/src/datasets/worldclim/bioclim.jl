@@ -1,5 +1,5 @@
 """
-    worldclim(layer::Integer; resolution::Float64=10.0, left=nothing, right=nothing, bottom=nothing, top=nothing)
+    SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, layer::Integer=1; resolution::Float64=10.0, left=nothing, right=nothing, bottom=nothing, top=nothing)
 
 Download and prepare a WorldClim 2.1 bioclimatic variable, and returns it as an
 `SimpleSDMPredictor`. Layers are called by their number, from 1 to 19. The list
@@ -42,9 +42,16 @@ will be much faster.
 
 Original data: https://www.worldclim.org/data/worldclim21.html
 """
-function worldclim(layer::Integer; resolution::Float64=10.0, left=nothing, right=nothing, bottom=nothing, top=nothing)
-    return raster(SimpleSDMPredictor, WorldClim(resolution), layer=layer, left=left, right=right, bottom=bottom, top=top)
+function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, layer::Integer=1; resolution::Float64=10.0, kwargs...)
+    @assert resolution in [2.5, 5.0, 10.0]
+    file = _get_raster(WorldClim, BioClim, layer, resolution)
+    return geotiff(SimpleSDMPredictor, file; kwargs...)
 end
 
-worldclim(layers::Vector{T}; args...) where {T <: Integer} = [worldclim(l; args...) for l in layers]
-worldclim(layers::UnitRange{T}; args...) where {T <: Integer} = [worldclim(l; args...) for l in layers]
+function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, layers::Vector{T}; kwargs...) where {T <: Integer}
+    return [SimpleSDMPredictor(WorldClim, BioClim, l; kwargs...) for l in layers]
+end
+
+function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, layers::UnitRange{T}; kwargs...) where {T <: Integer}
+    return SimpleSDMPredictor(WorldClim, BioClim, collect(layers); kwargs...)
+end

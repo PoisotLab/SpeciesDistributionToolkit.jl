@@ -1,10 +1,5 @@
-function SimpleSDMPredictor(::Type{CHELSA}, ::Type{BioClim}, layer::Integer=1; kwargs...)
-    file = _get_raster(CHELSA, BioClim, layer)
-    return geotiff(SimpleSDMPredictor, file; kwargs...)
-end
-
 """
-    bioclim(layer::Integer; left=nothing, right=nothing, bottom=nothing, top=nothing)
+    SimpleSDMPredictor(CHELSA, BioClim, layer::Integer; left=nothing, right=nothing, bottom=nothing, top=nothing)
 
 Download and prepare bioclim layers from the CHELSA database, and returns
 them as an array of `SimpleSDMPredictor`s. Layers are called by their number,
@@ -46,9 +41,15 @@ calls will be much faster.
 | 19       | Precipitation of Coldest Quarter                           |
 
 """
-function bioclim(layer::Integer; left=nothing, right=nothing, bottom=nothing, top=nothing)
-    return raster(SimpleSDMPredictor, BioClim(), layer=layer, left=left, right=right, bottom=bottom, top=top)
+function SimpleSDMPredictor(::Type{CHELSA}, ::Type{BioClim}, layer::Integer=1; kwargs...)
+    file = _get_raster(CHELSA, BioClim, layer)
+    return geotiff(SimpleSDMPredictor, file; kwargs...)
 end
 
-bioclim(layers::Vector{T}; args...) where {T <: Integer} = [bioclim(l; args...) for l in layers]
-bioclim(layers::UnitRange{T}; args...) where {T <: Integer} = [bioclim(l; args...) for l in layers]
+function SimpleSDMPredictor(::Type{CHELSA}, ::Type{BioClim}, layers::Vector{T}; kwargs...) where {T <: Integer}
+    return [SimpleSDMPredictor(CHELSA, BioClim, l; kwargs...) for l in layers]
+end
+
+function SimpleSDMPredictor(::Type{CHELSA}, ::Type{BioClim}, layers::UnitRange{T}; kwargs...) where {T <: Integer}
+    return SimpleSDMPredictor(CHELSA, BioClim, collect(layers); kwargs...)
+end

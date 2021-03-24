@@ -25,7 +25,7 @@ export geotiff
 
 include(joinpath("datasets", "types.jl"))
 export WorldClim, CHELSA, EarthEnv
-export BioClim, LandCover
+export BioClim, LandCover, HabitatHeterogeneity
 
 include(joinpath("datasets", "chelsa", "download.jl"))
 include(joinpath("datasets", "chelsa", "bioclim.jl"))
@@ -35,6 +35,7 @@ include(joinpath("datasets", "worldclim", "bioclim.jl"))
 
 include(joinpath("datasets", "earthenv", "download.jl"))
 include(joinpath("datasets", "earthenv", "landcover.jl"))
+include(joinpath("datasets", "earthenv", "habitatheterogeneity.jl"))
 
 include(joinpath("operations", "coarsen.jl"))
 include(joinpath("operations", "sliding.jl"))

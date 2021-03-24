@@ -7,6 +7,7 @@ struct EarthEnv <: LayerProvider end
 
 struct BioClim <: LayerDataset end
 struct LandCover <: LayerDataset end
+struct HabitatHeterogeneity <: LayerDataset end
 
 # Provider paths
 _rasterpath(::Type{WorldClim}) = "WorldClim"
@@ -16,4 +17,5 @@ _rasterpath(::Type{EarthEnv}) = "EarthEnv"
 # Dataset paths
 _rasterpath(::Type{BioClim}) = "BioClim"
 _rasterpath(::Type{LandCover}) = "LandCover"
+_rasterpath(::Type{HabitatHeterogeneity}) = "HabitatHeterogeneity"
 

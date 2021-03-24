@@ -32,7 +32,7 @@ function ascii(file::AbstractString, datatype::Type{T}=Float64) where {T <: Numb
             grid[i] = nothing
         end
     end
-    return SimpleSDMPredictor(grid, xl, xl+cs*2ncols, yl, yl+cs*2nrows)
+    return SimpleSDMPredictor(grid, xl, xl+cs*ncols, yl, yl+cs*nrows)
 end
 
 """
@@ -47,7 +47,7 @@ function ascii(layer::SimpleSDMPredictor{T}, file::AbstractString; nodata::T=con
     open(file, "w") do io 
         write(io, "ncols $(size(layer, 2))\n")
         write(io, "nrows $(size(layer, 1))\n")
-        write(io, "cellsize $(stride(layer)[1])\n")
+        write(io, "cellsize $(2*stride(layer)[1])\n")
         write(io, "xllcorner $(layer.left)\n")
         write(io, "yllcorner $(layer.bottom)\n")
         write(io, "nodata_value $(nodata)\n")

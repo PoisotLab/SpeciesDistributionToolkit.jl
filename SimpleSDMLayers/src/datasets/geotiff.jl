@@ -76,3 +76,47 @@ function geotiff(
     return LT(buffer, left_pos-0.5lon_stride, right_pos+0.5lon_stride, bottom_pos-0.5lat_stride, top_pos+0.5lat_stride)
 
 end
+
+function geotiff(layer::SimpleSDMPredictor{T}, file::AbstractString; nodata::T=convert(T, -9999)) where {T <: Number}
+    array = layer.grid
+    replace!(array, nothing => NaN)
+    array = convert(Matrix{T}, array)
+    dtype = eltype(array)
+    array_t = reverse(permutedims(array, [2, 1]); dims=2)
+    width, height = size(array_t)
+
+    # Geotransform
+    gt = zeros(Float64, 6)
+    gt[1] = layer.left
+    gt[2] = 2stride(layer, 1)
+    gt[3] = 0.0
+    gt[4] = layer.top
+    gt[5] = 0.0
+    gt[6] = -2stride(layer, 2)
+
+    # Write
+    prefix = first(split(last(splitpath(file)), '.'))
+    ArchGDAL.create(prefix,
+                driver=ArchGDAL.getdriver("MEM"),
+                width=width, height=height,
+                nbands=1, dtype=T,
+                options=["COMPRESS=LZW"]) do dataset
+    
+        band = ArchGDAL.getband(dataset, 1)
+        
+        # Write data to band
+        ArchGDAL.write!(band, array_t)
+
+        # Write nodata and projection info
+        ArchGDAL.setnodatavalue!(band, nodata)
+        ArchGDAL.setgeotransform!(dataset, gt)
+        ArchGDAL.setproj!(dataset, "EPSG:4326")
+
+        # Write !
+        ArchGDAL.write(dataset, file, driver=ArchGDAL.getdriver("GTiff"), options=["COMPRESS=LZW"])
+    end
+end
+
+function geotiff(layer::SimpleSDMResponse{T}, file::AbstractString; nodata::T=convert(T, -9999)) where {T <: Number}
+    geotiff(convert(SimpleSDMPredictor, layer), file; nodata=nodata)
+end

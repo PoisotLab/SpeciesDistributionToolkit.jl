@@ -87,6 +87,7 @@ Using the `Plots` package, one can call the `heatmap`, `contour`, `density`
 `heatmap`.
 
 ~~~ julia
+temperature = SimpleSDMPredictor(WorldClim, BioClim, 1)
 plot(temperature)
 ~~~
 

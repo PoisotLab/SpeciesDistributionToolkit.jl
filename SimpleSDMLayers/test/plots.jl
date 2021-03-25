@@ -77,18 +77,6 @@ xaxis!("Temperature")
 yaxis!("Precipitation")
 savefig(joinpath("gallery", "scatter-2d.png"))
 
-t_europe = SimpleSDMPredictor(WorldClim, BioClim, 1; left=-11.0, right=31.1, bottom=29.0, top=71.1)
-
-wireframe(t_europe, c=:thermal, title="Temperature",
-    xlabel = "Longitude",
-    ylabel= "Latitude", camera=(30, 30))
-savefig(joinpath("gallery", "persp_30_30.png"))
-
-wireframe(t_europe, c=:thermal, title="Temperature",
-    xlabel = "Longitude",
-    ylabel= "Latitude", camera=(40, 20))
-savefig(joinpath("gallery", "persp_40_20.png"))
-
 a = rand(Bool, 100, 100)
 a = convert(Matrix{Union{Bool,Nothing}}, a)
 a[rand(eachindex(a), 100)] .= nothing

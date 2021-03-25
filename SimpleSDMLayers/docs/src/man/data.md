@@ -13,7 +13,7 @@ TODO return as `SimpleSDMPredictors`
 ## Later providers
 
 ```@docs
-LayerProvider
+SimpleSDMLayers.LayerProvider
 WorldClim
 CHELSA
 EarthEnv
@@ -22,7 +22,7 @@ EarthEnv
 ## Layer datasets
 
 ```@docs
-LayerDataset
+SimpleSDMLayers.LayerDataset
 BioClim
 LandCover
 HabitatHeterogeneity

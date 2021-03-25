@@ -40,7 +40,9 @@ function geotiff(
         # band, but this is not the case for the future WorldClim data.
         band = ArchGDAL.getband(dataset, bandnumber)
         T = ArchGDAL.pixeltype(band)
-        nodata = convert(T, ArchGDAL.getnodatavalue(band))
+        
+        # The nodata is not always correclty identified, so if it is not found, we assumed it is the smallest value in the band
+        nodata = isnothing(ArchGDAL.getnodatavalue(band)) ? convert(T, ArchGDAL.minimum(band)) : convert(T, ArchGDAL.getnodatavalue(band))
 
         # Get the correct latitudes
         minlon = transform[1]

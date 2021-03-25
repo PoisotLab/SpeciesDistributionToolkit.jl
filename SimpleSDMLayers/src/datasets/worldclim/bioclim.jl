@@ -59,9 +59,6 @@ end
 function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, mod::CMIP6, fut::SharedSocioeconomicPathway, layer::Integer=1; year="2021-2040", resolution::Float64=10.0, kwargs...)
     @assert year in ["2021-2040", "2041-2060", "2061-2080", "2081-2100"]
     @assert resolution in [2.5, 5.0, 10.0]
-    if (mod == GFDLESM4) & (fut in [SSP245, SSP585])
-        @error "Incompatible scenario $(fut) and model $(mod)"
-    end
     file = _get_raster(WorldClim, BioClim, mod, fut, resolution, year)
     return geotiff(SimpleSDMPredictor, file, layer; kwargs...)
 end

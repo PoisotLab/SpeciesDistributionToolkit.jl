@@ -53,3 +53,17 @@ end
 function SimpleSDMPredictor(::Type{CHELSA}, ::Type{BioClim}, layers::UnitRange{T}; kwargs...) where {T <: Integer}
     return SimpleSDMPredictor(CHELSA, BioClim, collect(layers); kwargs...)
 end
+
+function SimpleSDMPredictor(::Type{CHELSA}, ::Type{BioClim}, mod::CMIP5, fut::RepresentativeConcentrationPathway, layer::Integer=1; year="2041-2060", kwargs...)
+    @assert year in ["2041-2060", "2061-2080"]
+    file = _get_raster(CHELSA, BioClim, mod, fut, layer, year)
+    return geotiff(SimpleSDMPredictor, file, layer; kwargs...)
+end
+
+function SimpleSDMPredictor(::Type{CHELSA}, ::Type{BioClim}, mod::CMIP5, fut::RepresentativeConcentrationPathway, layers::Vector{T}; kwargs...) where {T <: Integer}
+    return [SimpleSDMPredictor(CHELSA, BioClim, mod, fut, l; kwargs...) for l in layers]
+end
+
+function SimpleSDMPredictor(::Type{CHELSA}, ::Type{BioClim}, mod::CMIP5, fut::RepresentativeConcentrationPathway, layers::UnitRange{T}; kwargs...) where {T <: Integer}
+    return SimpleSDMPredictor(CHELSA, BioClim, mod, fut, collect(layers); kwargs...)
+end

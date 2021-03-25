@@ -1,7 +1,7 @@
 module SimpleSDMLayers
 
 using ArchGDAL
-using HTTP
+using Downloads
 using RecipesBase
 using ZipFile
 using Requires
@@ -27,12 +27,19 @@ include(joinpath("datasets", "types.jl"))
 export WorldClim, CHELSA, EarthEnv
 export BioClim, LandCover, HabitatHeterogeneity
 export CMIP6, SharedSocioeconomicPathway
+export CMIP5, RepresentativeConcentrationPathway
+for s in instances(CMIP5)
+    @eval export $(Symbol(s))
+end
 for s in instances(CMIP6)
     @eval export $(Symbol(s))
 end
-for s in instances(SharedSocioeconomicPathway)
+for s in instances(RepresentativeConcentrationPathway)
     @eval export $(Symbol(s))
 end 
+for s in instances(SharedSocioeconomicPathway)
+    @eval export $(Symbol(s))
+end
 
 include(joinpath("datasets", "chelsa", "download.jl"))
 include(joinpath("datasets", "chelsa", "bioclim.jl"))

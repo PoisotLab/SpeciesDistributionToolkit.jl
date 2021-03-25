@@ -11,10 +11,7 @@ function _get_raster(::Type{EarthEnv}, ::Type{LandCover}, layer::Integer, full::
     filename = "landcover_$(filetype)_$(layer).tif"
 
     if !isfile(joinpath(path, filename))
-        layerrequest = HTTP.request("GET", root * stem)
-        open(joinpath(path, filename), "w") do layerfile
-            write(layerfile, String(layerrequest.body))
-        end
+        Downloads.download(root * stem, joinpath(path, filename))
     end
 
     return joinpath(path, filename)
@@ -52,10 +49,7 @@ function _get_raster(::Type{EarthEnv}, ::Type{HabitatHeterogeneity}, layer::Inte
     filename = "$(layernames[layer])_$(resolution)km.tif"
 
     if !isfile(joinpath(path, filename))
-        layerrequest = HTTP.request("GET", root * stem)
-        open(joinpath(path, filename), "w") do layerfile
-            write(layerfile, String(layerrequest.body))
-        end
+        Downloads.download(root * stem, joinpath(path, filename))
     end
 
     return joinpath(path, filename)

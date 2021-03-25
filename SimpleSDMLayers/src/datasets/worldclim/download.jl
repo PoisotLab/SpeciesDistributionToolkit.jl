@@ -13,10 +13,7 @@ function _get_raster(::Type{WorldClim}, ::Type{BioClim}, layer::Integer, resolut
         if !isfile(zip_file)
             root = "https://biogeo.ucdavis.edu/data/worldclim/v2.1/base/"
             stem = "wc2.1_$(res[resolution])m_bio.zip"
-            r = HTTP.request("GET", root * stem)
-            open(zip_file, "w") do f
-                write(f, String(r.body))
-            end
+            Downloads.download(root * stem, zip_file)
         end
         zf = ZipFile.Reader(zip_file)
         file_to_read =
@@ -42,10 +39,7 @@ function _get_raster(::Type{WorldClim}, ::Type{BioClim}, mod::CMIP6, fut::Shared
         if !isfile(zip_file)
             root = "https://biogeo.ucdavis.edu/data/worldclim/v2.1/fut/"
             stem = "$(res[resolution])m/wc2.1_$(res[resolution])m_bioc_$(_rasterpath(mod))_$(_rasterpath(fut))_$(year).zip"
-            r = HTTP.request("GET", root * stem)
-            open(zip_file, "w") do f
-                write(f, String(r.body))
-            end
+            Downloads.download(root * stem, zip_file)
         end
         zf = ZipFile.Reader(zip_file)
         file_to_read = only(zf.files)

@@ -21,7 +21,10 @@ _rasterpath(::Type{HabitatHeterogeneity}) = "HabitatHeterogeneity"
 
 # Future climate information as enum types
 @enum SharedSocioeconomicPathway SSP126 SSP245 SSP370 SSP585
+@enum RepresentativeConcentrationPathway RCP26 RCP45 RCP60 RCP85
+
 @enum CMIP6 BCCCSM2MR CNRMCMS61 CNRMESM21 CanESM5 GFDLESM4 IPSLCM6ALR MIROCES2L MIROC6 MRIESM2
+@enum CMIP5 BCCCSM2MR CNRMCMS61 CNRMESM21 CanESM5 GFDLESM4 IPSLCM6ALR MIROCES2L MIROC6 MRIESM2
 
 # SSP path
 _rasterpath(ssp::SharedSocioeconomicPathway) = _rasterpath(Val{ssp})

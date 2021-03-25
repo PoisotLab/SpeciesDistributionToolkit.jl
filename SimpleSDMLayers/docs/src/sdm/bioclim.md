@@ -40,7 +40,7 @@ example, we will take all worldclim data, at the default 10 arc minute
 resolution:
 
 ```@example bioclim
-predictors = worldclim(1:19; left=left, right=right, bottom=bottom, top=top);
+predictors = SimpleSDMPredictor(WorldClim, BioClim, 1:19; left=left, right=right, bottom=bottom, top=top);
 first(predictors)
 ```
 

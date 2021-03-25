@@ -69,12 +69,12 @@ are immutable.
 
 ### Bioclimatic data
 
-| Data provider | Dataset                | Layers | Source                             | Future models | Future scenarios                     |
-| ------------- | ---------------------- | ------ | ---------------------------------- | ------------- | ------------------------------------ |
-| `EarthEnv`    | `Landcover`            | 12     | [EarthEnv][earthenv-landcover]     |               |                                      |
-| `EarthEnv`    | `HabitatHeterogeneity` | 14     | [EarthEnv][earthenv-texture]       |               |                                      |
-| `WorldClim`   | `BioClim`              | 19     | [WorldClim 2.1][worldclim-current] | `CMIP6`       | `SharedSocioeconomicPathway`         |
-| `CHELSA`      | `BioClim`              | 12     | [CHELSA][chelsa-bioclim]           | `CMIP5`       | `RepresentativeConcentrationPathway` |
+| Data provider                    | Dataset                | Layers | Future models | Future scenarios                     |
+| -------------------------------- | ---------------------- | ------ | ------------- | ------------------------------------ |
+| `EarthEnv`                       | `Landcover`            | 12     |               |                                      |
+| `EarthEnv`                       | `HabitatHeterogeneity` | 14     |               |                                      |
+| [`WorldClim`][worldclim-current] | `BioClim`              | 19     | `CMIP6`       | `SharedSocioeconomicPathway`         |
+| [`CHELSA`][chelsa-bioclim]       | `BioClim`              | 12     | `CMIP5`       | `RepresentativeConcentrationPathway` |
  
 [earthenv-landcover]: http://www.earthenv.org/landcover
 [earthenv-texture]: http://www.earthenv.org/texture

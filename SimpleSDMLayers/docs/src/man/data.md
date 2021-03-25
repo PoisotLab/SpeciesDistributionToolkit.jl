@@ -4,26 +4,42 @@ The package offers access to bioclimatic and other datasets - they are
 downloaded, saved to the disk, and then read locally. Please note that some of
 them require a lot of memory, so make sure your machine can handle them.
 
-## Worldclim 2.1
+TODO make a refence to the environment variable
+
+## General interface
+
+TODO return as `SimpleSDMPredictors`
+
+## Later providers
 
 ```@docs
-worldclim
+LayerProvider
+WorldClim
+CHELSA
+EarthEnv
 ```
 
-## CHELSA V1
+## Layer datasets
 
 ```@docs
-bioclim
+LayerDataset
+BioClim
+LandCover
+HabitatHeterogeneity
 ```
 
-## EarthEnv landcover
+## Future climate models
 
 ```@docs
-landcover
+SharedSocioeconomicPathway
+RepresentativeConcentrationPathway
+CMIP5
+CMIP6
 ```
 
-## ASCII files
+## File reading and writing
 
 ```@docs
 SimpleSDMLayers.ascii
+geotiff
 ```

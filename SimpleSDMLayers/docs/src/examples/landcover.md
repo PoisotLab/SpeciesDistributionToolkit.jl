@@ -8,7 +8,7 @@ limits of a bounding box.
 
 ```@example urban
 using SimpleSDMLayers
-urban = landcover(9; left=-11.0, right=31.1, bottom=29.0, top=71.1)
+urban = SimpleSDMPredictor(EarthEnv, LandCover, 9; left=-11.0, right=31.1, bottom=29.0, top=71.1)
 ```
 
 This dataset is returning data as `UInt8` (as it represents a proportion of the

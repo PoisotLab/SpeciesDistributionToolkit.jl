@@ -19,7 +19,7 @@ only focus on the 11 first variables, since we do not want the information on
 open water (layer 12):
 
 ```@example cons
-lc = landcover(1; full=false, bbox...)
+lc = SimpleSDMPredictor(EarthEnv, LandCover, 1; full=false, bbox...)
 use = fill(NaN32, size(lc)..., 11)
 ```
 
@@ -40,7 +40,7 @@ appropriate data cube slice:
 
 ```@example cons
 for layer in 2:11
-    lc = landcover(layer; full=false, bbox...)
+    lc = SimpleSDMpredictor(EarthEnv, LandCover, layer; full=false, bbox...)
     for (i,e) in enumerate(lc.grid)
         coord = (CartesianIndices(size(lc.grid))[i].I..., layer)
         if !isnothing(e)

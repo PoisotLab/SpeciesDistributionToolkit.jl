@@ -1,7 +1,7 @@
 ## Simple Layers for Species Distributions Modelling
 
-This package offers very simple types and functions to interact with
-bioclimatic data and the output of species distribution models.
+This package offers very simple types and functions to interact with bioclimatic
+data and the output of species distribution models.
 
 [![d_stable](https://img.shields.io/badge/Doc-stable-green?style=flat-square)](https://ecojulia.github.io/SimpleSDMLayers.jl/stable/)
 [![d_latest](https://img.shields.io/badge/Doc-latest-blue?style=flat-square)](https://ecojulia.github.io/SimpleSDMLayers.jl/latest/)
@@ -19,8 +19,9 @@ bioclimatic data and the output of species distribution models.
        title = "SimpleSDMLayers.jl & GBIF.jl example">
 </p>
 
-Curious to know more? Have a look at our [paper in Journal of Open Source Software](https://doi.org/10.21105/joss.02872), our [JuliaCon poster](https://github.com/gabrieldansereau/juliacon-2020-poster/blob/master/juliacon-poster.pdf), our [NextJournal demo notebook](https://nextjournal.com/gabrieldansereau/SimpleSDMLayers-JuliaCon2020-demo/), and our [extended documentation](https://ecojulia.github.io/SimpleSDMLayers.jl/stable/), or keep reading for a quick overview.
+Curious to know more? Have a look at our [paper in Journal of Open Source Software][joss], our [JuliaCon poster](https://github.com/gabrieldansereau/juliacon-2020-poster/blob/master/juliacon-poster.pdf), our [NextJournal demo notebook](https://nextjournal.com/gabrieldansereau/SimpleSDMLayers-JuliaCon2020-demo/), and our [extended documentation](https://ecojulia.github.io/SimpleSDMLayers.jl/stable/), or keep reading for a quick overview.
 
+[joss]: https://doi.org/10.21105/joss.02872
 ### Installation
 
 The currently released version of the package can be installed with:

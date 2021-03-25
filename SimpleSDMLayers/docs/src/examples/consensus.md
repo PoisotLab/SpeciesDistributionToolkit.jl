@@ -79,5 +79,5 @@ entropy = SimpleSDMResponse(entropy, lc)
 p1 = plot(consensus, c=cgrad(:Set3_11, categorical=true), frame=:none)
 p2 = plot(entropy, c=:bamako, frame=:none)
 
-plot(p1, p2, size=(900, 400), dpi=600)
+plot(p1, p2)
 ```

@@ -83,7 +83,7 @@ function geotiff(
 
 end
 
-function geotiff(layer::SimpleSDMPredictor{T}, file::AbstractString; nodata::T=convert(T, -9999)) where {T <: Number}
+function geotiff(file::AbstractString, layer::SimpleSDMPredictor{T}; nodata::T=convert(T, -9999)) where {T <: Number}
     array = layer.grid
     replace!(array, nothing => NaN)
     array = convert(Matrix{T}, array)

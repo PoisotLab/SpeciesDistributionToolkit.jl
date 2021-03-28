@@ -8,11 +8,12 @@ M[rand(Bool, size(M))] .= nothing
 
 S = SimpleSDMPredictor(M, 0.0, 2.0, 0.0, 1.0)
 
-SimpleSDMLayers.ascii(S, "test.asc")
+SimpleSDMLayers.ascii("test.asc", S)
 @test isfile("test.asc")
 
 U = SimpleSDMLayers.ascii("test.asc")
 
+@test typeof(S) <: SimpleSDMPredictor
 @test all(S.grid .== U.grid)
 @test S.left == U.left
 @test S.bottom == U.bottom
@@ -20,7 +21,7 @@ U = SimpleSDMLayers.ascii("test.asc")
 @test S.top == U.top
 @test size(S) == size(U)
 
-geotiff(U, "test.tiff")
+geotiff("test.tiff", U)
 @test isfile("test.tiff")
 
 rm("test.asc")

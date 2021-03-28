@@ -48,10 +48,7 @@ function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{HabitatHeterogeneity}, laye
     return geotiff(SimpleSDMPredictor, file; kwargs...)
 end
 
-function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{HabitatHeterogeneity}, layers::Vector{T}; kwargs...) where {T <: Integer}
+function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{HabitatHeterogeneity}, layers::AbstractArray; kwargs...)
+    @assert eltype(layers) <: Integer
     return [SimpleSDMPredictor(EarthEnv, HabitatHeterogeneity, l; kwargs...) for l in layers]
-end
-
-function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{HabitatHeterogeneity}, layers::UnitRange{T}; kwargs...) where {T <: Integer}
-    return SimpleSDMPredictor(EarthEnv, HabitatHeterogeneity, collect(layers); kwargs...)
 end

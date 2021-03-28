@@ -48,12 +48,9 @@ function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, layer::Integer=1
     return geotiff(SimpleSDMPredictor, file; kwargs...)
 end
 
-function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, layers::Vector{T}; kwargs...) where {T <: Integer}
+function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, layers::AbstractArray; kwargs...)
+    @assert eltype(layers) <: Integer
     return [SimpleSDMPredictor(WorldClim, BioClim, l; kwargs...) for l in layers]
-end
-
-function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, layers::UnitRange{T}; kwargs...) where {T <: Integer}
-    return SimpleSDMPredictor(WorldClim, BioClim, collect(layers); kwargs...)
 end
 
 function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, mod::CMIP6, fut::SharedSocioeconomicPathway, layer::Integer=1; year="2021-2040", resolution::Float64=10.0, kwargs...)
@@ -63,10 +60,7 @@ function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, mod::CMIP6, fut:
     return geotiff(SimpleSDMPredictor, file, layer; kwargs...)
 end
 
-function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, mod::CMIP6, fut::SharedSocioeconomicPathway, layers::Vector{T}; kwargs...) where {T <: Integer}
+function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, mod::CMIP6, fut::SharedSocioeconomicPathway, layers::AbstractArray; kwargs...)
+    @assert eltype(layers) <: Integer
     return [SimpleSDMPredictor(WorldClim, BioClim, mod, fut, l; kwargs...) for l in layers]
-end
-
-function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, mod::CMIP6, fut::SharedSocioeconomicPathway, layers::UnitRange{T}; kwargs...) where {T <: Integer}
-    return SimpleSDMPredictor(WorldClim, BioClim, mod, fut, collect(layers); kwargs...)
 end

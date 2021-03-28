@@ -46,10 +46,7 @@ function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{LandCover}, layer::Integer=
     return geotiff(SimpleSDMPredictor, file; kwargs...)
 end
 
-function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{LandCover}, layers::Vector{T}; kwargs...) where {T <: Integer}
+function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{LandCover}, layers::AbstractArray; kwargs...)
+    @assert eltype(layers) <: Integer
     return [SimpleSDMPredictor(EarthEnv, LandCover, l; kwargs...) for l in layers]
-end
-
-function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{LandCover}, layers::UnitRange{T}; kwargs...) where {T <: Integer}
-    return SimpleSDMPredictor(EarthEnv, LandCover, collect(layers); kwargs...)
 end

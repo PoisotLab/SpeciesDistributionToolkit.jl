@@ -124,6 +124,60 @@ function geotiff(file::AbstractString, layer::SimpleSDMPredictor{T}; nodata::T=c
     return file
 end
 
-function geotiff(layer::SimpleSDMResponse{T}, file::AbstractString; nodata::T=convert(T, -9999)) where {T <: Number}
-    return geotiff(convert(SimpleSDMPredictor, layer), file; nodata=nodata)
+function _prepare_layer_for_burnin(layer::T) where {T <: SimpleSDMLayer}
+    @assert eltype(layer) <: Number
+    array = layer.grid
+    replace!(array, nothing => NaN)
+    array = convert(Matrix{eltype(layer)}, array)
+    dtype = eltype(array)
+    array_t = reverse(permutedims(array, [2, 1]); dims=2)
+    return array_t
+end
+
+function geotiff(file::AbstractString, layers::Vector{SimpleSDMPredictor{T}}; nodata::T=convert(T, -9999)) where {T <: Number}
+    bands = 1:length(layers)
+    _layers_are_compatible(layers)
+    width, height = size(_prepare_layer_for_burnin(layers[1]))
+
+    # Geotransform
+    gt = zeros(Float64, 6)
+    gt[1] = layers[1].left
+    gt[2] = 2stride(layers[1], 1)
+    gt[3] = 0.0
+    gt[4] = layers[1].top
+    gt[5] = 0.0
+    gt[6] = -2stride(layers[1], 2)
+
+    # Write
+    prefix = first(split(last(splitpath(file)), '.'))
+    ArchGDAL.create(prefix,
+                driver=ArchGDAL.getdriver("MEM"),
+                width=width, height=height,
+                nbands=length(layers), dtype=T,
+                options=["COMPRESS=LZW"]) do dataset
+        
+        for i in 1:length(bands)
+            band = ArchGDAL.getband(dataset, i)
+            
+            # Write data to band
+            ArchGDAL.write!(band, _prepare_layer_for_burnin(layers[i]))
+
+            # Write nodata and projection info
+            ArchGDAL.setnodatavalue!(band, nodata)
+        end
+        ArchGDAL.setgeotransform!(dataset, gt)
+        ArchGDAL.setproj!(dataset, "EPSG:4326")
+
+        # Write !
+        ArchGDAL.write(dataset, file, driver=ArchGDAL.getdriver("GTiff"), options=["COMPRESS=LZW"])
+    end
+    return file
+end
+
+function geotiff(file::AbstractString, layer::SimpleSDMResponse{T}; nodata::T=convert(T, -9999)) where {T <: Number}
+    return geotiff(file, convert(SimpleSDMPredictor, layer); nodata=nodata)
+end
+
+function geotiff(file::AbstractString, layers::Vector{SimpleSDMResponse{T}}; nodata::T=convert(T, -9999)) where {T <: Number}
+    return geotiff(file, convert.(SimpleSDMPredictor, layers); nodata=nodata)
 end

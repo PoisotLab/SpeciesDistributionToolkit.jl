@@ -4,11 +4,16 @@ The package offers access to bioclimatic and other datasets - they are
 downloaded, saved to the disk, and then read locally. Please note that some of
 them require a lot of memory, so make sure your machine can handle them.
 
-TODO make a refence to the environment variable
+By default, the layers are stored in the `assets` subfolder of the current
+project. This being said, the prefered solution is to define a `SDMLAYERS_PATH`
+environment variable pointing to a specific path, where the layers will live.
+This will ensure that they are re-used between projects.
 
 ## General interface
 
-TODO return as `SimpleSDMPredictors`
+All layers are returned as `SimpleSDMPredictor`, and therefore constructed by
+calling the `SimpleSDMPredictor` function on a `LayerProvider` and a
+`LayerDataset`, possibly with a future climate model and scenario.
 
 ## Later providers
 

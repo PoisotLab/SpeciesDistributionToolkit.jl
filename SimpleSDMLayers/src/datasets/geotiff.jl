@@ -8,7 +8,7 @@ function _find_span(n, m, M, pos)
 end
 
 """
-    geotiff(::Type{LT}, tiff_file; left=nothing, right=nothing, bottom=nothing, top=nothing) where {LT <: SimpleSDMLayer}
+    geotiff(::Type{LT}, file, bandnumber::Integer=1; left=nothing, right=nothing, bottom=nothing, top=nothing) where {LT <: SimpleSDMLayer}
 
 The geotiff function reads a geotiff file, and returns it as a matrix of the
 correct type. The optional arguments `left`, `right`, `bottom`, and `left` are
@@ -83,6 +83,12 @@ function geotiff(
 
 end
 
+"""
+    geotiff(file::AbstractString, layer::SimpleSDMPredictor{T}; nodata::T=convert(T, -9999)) where {T <: Number}
+
+Write a single `layer` to a `file`, where the `nodata` field is set to an
+arbitrary value.
+"""
 function geotiff(file::AbstractString, layer::SimpleSDMPredictor{T}; nodata::T=convert(T, -9999)) where {T <: Number}
     array = layer.grid
     replace!(array, nothing => NaN)
@@ -134,6 +140,12 @@ function _prepare_layer_for_burnin(layer::T) where {T <: SimpleSDMLayer}
     return array_t
 end
 
+"""
+    geotiff(file::AbstractString, layers::Vector{SimpleSDMPredictor{T}}; nodata::T=convert(T, -9999)) where {T <: Number}
+
+Stores a series of `layers` in a `file`, where every layer in a band. See
+`geotiff` for other options.
+"""
 function geotiff(file::AbstractString, layers::Vector{SimpleSDMPredictor{T}}; nodata::T=convert(T, -9999)) where {T <: Number}
     bands = 1:length(layers)
     _layers_are_compatible(layers)
@@ -174,10 +186,20 @@ function geotiff(file::AbstractString, layers::Vector{SimpleSDMPredictor{T}}; no
     return file
 end
 
+"""
+    geotiff(file::AbstractString, layer::SimpleSDMResponse{T}; nodata::T=convert(T, -9999)) where {T <: Number}
+
+Write a single `SimpleSDMResponse` layer to a file.
+"""
 function geotiff(file::AbstractString, layer::SimpleSDMResponse{T}; nodata::T=convert(T, -9999)) where {T <: Number}
     return geotiff(file, convert(SimpleSDMPredictor, layer); nodata=nodata)
 end
 
+"""
+    geotiff(file::AbstractString, layers::Vector{SimpleSDMResponse{T}}; nodata::T=convert(T, -9999)) where {T <: Number}
+
+Write a vector of `SimpleSDMResponse` layers to bands in a file.
+"""
 function geotiff(file::AbstractString, layers::Vector{SimpleSDMResponse{T}}; nodata::T=convert(T, -9999)) where {T <: Number}
     return geotiff(file, convert.(SimpleSDMPredictor, layers); nodata=nodata)
 end

@@ -1,27 +1,5 @@
 """
-    landcover(layers::Vector{T}; full::Bool=false, path::AbstractString="assets") where {T <: Integer}
-
-Download and prepare the EarthEnv consensus landcover data, and returns them as
-an array of `SimpleSDMPredictor`s. Layers are called by their number, from 1 to
-14. The list of available layers is given in a table below. The raw data come
-from https://www.earthenv.org/landcover.
-
-THe `full` keyword indicates whether the *DISCover* information must be
-included. Quoting from the reference website:
-
-> Although DISCover is based on older remote sensing imagery (1992-1993), it
-> contains some complementary information which is useful for capturing
-> sub-pixel land cover heterogeneity (please see the associated article for
-> details). Therefore, it is recommended to use the full version of the
-> consensus land cover dataset for most applications. However, the reduced
-> version may provide an alternative for applications in regions with large land
-> cover change in the past two decades.
-
-It is recommended to *keep* the content of the `path` folder, as it will
-eliminate the need to download and/or extract the tiff files. For example,
-calling `landcover(1:12)` will download and extract everything, and future calls
-will be much faster. Please keep in mind that the layers can be quite large, so
-keeping the models stored is particularly important.
+    SimpleSDMPredictor(::Type{EarthEnv}, ::Type{HabitatHeterogeneity}, layer::Integer=1; resolution::Int64=25, kwargs...)
 
 | Variable | Explanation              | Measure                                                          | Value range                         | Relationship to heterogeneity |
 | -------- | ------------------------ | ---------------------------------------------------------------- | ----------------------------------- | ----------------------------- |

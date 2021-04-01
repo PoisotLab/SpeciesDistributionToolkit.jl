@@ -1,6 +1,6 @@
 
 """
-    landcover(layers::Vector{T}; full::Bool=false, path::AbstractString="assets") where {T <: Integer}
+    SimpleSDMPredictor(::Type{EarthEnv}, ::Type{LandCover}, layer::Integer=1; full::Bool=false, kwargs...)
 
 Download and prepare the EarthEnv consensus landcover data, and returns them as
 an array of `SimpleSDMPredictor`s. Layers are called by their number, from 1 to

@@ -34,7 +34,7 @@ We can then apply these functions using the `mosaic` method:
 
 ```@example cons
 consensus = mosaic(x -> last(findmax(x)), lc)
-entropy = mapslices(shannon, lc)
+entropy = mosaic(shannon, lc)
 ```
 
 ```@example cons

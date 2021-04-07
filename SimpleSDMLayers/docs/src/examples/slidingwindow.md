@@ -9,7 +9,7 @@ using SimpleSDMLayers
 using Plots
 using Statistics
 
-precipitation = worldclim(12; left=-80.0, right=-56.0, bottom=44.0, top=62.0)
+precipitation = SimpleSDMPredictor(WorldClim, BioClim, 12; left=-80.0, right=-56.0, bottom=44.0, top=62.0)
 ```
 
 The sliding window works by taking all pixels *within a given radius* (expressed

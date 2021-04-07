@@ -1,7 +1,7 @@
 ## Simple Layers for Species Distributions Modelling
 
-This package offers very simple types and functions to interact with
-bioclimatic data and the output of species distribution models.
+This package offers very simple types and functions to interact with bioclimatic
+data and the output of species distribution models.
 
 [![d_stable](https://img.shields.io/badge/Doc-stable-green?style=flat-square)](https://ecojulia.github.io/SimpleSDMLayers.jl/stable/)
 [![d_latest](https://img.shields.io/badge/Doc-latest-blue?style=flat-square)](https://ecojulia.github.io/SimpleSDMLayers.jl/latest/)
@@ -19,8 +19,9 @@ bioclimatic data and the output of species distribution models.
        title = "SimpleSDMLayers.jl & GBIF.jl example">
 </p>
 
-Curious to know more? Have a look at our [paper in Journal of Open Source Software](https://doi.org/10.21105/joss.02872), our [JuliaCon poster](https://github.com/gabrieldansereau/juliacon-2020-poster/blob/master/juliacon-poster.pdf), our [NextJournal demo notebook](https://nextjournal.com/gabrieldansereau/SimpleSDMLayers-JuliaCon2020-demo/), and our [extended documentation](https://ecojulia.github.io/SimpleSDMLayers.jl/stable/), or keep reading for a quick overview.
+Curious to know more? Have a look at our [paper in Journal of Open Source Software][joss], our [JuliaCon poster](https://github.com/gabrieldansereau/juliacon-2020-poster/blob/master/juliacon-poster.pdf), our [NextJournal demo notebook](https://nextjournal.com/gabrieldansereau/SimpleSDMLayers-JuliaCon2020-demo/), and our [extended documentation](https://ecojulia.github.io/SimpleSDMLayers.jl/stable/), or keep reading for a quick overview.
 
+[joss]: https://doi.org/10.21105/joss.02872
 ### Installation
 
 The currently released version of the package can be installed with:
@@ -68,19 +69,22 @@ are immutable.
 
 ### Bioclimatic data
 
-#### WorldClim 2.1
+| Data provider                    | Dataset                | Layers | Future models | Future scenarios                     |
+| -------------------------------- | ---------------------- | ------ | ------------- | ------------------------------------ |
+| `EarthEnv`                       | `Landcover`            | 12     |               |                                      |
+| `EarthEnv`                       | `HabitatHeterogeneity` | 14     |               |                                      |
+| [`WorldClim`][worldclim-current] | `BioClim`              | 19     | `CMIP6`       | `SharedSocioeconomicPathway`         |
+| [`CHELSA`][chelsa-bioclim]       | `BioClim`              | 12     | `CMIP5`       | `RepresentativeConcentrationPathway` |
+ 
+[earthenv-landcover]: http://www.earthenv.org/landcover
+[earthenv-texture]: http://www.earthenv.org/texture
+[worldclim-current]: https://www.worldclim.org/data/worldclim21.html
+[chelsa-bioclim]: http://chelsa-climate.org/
 
-The `worldclim` function will get a range, or an array of indices, and return
-the corresponding bioclim 2.1 layers at the specified `resolution`. For
-example, to get the annual temperature, and annual precipitation:
-
-~~~ julia
-temperature, precipitation = worldclim([1,12])
-~~~
-
-By default, the function will return the layers for the entire globe, and they
-can be cropped later. The layers are returned as `SimpleSDMPredictor` objects.
-
+When downloaded (using `SimpleSDMPredictor`), the layers are stored either in an
+`assets` subfolder of the current project (strongly advised against), or at the
+location determined by the `SDMLAYERS_PATH` environment variable. The datasets/providers
+with future models and scenarios also accept years.
 
 ### Plotting
 
@@ -89,6 +93,7 @@ Using the `Plots` package, one can call the `heatmap`, `contour`, `density`
 `heatmap`.
 
 ~~~ julia
+temperature = SimpleSDMPredictor(WorldClim, BioClim, 1)
 plot(temperature)
 ~~~
 

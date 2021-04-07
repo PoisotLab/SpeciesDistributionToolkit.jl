@@ -1,7 +1,7 @@
 module SimpleSDMLayers
 
 using ArchGDAL
-using HTTP
+using Downloads
 using RecipesBase
 using ZipFile
 using Requires
@@ -19,19 +19,37 @@ export latitudes, longitudes
 
 include(joinpath("lib", "iteration.jl"))
 
-include(joinpath("datasets", "sources.jl"))
-include(joinpath("datasets", "download_layer.jl"))
-export EarthEnv, WorldClim, BioClim
-
-include(joinpath("datasets", "raster.jl"))
 include(joinpath("datasets", "ascii.jl"))
 include(joinpath("datasets", "geotiff.jl"))
 export geotiff
 
-include(joinpath("datasets", "worldclim.jl"))
-include(joinpath("datasets", "chelsa.jl"))
-include(joinpath("datasets", "landcover.jl"))
-export worldclim, bioclim, landcover
+include(joinpath("datasets", "types.jl"))
+export WorldClim, CHELSA, EarthEnv
+export BioClim, LandCover, HabitatHeterogeneity
+export CMIP6, SharedSocioeconomicPathway
+export CMIP5, RepresentativeConcentrationPathway
+for s in instances(CMIP5)
+    @eval export $(Symbol(s))
+end
+for s in instances(CMIP6)
+    @eval export $(Symbol(s))
+end
+for s in instances(RepresentativeConcentrationPathway)
+    @eval export $(Symbol(s))
+end 
+for s in instances(SharedSocioeconomicPathway)
+    @eval export $(Symbol(s))
+end
+
+include(joinpath("datasets", "chelsa", "download.jl"))
+include(joinpath("datasets", "chelsa", "bioclim.jl"))
+
+include(joinpath("datasets", "worldclim", "download.jl"))
+include(joinpath("datasets", "worldclim", "bioclim.jl"))
+
+include(joinpath("datasets", "earthenv", "download.jl"))
+include(joinpath("datasets", "earthenv", "landcover.jl"))
+include(joinpath("datasets", "earthenv", "habitatheterogeneity.jl"))
 
 include(joinpath("operations", "coarsen.jl"))
 include(joinpath("operations", "sliding.jl"))
@@ -44,11 +62,8 @@ include(joinpath("recipes", "recipes.jl"))
 
 # This next bit is about being able to change the path for raster assets
 # globally, which avoids duplication this argument across multiple functions.
-_layers_assets_path = "assets"
-function assets_path()
-    isdir(SimpleSDMLayers._layers_assets_path) || mkdir(SimpleSDMLayers._layers_assets_path)
-    return SimpleSDMLayers._layers_assets_path
-end
+_layers_assets_path = get(ENV, "SDMLAYERS_PATH", "assets")
+isdir(_layers_assets_path) || mkpath(_layers_assets_path)
 
 # Fixes the export of clip when GBIF or others are loaded
 clip(::T) where {T <: SimpleSDMLayer} = nothing

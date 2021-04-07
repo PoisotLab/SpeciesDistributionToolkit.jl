@@ -3,7 +3,7 @@ using SimpleSDMLayers
 using GBIF
 using Test
 
-temperature = worldclim(1)
+temperature = SimpleSDMPredictor(WorldClim, BioClim, 1)
 
 kingfisher = GBIF.taxon("Megaceryle alcyon", strict=true)
 

@@ -7,7 +7,7 @@ for each layers are in the function documentation):
 
 ```@example temp
 using SimpleSDMLayers
-temperature = worldclim(1)
+temperature = SimpleSDMPredictor(WorldClim, BioClim, 1)
 ```
 
 Thanks to the integration with Plots and StatsPlots, we can very rapidly

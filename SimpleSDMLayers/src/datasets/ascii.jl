@@ -9,7 +9,7 @@ end
 Reads the content of a grid file to a `SimpleSDMPredictor`, the type of which is
 given by the `datatype` argument.
 """
-function ascii(file::AbstractString, datatype::Type{T}=Float64) where {T <: Number}
+function ascii(::Type{LT}, file::AbstractString, datatype::Type{T}=Float64) where {LT <: SimpleSDMLayer, T <: Number}
     lines = lowercase.(readlines(file))
     # Get the information
     ncols, ncols_line = _get_asc_field(lines, "ncols", Int64)
@@ -32,7 +32,11 @@ function ascii(file::AbstractString, datatype::Type{T}=Float64) where {T <: Numb
             grid[i] = nothing
         end
     end
-    return SimpleSDMPredictor(grid, xl, xl+cs*ncols, yl, yl+cs*nrows)
+    return LT(grid, xl, xl+cs*ncols, yl, yl+cs*nrows)
+end
+
+function ascii(file::AbstractString, datatype::Type{T}=Float64) where {T <: Number}
+    return ascii(SimpleSDMPredictor, file, datatype)
 end
 
 """
@@ -40,8 +44,8 @@ end
 
 Writes a `layer` to a grid file, with a given `nodata` value. The layer must store numbers.
 """
-function ascii(layer::SimpleSDMPredictor{T}, file::AbstractString; nodata::T=convert(T, -9999)) where {T <: Number}
-    if !(stride(layer)[1] ≈ stride(layer)[2])
+function ascii(file::AbstractString, layer::SimpleSDMPredictor{T}; nodata::T=convert(T, -9999)) where {T <: Number}
+    if !(stride(layer,1) ≈ stride(layer,2))
         throw(DimensionMismatch("The cells of the layer to write must be square (i.e. both values of stride must be equal)"))
     end
     open(file, "w") do io 

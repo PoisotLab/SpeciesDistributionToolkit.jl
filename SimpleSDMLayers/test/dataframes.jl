@@ -3,7 +3,7 @@ using SimpleSDMLayers
 using DataFrames
 using Test
 
-temperature = worldclim(1)
+temperature = SimpleSDMPredictor(WorldClim, BioClim, 1)
 
 df = DataFrame(latitude = [0.0, 1.0], longitude = [30.0, 31.0], values = [42.0, 15.0])
 

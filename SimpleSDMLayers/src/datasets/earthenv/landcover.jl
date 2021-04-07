@@ -1,6 +1,6 @@
 
 """
-    landcover(layers::Vector{T}; full::Bool=false, path::AbstractString="assets") where {T <: Integer}
+    SimpleSDMPredictor(::Type{EarthEnv}, ::Type{LandCover}, layer::Integer=1; full::Bool=false, kwargs...)
 
 Download and prepare the EarthEnv consensus landcover data, and returns them as
 an array of `SimpleSDMPredictor`s. Layers are called by their number, from 1 to
@@ -41,9 +41,12 @@ keeping the models stored is particularly important.
 
 These data are released under a CC-BY-NC license to Tuanmu & Jetz.
 """
-function landcover(layer::Integer; full::Bool=false, left=nothing, right=nothing, bottom=nothing, top=nothing)
-    return raster(SimpleSDMPredictor, EarthEnv(full), layer=layer, left=left, right=right, bottom=bottom, top=top)
+function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{LandCover}, layer::Integer=1; full::Bool=false, kwargs...)
+    file = _get_raster(EarthEnv, LandCover, layer, full)
+    return geotiff(SimpleSDMPredictor, file; kwargs...)
 end
 
-landcover(layers::Vector{T}; args...) where {T <: Integer} = [landcover(l; args...) for l in layers]
-landcover(layers::UnitRange{T}; args...) where {T <: Integer} = [landcover(l; args...) for l in layers]
+function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{LandCover}, layers::AbstractArray; kwargs...)
+    @assert eltype(layers) <: Integer
+    return [SimpleSDMPredictor(EarthEnv, LandCover, l; kwargs...) for l in layers]
+end

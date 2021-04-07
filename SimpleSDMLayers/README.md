@@ -83,7 +83,8 @@ are immutable.
 
 When downloaded (using `SimpleSDMPredictor`), the layers are stored either in an
 `assets` subfolder of the current project (strongly advised against), or at the
-location determined by the `SDMLAYERS_PATH` environment variable.
+location determined by the `SDMLAYERS_PATH` environment variable. The datasets/providers
+with future models and scenarios also accept years.
 
 ### Plotting
 

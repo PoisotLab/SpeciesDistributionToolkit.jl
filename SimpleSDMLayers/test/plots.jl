@@ -2,6 +2,7 @@ module SSLTestPlots
 using SimpleSDMLayers
 using Test
 using Plots
+using StatsPlots
 
 temperature, precipitation = SimpleSDMPredictor(WorldClim, BioClim, [1,12])
 
@@ -64,6 +65,10 @@ yaxis!("Latitude")
 savefig(joinpath("gallery", "heatmap_scaledown.png"))
 
 histogram(precipitation, leg=false)
+xaxis!("Precipitation")
+savefig(joinpath("gallery", "histogram.png"))
+
+density(precipitation, leg=false)
 xaxis!("Precipitation")
 savefig(joinpath("gallery", "density.png"))
 

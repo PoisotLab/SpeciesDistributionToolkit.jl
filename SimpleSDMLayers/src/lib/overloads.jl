@@ -16,16 +16,23 @@ import Base: vcat
 import Base: show
 
 """
+    Base.show(io::IO, ::MIME"text/plain", layer::T) where {T <: SimpleSDMLayer}
     Base.show(io::IO, layer::T) where {T <: SimpleSDMLayer}
 
 Shows a textual representation of the layer.
 """
-function Base.show(io::IO, layer::T) where {T <: SimpleSDMLayer}
+function Base.show(io::IO, ::MIME"text/plain", layer::T) where {T <: SimpleSDMLayer}
     itype = eltype(layer)
     otype = T <: SimpleSDMPredictor ? "predictor" : "response"
     print(io, """SDM $(otype) → $(size(layer,1))×$(size(layer,2)) grid with $(length(layer)) $(itype)-valued cells
-    Latitudes\t$(extrema(latitudes(layer)))
-    Longitudes\t$(extrema(longitudes(layer)))""")
+    \x20\x20Latitudes\t$(extrema(latitudes(layer)))
+    \x20\x20Longitudes\t$(extrema(longitudes(layer)))""")
+end
+
+function Base.show(io::IO, layer::T) where {T <: SimpleSDMLayer}
+    itype = eltype(layer)
+    otype = T <: SimpleSDMPredictor ? "predictor" : "response"
+    print(io, "SDM $(otype) → $(size(layer,1))×$(size(layer,2)) grid with $(length(layer)) $(itype)-valued cells")
 end
 
 """

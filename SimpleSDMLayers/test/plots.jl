@@ -2,6 +2,7 @@ module SSLTestPlots
 using SimpleSDMLayers
 using Test
 using Plots
+using StatsPlots
 
 temperature, precipitation = SimpleSDMPredictor(WorldClim, BioClim, [1,12])
 
@@ -36,7 +37,7 @@ for (i,e) in enumerate(lc1.grid)
   n_lc1[i] = isnothing(e) ? NaN : Float32(e)
 end
 lc1 = SimpleSDMPredictor(n_lc1, lc1)
-plot(lc1, c=:terrain, title="Landcover class 1", frame=:box,
+plot(lc1, c=:heat, title="Landcover class 1", frame=:box,
     xlabel = "Longitude",
     ylabel= "Latitude")
 savefig(joinpath("gallery", "range-comparison-landcover.png"))
@@ -64,6 +65,10 @@ yaxis!("Latitude")
 savefig(joinpath("gallery", "heatmap_scaledown.png"))
 
 histogram(precipitation, leg=false)
+xaxis!("Precipitation")
+savefig(joinpath("gallery", "histogram.png"))
+
+density(precipitation, leg=false)
 xaxis!("Precipitation")
 savefig(joinpath("gallery", "density.png"))
 

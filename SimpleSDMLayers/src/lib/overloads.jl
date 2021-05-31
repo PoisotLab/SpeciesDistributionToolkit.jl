@@ -168,6 +168,9 @@ range, or the grid index containing this latitude if it is within range
 function _match_latitude(layer::T, lat::K; side=:none) where {T <: SimpleSDMLayer, K <: AbstractFloat}
     side in [:none, :bottom, :top] || throw(ArgumentError("side must be one of :none (default), :bottom, :top"))
 
+    lat > layer.top && return nothing
+    lat < layer.bottom && return nothing
+
     ldiff = abs.(lat .- latitudes(layer))
     if side == :none || !any(x -> isapprox(x, stride(layer, 2)), ldiff)
         l = last(findmin(ldiff))

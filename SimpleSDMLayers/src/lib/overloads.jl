@@ -165,10 +165,19 @@ end
 Given a layer and a latitude, returns `nothing` if the latitude is outside the
 range, or the grid index containing this latitude if it is within range
 """
-function _match_latitude(layer::T, lat::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-    lat > layer.top && return nothing
-    lat < layer.bottom && return nothing
-    return last(findmin(abs.(lat .- latitudes(layer))))
+function _match_latitude(layer::T, lat::K; side=:none) where {T <: SimpleSDMLayer, K <: AbstractFloat}
+    side in [:none, :bottom, :top] || throw(ArgumentError("side must be one of :none (default), :bottom, :top"))
+
+    ldiff = abs.(lat .- latitudes(layer))
+    if side == :none || !any(x -> isapprox(x, stride(layer, 2)), ldiff)
+        l = last(findmin(ldiff))
+    elseif side == :bottom
+        l = findlast(x -> isapprox(x, stride(layer, 2)), ldiff)
+    elseif side == :top
+        l = findfirst(x -> isapprox(x, stride(layer, 2)), ldiff)
+    end
+    
+    return l
 end
 
 
@@ -176,10 +185,22 @@ end
 Given a layer and a longitude, returns `nothing` if the longitude is outside the
 range, or the grid index containing this longitude if it is within range
 """
-function _match_longitude(layer::T, lon::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
+function _match_longitude(layer::T, lon::K; side::Symbol=:none) where {T <: SimpleSDMLayer, K <: AbstractFloat}
+    side in [:none, :left, :right] || throw(ArgumentError("side must be one of :none (default), :left, :right"))
+    
     lon > layer.right && return nothing
     lon < layer.left && return nothing
-    return last(findmin(abs.(lon .- longitudes(layer))))
+    
+    ldiff = abs.(lon .- longitudes(layer))
+    if side == :none || !any(x -> isapprox(x, stride(layer, 1)), ldiff)
+        l = last(findmin(ldiff))
+    elseif side == :left
+        l = findlast(x -> isapprox(x, stride(layer, 1)), ldiff)
+    elseif side == :right
+        l = findfirst(x -> isapprox(x, stride(layer, 1)), ldiff)
+    end
+
+    return l
 end
 
 """
@@ -209,10 +230,10 @@ function Base.getindex(layer::T; left=nothing, right=nothing, top=nothing, botto
           @assert typeof(limit) <: AbstractFloat
        end
     end
-    imax = _match_longitude(layer, isnothing(right) ? layer.right : right)
-    imin = _match_longitude(layer, isnothing(left) ? layer.left : left)
-    jmax = _match_latitude(layer, isnothing(top) ? layer.top : top)
-    jmin = _match_latitude(layer, isnothing(bottom) ? layer.bottom : bottom)
+    imax = _match_longitude(layer, isnothing(right) ? layer.right : right; side=:right)
+    imin = _match_longitude(layer, isnothing(left) ? layer.left : left; side=:left)
+    jmax = _match_latitude(layer, isnothing(top) ? layer.top : top; side=:top)
+    jmin = _match_latitude(layer, isnothing(bottom) ? layer.bottom : bottom; side=:bottom)
     any(isnothing.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
     # Note that this is LATITUDE first
     return layer[jmin:jmax, imin:imax]

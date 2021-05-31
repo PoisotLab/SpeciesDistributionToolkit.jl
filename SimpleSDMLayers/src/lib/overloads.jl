@@ -41,7 +41,7 @@ end
 Returns a response with the same grid and bounding box as the predictor.
 """
 function Base.convert(::Type{SimpleSDMResponse}, layer::T) where {T <: SimpleSDMPredictor}
-   return copy(SimpleSDMResponse(layer.grid, layer.left, layer.right, layer.bottom, layer.top))
+    return copy(SimpleSDMResponse(layer.grid, layer.left, layer.right, layer.bottom, layer.top))
 end
 
 """
@@ -50,7 +50,7 @@ end
 Returns a predictor with the same grid and bounding box as the response.
 """
 function Base.convert(::Type{SimpleSDMPredictor}, layer::T) where {T <: SimpleSDMResponse}
-   return copy(SimpleSDMPredictor(layer.grid, layer.left, layer.right, layer.bottom, layer.top))
+    return copy(SimpleSDMPredictor(layer.grid, layer.left, layer.right, layer.bottom, layer.top))
 end
 
 """
@@ -73,7 +73,7 @@ end
 Returns the grid as an array.
 """
 function Base.convert(::Type{Matrix}, layer::T) where {T <: SimpleSDMLayer}
-   return copy(layer.grid)
+    return copy(layer.grid)
 end
 
 """
@@ -110,11 +110,11 @@ alongside a side of the grid. The first position is the length of the
 *longitude* cells, the second the *latitude*.
 """
 function Base.stride(layer::T; dims::Union{Nothing,Integer}=nothing) where {T <: SimpleSDMLayer}
-   lon_stride = (layer.right-layer.left)/2.0size(layer, 2)
-   lat_stride = (layer.top-layer.bottom)/2.0size(layer, 1)
-   isnothing(dims) && return (lon_stride, lat_stride)
-   dims == 1 && return lon_stride
-   dims == 2 && return lat_stride
+    lon_stride = (layer.right-layer.left)/2.0size(layer, 2)
+    lat_stride = (layer.top-layer.bottom)/2.0size(layer, 1)
+    isnothing(dims) && return (lon_stride, lat_stride)
+    dims == 1 && return lon_stride
+    dims == 2 && return lat_stride
 end
 Base.stride(layer::T, i::Int) where {T<:SimpleSDMLayer} = stride(layer; dims=i)
 
@@ -145,20 +145,20 @@ performs additional checks to ensure that the range is not empty, and to also
 ensure that it does not overflows from the size of the layer.
 """
 function Base.getindex(layer::T, i::R, j::R) where {T <: SimpleSDMLayer, R <: UnitRange}
-   i_min = isempty(i) ? max(i.start-1, 1) : i.start
-   i_max = isempty(i) ? max(i.stop+2, size(layer, 1)) : i.stop
-   j_min = isempty(j) ? max(j.start-1, 1) : j.start
-   j_max = isempty(j) ? max(j.stop+2, size(layer, 2)) : j.stop
-   i_fix = i_min:i_max
-   j_fix = j_min:j_max
-   RT = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
-   return RT(
-            layer.grid[i_fix,j_fix],
-            minimum(longitudes(layer)[j_fix])-stride(layer,1),
-            maximum(longitudes(layer)[j_fix])+stride(layer,1),
-            minimum(latitudes(layer)[i_fix])-stride(layer,2),
-            maximum(latitudes(layer)[i_fix])+stride(layer,2)
-           )
+    i_min = isempty(i) ? max(i.start-1, 1) : i.start
+    i_max = isempty(i) ? max(i.stop+2, size(layer, 1)) : i.stop
+    j_min = isempty(j) ? max(j.start-1, 1) : j.start
+    j_max = isempty(j) ? max(j.stop+2, size(layer, 2)) : j.stop
+    i_fix = i_min:i_max
+    j_fix = j_min:j_max
+    RT = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
+    return RT(
+        layer.grid[i_fix,j_fix],
+        minimum(longitudes(layer)[j_fix])-stride(layer,1),
+        maximum(longitudes(layer)[j_fix])+stride(layer,1),
+        minimum(latitudes(layer)[i_fix])-stride(layer,2),
+        maximum(latitudes(layer)[i_fix])+stride(layer,2)
+    )
 end
 
 """
@@ -166,9 +166,9 @@ Given a layer and a latitude, returns `nothing` if the latitude is outside the
 range, or the grid index containing this latitude if it is within range
 """
 function _match_latitude(layer::T, lat::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-   lat > layer.top && return nothing
-   lat < layer.bottom && return nothing
-   return last(findmin(abs.(lat .- latitudes(layer))))
+    lat > layer.top && return nothing
+    lat < layer.bottom && return nothing
+    return last(findmin(abs.(lat .- latitudes(layer))))
 end
 
 
@@ -177,9 +177,9 @@ Given a layer and a longitude, returns `nothing` if the longitude is outside the
 range, or the grid index containing this longitude if it is within range
 """
 function _match_longitude(layer::T, lon::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-   lon > layer.right && return nothing
-   lon < layer.left && return nothing
-   return last(findmin(abs.(lon .- longitudes(layer))))
+    lon > layer.right && return nothing
+    lon < layer.left && return nothing
+    return last(findmin(abs.(lon .- longitudes(layer))))
 end
 
 """
@@ -189,11 +189,11 @@ Extracts the value of a layer at a given latitude and longitude. If values
 outside the range are requested, will return `nothing`.
 """
 function Base.getindex(layer::T, longitude::K, latitude::K) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-   i = _match_longitude(layer, longitude)
-   j = _match_latitude(layer, latitude)
-   isnothing(i) && return nothing
-   isnothing(j) && return nothing
-   return layer.grid[j, i]
+    i = _match_longitude(layer, longitude)
+    j = _match_latitude(layer, latitude)
+    isnothing(i) && return nothing
+    isnothing(j) && return nothing
+    return layer.grid[j, i]
 end
 
 """
@@ -204,18 +204,18 @@ Returns a subset of the argument layer, where the new limits are given by
 if so these limits will not be affected.
 """
 function Base.getindex(layer::T; left=nothing, right=nothing, top=nothing, bottom=nothing) where {T <: SimpleSDMLayer}
-   for limit in [left, right, top, bottom]
-      if !isnothing(limit)
-         @assert typeof(limit) <: AbstractFloat
-      end
-   end
-   imax = _match_longitude(layer, isnothing(right) ? layer.right : right)
-   imin = _match_longitude(layer, isnothing(left) ? layer.left : left)
-   jmax = _match_latitude(layer, isnothing(top) ? layer.top : top)
-   jmin = _match_latitude(layer, isnothing(bottom) ? layer.bottom : bottom)
-   any(isnothing.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
-   # Note that this is LATITUDE first
-   return layer[jmin:jmax, imin:imax]
+    for limit in [left, right, top, bottom]
+       if !isnothing(limit)
+          @assert typeof(limit) <: AbstractFloat
+       end
+    end
+    imax = _match_longitude(layer, isnothing(right) ? layer.right : right)
+    imin = _match_longitude(layer, isnothing(left) ? layer.left : left)
+    jmax = _match_latitude(layer, isnothing(top) ? layer.top : top)
+    jmin = _match_latitude(layer, isnothing(bottom) ? layer.bottom : bottom)
+    any(isnothing.([imin, imax, jmin, jmax])) && throw(ArgumentError("Unable to extract, coordinates outside of range"))
+    # Note that this is LATITUDE first
+    return layer[jmin:jmax, imin:imax]
 end
 
 """
@@ -241,8 +241,8 @@ Extract a layer based on a second layer. Note that the two layers must be
 size.
 """
 function Base.getindex(layer1::T1, layer2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
-   SimpleSDMLayers._layers_are_compatible(layer1, layer2)
-   return layer1[left=layer2.left, right=layer2.right, bottom=layer2.bottom, top=layer2.top]
+    SimpleSDMLayers._layers_are_compatible(layer1, layer2)
+    return layer1[left=layer2.left, right=layer2.right, bottom=layer2.bottom, top=layer2.top]
 end
 
 """
@@ -252,8 +252,8 @@ Changes the value of a cell, or a range of cells, as indicated by their grid
 positions.
 """
 function Base.setindex!(layer::SimpleSDMResponse{T}, v::T, i...) where {T}
-   typeof(v) <: eltype(layer.grid) || throw(ArgumentError("Impossible to set a value to a non-matching type"))
-   layer.grid[i...] = v
+    typeof(v) <: eltype(layer.grid) || throw(ArgumentError("Impossible to set a value to a non-matching type"))
+    layer.grid[i...] = v
 end
 
 """
@@ -263,9 +263,9 @@ Changes the values of the cell including the point at the requested latitude and
 longitude.
 """
 function Base.setindex!(layer::SimpleSDMResponse{T}, v::T, lon::Float64, lat::Float64) where {T}
-   i = _match_longitude(layer, lon)
-   j = _match_latitude(layer, lat)
-   layer[j,i] = v
+    i = _match_longitude(layer, lon)
+    j = _match_latitude(layer, lat)
+    layer[j,i] = v
 end
 
 """
@@ -278,9 +278,9 @@ the type. If not, the same result can always be achieved through the use of
 `copy`, manual update, and `convert`.
 """
 function Base.similar(layer::T, ::Type{TC}) where {TC <: Any, T <: SimpleSDMLayer}
-   emptygrid = convert(Matrix{Union{Nothing,TC}}, zeros(TC, size(layer)))
-   emptygrid[findall(isnothing, layer.grid)] .= nothing
-   return SimpleSDMResponse(emptygrid, layer.left, layer.right, layer.bottom, layer.top)
+    emptygrid = convert(Matrix{Union{Nothing,TC}}, zeros(TC, size(layer)))
+    emptygrid[findall(isnothing, layer.grid)] .= nothing
+    return SimpleSDMResponse(emptygrid, layer.left, layer.right, layer.bottom, layer.top)
 end
 
 
@@ -294,7 +294,7 @@ zero for the type. If not, the same result can always be achieved through the
 use of `copy`, manual update, and `convert`.
 """
 function Base.similar(layer::T) where {T <: SimpleSDMLayer}
-   return similar(layer, eltype(layer))
+    return similar(layer, eltype(layer))
 end
 
 """
@@ -303,9 +303,9 @@ end
 Returns a new copy of the layer, which has the same type.
 """
 function Base.copy(layer::T) where {T <: SimpleSDMLayer}
-   copygrid = copy(layer.grid)
-   RT = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
-   return RT(copygrid, copy(layer.left), copy(layer.right), copy(layer.bottom), copy(layer.top))
+    copygrid = copy(layer.grid)
+    RT = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
+    return RT(copygrid, copy(layer.left), copy(layer.right), copy(layer.bottom), copy(layer.top))
 end
 
 """

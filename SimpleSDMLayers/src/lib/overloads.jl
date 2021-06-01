@@ -172,12 +172,13 @@ function _match_latitude(layer::T, lat::K; side=:none) where {T <: SimpleSDMLaye
     lat < layer.bottom && return nothing
 
     ldiff = abs.(lat .- latitudes(layer))
-    if side == :none || !any(x -> isapprox(x, stride(layer, 2)), ldiff)
+    lapprox = isapprox.(ldiff, stride(layer, 2))
+    if side == :none || !any(lapprox)
         l = last(findmin(ldiff))
     elseif side == :bottom
-        l = findlast(x -> isapprox(x, stride(layer, 2)), ldiff)
+        l = findlast(lapprox)
     elseif side == :top
-        l = findfirst(x -> isapprox(x, stride(layer, 2)), ldiff)
+        l = findfirst(lapprox)
     end
     
     return l
@@ -195,12 +196,13 @@ function _match_longitude(layer::T, lon::K; side::Symbol=:none) where {T <: Simp
     lon < layer.left && return nothing
     
     ldiff = abs.(lon .- longitudes(layer))
-    if side == :none || !any(x -> isapprox(x, stride(layer, 1)), ldiff)
+    lapprox = isapprox.(ldiff, stride(layer, 1))
+    if side == :none || !any(lapprox)
         l = last(findmin(ldiff))
     elseif side == :left
-        l = findlast(x -> isapprox(x, stride(layer, 1)), ldiff)
+        l = findlast(lapprox)
     elseif side == :right
-        l = findfirst(x -> isapprox(x, stride(layer, 1)), ldiff)
+        l = findfirst(lapprox)
     end
 
     return l

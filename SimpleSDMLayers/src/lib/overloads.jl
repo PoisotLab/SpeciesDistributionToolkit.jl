@@ -374,6 +374,7 @@ function Base.vcat(l1::T, l2::T) where {T <: SimpleSDMLayer}
     (l1.right == l2.right) || throw(ArgumentError("The two layers passed to vcat must have the same right coordinate"))
     all(stride(l1) .≈ stride(l2)) || throw(ArgumentError("The two layers passed to vcat must have the same stride"))
     (l1.top == l2.bottom) && return vcat(l2, l1)
+    (l2.top == l1.bottom) || throw(ArgumentError("The two layers passed to vcat must have contiguous bottom and top coordinates"))
     new_grid = vcat(l2.grid, l1.grid)
     RT = T <: SimpleSDMPredictor ? SimpleSDMPredictor : SimpleSDMResponse
     return RT(new_grid, l1.left, l1.right, l2.bottom, l1.top)
@@ -382,7 +383,7 @@ end
 """
     Base.hcat(l1::T, l2::T) where {T <: SimpleSDMLayers}
 
-Adds the second layer *to the right of* the first one (according to coordinaters),
+Adds the second layer *to the right of* the first one (according to coordinates),
 assuming the strides and left/right coordinates match. This will automatically 
 re-order the layers if the second is to the left the first.
 """
@@ -391,6 +392,7 @@ function Base.hcat(l1::T, l2::T) where {T <: SimpleSDMLayer}
     (l1.bottom == l2.bottom) || throw(ArgumentError("The two layers passed to hcat must have the same bottom coordinate"))
     all(stride(l1) .≈ stride(l2)) || throw(ArgumentError("The two layers passed to hcat must have the same stride"))
     (l2.right == l1.left) && return hcat(l2, l1)
+    (l1.right == l2.left) || throw(ArgumentError("The two layers passed to hcat must have contiguous left and right coordinates"))
     new_grid = hcat(l1.grid, l2.grid)
     RT = T <: SimpleSDMPredictor ? SimpleSDMPredictor : SimpleSDMResponse
     return RT(new_grid, l1.left, l2.right, l1.bottom, l1.top)

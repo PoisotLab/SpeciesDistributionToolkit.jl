@@ -54,19 +54,24 @@ end
     DataFrames.DataFrame(layer::T) where {T <: SimpleSDMLayer}
 
 Returns a DataFrame from a `SimpleSDMLayer` element, with columns for latitudes,
-longitudes and grid values. 
+longitudes and grid values. `nothing` values in the layer grid are replaced by
+`missing` values in the DataFrame.
 """
 function DataFrames.DataFrame(layer::T; kw...) where {T <: SimpleSDMLayer}
     lats = repeat(latitudes(layer), outer = size(layer, 2))
     lons = repeat(longitudes(layer), inner = size(layer, 1))
-    return DataFrames.DataFrame(latitude = lats, longitude = lons, values = vec(layer.grid); kw...)
+    values = replace(vec(layer.grid), nothing => missing)
+    df = DataFrames.DataFrame(latitude = lats, longitude = lons, values = values; kw...)
+    return df
 end
 
 """
     DataFrames.DataFrame(layers::Array{SimpleSDMLayer})
 
 Returns a single DataFrame from an `Array` of compatible`SimpleSDMLayer`
-elements, with every layer as a column, as well as columns for latitudes and longitudes.
+elements, with every layer as a column, as well as columns for latitudes and 
+longitudes. `nothing` values in the layer grids are replaced by
+`missing` values in the DataFrame.
 """
 function DataFrames.DataFrame(layers::Array{T}; kw...) where {T <: SimpleSDMLayer}
     l1 = layers[1]
@@ -74,7 +79,7 @@ function DataFrames.DataFrame(layers::Array{T}; kw...) where {T <: SimpleSDMLaye
     
     lats = repeat(latitudes(l1), outer = size(l1, 2))
     lons = repeat(longitudes(l1), inner = size(l1, 1))
-    values = mapreduce(x -> vec(x.grid), hcat, layers)
+    values = mapreduce(x -> replace(vec(x.grid), nothing => missing), hcat, layers)
     
     df = DataFrames.DataFrame(values, :auto; kw...)
     DataFrames.insertcols!(df, 1, :latitude => lats)

@@ -29,7 +29,7 @@ using Statistics
 using DataFrames
 
 # Load environmental data
-temperature, precipitation = worldclim([1,12])
+temperature, precipitation = SimpleSDMPredictor(WorldClim, BioClim, [1,12])
 
 # Get GBIF occurrences
 kingfisher = GBIF.taxon("Megaceryle alcyon", strict=true)
@@ -59,11 +59,12 @@ rename!(env_df, :x1 => :temperature, :x2 => :precipitation)
 first(env_df, 5)
 ```
 
-Note that the resulting `DataFrame` will include the values set to `nothing` in
-the layers. We might want to remove those rows using `filter!`:
+Note that the resulting `DataFrame` will include `missing` values for the 
+elements set to `nothing` in the layers. We might want to remove those rows 
+using `filter!` or `dropmissing!`:
 
 ```@example dataframes
-filter!(x -> !isnothing(x.temperature) && !isnothing(x.precipitation), env_df);
+dropmissing!(env_df, [:temperature, :precipitation]);
 last(env_df, 5)
 ```
 

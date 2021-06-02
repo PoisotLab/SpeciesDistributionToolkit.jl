@@ -14,9 +14,9 @@ temperature_clip = clip(temperature, df)
 @test typeof(temperature_clip) == typeof(temperature)
 
 @test typeof(DataFrame(temperature_clip)) == DataFrame
-@test eltype(DataFrame(temperature_clip).values) == eltype(temperature_clip.grid)
+@test eltype(DataFrame(temperature_clip).values) == Union{Missing, eltype(temperature_clip)}
 @test typeof(DataFrame([temperature_clip, temperature_clip])) == DataFrame
-@test eltype(DataFrame([temperature_clip, temperature_clip]).x1) == eltype(temperature_clip.grid)
+@test eltype(DataFrame([temperature_clip, temperature_clip]).x1) == Union{Missing, eltype(temperature_clip)}
 
 @test typeof(SimpleSDMPredictor(df, :values, temperature_clip)) <: SimpleSDMLayer
 @test typeof(SimpleSDMPredictor(df, :values, temperature_clip)) <: SimpleSDMPredictor

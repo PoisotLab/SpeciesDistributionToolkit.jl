@@ -79,7 +79,8 @@ function DataFrames.DataFrame(layers::Array{T}; kw...) where {T <: SimpleSDMLaye
     
     lats = repeat(latitudes(l1), outer = size(l1, 2))
     lons = repeat(longitudes(l1), inner = size(l1, 1))
-    values = mapreduce(x -> replace(vec(x.grid), nothing => missing), hcat, layers)
+    values = mapreduce(x -> vec(x.grid), hcat, layers)
+    values = replace(values, nothing => missing)
     
     df = DataFrames.DataFrame(values, :auto; kw...)
     DataFrames.insertcols!(df, 1, :longitude => lons)

@@ -8,11 +8,16 @@ temp = SimpleSDMPredictor(WorldClim, BioClim, 1)
 coords = (left = -145.0, right = -50.0, bottom = 20.0, top = 75.0)
 l1 = temp[coords]
 l2 = SimpleSDMPredictor(WorldClim, BioClim, 1; coords...)
+tempfile = tempname()
+geotiff(tempfile, l2)
+l3 = replace(geotiff(SimpleSDMPredictor, tempfile), NaN => nothing)
 
 @test size(l1) == size(l2)
+@test size(l1) == size(l3)
 @test l1.grid == l2.grid
+@test l1.grid == l3.grid
 
-for l in (l1, l2)
+for l in (l1, l2, l3)
     @test size(l) == (330, 570)
 
     @test l.left == coords.left

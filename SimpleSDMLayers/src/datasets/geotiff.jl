@@ -102,11 +102,7 @@ Write a single `layer` to a `file`, where the `nodata` field is set to an
 arbitrary value.
 """
 function geotiff(file::AbstractString, layer::SimpleSDMPredictor{T}; nodata::T=convert(T, -9999)) where {T <: Number}
-    array = layer.grid
-    replace!(array, nothing => NaN)
-    array = convert(Matrix{T}, array)
-    dtype = eltype(array)
-    array_t = reverse(permutedims(array, [2, 1]); dims=2)
+    array_t = _prepare_layer_for_burnin(layer)
     width, height = size(array_t)
 
     # Geotransform
@@ -144,8 +140,7 @@ end
 
 function _prepare_layer_for_burnin(layer::T) where {T <: SimpleSDMLayer}
     @assert eltype(layer) <: Number
-    array = layer.grid
-    replace!(array, nothing => NaN)
+    array = replace(layer.grid, nothing => NaN)
     array = convert(Matrix{eltype(layer)}, array)
     dtype = eltype(array)
     array_t = reverse(permutedims(array, [2, 1]); dims=2)

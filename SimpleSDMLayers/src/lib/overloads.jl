@@ -25,8 +25,8 @@ function Base.show(io::IO, ::MIME"text/plain", layer::T) where {T <: SimpleSDMLa
     itype = eltype(layer)
     otype = T <: SimpleSDMPredictor ? "predictor" : "response"
     print(io, """SDM $(otype) → $(size(layer,1))×$(size(layer,2)) grid with $(length(layer)) $(itype)-valued cells
-    \x20\x20Latitudes\t$(extrema(latitudes(layer)))
-    \x20\x20Longitudes\t$(extrema(longitudes(layer)))""")
+    \x20\x20Latitudes\t$(Tuple(latitudes(layer)[[1, end]]))
+    \x20\x20Longitudes\t$(Tuple(longitudes(layer)[[1, end]]))""")
 end
 
 function Base.show(io::IO, layer::T) where {T <: SimpleSDMLayer}

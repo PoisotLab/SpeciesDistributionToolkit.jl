@@ -23,6 +23,8 @@ struct SimpleSDMPredictor{T} <: SimpleSDMLayer
     bottom::AbstractFloat
     top::AbstractFloat
     function SimpleSDMPredictor(grid::Matrix{Union{Nothing,T}}, l::K, r::K, b::K, t::K) where {T, K<:AbstractFloat}
+        r < l && throw(ArgumentError("The right bounding coordinate must be greater than the right one"))
+        t < b && throw(ArgumentError("The top bounding coordinate must be greater than the bottom one"))
         return new{T}(grid, l, r, b, t)
     end
 end
@@ -38,6 +40,8 @@ mutable struct SimpleSDMResponse{T} <: SimpleSDMLayer
     bottom::AbstractFloat
     top::AbstractFloat
     function SimpleSDMResponse(grid::Matrix{Union{Nothing,T}}, l::K, r::K, b::K, t::K) where {T, K<:AbstractFloat}
+        r < l && throw(ArgumentError("The right bounding coordinate must be greater than the right bounding coordinate"))
+        t < b && throw(ArgumentError("The top bounding coordinate must be greater than the bottom bounding coordinate"))
         return new{T}(grid, l, r, b, t)
     end
 end

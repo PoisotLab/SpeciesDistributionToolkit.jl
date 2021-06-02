@@ -61,7 +61,7 @@ function DataFrames.DataFrame(layer::T; kw...) where {T <: SimpleSDMLayer}
     lats = repeat(latitudes(layer), outer = size(layer, 2))
     lons = repeat(longitudes(layer), inner = size(layer, 1))
     values = replace(vec(layer.grid), nothing => missing)
-    df = DataFrames.DataFrame(latitude = lats, longitude = lons, values = values; kw...)
+    df = DataFrames.DataFrame(longitude = lons, latitude = lats, values = values; kw...)
     return df
 end
 
@@ -82,8 +82,8 @@ function DataFrames.DataFrame(layers::Array{T}; kw...) where {T <: SimpleSDMLaye
     values = mapreduce(x -> replace(vec(x.grid), nothing => missing), hcat, layers)
     
     df = DataFrames.DataFrame(values, :auto; kw...)
-    DataFrames.insertcols!(df, 1, :latitude => lats)
     DataFrames.insertcols!(df, 1, :longitude => lons)
+    DataFrames.insertcols!(df, 2, :latitude => lats)
     return df
 end
 

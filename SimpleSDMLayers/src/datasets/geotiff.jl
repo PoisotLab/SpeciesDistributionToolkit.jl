@@ -1,9 +1,21 @@
-function _find_span(n, m, M, pos)
+function _find_span(n, m, M, pos, side)
+    side in [:left, :right, :bottom, :top] || throw(ArgumentError("side must be one of :left, :right, :bottom, top"))
+    
     pos > M && return nothing
     pos < m && return nothing
     stride = (M - m) / n
     centers = (m + 0.5stride):stride:(M-0.5stride)
-    span_pos = last(findmin(abs.(pos .- centers)))
+    pos_diff = abs.(pos .- centers)
+    pos_approx = isapprox.(pos_diff, 0.5stride)
+    if any(pos_approx)
+        if side in [:left, :bottom]
+            span_pos = findlast(pos_approx)
+        elseif side in [:right, :top]
+            span_pos = findfirst(pos_approx)
+        end
+    else
+        span_pos = last(findmin(abs.(pos .- centers)))
+    end
     return (stride, centers[span_pos], span_pos)
 end
 
@@ -64,10 +76,10 @@ function geotiff(
         #global left_pos, right_pos
         #global bottom_pos, top_pos
 
-        lon_stride, left_pos, min_width = _find_span(width, minlon, maxlon, left)
-        _, right_pos, max_width = _find_span(width, minlon, maxlon, right)
-        lat_stride, top_pos, max_height = _find_span(height, minlat, maxlat, top)
-        _, bottom_pos, min_height = _find_span(height, minlat, maxlat, bottom)
+        lon_stride, left_pos, min_width = _find_span(width, minlon, maxlon, left, :left)
+        _, right_pos, max_width = _find_span(width, minlon, maxlon, right, :right)
+        lat_stride, top_pos, max_height = _find_span(height, minlat, maxlat, top, :top)
+        _, bottom_pos, min_height = _find_span(height, minlat, maxlat, bottom, :bottom)
 
         max_height, min_height = height .- (min_height, max_height) .+ 1
 
@@ -90,11 +102,7 @@ Write a single `layer` to a `file`, where the `nodata` field is set to an
 arbitrary value.
 """
 function geotiff(file::AbstractString, layer::SimpleSDMPredictor{T}; nodata::T=convert(T, -9999)) where {T <: Number}
-    array = layer.grid
-    replace!(array, nothing => NaN)
-    array = convert(Matrix{T}, array)
-    dtype = eltype(array)
-    array_t = reverse(permutedims(array, [2, 1]); dims=2)
+    array_t = _prepare_layer_for_burnin(layer)
     width, height = size(array_t)
 
     # Geotransform
@@ -132,8 +140,7 @@ end
 
 function _prepare_layer_for_burnin(layer::T) where {T <: SimpleSDMLayer}
     @assert eltype(layer) <: Number
-    array = layer.grid
-    replace!(array, nothing => NaN)
+    array = replace(layer.grid, nothing => NaN)
     array = convert(Matrix{eltype(layer)}, array)
     dtype = eltype(array)
     array_t = reverse(permutedims(array, [2, 1]); dims=2)

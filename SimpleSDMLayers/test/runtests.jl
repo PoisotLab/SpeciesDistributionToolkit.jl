@@ -17,6 +17,7 @@ tests = [
    "worldclim" => "worldclim.jl",
    "earthenv" => "earthenv.jl",
    "chelsa" => "chelsa.jl",
+   "subsetting" => "subsetting.jl",
    "coarsen" => "coarsen.jl",
    "plotting" => "plots.jl",
    "GBIF" => "gbif.jl",

@@ -401,11 +401,14 @@ function Base.hcat(l1::T, l2::T) where {T <: SimpleSDMLayer}
 end
 
 """
-    Base.replace!(layer::T, old_new::Pair...) where {T <: SimpleSDMResponse}
+    Base.replace!(layer::T, old_new::Pair...) where {T <: SimpleSDMLayer}
 
-Replaces the elements of `layer` according to a series of pairs. In place.
+Replaces the elements of `layer` according to a series of pairs. In place. Only
+possible for `SimpleSDMResponse` elements (which are mutable) and will throw an
+error if called on a `SimpleSDMPredictor` element (which is not mutable).
 """
-function Base.replace!(layer::T, old_new::Pair...) where {T <: SimpleSDMResponse}
+function Base.replace!(layer::T, old_new::Pair...) where {T <: SimpleSDMLayer}
+    layer isa SimpleSDMResponse || throw(ArgumentError("`SimpleSDMPredictor` elements are immutable. Convert to a `SimpleSDMResponse` first or call `replace!` directly on the grid element."))
     replace!(layer.grid, old_new...)
     return layer
 end
@@ -422,7 +425,7 @@ function Base.replace(layer::T, old_new::Pair...) where {T <: SimpleSDMResponse}
 end
 
 """
-    Base.replace!(layer::T, old_new::Pair...) where {T <: SimpleSDMResponse}
+    Base.replace(layer::T, old_new::Pair...) where {T <: SimpleSDMPredictor}
 
 Replaces the elements of `layer` according to a series of pairs. Copies the
 layer as a response before.

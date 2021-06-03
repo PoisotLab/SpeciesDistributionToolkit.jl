@@ -14,6 +14,8 @@ import Base.Broadcast: broadcast
 import Base: hcat
 import Base: vcat
 import Base: show
+import Base: ==
+import Base: isequal
 
 """
     Base.show(io::IO, ::MIME"text/plain", layer::T) where {T <: SimpleSDMLayer}
@@ -438,4 +440,44 @@ Returns the quantiles of `layer` at `p`, using `Statistics.quantile`.
 """
 function Statistics.quantile(layer::T, p) where {T <: SimpleSDMLayer}
     return quantile(collect(layer), p)
+end
+
+"""
+    ==(layer1::SimpleSDMLayer, layer2::SimpleSDMLayer)
+
+Tests whether two `SimpleSDMLayer` elements are equal. The layers are equal if 
+all their fields (`grid`, `left`, `right`, `bottom`, `top`) are equal, as 
+verified with `==` (e.g., `layer1.grid == layer2.grid`).
+"""
+
+function Base.:(==)(layer1::SimpleSDMLayer, layer2::SimpleSDMLayer)
+    return all(
+        [
+            layer1.grid == layer2.grid,
+            layer1.left == layer2.left,
+            layer1.right == layer2.right,
+            layer1.bottom == layer2.bottom,
+            layer1.top == layer2.top,
+        ]
+    )
+end
+
+"""
+    isequal(layer1::SimpleSDMLayer, layer2::SimpleSDMLayer)
+
+Tests whether two `SimpleSDMLayer` elements are equal. The layers are equal if 
+all their fields (`grid`, `left`, `right`, `bottom`, `top`) are equal, as 
+verified with `isequal` (e.g., `isequal(layer1.grid, layer2.grid)`).
+"""
+
+function Base.isequal(layer1::SimpleSDMLayer, layer2::SimpleSDMLayer)
+    return all(
+        [
+            isequal(layer1.grid, layer2.grid),
+            isequal(layer1.left, layer2.left),
+            isequal(layer1.right, layer2.right),
+            isequal(layer1.bottom, layer2.bottom),
+            isequal(layer1.top, layer2.top),
+        ]
+    )
 end

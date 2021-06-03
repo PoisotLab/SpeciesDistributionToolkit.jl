@@ -101,4 +101,27 @@ s2 = replace(s1, 1 => 2, 3 => 2, 9 => nothing)
 @test s2.grid[3,1] == 2
 @test s2.grid[1,3] == 7
 
+# == & isequal
+l1, l2 = SimpleSDMPredictor(WorldClim, BioClim, 1:2)
+l3 = copy(l1)
+l4 = similar(l1)
+replace!(l4, nothing => NaN)
+l5 = SimpleSDMPredictor(replace(l1.grid, nothing => missing), l1)
+
+@test l1 == l1
+@test l1 === l1
+@test l2 != l1
+@test l3 == l1
+@which l3 !== l1
+
+@test l4 != l1
+@test l4 != l4
+@test !isequal(l4, l1)
+@test isequal(l4, l4)
+
+@test ismissing(l5 == l1)
+@test ismissing(l5 == l5)
+@test !isequal(l5, l1)
+@test isequal(l5, l5)
+
 end

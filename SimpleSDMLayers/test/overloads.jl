@@ -112,7 +112,7 @@ l5 = SimpleSDMPredictor(replace(l1.grid, nothing => missing), l1)
 @test l1 === l1
 @test l2 != l1
 @test l3 == l1
-@which l3 !== l1
+@test l3 !== l1
 
 @test l4 != l1
 @test l4 != l4

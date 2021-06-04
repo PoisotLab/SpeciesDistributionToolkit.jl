@@ -462,7 +462,6 @@ Tests whether two `SimpleSDMLayer` elements are equal. The layers are equal if
 all their fields (`grid`, `left`, `right`, `bottom`, `top`) are equal, as 
 verified with `==` (e.g., `layer1.grid == layer2.grid`).
 """
-
 function Base.:(==)(layer1::SimpleSDMLayer, layer2::SimpleSDMLayer)
     return all(
         [
@@ -486,7 +485,6 @@ Tests whether two `SimpleSDMLayer` elements are equal. The layers are equal if
 all their fields (`grid`, `left`, `right`, `bottom`, `top`) are equal, as 
 verified with `isequal` (e.g., `isequal(layer1.grid, layer2.grid)`).
 """
-
 function Base.isequal(layer1::SimpleSDMLayer, layer2::SimpleSDMLayer)
     return all(
         [

@@ -19,7 +19,6 @@ longitudes(layer::T) where {T <: SimpleSDMLayer} = range(layer.left+stride(layer
 
 Returns the bounding coordinates of a layer as `NamedTuple`.
 """
-
 boundingbox(layer::T) where {T <: SimpleSDMLayer} =  (left=layer.left, right=layer.right, bottom=layer.bottom, top=layer.top)
 
 """

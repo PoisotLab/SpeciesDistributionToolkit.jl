@@ -1,13 +1,12 @@
-# Importing your own data
+# Importing and exporting your own data
 
-It is possible to import your own rasters into a `SimpleSDMLayer` object. This
-requires defining a new type and two "helper" functions, which might seem a
-little bit convoluted, but helps *immensely* underneath in case you want to also
-*download* rasters from the web with different arguments. In this example, we
-will look at a data file produced by the *OmniScape* package, and which
-represents landscape connectivity in the Laurentians region of Québec. This
-example will also show how we can use the `broadcast` operation to modify the
-values of a raster.
+It is possible to import your own rasters into a `SimpleSDMLayer` object and to
+export `SimpleSDMLayer` objects to raster files. In this example, we will look at a data file
+produced by the *OmniScape* package, and which represents landscape connectivity
+in the Laurentians region of Québec. This example will also show how we can use
+the `broadcast` operation to modify the values of a raster.
+
+## Importing data
 
 ```@example temp
 using SimpleSDMLayers
@@ -40,4 +39,25 @@ Finally, we are ready for plotting:
 
 ```@example temp
 plot(qmap, frame=:grid, c=:cork, clim=(0,1))
+```
+
+## Exporting data
+
+ `geotiff` can also be used in the opposite way to write `SimpleSDMLayer`
+objects to tiff files. For instance, we might want to keep our layer with
+quantile values for later on:
+
+```@example temp
+geotiff("layer.tif", qmap)
+```
+
+Note that `geotiff` can also write multiple layers in a single file (as
+different bands) as long as they have the same size and the same bounding
+coordinates. We can then reimport them by specifying the band number.
+
+```@example temp
+layers = SimpleSDMPredictor(WorldClim, BioClim, 1:2)
+
+geotiff("stack.tif", layers)
+layers = [geotiff(SimpleSDMPredictor, "stack.tif", i) for i in 1:2]
 ```

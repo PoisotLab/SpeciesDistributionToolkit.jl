@@ -1,6 +1,5 @@
 module SimpleSDMLayers
 
-using ArchGDAL: boundingbox
 using ArchGDAL
 using Downloads
 using RecipesBase

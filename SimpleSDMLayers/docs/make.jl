@@ -20,7 +20,7 @@ makedocs(
             "DataFrames integration" => "examples/dataframes.md",
             "Sliding window analysis" => "examples/slidingwindow.md",
             "Landcover data" => "examples/landcover.md",
-            "Landcover consensus" => "examples/consensus.md"
+            "Landcover consensus" => "examples/consensus.md",
             "Importing and exporting" => "examples/import.md",
         ],
         "Building SDMs" => [

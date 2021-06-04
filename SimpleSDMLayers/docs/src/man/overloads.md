@@ -32,7 +32,6 @@ Base.min
 /
 ==
 isequal
-hash
 ```
 
 ## From `Broadcast`

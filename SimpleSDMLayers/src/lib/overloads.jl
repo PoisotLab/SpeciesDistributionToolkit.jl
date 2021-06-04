@@ -16,6 +16,7 @@ import Base: vcat
 import Base: show
 import Base: ==
 import Base: isequal
+import Base: hash
 
 """
     Base.show(io::IO, ::MIME"text/plain", layer::T) where {T <: SimpleSDMLayer}
@@ -472,6 +473,10 @@ function Base.:(==)(layer1::SimpleSDMLayer, layer2::SimpleSDMLayer)
             layer1.top == layer2.top,
         ]
     )
+end
+
+function Base.hash(layer::SimpleSDMLayer, h::UInt)
+    return hash((layer.grid, layer.left, layer.right, layer.bottom, layer.top), h)
 end
 
 """

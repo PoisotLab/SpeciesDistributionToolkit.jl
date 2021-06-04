@@ -101,7 +101,7 @@ s2 = replace(s1, 1 => 2, 3 => 2, 9 => nothing)
 @test s2.grid[3,1] == 2
 @test s2.grid[1,3] == 7
 
-# == & isequal
+# ==, isequal, hash
 l1, l2 = SimpleSDMPredictor(WorldClim, BioClim, 1:2; left = 0.0, right = 10.0, bottom = 0.0, top = 10.0)
 l3 = copy(l1)
 l4 = similar(l1)
@@ -123,6 +123,14 @@ l5 = SimpleSDMPredictor(replace(l1.grid, nothing => missing), l1)
 @test ismissing(l5 == l5)
 @test !isequal(l5, l1)
 @test isequal(l5, l5)
+
+@test hash(l1) == hash(l1)
+@test hash(l2) != hash(l1)
+@test hash(l3) == hash(l1)
+@test hash(l4) != hash(l1)
+@test hash(l4) == hash(l4)
+@test hash(l5) != hash(l1)
+@test hash(l5) == hash(l5)
 
 # getindex(layer1, layer2)
 l1, l2 = SimpleSDMPredictor(WorldClim, BioClim, 1:2; left = 0.0, right = 10.0, bottom = 0.0, top = 10.0)

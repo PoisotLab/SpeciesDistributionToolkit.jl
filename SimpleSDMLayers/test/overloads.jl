@@ -102,7 +102,7 @@ s2 = replace(s1, 1 => 2, 3 => 2, 9 => nothing)
 @test s2.grid[1,3] == 7
 
 # == & isequal
-l1, l2 = SimpleSDMPredictor(WorldClim, BioClim, 1:2)
+l1, l2 = SimpleSDMPredictor(WorldClim, BioClim, 1:2; left = 0.0, right = 10.0, bottom = 0.0, top = 10.0)
 l3 = copy(l1)
 l4 = similar(l1)
 replace!(l4, nothing => NaN)
@@ -123,5 +123,17 @@ l5 = SimpleSDMPredictor(replace(l1.grid, nothing => missing), l1)
 @test ismissing(l5 == l5)
 @test !isequal(l5, l1)
 @test isequal(l5, l5)
+
+# getindex(layer1, layer2)
+l1, l2 = SimpleSDMPredictor(WorldClim, BioClim, 1:2; left = 0.0, right = 10.0, bottom = 0.0, top = 10.0)
+l3 = SimpleSDMPredictor(WorldClim, BioClim, 1; left = 5.0, right = 10.0, bottom = 5.0, top = 10.0)
+@test stride(l1) == stride(l3)
+
+l4 = l1[l2]
+@test l4 == l1
+
+l5 = l1[l3]
+@test l5 == l3
+@test_throws ArgumentError l3[l1]
 
 end

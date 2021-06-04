@@ -265,11 +265,20 @@ end
     Base.getindex(layer1::T1, layer2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
 
 Extract a layer based on a second layer. Note that the two layers must be
-*compatible*, which is to say they must have the same bounding box and grid
-size.
+*compatible*, which is to say they must have the same stride and the bounding
+coordinates of layer2 must be contained in layer1.
 """
 function Base.getindex(layer1::T1, layer2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
-    SimpleSDMLayers._layers_are_compatible(layer1, layer2)
+    iscompat = all(
+        [
+            layer2.left >= layer1.left,
+            layer2.right <= layer1.right,
+            layer2.bottom >= layer1.bottom,
+            layer2.top <= layer1.top,
+        ]
+    )
+    iscompat || throw(ArgumentError("layer2 has bounding coordinates that are not contained in layer1"))
+    stride(layer1) == stride(layer2) || throw(ArgumentError("The layers have different strides"))
     return layer1[left=layer2.left, right=layer2.right, bottom=layer2.bottom, top=layer2.top]
 end
 

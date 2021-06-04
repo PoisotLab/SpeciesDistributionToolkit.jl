@@ -14,6 +14,9 @@ import Base.Broadcast: broadcast
 import Base: hcat
 import Base: vcat
 import Base: show
+import Base: ==
+import Base: isequal
+import Base: hash
 
 """
     Base.show(io::IO, ::MIME"text/plain", layer::T) where {T <: SimpleSDMLayer}
@@ -263,11 +266,20 @@ end
     Base.getindex(layer1::T1, layer2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
 
 Extract a layer based on a second layer. Note that the two layers must be
-*compatible*, which is to say they must have the same bounding box and grid
-size.
+*compatible*, which is to say they must have the same stride and the bounding
+coordinates of layer2 must be contained in layer1.
 """
 function Base.getindex(layer1::T1, layer2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
-    SimpleSDMLayers._layers_are_compatible(layer1, layer2)
+    iscompat = all(
+        [
+            layer2.left >= layer1.left,
+            layer2.right <= layer1.right,
+            layer2.bottom >= layer1.bottom,
+            layer2.top <= layer1.top,
+        ]
+    )
+    iscompat || throw(ArgumentError("layer2 has bounding coordinates that are not contained in layer1"))
+    stride(layer1) == stride(layer2) || throw(ArgumentError("The layers have different strides"))
     return layer1[left=layer2.left, right=layer2.right, bottom=layer2.bottom, top=layer2.top]
 end
 
@@ -399,11 +411,14 @@ function Base.hcat(l1::T, l2::T) where {T <: SimpleSDMLayer}
 end
 
 """
-    Base.replace!(layer::T, old_new::Pair...) where {T <: SimpleSDMResponse}
+    Base.replace!(layer::T, old_new::Pair...) where {T <: SimpleSDMLayer}
 
-Replaces the elements of `layer` according to a series of pairs. In place.
+Replaces the elements of `layer` according to a series of pairs. In place. Only
+possible for `SimpleSDMResponse` elements (which are mutable) and will throw an
+error if called on a `SimpleSDMPredictor` element (which is not mutable).
 """
-function Base.replace!(layer::T, old_new::Pair...) where {T <: SimpleSDMResponse}
+function Base.replace!(layer::T, old_new::Pair...) where {T <: SimpleSDMLayer}
+    layer isa SimpleSDMResponse || throw(ArgumentError("`SimpleSDMPredictor` elements are immutable. Convert to a `SimpleSDMResponse` first or call `replace!` directly on the grid element."))
     replace!(layer.grid, old_new...)
     return layer
 end
@@ -420,7 +435,7 @@ function Base.replace(layer::T, old_new::Pair...) where {T <: SimpleSDMResponse}
 end
 
 """
-    Base.replace!(layer::T, old_new::Pair...) where {T <: SimpleSDMResponse}
+    Base.replace(layer::T, old_new::Pair...) where {T <: SimpleSDMPredictor}
 
 Replaces the elements of `layer` according to a series of pairs. Copies the
 layer as a response before.
@@ -438,4 +453,48 @@ Returns the quantiles of `layer` at `p`, using `Statistics.quantile`.
 """
 function Statistics.quantile(layer::T, p) where {T <: SimpleSDMLayer}
     return quantile(collect(layer), p)
+end
+
+"""
+    ==(layer1::SimpleSDMLayer, layer2::SimpleSDMLayer)
+
+Tests whether two `SimpleSDMLayer` elements are equal. The layers are equal if 
+all their fields (`grid`, `left`, `right`, `bottom`, `top`) are equal, as 
+verified with `==` (e.g., `layer1.grid == layer2.grid`).
+"""
+
+function Base.:(==)(layer1::SimpleSDMLayer, layer2::SimpleSDMLayer)
+    return all(
+        [
+            layer1.grid == layer2.grid,
+            layer1.left == layer2.left,
+            layer1.right == layer2.right,
+            layer1.bottom == layer2.bottom,
+            layer1.top == layer2.top,
+        ]
+    )
+end
+
+function Base.hash(layer::SimpleSDMLayer, h::UInt)
+    return hash((layer.grid, layer.left, layer.right, layer.bottom, layer.top), h)
+end
+
+"""
+    isequal(layer1::SimpleSDMLayer, layer2::SimpleSDMLayer)
+
+Tests whether two `SimpleSDMLayer` elements are equal. The layers are equal if 
+all their fields (`grid`, `left`, `right`, `bottom`, `top`) are equal, as 
+verified with `isequal` (e.g., `isequal(layer1.grid, layer2.grid)`).
+"""
+
+function Base.isequal(layer1::SimpleSDMLayer, layer2::SimpleSDMLayer)
+    return all(
+        [
+            isequal(layer1.grid, layer2.grid),
+            isequal(layer1.left, layer2.left),
+            isequal(layer1.right, layer2.right),
+            isequal(layer1.bottom, layer2.bottom),
+            isequal(layer1.top, layer2.top),
+        ]
+    )
 end

@@ -102,7 +102,7 @@ Write a single `layer` to a `file`, where the `nodata` field is set to an
 arbitrary value.
 """
 function geotiff(file::AbstractString, layer::SimpleSDMPredictor{T}; nodata::T=convert(T, -9999)) where {T <: Number}
-    array_t = _prepare_layer_for_burnin(layer)
+    array_t = _prepare_layer_for_burnin(layer, nodata)
     width, height = size(array_t)
 
     # Geotransform
@@ -138,9 +138,9 @@ function geotiff(file::AbstractString, layer::SimpleSDMPredictor{T}; nodata::T=c
     return file
 end
 
-function _prepare_layer_for_burnin(layer::T) where {T <: SimpleSDMLayer}
+function _prepare_layer_for_burnin(layer::SimpleSDMPredictor{T}, nodata::T) where {T <: Number}
     @assert eltype(layer) <: Number
-    array = replace(layer.grid, nothing => NaN)
+    array = replace(layer.grid, nothing => nodata)
     array = convert(Matrix{eltype(layer)}, array)
     dtype = eltype(array)
     array_t = reverse(permutedims(array, [2, 1]); dims=2)
@@ -156,7 +156,7 @@ Stores a series of `layers` in a `file`, where every layer in a band. See
 function geotiff(file::AbstractString, layers::Vector{SimpleSDMPredictor{T}}; nodata::T=convert(T, -9999)) where {T <: Number}
     bands = 1:length(layers)
     _layers_are_compatible(layers)
-    width, height = size(_prepare_layer_for_burnin(layers[1]))
+    width, height = size(_prepare_layer_for_burnin(layers[1], nodata))
 
     # Geotransform
     gt = zeros(Float64, 6)
@@ -179,7 +179,7 @@ function geotiff(file::AbstractString, layers::Vector{SimpleSDMPredictor{T}}; no
             band = ArchGDAL.getband(dataset, i)
             
             # Write data to band
-            ArchGDAL.write!(band, _prepare_layer_for_burnin(layers[i]))
+            ArchGDAL.write!(band, _prepare_layer_for_burnin(layers[i], nodata))
 
             # Write nodata and projection info
             ArchGDAL.setnodatavalue!(band, nodata)

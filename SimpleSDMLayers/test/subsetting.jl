@@ -10,7 +10,7 @@ l1 = temp[coords]
 l2 = SimpleSDMPredictor(WorldClim, BioClim, 1; coords...)
 tempfile = tempname()
 geotiff(tempfile, l2)
-l3 = replace(geotiff(SimpleSDMPredictor, tempfile), NaN => nothing)
+l3 = geotiff(SimpleSDMPredictor, tempfile)
 
 @test size(l1) == size(l2)
 @test size(l1) == size(l3)

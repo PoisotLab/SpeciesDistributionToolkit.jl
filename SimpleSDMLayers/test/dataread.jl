@@ -16,7 +16,7 @@ f2 = tempname()
 geotiff(f2, l; nodata=-3.4f38)
 mp2 = geotiff(SimpleSDMPredictor, f2)
 
-@test typeof(mp2) <: SimpleSDMResponse
+@test typeof(mp2) <: SimpleSDMPredictor
 @test size(mp2) == size(l)
 @test mp2 == l
 

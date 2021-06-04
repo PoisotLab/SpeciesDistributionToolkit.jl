@@ -15,6 +15,14 @@ This returns the longitudes at the center of each cell in the grid.
 longitudes(layer::T) where {T <: SimpleSDMLayer} = range(layer.left+stride(layer, 1), layer.right-stride(layer, 1); length=size(layer,2))
 
 """
+    boundingbox(layer::T) where {T <: SimpleSDMLayer}
+
+Returns the bounding coordinates of a layer as `NamedTuple`.
+"""
+
+boundingbox(layer::T) where {T <: SimpleSDMLayer} =  (left=layer.left, right=layer.right, bottom=layer.bottom, top=layer.top)
+
+"""
     _layers_are_compatible(l1::X, l2::Y) where {X <: SimpleSDMLayer, Y <: SimpleSDMLayer}
 
     Internal function to verify if layers are compatible, i.e. have the same

@@ -1,5 +1,6 @@
 module SimpleSDMLayers
 
+using ArchGDAL: boundingbox
 using ArchGDAL
 using Downloads
 using RecipesBase
@@ -15,7 +16,7 @@ include(joinpath("lib", "overloads.jl"))
 include(joinpath("lib", "generated.jl"))
 
 include(joinpath("lib", "basics.jl"))
-export latitudes, longitudes
+export latitudes, longitudes, boundingbox
 
 include(joinpath("lib", "iteration.jl"))
 

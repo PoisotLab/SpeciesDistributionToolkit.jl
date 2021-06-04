@@ -5,6 +5,7 @@ coarsen
 slidingwindow
 latitudes
 longitudes
+boundingbox
 clip
 mask
 rescale!

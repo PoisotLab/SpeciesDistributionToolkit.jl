@@ -15,7 +15,7 @@ include(joinpath("lib", "overloads.jl"))
 include(joinpath("lib", "generated.jl"))
 
 include(joinpath("lib", "basics.jl"))
-export latitudes, longitudes, boundingbox
+export latitudes, longitudes, boundingbox, grid
 
 include(joinpath("lib", "iteration.jl"))
 

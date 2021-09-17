@@ -1,5 +1,8 @@
 push!(LOAD_PATH, "../src/")
 
+# Run plotting headless
+ENV["GKSwstype"] = "100"
+
 using Documenter, GBIF
 
 makedocs(

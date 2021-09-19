@@ -1,6 +1,6 @@
 import Base.show
 
-_strfmt(str::T) where {T}  = convert(AbstractString, str)
+_strfmt(str::T) where {T}  = str
 _strfmt(::Nothing) = "<nothing>"
 
 """

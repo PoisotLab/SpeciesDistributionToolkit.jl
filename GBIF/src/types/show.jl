@@ -1,5 +1,8 @@
 import Base.show
 
+_strfmt(str::T) where {T}  = convert(AbstractString, str)
+_strfmt(::Nothing) = "<nothing>"
+
 """
 **Show an occurrence**
 
@@ -8,7 +11,7 @@ import Base.show
 Displays the key, the taxon name, and the country of observation.
 """
 function show(io::IO, o::GBIFRecord)
-  println(io, "GBIF record $(o.key)\t$(o.taxon.name)\t($(o.country))")
+  println(io, "GBIF record $(_strfmt(o.key))\t$(_strfmt(o.taxon.name))\t($(_strfmt(o.country)))")
 end
 
 """
@@ -30,5 +33,5 @@ end
 Displays the taxon name.
 """
 function show(io::IO, t::GBIFTaxon)
-  println(io, "GBIF taxon -- $(t.name)")
+  println(io, "GBIF taxon -- $(_strfmt(t.name))")
 end

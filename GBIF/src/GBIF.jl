@@ -85,15 +85,6 @@ const gbifenums = Dict(
   ]
  )
 
-#=
-HACK this is required because some GBIF strings fail to parse, and I do not know
-why.
-=#
-import Base: convert
-function convert(::Type{AbstractString}, t::T) where {T <: Nothing}
-  return "<nothing>"
-end
-
 # Load the main functions
 
 include("query.jl")

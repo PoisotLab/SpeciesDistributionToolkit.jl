@@ -102,6 +102,14 @@ function Base.setindex!(layer::T, v, i::CartesianIndex{2}) where {T <: SimpleSDM
     return setindex!(layer.grid, v, i)
 end
 
-function Base.setindex!(layer::T, v, i::Array{CartesianIndex{2}}) where {T <: SimpleSDMLayer}
+function Base.setindex!(layer::T, v, i::Array{CartesianIndex{2}}) where {T <: SimpleSDMResponse}
     return layer.grid[i] = v
+end
+
+function Base.setindex!(layer::T, v, longitude::Float64, latitude::Float64) where {T <: SimpleSDMResponse}
+    return setindex!(layer, v, Point(longitude, latitude))
+end
+
+function Base.setindex!(layer::T, v, p::Point) where {T <: SimpleSDMResponse}
+    return setindex!(layer, v, _point_to_cartesian(layer, p))
 end

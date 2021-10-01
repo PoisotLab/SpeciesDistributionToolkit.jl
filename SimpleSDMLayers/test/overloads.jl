@@ -37,7 +37,7 @@ C = (left=0.2, bottom=0.5)
 
 Y = SimpleSDMResponse(zeros(Float64, (5,5)), 0.0, 1.0, 0.0, 1.0)
 Y[0.1,0.1] = 0.2
-@test Y[0.1,0.1] == 0.2
+@test Y[Point(0.1,0.1)] == 0.2
 
 Z = convert(SimpleSDMPredictor, Y)
 Y[0.1,0.1] = 4.0
@@ -138,11 +138,11 @@ l1, l2 = SimpleSDMPredictor(WorldClim, BioClim, 1:2; left = 0.0, right = 10.0, b
 l3 = SimpleSDMPredictor(WorldClim, BioClim, 1; left = 5.0, right = 10.0, bottom = 5.0, top = 10.0)
 @test stride(l1) == stride(l3)
 
-l4 = l1[l2]
+l4 = clip(l1, l2)
 @test l4 == l1
 
-l5 = l1[l3]
+l5 = clip(l1, l3)
 @test l5 == l3
-@test_throws ArgumentError l3[l1]
+@test_throws ArgumentError clip(l3, l1)
 
 end

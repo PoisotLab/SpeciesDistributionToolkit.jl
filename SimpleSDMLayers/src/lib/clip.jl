@@ -31,3 +31,23 @@ function clip(layer::T; left=nothing, right=nothing, top=nothing, bottom=nothing
     )
     return clip(layer, p1, p2)
 end
+
+"""
+    clip(origin::T1, destination::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
+
+Clips a layer by another layer, *i.e.* subsets the first layer so that it has
+the dimensions of the second layer. This operation applies a very small
+displacement to the limits (`5eps()`) to ensure that if the coordinate to cut at
+falls exactly on a cell boundary, the correct cell will be used in the return
+layer.
+"""
+function clip(origin::T1, destination::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
+    _d = 5eps()
+    err = false
+    destination.right > origin.right && (err = true)
+    destination.left < origin.left && (err = true)
+    destination.bottom < origin.bottom && (err = true)
+    destination.top > origin.top && (err = true)
+    err && throw(ArgumentError("The two layers are not compatible"))
+    return clip(origin, Point(destination.left+_d, destination.bottom+_d), Point(destination.right-_d, destination.top-_d))
+end

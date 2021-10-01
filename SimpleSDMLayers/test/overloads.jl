@@ -17,8 +17,6 @@ end
 @test isnothing(S[1.2, 1.3])
 @test isnothing(S[0.2, 1.3])
 
-@test typeof(S[1:2, 5:7]) == typeof(S)
-
 @test typeof(S[left=0.2, right=0.6, bottom=0.5, top=1.0]) == typeof(S)
 @test S[left=0.2, right=0.6, bottom=0.5, top=1.0].top ≈ 1.0
 @test S[left=0.2, right=0.6, bottom=0.5, top=1.0].bottom ≈ 0.4

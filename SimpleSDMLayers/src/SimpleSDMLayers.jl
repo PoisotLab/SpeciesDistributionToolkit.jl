@@ -7,6 +7,7 @@ using ZipFile
 using Requires
 using Statistics
 using GeometryBasics: Point
+export Point
 
 # Basic types for the package
 include(joinpath("lib", "types.jl"))
@@ -18,6 +19,7 @@ include(joinpath("interfaces", "iteration.jl"))
 include(joinpath("interfaces", "indexing.jl"))
 
 include(joinpath("lib", "overloads.jl"))
+include(joinpath("lib", "clip.jl"))
 
 include(joinpath("lib", "generated.jl"))
 
@@ -71,7 +73,6 @@ _layers_assets_path = get(ENV, "SDMLAYERS_PATH", "assets")
 isdir(_layers_assets_path) || mkpath(_layers_assets_path)
 
 # Fixes the export of clip when GBIF or others are loaded
-clip(::T) where {T <: SimpleSDMLayer} = nothing
 export clip
 
 function __init__()

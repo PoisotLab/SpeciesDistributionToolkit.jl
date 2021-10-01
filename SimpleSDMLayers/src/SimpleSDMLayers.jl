@@ -6,9 +6,18 @@ using RecipesBase
 using ZipFile
 using Requires
 using Statistics
+using GeoInterface
 
+# Basic types for the package
 include(joinpath("lib", "types.jl"))
 export SimpleSDMLayer, SimpleSDMResponse, SimpleSDMPredictor
+
+# Implements a series of interactes (GeoInterface, AbstractArray, Iteration, and Indexing)
+include(joinpath("interfaces", "common.jl"))
+include(joinpath("interfaces", "geo.jl"))
+include(joinpath("interfaces", "iteration.jl"))
+include(joinpath("interfaces", "indexing.jl"))
+export RasterCoordinate
 
 include(joinpath("lib", "overloads.jl"))
 
@@ -16,8 +25,6 @@ include(joinpath("lib", "generated.jl"))
 
 include(joinpath("lib", "basics.jl"))
 export latitudes, longitudes, boundingbox
-
-include(joinpath("lib", "iteration.jl"))
 
 include(joinpath("datasets", "ascii.jl"))
 include(joinpath("datasets", "geotiff.jl"))

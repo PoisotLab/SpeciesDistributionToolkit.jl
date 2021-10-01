@@ -15,7 +15,6 @@ function Base.setindex!(X::T, v, i::CartesianIndex{2}) where {T <: SimpleSDMResp
 end
 
 function Base.setindex!(X::T, v, i::Array{CartesianIndex{2}}) where {T <: SimpleSDMLayer}
-    @info "lul"
     return X.grid[i] = v
 end
 

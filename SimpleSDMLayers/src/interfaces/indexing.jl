@@ -1,4 +1,4 @@
-function _raster_to_cartesian(layer::T, c::RasterCoordinate) where {T <: SimpleSDMLayer}
+function _point_to_cartesian(layer::T, c::Point) where {T <: SimpleSDMLayer}
     lat = SimpleSDMLayers._match_latitude(layer, GeoInterface.ycoord(c))
     lon = SimpleSDMLayers._match_longitude(layer, GeoInterface.xcoord(c))
     return CartesianIndex(lon, lat)
@@ -36,10 +36,10 @@ function Base.getindex(layer::T, i::AbstractFloat, j::AbstractFloat) where {T <:
     return layer[RasterCoordinate(i,j)]
 end
 
-function Base.getindex(layer::T, c::RasterCoordinate) where {T <: SimpleSDMLayer}
-    return layer[_raster_to_cartesian(layer, c)]
+function Base.getindex(layer::T, c::Point) where {T <: SimpleSDMLayer}
+    return layer[_point_to_cartesian(layer, c)]
 end
 
-function Base.getindex(layer::T, c::Array{<:RasterCoordinate}) where {T <: SimpleSDMLayer}
-    return layer[[_raster_to_cartesian(layer, i) for i in c]]
+function Base.getindex(layer::T, c::Array{<:Point}) where {T <: SimpleSDMLayer}
+    return layer[[_point_to_cartesian(layer, i) for i in c]]
 end

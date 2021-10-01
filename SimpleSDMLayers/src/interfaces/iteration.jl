@@ -2,7 +2,7 @@ function Base.iterate(layer::T) where {T <: SimpleSDMLayer}
     position = findfirst(!isnothing, layer.grid)
     isnothing(position) && return nothing
     value = layer.grid[position]
-    coordinates = RasterCoordinate(longitudes(layer)[last(position.I)], latitudes(layer)[first(position.I)])
+    coordinates = Point(longitudes(layer)[last(position.I)], latitudes(layer)[first(position.I)])
     return (coordinates => value, position)
 end
 
@@ -12,7 +12,7 @@ function Base.iterate(layer::T, state) where {T <: SimpleSDMLayer}
     position = findnext(!isnothing, layer.grid, CartesianIndices(layer.grid)[newstate])
     isnothing(position) && return nothing
     value = layer.grid[position]
-    coordinates = RasterCoordinate(longitudes(layer)[last(position.I)], latitudes(layer)[first(position.I)])
+    coordinates = Point(longitudes(layer)[last(position.I)], latitudes(layer)[first(position.I)])
     return (coordinates => value, position)
 end
 

@@ -113,10 +113,10 @@ function Base.getindex(layer::T, p1::Point, p2::Point) where {T <: SimpleSDMLaye
     R = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
     return R(
         layer.grid[pmin:pmax], 
-        longitudes(layer)[last(pmin.I)],
-        longitudes(layer)[last(pmax.I)],
-        latitudes(layer)[first(pmin.I)],
-        latitudes(layer)[first(pmax.I)]
+        longitudes(layer)[last(pmin.I)]-stride(layer, dims=1),
+        longitudes(layer)[last(pmax.I)]+stride(layer, dims=1),
+        latitudes(layer)[first(pmin.I)]-stride(layer, dims=2),
+        latitudes(layer)[first(pmax.I)]+stride(layer, dims=2)
     )
 end
 

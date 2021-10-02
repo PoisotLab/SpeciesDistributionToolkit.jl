@@ -6,7 +6,8 @@ using Statistics
 using Literate
 
 # Literate files
-corefiles = [joinpath(joinpath("src", "examples"), f) for f in readdir(joinpath("src", "examples"))]
+expl = joinpath("docs", "src", "examples")
+corefiles = [joinpath(expl, f) for f in readdir(expl)]
 filter!(f -> endswith(f, "jl"), corefiles)
 vignetteconfig = Dict(
     "repo_root_url" => "https://github.com/EcoJulia/SimpleSDMLayers.jl",

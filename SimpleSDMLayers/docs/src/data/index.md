@@ -14,13 +14,13 @@ calling the `SimpleSDMPredictor` function on a `LayerProvider` and a
 `LayerDataset`, possibly with a future climate model and scenario. In all cases,
 the method accepts either a single layer, or an array of layers.
 
-| Data provider                    | Dataset                | Layers | Future models | Future scenarios                     |
-| -------------------------------- | ---------------------- | ------ | ------------- | ------------------------------------ |
-| `EarthEnv`                       | `Landcover`            | 12     |               |                                      |
-| `EarthEnv`                       | `HabitatHeterogeneity` | 14     |               |                                      |
-| [`WorldClim`][worldclim-current] | `BioClim`              | 19     | `CMIP6`       | `SharedSocioeconomicPathway`         |
-| [`CHELSA`][chelsa-bioclim]       | `BioClim`              | 12     | `CMIP5`       | `RepresentativeConcentrationPathway` |
- 
+| Data provider                     | Dataset                                     | Layers | Future models    | Future scenarios                                                   |
+| --------------------------------- | ------------------------------------------- | ------ | ---------------- | ------------------------------------------------------------------ |
+| `EarthEnv`                        | `Landcover`[→][earthenv-landcover]          | 12     |                  |                                                                    |
+| `EarthEnv`                        | `HabitatHeterogeneity`[→][earthenv-texture] | 14     |                  |                                                                    |
+| `WorldClim`[→][worldclim-current] | `BioClim`                                   | 19     | `CMIP6`          | `SharedSocioeconomicPathway`                                       |
+| `CHELSA`[→][chelsa-bioclim]       | `BioClim`                                   | 12     | `CMIP5`, `CMIP6` | `RepresentativeConcentrationPathway`, `SharedSocioeconomicPathway` |
+
 [earthenv-landcover]: http://www.earthenv.org/landcover
 [earthenv-texture]: http://www.earthenv.org/texture
 [worldclim-current]: https://www.worldclim.org/data/worldclim21.html

@@ -4,7 +4,13 @@
 # allows to easily use `GeometryBasics` objects for masking. In this example, we
 # will illustrate how we can get the temperature values around a given point:
 
+using SimpleSDMLayers
+using GeometryBasics
+using Plots
+
 temperature = SimpleSDMPredictor(CHELSA, BioClim, 1; left=-76, right=-72, top=47., bottom=43.)
+
+#-
 
 plot(temperature)
 

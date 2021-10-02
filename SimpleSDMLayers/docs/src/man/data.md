@@ -28,7 +28,7 @@ the method accepts either a single layer, or an array of layers.
 [worldclim-current]: https://www.worldclim.org/data/worldclim21.html
 [chelsa-bioclim]: http://chelsa-climate.org/
 
-## Later providers
+## Layer providers
 
 ```@docs
 SimpleSDMLayers.LayerProvider

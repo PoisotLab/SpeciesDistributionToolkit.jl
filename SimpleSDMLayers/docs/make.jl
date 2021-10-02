@@ -3,6 +3,19 @@ push!(LOAD_PATH, joinpath("..", "src"))
 using Documenter, SimpleSDMLayers
 using GBIF
 using Statistics
+using Literate
+
+# Literate files
+corefiles = [joinpath(joinpath("src", "examples"), f) for f in readdir(joinpath("src", "examples"))]
+filter!(f -> endswith(f, "jl"), corefiles)
+vignetteconfig = Dict(
+    "repo_root_url" => "https://github.com/EcoJulia/SimpleSDMLayers.jl",
+    "flavor" => Literate.DocumenterFlavor(),
+    "credit" => false
+)
+for corefile in corefiles
+    Literate.markdown(corefile; config=vignetteconfig)
+end
 
 makedocs(
     sitename = "Simple SDM Layers",
@@ -15,7 +28,7 @@ makedocs(
             "Other operations" => "man/operations.md",
             "Data" => "man/data.md",
         ],
-        "Examples" => [
+        "General examples" => [
             "Temperature data" => "examples/temperature.md",
             "DataFrames integration" => "examples/dataframes.md",
             "Sliding window analysis" => "examples/slidingwindow.md",
@@ -23,10 +36,10 @@ makedocs(
             "Landcover consensus" => "examples/consensus.md",
             "Importing and exporting" => "examples/import.md",
         ],
-        "Building SDMs" => [
-            "GBIF integration" => "sdm/gbif.md",
-            "BIOCLIM from scratch" => "sdm/bioclim.md",
-            "Future data" => "sdm/future.md"
+        "SDM examples" => [
+            "GBIF integration" => "examples/gbif.md",
+            "BIOCLIM from scratch" => "examples/bioclim.md",
+            "Future data" => "examples/future.md"
         ]
     ]
 )

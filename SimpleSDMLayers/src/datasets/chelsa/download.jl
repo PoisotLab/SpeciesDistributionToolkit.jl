@@ -41,7 +41,7 @@ function _get_raster(::Type{CHELSA}, ::Type{BioClim}, mod::CMIP6, fut::SharedSoc
     isdir(path) || mkpath(path)
 
     root = "https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V2/GLOBAL/climatologies/$(year)/$(_rasterpath(mod))/$(_rasterpath(fut))/bio/"
-    filename = "CHELSA_bio$(layer)_$(year)_$(_rasterpath(mod))_$(_rasterpath(fut))_V2.1.tif"
+    filename = "CHELSA_bio$(layer)_$(year)_$(lowercase(_rasterpath(mod)))_$(_rasterpath(fut))_V.2.1.tif"
     
     filepath = joinpath(path, filename)
     if !(isfile(filepath))

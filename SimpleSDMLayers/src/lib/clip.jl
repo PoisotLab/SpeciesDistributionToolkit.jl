@@ -20,6 +20,11 @@ function clip(layer::T, p1::Point, p2::Point) where {T <: SimpleSDMLayer}
     )
 end
 
+"""
+    clip(layer::T; left=nothing, right=nothing, top=nothing, bottom=nothing) where {T <: SimpleSDMLayer}
+
+Clips a raster by giving the (optional) limites `left`, `right`, `bottom`, and `top`.
+"""
 function clip(layer::T; left=nothing, right=nothing, top=nothing, bottom=nothing) where {T <: SimpleSDMLayer}
     p1 = Point(
         isnothing(left) ? layer.left : left,

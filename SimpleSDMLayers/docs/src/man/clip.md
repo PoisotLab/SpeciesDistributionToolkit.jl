@@ -1,0 +1,5 @@
+# Clipping rasters
+
+```@docs
+clip
+```

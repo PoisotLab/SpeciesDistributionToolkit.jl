@@ -24,6 +24,7 @@ makedocs(
         "Home" => "index.md",
         "Manual" => [
             "Types" => "man/types.md",
+            "Indexing" => "man/indexing.md",
             "Overloads" => "man/overloads.md",
             "Other operations" => "man/operations.md",
             "Data" => "man/data.md",

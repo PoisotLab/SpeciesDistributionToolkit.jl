@@ -9,6 +9,7 @@ using SimpleSDMLayers
 using GBIF
 using Plots
 using Statistics
+
 #-
 
 temperature, precipitation = SimpleSDMPredictor(WorldClim, BioClim, [1,12])

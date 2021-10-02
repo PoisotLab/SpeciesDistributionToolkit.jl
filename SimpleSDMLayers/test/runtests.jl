@@ -4,24 +4,25 @@ using Test
 global anyerrors = false
 
 tests = [
-   "construction" => "construction.jl",
-   "basics" => "basics.jl",
-   "matching" => "matching.jl",
+   "construction" => "core/construction.jl",
+   "lat./lon." => "core/latlon.jl",
+   "iteration" => "core/iteration.jl",
+   "lat./lon. conversion" => "core/coordconvert.jl",
+   "tiling" => "core/tiling.jl",
+   "setindex" => "core/setindex.jl",
    "overloads" => "overloads.jl",
-   "ascii" => "ascii.jl",
-   "iteration" => "iteration.jl",
-   "rescale" => "rescale.jl",
-   "mosaic" => "mosaic.jl",
+   "rescale" => "operations/rescale.jl",
+   "mosaic" => "operations/mosaic.jl",
+   "coarsen" => "operations/coarsen.jl",
+   "subsetting" => "operations/subsetting.jl",
    "generated" => "generated.jl",
-   "import" => "dataread.jl",
-   "worldclim" => "worldclim.jl",
-   "earthenv" => "earthenv.jl",
-   "chelsa" => "chelsa.jl",
-   "subsetting" => "subsetting.jl",
-   "coarsen" => "coarsen.jl",
-   "plotting" => "plots.jl",
-   "GBIF" => "gbif.jl",
-   #"DataFrames" => "dataframes.jl"
+   "ascii" => "data/ascii.jl",
+   "import" => "data/dataread.jl",
+   "worldclim" => "data/worldclim.jl",
+   "earthenv" => "data/earthenv.jl",
+   "chelsa" => "data/chelsa.jl",
+   "plotting" => "extensions/plots.jl",
+   "GBIF" => "extensions/gbif.jl",
 ]
 
 for test in tests

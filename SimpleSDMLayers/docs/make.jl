@@ -15,7 +15,7 @@ vignetteconfig = Dict(
     "credit" => false
 )
 for corefile in corefiles
-    Literate.markdown(corefile; config=vignetteconfig)
+    Literate.markdown(corefile, expl; config=vignetteconfig)
 end
 
 makedocs(

@@ -1,11 +1,7 @@
-# EarthEnv data
-
-
-```@docs
-EarthEnv
-```
+# Datasets
 
 ```@docs
+BioClim
 LandCover
 HabitatHeterogeneity
 ```

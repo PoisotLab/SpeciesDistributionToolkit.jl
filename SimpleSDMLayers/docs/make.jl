@@ -34,9 +34,9 @@ makedocs(
         "Data" => [
             "Data interface" => "data/index.md",
             "IO" => "data/io.md",
-            "WorldClim" => "data/worldclim.md",
-            "CHELSA" => "data/chelsa.md",
-            "EarthEnv" => "data/earthenv.md",
+            "Providers" => "data/providers.md",
+            "Datasets" => "data/datasets.md",
+            "Futures" => "data/futuredata.md",
         ],
         "General examples" => [
             "Temperature data" => "examples/temperature.md",

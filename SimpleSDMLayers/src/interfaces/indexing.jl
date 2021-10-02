@@ -1,11 +1,3 @@
-function _point_to_cartesian(layer::T, c::Point) where {T <: SimpleSDMLayer}
-    lon = SimpleSDMLayers._match_longitude(layer, c[1])
-    lat = SimpleSDMLayers._match_latitude(layer, c[2])
-    isnothing(lon) && return nothing
-    isnothing(lat) && return nothing
-    return CartesianIndex(lat, lon)
-end
-
 """
     Base.CartesianIndices(layer::T) where {T <: SimpleSDMLayer}
 

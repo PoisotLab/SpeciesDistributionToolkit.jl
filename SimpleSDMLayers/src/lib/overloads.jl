@@ -108,55 +108,6 @@ Returns the index of the grid.
 """
 Base.eachindex(layer::T) where {T <: SimpleSDMLayer} = eachindex(layer.grid)
 
-
-
-"""
-Given a layer and a latitude, returns `nothing` if the latitude is outside the
-range, or the grid index containing this latitude if it is within range
-"""
-function _match_latitude(layer::T, lat::K; side=:none) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-    side in [:none, :bottom, :top] || throw(ArgumentError("side must be one of :none (default), :bottom, :top"))
-
-    lat > layer.top && return nothing
-    lat < layer.bottom && return nothing
-
-    ldiff = abs.(lat .- latitudes(layer))
-    lapprox = isapprox.(ldiff, stride(layer, 2))
-    if side == :none || !any(lapprox)
-        l = last(findmin(ldiff))
-    elseif side == :bottom
-        l = findlast(lapprox)
-    elseif side == :top
-        l = findfirst(lapprox)
-    end
-    
-    return l
-end
-
-
-"""
-Given a layer and a longitude, returns `nothing` if the longitude is outside the
-range, or the grid index containing this longitude if it is within range
-"""
-function _match_longitude(layer::T, lon::K; side::Symbol=:none) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-    side in [:none, :left, :right] || throw(ArgumentError("side must be one of :none (default), :left, :right"))
-    
-    lon > layer.right && return nothing
-    lon < layer.left && return nothing
-    
-    ldiff = abs.(lon .- longitudes(layer))
-    lapprox = isapprox.(ldiff, stride(layer, 1))
-    if side == :none || !any(lapprox)
-        l = last(findmin(ldiff))
-    elseif side == :left
-        l = findlast(lapprox)
-    elseif side == :right
-        l = findfirst(lapprox)
-    end
-
-    return l
-end
-
 """
     Base.similar(layer::T, ::Type{TC}) where {TC <: Any, T <: SimpleSDMLayer}
 

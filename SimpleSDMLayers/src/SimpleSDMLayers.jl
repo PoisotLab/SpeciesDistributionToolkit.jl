@@ -13,12 +13,18 @@ export Point
 include(joinpath("lib", "types.jl"))
 export SimpleSDMLayer, SimpleSDMResponse, SimpleSDMPredictor
 
+# Main functions to match coordinates
+include(joinpath("lib", "coordinateconversion.jl"))
+
 # Implements a series of interfaces (AbstractArray, iteration, and indexing)
 include(joinpath("interfaces", "common.jl"))
 include(joinpath("interfaces", "iteration.jl"))
 include(joinpath("interfaces", "indexing.jl"))
 
+# Additional overloads
 include(joinpath("lib", "overloads.jl"))
+
+# Raster clipping
 include(joinpath("lib", "clip.jl"))
 
 include(joinpath("lib", "generated.jl"))

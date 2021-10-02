@@ -34,7 +34,7 @@ bottom, top = extrema([o.latitude for o in obs]) .+ (-5,5)
 # example, we will take all worldclim data, at the default 10 arc minute
 # resolution:
 
-predictors = SimpleSDMPredictor(WorldClim, BioClim, 1:19; left=left, right=right, bottom=bottom, top=top);
+predictors = SimpleSDMPredictor(CHELSA, BioClim, 1:19; left=left, right=right, bottom=bottom, top=top);
 first(predictors)
 
 # The point of BIOCLIM (the model, not the dataset) is that the score assigned

@@ -25,10 +25,11 @@ makedocs(
         "Manual" => [
             "Types" => "man/types.md",
             "Indexing" => "man/indexing.md",
+            "Clipping" => "man/clip.md",
             "Overloads" => "man/overloads.md",
             "Other operations" => "man/operations.md",
-            "Data" => "man/data.md",
         ],
+        "Data" => "man/data.md",
         "General examples" => [
             "Temperature data" => "examples/temperature.md",
             "DataFrames integration" => "examples/dataframes.md",

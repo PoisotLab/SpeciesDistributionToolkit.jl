@@ -41,7 +41,7 @@ makedocs(
         "General examples" => [
             "Temperature data" => "examples/temperature.md",
             "Geometry objects" => "examples/geometry.md",
-            "DataFrames integration" => "examples/dataframes.md",
+           # "DataFrames integration" => "examples/dataframes.md",
             "Sliding window analysis" => "examples/slidingwindow.md",
             "Landcover data" => "examples/landcover.md",
             "Landcover consensus" => "examples/consensus.md",

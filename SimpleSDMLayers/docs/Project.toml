@@ -1,5 +1,4 @@
 [deps]
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 GBIF = "ee291a33-5a6c-5552-a3c8-0f29a1181037"
 GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326"

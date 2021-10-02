@@ -8,7 +8,7 @@ using SimpleSDMLayers
 using GeometryBasics
 using Plots
 
-temperature = SimpleSDMPredictor(CHELSA, BioClim, 1; left=-76, right=-72, top=47., bottom=43.)
+temperature = convert(Float32, SimpleSDMPredictor(CHELSA, BioClim, 1; left=-76, right=-72, top=47., bottom=43.))
 
 #-
 

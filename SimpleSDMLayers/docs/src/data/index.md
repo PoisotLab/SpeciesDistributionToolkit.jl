@@ -9,8 +9,6 @@ project. This being said, the prefered solution is to define a `SDMLAYERS_PATH`
 environment variable pointing to a specific path, where the layers will live.
 This will ensure that they are re-used between projects.
 
-## General interface
-
 All layers are returned as `SimpleSDMPredictor`, and therefore constructed by
 calling the `SimpleSDMPredictor` function on a `LayerProvider` and a
 `LayerDataset`, possibly with a future climate model and scenario. In all cases,
@@ -28,36 +26,9 @@ the method accepts either a single layer, or an array of layers.
 [worldclim-current]: https://www.worldclim.org/data/worldclim21.html
 [chelsa-bioclim]: http://chelsa-climate.org/
 
-## Layer providers
+## Providers and datasets
 
 ```@docs
 SimpleSDMLayers.LayerProvider
-WorldClim
-CHELSA
-EarthEnv
-```
-
-## Layer datasets
-
-```@docs
 SimpleSDMLayers.LayerDataset
-BioClim
-LandCover
-HabitatHeterogeneity
-```
-
-## Future climate models
-
-```@docs
-SharedSocioeconomicPathway
-RepresentativeConcentrationPathway
-CMIP5
-CMIP6
-```
-
-## File reading and writing
-
-```@docs
-SimpleSDMLayers.ascii
-geotiff
 ```

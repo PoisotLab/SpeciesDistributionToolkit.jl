@@ -6,12 +6,21 @@ and a bounding box indicated by the floating point coordinates of its limits.
 ## Implemented types
 
 ```@docs
+SimpleSDMLayer
 SimpleSDMResponse
 SimpleSDMPredictor
 ```
 
-## Abstract type
+## Getting the coordinates
 
 ```@docs
-SimpleSDMLayer
+latitudes
+longitudes
+boundingbox
+```
+
+## Type conversion
+
+```@docs
+convert
 ```

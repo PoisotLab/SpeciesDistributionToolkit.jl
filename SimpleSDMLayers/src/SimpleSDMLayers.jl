@@ -20,6 +20,7 @@ include(joinpath("lib", "coordinateconversion.jl"))
 include(joinpath("interfaces", "common.jl"))
 include(joinpath("interfaces", "iteration.jl"))
 include(joinpath("interfaces", "indexing.jl"))
+include(joinpath("interfaces", "broadcast.jl"))
 
 # Additional overloads
 include(joinpath("lib", "overloads.jl"))

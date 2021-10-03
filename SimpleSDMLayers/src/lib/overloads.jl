@@ -7,7 +7,6 @@ import Base: copy
 import Base: eltype
 import Base: convert
 import Base: collect
-import Base.Broadcast: broadcast
 import Base: hcat
 import Base: vcat
 import Base: show
@@ -146,24 +145,6 @@ function Base.copy(layer::T) where {T <: SimpleSDMLayer}
     copygrid = copy(layer.grid)
     RT = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
     return RT(copygrid, copy(layer.left), copy(layer.right), copy(layer.bottom), copy(layer.top))
-end
-
-"""
-   Broadcast.broadcast(f, L::LT) where {LT <: SimpleSDMLayer}
-
-TODO
-"""
-function Base.Broadcast.broadcast(f, L::LT) where {LT <: SimpleSDMLayer}
-    newgrid = Array{Any}(nothing, size(L))
-    N = SimpleSDMResponse(newgrid, L)
-    v = filter(!isnothing, L.grid)
-    fv = f.(v)
-    N.grid[findall(!isnothing, L.grid)] .= fv
-
-    internal_types = unique(typeof.(N.grid))
-
-    RT = LT <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
-    return RT(convert(Matrix{Union{internal_types...}}, N.grid), N)
 end
 
 """

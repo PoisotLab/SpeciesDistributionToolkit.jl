@@ -16,4 +16,5 @@ function Base.iterate(layer::T, state) where {T <: SimpleSDMLayer}
     return (coordinates => value, position)
 end
 
-Base.IteratorSize(::T) where {T <: SimpleSDMLayer} = Base.HasLength()
+#Base.IteratorSize(::T) where {T <: SimpleSDMLayer} = Base.HasShape{2}()
+Base.IteratorEltype(::T) where {T <: SimpleSDMLayer} = Base.EltypeUnknown()

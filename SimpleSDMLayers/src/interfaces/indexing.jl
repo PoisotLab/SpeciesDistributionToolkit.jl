@@ -1,3 +1,5 @@
+Base.IndexStyle(::Type{<:SimpleSDMLayer}) = IndexCartesian()
+
 """
     Base.CartesianIndices(layer::T) where {T <: SimpleSDMLayer}
 

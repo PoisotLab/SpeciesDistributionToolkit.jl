@@ -49,7 +49,7 @@ V = collect(Z)
 @test typeof(V) == Vector{Float64}
 
 # typed similar
-c2 = similar(l1, Bool)
+c2 = similar(Y, Bool)
 @test eltype(c2) == Bool
 
 @test eltype(convert(Int64, c2)) == Int64

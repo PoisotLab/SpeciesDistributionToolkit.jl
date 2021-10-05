@@ -14,3 +14,15 @@ Returns the size of the grid alongside a dimension.
 Base.size(layer::T, i...) where {T <: SimpleSDMLayer} = size(layer.grid, i...)
 
 Base.length(layer::T) where {T <: SimpleSDMLayer} = count(!isnothing, layer.grid)
+
+"""
+    Base.keys(layer::T) where {T <: SimpleSDMLayer}
+
+Returns an array of `Point` where every entry in the array is a non-`nothing`
+grid coordinate.
+"""
+function Base.keys(layer::T) where {T <: SimpleSDMLayer}
+    _lon = longitudes(layer)
+    _lat = latitudes(layer)
+    return [Point(_lon[p[2]], _lat[p[1]]) for p in findall(!isnothing, layer.grid)]
+end

@@ -5,6 +5,7 @@ using Downloads
 using RecipesBase
 using ZipFile
 using Requires
+using Distances
 using Statistics
 using GeometryBasics: Point
 export Point

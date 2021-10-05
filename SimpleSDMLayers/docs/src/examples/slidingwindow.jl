@@ -18,7 +18,7 @@ precipitation = SimpleSDMPredictor(WorldClim, BioClim, 12; left=-80.0, right=-56
 # removed. In this case, we will do a summary across a 100 km radius around each
 # pixel:
 
-averaged = slidingwindow(precipitation, Statistics.mean, 100.0)
+averaged = slidingwindow(precipitation, Statistics.mean, 100.0; threaded=false)
 
 # We can finally overlap the two layers -- the result of sliding window is a
 # little bit smoother than the raw data.

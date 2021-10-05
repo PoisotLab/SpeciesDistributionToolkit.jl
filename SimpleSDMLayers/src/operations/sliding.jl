@@ -1,15 +1,3 @@
-function haversine(lon1, lat1, lon2, lat2; R=6371.0)
-    φ1 = lat1 * π/180.0
-    φ2 = lat2 * π/180.0
-    Δφ = (lat2-lat1) * π/180.0
-    Δλ = (lon2-lon1) * π/180.0
-    a = sin(Δφ/2.0)^2.0 + cos(φ1)*cos(φ2) * sin(Δλ)^2.0
-    c = 2.0 * atan(sqrt(a), sqrt(1.0-a))
-    return R*c
-end
-
-haversine(p1, p2; R=6371.0) = haversine(p1..., p2...; R=R)
-
 """
     slidingwindow(L::LT, f::FT, d::IT) where {LT <: SimpleSDMLayer, FT <: Function, IT <: Number}
 
@@ -36,25 +24,38 @@ function slidingwindow(layer::LT, f::FT, d::IT; threaded::Bool=Threads.nthreads(
     # New layer using typed similar
     N = similar(layer, return_type)
 
-    # Store latitudes and longitudes
-    _lat, _lon = latitudes(layer), longitudes(layer)
-
     # Vector of all positions with a value
-    filled_positions = CartesianIndices(layer.grid)[findall(!isnothing, layer.grid)]
+    filled_positions = keys(layer)
 
     # We then filter in the occupied positions
     if threaded
         Threads.@threads for pos in filled_positions
-            neighbors = filter(p -> haversine((_lon[Tuple(pos)[2]], _lat[Tuple(pos)[1]]), (_lon[Tuple(p)[2]], _lat[Tuple(p)[1]])) < d, filled_positions)
-            N.grid[pos] = f(layer.grid[neighbors])
+            N[pos] = f(_sliding_values(layer, pos, d))
         end
     else
         for pos in filled_positions
-            neighbors = filter(p -> haversine((_lon[Tuple(pos)[2]], _lat[Tuple(pos)[1]]), (_lon[Tuple(p)[2]], _lat[Tuple(p)[1]])) < d, filled_positions)
-            N.grid[pos] = f(layer.grid[neighbors])
+           N[pos] = f(_sliding_values(layer, pos, d))
         end
     end
 
     # And we return the object
     return N
+end
+
+function _sliding_values(layer, pt, d; R=6371.0)
+    # Bounding box (approx.) for the sliding window of length d at the given point
+    max_lat = min(layer.top, pt[2]+(180.0*d)/(π*R))
+    min_lat = max(layer.bottom, pt[2]-(180.0*d)/(π*R))
+    max_lon = min(layer.right, pt[1]+(360.0*d)/(π*R))
+    min_lon = max(layer.left, pt[1]-(360.0*d)/(π*R))
+
+    # Extracted layer for the sliding window
+    _tmp = clip(layer; left=min_lon, right=max_lon, top=max_lat, bottom=min_lat)
+    
+    # Filter the correct positions
+    filled_positions = keys(_tmp)
+    neighbors = filter(p -> Distances.haversine((pt[1], pt[2]), (p[1], p[2]), R) < d, filled_positions)
+
+    # Return
+    return _tmp[neighbors]
 end

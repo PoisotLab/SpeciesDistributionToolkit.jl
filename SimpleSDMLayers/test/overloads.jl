@@ -18,20 +18,6 @@ end
 @test isnothing(S[1.2, 1.3])
 @test isnothing(S[0.2, 1.3])
 
-cl1 = clip(S; left=0.2, right=0.6, bottom=0.5, top=1.0)
-@test typeof(cl1) == typeof(S)
-@test cl1.top ≈ 1.0
-@test cl1.bottom ≈ 0.4
-@test cl1.right ≈ 0.6
-@test clip(S; left=0.19).left <= 0.2
-
-cl2 = clip(S; left=0.2, bottom=0.5)
-@test typeof(cl2) == typeof(S)
-@test cl2.top ≈ 1.0
-@test cl2.bottom ≈ 0.4
-@test cl2.right ≈ 1.0
-@test cl2.left ≈ 0.2
-
 C = (left=0.2, bottom=0.5)
 @test typeof(clip(S; C...)) == typeof(S)
 

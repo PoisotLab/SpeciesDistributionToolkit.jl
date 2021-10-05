@@ -2,39 +2,48 @@
 
 # The `SimpleSDMLayers` package uses `Point`s to represent coordinates, which
 # allows to easily use `GeometryBasics` objects for masking. In this example, we
-# will illustrate how we can get the temperature values around a given point:
+# will illustrate how we can get the values around a given point, and within a
+# polygon. These functions all rely on `mask` to extract the values.
 
 using SimpleSDMLayers
 using GeometryBasics
 using Plots
+using JSON
 
-temperature = convert(Float32, SimpleSDMPredictor(CHELSA, BioClim, 1; left=-76, right=-72, top=47., bottom=43.))
+layer = SimpleSDMPredictor(WorldClim, BioClim; resolution=5.0, left=-89., right=-70., top=27., bottom=15.)
 
 #-
 
 plot(temperature)
 
-# We will now define a center of 1 degree of radius centered on Montréal
+# We will now define a center of 5 degree of radius centered on La Habana
 
-area = Circle(Point(-73.56, 45.50), 1.0)
+la_habana = Point(-82.38304, 23.13302)
+area = Circle(la_habana, 5.0)
 
-# The `temperature` layer is a predictor, which is immutable, so we can convert
-# it into a response:
+# We can plot the background of the map, and add the clipped region:
 
-temperature = convert(SimpleSDMResponse, temperature)
+plot(layer, c=:lightgrey, frame=:box)
+plot!(mask(area, layer), c=:turku)
+scatter!(la_habana, lab="", c=:white, msw=2.0)
 
-# And now we can quite simply clip and update:
+# This approach is useful if you want to mask according to a polygon. In this
+# case, we will keep the values within a polygon representing Cuba:
 
-for xyz in temperature
-    if !(xyz.first in area)
-        temperature[xyz.first] = nothing
-    end
-end
+borders = download("https://raw.githubusercontent.com/AshKyd/geojson-regions/master/countries/50m/CUB.geojson")
+cuba_data = JSON.parsefile(borders)
+polys = cuba_data["geometry"]["coordinates"]
+CUBA = SimpleSDMLayers._format_polygon.(polys)
 
-# This should lead to a circular-ish area:
+# This object is actually a multi-polygon, or an array of polygons. The `mask`
+# function can handle this:
 
-plot(temperature)
+plot(layer, c=:lightgrey, frame=:box)
+plot!(mask(CUBA, layer), c=:turku)
+scatter!(la_habana, lab="", c=:white, msw=2.0)
 
-# This approach is useful if you want to mask according to a polygon, or if you
-# want to restrict pseudo-absences to a certain distance away from points in
-# SDMs.
+# The delimitation of the area to crop is only as good as the underlying GeoJSON
+# polygons, which in this case is missing some coastal areas. As a sidenote, the
+# *center* of the grid cell is checked for being in the polygon (not *any*
+# coordinate within the grid cell) - for this reason, coarser rasters (*e.g.* at
+# 10 minutes resolution) may not respond perfectly well to masking in this way.

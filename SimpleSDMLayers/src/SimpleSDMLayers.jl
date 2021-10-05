@@ -7,8 +7,9 @@ using ZipFile
 using Requires
 using Distances
 using Statistics
-using GeometryBasics: Point
-export Point
+using GeometryBasics
+export Point, Polygon
+using PolygonOps
 
 # Basic types for the package
 include(joinpath("lib", "types.jl"))

@@ -60,5 +60,5 @@ heatmap(elevation_europe_coarse, aspectratio=1, c=:cividis, frame=:box)
 density(elevation, frame=:zerolines, c=:grey, fill=(0, :grey, 0.5), lab="")
 density!(elevation_europe, c=:black, lab="Raw data")
 density!(elevation_europe_coarse, c=:darkgrey, lab="Average")
-xaxis!("Elevation", (-50,30))
+xaxis!("Elevation")
 

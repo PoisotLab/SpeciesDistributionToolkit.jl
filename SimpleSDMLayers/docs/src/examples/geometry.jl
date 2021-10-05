@@ -28,7 +28,9 @@ plot!(mask(area, layer), c=:turku)
 scatter!(la_habana, lab="", c=:white, msw=2.0)
 
 # This approach is useful if you want to mask according to a polygon. In this
-# case, we will keep the values within a polygon representing Cuba:
+# case, we will keep the values within a polygon representing Cuba. We grab data
+# from Natural Earth Resources, that do not have the best resolution in terms of
+# borders, but are sufficient for this illustration:
 
 borders = download("https://raw.githubusercontent.com/AshKyd/geojson-regions/master/countries/50m/CUB.geojson")
 cuba_data = JSON.parsefile(borders)

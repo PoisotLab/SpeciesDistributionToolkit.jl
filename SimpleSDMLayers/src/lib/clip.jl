@@ -8,12 +8,8 @@ correct coordinates will be extracted.
 function clip(layer::T, p1::Point, p2::Point) where {T <: SimpleSDMLayer}
     latextr = extrema([p1[2], p2[2]])
     lonextr = extrema([p1[1], p2[1]])
-    @info latextr
-    @info lonextr
     pmin = _point_to_cartesian(layer, Point(minimum(lonextr), minimum(latextr)); side=:bottomleft)
     pmax = _point_to_cartesian(layer, Point(maximum(lonextr), maximum(latextr)); side=:topright)
-    @info pmin
-    @info pmax
     R = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
     return R(
         layer.grid[pmin:pmax], 

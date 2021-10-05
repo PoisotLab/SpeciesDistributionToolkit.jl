@@ -1,10 +1,10 @@
 function _point_to_cartesian(layer::T, c::Point; side=:center) where {T <: SimpleSDMLayer}
     lonside, latside = true, true
     if side == :bottomleft
-        lonside, latside = true, true
+        lonside, latside = false, false
     end
     if side == :topright
-        lonside, latside = false, false
+        lonside, latside = true, true
     end
     lon = SimpleSDMLayers._match_longitude(layer, c[1]; lower=lonside)
     lat = SimpleSDMLayers._match_latitude(layer, c[2]; lower=latside)
@@ -29,7 +29,7 @@ function _match_latitude(layer::T, lat::K; lower::Bool=true) where {T <: SimpleS
 end
 
 function _match_longitude(layer::T, lon::K; lower::Bool=true) where {T <: SimpleSDMLayer, K <: AbstractFloat}
-    layer.left <= lon <= layer.top || return nothing
+    layer.left <= lon <= layer.right || return nothing
     lon == layer.left  && return 1
     lon == layer.right  && return size(layer, 2)
     relative = (lon - layer.left)/(layer.right - layer.left)

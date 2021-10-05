@@ -84,6 +84,13 @@ Information on land cover, currently only provided by `EarthEnv`.
 struct LandCover <: LayerDataset end
 
 """
+    Elevation
+
+General type for a DEM, currently available through `WorldClim`
+"""
+struct Elevation <: LayerDataset end
+
+"""
     HabitatHeterogeneity
 
 Information on habitat heterogeneity, currently only provided by `EarthEnv`.
@@ -133,6 +140,7 @@ _rasterpath(::Type{EarthEnv}) = "EarthEnv"
 _rasterpath(::Type{BioClim}) = "BioClim"
 _rasterpath(::Type{LandCover}) = "LandCover"
 _rasterpath(::Type{HabitatHeterogeneity}) = "HabitatHeterogeneity"
+_rasterpath(::Type{Elevation}) = "Elevation"
 
 # Future paths
 _rasterpath(model::CMIP6) = _rasterpath(Val{model})

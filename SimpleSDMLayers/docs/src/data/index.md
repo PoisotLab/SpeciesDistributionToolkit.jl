@@ -19,6 +19,7 @@ the method accepts either a single layer, or an array of layers.
 | `EarthEnv`                        | `Landcover`[→][earthenv-landcover]          | 12     |                  |                                                                    |
 | `EarthEnv`                        | `HabitatHeterogeneity`[→][earthenv-texture] | 14     |                  |                                                                    |
 | `WorldClim`[→][worldclim-current] | `BioClim`                                   | 19     | `CMIP6`          | `SharedSocioeconomicPathway`                                       |
+| `WorldClim`[→][worldclim-current] | `Elevation`                                 | 1      | `Elevation`      |                                                                    |
 | `CHELSA`[→][chelsa-bioclim]       | `BioClim`                                   | 12     | `CMIP5`, `CMIP6` | `RepresentativeConcentrationPathway`, `SharedSocioeconomicPathway` |
 
 [earthenv-landcover]: http://www.earthenv.org/landcover

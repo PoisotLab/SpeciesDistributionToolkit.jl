@@ -1,3 +1,31 @@
+function _get_raster(::Type{WorldClim}, ::Type{Elevation}, layer::Integer, resolution=10.0)
+    res = Dict(2.5 => "2.5", 5.0 => "5", 10.0 => "10")
+    
+    path = joinpath(SimpleSDMLayers._layers_assets_path, _rasterpath(WorldClim), _rasterpath(Elevation), res[resolution])
+    isdir(path) || mkpath(path)
+
+    output_file = joinpath(path, "wc2.1_$(res[resolution])m_elev.tif")
+    zip_file = joinpath(path, "wc2.1_$(res[resolution])m_elev.zip")
+
+    if !isfile(path)
+        if !isfile(zip_file)
+            root = "https://biogeo.ucdavis.edu/data/worldclim/v2.1/base/"
+            stem = "wc2.1_$(res[resolution])m_elev.zip"
+            Downloads.download(root * stem, zip_file)
+        end
+        zf = ZipFile.Reader(zip_file)
+        file_to_read =
+            first(filter(f -> joinpath(path, f.name) == output_file, zf.files))
+
+        if !isfile(joinpath(path, file_to_read.name))
+            write(joinpath(path, file_to_read.name), read(file_to_read))
+        end
+        close(zf)
+    end
+
+    return joinpath(path, file_to_read.name)
+end
+
 function _get_raster(::Type{WorldClim}, ::Type{BioClim}, layer::Integer, resolution=10.0)
     1 ≤ layer ≤ 19 || throw(ArgumentError("The layer must be between 1 and 19"))
 

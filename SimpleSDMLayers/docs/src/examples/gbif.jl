@@ -74,6 +74,8 @@ presabs = mask(precipitation_clip, kf_occurrences, Float32)
 zoom = clip(presabs; left=-100., right=-75.0, top=43.0, bottom=20.0)
 buffered = slidingwindow(zoom, Statistics.mean, 100.0)
 
+#-
+
 plot(buffered, c=:lapaz, legend=false, frame=:box)
 scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), lab="", c=:white, msc=:orange, ms=2, alpha=0.5)
 

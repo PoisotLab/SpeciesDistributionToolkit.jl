@@ -9,6 +9,8 @@
 using SimpleSDMLayers
 using Plots
 
+#-
+
 urban = SimpleSDMPredictor(EarthEnv, LandCover, 9; left=-11.0, right=31.1, bottom=29.0, top=71.1)
 
 # This dataset is returning data as `UInt8` (as it represents a proportion of

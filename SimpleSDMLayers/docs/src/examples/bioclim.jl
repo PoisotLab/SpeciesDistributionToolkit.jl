@@ -18,6 +18,8 @@ obs = occurrences(
     "limit" => 50
 )
 
+#-
+
 while length(obs) < min(2000, size(obs))
     occurrences!(obs)
 end
@@ -43,6 +45,8 @@ first(predictors)
 # pixel in every variable.
 
 _pixel_score(x) = 2.0(x > 0.5 ? 1.0-x : x)
+
+#-
 
 function SDM(layer::T, observations::GBIFRecords) where {T <: SimpleSDMLayer}
     qf = ecdf(layer[observations]) # We only want the observed values

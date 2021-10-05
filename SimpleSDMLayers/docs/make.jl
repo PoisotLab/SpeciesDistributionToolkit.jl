@@ -39,9 +39,8 @@ makedocs(
             "Futures" => "data/futuredata.md",
         ],
         "General examples" => [
-            "Temperature data" => "examples/temperature.md",
+            "Elevation data" => "examples/elevation.md",
             "Geometry objects" => "examples/geometry.md",
-           # "DataFrames integration" => "examples/dataframes.md",
             "Sliding window analysis" => "examples/slidingwindow.md",
             "Landcover data" => "examples/landcover.md",
             "Landcover consensus" => "examples/consensus.md",

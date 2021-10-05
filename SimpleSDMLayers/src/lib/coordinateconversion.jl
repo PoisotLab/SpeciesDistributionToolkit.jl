@@ -15,9 +15,12 @@ end
 
 function _match_latitude(layer::T, lat::K; side=:none) where {T <: SimpleSDMLayer, K <: AbstractFloat}
 
-    layer.top > lat > layer.bottom || return nothing
+    layer.top >= lat >= layer.bottom || return nothing
 
-    ldiff = abs.(lat .- latitudes(layer))
+    relative = (lat - layer.bottom)/(layer.top - layer.bottom)*(size(layer,1)-1)+1    
+    rval = floor(Int64, relative-1):1:floor(Int64, relative+1)
+
+    ldiff = abs.(lat .- latitudes(layer)[rval])
     lapprox = isapprox.(ldiff, stride(layer, 2))
 
     if side == :none || !any(lapprox)
@@ -30,12 +33,12 @@ function _match_latitude(layer::T, lat::K; side=:none) where {T <: SimpleSDMLaye
         throw(ArgumentError("side must be one of :none (default), :bottom, :top"))
     end
     
-    return l
+    return rval[l]
 end
 
 function _match_longitude(layer::T, lon::K; side::Symbol=:none) where {T <: SimpleSDMLayer, K <: AbstractFloat}
     
-    layer.right > lon > layer.left || return nothing
+    layer.right >= lon >= layer.left || return nothing
     
     ldiff = abs.(lon .- longitudes(layer))
     lapprox = isapprox.(ldiff, stride(layer, 1))

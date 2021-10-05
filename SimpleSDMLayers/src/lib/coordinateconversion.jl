@@ -17,7 +17,15 @@ function _match_latitude(layer::T, lat::K; side=:none) where {T <: SimpleSDMLaye
 
     layer.top >= lat >= layer.bottom || return nothing
 
-    relative = (lat - layer.bottom)/(layer.top - layer.bottom)*(size(layer,1)-1)+1    
+    relative = (lat - layer.bottom)/(layer.top - layer.bottom)*(size(layer,1)-1)+1
+    
+    @assert side in [:bottom, :top, :none]
+
+    isequal(:none)(side) && return floor(Int64, relative)
+    isequal(:bottom)(side) && return ceil(Int64, relative)
+    isequal(:top)(side) && return floor(Int64, relative)
+
+    #=
     rval = floor(Int64, relative):1:ceil(Int64, relative)
 
     ldiff = abs.(lat .- latitudes(layer)[rval])
@@ -34,6 +42,7 @@ function _match_latitude(layer::T, lat::K; side=:none) where {T <: SimpleSDMLaye
     end
     
     return rval[l]
+    =#
 end
 
 function _match_longitude(layer::T, lon::K; side::Symbol=:none) where {T <: SimpleSDMLayer, K <: AbstractFloat}
@@ -41,6 +50,14 @@ function _match_longitude(layer::T, lon::K; side::Symbol=:none) where {T <: Simp
     layer.right >= lon >= layer.left || return nothing
     
     relative = (lon - layer.left)/(layer.right - layer.left)*(size(layer,2)-1)+1    
+    
+    @assert side in [:left, :right, :none]
+
+    isequal(:none)(side) && return floor(Int64, relative)
+    isequal(:left)(side) && return ceil(Int64, relative)
+    isequal(:right)(side) && return floor(Int64, relative)
+
+    #=
     rval = floor(Int64, relative):1:ceil(Int64, relative)
 
     ldiff = abs.(lon .- longitudes(layer)[rval])
@@ -57,4 +74,5 @@ function _match_longitude(layer::T, lon::K; side::Symbol=:none) where {T <: Simp
     end
 
     return rval[l]
+    =#
 end

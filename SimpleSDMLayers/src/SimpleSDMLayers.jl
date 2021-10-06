@@ -10,6 +10,7 @@ using Statistics
 using GeometryBasics
 export Point, Polygon
 using PolygonOps
+using StatsBase
 
 # Basic types for the package
 include(joinpath("lib", "types.jl"))
@@ -67,6 +68,12 @@ include(joinpath("datasets", "worldclim", "elevation.jl"))
 include(joinpath("datasets", "earthenv", "download.jl"))
 include(joinpath("datasets", "earthenv", "landcover.jl"))
 include(joinpath("datasets", "earthenv", "habitatheterogeneity.jl"))
+
+include(joinpath("pseudoabsences", "main.jl"))
+include(joinpath("pseudoabsences", "radius.jl"))
+include(joinpath("pseudoabsences", "randomselection.jl"))
+include(joinpath("pseudoabsences", "surfacerangeenvelope.jl"))
+export WithinRadius, RandomSelection, SurfaceRangeEnvelope
 
 include(joinpath("operations", "coarsen.jl"))
 include(joinpath("operations", "sliding.jl"))

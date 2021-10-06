@@ -1,4 +1,4 @@
-# # BRTs
+# # BRTs for species distribution forecasting
 
 using SimpleSDMLayers
 using EvoTrees
@@ -28,7 +28,7 @@ end
 
 layers = [
     clip(layer, observations) for layer in SimpleSDMPredictor(WorldClim, BioClim, 1:19)
-]
+];
 
 # To remove the sampling effect, we transform the presences to a grid, and
 # generate pseudo-absences using the surface range envelope method.
@@ -40,27 +40,27 @@ absences = rand(SurfaceRangeEnvelope, presences)
 # pseudo-absent - we can rely on the `replace` method to empty any `false`
 # values:
 
-xy_presence = keys(replace(presences, false => nothing))
-xy_absence = keys(replace(absences, false => nothing))
-xy = vcat(xy_presence, xy_absence)
+xy_presence = keys(replace(presences, false => nothing));
+xy_absence = keys(replace(absences, false => nothing));
+xy = vcat(xy_presence, xy_absence);
 
 # With the `xy` list of coordinates, we can get a predictor `X`, and a response
 # `y`.
 
-X = hcat([layer[xy] for layer in layers]...)
-y = vcat(fill(1.0, length(xy_presence)), fill(0.0, length(xy_absence)))
+X = hcat([layer[xy] for layer in layers]...);
+y = vcat(fill(1.0, length(xy_presence)), fill(0.0, length(xy_absence)));
 
 # To train the model, we will use a random subset representing 70% of the
 # dataset:
 
-train_size = floor(Int, 0.7 * length(y))
-train_idx = sample(1:length(y), train_size; replace=false)
-test_idx = setdiff(1:length(y), train_idx)
+train_size = floor(Int, 0.7 * length(y));
+train_idx = sample(1:length(y), train_size; replace=false);
+test_idx = setdiff(1:length(y), train_idx);
 
 # This gives use the training and testing (or evaluation) sets:
 
-Xtrain, Xtest = X[train_idx, :], X[test_idx, :]
-Ytrain, Ytest = y[train_idx], y[test_idx]
+Xtrain, Xtest = X[train_idx, :], X[test_idx, :];
+Ytrain, Ytest = y[train_idx], y[test_idx];
 
 # In order to fit the tree, we need to define a number of parameters. We will
 # use a Gaussian maximum likelihood tree (from `EvoTrees`), which will give us a
@@ -89,23 +89,25 @@ model = fit_evotree(gaussian_tree_parameters, Xtrain, Ytrain; X_eval=Xtest, Y_ev
 # The next step is to gather *all* the values of all the layers in a matrix, in
 # order to run the full spatial prediction:
 
-all_values = hcat([layer[keys(layer)] for layer in layers]...)
+all_values = hcat([layer[keys(layer)] for layer in layers]...);
 
 # If the matrix is too big, we could resort to a combination of `clip`, make the
 # prediction on each tile, and then use `hcat` and `vcat` to combine them. This
 # is not the case here, so we can predict directly:
 
-pred = EvoTrees.predict(model, all_values)
+pred = EvoTrees.predict(model, all_values);
 
 # Once the prediction is done, we can copy the values into a layer.
 
 distribution = similar(layers[1], Float64)
 distribution[keys(distribution)] = pred[:, 1]
+distribution
 
 # We do the same thing for uncertainty:
 
 uncertainty = similar(layers[1], Float64)
 uncertainty[keys(uncertainty)] = pred[:, 2]
+uncertainty
 
 # And we can now visualize the prediction, which we force to be in `[0,1]`.
 
@@ -132,8 +134,8 @@ xaxis!("Prediction score")
 # values for a little surprise later on. We will find the value of the score
 # that optimizes Youden's J (Cohen's κ is also a suitable alternative):
 
-cutoff = LinRange(extrema(distribution)..., 500)
-J = similar(cutoff)
+cutoff = LinRange(extrema(distribution)..., 500);
+J = similar(cutoff);
 
 # The loop to measure everything is fairly simple, as we already know the
 # correct positions of presences and absences:
@@ -185,22 +187,23 @@ scatter!(xy_presence; lab="", c=:orange, alpha=0.5, msw=0.0, ms=2)
 future_layers = [
     clip(layer, observations) for
     layer in SimpleSDMPredictor(WorldClim, BioClim, CanESM5, SSP245, 1:19; year="2041-2060")
-]
+];
 
 # We can get all the future values from this data:
 
-all_future_values = hcat([layer[keys(layer)] for layer in future_layers]...)
+all_future_values = hcat([layer[keys(layer)] for layer in future_layers]...);
 
 # And make a prediction based on our BRT model. This is, of course, assuming
 # that BRTs are good at this type of prediction (they're OK).
 
-future_pred = EvoTrees.predict(model, all_future_values)
+future_pred = EvoTrees.predict(model, all_future_values);
 
 # As before, we also have a measure of uncertainty. In the interest of keeping
 # this vignette small, we will not look at it.
 
 future_distribution = similar(layers[1], Float64)
 future_distribution[keys(future_distribution)] = future_pred[:, 1]
+future_distribution
 
 # The values in `future_distribution` are in the scale of what the BRT returns,
 # so we can compare them with the values of `distribution`:

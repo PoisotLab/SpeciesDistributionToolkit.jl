@@ -12,9 +12,9 @@ using JSON
 
 layer = SimpleSDMPredictor(WorldClim, BioClim; resolution=5.0, left=-89., right=-70., top=27., bottom=15.)
 
-#-
+# Let's have a look at the data, before applying any transformation:
 
-plot(temperature)
+plot(layer)
 
 # We will now define a center of 5 degree of radius centered on La Habana
 

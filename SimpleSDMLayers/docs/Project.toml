@@ -2,6 +2,7 @@
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 EvoTrees = "f6006082-12f8-11e9-0c9c-0d5d367ab1e5"
 GBIF = "ee291a33-5a6c-5552-a3c8-0f29a1181037"
+GLM = "38e38edf-8417-5370-95a0-9cbb8c7f171a"
 GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"

@@ -48,6 +48,7 @@ makedocs(
         ],
         "SDM examples" => [
             "GBIF integration" => "examples/gbif.md",
+            "Variable selection (VIF)" => "examples/vif.md",
             "Building the BIOCLIM model" => "examples/bioclim.md",
             "Pseudo-absences" => "examples/pseudoabsences.md",
             "Dealing with future data" => "examples/future.md",

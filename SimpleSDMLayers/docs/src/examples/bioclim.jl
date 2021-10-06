@@ -1,4 +1,4 @@
-# # Writing BIOCLIM from scratch
+# # Building the BIOCLIM model
 
 # In this example, we will write the BIOCLIM species distribution model using
 # `SimpleSDMLayers.jl` and `GBIF.jl`.
@@ -8,48 +8,62 @@ using GBIF
 using Plots
 using StatsBase
 using Statistics
+using GeometryBasics
 
-# We can get some occurrences for the taxon of interest:
+# We will focus on the distribution of *Alces alces* in Europe, which has a high
+# enough number of occurrences.
 
 obs = occurrences(
     GBIF.taxon("Alces alces", strict=true),
     "hasCoordinate" => "true",
     "continent" => "EUROPE",
-    "limit" => 50
+    "limit" => 300
 )
 
-#-
+# We will now page through a few additional results (300 at a time):
 
-while length(obs) < min(2000, size(obs))
+while length(obs) < min(5000, size(obs))
     occurrences!(obs)
 end
 
-# This query uses a range for the longitude and latitude, so as to make sure
-# that we get a relatively small region. Before we get the layers, we will
-# figure out the bounding box for the observations - just to make sure that we
-# will have something large enough, we will add a 2 degrees padding around it:
+# This query uses the `continent` parameter from GBIF, and in order to make sure
+# that we get a relatively small region around the observations, we might define
+# our own bounding box. Just to make sure that the bounding box is large enough,
+# we will add a 5 degrees padding around it:
 
 left, right = extrema([o.longitude for o in obs]) .+ (-5,5)
 bottom, top = extrema([o.latitude for o in obs]) .+ (-5,5)
 
 # With this information in hand, we can start getting our variables. In this
-# example, we will take all worldclim data, at the default 10 arc minute
-# resolution:
+# example, we will take all of the BioClim data from WorldClim, at the 5 arc
+# minute resolution, and add the elevation layer. Note that using the bounding
+# box coordinates when calling the layers is *much* faster than clipping after
+# the fact (assuming that you arleady have the files downloaded).
 
-predictors = SimpleSDMPredictor(WorldClim, BioClim, 1:19; left=left, right=right, bottom=bottom, top=top);
-first(predictors)
+predictors = convert.(Float32, SimpleSDMPredictor(WorldClim, BioClim, 1:19; resolution=5.0, left=left, right=right, bottom=bottom, top=top));
+push!(predictors, convert(Float32, SimpleSDMPredictor(WorldClim, Elevation; resolution=5.0, left=left, right=right, bottom=bottom, top=top)));
 
 # The point of BIOCLIM (the model, not the dataset) is that the score assigned
-# to a pixel is maximal is this pixel is the *median* value for a given variable
-# - therefore, we need to measure the cumulative density function for every
-# pixel in every variable.
+# to a pixel is maximal if this pixel is the *median* value for a given
+# variable. Therefore, we need to measure the cumulative density function for
+# every pixel in every variable, and transform it with:
 
 _pixel_score(x) = 2.0(x > 0.5 ? 1.0-x : x)
 
-#-
+# The *actual* model generation is fairly straightforward, as we will need to
+# get the values of the layers in the cells occupied by an observation. Because
+# sampling bias is very real, we will grid the observations by transforming them
+# into a boolean layer:
 
-function SDM(layer::T, observations::GBIFRecords) where {T <: SimpleSDMLayer}
-    qf = ecdf(layer[observations]) # We only want the observed values
+presences = mask(predictors[1], obs, Bool)
+
+# This step is very important so as not to bias the estimation of quantiles,
+# which overcounting observations within the same cell would do. We can now
+# define the model:
+
+function SDM(predictor::T1, observations::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
+    _tmp = mask(observations, predictor)
+    qf = ecdf(convert(Vector{Float32}, _tmp[keys(_tmp)])) # We only want the observed values
     return (_pixel_score∘qf)
 end
 
@@ -73,14 +87,24 @@ end
 # multi-threading, or use a different resolution for the prediction than we did
 # for the training.
 
-models = [SDM(predictor, obs) for predictor in predictors]
+models = [SDM(predictor, presences) for predictor in predictors];
+
+# We now get the prediction:
+
 prediction = SDM(predictors, models)
+
+# It's not a bad idea to look at this prediction, to get a sense of where the
+# hotspots of presence would be:
+
+plot(prediction, c=:viridis, frame=:box)
+xaxis!("Longitude")
+yaxis!("Latitude")
 
 # Just because we may want to visualize this result in a transformed way, *i.e.*
 # by looking at the quantiles of suitability, we can call the `rescale!`
 # function:
 
-rescale!(prediction, collect(0.0:0.01:1.0))
+rescale!(prediction, collect(0.0:0.005:1.0))
 
 # As this map now represents the quantiles of suitability, we may want to remove
 # the lower 5%. For this, we need to create a boolean mask, which we can do by
@@ -92,7 +116,6 @@ cutoff = broadcast(x -> x > 0.05, prediction)
 
 plot(prediction, frame=:box, c=:lightgrey) # Plot a uniform background
 plot!(mask(cutoff, prediction), clim=(0,1), c=:bamako)
-scatter!([(o.longitude, o.latitude) for o in obs], ms=4, c=:orange, lab="")
 xaxis!("Longitude")
 yaxis!("Latitude")
 

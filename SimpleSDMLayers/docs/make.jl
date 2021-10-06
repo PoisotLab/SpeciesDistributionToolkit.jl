@@ -48,8 +48,8 @@ makedocs(
         ],
         "SDM examples" => [
             "GBIF integration" => "examples/gbif.md",
-            "BIOCLIM from scratch" => "examples/bioclim.md",
-            "Future data" => "examples/future.md"
+            "Building the BIOCLIM model" => "examples/bioclim.md",
+            "Dealing with future data" => "examples/future.md"
         ]
     ]
 )

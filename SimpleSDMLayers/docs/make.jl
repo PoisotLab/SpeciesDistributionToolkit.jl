@@ -51,7 +51,7 @@ makedocs(
             "Building the BIOCLIM model" => "examples/bioclim.md",
             "Pseudo-absences" => "examples/pseudoabsences.md",
             "Dealing with future data" => "examples/future.md",
-            "Boosted Regression Trees" => "examples/brt.jl"
+            "BRTs and climate change" => "examples/brt.md"
         ]
     ]
 )

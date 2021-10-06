@@ -16,7 +16,9 @@ using Plots
 # We will re-use the data from the pseudo-absences example:
 
 sp = GBIF.taxon("Hypomyces lactifluorum")
-observations = occurrences(sp, "hasCoordinate" => true, "limit" => 300, "country" => "CA", "country" => "US")
+observations = occurrences(
+    sp, "hasCoordinate" => true, "limit" => 300, "country" => "CA", "country" => "US"
+)
 while length(observations) < size(observations)
     occurrences!(observations)
 end
@@ -24,7 +26,9 @@ end
 # We will pick the entire BioClim layers at a 10 minutes resolution, and clip
 # them to the observations (this adds a 5 degrees buffer).
 
-layers = [clip(layer, observations) for layer in SimpleSDMPredictor(WorldClim, BioClim, 1:19)]
+layers = [
+    clip(layer, observations) for layer in SimpleSDMPredictor(WorldClim, BioClim, 1:19)
+]
 
 # To remove the sampling effect, we transform the presences to a grid, and
 # generate pseudo-absences using the surface range envelope method.
@@ -49,8 +53,8 @@ y = vcat(fill(1.0, length(xy_presence)), fill(0.0, length(xy_absence)))
 # To train the model, we will use a random subset representing 70% of the
 # dataset:
 
-train_size = floor(Int, 0.7*length(y))
-train_idx = sample(1:length(y), train_size, replace=false)
+train_size = floor(Int, 0.7 * length(y))
+train_idx = sample(1:length(y), train_size; replace=false)
 test_idx = setdiff(1:length(y), train_idx)
 
 # This gives use the training and testing (or evaluation) sets:
@@ -63,17 +67,24 @@ Ytrain, Ytest = y[train_idx], y[test_idx]
 # measure of the average prediction, but also the standard deviation. This is
 # important in order to communicate uncertainty.
 
-gaussian_tree_parameters = EvoTreeGaussian(
-    loss=:gaussian, metric=:gaussian,
-    nrounds=100, nbins=100,
-    λ = 0.0, γ=0.0, η=0.1,
-    max_depth = 7, min_weight = 1.0,
-    rowsample=0.5, colsample=1.0)
+gaussian_tree_parameters = EvoTreeGaussian(;
+    loss=:gaussian,
+    metric=:gaussian,
+    nrounds=100,
+    nbins=100,
+    λ=0.0,
+    γ=0.0,
+    η=0.1,
+    max_depth=7,
+    min_weight=1.0,
+    rowsample=0.5,
+    colsample=1.0,
+)
 
 # We can now fit the BRT. This function has an additional `print_every_n` to
 # update on the progress every `n` epochs, but we don't really need it here.
 
-model = fit_evotree(gaussian_tree_parameters, Xtrain, Ytrain, X_eval = Xtest, Y_eval = Ytest)
+model = fit_evotree(gaussian_tree_parameters, Xtrain, Ytrain; X_eval=Xtest, Y_eval=Ytest)
 
 # The next step is to gather *all* the values of all the layers in a matrix, in
 # order to run the full spatial prediction:
@@ -89,27 +100,31 @@ pred = EvoTrees.predict(model, all_values)
 # Once the prediction is done, we can copy the values into a layer.
 
 distribution = similar(layers[1], Float64)
-distribution[keys(distribution)] = pred[:,1]
+distribution[keys(distribution)] = pred[:, 1]
 
 # We do the same thing for uncertainty:
 
 uncertainty = similar(layers[1], Float64)
-uncertainty[keys(uncertainty)] = pred[:,2]
+uncertainty[keys(uncertainty)] = pred[:, 2]
 
 # And we can now visualize the prediction, which we force to be in `[0,1]`.
 
-p_dis = plot(rescale(distribution, (0, 1)), c=:bamako)
-scatter!(xy_presence, lab="", c=:black, alpha=0.2, msw=0.0, ms=3)
+p_dis = plot(rescale(distribution, (0, 1)); c=:bamako)
+scatter!(xy_presence; lab="", c=:black, alpha=0.2, msw=0.0, ms=3)
 
 # We can do the same thing for the uncertainty
 
-p_unc = plot(uncertainty, c=:tokyo)
+p_unc = plot(uncertainty; c=:tokyo)
 
 # Of course, this prediction is returing values for the entire range of the
 # initial layer, so let's compare the distributions of the prediction score:
 
-histogram(distribution[xy_presence], fill=(0, :teal, 0.2), lc=:teal, frame=:origin, lab="Present")
-histogram!(distribution[xy_absence], fill=(0, :white, 0.0), frame=:origin, lc=:grey, lab="Absent")
+histogram(
+    distribution[xy_presence]; fill=(0, :teal, 0.2), lc=:teal, frame=:origin, lab="Present"
+)
+histogram!(
+    distribution[xy_absence]; fill=(0, :white, 0.0), frame=:origin, lc=:grey, lab="Absent"
+)
 xaxis!("Prediction score")
 
 # This looks like a good opportunity to do some thresholding. Note that the
@@ -130,14 +145,14 @@ for (i, c) in enumerate(cutoff)
     fp = length(p_presence) - tp
     fn = sum(p_absence)
     tn = length(p_absence) - fn
-    J[i] = tp/(tp+fn) + tn/(tn+fp) - 1
+    J[i] = tp / (tp + fn) + tn / (tn + fp) - 1
 end
 
 # We can finally replace the `NaN` values by the random estimate, and look at
 # the plot:
 
 J[isnan.(J)] .= 0.5
-plot(cutoff, J, lab="", fill=(0, 0.5, :grey), c=:grey)
+plot(cutoff, J; lab="", fill=(0, 0.5, :grey), c=:grey)
 xaxis!(extrema(distribution), "Threshold")
 yaxis!((0.5, 1), "Informedness")
 
@@ -158,16 +173,19 @@ range_mask = broadcast(v -> v >= τ, distribution)
 
 # And finally, plot the whole thing:
 
-plot(distribution, c=:lightgrey, leg=false)
-plot!(mask(range_mask, distribution), c=:blue)
-scatter!(xy_presence, lab="", c=:orange, alpha=0.5, msw=0.0, ms=2)
+plot(distribution; c=:lightgrey, leg=false)
+plot!(mask(range_mask, distribution); c=:blue)
+scatter!(xy_presence; lab="", c=:orange, alpha=0.5, msw=0.0, ms=2)
 
 # Now, for the big question - will this range move in the future? To explore
 # this, we will get the same variables, but in the future. In order to simplify
 # the code, we will limit ourselves to one SSP (245) and one CMIP6 model
 # (CanESM5), around 2050:
 
-future_layers = [clip(layer, observations) for layer in SimpleSDMPredictor(WorldClim, BioClim, CanESM5, SSP245, 1:19; year="2041-2060")]
+future_layers = [
+    clip(layer, observations) for
+    layer in SimpleSDMPredictor(WorldClim, BioClim, CanESM5, SSP245, 1:19; year="2041-2060")
+]
 
 # We can get all the future values from this data:
 
@@ -182,12 +200,12 @@ future_pred = EvoTrees.predict(model, all_future_values)
 # this vignette small, we will not look at it.
 
 future_distribution = similar(layers[1], Float64)
-future_distribution[keys(future_distribution)] = future_pred[:,1]
+future_distribution[keys(future_distribution)] = future_pred[:, 1]
 
 # The values in `future_distribution` are in the scale of what the BRT returns,
 # so we can compare them with the values of `distribution`:
 
-plot(future_distribution - distribution, clim=(-1.1,1.1), c=:lisbon)
+plot(future_distribution - distribution; clim=(-1.1, 1.1), c=:lisbon)
 
 # This shows the area of predicted gain and loss of presence. Because we have
 # thresholded our current distribution, we can look at the predicted ranges of
@@ -206,5 +224,5 @@ both_ranges_mask = maximum([future_range_mask, range_mask])
 # unfavorable, the green one remaining suitable, and the blue area being newly
 # opened range:
 
-plot(distribution, c=:lightgrey, leg=false)
-plot!(mask(both_ranges_mask, range_change), c=:roma)
+plot(distribution; c=:lightgrey, leg=false)
+plot!(mask(both_ranges_mask, range_change); c=:roma)

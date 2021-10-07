@@ -45,6 +45,7 @@ makedocs(
             "Landcover data" => "examples/landcover.md",
             "Landcover consensus" => "examples/consensus.md",
             "Importing and exporting" => "examples/import.md",
+            "Bivariate mapping" => "examples/bivariate.md"
         ],
         "SDM examples" => [
             "GBIF integration" => "examples/gbif.md",

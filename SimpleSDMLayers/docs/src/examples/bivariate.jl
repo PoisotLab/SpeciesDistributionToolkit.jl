@@ -89,8 +89,8 @@ for i in 2:length(breakpoints)
     end
 end
 
-xaxis!(pl2, (0, 1), "Temperature")#, ticks=breakpoints)
-yaxis!(pl2, (0, 1), "Precipitation")#, ticks=breakpoints)
+xaxis!(pl2, (0, 1), "Temperature")
+yaxis!(pl2, (0, 1), "Precipitation")
 
 # And now, we can plot the legend next to the map - future releases of the
 # package will hopefully offer this in a far more user friendly way.

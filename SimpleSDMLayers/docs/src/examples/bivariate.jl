@@ -13,7 +13,9 @@ using StatsPlots.PlotMeasures
 # In order to illustrate bivariate mapping, we will look at the joint
 # distribution of temperature and precipitation:
 
-layer1, layer2 = SimpleSDMPredictor(WorldClim, BioClim, [1, 12]; left=-12., right=20., bottom=36., top=62.)
+layer1, layer2 = SimpleSDMPredictor(
+    WorldClim, BioClim, [1, 12]; left=-12.0, right=20.0, bottom=36.0, top=62.0
+)
 
 # The next step is to decide on quantiles breakpoints; for $n$ breakpoints,
 # there will be $n-1$ classes, so if we want (for example) 4 classes, we will

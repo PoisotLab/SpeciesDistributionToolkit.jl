@@ -29,7 +29,12 @@ X = (x .- mean(x; dims=1)) ./ std(x; dims=1)
 # The VIF is simply measured as 1/(1-R²) by regressing every variable against
 # all others. Let's have an illustration with the first predictor:
 
-r -> 1 / (1 - r)(r2(lm(X[:, 2:end], X[:, 1])))
+function vif(model)
+    R² = r2(model)
+    return 1 / (1-R²)
+end
+
+vif(lm(X[:, 2:end], X[:, 1]))
 
 # The generally agreed threshold for a good VIF is 2, or 5, or 10 (so both
 # "generally" and "agreed" are overstatements here), and as this one is higher,
@@ -42,7 +47,7 @@ r -> 1 / (1 - r)(r2(lm(X[:, 2:end], X[:, 1])))
 
 vifs = zeros(Float64, length(layers))
 for i in eachindex(layers)
-    vifs[i] = r -> 1 / (1 - r)(r2(lm(X[:, setdiff(eachindex(layers), i)], X[:, i])))
+    vifs[i] = vif(lm(X[:, setdiff(eachindex(layers), i)], X[:, i]))
 end
 findmax(vifs)
 
@@ -55,7 +60,7 @@ function stepwisevif(
     X = (x .- mean(x; dims=1)) ./ std(x; dims=1)
     vifs = zeros(Float64, length(selection))
     for i in eachindex(selection)
-        vifs[i] = r -> 1 / (1 - r)(r2(lm(X[:, setdiff(eachindex(selection), i)], X[:, i])))
+        vifs[i] = vif(lm(X[:, setdiff(eachindex(layers), i)], X[:, i]))
     end
     all(vifs .<= threshold) && return selection
     drop = last(findmax(vifs))

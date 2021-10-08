@@ -1,4 +1,4 @@
-# File reading and writing
+# Reading and writing files
 
 ```@docs
 SimpleSDMLayers.ascii

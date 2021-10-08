@@ -30,13 +30,8 @@ makedocs(
             "Operations on values" => "man/changevalues.md",
             "Overloads" => "man/overloads.md",
             "Other operations" => "man/operations.md",
-        ],
-        "Data" => [
-            "Data interface" => "data/index.md",
-            "IO" => "data/io.md",
-            "Providers" => "data/providers.md",
-            "Datasets" => "data/datasets.md",
-            "Futures" => "data/futuredata.md",
+            "Data access" => "man/data.md",
+            "IO" => "man/io.md"
         ],
         "General examples" => [
             "Elevation data" => "examples/elevation.md",
@@ -47,7 +42,7 @@ makedocs(
             "Importing and exporting" => "examples/import.md",
             "Bivariate mapping" => "examples/bivariate.md"
         ],
-        "SDM examples" => [
+        "SDM case studies" => [
             "GBIF integration" => "examples/gbif.md",
             "Variable selection (VIF)" => "examples/vif.md",
             "Building the BIOCLIM model" => "examples/bioclim.md",

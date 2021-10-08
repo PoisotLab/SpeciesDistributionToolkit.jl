@@ -1,69 +1,70 @@
 # # Working with GBIF data
 
-# In this example, we will see how we can make the packages `SimpleSDMLayers`
-# and [the `GBIF.jl` package](https://ecojulia.github.io/GBIF.jl/dev/) interact.
-# We will specifically plot the relationship between temperature and
-# precipitation for a few occurrences of the kingfisher *Megaceryle alcyon*.
+# **Justification for this use case:** building species distribution models
+# requires information of where species are. In this document, we will see how
+# the `SimpleSDMLayers` and `GBIF` packages interact, as a first step to get in
+# a usable state. Specifically, we will work on the occurences of the
+# relationship between temperature and precipitation for a few occurrences of
+# the fungus *Hypomyces lactifluorum*, which will be the taxon used for all
+# SDM-related vignettes.
 
 using SimpleSDMLayers
 using GBIF
 using Plots
 using Statistics
 
-#-
+# We will focus on showing where on the temperature/precipitation space the
+# occurrences are, so we will download these layers:
 
 temperature, precipitation = SimpleSDMPredictor(WorldClim, BioClim, [1,12])
 
-# We can get some occurrences for the taxon of interest:
+# And now, we can follow the GBIF documentation to get some occurrences
 
-kingfisher = GBIF.taxon("Megaceryle alcyon", strict=true)
-kf_occurrences = occurrences(kingfisher, "hasCoordinate" => "true", "decimalLatitude" => (0.0, 65.0), "decimalLongitude" => (-180.0, -50.0), "limit" => 300)
+observations = occurrences(GBIF.taxon("Hypomyces lactifluorum"; strict=true), "hasCoordinate" => "true", "country" => "CA", "country" => "US", "limit" => 300)
+while length(observations) < size(observations)
+    occurrences!(observations)
+end
 
-#-
-
-[occurrences!(kf_occurrences) for i in 1:4]
-@info kf_occurrences
+@info observations
 
 # We can then extract the temperature for the first occurrence:
 
-temperature[kf_occurrences[1]]
+temperature[observations[1]]
 
 # Of course, it would be unwieldy to do this for every occurrence in our dataset,
 # and so we will see a way do it much faster. But first, we do not need the entire
 # surface of the planet to perform our analysis, and so we will instead clip the
 # layers:
 
-temperature_clip = clip(temperature, kf_occurrences)
-precipitation_clip = clip(precipitation, kf_occurrences)
+temperature = clip(temperature, observations)
+precipitation = clip(precipitation, observations)
 
 # This will make the future queries a little faster. By default, the `clip`
 # function will ad a 5% margin on every side. To get the values of a layer at
 # every occurrence in a `GBIFRecord`, we simply pass the records as a position:
 
-histogram2d(temperature_clip, precipitation_clip, c=:viridis)
-scatter!(temperature_clip[kf_occurrences], precipitation_clip[kf_occurrences], lab="", c=:white, msc=:orange)
+histogram2d(temperature, precipitation, c=:devon, frame=:zerolines, leg=false, lab="")
+scatter!(temperature[observations], precipitation[observations], lab="", c=:white, msc=:orange, alpha=0.2)
+xaxis!("Temperature (°C)")
+yaxis!("Precipitation (mm)")
 
 # This will return a record of all data for all geo-localized occurrences
 # (*i.e.* neither the latitude nor the longitude is `missing`) in a
-# `GBIFRecords` collection, as an array of the `eltype` of the layer.
-
-# Note that the layer values can be `nothing`, in which case you might need to
-# run `filter(!isnothing, temperature_clip[kf_occurrences]` for it to work with
-# the plotting functions.
+# `GBIFRecords` collection, as an array of the `eltype` of the layer. Note that
+# the layer values can be `nothing`, in which case you might need to run
+# `filter(!isnothing, temperature_clip[kf_occurrences]` for it to work with the
+# plotting functions.
 
 # We can also plot the records over space, using the overloads of the `latitudes`
 # and `longitudes` functions:
 
-contour(temperature_clip, c=:alpine, title="Precipitation", frame=:box, fill=true)
-scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), lab="", c=:white, msc=:orange, ms=2)
-
-# These extensions of `SimpleSDMLayers` functions to work with the `GBIF`
-# package are meant to greatly simplify the expression of more complex
-# pipelines, notably for actual species distribution modeling.
+contour(temperature, c=:cork, frame=:box, fill=true, clim=(-20, 20), levels=6)
+scatter!(longitudes(observations), latitudes(observations), lab="", c=:white, msc=:orange, ms=2)
 
 # We can finally make a layer with the number of observations per cells:
 
-presabs = mask(precipitation_clip, kf_occurrences, Float32)
+presabs = mask(temperature, observations, Float32)
+plot(log1p(presabs), c=:tokyo)
 
 # Because the cells are rather small, and there are few observations, this is not
 # necessarily going to be very informative - to get a better sense of the
@@ -71,11 +72,7 @@ presabs = mask(precipitation_clip, kf_occurrences, Float32)
 # radius of 100km around each cell (we will do so for a zoomed-in part of the map
 # to save time):
 
-zoom = clip(presabs; left=-100., right=-75.0, top=43.0, bottom=20.0)
+zoom = clip(presabs; left=-80., right=-65.0, top=50.0, bottom=40.0)
 buffered = slidingwindow(zoom, Statistics.mean, 100.0)
-
-#-
-
-plot(buffered, c=:lapaz, legend=false, frame=:box)
-scatter!(longitudes(kf_occurrences), latitudes(kf_occurrences), lab="", c=:white, msc=:orange, ms=2, alpha=0.5)
-
+plot(buffered, c=:tokyo, frame=:box)
+scatter!(longitudes(observations), latitudes(observations), lab="", c=:white, msc=:orange, ms=2, alpha=0.5)

@@ -1,6 +1,6 @@
 # # Future climate data
 
-# For some dta providers and datasets, `SimpleSDMLayers` offers access to future
+# For some data providers and datasets, `SimpleSDMLayers` offers access to future
 # climate data. Future climates are usually specified by a model, and a
 # scenario. For example, WorldClim 2.1 offers the full suite of BioClim variable
 # under four SSPs and a number of CMIP6 models.

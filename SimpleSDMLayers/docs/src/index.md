@@ -18,3 +18,16 @@ species distribution models. Despite what the name may suggest, this package
 does *not* implement SDMs, but is instead intended as a library usable for this
 purpose. Nevertheless, the documentation contains a few example of building
 models, and integrating this package with the GBIF API.
+
+The documentations is split in three sections. The **manual** is a fairly
+exhaustive documentation of the functions, methods, types, and interfaces, and
+it is a good idea to skim it first, and come back for a focused reading when you
+have a specific use-case in mind. The **general examples** section is a
+collection of mostly disconnected workflows, intended to show how
+`SimpleSDMLayers` interacts with other packages. It should give you a better
+understanding of you can actually use the package. Finally, the **SDM case
+studies** are a more linear series of vignettes, covering occurrence data,
+variable selection, bulding a presence-only model, generating pseudo-absences,
+and using a machine learning approach to do range forecasting under climate
+change. This last section can be used as a template to develop new analyses, and
+will use almost all the features in the package.

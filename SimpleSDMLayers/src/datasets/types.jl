@@ -5,43 +5,49 @@
 A `LayerProvider` is an abstract type used to dispatch the correct call of
 `SimpleSDMPredictor` to a specific dataset. A dataset is specified by a
 `LayerProvider` and a `LayerDataset`, as well as optionally one or multiple
-layers, and future climate information.
+layers, and future climate information, resolution, or dates.
 """
 abstract type LayerProvider end
 
 """
     LayerDataset
 
-A `LayerDataset` is a specific set of rasters provided by a `LayerProvider`.
+A `LayerDataset` is a specific set of rasters provided by a `LayerProvider`. For
+a number of dataset types that are very broad (`LandCover`,
+`HabitatHeterogeneity`), the precise mapping of layers is documented in their
+`SimpleSDMPredictor` method.
 """
 abstract type LayerDataset end
 
 """
     WorldClim
 
-TODO WorldClim
+[WorldClim](https://worldclim.org/) offers bioclimatic data both historical and
+future, under `CMIP6` scenarios.
 
 This provider currently offers `BioClim` data, both historical and future under
-`CMIP6`.
+`CMIP6`, and the `Elevation` raster.
 """
 struct WorldClim <: LayerProvider end
 
 """
     CHELSA
 
-TODO CHELSA
+[CHELSA](https://chelsa-climate.org/) offers high resolution climatologies. This
+provider currently offers `BioClim` data, both historical and future under
+`CMIP5` *and* `CMIP6`.
 
-This provider currently offers `BioClim` data, both historical and future under
-`CMIP5`.
+Note that CHELSA offers a subset of all possible CMIP6 combinations, which is
+supposed to be the most informative.
 """
 struct CHELSA <: LayerProvider end
 
 """
     EarthEnv
 
-Data from the earthenv project, all released under a CC-BY-NC license to Tuanmu
-& Jetz. This provider currently offers `LandCover` and `HabitatHeterogeneity`
-rasters.
+Data from the [EarthEnv](https://www.earthenv.org//) project, all released under
+a CC-BY-NC license to Tuanmu & Jetz. This provider currently offers `LandCover`
+and `HabitatHeterogeneity` rasters.
 """
 struct EarthEnv <: LayerProvider end
 
@@ -93,7 +99,8 @@ struct Elevation <: LayerDataset end
 """
     HabitatHeterogeneity
 
-Information on habitat heterogeneity, currently only provided by `EarthEnv`.
+Information on [habitat heterogeneity](https://www.earthenv.org/texture),
+currently only provided by `EarthEnv`.
 """
 struct HabitatHeterogeneity <: LayerDataset end
 

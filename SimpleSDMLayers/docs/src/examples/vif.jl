@@ -4,7 +4,7 @@ using SimpleSDMLayers
 using GLM
 using Statistics
 
-# **Justification for this use case:** A lot of predictive variables are
+# **Justification for this use case:** a lot of predictive variables are
 # auto-correlated, and therefore one might argue that maybe, we may eventually
 # build better models by removing some of them. This is generally refered to as
 # variable selection, and sharing one's opinion on this is the fastest way to

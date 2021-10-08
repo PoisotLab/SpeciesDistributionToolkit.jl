@@ -1,5 +1,14 @@
 # # Future climate data
 
+using SimpleSDMLayers
+using Plots
+using Statistics
+
+# **Justification for this use case:** we will often want to forecast the range
+# of species under a variety of climate change scenarios. For this reason,
+# `SimpleSDMLayers` offers access to CMIP5 and CMIP6 scenarios or models, to be
+# used in these situations.
+
 # For some data providers and datasets, `SimpleSDMLayers` offers access to future
 # climate data. Future climates are usually specified by a model, and a
 # scenario. For example, WorldClim 2.1 offers the full suite of BioClim variable
@@ -10,17 +19,14 @@
 # where we contrast the "historical" climate (*i.e.* what is assumed to be the
 # current data) to the projected  data under SSP585 in the 2041-2060 period.
 
-using SimpleSDMLayers
-using Plots
-using Statistics
-
 # We will start by getting the contemporary data:
 
-baseline = SimpleSDMPredictor(WorldClim, BioClim, 1; left=60.0, right=95.0, bottom=0.0, top=40.0)
+boundaries = (left=-169.0, right=-50.0, bottom=24.0, top=71.0)
+baseline = SimpleSDMPredictor(WorldClim, BioClim, 1; boundaries...)
+contour(baseline; c=:cork, frame=:box, fill=true, clim=(-30, 30), levels=6)
 
-plot(baseline, frame=:box, c=:heat)
-
-# To get a future dataset, we need to specify the model:
+# To get a future dataset, we need to specify the model - models are
+# combinations of a CMIP version, and either a RCP or SSP:
 
 instances(CMIP6)
 
@@ -28,19 +34,23 @@ instances(CMIP6)
 
 instances(SharedSocioeconomicPathway)
 
-# We can now get our future temperature layer (and plot it):
+# We can now get our future temperature layer (and plot it), for a valid
+# model/scenario combination, and plot it. We will pick an extreme scenario at a
+# long (yet frighteningly short) time in the future. In order to facilitate the
+# comparison with the previous plot, we will re-use the same color limites,
+# where blue is negatuve temperatures.
 
-future = SimpleSDMPredictor(WorldClim, BioClim, CanESM5, SSP585, 1; year="2041-2060", left=60.0, right=95.0, bottom=0.0, top=40.0)
-
-plot(future, frame=:box, c=:heat)
+future = SimpleSDMPredictor(WorldClim, BioClim, CanESM5, SSP585, 1; year="2061-2080", boundaries...)
+contour(future; c=:cork, frame=:box, fill=true, clim=(-30, 30), levels=6)
 
 # Note that the call to get the future data is almost the same as the historical
 # one - the exception is the addition of the model and scenario, and the
-# specification of the years.
+# specification of the years. With this layer, we can now measure the difference
+# in mean annual temperature, because layers can be substracted. Note that we
+# are switching the scale: the difference between the two layers here is always
+# positive.
 
-# With this layer, we can now measure the difference in mean annual temperature:
-
-plot(future - baseline, c=:lapaz, frame=:box)
+plot(future - baseline, frame=:box, c=:lajolla)
 
 # We might actually be interested in averaging multiple models. Because we know
 # the variety of models worldclim has (`instances(CMIP6)`), we can do this
@@ -50,17 +60,19 @@ plot(future - baseline, c=:lapaz, frame=:box)
 ensemble = [
     SimpleSDMPredictor(
         WorldClim, BioClim, model, SSP585, 1;
-        year="2041-2060", left=60.0, right=95.0, bottom=0.0, top=40.0
+        year="2061-2080", boundaries...
     ) for model in instances(CMIP6) if model != GFDLESM4
 ];
 
-# We will measure the difference of each layer to the baseline:
+# We can create a layer of differences from each scenario to the baseline:
 
+differences = [component - baseline for component in ensemble];
 
-differences = [component - baseline for component in ensemble]
+# This can be plotted as a grid of differences, using the same colorscale as in
+# the previous plot:
 
-plot(plot.(differences, c=:lapaz)..., frame=:box)
+plot(plot.(differences, c=:lajolla, grid=:none, axes=false, frame=:none, leg=false)...)
 
-# From this, we can look at the average difference (across multiple models):
+# Finally, we can plot the average of the expected conditions under the scenario we considered:
 
-plot(mosaic(mean, differences), c=:lapaz, frame=:box)
+contour(mosaic(mean, ensemble); c=:cork, frame=:box, fill=true, clim=(-30, 30), levels=6)

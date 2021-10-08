@@ -34,12 +34,10 @@ makedocs(
             "IO" => "man/io.md"
         ],
         "General examples" => [
-            "Elevation data" => "examples/elevation.md",
-            "Geometry objects" => "examples/geometry.md",
+            "Introduction: elevation data" => "examples/elevation.md",
+            "Geometry for clipping" => "examples/geometry.md",
             "Sliding window analysis" => "examples/slidingwindow.md",
             "Landcover data" => "examples/landcover.md",
-            "Landcover consensus" => "examples/consensus.md",
-            "Importing and exporting" => "examples/import.md",
             "Bivariate mapping" => "examples/bivariate.md"
         ],
         "SDM case studies" => [

@@ -11,34 +11,38 @@ using Statistics
 # start a brawl at any gathering of ecologists.
 
 # We will illustrate variable selection with the Variance Inflation Factor using
-# the bioclim data from Québec.
+# the bioclim data from the region in which *Hypomyces lactifluorum* is found.
 
 layers = SimpleSDMPredictor(
-    WorldClim, BioClim, 1:19; left=-80.0, right=-56.0, bottom=44.0, top=62.0
-)
+    WorldClim, BioClim, 1:19; left=-169.0, right=-50.0, bottom=24.0, top=71.0
+);
 
 # We will first gather everything in a matrix:
 
-x = hcat([layer[keys(layer)] for layer in layers]...)
+x = hcat([layer[keys(layer)] for layer in layers]...);
+size(x)
 
 # Because of the spread of some values, we will center and reduce this matrix to
 # give every variable a mean of 0 and unit variance:
 
 X = (x .- mean(x; dims=1)) ./ std(x; dims=1)
+round.(Int, mean(X; dims=1))
 
 # The VIF is simply measured as 1/(1-R²) by regressing every variable against
 # all others. Let's have an illustration with the first predictor:
 
 function vif(model)
     R² = r2(model)
-    return 1 / (1-R²)
+    return 1 / (1 - R²)
 end
 
 vif(lm(X[:, 2:end], X[:, 1]))
 
 # The generally agreed threshold for a good VIF is 2, or 5, or 10 (so both
 # "generally" and "agreed" are overstatements here), and as this one is higher,
-# it suggests that we may not need all of these data.
+# it suggests that we may not need all of these data. It is also entirely
+# possible to have an *infinite* VIF, in case two variables are perfectly
+# correlated (this happens a fair amount with bioclim, in fact).
 
 # For this reason, we will go through an iterative process to get rid of
 # variables one by one until the largest VIF is no larger than some threshold.
@@ -47,11 +51,13 @@ vif(lm(X[:, 2:end], X[:, 1]))
 
 vifs = zeros(Float64, length(layers))
 for i in eachindex(layers)
-    vifs[i] = vif(lm(X[:, setdiff(eachindex(layers), i)], X[:, i]))
+    vifs[i] = vif(lm(X[:, setdiff(eachindex(selection), i)], X[:, i]))
 end
 findmax(vifs)
 
-# This is a good application for a recursive function. Let's write it this way.
+# This result suggests that this variable, because it has the highest VIF (and
+# one that is above our threshold), should be dropped. Repeating the process is
+# a good use case for a recursive function:
 
 function stepwisevif(
     layers::Vector{T}, selection=collect(1:length(layers)), threshold::Float64=5.0
@@ -60,11 +66,12 @@ function stepwisevif(
     X = (x .- mean(x; dims=1)) ./ std(x; dims=1)
     vifs = zeros(Float64, length(selection))
     for i in eachindex(selection)
-        vifs[i] = vif(lm(X[:, setdiff(eachindex(layers), i)], X[:, i]))
+        vifs[i] = vif(lm(X[:, setdiff(eachindex(selection), i)], X[:, i]))
     end
     all(vifs .<= threshold) && return selection
     drop = last(findmax(vifs))
     popat!(selection, drop)
+    @info "Variables remaining: $(selection)"
     return stepwisevif(layers, selection, threshold)
 end
 

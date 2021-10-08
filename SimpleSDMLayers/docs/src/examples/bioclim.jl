@@ -4,7 +4,7 @@
 # platform to build your own species distribution models. In this example, which
 # assumes that you have read the vignettes on GBIF integration and variable
 # selection through VIF, we will build our own version of the BIOCLIM model, and
-# apply it to the distribution of *Alces alces* in Europe.
+# apply it to the distribution of *Hypomyces lactifluorum* in North America.
 
 using SimpleSDMLayers
 using GBIF
@@ -15,27 +15,22 @@ using Statistics
 using GeometryBasics
 
 # BIOCLIM is a very simple model, which only requires presence information. The
-# first step is therefore to get occurrences of *Alces alces* in Europe. We will
-# specifically focus on Norway, Sweden, and Finland. Because the data in GBIF is
-# only as good as the original data source, sometimes searching by `continent`
-# gives fewer results than searching by country.
+# first step is therefore to get occurrences of *Hypomyces lactifluorum* in
+# North America. Because the data in GBIF is only as good as the original data
+# source, sometimes searching by `continent` gives fewer results than searching
+# by country.
 
 observations = occurrences(
-    GBIF.taxon("Alces alces"; strict=true),
+    GBIF.taxon("Hypomyces lactifluorum"; strict=true),
     "hasCoordinate" => "true",
-    "country" => "NO",
-    "country" => "DK",
-    "country" => "SE",
-    "country" => "FI",
+    "country" => "CA",
+    "country" => "US",
     "limit" => 300,
 )
 
-# We will now page through a few additional results (300 at a time). In a real
-# world context, we may want to download the entire dataset, or keep folds of it
-# for validation. But for the sake of illustration, a few thousands occurrences
-# are more than we need.
+# We will now page through additional results (300 at a time). 
 
-while length(observations) < min(10000, size(observations))
+while length(observations) < size(observations)
     occurrences!(observations)
 end
 
@@ -49,7 +44,7 @@ bottom, top = extrema(latitudes(observations)) .+ (-5, 5)
 boundaries = (left=left, right=right, bottom=bottom, top=top)
 
 # With this information in hand, we can start getting our variables. In this
-# example, we will take all of the BioClim data from WorldClim, at the 5 arc
+# example, we will take all of the BioClim data from WorldClim, at the 10 arc
 # minute resolution, and add the elevation layer. Note that using the bounding
 # box coordinates when calling the layers is *much* faster than clipping after
 # the fact (assuming that you already have the files downloaded).
@@ -190,4 +185,8 @@ xaxis!("Longitude")
 yaxis!("Latitude")
 
 # And there it is! A simple way to write the BIOCLIM model by building on the
-# integration between SimpleSDMLayers and GBIF.
+# integration between SimpleSDMLayers and GBIF. BIOCLIM has a tendency to
+# underfit the distribution quite a bit - in fact, the range returned here is
+# larger than what other methods (like BRT) would return. The next vignettes in
+# this section will be focused on using additional functionalities of
+# `SimpleSDMLayers` until we are able to make a better model for this species.

@@ -25,9 +25,13 @@ it is a good idea to skim it first, and come back for a focused reading when you
 have a specific use-case in mind. The **general examples** section is a
 collection of mostly disconnected workflows, intended to show how
 `SimpleSDMLayers` interacts with other packages. It should give you a better
-understanding of you can actually use the package. Finally, the **SDM case
-studies** are a more linear series of vignettes, covering occurrence data,
-variable selection, bulding a presence-only model, generating pseudo-absences,
-and using a machine learning approach to do range forecasting under climate
-change. This last section can be used as a template to develop new analyses, and
-will use almost all the features in the package.
+understanding of you can actually use the package.
+
+Finally, the **SDM case studies** are a more linear series of vignettes,
+covering occurrence data, variable selection, bulding a presence-only model,
+generating pseudo-absences, and using a machine learning approach to do range
+forecasting under climate change. This last section can be used as a template to
+develop new analyses, and will use almost all the features in the package. All
+of the SDM vignettes use the same species throughout - *Hypomyces lactifluorum*
+is a fungus of moderate commerical importance in North America, whose
+distribution is probably going to be affected by climate change.

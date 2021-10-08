@@ -4,7 +4,7 @@ using SimpleSDMLayers
 using GLM
 using Statistics
 
-# **Justification for this case study:** A lot of predictive variables are
+# **Justification for this use case:** A lot of predictive variables are
 # auto-correlated, and therefore one might argue that maybe, we may eventually
 # build better models by removing some of them. This is generally refered to as
 # variable selection, and sharing one's opinion on this is the fastest way to
@@ -24,12 +24,12 @@ x = hcat([layer[keys(layer)] for layer in layers]...)
 # Because of the spread of some values, we will center and reduce this matrix to
 # give every variable a mean of 0 and unit variance:
 
-X = (x .- mean(x; dims=1))./std(x; dims=1)
+X = (x .- mean(x; dims=1)) ./ std(x; dims=1)
 
 # The VIF is simply measured as 1/(1-R²) by regressing every variable against
 # all others. Let's have an illustration with the first predictor:
 
-lm(X[:,2:end], X[:,1]) |> r2 |> r -> 1/(1-r)
+r -> 1 / (1 - r)(r2(lm(X[:, 2:end], X[:, 1])))
 
 # The generally agreed threshold for a good VIF is 2, or 5, or 10 (so both
 # "generally" and "agreed" are overstatements here), and as this one is higher,
@@ -42,18 +42,20 @@ lm(X[:,2:end], X[:,1]) |> r2 |> r -> 1/(1-r)
 
 vifs = zeros(Float64, length(layers))
 for i in eachindex(layers)
-    vifs[i] = lm(X[:,setdiff(eachindex(layers), i)], X[:,i]) |> r2 |> r -> 1/(1-r)
+    vifs[i] = r -> 1 / (1 - r)(r2(lm(X[:, setdiff(eachindex(layers), i)], X[:, i])))
 end
 findmax(vifs)
 
 # This is a good application for a recursive function. Let's write it this way.
 
-function stepwisevif(layers::Vector{T}, selection=collect(1:length(layers)), threshold::Float64=5.0) where {T <: SimpleSDMLayer}
+function stepwisevif(
+    layers::Vector{T}, selection=collect(1:length(layers)), threshold::Float64=5.0
+) where {T<:SimpleSDMLayer}
     x = hcat([layer[keys(layer)] for layer in layers[selection]]...)
-    X = (x .- mean(x; dims=1))./std(x; dims=1)
+    X = (x .- mean(x; dims=1)) ./ std(x; dims=1)
     vifs = zeros(Float64, length(selection))
     for i in eachindex(selection)
-        vifs[i] = lm(X[:,setdiff(eachindex(selection), i)], X[:,i]) |> r2 |> r -> 1/(1-r)
+        vifs[i] = r -> 1 / (1 - r)(r2(lm(X[:, setdiff(eachindex(selection), i)], X[:, i])))
     end
     all(vifs .<= threshold) && return selection
     drop = last(findmax(vifs))

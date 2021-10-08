@@ -61,3 +61,24 @@ function layernames(::Type{EarthEnv}, ::Type{LandCover})
         "Open Water",
     )
 end
+
+function layernames(::Type{EarthEnv}, ::Type{Topography})
+    return (
+        "Elevation",
+        "Slope",
+        "Aspect Cosine",
+        "Aspect Sine",
+        "Aspect Eastness",
+        "Aspect Northness",
+        "Roughness",
+        "Topographic Position Index",
+        "Terrain Ruggedness Index",
+        "Vector Ruggedness Measure",
+        "∂(E-W slope)",
+        "∂²(E-W slope)",
+        "∂(N-S slope)",
+        "∂²(N-S slope)",
+        "Profile curvature",
+        "Tangential curvature"
+    )
+end

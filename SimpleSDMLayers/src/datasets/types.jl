@@ -105,6 +105,13 @@ currently only provided by `EarthEnv`.
 struct HabitatHeterogeneity <: LayerDataset end
 
 """
+    Topography
+
+Information on habitat topography, currently provided by `EarthEnv`.
+"""
+struct Topography <: LayerDataset end
+
+"""
     SharedSocioeconomicPathway
 
 Enumeration of the four SSPs, which can be listed with

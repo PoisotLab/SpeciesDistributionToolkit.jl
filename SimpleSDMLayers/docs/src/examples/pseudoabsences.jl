@@ -5,14 +5,18 @@ using Plots
 using GBIF
 using StatsBase
 
-# **Justification for this use case:** many models require background
-# knowledge about where the species is *not*, which is rarely available. For
-# this reason, we often need to resort to generating pseudo-absences, by
-# applying various guesses based on where we know species are.
+# **Justification for this use case:** by contrast to the BIOCLIM model from the
+# previous use case, many models require background knowledge about where the
+# species is *not*, which is rarely available. For this reason, we often need to
+# resort to generating pseudo-absences, by applying various guesses based on
+# where we know species are.
 
-# In this example, we will see how to generate pseudo-absences using three
-# methods: radius-based, surface range envelope, and random selection. To begin
-# with, we will occurrences for the Lobster mushroom in Canada and the US.
+# In this example, we will see how to generate pseudo-absences (according to
+# [Barbet-Massin *et
+# al.*](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/j.2041-210X.2011.00172.x))
+# using three methods: radius-based, surface range envelope, and random
+# selection. To begin with, we will occurrences for the Lobster mushroom in
+# Canada and the US.
 
 sp = GBIF.taxon("Hypomyces lactifluorum")
 observations = occurrences(sp, "hasCoordinate" => true, "limit" => 300, "country" => "CA", "country" => "US")
@@ -79,4 +83,8 @@ wr_one_pa = rand(WithinRadius, presences)
 plot(convert(Float32, wr_one_pa), c=:Greys, leg=false)
 scatter!(longitudes(observations), latitudes(observations), lab="", msw=0.0, ms=1, c=:orange)
 
-# This is a much better distribution of pseudo-absences!
+# This is a much better distribution of pseudo-absences! Of course, the
+# consequences of which pseudo-absence method to pick is key in the accuracy of
+# the model. The `WithinRadius` method may not always perform better. In fact,
+# in the Boosted Regression Tree exmaple, we will see how `SurfaceRangeEnvelope`
+# gives excellent results.

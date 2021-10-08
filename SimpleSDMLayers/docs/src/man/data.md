@@ -24,6 +24,9 @@ the method accepts either a single layer, or an array of layers.
 
 ## Providers and datasets
 
+The `layernames` method (inputs are a provider and a dataset) will return a
+tuple with the name of the layers.
+
 ### Data providers
 
 ```@docs

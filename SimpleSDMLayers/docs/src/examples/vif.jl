@@ -81,6 +81,10 @@ end
 
 selected_variables_id = stepwisevif(layers)
 
+# Which variables are these?
+
+layernames(WorldClim, BioClim)[selected_variables_id]
+
 # Finally, we can select the variables this process recommends:
 
 layers[selected_variables_id]

@@ -111,12 +111,12 @@ uncertainty
 
 # And we can now visualize the prediction, which we force to be in `[0,1]`.
 
-p_dis = plot(rescale(distribution, (0, 1)); c=:bamako)
+p_dis = plot(rescale(distribution, (0, 1)); c=:bamako, frame=:box)
 scatter!(xy_presence; lab="", c=:black, alpha=0.2, msw=0.0, ms=3)
 
 # We can do the same thing for the uncertainty
 
-p_unc = plot(uncertainty; c=:tokyo)
+p_unc = plot(uncertainty; c=:tokyo, frame=:box)
 
 # Of course, this prediction is returing values for the entire range of the
 # initial layer, so let's compare the distributions of the prediction score:
@@ -176,17 +176,17 @@ range_mask = broadcast(v -> v >= τ, distribution)
 # And finally, plot the whole thing:
 
 plot(distribution; c=:lightgrey, leg=false)
-plot!(mask(range_mask, distribution); c=:blue)
+plot!(mask(range_mask, distribution); c=:darkgreen)
 scatter!(xy_presence; lab="", c=:orange, alpha=0.5, msw=0.0, ms=2)
 
 # Now, for the big question - will this range move in the future? To explore
 # this, we will get the same variables, but in the future. In order to simplify
-# the code, we will limit ourselves to one SSP (245) and one CMIP6 model
+# the code, we will limit ourselves to one SSP (585) and one CMIP6 model
 # (CanESM5), around 2050:
 
 future_layers = [
     clip(layer, observations) for
-    layer in SimpleSDMPredictor(WorldClim, BioClim, CanESM5, SSP245, 1:19; year="2041-2060")
+    layer in SimpleSDMPredictor(WorldClim, BioClim, CanESM5, SSP585, 1:19; year="2041-2060")
 ];
 
 # We can get all the future values from this data:

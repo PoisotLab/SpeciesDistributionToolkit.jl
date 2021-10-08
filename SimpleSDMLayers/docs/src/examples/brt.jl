@@ -6,7 +6,7 @@ using GBIF
 using StatsBase
 using Plots
 
-# **Justification for this case study:** Boosted Regression Trees (BRTs) are a
+# **Justification for this use case:** Boosted Regression Trees (BRTs) are a
 # powerful way to predict the distribution of species. We will see how we can
 # get information in and out of layers to use them, and how to use this model to
 # predict a new distribution under a climate change scenario. This use-case

@@ -5,7 +5,7 @@ using Plots
 using GBIF
 using StatsBase
 
-# **Justification for this case study:** many models require background
+# **Justification for this use case:** many models require background
 # knowledge about where the species is *not*, which is rarely available. For
 # this reason, we often need to resort to generating pseudo-absences, by
 # applying various guesses based on where we know species are.

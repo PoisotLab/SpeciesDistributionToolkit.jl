@@ -5,7 +5,7 @@ using StatsPlots
 using Colors, ColorBlendModes
 using StatsPlots.PlotMeasures
 
-# **Justification for this case study:** We can show more than one
+# **Justification for this use case:** We can show more than one
 # (specifically, two) variables on a single map, using a bivariate color scale.
 # This currently involves a bit of manual manipulation, but will become part of
 # the core package functionalities in the future.

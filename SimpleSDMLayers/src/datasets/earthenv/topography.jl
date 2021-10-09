@@ -17,5 +17,5 @@ end
 
 function SimpleSDMPredictor(::Type{EarthEnv}, ::Type{Topography}, layers::AbstractArray; kwargs...)
     @assert eltype(layers) <: Integer
-    return [SimpleSDMPredictor(EarthEnv, HabitatHeterogeneity, l; kwargs...) for l in layers]
+    return [SimpleSDMPredictor(EarthEnv, Topography, l; kwargs...) for l in layers]
 end

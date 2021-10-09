@@ -42,7 +42,7 @@ export geotiff
 
 include(joinpath("datasets", "types.jl"))
 export WorldClim, CHELSA, EarthEnv
-export BioClim, LandCover, HabitatHeterogeneity, Elevation
+export BioClim, LandCover, HabitatHeterogeneity, Elevation, Topography
 export CMIP6, SharedSocioeconomicPathway
 export CMIP5, RepresentativeConcentrationPathway
 for s in instances(CMIP5)
@@ -58,6 +58,9 @@ for s in instances(SharedSocioeconomicPathway)
     @eval export $(Symbol(s))
 end
 
+include(joinpath("datasets", "layernames.jl"))
+export layernames
+
 include(joinpath("datasets", "chelsa", "download.jl"))
 include(joinpath("datasets", "chelsa", "bioclim.jl"))
 
@@ -68,6 +71,7 @@ include(joinpath("datasets", "worldclim", "elevation.jl"))
 include(joinpath("datasets", "earthenv", "download.jl"))
 include(joinpath("datasets", "earthenv", "landcover.jl"))
 include(joinpath("datasets", "earthenv", "habitatheterogeneity.jl"))
+include(joinpath("datasets", "earthenv", "topography.jl"))
 
 include(joinpath("pseudoabsences", "main.jl"))
 include(joinpath("pseudoabsences", "radius.jl"))

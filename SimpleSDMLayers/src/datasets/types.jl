@@ -155,6 +155,7 @@ _rasterpath(::Type{BioClim}) = "BioClim"
 _rasterpath(::Type{LandCover}) = "LandCover"
 _rasterpath(::Type{HabitatHeterogeneity}) = "HabitatHeterogeneity"
 _rasterpath(::Type{Elevation}) = "Elevation"
+_rasterpath(::Type{Topography}) = "Topography"
 
 # Future paths
 _rasterpath(model::CMIP6) = _rasterpath(Val{model})

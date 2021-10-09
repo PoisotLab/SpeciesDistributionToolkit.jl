@@ -54,3 +54,26 @@ function _get_raster(::Type{EarthEnv}, ::Type{HabitatHeterogeneity}, layer::Inte
 
     return joinpath(path, filename)
 end
+
+function _get_raster(::Type{EarthEnv}, ::Type{Topography}, layer::Integer, resolution::Integer=50, source::String="GMTED", aggregation::String="mean")
+    1 ≤ layer ≤ 16 || throw(ArgumentError("The layer must be between 1 and 16"))
+
+    _src = Dict("GMTED" => "GMTED")
+    _agr = Dict("mean" => "mn", "median" => "md", "minimum" => "mi", "maximum" => "ma", "std" => "sd ")
+    _lay = ["elevation", "slope", "aspectcosine", "aspectsine", "eastness", "northness", "roughness", "tpi", "tri", "vrm", "dx" ,"dxx", "dy", "dyy", "pcurv", "tcurv"]
+    _res = Dict(1 => "1KM", 10 => "10KM", 5 => "5KM", 50 => "50KM", 100 => "100KM")
+    _sfx = layer == 1 ? _agr[aggregation] : "md"
+
+    path = joinpath(SimpleSDMLayers._layers_assets_path, _rasterpath(EarthEnv), _rasterpath(Topography), _res[resolution])
+    isdir(path) || mkpath(path)
+
+    root = "https://data.earthenv.org/topography/"
+    stem = "$(_lay[layer])_$(_res[resolution])$(_agr[aggregation])_$(_src[source])$(_sfx).tif"
+    filename = stem
+
+    if !isfile(joinpath(path, filename))
+        Downloads.download(root * stem, joinpath(path, filename))
+    end
+
+    return joinpath(path, filename)
+end

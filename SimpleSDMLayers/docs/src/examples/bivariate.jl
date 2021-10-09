@@ -11,22 +11,22 @@ using StatsPlots.PlotMeasures
 # the core package functionalities in the future.
 
 # In order to illustrate bivariate mapping, we will look at the joint
-# distribution of temperature and precipitation:
+# distribution of two measures: eveness of land use, and terrain roughness.
 
-layer1, layer2 = SimpleSDMPredictor(
-    WorldClim, BioClim, [1, 12]; left=-12.0, right=20.0, bottom=36.0, top=62.0
-)
+boundaries = (left=-12.0, right=20.0, bottom=36.0, top=62.0)
+
+layer1 = convert(Float16, SimpleSDMPredictor(EarthEnv, HabitatHeterogeneity, 2; resolution=5, boundaries...))
+layer2 = convert(Float16, SimpleSDMPredictor(EarthEnv, Topography, 7; resolution=5, boundaries...))
 
 # The next step is to decide on quantiles breakpoints; for $n$ breakpoints,
-# there will be $n-1$ classes, so if we want (for example) 4 classes, we will
+# there will be $n-1$ classes, so if we want (for example) 3 classes, we will
 # need:
 
-breakpoints = LinRange(0.0, 1.0, 5)
+breakpoints = LinRange(0.0, 1.0, 4)
 
 # We set the breakpoints for 0 to 1 because we will convert the raw layers to
-# this space, either by using quantiles, or by ranging them. Note that 16
-# classes is a lot to take in, and bivariate maps usually work best when used
-# with 9 classes.
+# this space, either by using quantiles, or by ranging them. Note that bivariate
+# maps usually work best when used with 9 classes.
 
 # The next decision is to take a bivaraite color palette, and the combinations
 # below are [commonly
@@ -36,17 +36,17 @@ breakpoints = LinRange(0.0, 1.0, 5)
 #
 
 p0 = colorant"#e8e8e8"
-#p1, p2 = colorant"#64acbe", colorant"#c85a5a"
+p1, p2 = colorant"#64acbe", colorant"#c85a5a"
 #p1, p2 = colorant"#73ae80", colorant"#6c83b5"
 #p1, p2 = colorant"#9972af", colorant"#c8b35a"
-p1, p2 = colorant"#be64ac", colorant"#5ac8c8"
+#p1, p2 = colorant"#be64ac", colorant"#5ac8c8"
 
 # To make the code easier, we will simply create a palette with a set number of
-# steps - this will be the first dimension:
+# steps - this will be the first dimension (elevation):
 
 c1 = palette([p0, p1], length(breakpoints) - 1)
 
-# This will be the second dimension:
+# This will be the second dimension (slope):
 
 c2 = palette([p0, p2], length(breakpoints) - 1)
 
@@ -54,7 +54,7 @@ c2 = palette([p0, p2], length(breakpoints) - 1)
 # more readable maps:
 
 q1 = rescale(layer1, collect(LinRange(0.0, 1.0, 10 * length(breakpoints))));
-q2 = rescale(layer2, collect(LinRange(0.0, 1.0, 10 * length(breakpoints))));
+q2 = mask(q1, rescale(layer2, collect(LinRange(0.0, 1.0, 10 * length(breakpoints)))));
 
 # In order to produce the plot proper, we "simply" extract the values between
 # breakpoints for either variables, and only plot this section in the correct
@@ -91,8 +91,8 @@ for i in 2:length(breakpoints)
     end
 end
 
-xaxis!(pl2, (0, 1), "Temperature")
-yaxis!(pl2, (0, 1), "Precipitation")
+xaxis!(pl2, (0, 1), layernames(EarthEnv, HabitatHeterogeneity)[2])
+yaxis!(pl2, (0, 1), layernames(EarthEnv, Topography)[7])
 
 # And now, we can plot the legend next to the map - future releases of the
 # package will hopefully offer this in a far more user friendly way.

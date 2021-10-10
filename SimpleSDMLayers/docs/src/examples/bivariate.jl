@@ -5,92 +5,45 @@ using StatsPlots
 using Colors, ColorBlendModes
 using StatsPlots.PlotMeasures
 
-# **Justification for this use case:** We can show more than one
-# (specifically, two) variables on a single map, using a bivariate color scale.
-# This currently involves a bit of manual manipulation, but will become part of
-# the core package functionalities in the future.
-
-# In order to illustrate bivariate mapping, we will look at the joint
-# distribution of two measures: eveness of land use, and terrain roughness.
+# **Justification for this use case:** We can show more than one (specifically,
+# two) variables on a single map, using a bivariate color scale. In order to
+# illustrate bivariate mapping, we will look at the joint distribution of two
+# measures: eveness of land use, and terrain roughness. We will trasnform the
+# values into quantiles, as this is generally prefered for bivariate maps.
 
 boundaries = (left=-12.0, right=20.0, bottom=36.0, top=62.0)
-
 layer1 = convert(Float16, SimpleSDMPredictor(EarthEnv, HabitatHeterogeneity, 2; resolution=5, boundaries...))
 layer2 = convert(Float16, SimpleSDMPredictor(EarthEnv, Topography, 7; resolution=5, boundaries...))
+q1 = rescale(layer1, collect(LinRange(0.0, 1.0, 100)));
+q2 = mask(q1, rescale(layer2, collect(LinRange(0.0, 1.0, 100))));
 
-# The next step is to decide on quantiles breakpoints; for $n$ breakpoints,
-# there will be $n-1$ classes, so if we want (for example) 3 classes, we will
-# need:
 
-breakpoints = LinRange(0.0, 1.0, 4)
-
-# We set the breakpoints for 0 to 1 because we will convert the raw layers to
-# this space, either by using quantiles, or by ranging them. Note that bivariate
-# maps usually work best when used with 9 classes.
-
-# The next decision is to take a bivaraite color palette, and the combinations
-# below are [commonly
+# Note that bivariate maps usually work best when used with 9 classes in total
+# (so 3 for each side). The next decision is to take a bivaraite color palette,
+# and the combinations below are [commonly
 # used](https://www.joshuastevens.net/cartography/make-a-bivariate-choropleth-map/).
 # Note that you can definitely use [diverging
 # colors](https://www.personal.psu.edu/cab38/ColorSch/Schemes.html) if you want.
-#
 
 p0 = colorant"#e8e8e8"
-p1, p2 = colorant"#64acbe", colorant"#c85a5a"
-#p1, p2 = colorant"#73ae80", colorant"#6c83b5"
-#p1, p2 = colorant"#9972af", colorant"#c8b35a"
-#p1, p2 = colorant"#be64ac", colorant"#5ac8c8"
+bv_pal_1 = (p0=p0, p1=colorant"#64acbe", p2=colorant"#c85a5a")
+bv_pal_2 = (p0=p0, p1=colorant"#73ae80", p2=colorant"#6c83b5")
+bv_pal_3 = (p0=p0, p1=colorant"#9972af", p2=colorant"#c8b35a")
+bv_pal_4 = (p0=p0, p1=colorant"#be64ac", p2=colorant"#5ac8c8")
 
-# To make the code easier, we will simply create a palette with a set number of
-# steps - this will be the first dimension (elevation):
+# The bivariate map itself is a call to plot:
 
-c1 = palette([p0, p1], length(breakpoints) - 1)
+plot(q1, q2; st=:bivariate, bv_pal_4...)
 
-# This will be the second dimension (slope):
+# Note that you can use the `bivariate` shorthand as well:
 
-c2 = palette([p0, p2], length(breakpoints) - 1)
-
-# Transforming the data into quantiles is a very good idea - it usually gives
-# more readable maps:
-
-q1 = rescale(layer1, collect(LinRange(0.0, 1.0, 10 * length(breakpoints))));
-q2 = mask(q1, rescale(layer2, collect(LinRange(0.0, 1.0, 10 * length(breakpoints)))));
-
-# In order to produce the plot proper, we "simply" extract the values between
-# breakpoints for either variables, and only plot this section in the correct
-# color *blend*. This example uses `BlendMultiply`, but darkening blend also
-# works.
-
-pl1 = plot(; aspectratio=1, frame=:box, leg=false)
-for i in 2:length(breakpoints)
-    m1 = broadcast(v -> breakpoints[i - 1] <= v <= breakpoints[i], q1)
-    for j in 2:length(breakpoints)
-        m2 = broadcast(v -> breakpoints[j - 1] <= v <= breakpoints[j], q2)
-        m = reduce(*, [m1, m2])
-        replace!(m, false => nothing)
-        plot!(pl1, convert(Float32, m); c=BlendMultiply(c1[i - 1], c2[j - 1]))
-    end
-end
-
+bivariate(q1, q2; classes=3, frame=:box, bv_pal_2...)
 xaxis!(pl1, "Longitude")
 yaxis!(pl1, "Latitude")
 
 # We can repeat essentially the same process for the legend:
 
-pl2 = plot(; grid=:none, ticks=:none, aspectratio=1, leg=false)
-w = breakpoints[2] - breakpoints[1]
-h = breakpoints[2] - breakpoints[1]
-for i in 2:length(breakpoints)
-    for j in 2:length(breakpoints)
-        c = BlendMultiply(c1[i - 1], c2[j - 1])
-        plot!(
-            pl2,
-            Shape(breakpoints[i - 1] .+ [0, w, w, 0], breakpoints[j - 1] .+ [0, 0, h, h]);
-            c=c,
-        )
-    end
-end
-
+pl2 = bivariatelegend(q1, q2; classes=3, bv_pal_2...)
 xaxis!(pl2, (0, 1), layernames(EarthEnv, HabitatHeterogeneity)[2])
 yaxis!(pl2, (0, 1), layernames(EarthEnv, Topography)[7])
 

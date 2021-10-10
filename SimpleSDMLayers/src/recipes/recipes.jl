@@ -1,4 +1,6 @@
 @shorthands bivariate
+@shorthands bivariatelegend
+
 
 """
 test 1
@@ -47,6 +49,26 @@ test 2
                     subplot := 1
                     legend := false
                     convert(Float32, m)
+                end
+            end
+        end
+    elseif get(plotattributes, :seriestype, :bivariatelegend) in [:bivariatelegend]
+        w, h = 1/classes, 1/classes
+        c1 = LinRange(p0, p1, classes)
+        c2 = LinRange(p0, p2, classes)
+        grid --> :none
+        ticks --> :none
+        legend --> false
+        frametype --> :none
+        xlims --> (0,1)
+        ylims --> (0,1)
+        aspect_ratio --> 1
+        for i in 1:classes
+            for j in 1:classes
+                @series begin
+                    seriescolor := BlendMultiply(c1[i], c2[j])
+                    seriestype := :shape
+                    (i-1)*w .+ [0, w, w, 0], (j-1)*h .+ [0, 0, h, h]
                 end
             end
         end

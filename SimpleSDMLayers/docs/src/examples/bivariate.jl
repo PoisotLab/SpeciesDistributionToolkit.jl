@@ -37,7 +37,7 @@ plot(q1, q2; st=:bivariate, bv_pal_4...)
 
 # Note that you can use the `bivariate` shorthand as well:
 
-bivariate(q1, q2; classes=3, frame=:box, bv_pal_2...)
+pl1 = bivariate(q1, q2; classes=3, frame=:box, bv_pal_2...)
 xaxis!(pl1, "Longitude")
 yaxis!(pl1, "Latitude")
 

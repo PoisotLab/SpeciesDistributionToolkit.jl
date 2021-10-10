@@ -88,6 +88,7 @@ include(joinpath("operations", "mosaic.jl"))
 export coarsen, slidingwindow, mask, rescale!, rescale, mosaic
 
 include(joinpath("recipes", "recipes.jl"))
+export bivariate
 
 # This next bit is about being able to change the path for raster assets
 # globally, which avoids duplication this argument across multiple functions.

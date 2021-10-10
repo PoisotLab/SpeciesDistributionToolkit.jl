@@ -1,38 +1,4 @@
-
 @shorthands bivariate
-
-@recipe function f(::Type{Val{:bivariate}}, plt::AbstractPlot; classes=3, p0=colorant"#e8e8e8", p1=colorant"#64acbe", p2=colorant"#c85a5a")
-    x = plotattributes[:x]
-    y = plotattributes[:y]
-    println(plotattributes)
-
-    # Get the palettes
-    c1 = palette([p0, p1], classes)
-    c2 = palette([p0, p2], classes)
-    breakpoints = LinRange(0.0, 1.0, classes+1)
-
-    xlims --> extrema(longitudes(x))
-    ylims--> extrema(latitudes(x))
-    legend --> false
-    aspectratio --> 1
-    frame --> :box
-    subplot --> 1
-
-    for i in 2:length(breakpoints)
-        m1 = broadcast(v -> breakpoints[i - 1] <= v <= breakpoints[i], x)
-        for j in 2:length(breakpoints)
-            m2 = broadcast(v -> breakpoints[j - 1] <= v <= breakpoints[j], y)
-            m = reduce(*, [m1, m2])
-            replace!(m, false => nothing)
-            replace!(m, nothing => NaN)
-            @series begin
-                seriestype --> :heatmap
-                color --> BlendMultiply(c1[i - 1], c2[j - 1])
-                longitudes(m), latitudes(m), convert(Matrix{Float64}, m.grid)
-            end
-        end
-    end
-end
 
 """
 test 1
@@ -56,7 +22,7 @@ end
 """
 test 2
 """
-@recipe function plot(l1::FT, l2::ST) where {FT <: SimpleSDMLayer, ST <: SimpleSDMLayer}
+@recipe function plot(l1::FT, l2::ST; classes::Int=3, p0=colorant"#e8e8e8", p1=colorant"#64acbe", p2=colorant"#c85a5a") where {FT <: SimpleSDMLayer, ST <: SimpleSDMLayer}
     eltype(l1) <: Number || throw(ArgumentError("Plotting is only supported for layers with number values ($(eltype(l1)))"))
     eltype(l2) <: Number || throw(ArgumentError("Plotting is only supported for layers with number values ($(eltype(l2)))"))
     seriestype --> :scatter
@@ -64,5 +30,25 @@ test 2
         SimpleSDMLayers._layers_are_compatible(l1, l2)
         valid_i = findall(.!isnothing.(l1.grid) .& .!isnothing.(l2.grid))
         l1.grid[valid_i], l2.grid[valid_i]
+    elseif get(plotattributes, :seriestype, :bivariate) in [:bivariate]
+        SimpleSDMLayers._layers_are_compatible(l1, l2)
+        c1 = LinRange(p0, p1, classes)
+        c2 = LinRange(p0, p2, classes)
+        breakpoints = LinRange(0.0, 1.0, classes+1)
+        for i in 2:length(breakpoints)
+            m1 = broadcast(v -> breakpoints[i - 1] <= v <= breakpoints[i], l1)
+            for j in 2:length(breakpoints)
+                m2 = broadcast(v -> breakpoints[j - 1] <= v <= breakpoints[j], l2)
+                m = reduce(*, [m1, m2])
+                replace!(m, false => nothing)
+                @series begin
+                    seriescolor := ColorBlendModes.BlendMultiply(c1[i - 1], c2[j - 1])
+                    seriestype := :heatmap
+                    subplot := 1
+                    legend := false
+                    convert(Float32, m)
+                end
+            end
+        end
     end
 end

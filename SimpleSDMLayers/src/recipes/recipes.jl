@@ -37,40 +37,51 @@ test 2
         c1 = LinRange(p0, p1, classes)
         c2 = LinRange(p0, p2, classes)
         breakpoints = LinRange(0.0, 1.0, classes+1)
+        classified = similar(l1, Int)
+        cols = Vector{typeof(p0)}(undef, classes^2)
         for i in 2:length(breakpoints)
             m1 = broadcast(v -> breakpoints[i - 1] <= v <= breakpoints[i], l1)
             for j in 2:length(breakpoints)
+                current_class = (i-2)*classes + (j-2) + 1
+                @info i j current_class
                 m2 = broadcast(v -> breakpoints[j - 1] <= v <= breakpoints[j], l2)
                 m = reduce(*, [m1, m2])
                 replace!(m, false => nothing)
-                @series begin
-                    seriescolor := ColorBlendModes.BlendMultiply(c1[i - 1], c2[j - 1])
-                    seriestype := :heatmap
-                    subplot := 1
-                    legend := false
-                    convert(Float32, m)
-                end
+                classified[keys(m)] = fill(current_class, sum(m))
+                cols[current_class] = ColorBlendModes.BlendMultiply(c1[i - 1], c2[j - 1])
             end
         end
+        @series begin
+            seriescolor := reverse(cols)
+            seriestype := :heatmap
+            subplot := 1
+            legend := false
+            convert(Float16, classified)
+        end
     elseif get(plotattributes, :seriestype, :bivariatelegend) in [:bivariatelegend]
-        w, h = 1/classes, 1/classes
         c1 = LinRange(p0, p1, classes)
         c2 = LinRange(p0, p2, classes)
         grid --> :none
         ticks --> :none
         legend --> false
         frametype --> :none
-        xlims --> (0,1)
-        ylims --> (0,1)
+        xlims --> (1-0.5, classes+0.5)
+        ylims --> (1-0.5, classes+0.5)
         aspect_ratio --> 1
+        cols = Vector{typeof(p0)}(undef, classes^2)
+        current_class = 1
+        m = zeros(Float64, classes, classes)
         for i in 1:classes
             for j in 1:classes
-                @series begin
-                    seriescolor := BlendMultiply(c1[i], c2[j])
-                    seriestype := :shape
-                    (i-1)*w .+ [0, w, w, 0], (j-1)*h .+ [0, 0, h, h]
-                end
+                m[i,j] = current_class
+                cols[current_class] = ColorBlendModes.BlendMultiply(c1[i], c2[j])
+                current_class += 1
             end
+        end
+        @series begin
+            seriescolor := cols
+            seriestype := :heatmap
+            m
         end
     end
 end

@@ -2,7 +2,6 @@
 
 using SimpleSDMLayers
 using StatsPlots
-using Colors, ColorBlendModes
 using StatsPlots.PlotMeasures
 
 # **Justification for this use case:** We can show more than one (specifically,
@@ -44,10 +43,18 @@ yaxis!(pl1, "Latitude")
 # We can repeat essentially the same process for the legend:
 
 pl2 = bivariatelegend(q1, q2; classes=3, bv_pal_2...)
-xaxis!(pl2, (0, 1), layernames(EarthEnv, HabitatHeterogeneity)[2])
-yaxis!(pl2, (0, 1), layernames(EarthEnv, Topography)[7])
+xaxis!(pl2, layernames(EarthEnv, HabitatHeterogeneity)[2])
+yaxis!(pl2, layernames(EarthEnv, Topography)[7])
 
 # And now, we can plot the legend next to the map - future releases of the
 # package will hopefully offer this in a far more user friendly way.
 
 plot(pl1, pl2; layout=@layout [a{0.75w} b])
+
+# TK
+
+
+p1 = bivariate(q1, q2; bv_pal_4..., classes=12, frame=:box, xlim=(-21, maximum(longitudes(q1))))
+xaxis!(p1, "Longitude")
+yaxis!(p1, "Latitude")
+p2 = bivariatelegend!(q1, q2; bv_pal_4..., inset = (1, bbox(0.01,0.1,0.28,0.28, :bottom, :left)), subplot = 2, xlab=layernames(WorldClim, BioClim)[1], ylab=layernames(WorldClim, BioClim)[12], guidefontsize=6)

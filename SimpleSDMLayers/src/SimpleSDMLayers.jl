@@ -3,6 +3,7 @@ module SimpleSDMLayers
 using ArchGDAL
 using Downloads
 using RecipesBase
+using Colors, ColorBlendModes
 using ZipFile
 using Requires
 using Distances

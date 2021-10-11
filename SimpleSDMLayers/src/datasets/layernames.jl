@@ -82,3 +82,6 @@ function layernames(::Type{EarthEnv}, ::Type{Topography})
         "Tangential curvature"
     )
 end
+
+layernames(p::Type{<:LayerProvider}, d::Type{<:LayerDataset}, i::Int) = layernames(p, d)[i]
+layernames(p::Type{<:LayerProvider}, d::Type{<:LayerDataset}, i::AbstractArray) = layernames(p, d)[i]

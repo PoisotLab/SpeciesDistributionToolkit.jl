@@ -40,14 +40,24 @@ test 2
         classified = similar(l1, Int)
         cols = typeof(p0)[]
         for i in 1:classes
-            m1 = broadcast(v -> breakpoints[i] <= v <= breakpoints[i+1], l1)
+            if isequal(classes)(i)
+                fi = (v) -> breakpoints[i] < v <= breakpoints[i+1]
+            else
+                fi = (v) -> breakpoints[i] <= v < breakpoints[i+1]
+            end
+            m1 = broadcast(fi, l1)
             for j in 1:classes
-                m2 = broadcast(v -> breakpoints[j] <= v <= breakpoints[j+1], l2)
+                if isequal(classes)(j)
+                    fj = (v) -> breakpoints[j] < v <= breakpoints[j+1]
+                else
+                    fj = (v) -> breakpoints[j] <= v < breakpoints[j+1]
+                end
+                m2 = broadcast(fj, l2)
                 push!(cols, ColorBlendModes.BlendMultiply(c1[i], c2[j]))
                 m = reduce(*, [m1, m2])
                 replace!(m, false => nothing)
-                if sum(m) > 0
-                    classified[keys(m)] = fill(length(cols), sum(m))
+                if length(m) > 0
+                    classified[keys(m)] = fill(length(cols), length(m))
                 end
             end
         end
@@ -56,7 +66,8 @@ test 2
             seriescolor := vec(cols)
             seriestype := :heatmap
             subplot := 1
-            legend := false
+            legend --> false
+            clims --> (1, classes^2)
             convert(Float16, classified)
         end
     elseif get(plotattributes, :seriestype, :bivariatelegend) in [:bivariatelegend]

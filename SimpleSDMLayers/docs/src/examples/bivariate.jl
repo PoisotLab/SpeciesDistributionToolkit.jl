@@ -57,15 +57,16 @@ plot(pl1, pl2; layout=@layout [a{0.75w} b])
 
 # Using the `subplot` and `inset` arguments of Plots.jl, we can have the legend
 # within the figure. Note how in this example we expand the limits on the x axis
-# to make the legend fit.
+# to make the legend fit, but also use more classes in the map to have a
+# smoother result.
 
-p1 = bivariate(q1, q2; classes=3, bv_pal_4..., frame=:box, xlim=(-24, maximum(longitudes(q1))))
+p1 = bivariate(q1, q2; classes=6, bv_pal_2..., frame=:box, xlim=(-24, maximum(longitudes(q1))))
 xaxis!(p1, "Longitude")
 yaxis!(p1, "Latitude")
 p2 = bivariatelegend!(
     q1,
     q2;
-    bv_pal_4...,
+    bv_pal_2...,
     inset=(1, bbox(0.04, 0.05, 0.28, 0.28, :top, :left)),
     subplot=2,
     xlab=layernames(EarthEnv, HabitatHeterogeneity)[2],

@@ -8,18 +8,13 @@ directly, and also allow to set and get values using the geographic coordinates
 ## From `Base`
 
 ```@docs
-convert
 copy
 collect
 eltype
 size
 stride
 eachindex
-getindex
-setindex!
 similar
-replace
-replace!
 Base.sum
 Base.maximum
 Base.minimum
@@ -35,10 +30,6 @@ isequal
 ```
 
 ## From `Broadcast`
-
-```@docs
-broadcast
-```
 
 ## From `Statistics`
 

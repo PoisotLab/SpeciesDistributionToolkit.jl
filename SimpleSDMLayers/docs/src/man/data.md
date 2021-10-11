@@ -9,55 +9,61 @@ project. This being said, the prefered solution is to define a `SDMLAYERS_PATH`
 environment variable pointing to a specific path, where the layers will live.
 This will ensure that they are re-used between projects.
 
-## General interface
-
 All layers are returned as `SimpleSDMPredictor`, and therefore constructed by
 calling the `SimpleSDMPredictor` function on a `LayerProvider` and a
 `LayerDataset`, possibly with a future climate model and scenario. In all cases,
 the method accepts either a single layer, or an array of layers.
 
-| Data provider                    | Dataset                | Layers | Future models | Future scenarios                     |
-| -------------------------------- | ---------------------- | ------ | ------------- | ------------------------------------ |
-| `EarthEnv`                       | `Landcover`            | 12     |               |                                      |
-| `EarthEnv`                       | `HabitatHeterogeneity` | 14     |               |                                      |
-| [`WorldClim`][worldclim-current] | `BioClim`              | 19     | `CMIP6`       | `SharedSocioeconomicPathway`         |
-| [`CHELSA`][chelsa-bioclim]       | `BioClim`              | 12     | `CMIP5`       | `RepresentativeConcentrationPathway` |
- 
-[earthenv-landcover]: http://www.earthenv.org/landcover
-[earthenv-texture]: http://www.earthenv.org/texture
-[worldclim-current]: https://www.worldclim.org/data/worldclim21.html
-[chelsa-bioclim]: http://chelsa-climate.org/
+| Data provider | Dataset                | Layers | Future models    | Future scenarios                                                   |
+| ------------- | ---------------------- | ------ | ---------------- | ------------------------------------------------------------------ |
+| `EarthEnv`    | `Landcover`            | 12     |                  |                                                                    |
+| `EarthEnv`    | `HabitatHeterogeneity` | 14     |                  |                                                                    |
+| `WorldClim`   | `BioClim`              | 19     | `CMIP6`          | `SharedSocioeconomicPathway`                                       |
+| `WorldClim`   | `Elevation`            | 1      | `Elevation`      |                                                                    |
+| `CHELSA`      | `BioClim`              | 12     | `CMIP5`, `CMIP6` | `RepresentativeConcentrationPathway`, `SharedSocioeconomicPathway` |
 
-## Later providers
+## Providers and datasets
+
+The `layernames` method (inputs are a provider and a dataset) will return a
+tuple with the name of the layers.
+
+### Data providers
 
 ```@docs
 SimpleSDMLayers.LayerProvider
+```
+
+```@docs
 WorldClim
 CHELSA
 EarthEnv
 ```
 
-## Layer datasets
+### Datasets
 
 ```@docs
 SimpleSDMLayers.LayerDataset
+```
+
+```@docs
 BioClim
 LandCover
 HabitatHeterogeneity
+Elevation
 ```
 
-## Future climate models
+## Future data
+
+### CMIP5
 
 ```@docs
-SharedSocioeconomicPathway
-RepresentativeConcentrationPathway
 CMIP5
-CMIP6
+RepresentativeConcentrationPathway
 ```
 
-## File reading and writing
+### CMIP6
 
 ```@docs
-SimpleSDMLayers.ascii
-geotiff
+CIMP6
+SharedSocioeconomicPathway
 ```

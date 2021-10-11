@@ -43,7 +43,7 @@ will be much faster.
 Original data: https://www.worldclim.org/data/worldclim21.html
 """
 function SimpleSDMPredictor(::Type{WorldClim}, ::Type{BioClim}, layer::Integer=1; resolution::Float64=10.0, kwargs...)
-    @assert resolution in [2.5, 5.0, 10.0]
+    @assert resolution in [0.5, 2.5, 5.0, 10.0]
     file = _get_raster(WorldClim, BioClim, layer, resolution)
     return geotiff(SimpleSDMPredictor, file; kwargs...)
 end

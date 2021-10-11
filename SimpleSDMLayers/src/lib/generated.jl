@@ -1,4 +1,4 @@
-## Single layer overloads
+# Single layer overloads
 
 ops = Dict(
     :Base => [:sum, :maximum, :minimum, :extrema],

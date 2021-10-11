@@ -11,6 +11,10 @@ is part of the broader EcoJulia organisation.
 
 [qce]: https://poisotlab.io/
 
+**Can I sponsor this project**? Sure! There is a link in the sidebar on the right.
+Any money raised this way will go towards the snacks and coffee fund for students,
+or any charitable cause we like to support.
+
 **How can I cite this package**? This repository itself can be cited through its
 Zenodo archive ([`4902317`][zendoi]; this will generate a DOI for every
 release), and there is a manuscript in *Journal of Open Science Software*

@@ -57,5 +57,6 @@ run(`find . -type f -size +40M -delete`)
 
 deploydocs(
     repo = "github.com/EcoJulia/SimpleSDMLayers.jl.git",
-    push_preview = true
+    push_preview = true,
+    devbranch = "main"
 )

@@ -37,6 +37,8 @@ test 2
         c1 = LinRange(p0, p1, classes)
         c2 = LinRange(p0, p2, classes)
         breakpoints = LinRange(0.0, 1.0, classes+1)
+        q1 = rescale(l1, collect(LinRange(0.0, 1.0, 10classes)))
+        q2 = rescale(l2, collect(LinRange(0.0, 1.0, 10classes)))
         classified = similar(l1, Int)
         cols = typeof(p0)[]
         for i in 1:classes
@@ -45,14 +47,14 @@ test 2
             else
                 fi = (v) -> breakpoints[i] <= v < breakpoints[i+1]
             end
-            m1 = broadcast(fi, l1)
+            m1 = broadcast(fi, q1)
             for j in 1:classes
                 if isequal(classes)(j)
                     fj = (v) -> breakpoints[j] < v <= breakpoints[j+1]
                 else
                     fj = (v) -> breakpoints[j] <= v < breakpoints[j+1]
                 end
-                m2 = broadcast(fj, l2)
+                m2 = broadcast(fj, q2)
                 push!(cols, ColorBlendModes.BlendMultiply(c1[i], c2[j]))
                 m = reduce(*, [m1, m2])
                 replace!(m, false => nothing)

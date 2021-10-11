@@ -7,8 +7,7 @@ using StatsPlots.PlotMeasures
 # **Justification for this use case:** We can show more than one (specifically,
 # two) variables on a single map, using a bivariate color scale. In order to
 # illustrate bivariate mapping, we will look at the joint distribution of two
-# measures: eveness of land use, and terrain roughness. We will trasnform the
-# values into quantiles, as this is generally prefered for bivariate maps.
+# measures: eveness of land use, and terrain roughness.
 
 boundaries = (left=-12.0, right=30.0, bottom=36.0, top=72.0)
 layer1 = convert(
@@ -18,8 +17,7 @@ layer1 = convert(
 layer2 = convert(
     Float16, SimpleSDMPredictor(EarthEnv, Topography, 7; resolution=5, boundaries...)
 )
-q1 = rescale(layer1, collect(LinRange(0.0, 1.0, 100)));
-q2 = mask(q1, rescale(layer2, collect(LinRange(0.0, 1.0, 100))));
+layer2 = mask(layer1, layer2);
 
 # Note that bivariate maps usually work best when used with 9 classes in total
 # (so 3 for each side). The next decision is to take a bivaraite color palette,
@@ -34,21 +32,23 @@ bv_pal_2 = (p0=p0, p1=colorant"#73ae80", p2=colorant"#6c83b5")
 bv_pal_3 = (p0=p0, p1=colorant"#9972af", p2=colorant"#c8b35a")
 bv_pal_4 = (p0=p0, p1=colorant"#be64ac", p2=colorant"#5ac8c8")
 
-# The bivariate map itself is a call to plot:
+# The bivariate map itself is a call to plot. Internally, this will transform
+# the layers into quantiles (determined by the `classes` keyword, defaults to
+# 3):
 
-plot(q1, q2; st=:bivariate, bv_pal_3...)
+plot(layer1, layer2; st=:bivariate, bv_pal_3...)
 
 # Note that you can use the `bivariate` shorthand as well:
 
-pl1 = bivariate(q1, q2; classes=3, frame=:box, bv_pal_4...)
+pl1 = bivariate(layer1, layer2; classes=3, frame=:box, bv_pal_4...)
 xaxis!(pl1, "Longitude")
 yaxis!(pl1, "Latitude")
 
 # We can repeat essentially the same process for the legend:
 
-pl2 = bivariatelegend(q1, q2; classes=3, bv_pal_4...)
-xaxis!(pl2, layernames(EarthEnv, HabitatHeterogeneity)[2])
-yaxis!(pl2, layernames(EarthEnv, Topography)[7])
+pl2 = bivariatelegend(layer1, layer2; classes=3, bv_pal_4...)
+xaxis!(pl2, layernames(EarthEnv, HabitatHeterogeneity, 2))
+yaxis!(pl2, layernames(EarthEnv, Topography, 7))
 
 # And now, we can plot the legend next to the map - future releases of the
 # package will hopefully offer this in a far more user friendly way.
@@ -60,7 +60,7 @@ plot(pl1, pl2; layout=@layout [a{0.75w} b])
 # to make the legend fit, but also use more classes in the map to have a
 # smoother result.
 
-p1 = bivariate(q1, q2; classes=6, bv_pal_2..., frame=:box, xlim=(-24, maximum(longitudes(q1))))
+p1 = bivariate(layer1, layer2; classes=6, bv_pal_2..., frame=:box, xlim=(-24, maximum(longitudes(q1))))
 xaxis!(p1, "Longitude")
 yaxis!(p1, "Latitude")
 p2 = bivariatelegend!(

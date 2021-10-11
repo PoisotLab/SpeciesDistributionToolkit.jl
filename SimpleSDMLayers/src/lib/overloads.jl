@@ -279,3 +279,16 @@ function Base.isequal(layer1::SimpleSDMLayer, layer2::SimpleSDMLayer)
         ]
     )
 end
+
+Base.:*(n::Number, layer::T) where {T <: SimpleSDMLayer} = broadcast(x -> n*x, layer)
+Base.:*(layer::T, n::Number) where {T <: SimpleSDMLayer} = broadcast(x -> x*n, layer)
+Base.:/(n::Number, layer::T) where {T <: SimpleSDMLayer} = broadcast(x -> n/x, layer)
+Base.:/(layer::T, n::Number) where {T <: SimpleSDMLayer} = broadcast(x -> x/n, layer)
+Base.:-(n::Number, layer::T) where {T <: SimpleSDMLayer} = broadcast(x -> n-x, layer)
+Base.:-(layer::T, n::Number) where {T <: SimpleSDMLayer} = broadcast(x -> x-n, layer)
+Base.:+(n::Number, layer::T) where {T <: SimpleSDMLayer} = broadcast(x -> n+x, layer)
+Base.:+(layer::T, n::Number) where {T <: SimpleSDMLayer} = broadcast(x -> x+n, layer)
+Base.://(n::Number, layer::T) where {T <: SimpleSDMLayer} = broadcast(x -> n//x, layer)
+Base.://(layer::T, n::Number) where {T <: SimpleSDMLayer} = broadcast(x -> x//n, layer)
+Base.:%(n::Number, layer::T) where {T <: SimpleSDMLayer} = broadcast(x -> n%x, layer)
+Base.:%(layer::T, n::Number) where {T <: SimpleSDMLayer} = broadcast(x -> x%n, layer)

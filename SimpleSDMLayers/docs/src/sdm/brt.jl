@@ -179,6 +179,22 @@ plot(distribution; c=:lightgrey, leg=false)
 plot!(mask(range_mask, distribution); c=:darkgreen)
 scatter!(xy_presence; lab="", c=:orange, alpha=0.5, msw=0.0, ms=2)
 
+# Because our BRT also returns the uncertainty, we can combine both maps into a
+# bivariate one, showing both where we expect the species, but also where we are
+# uncertain about the prediction:
+
+plot(distribution; leg=false, c=:lightgrey, frame=:grid, xlab="Longitude", ylab="Latitude", grid=false)
+bivariate!(mask(range_mask, distribution), mask(range_mask, uncertainty))
+p2 = bivariatelegend!(
+    mask(range_mask, distribution),
+    mask(range_mask, uncertainty);
+    inset=(1, bbox(0.04, 0.08, 0.23, 0.23, :center, :left)),
+    subplot=2,
+    xlab="Prediction",
+    ylab="Uncertainty",
+    guidefontsize=7,
+)
+
 # Now, for the big question - will this range move in the future? To explore
 # this, we will get the same variables, but in the future. In order to simplify
 # the code, we will limit ourselves to one SSP (585) and one CMIP6 model

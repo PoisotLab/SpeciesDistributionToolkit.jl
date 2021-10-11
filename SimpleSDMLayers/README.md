@@ -1,115 +1,58 @@
 ## Simple Layers for Species Distributions Modelling
 
-This package offers very simple types and functions to interact with bioclimatic
-data and the output of species distribution models.
+**What is this package**? `SimpleSDMLayers` offers a series of types, methods,
+and additional helper functions to build species distribution models. It does
+*not* implement any species distribution models, although there are a few
+examples of how this can be done in the documentation.
 
-[![d_stable](https://img.shields.io/badge/Doc-stable-green?style=flat-square)](https://ecojulia.github.io/SimpleSDMLayers.jl/stable/)
-[![d_latest](https://img.shields.io/badge/Doc-latest-blue?style=flat-square)](https://ecojulia.github.io/SimpleSDMLayers.jl/latest/)
+**Who is developping this package**? This package is primarily maintained by the
+[Quantitative & Computational Ecology][qce] group at Université de Montréal, and
+is part of the broader EcoJulia organisation.
 
-![version](https://img.shields.io/github/v/tag/EcoJulia/SimpleSDMLayers.jl?sort=semver&style=flat-square)
-![CI](https://img.shields.io/github/workflow/status/EcoJulia/SimpleSDMLayers.jl/CI?label=CI&style=flat-square)
-![Doc](https://img.shields.io/github/workflow/status/EcoJulia/SimpleSDMLayers.jl/Documentation?label=Doc&style=flat-square)
-![Coverage](https://img.shields.io/codecov/c/github/EcoJulia/SimpleSDMLayers.jl?style=flat-square)
+[qce]: https://poisotlab.io/
 
-[![DOI](https://zenodo.org/badge/187030040.svg)](https://zenodo.org/badge/latestdoi/187030040)
-[![DOI](https://joss.theoj.org/papers/10.21105/joss.02872/status.svg)](https://doi.org/10.21105/joss.02872)
+**How can I cite this package**? This repository itself can be cited through its
+Zenodo archive ([`4902317`][zendoi]; this will generate a DOI for every
+release), and there is a manuscript in *Journal of Open Science Software*
+describing the package as well ([`10.21105/joss.02872`][jossdoi]).
 
-<p align="center">
-  <img align = "center" src="./joss/figures/paper_gbif_1.png"
-       title = "SimpleSDMLayers.jl & GBIF.jl example">
-</p>
+[zendoi]: https://zenodo.org/record/4902317
+[jossdoi]: https://joss.theoj.org/papers/10.21105/joss.02872
 
-Curious to know more? Have a look at our [paper in Journal of Open Source Software][joss], our [JuliaCon poster](https://github.com/gabrieldansereau/juliacon-2020-poster/blob/master/juliacon-poster.pdf), our [NextJournal demo notebook](https://nextjournal.com/gabrieldansereau/SimpleSDMLayers-JuliaCon2020-demo/), and our [extended documentation](https://ecojulia.github.io/SimpleSDMLayers.jl/stable/), or keep reading for a quick overview.
+**Is there a manual to help with the package**? Yes. You can read the
+documentation for the current [stable release][stable], which includes help on
+the functions, as well as a series of tutorials and vignettes ranging from
+simple analyses to full-fledged mini-studies.
 
-[joss]: https://doi.org/10.21105/joss.02872
-### Installation
+[stable]: https://ecojulia.github.io/SimpleSDMLayers.jl/stable/
 
-The currently released version of the package can be installed with:
+**Don't you have some swanky badges to display**? We do. They are listed at the
+very end of this README.
 
-~~~ julia
-] add SimpleSDMLayers
-~~~
-
-The package is also designed to work with `GBIF`, so you may want to use the following line instead:
-
-~~~ julia
-] add SimpleSDMLayers GBIF
-~~~
-
-### Type system
-
-All types belong to the abstract `SimpleSDMLayer`, and are organised in the
-same way: a `grid` field storing a matrix of data (of any type!), and the
-`left`, `right`, `bottom`, and `top` coordinates (as floating point values).
-
-The two core types of the package are `SimpleSDMPredictor` and
-`SimpleSDMResponse`. The only difference between the two is that predictors
-are immutable, but responses are.
-
-### Methods
-
-Most of the methods are overloads from `Base`. In particular, `SimpleSDMLayer`
-objects can be accessed like normal two-dimensional arrays, in which case
-they return an object of the same type if called with a range, and the value
-if called with a single position.
-
-It is also possible to crop a layer based on a bounding box:
-
-~~~ julia
-p[left=left, right=right, bottom=bottom, top=top]
-~~~
-
-If the layer is of the `SimpleSDMResponse` type, it is possible to write to it:
-~~~ julia
-p[-74.3, 17.65] = 1.4
-~~~
-
-This is only defined for `SimpleSDMResponse`, and `SimpleSDMPredictor`
-are immutable.
-
-### Bioclimatic data
-
-| Data provider                    | Dataset                | Layers | Future models | Future scenarios                     |
-| -------------------------------- | ---------------------- | ------ | ------------- | ------------------------------------ |
-| `EarthEnv`                       | `Landcover`            | 12     |               |                                      |
-| `EarthEnv`                       | `HabitatHeterogeneity` | 14     |               |                                      |
-| [`WorldClim`][worldclim-current] | `BioClim`              | 19     | `CMIP6`       | `SharedSocioeconomicPathway`         |
-| [`CHELSA`][chelsa-bioclim]       | `BioClim`              | 12     | `CMIP5`       | `RepresentativeConcentrationPathway` |
- 
-[earthenv-landcover]: http://www.earthenv.org/landcover
-[earthenv-texture]: http://www.earthenv.org/texture
-[worldclim-current]: https://www.worldclim.org/data/worldclim21.html
-[chelsa-bioclim]: http://chelsa-climate.org/
-
-When downloaded (using `SimpleSDMPredictor`), the layers are stored either in an
-`assets` subfolder of the current project (strongly advised against), or at the
-location determined by the `SDMLAYERS_PATH` environment variable. The datasets/providers
-with future models and scenarios also accept years.
-
-### Plotting
-
-Using the `Plots` package, one can call the `heatmap`, `contour`, `density`
-(requires `StatsPlots`), and `plot` methods. Note that `plot` defaults to a
-`heatmap`.
-
-~~~ julia
-temperature = SimpleSDMPredictor(WorldClim, BioClim, 1)
-plot(temperature)
-~~~
-
-<p align="center">
-  <img align = "center" src="./joss/figures/paper_temp_1.png"
-       title = "Temperature map">
-</p>
-
-One can also use `scatter(l1, l2)` where both `l1` and `l2` are layers with the
-same dimensions and bounding box, to get a scatterplot of the values. This will
-only show the pixels that have non-`nothing` values in *both* layers. Similarly,
-`histogram2d` works.
-
-## How to contribute
-
-Please read the [Code of Conduct][CoC] and the [contributing guidelines][contr].
+**Can I contribute to this project**? Absolutely. The most immediate way to
+contribute is to *use* the package, see what breaks, or where the documentation
+is incomplete, and [open an issue]. If you have a more general question, you can
+also [start a discussion]. Please read the [Code of Conduct][CoC] and the
+[contributing guidelines][contr].
 
 [CoC]: https://github.com/EcoJulia/SimpleSDMLayers.jl/blob/master/CODE_OF_CONDUCT.md
 [contr]: https://github.com/EcoJulia/SimpleSDMLayers.jl/blob/master/CONTRIBUTING.md
+[open an issue]: https://github.com/EcoJulia/SimpleSDMLayers.jl/issues
+[start a discussion]: https://github.com/EcoJulia/SimpleSDMLayers.jl/discussions
+
+**How do I install the package**? The latest tagged released can be installed
+just like any Julia package: `]add SimpleSDMLayers`. To get the most of it, we
+strongly suggest to also add `StatsPlots` and `GBIF`.
+
+---
+
+
+![GitHub](https://img.shields.io/github/license/EcoJulia/SimpleSDMLayers.jl)
+
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) ![GitHub contributors](https://img.shields.io/github/contributors/EcoJulia/SimpleSDMLayers.jl) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/EcoJulia/SimpleSDMLayers.jl)
+
+![GitHub last commit](https://img.shields.io/github/last-commit/EcoJulia/SimpleSDMLayers.jl) ![GitHub issues](https://img.shields.io/github/issues-raw/EcoJulia/SimpleSDMLayers.jl) ![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/EcoJulia/SimpleSDMLayers.jl)
+
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/EcoJulia/SimpleSDMLayers.jl?sort=semver) ![GitHub Release Date](https://img.shields.io/github/release-date/EcoJulia/SimpleSDMLayers.jl)
+
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/EcoJulia/SimpleSDMLayers.jl/CI?label=CI%20workflow) ![Codecov](https://img.shields.io/codecov/c/github/EcoJulia/SimpleSDMLayers.jl) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/EcoJulia/SimpleSDMLayers.jl/Documentation?label=Documentation%20workflow)

@@ -24,29 +24,14 @@ Have a look at the current [Julia documentation][pkgdoc].
 
 [pkgdoc]: https://docs.julialang.org/en/stable/manual/packages/#Making-changes-to-an-existing-package-1
 
-## EMOJIS!
-
-Please use emojis, this helps visually sorting through the commits.
-
-| If the commit is about... | ...then use        | Example                                        |
-|:--------------------------|:-------------------|:-----------------------------------------------|
-| Work in progress          | `:construction:`   | :construction: new graphics                    |
-| Bug fix                   | `:bug:`            | :bug: mean fails if NA                         |
-| Code maintenance          | `:wrench:`         | :wrench: fix variable names                    |
-| New test                  | `:rotating_light:` | :rotating_light: wget JSON resource            |
-| New data                  | `:bar_chart:`      | :bar_chart: example pollination network        |
-| New feature               | `:sparkles:`       | :sparkles: (anything amazing)                  |
-| Documentation             | `:books:`          | :books: null models wrapper                    |
-| Performance improvement   | `:racehorse:`      | :racehorse: parallelizes null model by default |
-| Upcoming release          | `:package:`        | :package: v1.0.2                               |
-
 ## Workflow
 
 This section describes the general steps to make sure that your contribution is
 integrated rapidly. The general workflow is as follows:
 
+1. Before you do anything, open an issue -- this is where we discuss the potential changes to the package
 1. Fork the repository (see *Branches, etc.* below)
-2. Create an *explicitly named branch* from `develop` (if present) or `master`
+2. Create an *explicitly named branch* from `next` (if present) or `main`
 3. Create a pull request *as soon as you make the first commit*
 4. Be as explicit as possible on your goals
 5. Do not squash / rebase commits while you work -- we will do so when merging
@@ -72,9 +57,9 @@ This will ensure that your contribution is rapidly reviewed and evaluated.
 
 ### Branches, etc.
 
-The *tagged* versions of anything on `master` are stable releases. The `master`
+The *tagged* versions of anything on `main` are stable releases. The `main`
 branch itself is the latest version, but it *must* always work (after the first
-tagged release). For more intensive development, use the `develop` branch, or
+tagged release). For more intensive development, use the `next` branch, or
 feature-specific branches. All significant branches are under continuous
 integration *and* code coverage analysis.
 

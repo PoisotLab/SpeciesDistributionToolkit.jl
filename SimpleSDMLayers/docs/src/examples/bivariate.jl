@@ -64,8 +64,8 @@ p1 = bivariate(layer1, layer2; classes=6, bv_pal_2..., frame=:box, xlim=(-24, ma
 xaxis!(p1, "Longitude")
 yaxis!(p1, "Latitude")
 p2 = bivariatelegend!(
-    q1,
-    q2;
+    layer1,
+    layer2;
     bv_pal_2...,
     inset=(1, bbox(0.04, 0.05, 0.28, 0.28, :top, :left)),
     subplot=2,

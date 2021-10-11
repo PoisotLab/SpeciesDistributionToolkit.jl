@@ -38,21 +38,22 @@ test 2
         c2 = LinRange(p0, p2, classes)
         breakpoints = LinRange(0.0, 1.0, classes+1)
         classified = similar(l1, Int)
-        cols = Vector{typeof(p0)}(undef, classes^2)
-        for i in 2:length(breakpoints)
-            m1 = broadcast(v -> breakpoints[i - 1] <= v <= breakpoints[i], l1)
-            for j in 2:length(breakpoints)
-                current_class = (i-2)*classes + (j-2) + 1
-                @info i j current_class
-                m2 = broadcast(v -> breakpoints[j - 1] <= v <= breakpoints[j], l2)
+        cols = typeof(p0)[]
+        for i in 1:classes
+            m1 = broadcast(v -> breakpoints[i] <= v <= breakpoints[i+1], l1)
+            for j in 1:classes
+                m2 = broadcast(v -> breakpoints[j] <= v <= breakpoints[j+1], l2)
+                push!(cols, ColorBlendModes.BlendMultiply(c1[i], c2[j]))
                 m = reduce(*, [m1, m2])
                 replace!(m, false => nothing)
-                classified[keys(m)] = fill(current_class, sum(m))
-                cols[current_class] = ColorBlendModes.BlendMultiply(c1[i - 1], c2[j - 1])
+                if sum(m) > 0
+                    classified[keys(m)] = fill(length(cols), sum(m))
+                end
             end
         end
+        replace!(classified, 0 => 1)
         @series begin
-            seriescolor := reverse(cols)
+            seriescolor := vec(cols)
             seriestype := :heatmap
             subplot := 1
             legend := false
@@ -69,13 +70,13 @@ test 2
         ylims --> (1-0.5, classes+0.5)
         aspect_ratio --> 1
         cols = Vector{typeof(p0)}(undef, classes^2)
-        current_class = 1
+        class = 1
         m = zeros(Float64, classes, classes)
         for i in 1:classes
             for j in 1:classes
-                m[i,j] = current_class
-                cols[current_class] = ColorBlendModes.BlendMultiply(c1[i], c2[j])
-                current_class += 1
+                m[j,i] = class
+                cols[class] = ColorBlendModes.BlendMultiply(c1[i], c2[j])
+                class += 1
             end
         end
         @series begin

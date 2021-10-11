@@ -5,43 +5,49 @@
 A `LayerProvider` is an abstract type used to dispatch the correct call of
 `SimpleSDMPredictor` to a specific dataset. A dataset is specified by a
 `LayerProvider` and a `LayerDataset`, as well as optionally one or multiple
-layers, and future climate information.
+layers, and future climate information, resolution, or dates.
 """
 abstract type LayerProvider end
 
 """
     LayerDataset
 
-A `LayerDataset` is a specific set of rasters provided by a `LayerProvider`.
+A `LayerDataset` is a specific set of rasters provided by a `LayerProvider`. For
+a number of dataset types that are very broad (`LandCover`,
+`HabitatHeterogeneity`), the precise mapping of layers is documented in their
+`SimpleSDMPredictor` method.
 """
 abstract type LayerDataset end
 
 """
     WorldClim
 
-TODO WorldClim
+[WorldClim](https://worldclim.org/) offers bioclimatic data both historical and
+future, under `CMIP6` scenarios.
 
 This provider currently offers `BioClim` data, both historical and future under
-`CMIP6`.
+`CMIP6`, and the `Elevation` raster.
 """
 struct WorldClim <: LayerProvider end
 
 """
     CHELSA
 
-TODO CHELSA
+[CHELSA](https://chelsa-climate.org/) offers high resolution climatologies. This
+provider currently offers `BioClim` data, both historical and future under
+`CMIP5` *and* `CMIP6`.
 
-This provider currently offers `BioClim` data, both historical and future under
-`CMIP5`.
+Note that CHELSA offers a subset of all possible CMIP6 combinations, which is
+supposed to be the most informative.
 """
 struct CHELSA <: LayerProvider end
 
 """
     EarthEnv
 
-Data from the earthenv project, all released under a CC-BY-NC license to Tuanmu
-& Jetz. This provider currently offers `LandCover` and `HabitatHeterogeneity`
-rasters.
+Data from the [EarthEnv](https://www.earthenv.org//) project, all released under
+a CC-BY-NC license to Tuanmu & Jetz. This provider currently offers `LandCover`
+and `HabitatHeterogeneity` rasters.
 """
 struct EarthEnv <: LayerProvider end
 
@@ -84,11 +90,26 @@ Information on land cover, currently only provided by `EarthEnv`.
 struct LandCover <: LayerDataset end
 
 """
+    Elevation
+
+General type for a DEM, currently available through `WorldClim`
+"""
+struct Elevation <: LayerDataset end
+
+"""
     HabitatHeterogeneity
 
-Information on habitat heterogeneity, currently only provided by `EarthEnv`.
+Information on [habitat heterogeneity](https://www.earthenv.org/texture),
+currently only provided by `EarthEnv`.
 """
 struct HabitatHeterogeneity <: LayerDataset end
+
+"""
+    Topography
+
+Information on habitat topography, currently provided by `EarthEnv`.
+"""
+struct Topography <: LayerDataset end
 
 """
     SharedSocioeconomicPathway
@@ -124,7 +145,6 @@ Enumeration of the models from CMIP5, which can be listed with
 """
 @enum CMIP5 ACCESS10 BNUESM CCSM4 CESM1BGC CESM1CAM5 CMCCCMS CMCCCM CNRMCM5 CSIROMK360 CanESM2 FGOALSG2 FIOESM GFDLCM3 GFDLESM2G GFDLESM2M GISSE2HCC GISSE2H GISSE2RCC GISSE2R HADGEM2AO HADGEM2CC IPSLCM5ALR IPSLCM5AMR MIROCESMCHEM MIROCESM MIROC5 MPIESMLR MPIESMMR MRICGCM3 MRIESM1 NORESM1M BCCCSM11 INMCM4
 
-
 # Provider paths
 _rasterpath(::Type{WorldClim}) = "WorldClim"
 _rasterpath(::Type{CHELSA}) = "CHELSA"
@@ -134,6 +154,8 @@ _rasterpath(::Type{EarthEnv}) = "EarthEnv"
 _rasterpath(::Type{BioClim}) = "BioClim"
 _rasterpath(::Type{LandCover}) = "LandCover"
 _rasterpath(::Type{HabitatHeterogeneity}) = "HabitatHeterogeneity"
+_rasterpath(::Type{Elevation}) = "Elevation"
+_rasterpath(::Type{Topography}) = "Topography"
 
 # Future paths
 _rasterpath(model::CMIP6) = _rasterpath(Val{model})

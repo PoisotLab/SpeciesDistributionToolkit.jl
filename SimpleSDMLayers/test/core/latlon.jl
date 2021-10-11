@@ -20,4 +20,7 @@ bbox = boundingbox(S)
 @test bbox.bottom == S.bottom
 @test bbox.top == S.top
 
+A = grid(S)
+@test M == A
+
 end

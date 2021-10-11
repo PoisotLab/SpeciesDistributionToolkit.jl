@@ -44,3 +44,13 @@ function SimpleSDMPredictor(::Type{CHELSA}, ::Type{BioClim}, mod::CMIP5, fut::Re
     @assert eltype(layers) <: Integer
     return [SimpleSDMPredictor(CHELSA, BioClim, mod, fut, l; kwargs...) for l in layers]
 end
+
+function SimpleSDMPredictor(::Type{CHELSA}, ::Type{BioClim}, mod::CMIP6, fut::SharedSocioeconomicPathway, layers::AbstractArray; kwargs...)
+    @assert eltype(layers) <: Integer
+    return [SimpleSDMPredictor(CHELSA, BioClim, mod, fut, l; kwargs...) for l in layers]
+end
+
+function SimpleSDMPredictor(::Type{CHELSA}, ::Type{BioClim}, mod::CMIP6, fut::SharedSocioeconomicPathway, layer::Integer=1; year="2041-2060", kwargs...)
+    file = _get_raster(CHELSA, BioClim, mod, fut, layer, year)
+    return geotiff(SimpleSDMPredictor, file; kwargs...)
+end

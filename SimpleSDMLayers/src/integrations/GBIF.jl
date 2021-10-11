@@ -32,7 +32,7 @@ Extracts the value of a layer at a given position for a `GBIFRecord`. If the
 function Base.getindex(layer::T, record::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
    ismissing(record.latitude) && return nothing
    ismissing(record.longitude) && return nothing
-   return layer[record.longitude, record.latitude]
+   return layer[Point(record.longitude, record.latitude)]
 end
 
 """
@@ -46,7 +46,7 @@ function Base.setindex!(layer::SimpleSDMResponse{T}, v::T, record::GBIF.GBIFReco
    ismissing(record.latitude) && return nothing
    ismissing(record.longitude) && return nothing
    isnothing(layer[record]) && return nothing
-   setindex!(layer, v, record.longitude, record.latitude)
+   setindex!(layer, v, Point(record.longitude, record.latitude))
 end
 
 """
@@ -74,7 +74,7 @@ function SimpleSDMLayers.clip(layer::T, records::GBIF.GBIFRecords) where {T <: S
    lon_max = min(layer.right, lon_max+lon_s)
    lon_min = max(layer.left, lon_min-lon_s)
 
-   return layer[left=lon_min, right=lon_max, bottom=lat_min, top=lat_max]
+   return clip(layer; left=lon_min, right=lon_max, bottom=lat_min, top=lat_max)
 end
 
 """

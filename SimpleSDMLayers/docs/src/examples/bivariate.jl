@@ -60,7 +60,7 @@ plot(pl1, pl2; layout=@layout [a{0.75w} b])
 # to make the legend fit, but also use more classes in the map to have a
 # smoother result.
 
-p1 = bivariate(layer1, layer2; classes=6, bv_pal_2..., frame=:box, xlim=(-24, maximum(longitudes(q1))))
+p1 = bivariate(layer1, layer2; classes=6, bv_pal_2..., frame=:box, xlim=(-24, maximum(longitudes(layer1))))
 xaxis!(p1, "Longitude")
 yaxis!(p1, "Latitude")
 p2 = bivariatelegend!(

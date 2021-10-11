@@ -44,6 +44,12 @@ also [start a discussion]. Please read the [Code of Conduct][CoC] and the
 just like any Julia package: `]add SimpleSDMLayers`. To get the most of it, we
 strongly suggest to also add `StatsPlots` and `GBIF`.
 
+**Why are there no code examples in this README**? In short, because keeping the
+code in the README up to date with what the package actually does is tedious;
+the documentation is built around many case studies, with richer text, and with
+a more narrative style. This is where you will find the code examples and the
+figures you are looking for!
+
 ---
 
 

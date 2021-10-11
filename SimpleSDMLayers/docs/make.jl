@@ -6,16 +6,18 @@ using Statistics
 using Literate
 
 # Literate files
-expl = joinpath("docs", "src", "examples")
-corefiles = [joinpath(expl, f) for f in readdir(expl)]
-filter!(f -> endswith(f, "jl"), corefiles)
-vignetteconfig = Dict(
-    "repo_root_url" => "https://github.com/EcoJulia/SimpleSDMLayers.jl",
-    "flavor" => Literate.DocumenterFlavor(),
-    "credit" => false
-)
-for corefile in corefiles
-    Literate.markdown(corefile, expl; config=vignetteconfig)
+for ENDING in ["examples", "sdm"]
+    expl = joinpath("docs", "src", ENDING)
+    corefiles = [joinpath(expl, f) for f in readdir(expl)]
+    filter!(f -> endswith(f, "jl"), corefiles)
+    vignetteconfig = Dict(
+        "repo_root_url" => "https://github.com/EcoJulia/SimpleSDMLayers.jl",
+        "flavor" => Literate.DocumenterFlavor(),
+        "credit" => false
+    )
+    for corefile in corefiles
+        Literate.markdown(corefile, expl; config=vignetteconfig)
+    end
 end
 
 makedocs(
@@ -41,12 +43,12 @@ makedocs(
             "Bivariate mapping" => "examples/bivariate.md"
         ],
         "SDM case studies" => [
-            "GBIF integration" => "examples/gbif.md",
-            "Variable selection (VIF)" => "examples/vif.md",
-            "Building the BIOCLIM model" => "examples/bioclim.md",
-            "Pseudo-absences" => "examples/pseudoabsences.md",
-            "Dealing with future data" => "examples/future.md",
-            "BRTs and climate change" => "examples/brt.md"
+            "GBIF integration" => "sdm/gbif.md",
+            "Variable selection (VIF)" => "sdm/vif.md",
+            "Building the BIOCLIM model" => "sdm/bioclim.md",
+            "Pseudo-absences" => "sdm/pseudoabsences.md",
+            "Dealing with future data" => "sdm/future.md",
+            "BRTs and climate change" => "sdm/brt.md"
         ]
     ]
 )

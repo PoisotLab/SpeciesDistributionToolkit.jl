@@ -88,3 +88,11 @@ layernames(WorldClim, BioClim)[selected_variables_id]
 # Finally, we can select the variables this process recommends:
 
 layers[selected_variables_id]
+
+# Before we move on -- variable selection, especially stepwise, is not
+# necessarilly a *good* practice. Alternatives are model selection,
+# dimensionality reduction using *e.g.* PCA, or other methods to remove the
+# problematic covariance structure in the data. In Julia, a lot of this can be
+# done using the `MultivariateStats` package. This can be an interesting
+# exercise: rather than relying on VIF, what would the dimensionsality of the
+# results look like with a PCA cutoff at 99% of explained variance?

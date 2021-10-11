@@ -4,7 +4,7 @@ using SimpleSDMLayers
 using EvoTrees
 using GBIF
 using StatsBase
-using Plots
+using StatsPlots
 
 # **Justification for this use case:** Boosted Regression Trees (BRTs) are a
 # powerful way to predict the distribution of species. We will see how we can
@@ -103,7 +103,28 @@ distribution = similar(layers[1], Float64)
 distribution[keys(distribution)] = pred[:, 1]
 distribution
 
-# We do the same thing for uncertainty:
+# The BRT is able to calculate a measure of relative gain from the different
+# variables:
+
+top5_var = importance(model, collect(layernames(WorldClim, BioClim)))[1:5]
+
+# This is an interesting alternative to VIF for variable selection, but also
+# shows the very strong impact of the mean temperature in the wettest quarter:
+
+most_important_layer = findfirst(isequal(top5_var[1].first), collect(layernames(WorldClim, BioClim)))
+histogram(
+    layers[most_important_layer][xy_presence]; fill=(0, :teal, 0.2), lc=:teal, frame=:origin, lab="Present"
+)
+histogram!(
+    layers[most_important_layer][xy_absence]; fill=(0, :white, 0.0), frame=:origin, lc=:grey, lab="Absent"
+)
+xaxis!(layernames(WorldClim, BioClim, most_important_layer))
+
+# It is interesting to notice that despite the importance of this predictor, the
+# difference between the presence and absence locations are not as clear as we
+# may expect!
+
+# We can similarly extract uncertainty:
 
 uncertainty = similar(layers[1], Float64)
 uncertainty[keys(uncertainty)] = pred[:, 2]

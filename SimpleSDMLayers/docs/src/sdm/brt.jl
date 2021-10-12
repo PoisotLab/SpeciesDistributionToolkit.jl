@@ -166,19 +166,19 @@ tn = zeros(Float64, length(cutoff));
 fn = zeros(Float64, length(cutoff));
 
 for (i, c) in enumerate(cutoff)
-    pred = distribution[xy] .>= c
-    tp[i] = sum(pred .& obs)
-    tn[i] = sum(.!(pred) .& (.!obs))
-    fp[i] = sum(pred .& (.!obs))
-    fn[i] = sum(.!(pred) .& obs)
+    prd = distribution[xy] .>= c
+    tp[i] = sum(prd .& obs)
+    tn[i] = sum(.!(prd) .& (.!obs))
+    fp[i] = sum(prd .& (.!obs))
+    fn[i] = sum(.!(prd) .& obs)
 end
 
 # From this, we can calculate a number of validation measures:
 
-tpr = tp ./ (tp .+ fn)
-fpr = fp ./ (fp .+ tn)
-J = (tp ./ (tp .+ fn)) + (tn ./ (tn .+ fp)) .- 1.0
-ppv = tp ./ (tp .+ fp)
+tpr = tp ./ (tp .+ fn);
+fpr = fp ./ (fp .+ tn);
+J = (tp ./ (tp .+ fn)) + (tn ./ (tn .+ fp)) .- 1.0;
+ppv = tp ./ (tp .+ fp);
 
 # The ROC-AUC is an overall measure of how good the fit is:
 

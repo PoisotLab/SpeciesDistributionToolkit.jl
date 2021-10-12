@@ -161,16 +161,18 @@ J = similar(cutoff);
 # The loop to measure everything is fairly simple, as we already know the
 # correct positions of presences and absences:
 
-for (i, c) in enumerate(cutoff)
-    p_presence = distribution[xy_presence] .>= c
-    p_absence = distribution[xy_absence] .>= c
-    tp = sum(p_presence)
-    fp = length(p_presence) - tp
-    fn = sum(p_absence)
-    tn = length(p_absence) - fn
-    J[i] = tp / (tp + fn) + tn / (tn + fp) - 1
-end
+obs = y .> 0
 
+for (i, c) in enumerate(cutoff)
+    predic = distribution[xy] .>= c
+    tp = sum(obs .& predic)
+	tn = sum(.!obs .& (.!predic))
+    fp = sum(.!obs .& predic)
+    fn = sum(obs .& (.!predic))
+    J[i] = tp / (tp + fn) + tn / (tn + fp) - 1
+	FPR[i] = fp/(fp+tn)
+	TPR[i] = tp/(tp+fn)
+end
 # We can finally replace the `NaN` values by the random estimate, and look at
 # the plot:
 

@@ -19,6 +19,7 @@ ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
 
 [compat]
 ArchGDAL = "0.7"
+Colors = "0.12"
 ColorBlendModes = "0.2"
 Distances = "0.10"
 Downloads = "1.4"

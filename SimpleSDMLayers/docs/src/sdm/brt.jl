@@ -108,8 +108,9 @@ distribution
 
 top5_var = importance(model, collect(layernames(WorldClim, BioClim)))[1:5]
 
-# This is an interesting alternative to VIF for variable selection, but also
-# shows the very strong impact of the mean temperature in the wettest quarter:
+# This is an interesting alternative to VIF for variable selection. Let's
+# examine how the most important variable relates to the predicted distribution
+# score:
 
 most_important_layer = findfirst(isequal(top5_var[1].first), collect(layernames(WorldClim, BioClim)))
 histogram(
@@ -156,43 +157,57 @@ xaxis!("Prediction score")
 # that optimizes Youden's J (Cohen's κ is also a suitable alternative):
 
 cutoff = LinRange(extrema(distribution)..., 500);
-J = similar(cutoff);
-
-# The loop to measure everything is fairly simple, as we already know the
-# correct positions of presences and absences:
 
 obs = y .> 0
 
+tp = zeros(Float64, length(cutoff));
+fp = zeros(Float64, length(cutoff));
+tn = zeros(Float64, length(cutoff));
+fn = zeros(Float64, length(cutoff));
+
 for (i, c) in enumerate(cutoff)
-    predic = distribution[xy] .>= c
-    tp = sum(obs .& predic)
-	tn = sum(.!obs .& (.!predic))
-    fp = sum(.!obs .& predic)
-    fn = sum(obs .& (.!predic))
-    J[i] = tp / (tp + fn) + tn / (tn + fp) - 1
-	FPR[i] = fp/(fp+tn)
-	TPR[i] = tp/(tp+fn)
+    pred = distribution[xy] .>= c
+    tp[i] = sum(pred .& obs)
+    tn[i] = sum(.!(pred) .& (.!obs))
+    fp[i] = sum(pred .& (.!obs))
+    fn[i] = sum(.!(pred) .& obs)
 end
-# We can finally replace the `NaN` values by the random estimate, and look at
-# the plot:
 
-J[isnan.(J)] .= 0.5
-plot(cutoff, J; lab="", fill=(0, 0.5, :grey), c=:grey)
-xaxis!(extrema(distribution), "Threshold")
-yaxis!((0.5, 1), "Informedness")
+# From this, we can calculate a number of validation measures:
 
-# It's fairly noteworthy that the region around 0.5 is relatively smooth, which
-# was also clear from the histogram of predicted values. This is a good sign
-# that the exact cutoff may vary as a function of, for example, small changes in
-# the pseudo-absence locations. This can be an interesting exercise: what
-# happens to this curve if there are more pseudo-absences than presences? What
-# happens to the cutoff if there are multiple runs of the model on different
-# test/train set, or different pseudo-absences? For now, we will assume that the
-# correct cutoff τ for a presence is readable directly at the peak of the curve:
+tpr = tp ./ (tp .+ fn)
+fpr = fp ./ (fp .+ tn)
+J = (tp ./ (tp .+ fn)) + (tn ./ (tn .+ fp)) .- 1.0
+ppv = tp ./ (tp .+ fp)
 
-τ = cutoff[last(findmax(J))]
+# The ROC-AUC is an overall measure of how good the fit is:
 
-# We can now map the result using the `distribution` data:
+dx = [reverse(fpr)[i] - reverse(fpr)[i - 1] for i in 2:length(fpr)]
+dy = [reverse(tpr)[i] + reverse(tpr)[i - 1] for i in 2:length(tpr)]
+AUC = sum(dx .* (dy ./ 2.0))
+
+# We can pick the value of the cutoff that maximizes J:
+
+thr_index = last(findmax(J))
+τ = cutoff[thr_index]
+
+# Let's have a look at the ROC curve:
+
+plot(fpr, tpr; aspectratio=1, frame=:box, lab="", dpi=600, size=(400, 400))
+scatter!([fpr[thr_index]], [tpr[thr_index]]; lab="", c=:black)
+plot!([0, 1], [0, 1]; c=:grey, ls=:dash, lab="")
+xaxis!("False positive rate", (0, 1))
+yaxis!("True positive rate", (0, 1))
+
+# And the precision-recall as well:
+
+plot(tpr, ppv; aspectratio=1, frame=:box, lab="", dpi=600, size=(400, 400))
+scatter!([tpr[thr_index]], [ppv[thr_index]]; lab="", c=:black)
+plot!([0, 1], [1, 0]; c=:grey, ls=:dash, lab="")
+xaxis!("True positive rate", (0, 1))
+yaxis!("Positive predictive value", (0, 1))
+
+# We can now map the result using τ as a cutoff for the `distribution` data:
 
 range_mask = broadcast(v -> v >= τ, distribution)
 
@@ -247,7 +262,7 @@ future_distribution
 # The values in `future_distribution` are in the scale of what the BRT returns,
 # so we can compare them with the values of `distribution`:
 
-plot(future_distribution - distribution; clim=(-1.1, 1.1), c=:lisbon)
+plot(future_distribution - distribution; clim=(-1, 1), c=:broc, frame=:box)
 
 # This shows the area of predicted gain and loss of presence. Because we have
 # thresholded our current distribution, we can look at the predicted ranges of

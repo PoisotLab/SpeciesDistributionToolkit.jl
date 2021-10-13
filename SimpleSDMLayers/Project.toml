@@ -1,7 +1,7 @@
 name = "SimpleSDMLayers"
 uuid = "2c645270-77db-11e9-22c3-0f302a89c64c"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>", "Gabriel Dansereau <gabriel.dansereau@umontreal.ca>"]
-version = "0.8.0"
+version = "0.8.1"
 
 [deps]
 ArchGDAL = "c9ce4bd3-c3d5-55b8-8973-c0e20141b8c3"
@@ -19,8 +19,8 @@ ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
 
 [compat]
 ArchGDAL = "0.7"
-Colors = "0.12"
 ColorBlendModes = "0.2"
+Colors = "0.12"
 Distances = "0.10"
 Downloads = "1.4"
 GeometryBasics = "0.4"

@@ -24,7 +24,7 @@ end
 """
 test 2
 """
-@recipe function plot(l1::FT, l2::ST; classes::Int=3, p0=colorant"#e8e8e8", p1=colorant"#64acbe", p2=colorant"#c85a5a") where {FT <: SimpleSDMLayer, ST <: SimpleSDMLayer}
+@recipe function plot(l1::FT, l2::ST; classes::Int=3, p0=colorant"#e8e8e8ff", p1=colorant"#64acbeff", p2=colorant"#c85a5aff") where {FT <: SimpleSDMLayer, ST <: SimpleSDMLayer}
     eltype(l1) <: Number || throw(ArgumentError("Plotting is only supported for layers with number values ($(eltype(l1)))"))
     eltype(l2) <: Number || throw(ArgumentError("Plotting is only supported for layers with number values ($(eltype(l2)))"))
     seriestype --> :scatter

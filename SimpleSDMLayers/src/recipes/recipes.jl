@@ -214,9 +214,10 @@ test 2
                 end
             end
         end
+        _fs = get(plotattributes, :annotationfontsize, 14)
         @series begin
             seriestype := :shape
-            annotations := [(0.0, -0.05, red, :center), (1.0, -0.05, green, :center), (0.5, sqrt(3)/2+0.05, blue, :center)]
+            annotations := [(-0.05, 0.0, (red, _fs, :left, 60.0)), (1.0, -0.05, (green, _fs, :right, 0.0)), (0.5+0.05, sqrt(3)/2, (blue, _fs, :left, -60.0))]
             markersize := 0
             seriescolor := hcat(shapes_colors...)
             shapes_x, shapes_y

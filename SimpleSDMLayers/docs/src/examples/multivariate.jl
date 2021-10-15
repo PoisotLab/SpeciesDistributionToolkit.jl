@@ -122,4 +122,4 @@ xaxis!(tri1, "Longitude")
 yaxis!(tri1, "Latitude")
 tri2 = trivariatelegend(layer1, layer2, layer3; red="Heterogeneity", green="Roughness", blue="Urban")
 
-plot(tri1, tri2; layout=@layout [a{0.75w} b])
+plot(tri1, tri2; layout=@layout [a{0.5w} b])

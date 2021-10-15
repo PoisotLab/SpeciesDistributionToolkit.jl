@@ -38,3 +38,4 @@ test/gallery/scatter.png
 
 # VS Code settings
 .vscode/settings.json
+.vscode/launch.json

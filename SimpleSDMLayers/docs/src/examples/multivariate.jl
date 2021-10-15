@@ -23,9 +23,11 @@ layer2 = convert(
 # The landcover data are finer than the other layers, so we will coarsen them.
 # Because of rounding issues, the left and right cordinates need to be rounded.
 
-layer3 = coarsen(convert(
-    Float16, SimpleSDMPredictor(EarthEnv, LandCover, 9; boundaries...)
-), mean, (5, 5))
+layer3 = coarsen(
+    convert(Float16, SimpleSDMPredictor(EarthEnv, LandCover, 9; boundaries...)),
+    mean,
+    (5, 5),
+)
 layer3.left = round(layer3.left; digits=0)
 layer3.right = round(layer3.right; digits=0)
 
@@ -77,7 +79,14 @@ plot(pl1, pl2; layout=@layout [a{0.75w} b])
 # to make the legend fit, but also use more classes in the map to have a
 # smoother result.
 
-p1 = bivariate(layer1, layer3; classes=6, bv_pal_2..., frame=:box, xlim=(-24, maximum(longitudes(layer1))))
+p1 = bivariate(
+    layer1,
+    layer3;
+    classes=6,
+    bv_pal_2...,
+    frame=:box,
+    xlim=(-24, maximum(longitudes(layer1))),
+)
 xaxis!(p1, "Longitude")
 yaxis!(p1, "Latitude")
 p2 = bivariatelegend!(
@@ -110,16 +119,39 @@ trivariatelegend(layer1, layer2, layer3; quantiles=true, simplex=true)
 # The legend function admits three additional arguments for the names of the
 # `red`, `green`, and `blue` channels:
 
-trivariatelegend(layer1, layer2, layer3; quantiles=true, simplex=true, red="Heterogeneous", green="Rough", blue="Urbanized")
+trivariatelegend(
+    layer1,
+    layer2,
+    layer3;
+    quantiles=true,
+    simplex=true,
+    red="Heterogeneous",
+    green="Rough",
+    blue="Urbanized",
+)
 
-# We can also combine the two elements. For reasons that are not completely
-# clear, the `trivariatelegend!` method makes the whole script hang, so the best
-# we can currently do is to put the legend next to the plot. This will be fixed
-# in a future release.
+# We can also combine the two elements:
 
-tri1 = trivariate(layer1, layer2, layer3; xlim=(-24, maximum(longitudes(layer1))))
+tri1 = trivariate(
+    layer1,
+    layer2,
+    layer3;
+    xlim=(-24, maximum(longitudes(layer1))),
+    frame=:grid,
+    grid=false,
+    simplex=false,
+)
 xaxis!(tri1, "Longitude")
 yaxis!(tri1, "Latitude")
-tri2 = trivariatelegend(layer1, layer2, layer3; red="Heterogeneity", green="Roughness", blue="Urban")
-
-plot(tri1, tri2; layout=@layout [a{0.5w} b])
+tri2 = trivariatelegend!(
+    layer1,
+    layer2,
+    layer3;
+    inset=(1, bbox(0.01, 0.03, 0.35, 0.35, :top, :left)),
+    subplot=2,
+    red="Heterogeneity",
+    green="Roughness",
+    blue="Urban",
+    annotationfontsize=6,
+    simplex=false,
+)

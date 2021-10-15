@@ -183,7 +183,8 @@ test 2
             seriestype := :heatmap
             subplot := 1
             legend --> false
-            longitudes(X), latitudes(X), reverse(trip; dims=1)
+            yflip --> false
+            longitudes(X), reverse(latitudes(X)), trip
         end
     elseif get(plotattributes, :seriestype, :trivariatelegend) in [:trivariatelegend]
         # Legend
@@ -196,31 +197,29 @@ test 2
         legend --> false
         ticks --> :none
         framestyle --> :none
+        shapes_x = []
+        shapes_y = []
+        shapes_colors = []
         for (row_number, triangles_to_do) in enumerate(reverse(1:steps))
             for triangle_number in 1:triangles_to_do
                 x0 = (triangle_number - 1) * a + (row_number - 1) * (a / 2)
                 y0 = (row_number - 1) * h
-                @series begin
-                    subplot := 1
-                    seriestype := :shape
-                    seriescolor := rgb_from_xy(x0 + a / 2, y0 + h / 2; simplex=simplex)
-                    [x0, x0 + a / 2, x0 + a], [y0, y0 + h, y0]
-                end
+                push!(shapes_x, [x0, x0 + a / 2, x0 + a])
+                push!(shapes_y, [y0, y0 + h, y0])
+                push!(shapes_colors, rgb_from_xy(x0 + a / 2, y0 + h / 2; simplex=simplex))
                 if row_number > 1
-                    @series begin
-                        subplot := 1
-                        seriestype := :shape
-                        seriescolor := rgb_from_xy(x0 + a / 2, y0 - h / 2; simplex=simplex)
-                        [x0, x0 + a / 2, x0 + a], [y0, y0 - h, y0]
-                    end
+                    push!(shapes_x, [x0, x0 + a / 2, x0 + a])
+                    push!(shapes_y, [y0, y0 - h, y0])
+                    push!(shapes_colors, rgb_from_xy(x0 + a / 2, y0 - h / 2; simplex=simplex))
                 end
             end
         end
         @series begin
-            seriestype := :scatter
+            seriestype := :shape
             annotations := [(0.0, -0.05, red, :center), (1.0, -0.05, green, :center), (0.5, sqrt(3)/2+0.05, blue, :center)]
             markersize := 0
-            [0.0, 0.0]
+            seriescolor := hcat(shapes_colors...)
+            shapes_x, shapes_y
         end
     end
 end

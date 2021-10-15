@@ -94,13 +94,13 @@ p2 = bivariatelegend!(
 # Using a trivariate mapping follows the same process, with layers representing
 # the red, green, and blue channel respectively.
 
-plot(layer1, layer2, layer3; st=:trivariate)
+plot(layer1, layer2, layer3; st=:trivariate, frame=:grid)
 
 # There are two options for this type of plots. The first is `quantiles=true`
 # (which maps quantiles rather than raw values), and the second is
 # `simplex=false`, which makes all values sum to 1 within a pixel. For example:
 
-trivariate(layer1, layer2, layer3; quantiles=true, simplex=true)
+trivariate(layer1, layer2, layer3; quantiles=true, simplex=true, frame=:grid)
 
 # It is a good idea to question whether using `simplex` is appropriate. The
 # legend can also be plotted using `trivariatelegend`:
@@ -110,11 +110,16 @@ trivariatelegend(layer1, layer2, layer3; quantiles=true, simplex=true)
 # The legend function admits three additional arguments for the names of the
 # `red`, `green`, and `blue` channels:
 
-trivariatelegend(layer1, layer2, layer3; quantiles=true, simplex=true, red="Heterogeneity", green="Roughness", blue="Urban")
+trivariatelegend(layer1, layer2, layer3; quantiles=true, simplex=true, red="Heterogeneous", green="Rough", blue="Urbanized")
 
-# We can also combine the two elements:
+# We can also combine the two elements. For reasons that are not completely
+# clear, the `trivariatelegend!` method makes the whole script hang, so the best
+# we can currently do is to put the legend next to the plot. This will be fixed
+# in a future release.
 
-trivariate(layer1, layer2, layer3; xlim=(-24, maximum(longitudes(layer1))))
-xaxis!(p1, "Longitude")
-yaxis!(p1, "Latitude")
-p2 = trivariatelegend!(layer1, layer2, layer3; inset=(1, bbox(0.04, 0.05, 0.28, 0.28, :top, :left)), subplot=2, red="Heterogeneity", green="Roughness", blue="Urban")
+tri1 = trivariate(layer1, layer2, layer3; xlim=(-24, maximum(longitudes(layer1))))
+xaxis!(tri1, "Longitude")
+yaxis!(tri1, "Latitude")
+tri2 = trivariatelegend(layer1, layer2, layer3; inset=(1, bbox(0.04, 0.05, 0.28, 0.28, :top, :left)), subplot=2, red="Heterogeneity", green="Roughness", blue="Urban")
+
+plot(tri1, tri2; layout=@layout [a{0.75w} b])

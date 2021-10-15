@@ -120,6 +120,6 @@ trivariatelegend(layer1, layer2, layer3; quantiles=true, simplex=true, red="Hete
 tri1 = trivariate(layer1, layer2, layer3; xlim=(-24, maximum(longitudes(layer1))))
 xaxis!(tri1, "Longitude")
 yaxis!(tri1, "Latitude")
-tri2 = trivariatelegend(layer1, layer2, layer3; inset=(1, bbox(0.04, 0.05, 0.28, 0.28, :top, :left)), subplot=2, red="Heterogeneity", green="Roughness", blue="Urban")
+tri2 = trivariatelegend(layer1, layer2, layer3; red="Heterogeneity", green="Roughness", blue="Urban")
 
 plot(tri1, tri2; layout=@layout [a{0.75w} b])

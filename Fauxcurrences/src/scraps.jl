@@ -19,6 +19,7 @@ end
 
 # Generate the observation distances
 obs = [Fauxcurrences.get_valid_coordinates(obs, layer) for obs in observations]
+# TODO: make this a function!
 obs_intra_matrices = [zeros(Float64, (size(obs[i], 2), size(obs[i], 2))) for i in 1:length(obs)]
 obs_inter_matrices = [zeros(Float64, (size(obs[i], 2), size(obs[j], 2))) for i in 1:(length(obs)-1) for j in (i+1):length(obs)]
 sim_intra_matrices = [zeros(Float64, (size(obs[i], 2), size(obs[i], 2))) for i in 1:length(obs)]

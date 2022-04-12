@@ -3,6 +3,7 @@ using Fauxcurrences
 using Plots
 using SimpleSDMLayers
 using GBIF
+using Statistics
 
 _bbox = (left=-160.0, right=-154.5, bottom=18.5, top=22.5)
 layer = convert(Float32, SimpleSDMPredictor(WorldClim, Elevation; _bbox..., resolution=0.5))
@@ -33,69 +34,56 @@ obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_
 Fauxcurrences.initialize_intraspecific_distances!(obs_intra, obs)
 Fauxcurrences.initialize_interspecific_distances!(obs_inter, obs)
 
+# Bootstrap!
+sim = [copy(o) for o in obs]
+@time Fauxcurrences.bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
 
+# Measure the initial divergences
+d_intra = [Fauxcurrences._distance_between_distributions(obs_intra[i], sim_intra[i]) for i in 1:length(sim_intra)]
+d_inter = [Fauxcurrences._distance_between_distributions(obs_inter[i], sim_inter[i]) for i in 1:length(sim_inter)]
+D = vcat(d_intra, d_inter)
+optimum = mean(D)
 
-# Generate the simulation distances
-sim = [generate_initial_points(layer, obs[i], obs_intra_matrices[i]) for i in 1:length(obs)]
-for i in 1:length(sim)
-    pairwise!(sim_intra_matrices[i], Df, sim[i])
-end
-cursor = 1
-for i in 1:(length(sim)-1)
-    for j in (i+1):length(sim)
-        pairwise!(sim_inter_matrices[cursor], Df, sim[i], sim[j])
-        cursor += 1
-    end
-end
-
-JSintra = [distribution_distance(obs_intra_matrices[i], sim_intra_matrices[i]) for i in 1:length(sim_intra_matrices)]
-JSinter = [distribution_distance(obs_inter_matrices[i], sim_inter_matrices[i]) for i in 1:length(sim_inter_matrices)]
-JS = vcat(JSintra, JSinter)
-optimum = mean(JS)
-
-progress = zeros(Float64, 200_000)
-scores = zeros(Float64, (length(JS), length(progress)))
-scores[:, 1] .= JS
+progress = zeros(Float64, 1_000)
+scores = zeros(Float64, (length(D), length(progress)))
+scores[:, 1] .= D
 progress[1] = optimum
+
+max_intra = map(maximum, obs_intra)
+max_inter = map(maximum, obs_inter)
 
 for i in 2:length(progress)
     # Get a random set of points to change
-    set_to_change = rand(1:length(sim))
+    updated_set = rand(1:length(sim))
 
     # Get a random point to change in the layer
-    point_to_change = rand(1:size(sim[set_to_change], 2))
+    _position = rand(1:size(sim[updated_set], 2))
 
     # Save the old point
-    current_point = sim[set_to_change][:, point_to_change]
+    current_point = sim[updated_set][:, _position]
 
     # Generate a new proposition
-    sim[set_to_change][:, point_to_change] .= new_random_point(layer, current_point, obs_intra_matrices[set_to_change])
-
-    # Update the distance matrices
-    pairwise!(sim_intra_matrices[set_to_change], Df, sim[set_to_change])
-    cursor = 1
-    for i in 1:(length(sim)-1)
-        for j in (i+1):length(sim)
-            # Only update the matrices for which there was a change
-            if (i == set_to_change) || (j == set_to_change)
-                pairwise!(sim_inter_matrices[cursor], Df, sim[i], sim[j])
-            end
-            cursor += 1
-        end
+    sim[updated_set][:, _position] .= Fauxcurrences._generate_new_random_point(layer, current_point, obs_intra[updated_set])
+    Fauxcurrences.initialize_interspecific_distances!(sim_inter, sim)
+    Fauxcurrences.initialize_intraspecific_distances!(sim_intra, sim)
+    while (~all(map(maximum, sim_inter) .<= max_inter)) & (~all(map(maximum, sim_intra) .<= max_intra))
+        sim[updated_set][:, (_position+1):end] .= _generate_new_random_point(layer, sim[updated_set][:, 1:_position], obs_intra[updated_set])
+        Fauxcurrences.initialize_interspecific_distances!(sim_inter, sim)
+        Fauxcurrences.initialize_intraspecific_distances!(sim_intra, sim)
     end
 
-    JSintra = [distribution_distance(obs_intra_matrices[i], sim_intra_matrices[i]) for i in 1:length(sim_intra_matrices)]
-    JSinter = [distribution_distance(obs_inter_matrices[i], sim_inter_matrices[i]) for i in 1:length(sim_inter_matrices)]
-    JS = vcat(JSintra, JSinter)
+    d_intra = [Fauxcurrences._distance_between_distributions(obs_intra[i], sim_intra[i]) for i in 1:length(sim_intra)]
+    d_inter = [Fauxcurrences._distance_between_distributions(obs_inter[i], sim_inter[i]) for i in 1:length(sim_inter)]
+    D = vcat(d_intra, d_inter)
+    candidate = mean(D)
 
-    d0 = mean(JS)
-    scores[:, i] .= JS
+    scores[:, i] .= D
 
-    if d0 < optimum
-        optimum = d0
+    if candidate < optimum
+        optimum = candidate
         @info "t = $(lpad(i, 8)) λ = $(round(optimum; digits=4))"
     else
-        sim[set_to_change][:, point_to_change] .= current_point
+        sim[updated_set][:, _position] .= current_point
     end
     progress[i] = optimum
 end

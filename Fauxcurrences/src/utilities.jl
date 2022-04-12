@@ -2,7 +2,7 @@
 This solves the direct (first) geodetic problem assuming Haversine distances are
 a correct approximation of the distance between points.
 """
-function _random_point(ref, d; R=Fauxccurences._earth_radius)
+function _random_point(ref, d; R=Fauxcurrences._earth_radius)
     # Convert the coordinates from degrees to radians
     λ, φ = deg2rad.(ref)
     # Get the angular distance
@@ -23,9 +23,9 @@ xy - points
 Dxy - distances
 """
 function _generate_new_random_point(layer, points, distances)
-    point = _random_point(xy[:, rand(1:size(points, 2))], rand(distances))
+    point = _random_point(points[:, rand(1:size(points, 2))], rand(distances))
     while isnothing(layer[point...])
-        point = _random_point(xy[:, rand(1:size(points, 2))], rand(distances))
+        point = _random_point(points[:, rand(1:size(points, 2))], rand(distances))
     end
     return point
 end

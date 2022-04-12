@@ -4,10 +4,16 @@ points for all taxa at once, so some knowledge of the distance matrices is
 required. Note that this function is modifying the *bootstraped* object, in
 order to make be as efficient as possible.
 
-Specifically, the first points are picked to respect the maximal inter-specific
-distances, and then the following points are picked to respect the intra and
-inter-specific distances. Points after the first one are added *at random*, so
-there can be an accumulation of points in some species.
+Specifically, the first point for each taxa is picked to respect the maximal
+inter-specific distances, and then the following points are picked to respect
+the intra and inter-specific distances. Points after the first one are added *at
+random*, so there can be an accumulation of points in some species early on.
+
+Note that this function is not particularly efficient, but this is a little bit
+of over-head for every simulation. The only guarantee offered is that the
+distances are not above the maximal distances in the dataset, there is no reason
+to expect that the distribution of distances within or across taxa will be
+respected.
 """
 function bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
     max_intra = map(maximum, obs_intra)

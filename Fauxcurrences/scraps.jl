@@ -44,7 +44,7 @@ d_inter = [Fauxcurrences._distance_between_distributions(obs_inter[i], sim_inter
 D = vcat(d_intra, d_inter)
 optimum = mean(D)
 
-progress = zeros(Float64, 1_000)
+progress = zeros(Float64, 20_000)
 scores = zeros(Float64, (length(D), length(progress)))
 scores[:, 1] .= D
 progress[1] = optimum
@@ -67,7 +67,7 @@ for i in 2:length(progress)
     Fauxcurrences.initialize_interspecific_distances!(sim_inter, sim)
     Fauxcurrences.initialize_intraspecific_distances!(sim_intra, sim)
     while (~all(map(maximum, sim_inter) .<= max_inter)) & (~all(map(maximum, sim_intra) .<= max_intra))
-        sim[updated_set][:, (_position+1):end] .= _generate_new_random_point(layer, sim[updated_set][:, 1:_position], obs_intra[updated_set])
+        sim[updated_set][:, _position] .= Fauxcurrences._generate_new_random_point(layer, current_point, obs_intra[updated_set])
         Fauxcurrences.initialize_interspecific_distances!(sim_inter, sim)
         Fauxcurrences.initialize_intraspecific_distances!(sim_intra, sim)
     end

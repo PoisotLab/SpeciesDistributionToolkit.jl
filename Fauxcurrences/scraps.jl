@@ -1,6 +1,12 @@
+using Revise
+using Fauxcurrences
+using Plots
+using SimpleSDMLayers
+using GBIF
+
 _bbox = (left=-160.0, right=-154.5, bottom=18.5, top=22.5)
 layer = convert(Float32, SimpleSDMPredictor(WorldClim, Elevation; _bbox..., resolution=0.5))
-#plot(layer, frame=:box, c=:bamako, dpi=400)
+plot(layer, frame=:box, c=:bamako, dpi=400)
 taxa = [
     GBIF.taxon("Himatione sanguinea"; strict=true),
     GBIF.taxon("Paroaria capitata"; strict=true),

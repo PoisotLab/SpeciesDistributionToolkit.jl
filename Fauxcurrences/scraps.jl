@@ -21,6 +21,7 @@ for t in taxa
         "decimalLatitude" => (_bbox.bottom, _bbox.top),
         "decimalLongitude" => (_bbox.left, _bbox.right),
         "limit" => 300)
+    occurrences!(obs)
     push!(observations, obs)
 end
 

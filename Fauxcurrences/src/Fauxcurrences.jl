@@ -1,4 +1,4 @@
-module Fauxccurences
+module Fauxcurrences
 
 import Distances
 using GBIF

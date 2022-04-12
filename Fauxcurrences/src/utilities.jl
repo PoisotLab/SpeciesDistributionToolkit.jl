@@ -67,3 +67,30 @@ function _distance_between_distributions(x, y)
     q = _bin_distances(y, m)
     return sqrt(Distances.js_divergence(p, q) / log(2))
 end
+
+"""
+Generates the internal distance matrices
+"""
+function preallocate_distance_matrices(obs)
+    obs_intra = [zeros(Float64, (size(obs[i], 2), size(obs[i], 2))) for i in 1:length(obs)]
+    obs_inter = [zeros(Float64, (size(obs[i], 2), size(obs[j], 2))) for i in 1:(length(obs)-1) for j in (i+1):length(obs)]
+    sim_intra = [zeros(Float64, (size(obs[i], 2), size(obs[i], 2))) for i in 1:length(obs)]
+    sim_inter = [zeros(Float64, (size(obs[i], 2), size(obs[j], 2))) for i in 1:(length(obs)-1) for j in (i+1):length(obs)]
+    return obs_intra, obs_inter, sim_intra, sim_inter
+end
+
+function initialize_intraspecific_distances!(intra, obs)
+    for i in 1:length(obs)
+        Distances.pairwise!(intra[i], Fauxcurrences._distancefunction, obs[i])
+    end
+end
+
+function initialize_interspecific_distances!(inter, obs)
+    cursor = 1
+    for i in 1:(length(obs)-1)
+        for j in (i+1):length(obs)
+            Distances.pairwise!(inter[cursor], Fauxcurrences._distancefunction, obs[i], obs[j])
+            cursor += 1
+        end
+    end
+end

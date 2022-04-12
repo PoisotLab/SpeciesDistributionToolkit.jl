@@ -25,22 +25,15 @@ end
 
 # Generate the observation distances
 obs = [Fauxcurrences.get_valid_coordinates(obs, layer) for obs in observations]
-# TODO: make this a function!
-obs_intra_matrices = [zeros(Float64, (size(obs[i], 2), size(obs[i], 2))) for i in 1:length(obs)]
-obs_inter_matrices = [zeros(Float64, (size(obs[i], 2), size(obs[j], 2))) for i in 1:(length(obs)-1) for j in (i+1):length(obs)]
-sim_intra_matrices = [zeros(Float64, (size(obs[i], 2), size(obs[i], 2))) for i in 1:length(obs)]
-sim_inter_matrices = [zeros(Float64, (size(obs[i], 2), size(obs[j], 2))) for i in 1:(length(obs)-1) for j in (i+1):length(obs)]
 
-for i in 1:length(obs)
-    Distances.pairwise!(obs_intra_matrices[i], Fauxcurrences._distancefunction, obs[i])
-end
-cursor = 1
-for i in 1:(length(obs)-1)
-    for j in (i+1):length(obs)
-        Distances.pairwise!(obs_inter_matrices[cursor], Fauxcurrences._distancefunction, obs[i], obs[j])
-        cursor += 1
-    end
-end
+# Pre-allocate the matrices
+obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_matrices(obs)
+
+# Fill the observed distance matrices
+Fauxcurrences.initialize_intraspecific_distances!(obs_intra, obs)
+Fauxcurrences.initialize_interspecific_distances!(obs_inter, obs)
+
+
 
 # Generate the simulation distances
 sim = [generate_initial_points(layer, obs[i], obs_intra_matrices[i]) for i in 1:length(obs)]

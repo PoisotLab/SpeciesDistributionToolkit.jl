@@ -20,8 +20,7 @@ for t in taxa
         "hasCoordinate" => "true",
         "decimalLatitude" => (_bbox.bottom, _bbox.top),
         "decimalLongitude" => (_bbox.left, _bbox.right),
-        "limit" => 300)
-    occurrences!(obs)
+        "limit" => 100)
     push!(observations, obs)
 end
 

@@ -5,13 +5,12 @@ using SimpleSDMLayers
 using GBIF
 using Statistics
 
-_bbox = (left=-160.0, right=-154.5, bottom=18.5, top=22.5)
+_bbox = (left=-12., right=3., bottom=36.0, top=44.0)
 layer = convert(Float32, SimpleSDMPredictor(WorldClim, Elevation; _bbox..., resolution=0.5))
 plot(layer, frame=:box, c=:bamako, dpi=400)
+_taxnames = ["Clamator glandarius", "Cuculus canorus"]
 taxa = [
-    GBIF.taxon("Himatione sanguinea"; strict=true),
-    GBIF.taxon("Paroaria capitata"; strict=true),
-    GBIF.taxon("Pluvialis fulva"; strict=true)
+    GBIF.taxon(_tn; strict=true) for _tn in _taxnames
 ]
 
 observations = []
@@ -20,7 +19,7 @@ for t in taxa
         "hasCoordinate" => "true",
         "decimalLatitude" => (_bbox.bottom, _bbox.top),
         "decimalLongitude" => (_bbox.left, _bbox.right),
-        "limit" => 100)
+        "limit" => 200)
     push!(observations, obs)
 end
 
@@ -86,15 +85,18 @@ for i in 2:length(progress)
 
     if candidate < optimum
         optimum = candidate
-        @info "t = $(lpad(i, 8)) λ = $(round(optimum; digits=4))"
+        @info "t = $(lpad(i, 8)) \t λ = $(round(optimum; digits=6))"
     else
         sim[updated_set][:, _position] .= current_point
     end
     progress[i] = optimum
 end
 
+# TODO: see if there is a weighted version of the JS divergence, in which case
+# use this based on a species x species matrix of association score
+
 # Performance change plot
-plot(scores[1:length(sim), :]', lab="", frame=:box, c=:grey)
+plot(scores[1:length(sim), :]', lab="", frame=:box, c=:grey, dpi=400)
 plot!(scores[(length(sim)+1):end, :]', lab="", c=:lightgrey)
 plot!(progress, c=:black, lw=2, lab="Overall")
 xaxis!("Iteration step")

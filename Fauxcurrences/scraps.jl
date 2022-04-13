@@ -4,8 +4,9 @@ using Plots
 using SimpleSDMLayers
 using GBIF
 using Statistics
+using ProgressMeter
 
-_bbox = (left=-12., right=3., bottom=36.0, top=44.0)
+_bbox = (left=-12.0, right=3.0, bottom=36.0, top=44.0)
 layer = convert(Float32, SimpleSDMPredictor(WorldClim, Elevation; _bbox..., resolution=0.5))
 plot(layer, frame=:box, c=:bamako, dpi=400)
 _taxnames = ["Clamator glandarius", "Cuculus canorus"]
@@ -56,6 +57,7 @@ progress[1] = optimum
 max_intra = map(maximum, obs_intra)
 max_inter = map(maximum, obs_inter)
 
+p = Progress(n; showspeed=true)
 for i in 2:length(progress)
     # Get a random set of points to change
     updated_set = rand(1:length(sim))
@@ -89,6 +91,7 @@ for i in 2:length(progress)
     else
         sim[updated_set][:, _position] .= current_point
     end
+    ProgressMeter.next!(p; showvalues=[(:optimum, optimum)])
     progress[i] = optimum
 end
 

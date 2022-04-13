@@ -6,10 +6,11 @@ using GBIF
 using Statistics
 using ProgressMeter
 
-_bbox = (left=-12.0, right=3.0, bottom=36.0, top=44.0)
+# Use the Sulawesi example from the original paper
+_bbox = (left=108., right=126.5, bottom=-7., top=8.)
 layer = convert(Float32, SimpleSDMPredictor(WorldClim, Elevation; _bbox..., resolution=0.5))
 plot(layer, frame=:box, c=:bamako, dpi=400)
-_taxnames = ["Clamator glandarius", "Cuculus canorus"]
+_taxnames = "Cyrtandra " .* ["bruteliana", "celebica", "geocarpa", "hypogaea", "polyneura", "widjajae"]
 taxa = [
     GBIF.taxon(_tn; strict=true) for _tn in _taxnames
 ]
@@ -49,7 +50,7 @@ d_inter = [Fauxcurrences._distance_between_distributions(obs_inter[i], sim_inter
 D = vcat(d_intra, d_inter)
 optimum = mean(D)
 
-progress = zeros(Float64, 20_000)
+progress = zeros(Float64, 500_000)
 scores = zeros(Float64, (length(D), length(progress)))
 scores[:, 1] .= D
 progress[1] = optimum
@@ -57,7 +58,7 @@ progress[1] = optimum
 max_intra = map(maximum, obs_intra)
 max_inter = map(maximum, obs_inter)
 
-p = Progress(n; showspeed=true)
+p = Progress(length(progress); showspeed=true)
 for i in 2:length(progress)
     # Get a random set of points to change
     updated_set = rand(1:length(sim))
@@ -87,7 +88,7 @@ for i in 2:length(progress)
 
     if candidate < optimum
         optimum = candidate
-        @info "t = $(lpad(i, 8)) \t λ = $(round(optimum; digits=6))"
+        #@info "t = $(lpad(i, 8)) \t λ = $(round(optimum; digits=6))"
     else
         sim[updated_set][:, _position] .= current_point
     end
@@ -99,9 +100,9 @@ end
 # use this based on a species x species matrix of association score
 
 # Performance change plot
-plot(scores[1:length(sim), :]', lab="", frame=:box, c=:grey, dpi=400)
-plot!(scores[(length(sim)+1):end, :]', lab="", c=:lightgrey)
-plot!(progress, c=:black, lw=2, lab="Overall")
+#plot(scores[1:length(sim), :]', lab="", frame=:box, c=:grey, dpi=400)
+#plot!(scores[(length(sim)+1):end, :]', lab="", c=:lightgrey)
+plot(progress, c=:black, lw=2, lab="Overall")
 xaxis!("Iteration step")
 yaxis!("Absolute performance")
 

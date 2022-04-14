@@ -23,16 +23,16 @@ function bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
     for i in 1:length(sim)
         sim[i][:, :] .= _generate_new_random_point(layer, obs[i], obs_intra[i])
     end
-    Fauxcurrences.initialize_interspecific_distances!(sim_inter, sim)
+    Fauxcurrences.measure_interspecific_distances!(sim_inter, sim)
     while ~all(map(maximum, sim_inter) .<= max_inter)
         for i in 1:length(sim)
             sim[i][:, :] .= _generate_new_random_point(layer, obs[i], obs_intra[i])
         end
-        Fauxcurrences.initialize_interspecific_distances!(sim_inter, sim)
+        Fauxcurrences.measure_interspecific_distances!(sim_inter, sim)
     end
 
     # Update the intra-specific distances
-    Fauxcurrences.initialize_intraspecific_distances!(sim_intra, sim)
+    Fauxcurrences.measure_intraspecific_distances!(sim_intra, sim)
 
     # How many points done?
     _progress = fill(1, length(sim))
@@ -42,12 +42,12 @@ function bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
         updated_set = rand(findall(_progress .< size.(sim_intra, 2)))
         _position = _progress[updated_set]
         sim[updated_set][:, (_position+1):end] .= _generate_new_random_point(layer, sim[updated_set][:, 1:_position], obs_intra[updated_set])
-        Fauxcurrences.initialize_interspecific_distances!(sim_inter, sim)
-        Fauxcurrences.initialize_intraspecific_distances!(sim_intra, sim)
+        Fauxcurrences.measure_interspecific_distances!(sim_inter, sim)
+        Fauxcurrences.measure_intraspecific_distances!(sim_intra, sim)
         while (~all(map(maximum, sim_inter) .<= max_inter)) & (~all(map(maximum, sim_intra) .<= max_intra))
             sim[updated_set][:, (_position+1):end] .= _generate_new_random_point(layer, sim[updated_set][:, 1:_position], obs_intra[updated_set])
-            Fauxcurrences.initialize_interspecific_distances!(sim_inter, sim)
-            Fauxcurrences.initialize_intraspecific_distances!(sim_intra, sim)
+            Fauxcurrences.measure_interspecific_distances!(sim_inter, sim)
+            Fauxcurrences.measure_intraspecific_distances!(sim_intra, sim)
         end
         _progress[updated_set] += 1
     end

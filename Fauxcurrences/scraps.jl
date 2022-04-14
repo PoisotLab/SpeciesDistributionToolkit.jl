@@ -7,7 +7,7 @@ using Statistics
 using ProgressMeter
 
 # Use the Sulawesi example from the original paper
-_bbox = (left=108., right=126.5, bottom=-7., top=8.)
+_bbox = (left=118.2, right=125.8, bottom=-7.0, top=2.0)
 layer = convert(Float32, SimpleSDMPredictor(WorldClim, Elevation; _bbox..., resolution=0.5))
 plot(layer, frame=:box, c=:bamako, dpi=400)
 _taxnames = "Cyrtandra " .* ["bruteliana", "celebica", "geocarpa", "hypogaea", "polyneura", "widjajae"]
@@ -36,29 +36,37 @@ points_to_generate = fill(25, length(obs))
 obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_matrices(obs; samples=points_to_generate)
 
 # Fill the observed distance matrices
-Fauxcurrences.initialize_intraspecific_distances!(obs_intra, obs)
-Fauxcurrences.initialize_interspecific_distances!(obs_inter, obs)
+Fauxcurrences.measure_intraspecific_distances!(obs_intra, obs)
+Fauxcurrences.measure_interspecific_distances!(obs_inter, obs)
 
 # Bootstrap!
 sim = Fauxcurrences.preallocate_simulated_points(obs; samples=points_to_generate)
 @time Fauxcurrences.bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
 
+# Get the bins for the observed distance matrices
+bin_intra = [Fauxcurrences._bin_distribution(obs_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)]
+bin_inter = [Fauxcurrences._bin_distribution(obs_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)]
+
+# Get the bins for the simulated distance matrices - note that the upper bound is always the observed maximum
+bin_s_intra = [Fauxcurrences._bin_distribution(sim_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)]
+bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)]
+
+# TODO: Only update the interspecific matrices that have changed -- add a
+# version with `, i` to the measure functions to select which to update
+
 # Measure the initial divergences
-d_intra = [Fauxcurrences._distance_between_distributions(obs_intra[i], sim_intra[i]) for i in 1:length(sim_intra)]
-d_inter = [Fauxcurrences._distance_between_distributions(obs_inter[i], sim_inter[i]) for i in 1:length(sim_inter)]
+d_intra = [Fauxcurrences._distance_between_binned_distributions(bin_intra[i], bin_s_intra[i]) for i in 1:length(sim_intra)]
+d_inter = [Fauxcurrences._distance_between_binned_distributions(bin_inter[i], bin_s_inter[i]) for i in 1:length(sim_inter)]
 D = vcat(d_intra, d_inter)
 optimum = mean(D)
 
-progress = zeros(Float64, 500_000)
+progress = zeros(Float64, 5_000)
 scores = zeros(Float64, (length(D), length(progress)))
 scores[:, 1] .= D
 progress[1] = optimum
 
-max_intra = map(maximum, obs_intra)
-max_inter = map(maximum, obs_inter)
-
 p = Progress(length(progress); showspeed=true)
-for i in 2:length(progress)
+@profview for i in 2:length(progress)
     # Get a random set of points to change
     updated_set = rand(1:length(sim))
 
@@ -70,16 +78,24 @@ for i in 2:length(progress)
 
     # Generate a new proposition
     sim[updated_set][:, _position] .= Fauxcurrences._generate_new_random_point(layer, current_point, obs_intra[updated_set])
-    Fauxcurrences.initialize_interspecific_distances!(sim_inter, sim)
-    Fauxcurrences.initialize_intraspecific_distances!(sim_intra, sim)
+    Fauxcurrences.measure_interspecific_distances!(sim_inter, sim; updated=updated_set)
+    Fauxcurrences.measure_intraspecific_distances!(sim_intra, sim; updated=updated_set)
     while (~all(map(maximum, sim_inter) .<= max_inter)) & (~all(map(maximum, sim_intra) .<= max_intra))
         sim[updated_set][:, _position] .= Fauxcurrences._generate_new_random_point(layer, current_point, obs_intra[updated_set])
-        Fauxcurrences.initialize_interspecific_distances!(sim_inter, sim)
-        Fauxcurrences.initialize_intraspecific_distances!(sim_intra, sim)
+        Fauxcurrences.measure_interspecific_distances!(sim_inter, sim; updated=updated_set)
+        Fauxcurrences.measure_intraspecific_distances!(sim_intra, sim; updated=updated_set)
     end
 
-    d_intra = [Fauxcurrences._distance_between_distributions(obs_intra[i], sim_intra[i]) for i in 1:length(sim_intra)]
-    d_inter = [Fauxcurrences._distance_between_distributions(obs_inter[i], sim_inter[i]) for i in 1:length(sim_inter)]
+
+    # Get the bins for the simulated distance matrices - note that the upper bound is always the observed maximum
+    bin_s_intra = [Fauxcurrences._bin_distribution(sim_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)]
+    bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)]
+
+    # Measure the initial divergences
+    d_intra = [Fauxcurrences._distance_between_binned_distributions(bin_intra[i], bin_s_intra[i]) for i in 1:length(sim_intra)]
+    d_inter = [Fauxcurrences._distance_between_binned_distributions(bin_inter[i], bin_s_inter[i]) for i in 1:length(sim_inter)]
+
+    # Measure the performance
     D = vcat(d_intra, d_inter)
     candidate = mean(D)
 
@@ -87,7 +103,6 @@ for i in 2:length(progress)
 
     if candidate < optimum
         optimum = candidate
-        #@info "t = $(lpad(i, 8)) \t λ = $(round(optimum; digits=6))"
     else
         sim[updated_set][:, _position] .= current_point
     end

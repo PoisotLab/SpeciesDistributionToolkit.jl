@@ -30,7 +30,6 @@ function _generate_new_random_point(layer, points, distances)
     return point
 end
 
-
 """
 Bin a distance matrix, using a default count of 20 bins. This function is
 instrumental in the package, as it is used internally to calculate the
@@ -39,17 +38,15 @@ specific implementation had the least-worst performance during a series of
 benchmarks, but in practice the package is going to spend a lot of time running
 it. It is a prime candidate for optimisation.
 """
-function _bin_distances(D::Matrix{Float64}, m::Float64)::Vector{Float64}
-    bins = 20
+function _bin_distribution(D::Matrix{Float64}, m::Float64)::Vector{Float64}
+    bins = 11
+    t = prod(size(D))
     r = LinRange(0.0, m + eps(typeof(m)), bins + 1)
-    c = zeros(eltype(D), bins)
-    for i in 1:bins
-        c[i] = count(D .< r[i+1])
-        if i > 1
-            c[i] = c[i] - sum(c[1:(i-1)])
-        end
+    c = zeros(Float64, bins)
+    @inbounds for i in 1:bins
+        c[i] = count(r[i] .< D .< r[i+1])/t
     end
-    return c ./ sum(c)
+    return c
 end
 
 """
@@ -61,10 +58,7 @@ absolute measure of fit allowing to compare the solutions. Note that the value
 returned is *already* corrected, so it can be at most 1.0, and at best
 (identical matrices) 0.
 """
-function _distance_between_distributions(x, y)
-    m = max(maximum(x), maximum(y))
-    p = _bin_distances(x, m)
-    q = _bin_distances(y, m)
+function _distance_between_binned_distributions(p, q)
     return sqrt(Distances.js_divergence(p, q) / log(2))
 end
 
@@ -79,17 +73,21 @@ function preallocate_distance_matrices(obs; samples=size.(obs,2))
     return obs_intra, obs_inter, sim_intra, sim_inter
 end
 
-function initialize_intraspecific_distances!(intra, obs)
+function measure_intraspecific_distances!(intra, obs; updated=1:length(obs))
     for i in 1:length(obs)
-        Distances.pairwise!(intra[i], Fauxcurrences._distancefunction, obs[i])
+        if i in updated
+            Distances.pairwise!(intra[i], Fauxcurrences._distancefunction, obs[i])
+        end
     end
 end
 
-function initialize_interspecific_distances!(inter, obs)
+function measure_interspecific_distances!(inter, obs; updated=1:length(obs))
     cursor = 1
     for i in 1:(length(obs)-1)
         for j in (i+1):length(obs)
-            Distances.pairwise!(inter[cursor], Fauxcurrences._distancefunction, obs[i], obs[j])
+            if (i in updated)|(j in updated)
+               Distances.pairwise!(inter[cursor], Fauxcurrences._distancefunction, obs[i], obs[j])
+            end
             cursor += 1
         end
     end

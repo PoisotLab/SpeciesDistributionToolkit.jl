@@ -7,13 +7,12 @@ using Statistics
 using ProgressMeter
 using Random
 
-Random.seed!(420)
-
 # Use the Sulawesi example from the original paper
 _bbox = (left=118.2, right=125.8, bottom=-7.0, top=2.0)
 layer = convert(Float32, SimpleSDMPredictor(WorldClim, Elevation; _bbox..., resolution=0.5))
 plot(layer, frame=:box, c=:bamako, dpi=400)
 _taxnames = "Cyrtandra " .* ["bruteliana", "celebica", "geocarpa", "hypogaea", "polyneura", "widjajae"]
+_taxnames = "Draco " .* ["beccarii", "spilonotus", "walkeri"]
 taxa = [
     GBIF.taxon(_tn; strict=true) for _tn in _taxnames
 ]
@@ -24,16 +23,21 @@ for t in taxa
         "hasCoordinate" => "true",
         "decimalLatitude" => (_bbox.bottom, _bbox.top),
         "decimalLongitude" => (_bbox.left, _bbox.right),
-        "limit" => 200)
+        "limit" => 300)
     push!(observations, obs)
 end
 
 # TODO: we can probably definitely thin the points in order to be within 1% of
 # the empirical distribution, which would be a lot faster,
 
+# Set a seed
+Random.seed!(616525434)
+
 # Generate the observation distances
 obs = [Fauxcurrences.get_valid_coordinates(obs, layer) for obs in observations]
-points_to_generate = fill(25, length(obs))
+
+# How many points per taxa do we want to simulate?
+points_to_generate = fill(35, length(obs))
 
 # Pre-allocate the matrices
 obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_matrices(obs; samples=points_to_generate)
@@ -63,13 +67,13 @@ d_inter = [Fauxcurrences._distance_between_binned_distributions(bin_inter[i], bi
 D = vcat(d_intra, d_inter)
 optimum = mean(D)
 
-progress = zeros(Float64, 10_000)
+progress = zeros(Float64, 200_000)
 scores = zeros(Float64, (length(D), length(progress)))
 scores[:, 1] .= D
 progress[1] = optimum
 
 p = Progress(length(progress); showspeed=true)
-@profview for i in 2:length(progress)
+for i in 2:length(progress)
     # Get a random set of points to change
     updated_set = rand(1:length(sim))
 
@@ -118,17 +122,17 @@ end
 
 # Performance change plot
 #plot(scores[1:length(sim), :]', lab="", frame=:box, c=:grey, dpi=400)
-#plot!(scores[(length(sim)+1):end, :]', lab="", c=:lightgrey)
-plot(progress, c=:black, lw=2, lab="Overall")
-xaxis!("Iteration step")
-yaxis!("Absolute performance")
+#plot(scores[(length(sim)+1):end, :]', lab="", c=:lightgrey)
+plot(progress, c=:black, lw=2, lab="Overall", dpi=400)
+xaxis!("Iteration step", (1, length(progress)))
+yaxis!("Jensen-Shannon distance", (0, 1))
 
 # Map
-p = [plot(layer, frame=:grid, c=:grey, cbar=false, legend=:bottomleft, size=(800, 600), dpi=600) for i in 1:length(sim), j in 1:2]
-c = distinguishable_colors(length(sim) + 4)[(end-length(sim)+1):end]
+p = [plot(layer, frame=:none, c=:grey, cbar=false, size=(1000, 1000)) for i in 1:length(sim), j in 1:2]
+c = distinguishable_colors(length(sim) + 1)[(end-length(sim)+1):end]
 for i in 1:length(sim)
-    scatter!(p[i, 1], obs[i][1, :], obs[i][2, :], lab="", ms=2, c=c[i], msw=0.0)
-    scatter!(p[i, 2], sim[i][1, :], sim[i][2, :], lab="", ms=2, c=c[i], msw=0.0, m=:diamond)
+    scatter!(p[i, 1], obs[i][1, :], obs[i][2, :], lab="", ms=8, c=c[i], msw=0.0)
+    scatter!(p[i, 2], sim[i][1, :], sim[i][2, :], lab="", ms=8, c=c[i], msw=0.0, m=:diamond)
 end
-plot(p..., layout=(2, length(sim)))
+plot(p..., layout=(2, length(sim)), size=(500length(taxa), 2 * 500))
 savefig("demo.png")

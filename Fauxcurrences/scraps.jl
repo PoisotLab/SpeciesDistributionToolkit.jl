@@ -27,8 +27,8 @@ for t in taxa
     push!(observations, obs)
 end
 
-# TODO: we can probably definitely thin the points in order to be within 1% of
-# the empirical distribution, which would be a lot faster,
+# TODO: we can probably definitely thin the points in order to be within a set
+# value of the  empirical distribution, which would be a lot faster
 
 # Set a seed
 Random.seed!(616525434)
@@ -92,7 +92,6 @@ for i in 2:length(progress)
         Fauxcurrences.measure_interspecific_distances!(sim_inter, sim; updated=updated_set)
         Fauxcurrences.measure_intraspecific_distances!(sim_intra, sim; updated=updated_set)
     end
-
 
     # Get the bins for the simulated distance matrices - note that the upper bound is always the observed maximum
     bin_s_intra = [Fauxcurrences._bin_distribution(sim_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)]

@@ -71,11 +71,11 @@ end
 """
 Generates the internal distance matrices
 """
-function preallocate_distance_matrices(obs)
+function preallocate_distance_matrices(obs; samples=size.(obs,2))
     obs_intra = [zeros(Float64, (size(obs[i], 2), size(obs[i], 2))) for i in 1:length(obs)]
     obs_inter = [zeros(Float64, (size(obs[i], 2), size(obs[j], 2))) for i in 1:(length(obs)-1) for j in (i+1):length(obs)]
-    sim_intra = [zeros(Float64, (size(obs[i], 2), size(obs[i], 2))) for i in 1:length(obs)]
-    sim_inter = [zeros(Float64, (size(obs[i], 2), size(obs[j], 2))) for i in 1:(length(obs)-1) for j in (i+1):length(obs)]
+    sim_intra = [zeros(Float64, (samples[i], samples[i])) for i in 1:length(obs)]
+    sim_inter = [zeros(Float64, (samples[i], samples[j])) for i in 1:(length(obs)-1) for j in (i+1):length(obs)]
     return obs_intra, obs_inter, sim_intra, sim_inter
 end
 

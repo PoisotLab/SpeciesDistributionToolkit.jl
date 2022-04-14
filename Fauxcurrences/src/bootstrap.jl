@@ -38,8 +38,8 @@ function bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
     _progress = fill(1, length(sim))
 
     # Run'em occurrences fast
-    while ~all(_progress .== size.(sim, 2))
-        updated_set = rand(findall(_progress .< size.(sim, 2)))
+    while ~all(_progress .== size.(sim_intra, 2))
+        updated_set = rand(findall(_progress .< size.(sim_intra, 2)))
         _position = _progress[updated_set]
         sim[updated_set][:, (_position+1):end] .= _generate_new_random_point(layer, sim[updated_set][:, 1:_position], obs_intra[updated_set])
         Fauxcurrences.initialize_interspecific_distances!(sim_inter, sim)
@@ -51,4 +51,12 @@ function bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
         end
         _progress[updated_set] += 1
     end
+end
+
+function preallocate_simulated_points(obs; samples=size.(obs,2))
+    sim = [
+        reshape(repeat(obs[i][:, 1], outer=samples[i]), (2, samples[i]))
+        for i in 1:length(obs)
+    ]
+    return sim
 end

@@ -28,21 +28,19 @@ end
 # TODO: we can probably definitely thin the points in order to be within 1% of
 # the empirical distribution, which would be a lot faster,
 
-# TODO: we can set how many samples we actually want for the null model, which
-# might also be much faster (or compensate lacks in data)
-
 # Generate the observation distances
 obs = [Fauxcurrences.get_valid_coordinates(obs, layer) for obs in observations]
+points_to_generate = fill(25, length(obs))
 
 # Pre-allocate the matrices
-obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_matrices(obs)
+obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_matrices(obs; samples=points_to_generate)
 
 # Fill the observed distance matrices
 Fauxcurrences.initialize_intraspecific_distances!(obs_intra, obs)
 Fauxcurrences.initialize_interspecific_distances!(obs_inter, obs)
 
 # Bootstrap!
-sim = [copy(o) for o in obs]
+sim = Fauxcurrences.preallocate_simulated_points(obs; samples=points_to_generate)
 @time Fauxcurrences.bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
 
 # Measure the initial divergences

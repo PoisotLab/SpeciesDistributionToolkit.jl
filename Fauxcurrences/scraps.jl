@@ -25,10 +25,11 @@ for t in taxa
     push!(observations, obs)
 end
 
-# NB we can probably definitely thin the points in order to be within 1% of the
-# empirical distribution, which would be a lot faster, and we can also decide on
-# how many samples we actually want for the null model, which might also be much
-# faster
+# TODO: we can probably definitely thin the points in order to be within 1% of
+# the empirical distribution, which would be a lot faster,
+
+# TODO: we can set how many samples we actually want for the null model, which
+# might also be much faster (or compensate lacks in data)
 
 # Generate the observation distances
 obs = [Fauxcurrences.get_valid_coordinates(obs, layer) for obs in observations]

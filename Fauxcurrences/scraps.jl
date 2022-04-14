@@ -5,6 +5,9 @@ using SimpleSDMLayers
 using GBIF
 using Statistics
 using ProgressMeter
+using Random
+
+Random.seed!(1234)
 
 # Use the Sulawesi example from the original paper
 _bbox = (left=118.2, right=125.8, bottom=-7.0, top=2.0)
@@ -51,8 +54,8 @@ bin_inter = [Fauxcurrences._bin_distribution(obs_inter[i], maximum(obs_inter[i])
 bin_s_intra = [Fauxcurrences._bin_distribution(sim_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)]
 bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)]
 
-# TODO: Only update the interspecific matrices that have changed -- add a
-# version with `, i` to the measure functions to select which to update
+# TODO: only get the bins when the distribution has changed, which might cut a
+# little bit of time - we can also probably pre-allocate the whole business
 
 # Measure the initial divergences
 d_intra = [Fauxcurrences._distance_between_binned_distributions(bin_intra[i], bin_s_intra[i]) for i in 1:length(sim_intra)]
@@ -60,7 +63,7 @@ d_inter = [Fauxcurrences._distance_between_binned_distributions(bin_inter[i], bi
 D = vcat(d_intra, d_inter)
 optimum = mean(D)
 
-progress = zeros(Float64, 5_000)
+progress = zeros(Float64, 10_000)
 scores = zeros(Float64, (length(D), length(progress)))
 scores[:, 1] .= D
 progress[1] = optimum

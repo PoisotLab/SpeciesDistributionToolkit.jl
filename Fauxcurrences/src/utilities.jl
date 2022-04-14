@@ -44,7 +44,7 @@ function _bin_distribution(D::Matrix{Float64}, m::Float64)::Vector{Float64}
     r = LinRange(0.0, m + eps(typeof(m)), bins + 1)
     c = zeros(Float64, bins)
     @inbounds for i in 1:bins
-        c[i] = count(r[i] .< D .< r[i+1])/t
+        c[i] = count(x -> r[i]<x<r[i+1], D)/t
     end
     return c
 end

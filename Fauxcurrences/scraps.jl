@@ -7,7 +7,7 @@ using Statistics
 using ProgressMeter
 using Random
 
-Random.seed!(1234)
+Random.seed!(420)
 
 # Use the Sulawesi example from the original paper
 _bbox = (left=118.2, right=125.8, bottom=-7.0, top=2.0)
@@ -83,7 +83,7 @@ p = Progress(length(progress); showspeed=true)
     sim[updated_set][:, _position] .= Fauxcurrences._generate_new_random_point(layer, current_point, obs_intra[updated_set])
     Fauxcurrences.measure_interspecific_distances!(sim_inter, sim; updated=updated_set)
     Fauxcurrences.measure_intraspecific_distances!(sim_intra, sim; updated=updated_set)
-    while (~all(map(maximum, sim_inter) .<= max_inter)) & (~all(map(maximum, sim_intra) .<= max_intra))
+    while (~all(map(maximum, sim_inter) .<= map(maximum, obs_inter))) & (~all(map(maximum, sim_intra) .<= map(maximum, obs_intra)))
         sim[updated_set][:, _position] .= Fauxcurrences._generate_new_random_point(layer, current_point, obs_intra[updated_set])
         Fauxcurrences.measure_interspecific_distances!(sim_inter, sim; updated=updated_set)
         Fauxcurrences.measure_intraspecific_distances!(sim_intra, sim; updated=updated_set)

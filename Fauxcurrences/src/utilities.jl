@@ -39,7 +39,7 @@ benchmarks, but in practice the package is going to spend a lot of time running
 it. It is a prime candidate for optimisation.
 """
 function _bin_distribution(D::Matrix{Float64}, m::Float64)::Vector{Float64}
-    c = zeros(Float64, 21)
+    c = zeros(Float64, Fauxcurrences._number_of_bins)
     _bin_distribution!(c, D, m)
 end
 

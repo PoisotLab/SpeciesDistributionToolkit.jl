@@ -178,15 +178,16 @@ a package-wide variable, `Fauxcurrences._number_of_bins`):
 ~~~julia
 # Matrix-wise plots
 x = LinRange(0.0, 1.0, length(bin_intra[1]))
+c = distinguishable_colors(length(sim) + 2)[(end-length(sim)+1):end]
 
-plot(x, bin_intra, m=[:circle :diamond :square], c=:black, lab="", lc=:black, frame=:box, dpi=400)
-plot!(x, bin_s_intra, m=[:circle :diamond :square], c=:grey, lab="", lc=:grey, ls=:dash)
+plot(x, bin_intra, m=:circle, frame=:box, dpi=400, c=c', lab="")
+plot!(x, bin_s_intra, m=:diamond, lab="", lc=:lightgrey, c=c')
 xaxis!("Distance bin", 0, 1)
 yaxis!("Density", 0, 0.2)
 title!("Intra-specific distances")
 
-plot(x, bin_inter, m=[:circle :diamond :square], c=:black, lab="", lc=:black, frame=:box, dpi=400)
-plot!(x, bin_s_inter, m=[:circle :diamond :square], c=:grey, lab="", lc=:grey, ls=:dash)
+plot(x, bin_inter, lab="", m=:circle, frame=:box, dpi=400, c=c')
+plot!(x, bin_s_inter, m=:diamond, lab="", lc=:lightgrey, c=c')
 xaxis!("Distance bin", 0, 1)
 yaxis!("Density", 0, 0.2)
 title!("Inter-specific distances")

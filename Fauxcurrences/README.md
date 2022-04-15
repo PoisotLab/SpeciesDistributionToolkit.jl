@@ -60,6 +60,57 @@ occurrence. Given an array of `GBIFRecords`, this can be done with
 obs = [Fauxcurrences.get_valid_coordinates(obs, layer) for obs in observations]
 ~~~
 
+**Step 2**. Decide on the number of points to generate, and the weight matrix.
+The number of points to generate is, by default, the number of observations in
+the original dataset, but this can be changed to generate balanced samples:
+
+~~~julia
+# How many points per taxa do we want to simulate?
+points_to_generate = fill(35, length(obs))
+~~~
+
+The weight matrix is used to determine whether intra or inter-specific distances
+are more important in the distribution score. For example, this will set up a
+scoring scheme where intra-specific distances count for 75% of the total. The
+only constraint is that the matrix `W` *must* sum to 1.
+
+~~~julia
+# Weight matrix
+W = Fauxcurrences.weighted_components(length(obs), 0.75)
+~~~
+
+**Step 3**. Pre-allocate the objects. This is an important part of the run, as
+`Fauxcurrences` is built to *not* allocate more memory than needed. As such,
+these objects are going to be re-written many, many times. The upside is that,
+if this steps fits in your memory, the entire workflow will also fit in your
+memory.
+
+~~~julia
+# Pre-allocate the matrices
+obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_matrices(obs; samples=points_to_generate)
+~~~
+
+**Step 4**. Measure the intra and inter-specific distances for the observations.
+This is an important step as *all generated points* will maintain the upper
+bounds of these distances matrices, *even if the inter-specific distance are
+weightless*.
+
+~~~julia
+# Fill the observed distance matrices
+Fauxcurrences.measure_intraspecific_distances!(obs_intra, obs)
+Fauxcurrences.measure_interspecific_distances!(obs_inter, obs)
+~~~
+
+**Step 5**. Bootstrap the initial set of points. This is a two-step process,
+involving first the pre-allocation of coordinate matrices, and second the
+population of these matrices using random points.
+
+~~~julia
+# Bootstrap!
+sim = Fauxcurrences.preallocate_simulated_points(obs; samples=points_to_generate)
+Fauxcurrences.bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
+~~~
+
 ## Suspected and know changes to the original package
 
 The changes are classified by whether or not we **KNOW** or **SUSPECT** a

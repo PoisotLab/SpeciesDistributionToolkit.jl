@@ -44,7 +44,7 @@ obs = [Fauxcurrences.get_valid_coordinates(obs, layer) for obs in observations]
 points_to_generate = fill(35, length(obs))
 
 # Weight matrix
-W = Fauxcurrences._weighted_components(length(taxa), 0.5)
+W = Fauxcurrences.weighted_components(length(taxa), 0.75)
 
 # Pre-allocate the matrices
 obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_matrices(obs; samples=points_to_generate)

@@ -93,8 +93,9 @@ end
 plot(p..., layout=(2, length(sim)), size=(500length(taxa), 2 * 500))
 savefig("demo.png")
 
-# Intra-specific distance plot
+# Matrix-wise plots
 x = LinRange(0.0, 1.0, length(bin_intra[1]))
+
 plot(x, bin_intra, m=[:circle :diamond :square], c=:black, lab="", lc=:black, frame=:box, dpi=400)
 plot!(x, bin_s_intra, m=[:circle :diamond :square], c=:grey, lab="", lc=:grey, ls=:dash)
 xaxis!("Distance bin", 0, 1)

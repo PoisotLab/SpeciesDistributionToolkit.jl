@@ -162,6 +162,36 @@ end
 During this time, you can setup a counter for steps without improvement, in
 order to cut the runs early if required.
 
+**Step 10**. Congratulations, your run is done! Maybe check the convergence with
+a simple plot:
+
+~~~julia
+# Performance change plot
+plot(progress, c=:black, lw=2, lab="Overall", dpi=400)
+xaxis!("Iteration step", (1, length(progress)))
+yaxis!("Jensen-Shannon distance", (0, 1))
+~~~
+
+You can also look at the per-matrix score, out of all the distance bins (set as
+a package-wide variable, `Fauxcurrences._number_of_bins`):
+
+~~~julia
+# Matrix-wise plots
+x = LinRange(0.0, 1.0, length(bin_intra[1]))
+
+plot(x, bin_intra, m=[:circle :diamond :square], c=:black, lab="", lc=:black, frame=:box, dpi=400)
+plot!(x, bin_s_intra, m=[:circle :diamond :square], c=:grey, lab="", lc=:grey, ls=:dash)
+xaxis!("Distance bin", 0, 1)
+yaxis!("Density", 0, 0.2)
+title!("Intra-specific distances")
+
+plot(x, bin_inter, m=[:circle :diamond :square], c=:black, lab="", lc=:black, frame=:box, dpi=400)
+plot!(x, bin_s_inter, m=[:circle :diamond :square], c=:grey, lab="", lc=:grey, ls=:dash)
+xaxis!("Distance bin", 0, 1)
+yaxis!("Density", 0, 0.2)
+title!("Inter-specific distances")
+~~~
+
 ## Suspected and know changes to the original package
 
 The changes are classified by whether or not we **KNOW** or **SUSPECT** a

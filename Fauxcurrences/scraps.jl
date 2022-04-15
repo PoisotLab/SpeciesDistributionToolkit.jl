@@ -84,11 +84,11 @@ xaxis!("Iteration step", (1, length(progress)))
 yaxis!("Jensen-Shannon distance", (0, 1))
 
 # Map
-p = [plot(layer, frame=:none, c=:lightgrey, cbar=false, size=(1000, 1000)) for i in 1:length(sim), j in 1:2]
-c = distinguishable_colors(length(sim) + 1)[(end-length(sim)+1):end]
+p = [plot(layer, frame=:none, c=:alpine, cbar=false, size=(1000, 1000)) for i in 1:length(sim), j in 1:2]
+c = distinguishable_colors(length(sim) + 2)[(end-length(sim)+1):end]
 for i in 1:length(sim)
-    scatter!(p[i, 1], obs[i][1, :], obs[i][2, :], lab="", ms=8, c=c[i], msw=0.0)
-    scatter!(p[i, 2], sim[i][1, :], sim[i][2, :], lab="", ms=8, c=c[i], msw=0.0, m=:diamond)
+    scatter!(p[i, 1], obs[i][1, :], obs[i][2, :], lab="", ms=8, mc=:white, msc=c[i], msw=1.0)
+    scatter!(p[i, 2], sim[i][1, :], sim[i][2, :], lab="", ms=8, mc=:white, msc=c[i], msw=1.0, m=:diamond)
 end
 plot(p..., layout=(2, length(sim)), size=(500length(taxa), 2 * 500))
 savefig("demo.png")

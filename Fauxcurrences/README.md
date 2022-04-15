@@ -11,6 +11,8 @@ functions.
 
 [paper]: https://onlinelibrary.wiley.com/doi/full/10.1111/ecog.05880
 
+![demo.png](demo.png)
+
 ## Why?
 
 Interoperability: this package uses `SimpleSDMLayers`, `Distances`, and `GBIF`

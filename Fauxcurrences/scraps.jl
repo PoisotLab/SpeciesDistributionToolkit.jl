@@ -31,6 +31,17 @@ end
 # TODO: we can probably definitely thin the points in order to be within a set
 # value of the  empirical distribution, which would be a lot faster
 
+# TODO: only get the bins when the distribution has changed, which might cut a
+# little bit of time - we can also probably pre-allocate the whole business
+
+# TODO: get a way to thin the observations by using a raster -- get the centroid
+# of cells with at least one observation
+
+# TODO: pre-allocate the container for the bins
+
+# TODO: wrap the code in scraps.jl in a function performing a single step of the
+# algorithm
+
 # Set a seed
 Random.seed!(616525434)
 
@@ -61,9 +72,6 @@ bin_inter = [Fauxcurrences._bin_distribution(obs_inter[i], maximum(obs_inter[i])
 # Get the bins for the simulated distance matrices - note that the upper bound is always the observed maximum
 bin_s_intra = [Fauxcurrences._bin_distribution(sim_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)]
 bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)]
-
-# TODO: only get the bins when the distribution has changed, which might cut a
-# little bit of time - we can also probably pre-allocate the whole business
 
 # Measure the initial divergences
 D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)

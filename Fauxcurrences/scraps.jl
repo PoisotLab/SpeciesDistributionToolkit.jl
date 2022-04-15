@@ -87,9 +87,23 @@ yaxis!("Jensen-Shannon distance", (0, 1))
 p = [plot(layer, frame=:none, c=:alpine, cbar=false, size=(1000, 1000)) for i in 1:length(sim), j in 1:2]
 c = distinguishable_colors(length(sim) + 2)[(end-length(sim)+1):end]
 for i in 1:length(sim)
-    title!(p[i,1], taxa[i].name)
+    title!(p[i, 1], taxa[i].name)
     scatter!(p[i, 1], obs[i][1, :], obs[i][2, :], lab="", ms=8, mc=:white, msc=c[i], msw=1.0)
     scatter!(p[i, 2], sim[i][1, :], sim[i][2, :], lab="", ms=8, mc=:white, msc=c[i], msw=1.0, m=:diamond)
 end
 plot(p..., layout=(2, length(sim)), size=(500length(taxa), 2 * 500))
 savefig("demo.png")
+
+# Intra-specific distance plot
+x = LinRange(0.0, 1.0, length(bin_intra[1]))
+plot(x, bin_intra, m=[:circle :diamond :square], c=:black, lab="", lc=:black, frame=:box, dpi=400)
+plot!(x, bin_s_intra, m=[:circle :diamond :square], c=:grey, lab="", lc=:grey, ls=:dash)
+xaxis!("Distance bin", 0, 1)
+yaxis!("Density", 0, 0.2)
+title!("Intra-specific distances")
+
+plot(x, bin_inter, m=[:circle :diamond :square], c=:black, lab="", lc=:black, frame=:box, dpi=400)
+plot!(x, bin_s_inter, m=[:circle :diamond :square], c=:grey, lab="", lc=:grey, ls=:dash)
+xaxis!("Distance bin", 0, 1)
+yaxis!("Density", 0, 0.2)
+title!("Inter-specific distances")

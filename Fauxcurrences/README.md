@@ -45,6 +45,21 @@ call to set-up a whole run of the pipeline.
 | `bootstrap!`                       | generates the initial proposition for the null               |
 | `score_distributions`              | measures the distribution distance                           |
 
+## Anatomy of a `Fauxcurrences`  run
+
+**Step 0**. Prepare the run - the minimal ingredients are a set of coordinates
+(for example using the `GBIF.jl` package), and a layer (one of the
+`SimpleSDMLayer` types, predictor or response does not matter).
+
+**Step 1**. Get the observation data in the correct format, which is an array of
+matrices with two rows (longitude, latitude) and one column for observed
+occurrence. Given an array of `GBIFRecords`, this can be done with
+
+~~~julia
+# Generate the observation distances
+obs = [Fauxcurrences.get_valid_coordinates(obs, layer) for obs in observations]
+~~~
+
 ## Suspected and know changes to the original package
 
 The changes are classified by whether or not we **KNOW** or **SUSPECT** a

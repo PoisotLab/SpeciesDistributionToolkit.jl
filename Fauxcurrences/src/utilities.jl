@@ -92,3 +92,25 @@ function measure_interspecific_distances!(inter, obs; updated=1:length(obs))
         end
     end
 end
+
+function score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
+    M = similar(W)
+    cursor = 1
+    for i in 1:length(bin_intra)
+        for j in 1:length(bin_intra)
+            if j >= i
+                if i == j
+                    M[i, i] = Fauxcurrences._distance_between_binned_distributions(bin_intra[i], bin_s_intra[i])
+                else
+                    M[i, j] = M[j, i] = Fauxcurrences._distance_between_binned_distributions(bin_inter[cursor], bin_s_inter[cursor])
+                    cursor += 1
+                end
+            end
+        end
+    end
+    @info M
+
+    return (M.*W)[findall(!iszero, W)]
+
+
+end

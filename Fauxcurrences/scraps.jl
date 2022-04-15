@@ -6,6 +6,7 @@ using GBIF
 using Statistics
 using ProgressMeter
 using Random
+using LinearAlgebra
 
 # Use the Sulawesi example from the original paper
 _bbox = (left=118.2, right=125.8, bottom=-7.0, top=2.0)
@@ -39,6 +40,9 @@ obs = [Fauxcurrences.get_valid_coordinates(obs, layer) for obs in observations]
 # How many points per taxa do we want to simulate?
 points_to_generate = fill(35, length(obs))
 
+# Weight matrix: the intra-specific distances are slightly more important
+W = Fauxcurrences._weighted_components(length(obs), 0.6)
+
 # Pre-allocate the matrices
 obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_matrices(obs; samples=points_to_generate)
 
@@ -62,10 +66,8 @@ bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i
 # little bit of time - we can also probably pre-allocate the whole business
 
 # Measure the initial divergences
-d_intra = [Fauxcurrences._distance_between_binned_distributions(bin_intra[i], bin_s_intra[i]) for i in 1:length(sim_intra)]
-d_inter = [Fauxcurrences._distance_between_binned_distributions(bin_inter[i], bin_s_inter[i]) for i in 1:length(sim_inter)]
-D = vcat(d_intra, d_inter)
-optimum = mean(D)
+D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
+optimum = sum(D)
 
 progress = zeros(Float64, 200_000)
 scores = zeros(Float64, (length(D), length(progress)))
@@ -98,12 +100,8 @@ for i in 2:length(progress)
     bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)]
 
     # Measure the initial divergences
-    d_intra = [Fauxcurrences._distance_between_binned_distributions(bin_intra[i], bin_s_intra[i]) for i in 1:length(sim_intra)]
-    d_inter = [Fauxcurrences._distance_between_binned_distributions(bin_inter[i], bin_s_inter[i]) for i in 1:length(sim_inter)]
-
-    # Measure the performance
-    D = vcat(d_intra, d_inter)
-    candidate = mean(D)
+    D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
+    candidate = sum(D)
 
     scores[:, i] .= D
 

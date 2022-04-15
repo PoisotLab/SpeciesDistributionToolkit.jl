@@ -11,6 +11,8 @@ using StatsBase
 const _earth_radius = 6371.0
 const _distancefunction = Distances.Haversine(_earth_radius)
 
+include("weightmatrices.jl")
+
 include("coordinates.jl")
 
 include("utilities.jl")

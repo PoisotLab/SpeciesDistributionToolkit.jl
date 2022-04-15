@@ -68,7 +68,7 @@ bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i
 # Measure the initial divergences
 D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
 
-progress = zeros(Float64, 100_000)
+progress = zeros(Float64, 200_000)
 scores = zeros(Float64, (length(D), length(progress)))
 progress[1] = sum(D)
 

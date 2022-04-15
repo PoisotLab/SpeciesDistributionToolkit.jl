@@ -87,6 +87,7 @@ yaxis!("Jensen-Shannon distance", (0, 1))
 p = [plot(layer, frame=:none, c=:alpine, cbar=false, size=(1000, 1000)) for i in 1:length(sim), j in 1:2]
 c = distinguishable_colors(length(sim) + 2)[(end-length(sim)+1):end]
 for i in 1:length(sim)
+    title!(p[i,1], taxa[i].name)
     scatter!(p[i, 1], obs[i][1, :], obs[i][2, :], lab="", ms=8, mc=:white, msc=c[i], msw=1.0)
     scatter!(p[i, 2], sim[i][1, :], sim[i][2, :], lab="", ms=8, mc=:white, msc=c[i], msw=1.0, m=:diamond)
 end

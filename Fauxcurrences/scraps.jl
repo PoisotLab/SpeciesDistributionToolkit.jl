@@ -35,7 +35,7 @@ end
 # of cells with at least one observation
 
 # Set a seed
-Random.seed!(616525434)
+Random.seed!(616525434012345)
 
 # Generate the observation distances
 obs = [Fauxcurrences.get_valid_coordinates(obs, layer) for obs in observations]
@@ -43,8 +43,8 @@ obs = [Fauxcurrences.get_valid_coordinates(obs, layer) for obs in observations]
 # How many points per taxa do we want to simulate?
 points_to_generate = fill(35, length(obs))
 
-# Weight matrix: the intra-specific distances are slightly more important
-W = Fauxcurrences._weighted_components(length(obs), 1.0)
+# Weight matrix
+W = Fauxcurrences._weighted_components(length(taxa), 0.5)
 
 # Pre-allocate the matrices
 obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_matrices(obs; samples=points_to_generate)
@@ -68,7 +68,7 @@ bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i
 # Measure the initial divergences
 D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
 
-progress = zeros(Float64, 20_000)
+progress = zeros(Float64, 100_000)
 scores = zeros(Float64, (length(D), length(progress)))
 progress[1] = sum(D)
 

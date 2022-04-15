@@ -31,16 +31,13 @@ end
 # TODO: we can probably definitely thin the points in order to be within a set
 # value of the  empirical distribution, which would be a lot faster
 
-# TODO: only get the bins when the distribution has changed, which might cut a
-# little bit of time - we can also probably pre-allocate the whole business
-
 # TODO: get a way to thin the observations by using a raster -- get the centroid
 # of cells with at least one observation
 
-# TODO: pre-allocate the container for the bins
+# TODO: only get the bins when the distribution has changed, which might cut a
+# little bit of time - we can also probably pre-allocate the whole business
 
-# TODO: wrap the code in scraps.jl in a function performing a single step of the
-# algorithm
+# TODO: pre-allocate the container for the bins
 
 # Set a seed
 Random.seed!(616525434)
@@ -75,56 +72,18 @@ bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i
 
 # Measure the initial divergences
 D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
-optimum = sum(D)
 
-progress = zeros(Float64, 2_000)
+progress = zeros(Float64, 20_000)
 scores = zeros(Float64, (length(D), length(progress)))
-scores[:, 1] .= D
-progress[1] = optimum
+progress[1] = sum(D)
 
 p = Progress(length(progress); showspeed=true)
 for i in 2:length(progress)
-    # Get a random set of points to change
-    updated_set = rand(1:length(sim))
-
-    # Get a random point to change in the layer
-    _position = rand(1:size(sim[updated_set], 2))
-
-    # Save the old point
-    current_point = sim[updated_set][:, _position]
-
-    # Generate a new proposition
-    sim[updated_set][:, _position] .= Fauxcurrences._generate_new_random_point(layer, current_point, obs_intra[updated_set])
-    Fauxcurrences.measure_interspecific_distances!(sim_inter, sim; updated=updated_set)
-    Fauxcurrences.measure_intraspecific_distances!(sim_intra, sim; updated=updated_set)
-    while (~all(map(maximum, sim_inter) .<= map(maximum, obs_inter))) & (~all(map(maximum, sim_intra) .<= map(maximum, obs_intra)))
-        sim[updated_set][:, _position] .= Fauxcurrences._generate_new_random_point(layer, current_point, obs_intra[updated_set])
-        Fauxcurrences.measure_interspecific_distances!(sim_inter, sim; updated=updated_set)
-        Fauxcurrences.measure_intraspecific_distances!(sim_intra, sim; updated=updated_set)
-    end
-
-    # Get the bins for the simulated distance matrices - note that the upper bound is always the observed maximum
-    bin_s_intra = [Fauxcurrences._bin_distribution(sim_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)]
-    bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)]
-
-    # Measure the initial divergences
-    D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
-    candidate = sum(D)
-
-    scores[:, i] .= D
-
-    if candidate < optimum
-        optimum = candidate
-    else
-        sim[updated_set][:, _position] .= current_point
-    end
-    ProgressMeter.next!(p; showvalues=[(:optimum, optimum)])
-    progress[i] = optimum
+    progress[i] = Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, progress[i-1])
+    ProgressMeter.next!(p; showvalues=[(:Optimum, progress[i])])
 end
 
 # Performance change plot
-#plot(scores[1:length(sim), :]', lab="", frame=:box, c=:grey, dpi=400)
-#plot(scores[(length(sim)+1):end, :]', lab="", c=:lightgrey)
 plot(progress, c=:black, lw=2, lab="Overall", dpi=400)
 xaxis!("Iteration step", (1, length(progress)))
 yaxis!("Jensen-Shannon distance", (0, 1))

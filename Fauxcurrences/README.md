@@ -111,6 +111,57 @@ sim = Fauxcurrences.preallocate_simulated_points(obs; samples=points_to_generate
 Fauxcurrences.bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
 ~~~
 
+**Step 6**. Bin the distance matrices, to prepare the scoring of the initial solution.
+
+~~~julia
+# Get the bins for the observed distance matrices
+bin_intra = [Fauxcurrences._bin_distribution(obs_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)]
+bin_inter = [Fauxcurrences._bin_distribution(obs_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)]
+
+# Get the bins for the simulated distance matrices - note that the upper bound is always the observed maximum
+bin_s_intra = [Fauxcurrences._bin_distribution(sim_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)]
+bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)]
+~~~
+
+This version of the `_bin_distribution` function is allocating an array for the
+bins, but the internal function is over-writing it, to avoid unwanted
+allocations.
+
+**Step 7**. Measure the initial divergence between the observed and simulated distributions.
+
+~~~julia
+# Measure the initial divergences
+D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
+~~~
+
+This step will return a vector, the sum of which is the total divergence between
+the matrices.
+
+**Step 8**. Setup the actual run. This step has infinitely many variations, as
+`Fauxcurrences` only offers a method to do *a single step forward*. In this
+example, we setup a `ProgressMeter.Progress` object, and then run 5x10⁵ steps.
+
+~~~julia
+progress = zeros(Float64, 200_000)
+progress[1] = sum(D)
+progbar = ProgressMeter.Progress(length(progress); showspeed=true)
+~~~
+
+**Step 9**. Run! The `step!` function takes most of what we have allocated so
+far, which is a lot, but allows considerable performance gains. The last
+argument to `step!` is the current divergence, and the return value of `step!`
+(in addition to modifying the simulated points) is the new divergence.
+
+~~~julia
+for i in 2:length(progress)
+    progress[i] = Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[i-1])
+    ProgressMeter.next!(progbar; showvalues=[(:Optimum, progress[i])])
+end
+~~~
+
+During this time, you can setup a counter for steps without improvement, in
+order to cut the runs early if required.
+
 ## Suspected and know changes to the original package
 
 The changes are classified by whether or not we **KNOW** or **SUSPECT** a

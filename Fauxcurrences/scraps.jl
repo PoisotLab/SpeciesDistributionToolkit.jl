@@ -68,14 +68,13 @@ bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i
 # Measure the initial divergences
 D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
 
-progress = zeros(Float64, 200_000)
-scores = zeros(Float64, (length(D), length(progress)))
+progress = zeros(Float64, 500_000)
 progress[1] = sum(D)
+progbar = ProgressMeter.Progress(length(progress); showspeed=true)
 
-p = Progress(length(progress); showspeed=true)
 for i in 2:length(progress)
     progress[i] = Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[i-1])
-    ProgressMeter.next!(p; showvalues=[(:Optimum, progress[i])])
+    ProgressMeter.next!(progbar; showvalues=[(:Optimum, progress[i])])
 end
 
 # Performance change plot

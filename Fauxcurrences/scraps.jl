@@ -114,9 +114,6 @@ for i in 2:length(progress)
     progress[i] = optimum
 end
 
-# TODO: see if there is a weighted version of the JS divergence, in which case
-# use this based on a species x species matrix of association score
-
 # Performance change plot
 #plot(scores[1:length(sim), :]', lab="", frame=:box, c=:grey, dpi=400)
 #plot(scores[(length(sim)+1):end, :]', lab="", c=:lightgrey)

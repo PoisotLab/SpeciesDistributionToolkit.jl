@@ -39,12 +39,15 @@ benchmarks, but in practice the package is going to spend a lot of time running
 it. It is a prime candidate for optimisation.
 """
 function _bin_distribution(D::Matrix{Float64}, m::Float64)::Vector{Float64}
-    bins = 21
+    c = zeros(Float64, 21)
+    _bin_distribution!(c, D, m)
+end
+
+function _bin_distribution!(c::Vector{Float64}, D::Matrix{Float64}, m::Float64)::Vector{Float64}
     t = prod(size(D))
-    r = LinRange(0.0, m + eps(typeof(m)), bins + 1)
-    c = zeros(Float64, bins)
-    @inbounds for i in 1:bins
-        c[i] = count(x -> r[i]<x<r[i+1], D)/t
+    r = LinRange(0.0, m + eps(typeof(m)), length(c) + 1)
+    @inbounds for i in 1:length(c)
+        c[i] = count(x -> r[i] < x < r[i+1], D) / t
     end
     return c
 end

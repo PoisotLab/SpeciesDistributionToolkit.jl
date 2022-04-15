@@ -34,11 +34,6 @@ end
 # TODO: get a way to thin the observations by using a raster -- get the centroid
 # of cells with at least one observation
 
-# TODO: only get the bins when the distribution has changed, which might cut a
-# little bit of time - we can also probably pre-allocate the whole business
-
-# TODO: pre-allocate the container for the bins
-
 # Set a seed
 Random.seed!(616525434)
 
@@ -79,7 +74,7 @@ progress[1] = sum(D)
 
 p = Progress(length(progress); showspeed=true)
 for i in 2:length(progress)
-    progress[i] = Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, progress[i-1])
+    progress[i] = Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[i-1])
     ProgressMeter.next!(p; showvalues=[(:Optimum, progress[i])])
 end
 

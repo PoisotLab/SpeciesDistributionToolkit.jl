@@ -1,4 +1,4 @@
-function step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, distance)
+function step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, distance)
     # Get a random set of points to change
     updated_set = rand(1:length(sim))
 
@@ -19,8 +19,8 @@ function step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_in
     end
 
     # Get the bins for the simulated distance matrices - note that the upper bound is always the observed maximum
-    bin_s_intra = [Fauxcurrences._bin_distribution(sim_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)]
-    bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)]
+    [Fauxcurrences._bin_distribution!(bin_s_intra[i], sim_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)]
+    [Fauxcurrences._bin_distribution!(bin_s_inter[i], sim_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)]
 
     # Measure the divergences
     D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)

@@ -108,9 +108,5 @@ function score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
             end
         end
     end
-    @info M
-
     return (M.*W)[findall(!iszero, W)]
-
-
 end

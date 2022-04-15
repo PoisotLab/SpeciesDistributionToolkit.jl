@@ -41,7 +41,7 @@ obs = [Fauxcurrences.get_valid_coordinates(obs, layer) for obs in observations]
 points_to_generate = fill(35, length(obs))
 
 # Weight matrix: the intra-specific distances are slightly more important
-W = Fauxcurrences._weighted_components(length(obs), 0.6)
+W = Fauxcurrences._weighted_components(length(obs), 1.0)
 
 # Pre-allocate the matrices
 obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_matrices(obs; samples=points_to_generate)
@@ -69,7 +69,7 @@ bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i
 D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
 optimum = sum(D)
 
-progress = zeros(Float64, 200_000)
+progress = zeros(Float64, 2_000)
 scores = zeros(Float64, (length(D), length(progress)))
 scores[:, 1] .= D
 progress[1] = optimum

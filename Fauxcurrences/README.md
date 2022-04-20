@@ -193,7 +193,7 @@ yaxis!("Density", 0, 0.2)
 title!("Inter-specific distances")
 ~~~
 
-## Suspected and know changes to the original package
+## Suspected and known changes to the original package
 
 The changes are classified by whether or not we **KNOW** or **SUSPECT** a
 change, and further by whether the change is a **difference** (the two packages

@@ -13,6 +13,10 @@ functions.
 
 ![demo.png](demo.png)
 
+The citation for the original `fauxcurrence` paper is
+
+> Osborne, O. G., Fell, H. G., Atkins, H., van Tol, J., Phillips, D., Herrera‐Alsina, L., Mynard, P., Bocedi, G., Gubry‐Rangin, C., Lancaster, L. T., Creer, S., Nangoy, M., Fahri, F., Lupiyaningdyah, P., Sudiana, I. M., Juliandi, B., Travis, J. M. J., Papadopulos, A. S. T., & Algar, A. C. (2022). Fauxcurrence: Simulating multi‐species occurrences for null models in species distribution modelling and biogeography. Ecography. https://doi.org/10.1111/ecog.05880
+
 ## Why?
 
 Interoperability: this package uses `SimpleSDMLayers`, `Distances`, and `GBIF`

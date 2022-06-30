@@ -9,14 +9,14 @@ config = Dict(
         "execute" => true,
         "flavor" => Literate.CommonMarkFlavor(),
         "credit" => false,
-        "name" => joinpath("docs", "index")
+        "name" => "index"
     ),
     :ipynb => Dict(
         "execute" => true,
         "credit" => false,
-        "name" => joinpath("docs", "fauxcurrences_demo")
+        "name" => "fauxcurrences_demo"
     )
 )
 
-Literate.markdown(joinpath(pwd(), "docs", "README.jl"); config=config[:md])
-Literate.notebook(joinpath(pwd(), "docs", "README.jl"); config=config[:ipynb])
+Literate.markdown(joinpath(pwd(), "README.jl"); config=config[:md])
+Literate.notebook(joinpath(pwd(), "README.jl"); config=config[:ipynb])

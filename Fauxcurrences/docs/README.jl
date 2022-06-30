@@ -225,6 +225,10 @@ end
 
 println("Improvement: $(round(progress[begin]/progress[end]; digits=2)) ×")
 
+# Note that for a small number of iterations (like we used here), this
+# improvement is unlikely to be very large; note also that the returns (in terms
+# of improvement over time) are very much diminishing.
+
 # You can also look at the per-matrix score, out of all the distance bins (set
 # as a package-wide variable, `Fauxcurrences._number_of_bins`, which you are
 # encouraged to tweak) -- under a *good* fit, the lines in `bin_intra` and

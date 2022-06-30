@@ -1,4 +1,6 @@
 """
+    _random_point(ref, d; R=Fauxcurrences._earth_radius)
+
 This solves the direct (first) geodetic problem assuming Haversine distances are
 a correct approximation of the distance between points.
 """
@@ -18,14 +20,21 @@ function _random_point(ref, d; R=Fauxcurrences._earth_radius)
 end
 
 """
-layer - for ref
-xy - points
-Dxy - distances
+    _generate_new_random_point(layer, points, distances)
+
+Generates a new random point (that must fall within a valued cell of `layer`)
+based on a collection of `points` and a `Dxy` distance matrix. The algorithm
+works by sampling a point, a distance in the matrix, and then generates a new
+point through a call to `_random_point`. Note that the distance is multiplied by
+the square root of a random deviate within the unit interval, in order to have
+points that fall uniformly within the circle defined by the sampled distance. In
+the absence of this correction, the distribution of points is biased towards the
+center.
 """
 function _generate_new_random_point(layer, points, distances)
-    point = _random_point(points[:, rand(1:size(points, 2))], rand(distances))
+    point = _random_point(points[:, rand(1:size(points, 2))], sqrt(rand()) * rand(distances))
     while isnothing(layer[point...])
-        point = _random_point(points[:, rand(1:size(points, 2))], rand(distances))
+        point = _random_point(points[:, rand(1:size(points, 2))], sqrt(rand()) * rand(distances))
     end
     return point
 end
@@ -68,7 +77,7 @@ end
 """
 Generates the internal distance matrices
 """
-function preallocate_distance_matrices(obs; samples=size.(obs,2))
+function preallocate_distance_matrices(obs; samples=size.(obs, 2))
     obs_intra = [zeros(Float64, (size(obs[i], 2), size(obs[i], 2))) for i in 1:length(obs)]
     obs_inter = [zeros(Float64, (size(obs[i], 2), size(obs[j], 2))) for i in 1:(length(obs)-1) for j in (i+1):length(obs)]
     sim_intra = [zeros(Float64, (samples[i], samples[i])) for i in 1:length(obs)]
@@ -88,8 +97,8 @@ function measure_interspecific_distances!(inter, obs; updated=1:length(obs))
     cursor = 1
     for i in 1:(length(obs)-1)
         for j in (i+1):length(obs)
-            if (i in updated)|(j in updated)
-               Distances.pairwise!(inter[cursor], Fauxcurrences._distancefunction, obs[i], obs[j])
+            if (i in updated) | (j in updated)
+                Distances.pairwise!(inter[cursor], Fauxcurrences._distancefunction, obs[i], obs[j])
             end
             cursor += 1
         end

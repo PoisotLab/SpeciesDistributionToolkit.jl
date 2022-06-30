@@ -282,36 +282,36 @@ created progress report:
 for i in 2:length(progress)
     progress[i] = Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[i-1])
     if iszero(i%20_000)
-        println("[$(lpad(100*round(Int64, i/length(progress)), 3))%]\tJS-divergence: $(round(progress[i]; digits=3))")
+        println("[$(lpad(round(Int64, 100*(i/length(progress))), 3))%]\tJS-divergence: $(round(progress[i]; digits=3))")
     end
 end
 ````
 
 ````
-[  0%]	JS-divergence: 0.258
-[  0%]	JS-divergence: 0.256
-[  0%]	JS-divergence: 0.245
-[  0%]	JS-divergence: 0.217
-[  0%]	JS-divergence: 0.211
-[  0%]	JS-divergence: 0.197
-[  0%]	JS-divergence: 0.195
-[  0%]	JS-divergence: 0.195
-[  0%]	JS-divergence: 0.195
-[  0%]	JS-divergence: 0.194
-[  0%]	JS-divergence: 0.194
-[  0%]	JS-divergence: 0.189
-[100%]	JS-divergence: 0.189
-[100%]	JS-divergence: 0.189
-[100%]	JS-divergence: 0.189
-[100%]	JS-divergence: 0.189
-[100%]	JS-divergence: 0.189
-[100%]	JS-divergence: 0.189
-[100%]	JS-divergence: 0.188
-[100%]	JS-divergence: 0.188
-[100%]	JS-divergence: 0.188
-[100%]	JS-divergence: 0.188
-[100%]	JS-divergence: 0.181
-[100%]	JS-divergence: 0.179
+[  4%]	JS-divergence: 0.258
+[  8%]	JS-divergence: 0.256
+[ 12%]	JS-divergence: 0.245
+[ 16%]	JS-divergence: 0.217
+[ 20%]	JS-divergence: 0.211
+[ 24%]	JS-divergence: 0.197
+[ 28%]	JS-divergence: 0.195
+[ 32%]	JS-divergence: 0.195
+[ 36%]	JS-divergence: 0.195
+[ 40%]	JS-divergence: 0.194
+[ 44%]	JS-divergence: 0.194
+[ 48%]	JS-divergence: 0.189
+[ 52%]	JS-divergence: 0.189
+[ 56%]	JS-divergence: 0.189
+[ 60%]	JS-divergence: 0.189
+[ 64%]	JS-divergence: 0.189
+[ 68%]	JS-divergence: 0.189
+[ 72%]	JS-divergence: 0.189
+[ 76%]	JS-divergence: 0.188
+[ 80%]	JS-divergence: 0.188
+[ 84%]	JS-divergence: 0.188
+[ 88%]	JS-divergence: 0.188
+[ 92%]	JS-divergence: 0.181
+[ 96%]	JS-divergence: 0.179
 [100%]	JS-divergence: 0.179
 
 ````
@@ -337,7 +337,10 @@ Improvement: 2.23 ×
 
 Note that for a small number of iterations (like we used here), this
 improvement is unlikely to be very large; note also that the returns (in terms
-of improvement over time) are very much diminishing.
+of improvement over time) are very much diminishing. The good news is that
+re-starting the process is as easy as running the loop with calls to `step!`
+again, as the packages has modified the matrices, and is ready to restart at
+any time.
 
 You can also look at the per-matrix score, out of all the distance bins (set
 as a package-wide variable, `Fauxcurrences._number_of_bins`, which you are

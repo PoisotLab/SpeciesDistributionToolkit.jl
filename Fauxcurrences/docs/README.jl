@@ -254,11 +254,11 @@ println("Improvement: $(round(progress[begin]/progress[end]; digits=2)) ×")
 # but for the moment, these seem to require more guesses about the parameters
 # than we are comfortable with.
 
-# **KNOWN/addition** The number of points to simulate can be fixed *per species*
-# - this is important because we may want to benchmark algorithms under the
-# unrealistic assumption that the sampling effort is the same. It also allows
-# users to generate smaller samples of simulated points, which is useful if some
-# species have a lot of occurrences.
+# **KNOWN/addition** The number of points to simulate can be fixed *per
+# species*, which is important because we may want to benchmark algorithms under
+# the unrealistic assumption that the sampling effort is the same. It also
+# allows users to generate smaller samples of simulated points, which is useful
+# if some species have a lot of occurrences.
 
 # **KNOWN/removal** The bootstrap phase (generation of the initial null) picks
 # distances from the distance matrix, rather than performing an estimation of

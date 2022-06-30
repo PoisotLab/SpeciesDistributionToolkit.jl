@@ -179,10 +179,10 @@ D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_
 # `ProgressMeter` will be a good way to track the progress of the run, and to
 # allow, for example, to stop it when a condition of criteria (absolute/relative
 # divergence, globally, on average, or per-species) are met. For the sake of
-# simplicity, we return the sum of all divergences, measures for 200000
+# simplicity, we return the sum of all divergences, measures for 500000
 # timesteps.
 
-progress = zeros(Float64, 200_000)
+progress = zeros(Float64, 500_000)
 progress[1] = sum(D)
 
 # ### Run!
@@ -201,8 +201,8 @@ progress[1] = sum(D)
 
 for i in 2:length(progress)
     progress[i] = Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[i-1])
-    if iszero(i%10_000)
-        println("[$(lpad(round(Int64, i/length(progress)), 3))%]\t$(progress[i])")
+    if iszero(i%20_000)
+        println("[$(lpad(100*round(Int64, i/length(progress)), 3))%]\tJS-divergence: $(round(progress[i]; digits=3))")
     end
 end
 

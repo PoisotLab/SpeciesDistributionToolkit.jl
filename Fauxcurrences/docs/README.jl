@@ -202,7 +202,7 @@ progress[1] = sum(D)
 for i in 2:length(progress)
     progress[i] = Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[i-1])
     if iszero(i%20_000)
-        println("[$(lpad(100*round(Int64, i/length(progress)), 3))%]\tJS-divergence: $(round(progress[i]; digits=3))")
+        println("[$(lpad(round(Int64, 100*(i/length(progress))), 3))%]\tJS-divergence: $(round(progress[i]; digits=3))")
     end
 end
 
@@ -220,7 +220,10 @@ println("Improvement: $(round(progress[begin]/progress[end]; digits=2)) ×")
 
 # Note that for a small number of iterations (like we used here), this
 # improvement is unlikely to be very large; note also that the returns (in terms
-# of improvement over time) are very much diminishing.
+# of improvement over time) are very much diminishing. The good news is that
+# re-starting the process is as easy as running the loop with calls to `step!`
+# again, as the packages has modified the matrices, and is ready to restart at
+# any time.
 
 # You can also look at the per-matrix score, out of all the distance bins (set
 # as a package-wide variable, `Fauxcurrences._number_of_bins`, which you are

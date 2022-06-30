@@ -252,11 +252,11 @@ method to do *a single step forward*. In most cases, using *e.g.*
 `ProgressMeter` will be a good way to track the progress of the run, and to
 allow, for example, to stop it when a condition of criteria (absolute/relative
 divergence, globally, on average, or per-species) are met. For the sake of
-simplicity, we return the sum of all divergences, measures for 200000
+simplicity, we return the sum of all divergences, measures for 500000
 timesteps.
 
 ````julia
-progress = zeros(Float64, 200_000)
+progress = zeros(Float64, 500_000)
 progress[1] = sum(D)
 ````
 
@@ -281,33 +281,38 @@ created progress report:
 ````julia
 for i in 2:length(progress)
     progress[i] = Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[i-1])
-    if iszero(i%10_000)
-        println("[$(lpad(round(Int64, i/length(progress)), 3))%]\t$(progress[i])")
+    if iszero(i%20_000)
+        println("[$(lpad(100*round(Int64, i/length(progress)), 3))%]\tJS-divergence: $(round(progress[i]; digits=3))")
     end
 end
 ````
 
 ````
-[  0%]	0.2826797326833009
-[  0%]	0.2575643392811751
-[  0%]	0.2568597660610004
-[  0%]	0.25624861682549815
-[  0%]	0.2560310587960286
-[  0%]	0.24531871837951783
-[  0%]	0.2287016433945011
-[  0%]	0.2170367064028843
-[  0%]	0.21067570539929376
-[  0%]	0.21067570539929376
-[  1%]	0.20791924276317314
-[  1%]	0.19657485644859934
-[  1%]	0.19540421217518547
-[  1%]	0.19540421217518547
-[  1%]	0.19540421217518547
-[  1%]	0.19540421217518547
-[  1%]	0.19540421217518547
-[  1%]	0.19540421217518547
-[  1%]	0.19540421217518547
-[  1%]	0.19449271695874998
+[  0%]	JS-divergence: 0.258
+[  0%]	JS-divergence: 0.256
+[  0%]	JS-divergence: 0.245
+[  0%]	JS-divergence: 0.217
+[  0%]	JS-divergence: 0.211
+[  0%]	JS-divergence: 0.197
+[  0%]	JS-divergence: 0.195
+[  0%]	JS-divergence: 0.195
+[  0%]	JS-divergence: 0.195
+[  0%]	JS-divergence: 0.194
+[  0%]	JS-divergence: 0.194
+[  0%]	JS-divergence: 0.189
+[100%]	JS-divergence: 0.189
+[100%]	JS-divergence: 0.189
+[100%]	JS-divergence: 0.189
+[100%]	JS-divergence: 0.189
+[100%]	JS-divergence: 0.189
+[100%]	JS-divergence: 0.189
+[100%]	JS-divergence: 0.188
+[100%]	JS-divergence: 0.188
+[100%]	JS-divergence: 0.188
+[100%]	JS-divergence: 0.188
+[100%]	JS-divergence: 0.181
+[100%]	JS-divergence: 0.179
+[100%]	JS-divergence: 0.179
 
 ````
 
@@ -326,7 +331,7 @@ println("Improvement: $(round(progress[begin]/progress[end]; digits=2)) ×")
 ````
 
 ````
-Improvement: 2.05 ×
+Improvement: 2.23 ×
 
 ````
 

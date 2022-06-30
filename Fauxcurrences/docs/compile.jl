@@ -9,12 +9,12 @@ config = Dict(
         "execute" => true,
         "flavor" => Literate.CommonMarkFlavor(),
         "credit" => false,
-        "name" => joinpath("docs", "README.md")
+        "name" => joinpath("docs", "README")
     ),
     :ipynb => Dict(
         "execute" => true,
         "credit" => false,
-        "name" => joinpath("docs", "fauxcurrences_demo.ipynb")
+        "name" => joinpath("docs", "fauxcurrences_demo")
     )
 )
 

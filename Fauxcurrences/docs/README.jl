@@ -65,6 +65,8 @@ using Fauxcurrences
 using SimpleSDMLayers
 using GBIF
 
+#-
+
 import Random
 Random.seed!(616525434012345)
 
@@ -88,6 +90,8 @@ raccoons = occurrences(taxon("Procyon lotor"),
     "decimalLatitude" => extrema(latitudes(layer)),
     "decimalLongitude" => extrema(longitudes(layer)),
     "limit" => 100)
+
+#-
 
 mice = occurrences(taxon("Peromyscus leucopus"),
     "hasCoordinate" => "true",
@@ -123,7 +127,7 @@ W = Fauxcurrences.weighted_components(length(obs), 0.75)
 # re-written many, many times. The upside is that, if this steps fits in your
 # memory, the entire workflow will also fit in your memory.
 
-obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_matrices(obs; samples=points_to_generate)
+obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_matrices(obs; samples=points_to_generate);
 
 # The entire workflow is designed to use multiple species (as most relevant
 # questions will require multiple species). Using a single-species approach only
@@ -135,20 +139,19 @@ obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_
 # bounds of these distances matrices, *even if the inter-specific distance are
 # weightless*.
 
-Fauxcurrences.measure_intraspecific_distances!(obs_intra, obs)
-
-Fauxcurrences.measure_interspecific_distances!(obs_inter, obs)
+Fauxcurrences.measure_intraspecific_distances!(obs_intra, obs);
+Fauxcurrences.measure_interspecific_distances!(obs_inter, obs);
 
 # ### Bootstrap the initial set of points
 
 # This is a two-step process, involving first the pre-allocation of coordinate
 # matrices, and second the population of these matrices using random points.
 
-sim = Fauxcurrences.preallocate_simulated_points(obs; samples=points_to_generate)
+sim = Fauxcurrences.preallocate_simulated_points(obs; samples=points_to_generate);
 
 # The actual bootstrapping can be a little longer:
 
-Fauxcurrences.bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
+Fauxcurrences.bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter);
 
 # ### Bin the distance matrices
 
@@ -157,13 +160,10 @@ Fauxcurrences.bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_i
 # matrix where the maximum distance is larger than the maximum distance in the
 # empirical matrix.
 
-bin_intra = [Fauxcurrences._bin_distribution(obs_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)]
-
-bin_inter = [Fauxcurrences._bin_distribution(obs_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)]
-
-bin_s_intra = [Fauxcurrences._bin_distribution(sim_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)]
-
-bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)]
+bin_intra = [Fauxcurrences._bin_distribution(obs_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)];
+bin_inter = [Fauxcurrences._bin_distribution(obs_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)];
+bin_s_intra = [Fauxcurrences._bin_distribution(sim_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)];
+bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)];
 
 # This version of the `_bin_distribution` function is allocating an array for
 # the bins, but the internal function is over-writing it, to avoid unwanted

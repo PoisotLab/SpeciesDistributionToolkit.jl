@@ -95,31 +95,25 @@ SDM predictor → 1255×1205 grid with 863533 Float32-valued cells
 ````
 
 This covers a small area in the Laurentians, north of Montréal, so looking for
-racoons and white-footed mice is a safe bet:
+racoons, deers, and white-footed mice is a safe bet:
 
 ````julia
-raccoons = occurrences(taxon("Procyon lotor"),
+taxa = taxon.(["Procyon lotor", "Odocoileus virginianus", "Peromyscus leucopus"])
+
+observations = [occurrences(t,
     "hasCoordinate" => "true",
     "decimalLatitude" => extrema(latitudes(layer)),
     "decimalLongitude" => extrema(longitudes(layer)),
-    "limit" => 100)
+    "limit" => 100) for t in taxa]
 ````
 
 ````
-GBIF records: downloaded 100 out of 368
+3-element Vector{GBIF.GBIFRecords}:
+ GBIF records: downloaded 100 out of 368
 
-````
+ GBIF records: downloaded 100 out of 799
 
-````julia
-mice = occurrences(taxon("Peromyscus leucopus"),
-    "hasCoordinate" => "true",
-    "decimalLatitude" => extrema(latitudes(layer)),
-    "decimalLongitude" => extrema(longitudes(layer)),
-    "limit" => 100)
-````
-
-````
-GBIF records: downloaded 41 out of 41
+ GBIF records: downloaded 41 out of 41
 
 ````
 
@@ -127,12 +121,13 @@ The last step is to turn these occurrences into a matrix of latitudes and
 longitudes:
 
 ````julia
-obs = [Fauxcurrences.get_valid_coordinates(sp, layer) for sp in [raccoons, mice]]
+obs = [Fauxcurrences.get_valid_coordinates(o, layer) for o in observations]
 ````
 
 ````
-2-element Vector{Matrix{Float64}}:
+3-element Vector{Matrix{Float64}}:
  [-73.948633 -74.060484 -74.879015 -74.879592 -74.876981 -73.914623 -74.876997 -73.754616 -73.832413 -74.870609 -73.492832 -73.866259 -74.035589 -72.641131 -74.618217; 45.545125 45.473934 46.380407 46.380325 46.378827 46.609248 46.378833 45.852488 45.565684 46.378721 45.697212 45.789065 45.809762 46.470866 46.219734]
+ [-74.585761 -74.586823 -74.876863 -74.876842 -74.566899 -73.518444 -74.589657 -74.595209 -73.610431 -74.470362 -73.746661 -73.507648 -73.50375 -73.520319 -73.515747 -74.777428 -73.152058 -73.127419 -74.879321 -74.876893 -73.499574 -73.517426 -73.507805 -73.791475 -74.586792 -74.599474 -73.515694 -73.913646 -73.751928; 46.128543 46.205704 46.378905 46.378876 46.223533 45.686388 46.175759 46.117711 46.191806 46.206837 45.72898 45.680209 45.696492 45.690761 45.67765 46.36145 46.435694 46.074111 46.380248 46.378876 45.690762 45.688794 45.68028 45.750856 46.201038 46.204139 45.679161 46.610041 45.697441]
  [-74.316667 -74.2 -74.1644; 45.483333 45.833333 45.4683]
 ````
 
@@ -147,7 +142,8 @@ points_to_generate = fill(30, length(obs))
 ````
 
 ````
-2-element Vector{Int64}:
+3-element Vector{Int64}:
+ 30
  30
  30
 ````
@@ -163,9 +159,10 @@ W = Fauxcurrences.weighted_components(length(obs), 0.75)
 ````
 
 ````
-2×2 Matrix{Float64}:
- 0.375  0.25
- 0.0    0.375
+3×3 Matrix{Float64}:
+ 0.25  0.0833333  0.0833333
+ 0.0   0.25       0.0833333
+ 0.0   0.0        0.25
 ````
 
 ### Pre-allocate the objects
@@ -239,10 +236,13 @@ D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_
 ````
 
 ````
-3-element Vector{Float64}:
- 0.1583016445773573
- 0.16413952617288444
- 0.22733293975896432
+6-element Vector{Float64}:
+ 0.08352051225167792
+ 0.023587420165084763
+ 0.11066876505627615
+ 0.0314278095584371
+ 0.03554438672171188
+ 0.11445125913584189
 ````
 
 ### Setup the actual run
@@ -261,7 +261,7 @@ progress[1] = sum(D)
 ````
 
 ````
-0.549774110509206
+0.39920015288902977
 ````
 
 ### Run!
@@ -274,30 +274,126 @@ modifying the simulated points) is the new divergence.
 Before running the actual loop, it is a good idea to time a handful of steps?
 Why a handful? Because Julia do be compiling, and because depending on the
 structure of your points, the problem might be more or less difficult to
-solve. We'll do one here.
-
-````julia
-Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[1])
-@time Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[1])
-````
-
-````
-0.549774110509206
-````
-
-Using `ProgressMeter` will make the timing of the whole process a lot more
-informative.
+solve. In practice, using `ProgressMeter` will make the timing of the whole
+process a lot more informative.
 
 ````julia
 for i in 2:length(progress)
     progress[i] = Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[i-1])
+    if iszero(i%2000)
+        println("Divergence: $(progress[i])")
+    end
 end
 ````
 
-Something not done here is to setup a counter for the number of steps without
-imporvement after an arbitrary burn-in, to avoid using up cycles for no
-progress. This would require two additional arguments (minimum number of
-steps, acceptable total divergence), and is relatively easy to implement.
+````
+Divergence: 0.2904279121022946
+Divergence: 0.2904279121022946
+Divergence: 0.28940094153653184
+Divergence: 0.2826797326833009
+Divergence: 0.2826797326833009
+Divergence: 0.2738913251756877
+Divergence: 0.2626107839121013
+Divergence: 0.2575643392811751
+Divergence: 0.2575643392811751
+Divergence: 0.2575643392811751
+Divergence: 0.2575643392811751
+Divergence: 0.2575643392811751
+Divergence: 0.2575643392811751
+Divergence: 0.2568597660610004
+Divergence: 0.2568597660610004
+Divergence: 0.2568597660610004
+Divergence: 0.2568597660610004
+Divergence: 0.25624861682549815
+Divergence: 0.25624861682549815
+Divergence: 0.25624861682549815
+Divergence: 0.2560310587960286
+Divergence: 0.2560310587960286
+Divergence: 0.2560310587960286
+Divergence: 0.2560310587960286
+Divergence: 0.2560310587960286
+Divergence: 0.2560310587960286
+Divergence: 0.25593180037161456
+Divergence: 0.25593180037161456
+Divergence: 0.24616087185479693
+Divergence: 0.24531871837951783
+Divergence: 0.24405024052608365
+Divergence: 0.2332860831679166
+Divergence: 0.22875221156902142
+Divergence: 0.2287016433945011
+Divergence: 0.2287016433945011
+Divergence: 0.22589234441603254
+Divergence: 0.22589234441603254
+Divergence: 0.2241583260317369
+Divergence: 0.2208357966869679
+Divergence: 0.2170367064028843
+Divergence: 0.2170367064028843
+Divergence: 0.2170367064028843
+Divergence: 0.21332575608115317
+Divergence: 0.21067570539929376
+Divergence: 0.21067570539929376
+Divergence: 0.21067570539929376
+Divergence: 0.21067570539929376
+Divergence: 0.21067570539929376
+Divergence: 0.21067570539929376
+Divergence: 0.21067570539929376
+Divergence: 0.21067570539929376
+Divergence: 0.21067570539929376
+Divergence: 0.21067570539929376
+Divergence: 0.21020025672703363
+Divergence: 0.20791924276317314
+Divergence: 0.20737707744145334
+Divergence: 0.20247743917386424
+Divergence: 0.19794405601522333
+Divergence: 0.1973624049026042
+Divergence: 0.19657485644859934
+Divergence: 0.19657485644859934
+Divergence: 0.19629739688284512
+Divergence: 0.19629739688284512
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19540421217518547
+Divergence: 0.19449271695874998
+Divergence: 0.19449271695874998
+Divergence: 0.19449271695874998
+Divergence: 0.19449271695874998
+
+````
+
+The call to `step!` is... lengthy. The reason for this is very simple: `step!`
+will update as much information as it can *in place* when a change is made.
+This means that there are no objects creates (only changed), but the downside
+is that the function needs to be given a lot of information.
 
 ### Congratulations, your run is done!
 
@@ -309,9 +405,13 @@ println("Improvement: $(round(progress[begin]/progress[end]; digits=2)) ×")
 ````
 
 ````
-Improvement: 1.56 ×
+Improvement: 2.05 ×
 
 ````
+
+Note that for a small number of iterations (like we used here), this
+improvement is unlikely to be very large; note also that the returns (in terms
+of improvement over time) are very much diminishing.
 
 You can also look at the per-matrix score, out of all the distance bins (set
 as a package-wide variable, `Fauxcurrences._number_of_bins`, which you are

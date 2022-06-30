@@ -40,6 +40,8 @@ function _generate_new_random_point(layer, points, distances)
 end
 
 """
+    _bin_distribution(D::Matrix{Float64}, m::Float64)::Vector{Float64}
+
 Bin a distance matrix, using a default count of 20 bins. This function is
 instrumental in the package, as it is used internally to calculate the
 divergence between the observed and simulated distances distributions. This
@@ -52,6 +54,12 @@ function _bin_distribution(D::Matrix{Float64}, m::Float64)::Vector{Float64}
     _bin_distribution!(c, D, m)
 end
 
+"""
+    _bin_distribution!(c::Vector{Float64}, D::Matrix{Float64}, m::Float64)::Vector{Float64}
+
+In-place allocation of the distribution binning. This function is the one that
+is used internally to over-write the scores.
+"""
 function _bin_distribution!(c::Vector{Float64}, D::Matrix{Float64}, m::Float64)::Vector{Float64}
     t = prod(size(D))
     r = LinRange(0.0, m + eps(typeof(m)), length(c) + 1)
@@ -62,12 +70,14 @@ function _bin_distribution!(c::Vector{Float64}, D::Matrix{Float64}, m::Float64):
 end
 
 """
-Returns the Jensen-Shannon distance (i.e. the square root of the divergence) for
-the two distance matrices. This version is prefered to the KL divergence in the
-original implementation as it prevents the `Inf` values when p(x)=0 and q(x)>0.
-The JS divergences is bounded between 0 and the natural log of 2, which gives an
-absolute measure of fit allowing to compare the solutions. Note that the value
-returned is *already* corrected, so it can be at most 1.0, and at best
+    _distance_between_binned_distributions(p, q)
+
+Returns the Jensen-Shannon distance (i.e. the square root of the JS divergence)
+for the two distance matrices. This version is prefered to the KL divergence in
+the original implementation as it prevents the `Inf` values when p(x)=0 and
+q(x)>0. The JS divergences is bounded between 0 and the natural log of 2, which
+gives an absolute measure of fit allowing to compare the solutions. Note that
+the value returned is *already* corrected, so it can be at most 1.0, and at best
 (identical matrices) 0.
 """
 function _distance_between_binned_distributions(p, q)
@@ -75,7 +85,9 @@ function _distance_between_binned_distributions(p, q)
 end
 
 """
-Generates the internal distance matrices
+    preallocate_distance_matrices(obs; samples=size.(obs, 2))
+
+Generates the internal distance matrices.
 """
 function preallocate_distance_matrices(obs; samples=size.(obs, 2))
     obs_intra = [zeros(Float64, (size(obs[i], 2), size(obs[i], 2))) for i in 1:length(obs)]
@@ -85,6 +97,13 @@ function preallocate_distance_matrices(obs; samples=size.(obs, 2))
     return obs_intra, obs_inter, sim_intra, sim_inter
 end
 
+"""
+    measure_intraspecific_distances!(intra, obs; updated=1:length(obs))
+
+Updates the matrices for intraspecific distances; note that internally, the
+`updated` keyword argument is going to change, to only replace what needs to be
+replaced.
+"""
 function measure_intraspecific_distances!(intra, obs; updated=1:length(obs))
     for i in 1:length(obs)
         if i in updated
@@ -93,6 +112,13 @@ function measure_intraspecific_distances!(intra, obs; updated=1:length(obs))
     end
 end
 
+"""
+    measure_interspecific_distances!(inter, obs; updated=1:length(obs))
+
+Updates the matrices for interspecific distances; note that internally, the
+`updated` keyword argument is going to change, to only replace what needs to be
+replaced.
+"""
 function measure_interspecific_distances!(inter, obs; updated=1:length(obs))
     cursor = 1
     for i in 1:(length(obs)-1)
@@ -105,6 +131,11 @@ function measure_interspecific_distances!(inter, obs; updated=1:length(obs))
     end
 end
 
+"""
+    score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
+
+Performs the actual score of the distributions, based on the weight matrix.
+"""
 function score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
     M = similar(W)
     cursor = 1

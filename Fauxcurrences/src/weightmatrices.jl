@@ -1,4 +1,6 @@
 """
+    equal_weights(n)
+
 All matrices have the same weight
 """
 function equal_weights(n)
@@ -12,6 +14,8 @@ function equal_weights(n)
 end
 
 """
+    weighted_components(n, intra)
+
 The intra-specific component has relative weight `intra` -- for a value of 1.0,
 the model is a purely intra-specific one
 """
@@ -30,6 +34,8 @@ function weighted_components(n, intra)
 end
 
 """
+    equally_weighted_components(n)
+
 The intra and inter components have the same weight, which means the
 inter-specific matrices can have less cumulative weight
 """

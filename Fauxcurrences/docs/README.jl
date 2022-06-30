@@ -83,26 +83,20 @@ Random.seed!(616525434012345)
 layer = geotiff(SimpleSDMPredictor, joinpath(dirname(pathof(SimpleSDMLayers)), "..", "data", "connectivity.tiff"))
 
 # This covers a small area in the Laurentians, north of Montréal, so looking for
-# racoons and white-footed mice is a safe bet:
+# racoons, deers, and white-footed mice is a safe bet:
 
-raccoons = occurrences(taxon("Procyon lotor"),
+taxa = taxon.(["Procyon lotor", "Odocoileus virginianus", "Peromyscus leucopus"])
+
+observations = [occurrences(t,
     "hasCoordinate" => "true",
     "decimalLatitude" => extrema(latitudes(layer)),
     "decimalLongitude" => extrema(longitudes(layer)),
-    "limit" => 100)
-
-#-
-
-mice = occurrences(taxon("Peromyscus leucopus"),
-    "hasCoordinate" => "true",
-    "decimalLatitude" => extrema(latitudes(layer)),
-    "decimalLongitude" => extrema(longitudes(layer)),
-    "limit" => 100)
+    "limit" => 100) for t in taxa]
 
 # The last step is to turn these occurrences into a matrix of latitudes and
 # longitudes:
 
-obs = [Fauxcurrences.get_valid_coordinates(sp, layer) for sp in [raccoons, mice]]
+obs = [Fauxcurrences.get_valid_coordinates(o, layer) for o in observations]
 
 # ### Parameters for the run
 
@@ -201,22 +195,21 @@ progress[1] = sum(D)
 # Before running the actual loop, it is a good idea to time a handful of steps?
 # Why a handful? Because Julia do be compiling, and because depending on the
 # structure of your points, the problem might be more or less difficult to
-# solve. We'll do one here.
-
-Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[1])
-@time Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[1])
-
-# Using `ProgressMeter` will make the timing of the whole process a lot more
-# informative.
+# solve. In practice, using `ProgressMeter` will make the timing of the whole
+# process a lot more informative. In this simple version, we rely on a manually
+# created progress report:
 
 for i in 2:length(progress)
     progress[i] = Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[i-1])
+    if iszero(i%10_000)
+        println("[$(lpad(round(Int64, i/length(progress)), 3))%]\t$(progress[i])")
+    end
 end
 
-# Something not done here is to setup a counter for the number of steps without
-# imporvement after an arbitrary burn-in, to avoid using up cycles for no
-# progress. This would require two additional arguments (minimum number of
-# steps, acceptable total divergence), and is relatively easy to implement.
+# The call to `step!` is... lengthy. The reason for this is very simple: `step!`
+# will update as much information as it can *in place* when a change is made.
+# This means that there are no objects creates (only changed), but the downside
+# is that the function needs to be given a lot of information.
 
 # ### Congratulations, your run is done!
 

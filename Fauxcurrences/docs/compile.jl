@@ -12,7 +12,7 @@ config = Dict(
         "name" => "index"
     ),
     :ipynb => Dict(
-        "execute" => true,
+        "execute" => false,
         "credit" => false,
         "name" => "fauxcurrences_demo"
     )

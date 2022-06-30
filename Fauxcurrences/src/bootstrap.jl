@@ -1,4 +1,6 @@
 """
+    bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
+
 Generates the initial proposition for points - this function generates the
 points for all taxa at once, so some knowledge of the distance matrices is
 required. Note that this function is modifying the *bootstraped* object, in
@@ -53,7 +55,13 @@ function bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
     end
 end
 
-function preallocate_simulated_points(obs; samples=size.(obs,2))
+"""
+    preallocate_simulated_points(obs; samples=size.(obs, 2))
+
+Create an empty matrix given a series of observations, and a number of samples
+to keep in the simulated dataset for each series of observations.
+"""
+function preallocate_simulated_points(obs; samples=size.(obs, 2))
     sim = [
         reshape(repeat(obs[i][:, 1], outer=samples[i]), (2, samples[i]))
         for i in 1:length(obs)

@@ -53,7 +53,7 @@ makedocs(
     ]
 )
 
-run(`find . -type f -size +40M -delete`)
+run(`find . -type f -size +5M -delete`)
 
 deploydocs(
     repo = "github.com/EcoJulia/SimpleSDMLayers.jl.git",

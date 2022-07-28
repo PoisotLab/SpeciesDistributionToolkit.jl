@@ -92,7 +92,11 @@ export bivariate
 
 # This next bit is about being able to change the path for raster assets
 # globally, which avoids duplication this argument across multiple functions.
-_layers_assets_path = get(ENV, "SDMLAYERS_PATH", "assets")
+_layers_assets_path = get(ENV, "SDMLAYERS_PATH", nothing)
+if isnothing(_layers_assets_path)
+    @warn "No SDMLAYERS_PATH environmental variable set, downloaded data will go to a temporary file, and be lost at the end of the session."
+    _layers_assets_path = tempdir()
+end
 isdir(_layers_assets_path) || mkpath(_layers_assets_path)
 
 # Fixes the export of clip when GBIF or others are loaded

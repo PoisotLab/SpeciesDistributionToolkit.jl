@@ -56,7 +56,6 @@ figures you are looking for!
 
 ---
 
-
 ![GitHub](https://img.shields.io/github/license/EcoJulia/SimpleSDMLayers.jl)
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) ![GitHub contributors](https://img.shields.io/github/contributors/EcoJulia/SimpleSDMLayers.jl) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/EcoJulia/SimpleSDMLayers.jl)

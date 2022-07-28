@@ -1,3 +1,5 @@
+ENV["SDMLAYERS_PATH"] = tempname() 
+
 using SimpleSDMLayers
 using Test
 

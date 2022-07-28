@@ -1,5 +1,9 @@
 push!(LOAD_PATH, joinpath("..", "src"))
 
+# Remove the environmental variable if it exists so layers go in temp storage -
+# this prevents the size of the repo from exploding
+ENV["SDMLAYERS_PATH"] = tempname()
+
 using Documenter, SimpleSDMLayers
 using GBIF
 using Statistics
@@ -21,9 +25,9 @@ for ENDING in ["examples", "sdm"]
 end
 
 makedocs(
-    sitename = "Simple SDM Layers",
-    modules = [SimpleSDMLayers],
-    pages = [
+    sitename="Simple SDM Layers",
+    modules=[SimpleSDMLayers],
+    pages=[
         "Home" => "index.md",
         "Manual" => [
             "Types" => "man/types.md",
@@ -56,7 +60,7 @@ makedocs(
 run(`find . -type f -size +5M -delete`)
 
 deploydocs(
-    repo = "github.com/EcoJulia/SimpleSDMLayers.jl.git",
-    push_preview = true,
-    devbranch = "main"
+    repo="github.com/EcoJulia/SimpleSDMLayers.jl.git",
+    push_preview=true,
+    devbranch="main"
 )

@@ -13,8 +13,7 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        version:
-          - ['1.6', '1.7', '1.8']
+        version: ['1.6', '1.7', '1.8']
         os:
           - ubuntu-latest
           - macOS-latest

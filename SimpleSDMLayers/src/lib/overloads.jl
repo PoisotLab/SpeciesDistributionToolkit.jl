@@ -294,8 +294,6 @@ Base.://(layer::T, n::Number) where {T <: SimpleSDMLayer} = broadcast(x -> x//n,
 Base.:%(n::Number, layer::T) where {T <: SimpleSDMLayer} = broadcast(x -> n%x, layer)
 Base.:%(layer::T, n::Number) where {T <: SimpleSDMLayer} = broadcast(x -> x%n, layer)
 
-"""
-"""
 function Base.findmax(layer::T) where {T <: SimpleSDMLayer}
     val, pos = findmax(collect(layer))
     return (val, keys(layer)[pos])

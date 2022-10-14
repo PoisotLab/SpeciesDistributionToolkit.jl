@@ -13,7 +13,7 @@ import Base: show
 import Base: ==
 import Base: isequal
 import Base: hash
-import Base: findmax, findmin, findall, findfirst, findlast
+import Base: findmax, findmin, findall
 
 """
     Base.show(io::IO, ::MIME"text/plain", layer::T) where {T <: SimpleSDMLayer}
@@ -306,12 +306,4 @@ end
 
 function Base.findall(f::Function, layer::T) where {T <: SimpleSDMLayer}
     return keys(layer)[findall(f, collect(layer))]
-end
-
-function Base.findfirst(f::Function, layer::T) where {T<:SimpleSDMLayer}
-    return keys(layer)[findfirst(f, collect(layer))]
-end
-
-function Base.findlast(f::Function, layer::T) where {T<:SimpleSDMLayer}
-    return keys(layer)[findlast(f, collect(layer))]
 end

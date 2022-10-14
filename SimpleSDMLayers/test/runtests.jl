@@ -10,6 +10,7 @@ tests = [
    "lat./lon." => "core/latlon.jl",
    "lat./lon. conversion" => "core/coordconvert.jl",
    "iteration" => "core/iteration.jl",
+   "extrema" => "core/extrema.jl",
    "tiling" => "core/tiling.jl",
    "setindex" => "core/setindex.jl",
    "overloads" => "overloads.jl",

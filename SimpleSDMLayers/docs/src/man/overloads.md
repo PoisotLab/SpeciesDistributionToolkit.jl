@@ -27,6 +27,11 @@ Base.min
 /
 ==
 isequal
+findmin
+findmax
+findfirst
+findlast
+findall
 ```
 
 ## From `Broadcast`

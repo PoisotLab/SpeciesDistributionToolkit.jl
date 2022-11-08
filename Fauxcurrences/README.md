@@ -1,5 +1,7 @@
 # Fauxcurrences.jl
 
+***MAINTENANCE MODE*** - this repo is being move to a monorepo with better integration between features
+
 This package is a *clean-room*, *feature-equivalent* re-write in Julia of most
 of the functionalities of the [`fauxcurrence` package for R][paper]. The
 original code is licensed under the GPL, and this package is licensed under the

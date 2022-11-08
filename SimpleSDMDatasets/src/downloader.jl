@@ -32,6 +32,7 @@ function downloader(
         joinpath(dir, fnm),
         SimpleSDMDatasets.filetype(data),
         SimpleSDMDatasets.bandnumber(data; kwargs...),
+        SimpleSDMDatasets.crs(data),
     )
 end
 
@@ -70,5 +71,6 @@ function downloader(
         joinpath(dir, fnm),
         SimpleSDMDatasets.filetype(data, future),
         SimpleSDMDatasets.bandnumber(data, future; kwargs...),
+        SimpleSDMDatasets.crs(data, future),
     )
 end

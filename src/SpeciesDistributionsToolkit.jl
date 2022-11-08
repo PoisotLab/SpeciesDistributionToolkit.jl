@@ -15,4 +15,7 @@ using Reexport
 # SimpleSDMDatasets for access to layers
 @reexport using SimpleSDMDatasets
 
+# Additional functions provided by the package
+include("integrations/gbif_layers.jl")
+
 end # module SpeciesDistributionsToolkit

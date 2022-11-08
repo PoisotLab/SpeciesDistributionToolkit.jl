@@ -99,10 +99,6 @@ isdir(_layers_assets_path) || mkpath(_layers_assets_path)
 export clip
 
 function __init__()
-    @require GBIF="ee291a33-5a6c-5552-a3c8-0f29a1181037" begin
-        @info "Loading GBIF support for SimpleSDMLayers.jl"
-        include("integrations/GBIF.jl")
-    end
     @require DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0" begin
         @info "Loading DataFrames support for SimpleSDMLayers.jl"
         include("integrations/DataFrames.jl")

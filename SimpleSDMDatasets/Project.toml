@@ -1,6 +1,6 @@
 name = "SimpleSDMDatasets"
 uuid = "2c7d61d0-5c73-410d-85b2-d2e7fbbdcefa"
-authors = ["Timothée Poisot (he/him) <timothee.poisot@umontreal.ca>"]
+authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 version = "0.0.1"
 
 [deps]

@@ -19,6 +19,7 @@ jobs:
         os: ['ubuntu-latest']
         arch: ['x64']
         experimental: [false]
+        package: ['SimpleSDMDatasets', 'GBIF', '@.']
     steps:
       - uses: actions/checkout@v2
       - uses: julia-actions/setup-julia@v1
@@ -27,10 +28,10 @@ jobs:
           arch: ${{ matrix.arch }}
       - uses: julia-actions/julia-buildpkg@latest
         with:
-          project: ./GBIF
+          project: ${{ matrix.package }}
       - uses: julia-actions/julia-runtest@latest
         with:
-          project: ./GBIF
+          project: ${{ matrix.package }}
           annotate: true
         env:
           PYTHON: ""

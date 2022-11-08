@@ -21,3 +21,12 @@ This enum stores the possible types of returned files. They are listed with
     _netcdf
     _ascii
 end
+
+"""
+    RasterProjection
+
+This enum stores the possible coordinate representation system of returned files. They are listed with `instances(RasterProjection)`.
+"""
+@enum RasterFileType begin
+    _wsg84
+end

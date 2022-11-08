@@ -221,3 +221,6 @@ layername(::R, ::F; kwargs...) where {R <: RasterData, F <: Future} = ""
 
 bandnumber(::R; kwargs...) where {R <: RasterData} = 1
 bandnumber(::R, ::F; kwargs...) where {R <: RasterData, F <: Future} = 1
+
+crs(::R) where {R <: RasterData} = _wsg84
+crs(data::R, future::F) where {R <: RasterData, F <: Future} = crs(data)

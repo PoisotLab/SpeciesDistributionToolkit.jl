@@ -9,13 +9,10 @@ on:
   pull_request:
 
 jobs:
-  test:
+  SimpleSDMDatasets:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
-    defaults:
-      run:
-        working-directory: SimpleSDMDatasets
     strategy:
       matrix:
         version: ['1.8']
@@ -29,7 +26,12 @@ jobs:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
       - uses: julia-actions/julia-buildpkg@latest
+        with:
+          project: ./GBIF
       - uses: julia-actions/julia-runtest@latest
+        with:
+          project: ./GBIF
+          annotate: true
         env:
           PYTHON: ""
           GKSwstype: "100"

@@ -9,13 +9,16 @@ using Reexport
 # SimpleSDMLayers to wrap everything together
 @reexport using SimpleSDMLayers
 
-# Faucurrences
-@reexport using Fauxcurrences
+# Fauxcurrences
+# @rexport using Fauxcurrences
 
 # SimpleSDMDatasets for access to layers
 @reexport using SimpleSDMDatasets
 
-# Additional functions provided by the package
+# Integrate the datasets to the layers
+include("integrations/datasets_layers.jl")
+
+# Integrate GBIF to the layers
 include("integrations/gbif_layers.jl")
 
 end # module SpeciesDistributionsToolkit

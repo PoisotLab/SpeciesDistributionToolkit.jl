@@ -1,10 +1,11 @@
 function _find_span(n, m, M, pos, side)
-    side in [:left, :right, :bottom, :top] || throw(ArgumentError("side must be one of :left, :right, :bottom, top"))
-    
+    side in [:left, :right, :bottom, :top] ||
+        throw(ArgumentError("side must be one of :left, :right, :bottom, top"))
+
     pos > M && return nothing
     pos < m && return nothing
     stride = (M - m) / n
-    centers = (m + 0.5stride):stride:(M-0.5stride)
+    centers = (m + 0.5stride):stride:(M - 0.5stride)
     pos_diff = abs.(pos .- centers)
     pos_approx = isapprox.(pos_diff, 0.5stride)
     if any(pos_approx)
@@ -32,19 +33,18 @@ The first argument is the type of the `SimpleSDMLayer` to be returned.
 function geotiff(
     ::Type{LT},
     file::AbstractString,
-    bandnumber::Integer=1;
+    bandnumber::Integer = 1;
     left = -180.0,
     right = 180.0,
     bottom = -90.0,
-    top = 90.0
-) where {LT<:SimpleSDMLayer}
+    top = 90.0,
+) where {LT <: SimpleSDMLayer}
 
     # This next block is reading the geotiff file, but also making sure that we
     # clip the file correctly to avoid reading more than we need.
     # This next block is reading the geotiff file, but also making sure that we
     # clip the file correctly to avoid reading more than we need.
     layer = ArchGDAL.read(file) do dataset
-
         transform = ArchGDAL.getgeotransform(dataset)
         wkt = ArchGDAL.getproj(dataset)
 
@@ -52,15 +52,19 @@ function geotiff(
         # band, but this is not the case for the future WorldClim data.
         band = ArchGDAL.getband(dataset, bandnumber)
         T = ArchGDAL.pixeltype(band)
-        
+
         # The nodata is not always correclty identified, so if it is not found, we assumed it is the smallest value in the band
-        nodata = isnothing(ArchGDAL.getnodatavalue(band)) ? convert(T, ArchGDAL.minimum(band)) : convert(T, ArchGDAL.getnodatavalue(band))
+        nodata = if isnothing(ArchGDAL.getnodatavalue(band))
+            convert(T, ArchGDAL.minimum(band))
+        else
+            convert(T, ArchGDAL.getnodatavalue(band))
+        end
 
         # Get the correct latitudes
         minlon = transform[1]
         maxlat = transform[4]
-        maxlon = minlon + size(band,1)*transform[2]
-        minlat = maxlat - abs(size(band,2)*transform[6])
+        maxlon = minlon + size(band, 1) * transform[2]
+        minlat = maxlat - abs(size(band, 2) * transform[6])
 
         left = isnothing(left) ? minlon : max(left, minlon)
         right = isnothing(right) ? maxlon : min(right, maxlon)
@@ -68,7 +72,7 @@ function geotiff(
         top = isnothing(top) ? maxlat : min(top, maxlat)
 
         lon_stride, lat_stride = transform[2], transform[6]
-        
+
         width = ArchGDAL.width(dataset)
         height = ArchGDAL.height(dataset)
 
@@ -84,15 +88,27 @@ function geotiff(
         max_height, min_height = height .- (min_height, max_height) .+ 1
 
         # We are now ready to initialize a matrix of the correct type.
-        buffer = Matrix{T}(undef, length(min_width:max_width), length(min_height:max_height))
-        ArchGDAL.read!(dataset, buffer, bandnumber, min_height:max_height, min_width:max_width)
-        buffer = convert(Matrix{Union{Nothing,eltype(buffer)}}, rotl90(buffer))
+        buffer =
+            Matrix{T}(undef, length(min_width:max_width), length(min_height:max_height))
+        ArchGDAL.read!(
+            dataset,
+            buffer,
+            bandnumber,
+            min_height:max_height,
+            min_width:max_width,
+        )
+        buffer = convert(Matrix{Union{Nothing, eltype(buffer)}}, rotl90(buffer))
         replace!(buffer, nodata => nothing)
-        LT(buffer, left_pos-0.5lon_stride, right_pos+0.5lon_stride, bottom_pos-0.5lat_stride, top_pos+0.5lat_stride)
+        return LT(
+            buffer,
+            left_pos - 0.5lon_stride,
+            right_pos + 0.5lon_stride,
+            bottom_pos - 0.5lat_stride,
+            top_pos + 0.5lat_stride,
+        )
     end
 
     return layer
-
 end
 
 """
@@ -101,7 +117,11 @@ end
 Write a single `layer` to a `file`, where the `nodata` field is set to an
 arbitrary value.
 """
-function geotiff(file::AbstractString, layer::SimpleSDMPredictor{T}; nodata::T=convert(T, -9999)) where {T <: Number}
+function geotiff(
+    file::AbstractString,
+    layer::SimpleSDMPredictor{T};
+    nodata::T = convert(T, -9999),
+) where {T <: Number}
     array_t = _prepare_layer_for_burnin(layer, nodata)
     width, height = size(array_t)
 
@@ -116,14 +136,13 @@ function geotiff(file::AbstractString, layer::SimpleSDMPredictor{T}; nodata::T=c
 
     # Write
     prefix = first(split(last(splitpath(file)), '.'))
-    ArchGDAL.create(prefix,
-                driver=ArchGDAL.getdriver("MEM"),
-                width=width, height=height,
-                nbands=1, dtype=T,
-                options=["COMPRESS=LZW"]) do dataset
-    
+    ArchGDAL.create(prefix;
+        driver = ArchGDAL.getdriver("MEM"),
+        width = width, height = height,
+        nbands = 1, dtype = T,
+        options = ["COMPRESS=LZW"]) do dataset
         band = ArchGDAL.getband(dataset, 1)
-        
+
         # Write data to band
         ArchGDAL.write!(band, array_t)
 
@@ -133,17 +152,25 @@ function geotiff(file::AbstractString, layer::SimpleSDMPredictor{T}; nodata::T=c
         ArchGDAL.setproj!(dataset, "EPSG:4326")
 
         # Write !
-        ArchGDAL.write(dataset, file, driver=ArchGDAL.getdriver("GTiff"), options=["COMPRESS=LZW"])
+        return ArchGDAL.write(
+            dataset,
+            file;
+            driver = ArchGDAL.getdriver("GTiff"),
+            options = ["COMPRESS=LZW"],
+        )
     end
     return file
 end
 
-function _prepare_layer_for_burnin(layer::SimpleSDMPredictor{T}, nodata::T) where {T <: Number}
+function _prepare_layer_for_burnin(
+    layer::SimpleSDMPredictor{T},
+    nodata::T,
+) where {T <: Number}
     @assert eltype(layer) <: Number
     array = replace(layer.grid, nothing => nodata)
     array = convert(Matrix{eltype(layer)}, array)
     dtype = eltype(array)
-    array_t = reverse(permutedims(array, [2, 1]); dims=2)
+    array_t = reverse(permutedims(array, [2, 1]); dims = 2)
     return array_t
 end
 
@@ -153,7 +180,11 @@ end
 Stores a series of `layers` in a `file`, where every layer in a band. See
 `geotiff` for other options.
 """
-function geotiff(file::AbstractString, layers::Vector{SimpleSDMPredictor{T}}; nodata::T=convert(T, -9999)) where {T <: Number}
+function geotiff(
+    file::AbstractString,
+    layers::Vector{SimpleSDMPredictor{T}};
+    nodata::T = convert(T, -9999),
+) where {T <: Number}
     bands = 1:length(layers)
     _layers_are_compatible(layers)
     width, height = size(_prepare_layer_for_burnin(layers[1], nodata))
@@ -169,15 +200,14 @@ function geotiff(file::AbstractString, layers::Vector{SimpleSDMPredictor{T}}; no
 
     # Write
     prefix = first(split(last(splitpath(file)), '.'))
-    ArchGDAL.create(prefix,
-                driver=ArchGDAL.getdriver("MEM"),
-                width=width, height=height,
-                nbands=length(layers), dtype=T,
-                options=["COMPRESS=LZW"]) do dataset
-        
+    ArchGDAL.create(prefix;
+        driver = ArchGDAL.getdriver("MEM"),
+        width = width, height = height,
+        nbands = length(layers), dtype = T,
+        options = ["COMPRESS=LZW"]) do dataset
         for i in 1:length(bands)
             band = ArchGDAL.getband(dataset, i)
-            
+
             # Write data to band
             ArchGDAL.write!(band, _prepare_layer_for_burnin(layers[i], nodata))
 
@@ -188,7 +218,12 @@ function geotiff(file::AbstractString, layers::Vector{SimpleSDMPredictor{T}}; no
         ArchGDAL.setproj!(dataset, "EPSG:4326")
 
         # Write !
-        ArchGDAL.write(dataset, file, driver=ArchGDAL.getdriver("GTiff"), options=["COMPRESS=LZW"])
+        return ArchGDAL.write(
+            dataset,
+            file;
+            driver = ArchGDAL.getdriver("GTiff"),
+            options = ["COMPRESS=LZW"],
+        )
     end
     return file
 end
@@ -198,8 +233,12 @@ end
 
 Write a single `SimpleSDMResponse` layer to a file.
 """
-function geotiff(file::AbstractString, layer::SimpleSDMResponse{T}; nodata::T=convert(T, -9999)) where {T <: Number}
-    return geotiff(file, convert(SimpleSDMPredictor, layer); nodata=nodata)
+function geotiff(
+    file::AbstractString,
+    layer::SimpleSDMResponse{T};
+    nodata::T = convert(T, -9999),
+) where {T <: Number}
+    return geotiff(file, convert(SimpleSDMPredictor, layer); nodata = nodata)
 end
 
 """
@@ -207,6 +246,10 @@ end
 
 Write a vector of `SimpleSDMResponse` layers to bands in a file.
 """
-function geotiff(file::AbstractString, layers::Vector{SimpleSDMResponse{T}}; nodata::T=convert(T, -9999)) where {T <: Number}
-    return geotiff(file, convert.(SimpleSDMPredictor, layers); nodata=nodata)
+function geotiff(
+    file::AbstractString,
+    layers::Vector{SimpleSDMResponse{T}};
+    nodata::T = convert(T, -9999),
+) where {T <: Number}
+    return geotiff(file, convert.(SimpleSDMPredictor, layers); nodata = nodata)
 end

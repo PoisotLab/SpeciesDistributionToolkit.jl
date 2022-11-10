@@ -6,6 +6,8 @@ components = ["SimpleSDMDatasets", "SimpleSDMLayers", "GBIF", "Fauxcurrences"]
 for package in components
     @info "Removing $(package)"
     Pkg.rm(package)
+end
+for package in components
     @info "Dev'ing $(package)"
     Pkg.develop(; path = "./$(package)")
 end

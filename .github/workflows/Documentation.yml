@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Setup the component packages (globally)
+        run: julia --project bootstrap.jl
+      - name: Check the monorepo status
+        run: julia --project -e "import Pkg; Pkg.status()"
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-docdeploy@v1
         env:

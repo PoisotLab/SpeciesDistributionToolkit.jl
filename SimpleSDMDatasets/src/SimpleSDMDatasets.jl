@@ -41,7 +41,7 @@ export ACCESS_CM2, ACCESS_ESM1_5, BCC_CSM2_MR, CanESM5, CanESM5_CanOE, CMCC_ESM2
 
 # Specifier types
 include("types/specifiers.jl")
-export RasterData, Future
+export RasterData, Projection
 
 # Common interface
 include("interface.jl")

@@ -1,4 +1,4 @@
-module TestSSDCHELSA2Future
+module TestSSDCHELSA2Projection
 
 using SimpleSDMDatasets
 using Test
@@ -7,11 +7,11 @@ using Dates
 @test CHELSA2 <: RasterProvider
 
 # Test the interface
-for D in Base.uniontypes(SimpleSDMDatasets.CHELSA2FutureDataset)
+for D in Base.uniontypes(SimpleSDMDatasets.CHELSA2ProjectedDataset)
     data = RasterData(CHELSA2, D)
     for M in Base.uniontypes(SimpleSDMDatasets.CHELSA2Model)
         for S in Base.uniontypes(SimpleSDMDatasets.CHELSA2Scenario)
-            future = Future(S, M)
+            future = Projection(S, M)
             @test SimpleSDMDatasets.provides(data, future)
             @test SimpleSDMDatasets.resolutions(data, future) |> isnothing
             @test SimpleSDMDatasets.extrakeys(data, future) |> isnothing
@@ -28,19 +28,19 @@ for D in Base.uniontypes(SimpleSDMDatasets.CHELSA2FutureDataset)
 end
 
 begin
-    data, future = RasterData(CHELSA2, BioClim), Future(SSP585, GFDL_ESM4)
-    out = downloader(data, future; layer = "BIO12")
+    data, future = RasterData(CHELSA2, BioClim), Projection(SSP585, GFDL_ESM4)
+    out = downloader(data, future; layer="BIO12")
     @test isfile(first(out))
     @test out[2] == SimpleSDMDatasets.filetype(data, future)
 end
 
 begin
-    data, future = RasterData(CHELSA2, AverageTemperature), Future(SSP126, IPSL_CM6A_LR)
+    data, future = RasterData(CHELSA2, AverageTemperature), Projection(SSP126, IPSL_CM6A_LR)
     out = downloader(
         data,
         future;
-        month = Month(4),
-        timespan = first(SimpleSDMDatasets.timespans(data, future)),
+        month=Month(4),
+        timespan=first(SimpleSDMDatasets.timespans(data, future))
     )
     @test isfile(first(out))
     @test out[2] == SimpleSDMDatasets.filetype(data, future)

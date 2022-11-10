@@ -38,7 +38,7 @@ end
 
 function downloader(
     data::RasterData{P, D},
-    future::Future{S, M};
+    future::Projection{S, M};
     kwargs...,
 ) where {P <: RasterProvider, D <: RasterDataset, S <: FutureScenario, M <: FutureModel}
     keychecker(data, future; kwargs...)

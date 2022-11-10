@@ -51,7 +51,7 @@ function keychecker(data::R; kwargs...) where {R <: RasterData}
     return nothing
 end
 
-function keychecker(data::R, future::F; kwargs...) where {R <: RasterData, F <: Future}
+function keychecker(data::R, future::F; kwargs...) where {R <: RasterData, F <: Projection}
 
     @assert SimpleSDMDatasets.provides(data, future)
 

@@ -27,7 +27,7 @@ inner constructor; instead, the way to check that a
 provider/dataset/scenario/model combination exists is to overload the `provides`
 method for a dataset and future.
 """
-struct Future{S <: FutureScenario, M <: FutureModel}
+struct Projection{S <: FutureScenario, M <: FutureModel}
     scenario::Type{S}
     model::Type{M}
 end

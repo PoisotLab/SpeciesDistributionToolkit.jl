@@ -35,37 +35,37 @@ WorldClim2FutureDataset = Union{
 
 provides(
     ::RasterData{WorldClim2, T},
-    ::Future{S, M},
+    ::Projection{S, M},
 ) where {T <: WorldClim2FutureDataset, S <: WorldClim2Scenario, M <: WorldClim2Model} = true
 
 provides(
     ::RasterData{WorldClim2, T},
-    ::Future{SSP370, FIO_ESM_2_0},
+    ::Projection{SSP370, FIO_ESM_2_0},
 ) where {T <: WorldClim2FutureDataset} = false
 
 provides(
     ::RasterData{WorldClim2, T},
-    ::Future{SSP245, GFDL_ESM4},
+    ::Projection{SSP245, GFDL_ESM4},
 ) where {T <: WorldClim2FutureDataset} = false
 
 provides(
     ::RasterData{WorldClim2, T},
-    ::Future{SSP585, GFDL_ESM4},
+    ::Projection{SSP585, GFDL_ESM4},
 ) where {T <: WorldClim2FutureDataset} = false
 
 provides(
     ::RasterData{WorldClim2, T},
-    ::Future{SSP370, HadGEM3_GC31_LL},
+    ::Projection{SSP370, HadGEM3_GC31_LL},
 ) where {T <: WorldClim2FutureDataset} = false
 
 downloadtype(
     ::RasterData{WorldClim2, T},
     ::F,
-) where {T <: WorldClim2FutureDataset, F <: Future} = _file
+) where {T <: WorldClim2FutureDataset, F <: Projection} = _file
 
 timespans(
     ::RasterData{WorldClim2, T},
-    ::Future{S, M},
+    ::Projection{S, M},
 ) where {T <: WorldClim2FutureDataset, S <: WorldClim2Scenario, M <: WorldClim2Model} = [
     Year(2021) => Year(2040),
     Year(2041) => Year(2060),
@@ -75,7 +75,7 @@ timespans(
 
 function source(
     data::RasterData{WorldClim2, T},
-    future::Future{S, M};
+    future::Projection{S, M};
     timespan = first(SimpleSDMDatasets.timespans(data, future)),
     resolution = maximum(keys(SimpleSDMDatasets.resolutions(data))),
     args...,
@@ -98,7 +98,7 @@ function bandnumber(
     data::RasterData{WorldClim2, BioClim},
     ::F;
     kwargs...,
-) where {F <: Future}
+) where {F <: Projection}
     @assert :layer in keys(kwargs)
     l = values(kwargs).layer
     return (l isa Integer) ? l : findfirst(isequal(l), layers(data))

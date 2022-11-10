@@ -27,7 +27,7 @@ The default value of this function is `false`, and to allow the use of a future
 dataset with a given provider, it is *required* to overload it so that it
 returns `true`.
 """
-provides(::R, ::F) where {R <: RasterData, F <: Future} = false
+provides(::R, ::F) where {R <: RasterData, F <: Projection} = false
 
 """
     downloadtype(::R) where {R <: RasterData}
@@ -50,7 +50,7 @@ If no overload is given, this will default to `downloadtype(data)`, as we can
 assume that the type of downloaded object is the same for both current and
 future scenarios.
 """
-downloadtype(data::R, ::F) where {R <: RasterData, F <: Future} = downloadtype(data)
+downloadtype(data::R, ::F) where {R <: RasterData, F <: Projection} = downloadtype(data)
 
 """
     filetype(::R) where {R <: RasterData}
@@ -72,7 +72,7 @@ raster source and a future scenario as a `RasterFileType`.
 If no overload is given, this will default to `filetype(data)`, as we can assume
 that the raster format is the same for both current and future scenarios.
 """
-filetype(data::R, ::F) where {R <: RasterData, F <: Future} = filetype(data)
+filetype(data::R, ::F) where {R <: RasterData, F <: Projection} = filetype(data)
 
 """
     resolutions(::R) where {R <: RasterData}
@@ -97,7 +97,7 @@ resolutions(::R) where {R <: RasterData} = nothing
 This methods control the `resolutions` for a future dataset. Unless overloaded,
 it will return `resolutions(data)`.
 """
-resolutions(data::R, ::F) where {R <: RasterData, F <: Future} = resolutions(data)
+resolutions(data::R, ::F) where {R <: RasterData, F <: Projection} = resolutions(data)
 
 """
     months(::R) where {R <: RasterData}
@@ -113,7 +113,7 @@ Any dataset with a return value that is not `nothing` *must* accept the
 `month` keyword.
 """
 months(::R) where {R <: RasterData} = nothing
-months(data::R, ::F) where {R <: RasterData, F <: Future} = months(data)
+months(data::R, ::F) where {R <: RasterData, F <: Projection} = months(data)
 
 """
     timespans(data::R, ::F) where {R <: RasterData, F <: Future}
@@ -128,7 +128,7 @@ Year(start) => Year(end)
 There is a method working on a single `RasterData` argument, defaulting to
 returning `nothing`, but it *should never* be overloaded.
 """
-timespans(::R, ::F) where {R <: RasterData, F <: Future} = nothing
+timespans(::R, ::F) where {R <: RasterData, F <: Projection} = nothing
 timespans(::R) where {R <: RasterData} = nothing
 
 """
@@ -146,7 +146,7 @@ Any dataset with a return value that is not `nothing` *must* accept the `layer`
 keyword.
 """
 layers(::R) where {R <: RasterData} = nothing
-layers(data::R, ::F) where {R <: RasterData, F <: Future} = layers(data)
+layers(data::R, ::F) where {R <: RasterData, F <: Projection} = layers(data)
 
 """
     layerdescriptions(data::R) where {R <: RasterData}
@@ -155,7 +155,7 @@ Human-readable names the layers. This will by default print the value of
 `layers`, but can be overloaded if these names are not informative.
 """
 layerdescriptions(data::R) where {R <: RasterData} = layers(data)
-layerdescriptions(data::R, ::F) where {R <: RasterData, F <: Future} =
+layerdescriptions(data::R, ::F) where {R <: RasterData, F <: Projection} =
     layerdescriptions(data)
 
 """
@@ -175,7 +175,7 @@ Any dataset with a return value that is not `nothing` *must* accept the keyword
 arguments specified in the return value.
 """
 extrakeys(::R) where {R <: RasterData} = nothing
-extrakeys(data::R, ::F) where {R <: RasterData, F <: Future} = extrakeys(data)
+extrakeys(data::R, ::F) where {R <: RasterData, F <: Projection} = extrakeys(data)
 
 """
     destination(::RasterData{P, D}; kwargs...) where {P <: RasterProvider, D <: RasterDataset}
@@ -189,7 +189,7 @@ destination(::RasterData{P, D}; kwargs...) where {P <: RasterProvider, D <: Rast
 
 destination(
     ::RasterData{P, D},
-    ::Future{S, M};
+    ::Projection{S, M};
     kwargs...,
 ) where {P <: RasterProvider, D <: RasterDataset, S <: FutureScenario, M <: FutureModel} =
     joinpath(
@@ -211,16 +211,16 @@ source(::RasterData{P, D}; kwargs...) where {P <: RasterProvider, D <: RasterDat
 
 source(
     ::RasterData{P, D},
-    ::Future{S, M};
+    ::Projection{S, M};
     kwargs...,
 ) where {P <: RasterProvider, D <: RasterDataset, S <: FutureScenario, M <: FutureModel} =
     nothing
 
 layername(::R; kwargs...) where {R <: RasterData} = ""
-layername(::R, ::F; kwargs...) where {R <: RasterData, F <: Future} = ""
+layername(::R, ::F; kwargs...) where {R <: RasterData, F <: Projection} = ""
 
 bandnumber(::R; kwargs...) where {R <: RasterData} = 1
-bandnumber(::R, ::F; kwargs...) where {R <: RasterData, F <: Future} = 1
+bandnumber(::R, ::F; kwargs...) where {R <: RasterData, F <: Projection} = 1
 
 crs(::R) where {R <: RasterData} = _wsg84
-crs(data::R, future::F) where {R <: RasterData, F <: Future} = crs(data)
+crs(data::R, future::F) where {R <: RasterData, F <: Projection} = crs(data)

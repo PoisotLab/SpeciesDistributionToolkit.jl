@@ -26,6 +26,8 @@ jobs:
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
+      - name: Setup the Monorepo
+        run: julia --project bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
         with:
           project: ${{ matrix.package }}

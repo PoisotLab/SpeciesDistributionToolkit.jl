@@ -1,1 +1,2 @@
-continue
+main = () -> nothing
+main()

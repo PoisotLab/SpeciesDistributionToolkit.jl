@@ -30,9 +30,9 @@ jobs:
         run: julia --project bootstrap.jl
       - name: Check the monorepo status
         run: julia --project -e "import Pkg; Pkg.status()"
-      - uses: julia-actions/julia-buildpkg@latest
-        with:
-          project: ${{ matrix.package }}
+      # - uses: julia-actions/julia-buildpkg@latest
+      #   with:
+      #     project: ${{ matrix.package }}
       - uses: julia-actions/julia-runtest@latest
         with:
           project: ${{ matrix.package }}

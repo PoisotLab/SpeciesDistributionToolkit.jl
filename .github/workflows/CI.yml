@@ -28,6 +28,8 @@ jobs:
           arch: ${{ matrix.arch }}
       - name: Setup the Monorepo
         run: julia --project bootstrap.jl
+      - name: Check the monorepo status
+        run: julia --project -e "import Pkg; Pkg.status()"
       - uses: julia-actions/julia-buildpkg@latest
         with:
           project: ${{ matrix.package }}

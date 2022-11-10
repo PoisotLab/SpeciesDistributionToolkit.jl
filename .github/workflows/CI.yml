@@ -26,13 +26,16 @@ jobs:
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
-      - name: Setup the Monorepo
+      - name: Setup the component packages (globally)
         run: julia --project bootstrap.jl
       - name: Check the monorepo status
         run: julia --project -e "import Pkg; Pkg.status()"
-      # - uses: julia-actions/julia-buildpkg@latest
-      #   with:
-      #     project: ${{ matrix.package }}
+      - name: Bootstrap ${{ matrix.package }}
+        run: julia --project=./${{ matrix.package }} ${{ matrix.package }}/bootstrap.jl
+        if: ${{ matrix.package != '@.' }}
+      - uses: julia-actions/julia-buildpkg@latest
+        with:
+          project: ${{ matrix.package }}
       - uses: julia-actions/julia-runtest@latest
         with:
           project: ${{ matrix.package }}

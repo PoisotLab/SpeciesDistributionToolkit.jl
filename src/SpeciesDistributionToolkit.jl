@@ -1,4 +1,4 @@
-module SpeciesDistributionsToolkit
+module SpeciesDistributionToolkit
 
 # We make ample use of re-export
 using Reexport
@@ -21,4 +21,4 @@ include("integrations/datasets_layers.jl")
 # Integrate GBIF to the layers
 include("integrations/gbif_layers.jl")
 
-end # module SpeciesDistributionsToolkit
+end # module SpeciesDistributionToolkit

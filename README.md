@@ -1,6 +1,6 @@
-# SpeciesDistributionsToolkit
+# SpeciesDistributionToolkit
 
-`SpeciesDistributionsToolkit.jl` is a few different packages wearing a trench coat, and the
+`SpeciesDistributionToolkit.jl` is a few different packages wearing a trench coat, and the
 end result is a toolkit meant to deal with (surprise!) species distribution data.
 Specifically, the goal of these packages put together is to provide a consistent way to
 handle occurrence data, put them on a map, and make it interact with environmental
@@ -20,7 +20,7 @@ version number.
 [mnrp]: https://monorepo.tools/
 
 Note that the packages *do* work indepently as well, but they are now *designed* to work
-together. In particular, when installing `SpeciesDistributionsToolkit`, you get access to
+together. In particular, when installing `SpeciesDistributionToolkit`, you get access to
 all the functions and types exported by the component packages.
 
 ## Current component packages

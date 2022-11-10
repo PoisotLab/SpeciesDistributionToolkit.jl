@@ -16,7 +16,7 @@ function SimpleSDMLayers.SimpleSDMPredictor(
     data::R,
     future::F;
     kwargs...,
-) where {R <: RasterData, F <: Future}
+) where {R <: RasterData, F <: Projection}
     # Split the bounding box from the rest of the data
     boundingbox, arguments = _boundingbox_out_of_kwargs(kwargs)
 

@@ -19,7 +19,7 @@ jobs:
         os: ['ubuntu-latest']
         arch: ['x64']
         experimental: [false]
-        package: ['SimpleSDMDatasets', 'GBIF', '@.']
+        package: ['SimpleSDMDatasets', 'GBIF', 'Fauxcurrences', 'SimpleSDMLayers', '@.']
     steps:
       - uses: actions/checkout@v2
       - uses: julia-actions/setup-julia@v1

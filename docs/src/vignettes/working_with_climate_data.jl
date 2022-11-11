@@ -1,8 +1,7 @@
 # Working with climate data
 
 using SpeciesDistributionsToolkit
-using CairoMakie
-using GeoMakie
+using CairoMakie, GeoMakie
 
 # Bounding box
 
@@ -14,28 +13,24 @@ dataprovider = RasterData(WorldClim2, BioClim)
 
 # Get some info about what we want
 
-we_want = (resolution = 5.0, layer = "BIO1")
+data_info = (resolution = 10.0, layer = "BIO1")
 
 # Get the baseline
 
-baseline = SimpleSDMPredictor(dataprovider; we_want..., spatial_extent...)
+baseline = SimpleSDMPredictor(dataprovider; data_info..., spatial_extent...)
 
 # We can do a little GeoMakie plot
 
 Makie.to_color(::Makie.MakieCore.Automatic) = 0.0f0
 
-temperature_map = Figure(; resolution = (1000, 1000))
-main_plot = GeoAxis(
-    temperature_map[1, 1];
-    coastlines = false,
-    dest = "+proj=moll",
-)
+figtemp = Figure(; resolution = (1000, 1000))
+figpanel = GeoAxis(figtemp[1, 1]; dest = "+proj=moll")
 heatmap!(
-    main_plot,
+    figpanel,
     sprinkle(convert(Float32, baseline))...;
     shading = false,
     interpolate = false,
     colormap = :heat,
 )
-datalims!(main_plot)
+datalims!(figpanel)
 current_figure()

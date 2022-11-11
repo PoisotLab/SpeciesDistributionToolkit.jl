@@ -56,5 +56,5 @@ hm = heatmap!(
     colormap = :roma,
 )
 Colorbar(figdiff[:, end + 1], hm; height = Relative(0.7))
-datalims!(figpanel)
+datalims!(figdiff)
 current_figure()

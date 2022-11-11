@@ -12,7 +12,7 @@ const _vignettes_dir = "docs/src/vignettes"
 
 # Compile the vignettes
 _list_of_vignettes = filter(f -> endswith(f, ".jl"), readdir(_vignettes_dir; join = true))
-_vignettes_pages = Vector{Pair{String, String}}[]
+_vignettes_pages = Pair{String, String}[]
 for vignette in _list_of_vignettes
     Literate.markdown(vignette, joinpath(pwd(), _vignettes_dir))
     compiled_vignette = replace(vignette, ".jl" => ".md")

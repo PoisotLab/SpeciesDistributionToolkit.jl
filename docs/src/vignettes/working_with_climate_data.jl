@@ -21,9 +21,9 @@ baseline = SimpleSDMPredictor(dataprovider; data_info..., spatial_extent...)
 
 # We can do a little GeoMakie plot
 
-Makie.to_color(::Makie.MakieCore.Automatic) = 0.0f0
+# Makie.to_color(::Makie.MakieCore.Automatic) = 0.0f0
 
-figtemp = Figure(; resolution = (1000, 1000))
+figtemp = Figure(; resolution = (1000, 800))
 figpanel = GeoAxis(figtemp[1, 1]; dest = "+proj=moll")
 heatmap!(
     figpanel,
@@ -32,5 +32,29 @@ heatmap!(
     interpolate = false,
     colormap = :heat,
 )
+datalims!(figpanel)
+current_figure()
+
+# Get some future data
+
+projection = Projection(SSP245, MIROC6)
+
+# Predicted temperatures
+
+future_temperature =
+    SimpleSDMPredictor(dataprovider, projection; data_info..., spatial_extent...)
+
+# Figure of differences
+
+figdiff = Figure(; resolution = (1000, 1000))
+diffpanel = GeoAxis(figtemp[1, 1]; dest = "+proj=moll")
+hm = heatmap!(
+    diffpanel,
+    sprinkle(convert(Float32, future_temperature - baseline))...;
+    shading = false,
+    interpolate = false,
+    colormap = :roma,
+)
+Colorbar(figdiff[:, end + 1], hm; height = Relative(0.7))
 datalims!(figpanel)
 current_figure()

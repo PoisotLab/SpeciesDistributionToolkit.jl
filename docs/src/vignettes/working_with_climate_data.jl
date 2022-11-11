@@ -5,39 +5,50 @@ using CairoMakie, GeoMakie
 
 # Bounding box
 
-spatial_extent = (left = -169.0, right = -50.0, bottom = 24.0, top = 71.0)
+spatial_extent = (left = -24.785, right = -12.634, top = 66.878, bottom = 62.935)
 
-# Get some data
+# We will get the BioClim data from CHELSA v1. These are pretty large data, and so this
+# operation may take a while in terms of download/read time.
 
-dataprovider = RasterData(WorldClim2, BioClim)
+dataprovider = RasterData(CHELSA1, BioClim)
 
 # Get some info about what we want
 
-data_info = (resolution = 10.0, layer = "BIO1")
+data_info = (layer = "BIO1",)
+
+# Note that we do not *need* to give the bounding box and layer data as distinct variables,
+# but this is more convenient in terms of code re-use. For this reason, we follow this
+# convention throughout the documentation.
 
 # Get the baseline
 
 baseline = SimpleSDMPredictor(dataprovider; data_info..., spatial_extent...)
 
-# We can do a little GeoMakie plot
+# Makie histogram
 
-# Makie.to_color(::Makie.MakieCore.Automatic) = 0.0f0
+hist(filter(!isnan, vec(last(sprinkle(baseline)))))
+
+# The values are scaled by 10m so we correct
 
 figtemp = Figure(; resolution = (1000, 800))
-figpanel = GeoAxis(figtemp[1, 1]; dest = "+proj=moll")
+figpanel = GeoAxis(
+    figtemp[1, 1];
+    dest = "+proj=latlon",
+    lonlims = extrema(longitudes(baseline)),
+    latlims = extrema(latitudes(baseline)),
+)
 heatmap!(
     figpanel,
-    sprinkle(convert(Float32, baseline))...;
+    sprinkle(convert(Float32, 0.1baseline))...;
     shading = false,
     interpolate = false,
     colormap = :heat,
 )
-datalims!(figpanel)
 current_figure()
 
 # Get some future data
 
-projection = Projection(SSP245, MIROC6)
+projection = Projection(RCP26, MIROC_ESM)
 
 # Predicted temperatures
 
@@ -46,15 +57,18 @@ future_temperature =
 
 # Figure of differences
 
-figdiff = Figure(; resolution = (1000, 1000))
-diffpanel = GeoAxis(figdiff[1, 1]; dest = "+proj=moll")
+varpanel = GeoAxis(
+    figtemp[2, 1];
+    dest = "+proj=latlon",
+    lonlims = extrema(longitudes(baseline)),
+    latlims = extrema(latitudes(baseline)),
+)
 hm = heatmap!(
-    diffpanel,
-    sprinkle(convert(Float32, future_temperature - baseline))...;
+    varpanel,
+    sprinkle(convert(Float32, 0.1(future_temperature - baseline)))...;
     shading = false,
     interpolate = false,
-    colormap = :roma,
+    colormap = :deep,
 )
-Colorbar(figdiff[:, end + 1], hm; height = Relative(0.7))
-datalims!(figdiff)
+Colorbar(figtemp[2, end + 1], hm; height = Relative(0.7))
 current_figure()

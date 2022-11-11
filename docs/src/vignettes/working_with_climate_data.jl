@@ -22,17 +22,7 @@ baseline = SimpleSDMPredictor(dataprovider; we_want..., spatial_extent...)
 
 # We can do a little GeoMakie plot
 
-function sprinkle(layer::T) where {T <: SimpleSDMLayer}
-    return (
-        longitudes(layer),
-        latitudes(layer),
-        transpose(replace(layer.grid, nothing => NaN)),
-    )
-end
-
 Makie.to_color(::Makie.MakieCore.Automatic) = 0.0f0
-
-# Make a plot
 
 temperature_map = Figure(; resolution = (1000, 1000))
 main_plot = GeoAxis(

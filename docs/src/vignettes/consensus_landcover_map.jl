@@ -1,4 +1,4 @@
-# Creating a landcover consensus map
+# # Creating a landcover consensus map
 
 using SpeciesDistributionToolkit
 using CairoMakie

@@ -7,6 +7,12 @@ struct SSP245 <: FutureScenario end
 struct SSP370 <: FutureScenario end
 struct SSP585 <: FutureScenario end
 
+# RCP scenarios
+struct RCP26 <: FutureScenario end
+struct RCP45 <: FutureScenario end
+struct RCP60 <: FutureScenario end
+struct RCP85 <: FutureScenario end
+
 # CMIP6 GCMs + variants
 struct ACCESS_CM2 <: FutureModel end
 struct ACCESS_ESM1_5 <: FutureModel end
@@ -33,6 +39,43 @@ struct MPI_ESM1_2_LR <: FutureModel end
 struct MPI_ESM1_2_HR <: FutureModel end
 struct MRI_ESM2_0 <: FutureModel end
 struct UKESM1_0_LL <: FutureModel end
+
+# CMIP5 GCMs + variants
+struct ACCESS1_0 <: FutureModel end
+struct BNU_ESM <: FutureModel end
+struct CCSM4 <: FutureModel end
+struct CESM1_BGC <: FutureModel end
+struct CESM1_CAM5 <: FutureModel end
+struct CMCC_CESM <: FutureModel end
+struct CMCC_CMS <: FutureModel end
+struct CMCC_CM <: FutureModel end
+struct CNRM_CM5 <: FutureModel end
+struct CSIRO_Mk3_6_0 <: FutureModel end
+struct CSIRO_Mk3L_1_2 <: FutureModel end
+struct CanESM2 <: FutureModel end
+struct EC_EARTH <: FutureModel end
+struct FGOALS_g2 <: FutureModel end
+struct FIO_ESM <: FutureModel end
+struct GFDL_CM3 <: FutureModel end
+struct GFDL_ESM2G <: FutureModel end
+struct GFDL_ESM2M <: FutureModel end
+struct GISS_E2_H_CC <: FutureModel end
+struct GISS_E2_H <: FutureModel end
+struct GISS_E2_R_CC <: FutureModel end
+struct GISS_E2_R <: FutureModel end
+struct HadGEM2_AO <: FutureModel end
+struct HadGEM2_CC <: FutureModel end
+struct HadGEM2_ES <: FutureModel end
+struct IPSL_CM5A_LR <: FutureModel end
+struct IPSL_CM5A_MR <: FutureModel end
+struct MIROC_ESM_CHEM <: FutureModel end
+struct MIROC_ESM <: FutureModel end
+struct MIROC5 <: FutureModel end
+struct MPI_ESM_LR <: FutureModel end
+struct MPI_ESM_MR <: FutureModel end
+struct MRI_CGCM3 <: FutureModel end
+struct MRI_ESM1 <: FutureModel end
+struct NorESM1_ME <: FutureModel end
 
 # CMIP6 Union types
 CMIP6Scenario = Union{SSP126, SSP245, SSP370, SSP585}
@@ -62,4 +105,43 @@ CMIP6Model = Union{
     MPI_ESM1_2_HR,
     MRI_ESM2_0,
     UKESM1_0_LL,
+}
+
+CMIP5Scenario = Union{RCP26, RCP45, RCP60, RCP85}
+CMIP5Model = Union{
+    ACCESS1_0,
+    BNU_ESM,
+    CCSM4,
+    CESM1_BGC,
+    CESM1_CAM5,
+    CMCC_CESM,
+    CMCC_CMS,
+    CMCC_CM,
+    CNRM_CM5,
+    CSIRO_Mk3_6_0,
+    CSIRO_Mk3L_1_2,
+    CanESM2,
+    EC_EARTH,
+    FGOALS_g2,
+    FIO_ESM,
+    GFDL_CM3,
+    GFDL_ESM2G,
+    GFDL_ESM2M,
+    GISS_E2_H_CC,
+    GISS_E2_H,
+    GISS_E2_R_CC,
+    GISS_E2_R,
+    HadGEM2_AO,
+    HadGEM2_CC,
+    HadGEM2_ES,
+    IPSL_CM5A_LR,
+    IPSL_CM5A_MR,
+    MIROC_ESM_CHEM,
+    MIROC_ESM,
+    MIROC5,
+    MPI_ESM_LR,
+    MPI_ESM_MR,
+    MRI_CGCM3,
+    MRI_ESM1,
+    NorESM1_ME,
 }

@@ -8,6 +8,7 @@ tests = [
     "WorldClim2 provider         " => "worldclim_v2.jl",
     "EarthEnv provider           " => "earthenv.jl",
     "CHELSA1 provider            " => "chelsa_v1.jl",
+    "CHELSA1 provider   (future) " => "chelsa_future_v1.jl",
     "CHELSA2 provider            " => "chelsa_v2.jl",
     "CHELSA2 provider   (future) " => "chelsa_future_v2.jl",
 ]

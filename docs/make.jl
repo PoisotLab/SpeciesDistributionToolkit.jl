@@ -14,7 +14,7 @@ const _vignettes_dir = "docs/src/vignettes"
 _list_of_vignettes = filter(f -> endswith(f, ".jl"), readdir(_vignettes_dir; join = true))
 _vignettes_pages = Dict{String, String}()
 for vignette in _list_of_vignettes
-    Literate.markdown(vignette, _vignettes_dir)
+    Literate.markdown(vignette, joinpath(pwd(), _vignettes_dir))
     compiled_vignette = replace(vignette, ".jl" => ".md")
     title = replace(last(splitpath(compiled_vignette)), ".md" => "")
     path = joinpath(splitpath(compiled_vignette)[3:end])

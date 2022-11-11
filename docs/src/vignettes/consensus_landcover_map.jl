@@ -4,45 +4,54 @@ using SpeciesDistributionToolkit
 using CairoMakie
 using GeoMakie
 
-# bounding box for ireland
+# In this vignette, we will look at the different landcover classes in Iceland. This is an
+# opportunity to see how we can edit, mask, and aggregate data for processing.
 
-iceland = (left = -24.785, right = -12.634, top = 66.878, bottom = 62.935)
+# To begin with, we define a bounding box around Iceland. The website [bboxfinder.com][bbox]
+# is fantastic is you need to rapidly define bounding boxes!
 
-# landcover
+# [bbox]: http://bboxfinder.com/#0.000000,0.000000,0.000000,0.000000
+
+spatial_extent = (left = -24.785, right = -12.634, top = 66.878, bottom = 62.935)
+
+# Defining a bounding box is important because, although we can clip any layer, the package
+# will only *read* what is required. For large data (like landcover data), this is
+# a significant improvement in memory footprint.
+
+# We now define our data provider, composed of a data source (`EarthEnv`) and a dataset
+# (`LandCover`).
 
 dataprovider = RasterData(EarthEnv, LandCover)
 
-# list of available layers
+# It is good practice to check which layers are provided:
 
 landcover_types = SimpleSDMDatasets.layers(dataprovider)
 
-# get the stack
+# We can download all the layers using a list comprehension. Note that the name (`stack`) is
+# a little misleading, as the packages have no concept of what a stack of raster is.
 
 stack = [
-    SimpleSDMPredictor(dataprovider; layer = layer, full = true, iceland...) for
+    SimpleSDMPredictor(dataprovider; layer = layer, full = true, spatial_extent...) for
     layer in landcover_types
 ]
 
-# create an empty object for storage
+# We know that the last layer (`"Open Water"`) is a little less interesting, so we can
+# create a mask for the pixels that are less than 100% open water.
 
-consensus = similar(first(stack))
-
-# we will set to `nothing` the positions in the consensus that are fully open water
 open_water_idx = findfirst(isequal("Open Water"), landcover_types)
+open_water_mask = broadcast(v -> v < 100.0f0, stack[open_water_idx])
 
-for k in keys(stack[open_water_idx])
-    if isequal(100)(stack[open_water_idx][k])
-        consensus[k] = nothing
-    end
-end
+# We can now mask all of the rasters in the stack, to remove the open water pixels:
 
-# fill the object
+stack = [mask(open_water_mask, layer) for layer in stack]
 
-for coordinate in keys(consensus)
-    consensus[coordinate...] = argmax([s[coordinate...] for s in stack])
-end
+# At this point, we are ready to get the most important land use category for each pixel,
+# using the `mosaic` function:
 
-# define a colormap for the classes
+consensus = mosaic(argmax, stack)
+
+# In order to represent the output, we will define a color palette corresponding to the
+# different categories in our data:
 
 landcover_colors = [
     :forestgreen,
@@ -57,15 +66,16 @@ landcover_colors = [
     :aqua,
     :grey74,
     :transparent,
-]
+];
 
 # We can now make the plot - because the area is relatively small, we will keep the `latlon`
 # projection as the destination. Most of this code is really manually setting up a figure
-# with a legend.
+# and a legend. The `sprinkle` function is used to transform a layer into an `x, y, z` tuple
+# that can be used for plotting.
 
-fig = Figure(; resolution = (1000, 800))
+fig = Figure(; resolution = (1000, 500))
 panel = GeoAxis(
-    fig[1:4, 1];
+    fig[1, 1];
     source = "+proj=longlat +datum=WGS84",
     dest = "+proj=longlat",
     lonlims = extrema(longitudes(consensus)),
@@ -81,7 +91,7 @@ heatmap!(
     colormap = landcover_colors,
 )
 Legend(
-    fig[5, 1],
+    fig[2, 1],
     [PolyElement(; color = landcover_colors[i]) for i in eachindex(landcover_colors)],
     landcover_types;
     orientation = :horizontal,

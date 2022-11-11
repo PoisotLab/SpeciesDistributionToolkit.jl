@@ -47,7 +47,7 @@ future_temperature =
 # Figure of differences
 
 figdiff = Figure(; resolution = (1000, 1000))
-diffpanel = GeoAxis(figtemp[1, 1]; dest = "+proj=moll")
+diffpanel = GeoAxis(figdiff[1, 1]; dest = "+proj=moll")
 hm = heatmap!(
     diffpanel,
     sprinkle(convert(Float32, future_temperature - baseline))...;

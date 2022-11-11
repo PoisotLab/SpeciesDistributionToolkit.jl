@@ -12,16 +12,12 @@ const _vignettes_dir = "docs/src/vignettes"
 
 # Compile the vignettes
 _list_of_vignettes = filter(f -> endswith(f, ".jl"), readdir(_vignettes_dir; join = true))
+_vignettes_pages = Dict{String, String}()
 for vignette in _list_of_vignettes
     Literate.markdown(vignette, _vignettes_dir)
-end
-_compiled_vignettes = filter(f -> endswith(f, ".md"), readdir(_vignettes_dir; join = true))
-
-# Prepare a series of pages for the vignettes
-_vignettes_pages = Dict{String, String}()
-for vignette in _compiled_vignettes
-    title = replace(last(splitpath(vignette)), ".md" => "")
-    path = joinpath(splitpath(vignette)[3:end])
+    compiled_vignette = replace(vignette, ".jl" => ".md")
+    title = replace(last(splitpath(compiled_vignette)), ".md" => "")
+    path = joinpath(splitpath(compiled_vignette)[3:end])
     _vignettes_pages[titlecase(replace(title, "_" => " "))] = path
 end
 

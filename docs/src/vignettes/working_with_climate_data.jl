@@ -1,6 +1,6 @@
 # Working with climate data
 
-using SpeciesDistributionsToolkit
+using SpeciesDistributionToolkit
 using CairoMakie, GeoMakie
 
 # Bounding box

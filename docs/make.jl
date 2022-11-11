@@ -1,5 +1,5 @@
 using Documenter
-using SpeciesDistributionsToolkit
+using SpeciesDistributionToolkit
 using InteractiveUtils
 using Markdown
 using Dates
@@ -24,7 +24,7 @@ for vignette in _compiled_vignettes
 end
 
 makedocs(;
-    sitename = "Species Distributions Toolkit",
+    sitename = "Species Distribution Toolkit",
     format = Documenter.HTML(;
         prettyurls = get(ENV, "CI", nothing) == true,
     ),
@@ -34,4 +34,4 @@ makedocs(;
     ],
 )
 
-deploydocs(; repo = "github.com/PoisotLab/SpeciesDistributionsToolkit.jl.git")
+deploydocs(; repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl.git")

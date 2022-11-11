@@ -8,18 +8,20 @@ using Literate
 # Prepare the report card
 # include(joinpath(@__DIR__, "report.jl"))
 
+const _vignettes_dir = "docs/src/vignettes"
+
 # Compile the vignettes
-_list_of_vignettes = filter(f -> endswith(f, ".jl"), readdir("src/vignettes"; join = true))
+_list_of_vignettes = filter(f -> endswith(f, ".jl"), readdir(_vignettes_dir; join = true))
 for vignette in _list_of_vignettes
-    Literate.markdown(vignette, "src/vignettes")
+    Literate.markdown(vignette, _vignettes_dir)
 end
-_compiled_vignettes = filter(f -> endswith(f, ".md"), readdir("src/vignettes"; join = true))
+_compiled_vignettes = filter(f -> endswith(f, ".md"), readdir(_vignettes_dir; join = true))
 
 # Prepare a series of pages for the vignettes
 _vignettes_pages = Dict{String, String}()
 for vignette in _compiled_vignettes
     title = replace(last(splitpath(vignette)), ".md" => "")
-    path = joinpath(splitpath(vignette)[2:end])
+    path = joinpath(splitpath(vignette)[3:end])
     _vignettes_pages[titlecase(replace(title, "_" => " "))] = path
 end
 

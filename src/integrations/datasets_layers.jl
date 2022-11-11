@@ -21,7 +21,7 @@ function SimpleSDMLayers.SimpleSDMPredictor(
     boundingbox, arguments = _boundingbox_out_of_kwargs(kwargs)
 
     # Get the data
-    filepath, filetype, bandnumber, crs = downloader(data; arguments...)
+    filepath, filetype, bandnumber, crs = downloader(data, future; arguments...)
 
     if isequal(SimpleSDMDatasets._tiff)(filetype)
         return geotiff(SimpleSDMPredictor, filepath, bandnumber; boundingbox...)

@@ -12,9 +12,9 @@ end
 function _internal_limit_update!(o::GBIFRecords)
     limit_index = findfirst((p) -> string(p.first) == "limit", o.query)
     limit = isnothing(limit_index) ? 20 : o.query[limit_index].second
-    if (length(o) + limit) > size(o)
+    if (length(o) + limit) > count(o)
         isnothing(limit_index) || deleteat!(o.query, limit_index)
-        push!(o.query, "limit" => size(o) - length(o))
+        push!(o.query, "limit" => count(o) - length(o))
     end
 end
 
@@ -31,11 +31,11 @@ ensure that the previous and the new occurrences have the same status, but only
 for records that have already been retrieved.
 """
 function occurrences!(o::GBIFRecords)
-    if length(o) == size(o)
+    if length(o) == count(o)
         @info "All occurences for this query have been returned"
     else
         if isnothing(o.query)
-            o.query = Dict{String,Any}()
+            o.query = Dict{String, Any}()
         end
         _internal_offset_update!(o)
         _internal_limit_update!(o)

@@ -21,16 +21,16 @@ set3 = occurrences("scientificName" => "Mus musculus", "year" => 1999, "hasCoord
 # Version with the full query - this one has about 250 records
 serval = GBIF.taxon("Leptailurus serval", strict=true)
 obs = occurrences(serval, "hasCoordinate" => "true", "continent" => "AFRICA", "decimalLongitude" => (-30, 40))
-while length(obs) < size(obs)
+while length(obs) < count(obs)
     occurrences!(obs)
 end
-@test length(obs) == size(obs)
+@test length(obs) == count(obs)
 
 # Version with the full query AND a set page size - this one has about 250 records
 obs = occurrences(serval, "hasCoordinate" => "true", "continent" => "AFRICA", "decimalLongitude" => (-30, 40), "limit" => 45)
-while length(obs) < size(obs)
+while length(obs) < count(obs)
     occurrences!(obs)
 end
-@test length(obs) == size(obs)
+@test length(obs) == count(obs)
 
 end

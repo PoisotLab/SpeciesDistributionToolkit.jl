@@ -11,20 +11,6 @@ should be done using other packages from the Julia ecosystem. In particular, we
 provide support for `DataFrames` and `Query` (and therefore the rest of the
 "queryverse").
 
-## Getting started
-
-The latest release of the package can be installed from the Julia console:
-
-~~~ julia
-Pkg.add("GBIF")
-~~~
-
-After installing it, load the package as usual:
-
-~~~ julia
-using GBIF
-~~~
-
 ## Core features
 
 - get taxonomic information using the `taxon` function

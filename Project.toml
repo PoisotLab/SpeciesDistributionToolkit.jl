@@ -6,6 +6,7 @@ version = "0.0.1"
 [deps]
 Fauxcurrences = "a2d61402-033a-4ca9-aef4-652d70cf7c9c"
 GBIF = "ee291a33-5a6c-5552-a3c8-0f29a1181037"
+GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 SimpleSDMDatasets = "2c7d61d0-5c73-410d-85b2-d2e7fbbdcefa"

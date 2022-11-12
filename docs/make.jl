@@ -30,9 +30,9 @@ makedocs(;
         "Index" => "index.md",
         "Vignettes" => _vignettes_pages,
         "GBIF.jl" => [
-            "Index" => "src/GBIF/index.md",
-            "Types" => "src/GBIF/types.md",
-            "Retrieving data" => "src/GBIF/data.md",
+            "Index" => "GBIF/index.md",
+            "Types" => "GBIF/types.md",
+            "Retrieving data" => "GBIF/data.md",
         ],
     ],
 )

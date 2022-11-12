@@ -10,15 +10,15 @@ using Literate
 
 const _vignettes_dir = "docs/src/vignettes"
 
-# Compile the vignettes
+# Compile the vignettes for the top-level package
 _list_of_vignettes = filter(f -> endswith(f, ".jl"), readdir(_vignettes_dir; join = true))
 _vignettes_pages = Pair{String, String}[]
 for vignette in _list_of_vignettes
     Literate.markdown(vignette, joinpath(pwd(), _vignettes_dir))
     compiled_vignette = replace(vignette, ".jl" => ".md")
-    title = replace(last(splitpath(compiled_vignette)), ".md" => "")
+    title = last(split(readlines(vignette)[1], "# # "))
     path = joinpath(splitpath(compiled_vignette)[3:end])
-    push!(_vignettes_pages, titlecase(replace(title, "_" => " ")) => path)
+    push!(_vignettes_pages, title => path)
 end
 
 makedocs(;

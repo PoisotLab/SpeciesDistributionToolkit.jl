@@ -38,6 +38,8 @@ envirovars =
 
 plot!(envirovars, temperature[observations], precipitation[observations])
 
+current_figure()
+
 # In order to also show these on the map, we will add a simple heatmap to the left of the
 # figure, and overlay the points using `longitudes` and `latitudes` for the observations:
 
@@ -46,3 +48,4 @@ hidedecorations!(map)
 hidespines!(map)
 heatmap!(map, sprinkle(temperature)...; colormap = :heat)
 plot!(map, longitudes(observations), latitudes(observations))
+current_figure()

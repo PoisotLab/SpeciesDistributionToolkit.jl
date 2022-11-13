@@ -15,6 +15,10 @@ using Reexport
 # SimpleSDMDatasets for access to layers
 @reexport using SimpleSDMDatasets
 
+# Functions for IO
+include("io/geotiff.jl")
+include("io/ascii.jl")
+
 # Integrate the datasets to the layers
 include("integrations/datasets_layers.jl")
 

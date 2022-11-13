@@ -1,9 +1,7 @@
 module SimpleSDMLayers
 
-using ArchGDAL
 using RecipesBase
 using Colors, ColorBlendModes
-using Requires
 using Distances
 using Statistics
 using GeometryBasics
@@ -35,10 +33,6 @@ include("lib/generated.jl")
 include("lib/basics.jl")
 export latitudes, longitudes, boundingbox, grid
 
-include("datasets/ascii.jl")
-include("datasets/geotiff.jl")
-export geotiff
-
 include("pseudoabsences/main.jl")
 include("pseudoabsences/radius.jl")
 include("pseudoabsences/randomselection.jl")
@@ -54,12 +48,5 @@ export coarsen, slidingwindow, mask, rescale!, rescale, mosaic
 
 include("recipes/recipes.jl")
 export bivariate
-
-function __init__()
-    @require DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0" begin
-        @info "Loading DataFrames support for SimpleSDMLayers.jl"
-        include("integrations/DataFrames.jl")
-    end
-end
 
 end # module

@@ -42,8 +42,6 @@ function geotiff(
 
     # This next block is reading the geotiff file, but also making sure that we
     # clip the file correctly to avoid reading more than we need.
-    # This next block is reading the geotiff file, but also making sure that we
-    # clip the file correctly to avoid reading more than we need.
     layer = ArchGDAL.read(file) do dataset
         transform = ArchGDAL.getgeotransform(dataset)
         wkt = ArchGDAL.getproj(dataset)
@@ -53,12 +51,12 @@ function geotiff(
         band = ArchGDAL.getband(dataset, bandnumber)
         T = ArchGDAL.pixeltype(band)
 
-        # The nodata is not always correclty identified, so if it is not found, we assumed it is the smallest value in the band
-        nodata = if isnothing(ArchGDAL.getnodatavalue(band))
-            convert(T, ArchGDAL.minimum(band))
-        else
-            convert(T, ArchGDAL.getnodatavalue(band))
-        end
+        # We need to check that the nodatavalue is represented in the correct pixeltype,
+        # which is not always the case (cough CHELSA2 cough). If this is the case, trying to
+        # convert the nodata value will throw an InexactError, so we can catch it and to
+        # something about it.
+        nodata = ArchGDAL.getnodatavalue(band)
+        nodata = isnothing(nodata) ? typemin(T) : nodata
 
         # Get the correct latitudes
         minlon = transform[1]
@@ -75,10 +73,6 @@ function geotiff(
 
         width = ArchGDAL.width(dataset)
         height = ArchGDAL.height(dataset)
-
-        #global lon_stride, lat_stride
-        #global left_pos, right_pos
-        #global bottom_pos, top_pos
 
         lon_stride, left_pos, min_width = _find_span(width, minlon, maxlon, left, :left)
         _, right_pos, max_width = _find_span(width, minlon, maxlon, right, :right)
@@ -186,7 +180,7 @@ function geotiff(
     nodata::T = convert(T, -9999),
 ) where {T <: Number}
     bands = 1:length(layers)
-    _layers_are_compatible(layers)
+    SimpleSDMLayers._layers_are_compatible(layers)
     width, height = size(_prepare_layer_for_burnin(layers[1], nodata))
 
     # Geotransform

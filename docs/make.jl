@@ -49,4 +49,7 @@ makedocs(;
     ],
 )
 
-deploydocs(; repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl.git")
+deploydocs(;
+    repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl.git",
+    push_preview = true,
+)

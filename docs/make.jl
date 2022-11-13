@@ -6,9 +6,9 @@ using Dates
 using Literate
 
 # Generate a report card for each known dataset
-include("dataset_report.jl")
+include("docs/dataset_report.jl")
 _dataset_catalogue = [
-    string(P) => joinpath("docs", "src", "SimpleSDMDatasets", "catalogue", "$(P).md")
+    string(P) => joinpath("SimpleSDMDatasets", "catalogue", "$(P).md")
     for P in subtypes(RasterProvider)
 ]
 

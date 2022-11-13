@@ -17,9 +17,14 @@ have data.
 This function is currently relatively slow. Performance improvements will arrive
 at some point.
 """
-function slidingwindow(layer::LT, f::FT, d::IT; threaded::Bool=Threads.nthreads()>1) where {LT <: SimpleSDMLayer, FT <: Function, IT <: Number}
+function slidingwindow(
+    layer::LT,
+    f::FT,
+    d::IT;
+    threaded::Bool = Threads.nthreads() > 1,
+) where {LT <: SimpleSDMLayer, FT <: Function, IT <: Number}
     # We infer the return type from a call to the function on the first three elements
-    return_type = typeof(f(collect(layer)[1:min(3, length(layer))]))
+    return_type = typeof(f(values(layer)[1:min(3, length(layer))]))
 
     # New layer using typed similar
     N = similar(layer, return_type)
@@ -34,7 +39,7 @@ function slidingwindow(layer::LT, f::FT, d::IT; threaded::Bool=Threads.nthreads(
         end
     else
         for pos in filled_positions
-           N[pos] = f(_sliding_values(layer, pos, d))
+            N[pos] = f(_sliding_values(layer, pos, d))
         end
     end
 
@@ -42,19 +47,22 @@ function slidingwindow(layer::LT, f::FT, d::IT; threaded::Bool=Threads.nthreads(
     return N
 end
 
-function _sliding_values(layer, pt, d; R=6371.0)
+function _sliding_values(layer, pt, d; R = 6371.0)
     # Bounding box (approx.) for the sliding window of length d at the given point
-    max_lat = min(layer.top, pt[2]+(180.0*d)/(π*R))
-    min_lat = max(layer.bottom, pt[2]-(180.0*d)/(π*R))
-    max_lon = min(layer.right, pt[1]+(360.0*d)/(π*R))
-    min_lon = max(layer.left, pt[1]-(360.0*d)/(π*R))
+    max_lat = min(layer.top, pt[2] + (180.0 * d) / (π * R))
+    min_lat = max(layer.bottom, pt[2] - (180.0 * d) / (π * R))
+    max_lon = min(layer.right, pt[1] + (360.0 * d) / (π * R))
+    min_lon = max(layer.left, pt[1] - (360.0 * d) / (π * R))
 
     # Extracted layer for the sliding window
-    _tmp = clip(layer; left=min_lon, right=max_lon, top=max_lat, bottom=min_lat)
-    
+    _tmp = clip(layer; left = min_lon, right = max_lon, top = max_lat, bottom = min_lat)
+
     # Filter the correct positions
     filled_positions = keys(_tmp)
-    neighbors = filter(p -> Distances.haversine((pt[1], pt[2]), (p[1], p[2]), R) < d, filled_positions)
+    neighbors = filter(
+        p -> Distances.haversine((pt[1], pt[2]), (p[1], p[2]), R) < d,
+        filled_positions,
+    )
 
     # Return
     return _tmp[neighbors]

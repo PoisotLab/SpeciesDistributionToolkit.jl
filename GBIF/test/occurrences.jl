@@ -33,4 +33,11 @@ while length(obs) < count(obs)
 end
 @test length(obs) == count(obs)
 
+# Check ABSENT records
+o = occurrences("occurrenceStatus" => "ABSENT")
+@test o[1].presence == false
+
+o = occurrences("occurrenceStatus" => "PRESENT")
+@test o[1].presence == true
+
 end

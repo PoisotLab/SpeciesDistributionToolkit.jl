@@ -1,6 +1,6 @@
-## CHELSA2
+# CHELSA2
 
-### AverageTemperature
+## AverageTemperature
 
 **Support for months** - list with `SimpleSDMDatasets.months(RasterData{CHELSA2, AverageTemperature})`
 
@@ -12,7 +12,7 @@
 
 **Future scenario `SSP585` supported** with models `GFDL_ESM4`, `IPSL_CM6A_LR`, `MPI_ESM1_2_HR`, `MRI_ESM2_0` and `UKESM1_0_LL`
 
-### BioClim
+## BioClim
 
 **Support for layers** - list with `SimpleSDMDatasets.layers(RasterData{CHELSA2, BioClim})`
 
@@ -24,7 +24,7 @@
 
 **Future scenario `SSP585` supported** with models `GFDL_ESM4`, `IPSL_CM6A_LR`, `MPI_ESM1_2_HR`, `MRI_ESM2_0` and `UKESM1_0_LL`
 
-### MaximumTemperature
+## MaximumTemperature
 
 **Support for months** - list with `SimpleSDMDatasets.months(RasterData{CHELSA2, MaximumTemperature})`
 
@@ -36,7 +36,7 @@
 
 **Future scenario `SSP585` supported** with models `GFDL_ESM4`, `IPSL_CM6A_LR`, `MPI_ESM1_2_HR`, `MRI_ESM2_0` and `UKESM1_0_LL`
 
-### MinimumTemperature
+## MinimumTemperature
 
 **Support for months** - list with `SimpleSDMDatasets.months(RasterData{CHELSA2, MinimumTemperature})`
 
@@ -48,7 +48,7 @@
 
 **Future scenario `SSP585` supported** with models `GFDL_ESM4`, `IPSL_CM6A_LR`, `MPI_ESM1_2_HR`, `MRI_ESM2_0` and `UKESM1_0_LL`
 
-### Precipitation
+## Precipitation
 
 **Support for months** - list with `SimpleSDMDatasets.months(RasterData{CHELSA2, Precipitation})`
 

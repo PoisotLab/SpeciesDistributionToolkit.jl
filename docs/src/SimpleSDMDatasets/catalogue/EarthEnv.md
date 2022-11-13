@@ -1,6 +1,6 @@
-## EarthEnv
+# EarthEnv
 
-### HabitatHeterogeneity
+## HabitatHeterogeneity
 
 **Support for layers** - list with `SimpleSDMDatasets.layers(RasterData{EarthEnv, HabitatHeterogeneity})`
 
@@ -8,7 +8,7 @@
 
 **Downloaded** as `_file`, **data stored** as `_tiff`
 
-### LandCover
+## LandCover
 
 **Support for layers** - list with `SimpleSDMDatasets.layers(RasterData{EarthEnv, LandCover})`
 

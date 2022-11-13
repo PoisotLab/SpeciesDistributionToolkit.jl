@@ -18,7 +18,7 @@ function report(data::RasterData{P, D}) where {P <: RasterProvider, D <: RasterD
     for S in subtypes(FutureScenario)
         models = []
         for M in subtypes(FutureModel)
-            if SimpleSDMDatasets.provides(data, Future(S, M))
+            if SimpleSDMDatasets.provides(data, Projection(S, M))
                 push!(models, "`$(M)`")
             end
         end
@@ -49,7 +49,7 @@ function report(::Type{P}) where {P <: RasterProvider}
 end
 
 for P in subtypes(RasterProvider)
-    open(joinpath(@__DIR__, "src", "usr", "$(P).md"), "w") do io
-        print(io, report(P))
+    open(joinpath("docs", "src", "SimpleSDMDatasets", "catalogue", "$(P).md"), "w") do io
+        return print(io, report(P))
     end
 end

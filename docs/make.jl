@@ -5,12 +5,15 @@ using Markdown
 using Dates
 using Literate
 
-# Prepare the report card
-# include(joinpath(@__DIR__, "report.jl"))
-
-const _vignettes_dir = "docs/src/vignettes"
+# Generate a report card for each dataset
+include("docs/dataset_report.jl")
+_dataset_catalogue = [
+    string(P) => joinpath("docs", "src", "SimpleSDMDatasets", "catalogue", "$(P).md")
+    for P in subtypes(RasterProvider)
+]
 
 # Compile the vignettes for the top-level package
+const _vignettes_dir = "docs/src/vignettes"
 _list_of_vignettes = filter(f -> endswith(f, ".jl"), readdir(_vignettes_dir; join = true))
 _vignettes_pages = Pair{String, String}[]
 for vignette in _list_of_vignettes
@@ -33,6 +36,15 @@ makedocs(;
             "GBIF.jl" => "GBIF/index.md",
             "GBIF data representation" => "GBIF/types.md",
             "GBIF data retrieval" => "GBIF/data.md",
+        ],
+        "SimpleSDMDatasets.jl" => [
+            "SimpleSDMDatasets.jl" => "SimpleSDMDatasets/index.md",
+            "Dataset catalogue" => _dataset_catalogue,
+            "For developers" => [
+                "Data representation" => "SimpleSDMDatasets/dev/types.md",
+                "Data retrieval interface" => "SimpleSDMDatasets/dev/interface.md",
+                "Internals" => "SimpleSDMDatasets/dev/internals.md",
+            ],
         ],
     ],
 )

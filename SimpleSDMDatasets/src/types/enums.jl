@@ -27,6 +27,6 @@ end
 
 This enum stores the possible coordinate representation system of returned files. They are listed with `instances(RasterProjection)`.
 """
-@enum RasterFileType begin
-    _wsg84
+@enum RasterCRS begin
+    _wgs84
 end

@@ -23,9 +23,16 @@ capybara.phylum
 # a vector of pairs (there is a reason, and it is not sufficiently important to spend
 # a paragraph on at this point). We will limit our search to South America, retrieve
 # occurrences 300 at a time (the maximum allowed by the GBIF API), and only focus on
-# georeferences observations:
+# georeferences observations. Of course, we only care about the places where the
+# observations represent a *presence*, so we will use the "occurrenceStatus" flag to get
+# these records only.
 
-query = ["hasCoordinate" => true, "continent" => "SOUTH_AMERICA", "limit" => 300]
+query = [
+    "hasCoordinate" => true,
+    "continent" => "SOUTH_AMERICA",
+    "limit" => 300,
+    "occurrenceStatus" => "PRESENT",
+]
 
 # We have enough information to start our search of occurrences:
 

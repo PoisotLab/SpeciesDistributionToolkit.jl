@@ -26,7 +26,13 @@ precipitation = SimpleSDMPredictor(dataprovider; layer = "BIO12", spatial_extent
 # number of occurrences, so we only need to do a single call to collect them all:
 
 bat = taxon("Mystacina tuberculata")
-observations = occurrences(bat, "country" => "NZ", "hasCoordinate" => true, "limit" => 300)
+observations = occurrences(
+    bat,
+    "country" => "NZ",
+    "hasCoordinate" => true,
+    "limit" => 300,
+    "occurrenceStatus" => "PRESENT",
+)
 
 # We can now setup a figure with the correct axes, and use the `layer[occurrence]` indexing
 # method to extrac the values from the layers at the location of each occurrence.

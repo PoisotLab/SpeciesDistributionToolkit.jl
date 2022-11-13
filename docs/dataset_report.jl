@@ -48,6 +48,9 @@ function report(::Type{P}) where {P <: RasterProvider}
     return Markdown.parse(full_text)
 end
 
+# Make sure the path is there
+mkpath(joinpath("docs", "src", "SimpleSDMDatasets", "catalogue"))
+
 for P in subtypes(RasterProvider)
     open(joinpath("docs", "src", "SimpleSDMDatasets", "catalogue", "$(P).md"), "w") do io
         return print(io, report(P))

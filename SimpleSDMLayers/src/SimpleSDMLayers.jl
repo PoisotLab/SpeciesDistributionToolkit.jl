@@ -27,6 +27,7 @@ include("lib/overloads.jl")
 
 # Raster clipping
 include("lib/clip.jl")
+export clip
 
 include("lib/generated.jl")
 

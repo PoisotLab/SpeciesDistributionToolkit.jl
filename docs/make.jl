@@ -5,7 +5,7 @@ using Markdown
 using Dates
 using Literate
 
-# Generate a report card for each dataset
+# Generate a report card for each known dataset
 include("docs/dataset_report.jl")
 _dataset_catalogue = [
     string(P) => joinpath("docs", "src", "SimpleSDMDatasets", "catalogue", "$(P).md")

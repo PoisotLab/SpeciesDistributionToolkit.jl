@@ -1,5 +1,7 @@
 # SpeciesDistributionToolkit
 
+[Issue/bug tracker](https://github.com/orgs/PoisotLab/projects/3)
+
 `SpeciesDistributionToolkit.jl` is a few different packages wearing a trench coat, and the
 end result is a toolkit meant to deal with (surprise!) species distribution data.
 Specifically, the goal of these packages put together is to provide a consistent way to

@@ -62,7 +62,6 @@ function geotiff(
         end
     catch err
         @info err
-        continue
     end
 
     # This next block is reading the geotiff file, but also making sure that we

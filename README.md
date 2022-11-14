@@ -1,12 +1,13 @@
 # SpeciesDistributionToolkit
 
-[Issue/bug tracker](https://github.com/orgs/PoisotLab/projects/3)
-
 `SpeciesDistributionToolkit.jl` is a few different packages wearing a trench coat, and the
 end result is a toolkit meant to deal with (surprise!) species distribution data.
 Specifically, the goal of these packages put together is to provide a consistent way to
 handle occurrence data, put them on a map, and make it interact with environmental
 information.
+
+> To get a sense of the next steps and help with the development, see the 
+[issues/bugs tracker](https://github.com/orgs/PoisotLab/projects/3)
 
 This package is *not* intended to perform any actual modeling, but can serve as a robust
 basis for such models. One plan on the horizon is to offer an interface from this package to

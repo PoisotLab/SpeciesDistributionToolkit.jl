@@ -15,3 +15,4 @@ SimpleSDMLayers = "2c645270-77db-11e9-22c3-0f302a89c64c"
 
 [compat]
 Reexport = "1"
+SimpleSDMLayers = "0.8"

@@ -29,11 +29,9 @@ function pairs_to_querystring(query::Pair...)
 end
 
 """
-**Return an interpreted occurrence given its key**
-
     occurrence(key::Union{String, Integer})
 
-The key can be given as a string or as an integer.
+Returns a GBIF occurrence identified by a key. The key can be given as a string or as an integer.
 """
 function occurrence(key::Union{String, Integer})
     occ_url = gbifurl * "occurrence/" * string(key)
@@ -56,17 +54,19 @@ function _internal_occurrences_getter(query::Pair...)
 end
 
 """
-**Retrieve latest occurrences based on a query**
-
     occurrences(query::Pair...)
 
 This function will return the latest occurrences matching the queries -- usually
 20, but this is entirely determined by the server default page size. The query
 parametes must be given as pairs, and are optional. Omitting the query will
-return the latest recorded occurrences.
+return the latest recorded occurrences for all taxa.
 
-The arguments accepted as queries are the one documented on the [GBIF
-API](https://www.gbif.org/developer/occurrence) website.
+The arguments accepted as queries are documented on the
+[GBIF API](https://www.gbif.org/developer/occurrence) website.
+
+**Note that** this function will return even observations where the "occurrenceStatus"
+is "ABSENT"; therefore, for the majority of uses, your query will *at least* contain
+`"occurrenceStatus" => "PRESENT"`.
 """
 function occurrences(query::Pair...)
     retrieved, offset, of_max = _internal_occurrences_getter(query...)
@@ -83,14 +83,9 @@ function occurrences(query::Pair...)
 end
 
 """
-**Retrieve latest occurrences for a taxon based on a query**
-
     occurrences(t::GBIFTaxon, query::Pair...)
 
-Returns occurrences that correspond to a filter, given in `q` as a dictionary.
-When first called, this function will return the latest 20 hits (or whichever
-default page size GBIF uses). Future occurrences can be queried with `next!` or
-`complete!`.
+Returns occurrences for a given taxon -- the query arguments are the same as the `occurrences` function.
 """
 function occurrences(t::GBIFTaxon, query::Pair...)
     levels = [:kingdom, :phylum, :class, :order, :family, :genus, :species]

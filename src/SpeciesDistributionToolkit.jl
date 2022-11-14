@@ -1,6 +1,7 @@
 module SpeciesDistributionToolkit
 
-using ArchGDAL
+import ArchGDAL
+import GDAL
 
 # We make ample use of re-export
 using Reexport

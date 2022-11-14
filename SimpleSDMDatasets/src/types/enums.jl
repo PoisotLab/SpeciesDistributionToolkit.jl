@@ -29,4 +29,5 @@ This enum stores the possible coordinate representation system of returned files
 """
 @enum RasterCRS begin
     _wgs84
+    _nad83
 end

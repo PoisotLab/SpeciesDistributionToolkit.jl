@@ -39,24 +39,30 @@ function geotiff(
     bottom = -90.0,
     top = 90.0,
 ) where {LT <: SimpleSDMLayer}
-    ArchGDAL.read(file) do stuff
-        wkt = ArchGDAL.importPROJ4(ArchGDAL.getproj(stuff))
-        wgs84 = ArchGDAL.importEPSG(4326)
-        # The next comparison is complete bullshit but for some reason, ArchGDAL has no
-        # mechanism to test the equality of coordinate systems. I sort of understand why,
-        # but it's still nonsense. So we are left with checking the string representations.
-        if string(wkt) != string(wgs84)
-            @warn """The dataset is not in WGS84
-            We will convert it to WGS84 using gdal_warp, and write it to a temporary file.
-            This is not an apology, this is a warning.
-            Proceed with caution.
-            """
-            newfile = tempname()
-            run(
-                `$(GDAL.gdalwarp_path()) $file $newfile -t_srs "+proj=longlat +ellps=WGS84"`,
-            )
-            file = newfile
+
+    try
+        ArchGDAL.read(file) do stuff
+            wkt = ArchGDAL.importPROJ4(ArchGDAL.getproj(stuff))
+            wgs84 = ArchGDAL.importEPSG(4326)
+            # The next comparison is complete bullshit but for some reason, ArchGDAL has no
+            # mechanism to test the equality of coordinate systems. I sort of understand why,
+            # but it's still nonsense. So we are left with checking the string representations.
+            if string(wkt) != string(wgs84)
+                @warn """The dataset is not in WGS84
+                We will convert it to WGS84 using gdal_warp, and write it to a temporary file.
+                This is not an apology, this is a warning.
+                Proceed with caution.
+                """
+                newfile = tempname()
+                run(
+                    `$(GDAL.gdalwarp_path()) $file $newfile -t_srs "+proj=longlat +ellps=WGS84"`,
+                )
+                file = newfile
+            end
         end
+    catch err
+        @info err
+        continue
     end
 
     # This next block is reading the geotiff file, but also making sure that we

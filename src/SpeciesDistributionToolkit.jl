@@ -21,6 +21,7 @@ using Reexport
 # Functions for IO
 include("io/geotiff.jl")
 include("io/ascii.jl")
+include("io/read_write.jl")
 
 # Integrate the datasets to the layers
 include("integrations/datasets_layers.jl")

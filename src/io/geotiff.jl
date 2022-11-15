@@ -21,7 +21,7 @@ function _find_span(n, m, M, pos, side)
 end
 
 """
-    geotiff(::Type{LT}, file, bandnumber::Integer=1; left=nothing, right=nothing, bottom=nothing, top=nothing) where {LT <: SimpleSDMLayer}
+    geotiff(file, ::Type{LT}; bandnumber::Integer=1, left=nothing, right=nothing, bottom=nothing, top=nothing) where {LT <: SimpleSDMLayer}
 
 The geotiff function reads a geotiff file, and returns it as a matrix of the
 correct type. The optional arguments `left`, `right`, `bottom`, and `left` are
@@ -30,16 +30,15 @@ you want to get a small subset from large files.
 
 The first argument is the type of the `SimpleSDMLayer` to be returned.
 """
-function geotiff(
-    ::Type{LT},
+function _read_geotiff(
     file::AbstractString,
-    bandnumber::Integer = 1;
+    ::Type{LT};
+    bandnumber::Integer = 1,
     left = -180.0,
     right = 180.0,
     bottom = -90.0,
     top = 90.0,
 ) where {LT <: SimpleSDMLayer}
-
     try
         ArchGDAL.read(file) do stuff
             wkt = ArchGDAL.importPROJ4(ArchGDAL.getproj(stuff))
@@ -135,7 +134,7 @@ end
 Write a single `layer` to a `file`, where the `nodata` field is set to an
 arbitrary value.
 """
-function geotiff(
+function _write_geotiff(
     file::AbstractString,
     layer::SimpleSDMPredictor{T};
     nodata::T = convert(T, -9999),
@@ -198,10 +197,11 @@ end
 Stores a series of `layers` in a `file`, where every layer in a band. See
 `geotiff` for other options.
 """
-function geotiff(
+function _write_geotiff(
     file::AbstractString,
     layers::Vector{SimpleSDMPredictor{T}};
     nodata::T = convert(T, -9999),
+    driver::String = "GTiff",
 ) where {T <: Number}
     bands = 1:length(layers)
     SimpleSDMLayers._layers_are_compatible(layers)
@@ -239,7 +239,7 @@ function geotiff(
         return ArchGDAL.write(
             dataset,
             file;
-            driver = ArchGDAL.getdriver("GTiff"),
+            driver = ArchGDAL.getdriver(driver),
             options = ["COMPRESS=LZW"],
         )
     end
@@ -251,12 +251,12 @@ end
 
 Write a single `SimpleSDMResponse` layer to a file.
 """
-function geotiff(
+function _write_geotiff(
     file::AbstractString,
     layer::SimpleSDMResponse{T};
-    nodata::T = convert(T, -9999),
+    kwargs...,
 ) where {T <: Number}
-    return geotiff(file, convert(SimpleSDMPredictor, layer); nodata = nodata)
+    return _write_geotiff(file, convert(SimpleSDMPredictor, layer); kwargs...)
 end
 
 """
@@ -264,10 +264,10 @@ end
 
 Write a vector of `SimpleSDMResponse` layers to bands in a file.
 """
-function geotiff(
+function _write_geotiff(
     file::AbstractString,
     layers::Vector{SimpleSDMResponse{T}};
-    nodata::T = convert(T, -9999),
+    kwargs...,
 ) where {T <: Number}
-    return geotiff(file, convert.(SimpleSDMPredictor, layers); nodata = nodata)
+    return _write_geotiff(file, convert.(SimpleSDMPredictor, layers); kwargs...)
 end

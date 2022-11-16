@@ -93,3 +93,18 @@ function occurrences(t::GBIFTaxon, query::Pair...)
     taxon_query = String(level) * "Key" => getfield(t, level).second
     return occurrences(taxon_query, query...)
 end
+
+"""
+    occurrences(t::Vector{GBIFTaxon}, query::Pair...)
+
+Returns occurrences for a series of taxa -- the query arguments are the same as the `occurrences` function.
+"""
+function occurrences(ts::Vector{GBIFTaxon}, query::Pair...)
+    taxon_query = []
+    for t in ts
+        levels = [:kingdom, :phylum, :class, :order, :family, :genus, :species]
+        level = levels[findlast(l -> getfield(t, l) !== missing, levels)]
+        push!(taxon_query, String(level) * "Key" => getfield(t, level).second)
+    end
+    return occurrences(taxon_query..., query...)
+end

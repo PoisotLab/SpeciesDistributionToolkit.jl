@@ -26,6 +26,12 @@ while length(obs) < count(obs)
 end
 @test length(obs) == count(obs)
 
+# Version with multiple taxa
+serval = GBIF.taxon("Leptailurus serval", strict=true)
+leopard = GBIF.taxon("Panthera pardus", strict=true)
+obs = occurrences([leopard, serval], "hasCoordinate" => true, "occurrenceStatus" => "PRESENT")
+@test typeof(obs) == GBIFRecords
+
 # Version with the full query AND a set page size - this one has about 250 records
 obs = occurrences(serval, "hasCoordinate" => "true", "continent" => "AFRICA", "decimalLongitude" => (-30, 40), "limit" => 45)
 while length(obs) < count(obs)

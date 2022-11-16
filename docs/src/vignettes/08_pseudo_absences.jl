@@ -33,11 +33,11 @@ presencelayer = mask(temperature, presences, Bool)
 
 #
 
-back1 = pseudoabsence(WithinRadius, presencelayer; distance = 120.0)
+back1 = pseudoabsencemask(WithinRadius, presencelayer; distance = 120.0)
 
 # but we might also not want to put points too *close* from occurrences:
 
-back2 = pseudoabsence(WithinRadius, presencelayer; distance = 50.0)
+back2 = pseudoabsencemask(WithinRadius, presencelayer; distance = 50.0)
 
 # This is something we can do with layer arithmetic
 

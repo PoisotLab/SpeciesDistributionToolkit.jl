@@ -27,28 +27,13 @@ function _known_point(ref, d, α; R = 6371.0)
     return rad2deg.((λ2, φ2))
 end
 
-function _invalid_pseudoabsence(pt, msk)
-    isnothing(msk[pt...]) && return true
-    msk[pt...] && return true
-    return false
-end
-
 function _layer_works_for_pseudoabsence(layer::T) where {T <: SimpleSDMLayer}
     @assert SimpleSDMLayers._inner_type(layer) <: Bool
     n_occ = sum(layer)
     return iszero(n_occ) && throw(ArgumentError("The presences layer is empty"))
 end
 
-function _return_point_as_grid(pt, layer)
-    cart = SimpleSDMLayers._point_to_cartesian(layer, Point(pt...))
-    rtpt = Point((longitudes(layer)[cart[2]], latitudes(layer)[cart[1]]))
-    return rtpt
-end
-
-"""
-    pseudoabsence
-"""
-function pseudoabsence(
+function pseudoabsencemask(
     ::Type{WithinRadius},
     presences::T;
     distance::Number = 100.0,
@@ -80,6 +65,38 @@ function pseudoabsence(
             background[background_cell] = true
         end
         deleteat!(keypool, indexin(valid_keys, keypool))
+    end
+    return background
+end
+
+function pseudoabsencemask(
+    ::Type{RandomSelection},
+    presences::T) where {T <: SimpleSDMLayer}
+    _layer_works_for_pseudoabsence(presences)
+    presence_only = mask(presences, presences)
+    background = replace(similar(presences, Bool), false => true)
+    for occupied_cell in keys(presence_only)
+        background[occupied_cell] = false
+    end
+    return background
+end
+
+function pseudoabsencemask(
+    ::Type{SurfaceRangeEnvelope},
+    presences::T) where {T <: SimpleSDMLayer}
+    _layer_works_for_pseudoabsence(presences)
+    presence_only = mask(presences, presences)
+    background = similar(presences, Bool)
+    lon = extrema([k[1] for k in keys(presence_only)])
+    lat = extrema([k[2] for k in keys(presence_only)])
+    for occupied_cell in keys(presences)
+        if lon[1] <= occupied_cell[1] <= lon[2]
+            if lat[1] <= occupied_cell <= lat[2]
+                if ~(presences[occupied_cell])
+                    background[occupied_cell] = true
+                end
+            end
+        end
     end
     return background
 end

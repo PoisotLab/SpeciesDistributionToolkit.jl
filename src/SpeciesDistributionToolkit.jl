@@ -39,7 +39,7 @@ include("integrations/gbif_layers.jl")
 # Functions for pseudo-absence generation
 include("pseudoabsences.jl")
 export WithinRadius, SurfaceRangeEnvelope, RandomSelection
-export pseudoabsence
+export pseudoabsencemask
 
 # Function to turn a layer into something (Geo)Makie can use
 function sprinkle(layer::T) where {T <: SimpleSDMLayer}

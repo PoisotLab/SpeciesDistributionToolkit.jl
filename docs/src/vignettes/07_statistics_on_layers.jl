@@ -4,11 +4,13 @@ using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
 
-# ...
+# In this vignette, we will have a look at the ways to transform layers and apply some
+# functions from `Statistics`. As an illustration, we will produce a map of suitability for
+# *Rangifer tarandus tarandus* based on temperature and precipitation.
 
 spatial_extent = (left = 3.0, bottom = 54.0, right = 33.0, top = 73.0)
 
-# 
+# We can collect the data for occurrences with several `"country"` arguments:
 
 rangifer = taxon("Rangifer tarandus tarandus"; strict = false)
 query = [
@@ -25,7 +27,8 @@ while length(presences) <= 3000
     occurrences!(presences)
 end
 
-# layers
+# We will get our layers from CHELSA1. Because these layers are returned as `UInt16`, we
+# multiply them by a float to get `Float64` layers.
 
 dataprovider = RasterData(CHELSA1, BioClim)
 temperature = 0.1SimpleSDMPredictor(dataprovider; layer = "BIO1", spatial_extent...)
@@ -95,7 +98,7 @@ quantile(temperature, [0.05, 0.95])
 # each predictor corresponding to the top abd bottom 5% of the ranges of values where the
 # species is:
 
-temp_limits = quantiles(temperature[presences], [0.05, 0.95])
+temp_limits = quantile(temperature[presences], [0.05, 0.95])
 
 # This can be used to mask the temperature layer:
 
@@ -103,11 +106,11 @@ temperature_range = broadcast(v -> temp_limits[1] <= v <= temp_limits[2], temper
 
 # We can do the same for the precipitation:
 
-prec_limits = quantiles(precipitation[presences], [0.05, 0.95])
+prec_limits = quantile(precipitation[presences], [0.05, 0.95])
 precipitation_range = broadcast(v -> prec_limits[1] <= v <= prec_limits[2], precipitation)
 
 # The combined range map is simply the places where both variables match with species
-# occurrences:
+# occurrences, which we can get by multiplying the two boolean layers:
 
 fig, ax, hm = heatmap(
     sprinkle(temperature_range * precipitation_range)...;

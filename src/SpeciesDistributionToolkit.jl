@@ -3,6 +3,13 @@ module SpeciesDistributionToolkit
 import ArchGDAL
 import GDAL
 
+import Distances
+# TODO: call the one from Fauxcurrences when integrated
+const _distance_function = Distances.Haversine(6371.0)
+
+import Distributions
+import StatsBase
+
 # We make ample use of re-export
 using Reexport
 
@@ -28,6 +35,11 @@ include("integrations/datasets_layers.jl")
 
 # Integrate GBIF to the layers
 include("integrations/gbif_layers.jl")
+
+# Functions for pseudo-absence generation
+include("pseudoabsences.jl")
+export WithinRadius, SurfaceRangeEnvelope, RandomSelection
+export pseudoabsencemask
 
 # Function to turn a layer into something (Geo)Makie can use
 function sprinkle(layer::T) where {T <: SimpleSDMLayer}

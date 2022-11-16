@@ -16,16 +16,11 @@ rangifer = taxon("Rangifer tarandus tarandus"; strict = false)
 query = [
     "occurrenceStatus" => "PRESENT",
     "hasCoordinate" => true,
-    "country" => "NO",
-    "country" => "SE",
-    "country" => "FI",
-    "country" => "DE",
+    "decimalLatitude" => (spatial_extent.bottom, spatial_extent.top),
+    "decimalLongitude" => (spatial_extent.left, spatial_extent.right),
     "limit" => 300,
 ]
 presences = occurrences(rangifer, query...)
-while length(presences) < 3000
-    occurrences!(presences)
-end
 
 # 
 
@@ -34,25 +29,28 @@ temperature = 0.1SimpleSDMPredictor(dataprovider; layer = "BIO1", spatial_extent
 
 # 
 
-presence_only = mask(temperature, presences, Bool)
+presencelayer = mask(temperature, presences, Bool)
+
+#
+
+back1 = pseudoabsence(WithinRadius, presencelayer; distance = 120.0)
+
+# but we might also not want to put points too *close* from occurrences:
+
+back2 = pseudoabsence(WithinRadius, presencelayer; distance = 50.0)
+
+# This is something we can do with layer arithmetic
+
+background = convert(Int8, back1) - convert(Int8, back2)
 
 # 
 
-heatmap(sprinkle(presence_only)...)
-
-# get a pseudo-absence
-
-background = similar(presence_only, Bool)
-
-# generate 200 pseudo-absences
-
-for i in 1:2000
-    pa = pseudoabsence(WithinRadius, presence_only; distance = 100.0)
-    background[pa] = true
-end
-
-# 
-
-heatmap(sprinkle(background)...)
-
-scatter!(longitudes(presences), latitudes(presences))
+heatmap(
+    sprinkle(temperature)...;
+    colormap = :heat,
+    axis = (; aspect = DataAspect()),
+    figure = (; resolution = (800, 500)),
+)
+heatmap!(sprinkle(background)...; colormap = cgrad([:transparent, :white]; alpha = 0.5))
+plot!(longitudes(presences), latitudes(presences); color = :black)
+current_figure()

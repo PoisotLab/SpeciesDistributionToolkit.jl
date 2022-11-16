@@ -10,12 +10,15 @@ struct RandomSelection <: PseudoAbsenceGenerator
 end
 
 function _random_point(ref, d; R = 6371.0)
+    α = deg2rad(rand() * 360.0)
+    return _known_point(ref, d, α; R = R)
+end
+
+function _known_point(ref, d, α; R = 6371.0)
     # Convert the coordinates from degrees to radians
     λ, φ = deg2rad.(ref)
     # Get the angular distance
     δ = d / R
-    # Pick a random bearing (angle w.r.t. true North)
-    α = deg2rad(rand() * 360.0)
     # Get the new latitude
     φ2 = asin(sin(φ) * cos(δ) + cos(φ) * sin(δ) * cos(α))
     # Get the new longitude
@@ -44,8 +47,6 @@ end
 
 """
     pseudoabsence
-
-This method generates a possible pseudo-absence location around known observations in a Boolean layer. The observations are generated in a radius expressed in *kilometers* around the known presences. To generate many background points, call this method multiple times.
 """
 function pseudoabsence(
     ::Type{WithinRadius},
@@ -53,40 +54,32 @@ function pseudoabsence(
     distance::Number = 100.0,
 ) where {T <: SimpleSDMLayer}
     _layer_works_for_pseudoabsence(presences)
-    k = rand(keys(presences))
-    newpt = _random_point(k, sqrt(rand()) * distance)
-    while _invalid_pseudoabsence(newpt, presences)
-        newpt = _random_point(k, sqrt(rand()) * distance)
+    presence_only = mask(presences, presences)
+    background = similar(presences, Bool)
+    keypool = keys(background)
+    # We only need to allocate this once, this is going to be written over for every
+    # iteration
+    lon = zeros(Float64, 4)
+    lat = zeros(Float64, 4)
+    for occupied_cell in keys(presence_only)
+        for (i, angl) in enumerate((0:3) / 4)
+            α = deg2rad(360.0angl)
+            lon[i], lat[i] = _known_point(occupied_cell, distance, α)
+        end
+        # Approximate bounding box for the cells to deal with
+        max_lat = min(presences.top, maximum(lat))
+        min_lat = max(presences.bottom, minimum(lat))
+        max_lon = min(presences.right, maximum(lon))
+        min_lon = max(presences.left, minimum(lon))
+        valid_keys = filter(
+            k -> (min_lon <= k[1] <= max_lon) & (min_lat <= k[2] <= max_lat),
+            keypool,
+        )
+        filter!(k -> _distance_function(occupied_cell, k) <= distance, valid_keys)
+        for background_cell in valid_keys
+            background[background_cell] = true
+        end
+        deleteat!(keypool, indexin(valid_keys, keypool))
     end
-    return _return_point_as_grid(newpt, presences)
-end
-
-function pseudoabsence(
-    ::Type{SurfaceRangeEnvelope},
-    presences::T,
-) where {T <: SimpleSDMLayer}
-    _layer_works_for_pseudoabsence(presences)
-    bbox = SpeciesDistributionToolkit.boundingbox(replace(presences, false => nothing))
-    londist = Distributions.Uniform(bbox.left, bbox.right)
-    latdist = Distributions.Uniform(bbox.bottom, bbox.top)
-    newpt = (rand(londist), rand(latdist))
-    while _invalid_pseudoabsence(newpt, presences)
-        newpt = (rand(londist), rand(latdist))
-    end
-    return _return_point_as_grid(newpt, presences)
-end
-
-function pseudoabsence(
-    ::Type{RandomSelection},
-    presences::T,
-) where {T <: SimpleSDMLayer}
-    _layer_works_for_pseudoabsence(presences)
-    bbox = SpeciesDistributionToolkit.boundingbox(presences)
-    londist = Distributions.Uniform(bbox.left, bbox.right)
-    latdist = Distributions.Uniform(bbox.bottom, bbox.top)
-    newpt = (rand(londist), rand(latdist))
-    while _invalid_pseudoabsence(newpt, presences)
-        newpt = (rand(londist), rand(latdist))
-    end
-    return _return_point_as_grid(newpt, presences)
+    return background
 end

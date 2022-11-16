@@ -6,7 +6,7 @@ function SimpleSDMLayers.SimpleSDMPredictor(data::R; kwargs...) where {R <: Rast
     filepath, filetype, bandnumber, crs = downloader(data; arguments...)
 
     if isequal(SimpleSDMDatasets._tiff)(filetype)
-        return geotiff(SimpleSDMPredictor, filepath, bandnumber; boundingbox...)
+        return SimpleSDMPredictor(filepath, "tiff"; bandnumber = bandnumber, boundingbox...)
     end
 
     return nothing
@@ -24,7 +24,7 @@ function SimpleSDMLayers.SimpleSDMPredictor(
     filepath, filetype, bandnumber, crs = downloader(data, future; arguments...)
 
     if isequal(SimpleSDMDatasets._tiff)(filetype)
-        return geotiff(SimpleSDMPredictor, filepath, bandnumber; boundingbox...)
+        return SimpleSDMPredictor(filepath, "tiff"; bandnumber = bandnumber, boundingbox...)
     end
 
     return nothing

@@ -18,6 +18,7 @@ for layertype in (:SimpleSDMResponse, :SimpleSDMPredictor)
                         right = right, bottom = bottom, top = top,
                     )
                 end
+                @error "Only tiff files are supported at the moment"
             end
 
             function save(
@@ -29,6 +30,7 @@ for layertype in (:SimpleSDMResponse, :SimpleSDMPredictor)
                     _write_geotiff(file, layers; kwargs...)
                     return file
                 end
+                @error "Only tiff files are supported at the moment"
             end
 
             function save(

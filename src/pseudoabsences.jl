@@ -91,7 +91,7 @@ function pseudoabsencemask(
     lat = extrema([k[2] for k in keys(presence_only)])
     for occupied_cell in keys(presences)
         if lon[1] <= occupied_cell[1] <= lon[2]
-            if lat[1] <= occupied_cell <= lat[2]
+            if lat[1] <= occupied_cell[2] <= lat[2]
                 if ~(presences[occupied_cell])
                     background[occupied_cell] = true
                 end
@@ -99,4 +99,30 @@ function pseudoabsencemask(
         end
     end
     return background
+end
+
+function sample(layer::T, n::Integer = 1; kwargs...) where {T <: SimpleSDMLayer}
+    @assert SimpleSDMLayers._inner_type(layer) <: Bool
+    pseudoabs = similar(layer, Bool)
+    for k in StatsBase.sample(keys(replace(layer, false => nothing)), n; kwargs...)
+        pseudoabs[k] = true
+    end
+    return pseudoabs
+end
+
+function sample(
+    layer::T,
+    weights::T2,
+    n::Integer = 1;
+    kwargs...,
+) where {T <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
+    @assert SimpleSDMLayers._inner_type(layer) <: Bool
+    @assert SimpleSDMLayers._inner_type(weights) <: Number
+    pseudoabs = similar(layer, Bool)
+    void = replace(layer, false => nothing)
+    vals = weights[keys(void)]
+    for k in StatsBase.sample(keys(void), StatsBase.Weights(vals), n; kwargs...)
+        pseudoabs[k] = true
+    end
+    return pseudoabs
 end

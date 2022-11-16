@@ -13,3 +13,8 @@ This documentation is therefore pretty vast: it offers an in-depth explanation o
 component packages are doing and how they work, discusses the interactions between these
 packages, and offers a series of illustrations which includes some examples of models of
 species distributions.
+
+If you want to contribute to the project, the best way is likely to have a look at the
+[development dashboard](https://github.com/orgs/PoisotLab/projects/3), or look for [possible
+first
+PRs](https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).

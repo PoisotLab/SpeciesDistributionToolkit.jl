@@ -18,4 +18,5 @@ SimpleSDMLayers = "2c645270-77db-11e9-22c3-0f302a89c64c"
 [compat]
 ArchGDAL = "0.9"
 GDAL = "1"
+GeoMakie = "0.4"
 Reexport = "1"

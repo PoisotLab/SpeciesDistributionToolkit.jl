@@ -34,12 +34,6 @@ include("lib/generated.jl")
 include("lib/basics.jl")
 export latitudes, longitudes, boundingbox, grid
 
-include("pseudoabsences/main.jl")
-include("pseudoabsences/radius.jl")
-include("pseudoabsences/randomselection.jl")
-include("pseudoabsences/surfacerangeenvelope.jl")
-export WithinRadius, RandomSelection, SurfaceRangeEnvelope
-
 include("operations/coarsen.jl")
 include("operations/sliding.jl")
 include("operations/mask.jl")

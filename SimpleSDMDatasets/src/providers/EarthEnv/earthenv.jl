@@ -4,7 +4,10 @@ EarthEnvDataset = Union{LandCover, HabitatHeterogeneity}
 provides(::Type{EarthEnv}, ::Type{T}) where {T <: EarthEnvDataset} = true
 
 # Additional keys for search
-extrakeys(::RasterData{EarthEnv, LandCover}) = Dict([:full=>(true,false)])
+extrakeys(::RasterData{EarthEnv, LandCover}) = Dict([:full => (true, false)])
+
+url(::RasterData{EarthEnv, LandCover}) = "https://www.earthenv.org/landcover"
+url(::RasterData{EarthEnv, HabitatHeterogeneity}) = "https://www.earthenv.org/texture"
 
 # Update the layers
 layers(::RasterData{EarthEnv, LandCover}) = [

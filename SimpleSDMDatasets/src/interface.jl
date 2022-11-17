@@ -223,3 +223,6 @@ bandnumber(::R, ::F; kwargs...) where {R <: RasterData, F <: Projection} = 1
 
 crs(::R) where {R <: RasterData} = _wgs84
 crs(data::R, ::F) where {R <: RasterData, F <: Projection} = crs(data)
+
+url(::R) where {R <: RasterData} = ""
+url(data::R, ::F) where {R <: RasterData, F <: Projection} = url(data)

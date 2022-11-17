@@ -9,6 +9,8 @@ CHELSA2Dataset = Union{
 # Update provisioning
 provides(::Type{CHELSA2}, ::Type{T}) where {T <: CHELSA2Dataset} = true
 
+url(::RasterData{CHELSA2, D}) where {D <: CHELSA2Dataset} = "https://chelsa-climate.org/"
+
 # Update the layers
 layers(::RasterData{CHELSA2, BioClim}) = "BIO" .* string.(1:19)
 layerdescriptions(::RasterData{CHELSA2, BioClim}) = Dict([

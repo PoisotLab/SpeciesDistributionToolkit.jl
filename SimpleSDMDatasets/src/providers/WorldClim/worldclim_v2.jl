@@ -12,6 +12,9 @@ wcdat = [
 ]
 WorldClim2Dataset = Union{wcdat...}
 
+url(::RasterData{WorldClim2, D}) where {D <: WorldClim2Dataset} =
+    "https://www.worldclim.org/data/index.html"
+
 # Update provisioning
 provides(::Type{WorldClim2}, ::Type{T}) where {T <: WorldClim2Dataset} = true
 

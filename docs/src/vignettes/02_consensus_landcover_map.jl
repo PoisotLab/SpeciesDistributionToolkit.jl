@@ -27,6 +27,10 @@ dataprovider = RasterData(EarthEnv, LandCover)
 
 landcover_types = layers(dataprovider)
 
+# For more information, you can also refer to the URL of the original dataset:
+
+SimpleSDMDatasets.url(dataprovider)
+
 # We can download all the layers using a list comprehension. Note that the name (`stack`) is
 # a little misleading, as the packages have no concept of what a stack of raster is.
 

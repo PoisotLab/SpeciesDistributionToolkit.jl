@@ -20,5 +20,6 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
 ArchGDAL = "0.9"
+Distributions = "0.25"
 GDAL = "1"
 Reexport = "1"

@@ -51,6 +51,7 @@ export RasterData, Projection
 
 # Common interface
 include("interface.jl")
+export layers, layerdescriptions
 
 # Providers
 include("providers/CHELSA/chelsa_v1.jl")

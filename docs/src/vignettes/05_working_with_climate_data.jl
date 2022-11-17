@@ -24,6 +24,10 @@ dataprovider = RasterData(CHELSA1, BioClim)
 
 data_info = (layer = "BIO3",)
 
+# We could also check the layer descriptions directly:
+
+layerdescriptions(dataprovider)
+
 # Note that we do not *need* to give the bounding box and layer data as distinct variables,
 # but this is more convenient in terms of code re-use. For this reason, we follow this
 # convention throughout the documentation.

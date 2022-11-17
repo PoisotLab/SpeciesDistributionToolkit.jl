@@ -39,9 +39,15 @@ function _read_geotiff(
     bottom = -90.0,
     top = 90.0,
 ) where {LT <: SimpleSDMLayer}
-    try
-        ArchGDAL.read(file) do stuff
+    ArchGDAL.read(file) do stuff
+        try
+            # We try to get the projection of the file - which is not always properly
+            # defined
             wkt = ArchGDAL.importPROJ4(ArchGDAL.getproj(stuff))
+        catch err
+            @info err
+        else
+            # If we can read the projection, we check that it is WGS84
             wgs84 = ArchGDAL.importEPSG(4326)
             # The next comparison is complete bullshit but for some reason, ArchGDAL has no
             # mechanism to test the equality of coordinate systems. I sort of understand why,
@@ -59,8 +65,6 @@ function _read_geotiff(
                 file = newfile
             end
         end
-    catch err
-        @info err
     end
 
     # This next block is reading the geotiff file, but also making sure that we

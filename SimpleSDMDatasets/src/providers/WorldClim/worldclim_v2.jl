@@ -29,6 +29,27 @@ months(::RasterData{WorldClim2, Elevation}) = nothing
 
 # Update the layers
 layers(::RasterData{WorldClim2, BioClim}) = "BIO" .* string.(1:19)
+layerdescriptions(::RasterData{WorldClim2, BioClim}) = Dict([
+    "BIO1" => "Annual Mean Temperature",
+    "BIO2" => "Mean Diurnal Range (Mean of monthly (max temp - min temp))",
+    "BIO3" => "Isothermality (BIO2/BIO7) (×100)",
+    "BIO4" => "Temperature Seasonality (standard deviation ×100)",
+    "BIO5" => "Max Temperature of Warmest Month",
+    "BIO6" => "Min Temperature of Coldest Month",
+    "BIO7" => "Temperature Annual Range (BIO5-BIO6)",
+    "BIO8" => "Mean Temperature of Wettest Quarter",
+    "BIO9" => "Mean Temperature of Driest Quarter",
+    "BIO10" => "Mean Temperature of Warmest Quarter",
+    "BIO11" => "Mean Temperature of Coldest Quarter",
+    "BIO12" => "Annual Precipitation",
+    "BIO13" => "Precipitation of Wettest Month",
+    "BIO14" => "Precipitation of Driest Month",
+    "BIO15" => "Precipitation Seasonality (Coefficient of Variation)",
+    "BIO16" => "Precipitation of Wettest Quarter",
+    "BIO17" => "Precipitation of Driest Quarter",
+    "BIO18" => "Precipitation of Warmest Quarter",
+    "BIO19" => "Precipitation of Coldest Quarter",
+])
 
 # The following functions are the list of URL codes for the datasets. Note that
 # they dispatch on the dataset within the context of WorldClim2

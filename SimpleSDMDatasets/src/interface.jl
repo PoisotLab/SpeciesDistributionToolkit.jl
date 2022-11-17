@@ -151,10 +151,9 @@ layers(data::R, ::F) where {R <: RasterData, F <: Projection} = layers(data)
 """
     layerdescriptions(data::R) where {R <: RasterData}
 
-Human-readable names the layers. This will by default print the value of
-`layers`, but can be overloaded if these names are not informative.
+Human-readable names the layers. This *must* be a dictionary mapping the layer names (as returned by `layers`) to a string explaining the contents of the layers.
 """
-layerdescriptions(data::R) where {R <: RasterData} = layers(data)
+layerdescriptions(data::R) where {R <: RasterData} = Dict(zip(layers(data), layers(data)))
 layerdescriptions(data::R, ::F) where {R <: RasterData, F <: Projection} =
     layerdescriptions(data)
 
@@ -223,4 +222,4 @@ bandnumber(::R; kwargs...) where {R <: RasterData} = 1
 bandnumber(::R, ::F; kwargs...) where {R <: RasterData, F <: Projection} = 1
 
 crs(::R) where {R <: RasterData} = _wgs84
-crs(data::R, future::F) where {R <: RasterData, F <: Projection} = crs(data)
+crs(data::R, ::F) where {R <: RasterData, F <: Projection} = crs(data)

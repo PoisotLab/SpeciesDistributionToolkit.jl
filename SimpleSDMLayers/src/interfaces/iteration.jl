@@ -1,20 +1,31 @@
+struct RasterCell{L <: Number, T <: Any}
+    longitude::L
+    latitude::L
+    value::T
+end
+
+function RasterCell(layer::T, position) where {T <: SimpleSDMLayer}
+    lon = longitudes(layer)[last(position.I)]
+    lat = latitudes(layer)[first(position.I)]
+    val = layer.grid[position]
+    return RasterCell(lon, lat, val)
+end
+
+Base.IteratorSize(::T) where {T <: SimpleSDMLayer} = Base.HasLength()
+function Base.IteratorEltype(layer::T) where {T <: SimpleSDMLayer}
+    return RasterCell{eltype(latitudes(layer)), SimpleSDMLayers._inner_type(layer)}
+end
+
 function Base.iterate(layer::T) where {T <: SimpleSDMLayer}
     position = findfirst(!isnothing, layer.grid)
     isnothing(position) && return nothing
-    value = layer.grid[position]
-    coordinates = Point(longitudes(layer)[last(position.I)], latitudes(layer)[first(position.I)])
-    return (coordinates => value, position)
+    return (RasterCell(layer, position), position)
 end
 
 function Base.iterate(layer::T, state) where {T <: SimpleSDMLayer}
-    newstate = LinearIndices(layer.grid)[state]+1
+    newstate = LinearIndices(layer.grid)[state] + 1
     newstate > prod(size(layer.grid)) && return nothing
     position = findnext(!isnothing, layer.grid, CartesianIndices(layer.grid)[newstate])
     isnothing(position) && return nothing
-    value = layer.grid[position]
-    coordinates = Point(longitudes(layer)[last(position.I)], latitudes(layer)[first(position.I)])
-    return (coordinates => value, position)
+    return (RasterCell(layer, position), position)
 end
-
-#Base.IteratorSize(::T) where {T <: SimpleSDMLayer} = Base.HasShape{2}()
-Base.IteratorEltype(::T) where {T <: SimpleSDMLayer} = Base.EltypeUnknown()

@@ -7,34 +7,31 @@ import Distances
 # TODO: call the one from Fauxcurrences when integrated
 const _distance_function = Distances.Haversine(6371.0)
 
-import Distributions
 import StatsBase
 
 # We make ample use of re-export
 using Reexport
 
-# GBIF to get species occurrence data
+# Expose the components
+@reexport using SimpleSDMDatasets
 @reexport using GBIF
-
-# SimpleSDMLayers to wrap everything together
 @reexport using SimpleSDMLayers
-
-# Fauxcurrences
 # @rexport using Fauxcurrences
 
-# SimpleSDMDatasets for access to layers
-@reexport using SimpleSDMDatasets
+# SimpleSDMLayers to wrap everything together
+include("integrations/datasets_layers.jl")
+
+# GBIF to get species occurrence data
+include("integrations/gbif_layers.jl")
 
 # Functions for IO
 include("io/geotiff.jl")
 include("io/ascii.jl")
 include("io/read_write.jl")
 
-# Integrate the datasets to the layers
-include("integrations/datasets_layers.jl")
-
-# Integrate GBIF to the layers
-include("integrations/gbif_layers.jl")
+# Tables interface
+import Tables
+include("tables.jl")
 
 # Functions for pseudo-absence generation
 include("pseudoabsences.jl")

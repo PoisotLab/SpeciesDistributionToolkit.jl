@@ -1,7 +1,6 @@
 # # Preparing data for prediction
 
 using SpeciesDistributionToolkit
-using CairoMakie
 
 #
 
@@ -31,24 +30,61 @@ varnames = layerdescriptions(dataprovider)
 #
 
 layers = [
-    1.0SimpleSDMPredictor(dataprovider; spatial_extent..., layer = lname) for
+    convert(
+        SimpleSDMResponse,
+        1.0SimpleSDMPredictor(dataprovider; spatial_extent..., layer = lname),
+    ) for
     lname in ["BIO1", "BIO12"]
 ]
 
-#
+# 
 
-mutable struct SimpleSDMStack{T <: SimpleSDMLayer}
-    names::Vector{String}
-    layers::Vector{Base.RefValue{T}}
+presenceonly = mask(layers[1], presences, Bool)
+absenceonly = SpeciesDistributionToolkit.sample(
+    pseudoabsencemask(SurfaceRangeEnvelope, presenceonly),
+    250,
+)
+replace!(presenceonly, false => nothing)
+replace!(absenceonly, false => nothing)
+for cell in absenceonly
+    presenceonly[cell.longitude, cell.latitude] = false
 end
 
+for i in eachindex(layers)
+    keys_to_void = setdiff(keys(layers[i]), keys(presenceonly))
+    for k in keys_to_void
+        layers[i][k] = nothing
+    end
+end
+
+layers
+
 #
 
-stack = SimpleSDMStack(["BIO1", "BIO12"], Ref.(layers))
+refs = Ref.([layers..., presenceonly])
+
+datastack = SimpleSDMStack(["BIO1", "BIO12", "Presence"], refs)
 
 # 
 
 import Tables
-Tables.istable(::Type{T}) where {T <: SimpleSDMStack} = true
-Tables.columnaccess(::Type{T}) where {T <: SimpleSDMStack} = true
-Tables.columns(s::T) where {T <: SimpleSDMStack} = s.layers
+Tables.istable(::Type{SimpleSDMStack}) = true
+Tables.rowaccess(::Type{SimpleSDMStack}) = true
+function Tables.schema(s::SimpleSDMStack)
+    tp = first(s)
+    @info keys(tp)
+    sc = Tables.Schema(keys(tp), typeof.(values(tp)))
+    @info sc
+    return sc
+end
+
+using DataFrames
+DataFrame(datastack)
+
+#
+
+using MLJ
+
+# 
+
+t = table(datastack)

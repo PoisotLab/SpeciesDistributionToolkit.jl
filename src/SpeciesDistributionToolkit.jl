@@ -29,6 +29,10 @@ include("io/geotiff.jl")
 include("io/ascii.jl")
 include("io/read_write.jl")
 
+# Stack for data export
+include("stack.jl")
+export SimpleSDMStack
+
 # Tables interface
 import Tables
 include("tables.jl")

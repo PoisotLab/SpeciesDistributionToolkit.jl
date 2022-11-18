@@ -17,6 +17,7 @@ Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 SimpleSDMDatasets = "2c7d61d0-5c73-410d-85b2-d2e7fbbdcefa"
 SimpleSDMLayers = "2c645270-77db-11e9-22c3-0f302a89c64c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+Tables = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
 
 [compat]
 ArchGDAL = "0.9"

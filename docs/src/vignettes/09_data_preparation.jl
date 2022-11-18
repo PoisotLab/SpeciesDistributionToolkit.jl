@@ -1,6 +1,7 @@
 # # Preparing data for prediction
 
 using SpeciesDistributionToolkit
+using CairoMakie
 
 #
 
@@ -34,8 +35,12 @@ layers = [
         SimpleSDMResponse,
         1.0SimpleSDMPredictor(dataprovider; spatial_extent..., layer = lname),
     ) for
-    lname in ["BIO1", "BIO12"]
+    lname in keys(varnames)
 ]
+
+#
+
+originallayers = deepcopy(layers)
 
 # 
 
@@ -63,7 +68,9 @@ layers
 
 refs = Ref.([layers..., presenceonly])
 
-datastack = SimpleSDMStack(["BIO1", "BIO12", "Presence"], refs)
+datastack = SimpleSDMStack([values(varnames)..., "Presence"], refs)
+
+predictionstack = SimpleSDMStack([values(varnames)...], Ref.(originallayers))
 
 # 
 
@@ -72,9 +79,7 @@ Tables.istable(::Type{SimpleSDMStack}) = true
 Tables.rowaccess(::Type{SimpleSDMStack}) = true
 function Tables.schema(s::SimpleSDMStack)
     tp = first(s)
-    @info keys(tp)
     sc = Tables.Schema(keys(tp), typeof.(values(tp)))
-    @info sc
     return sc
 end
 
@@ -87,4 +92,43 @@ using MLJ
 
 # 
 
-t = table(datastack)
+y, X = unpack(select(DataFrame(datastack), Not([:longitude, :latitude])), ==(:Presence));
+y = coerce(y, Continuous)
+
+#
+
+Standardizer = @load Standardizer pkg = MLJModels add = true verbosity = 0
+LM = @load LinearRegressor pkg = MLJLinearModels add = true verbosity = 0
+model = Standardizer() |> LM()
+
+#
+
+mach = machine(model, X, y) |> fit!
+
+#
+
+perf_measures = [mcc, f1score, accuracy, balanced_accuracy]
+evaluate!(
+    mach;
+    resampling = CV(; nfolds = 3, shuffle = true, rng = Xoshiro(234)),
+    measure = perf_measures,
+)
+
+#
+
+value = predict(mach, select(DataFrame(predictionstack), Not([:longitude, :latitude])));
+
+#
+
+prediction = select(DataFrame(predictionstack), [:longitude, :latitude]);
+prediction.value = value;
+
+#
+
+output = Tables.materializer(SimpleSDMResponse)(prediction)
+
+# 
+
+heatmap(sprinkle(output)...; colormap = :viridis)
+scatter!(longitudes(presences), latitudes(presences))
+current_figure()

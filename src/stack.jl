@@ -1,16 +1,32 @@
 """
     SimpleSDMStack
 
-Stores multiple _references_ to layers
+Stores multiple _references_ to layers alongside with their names. This is mostly useful because it provides an interface that we can use as a Tables.jl provider.
 """
 struct SimpleSDMStack
     names::Vector{String}
     layers::Vector{Base.RefValue}
+    function SimpleSDMStack(names::Vector{String}, layers::Vector{Base.RefValue})
+        # As many names as layers
+        @assert length(names) == length(layers)
+        # Layers have the correct type
+        @assert all([typeof(layer.x) <: SimpleSDMLayer for layer in layers])
+        # Layers are all compatible
+        @assert all([
+            SimpleSDMLayers._layers_are_compatible(first(layers).x, layer.x) for
+            layer in layers
+        ])
+        # Layers all have the same keys
+        @assert all([
+            sort(keys(first(layers).x)) == sort(keys(layer.x)) for layer in layers
+        ])
+        # Return if all pass
+        return new(names, layers)
+    end
 end
 
 Base.length(s::T) where {T <: SimpleSDMStack} = length(first(s.layers).x)
 Base.names(s::T) where {T <: SimpleSDMStack} = s.names
-
 SimpleSDMLayers.latitudes(s::T) where {T <: SimpleSDMStack} = latitudes(first(s.layers).x)
 SimpleSDMLayers.longitudes(s::T) where {T <: SimpleSDMStack} = longitudes(first(s.layers).x)
 SimpleSDMLayers.boundingbox(s::T) where {T <: SimpleSDMStack} =
@@ -50,4 +66,12 @@ function Base.iterate(s::SimpleSDMStack, state)
     vals = [l.x[lon, lat] for l in s.layers]
     varnames = [:longitude, :latitude, Symbol.(names(s))...]
     return (NamedTuple{tuple(varnames...)}(tuple(lon, lat, vals...)), position)
+end
+
+Tables.istable(::Type{SimpleSDMStack}) = true
+Tables.rowaccess(::Type{SimpleSDMStack}) = true
+function Tables.schema(s::SimpleSDMStack)
+    tp = first(s)
+    sc = Tables.Schema(keys(tp), typeof.(values(tp)))
+    return sc
 end

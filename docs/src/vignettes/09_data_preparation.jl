@@ -74,14 +74,6 @@ predictionstack = SimpleSDMStack([values(varnames)...], Ref.(originallayers))
 
 # 
 
-import Tables
-Tables.istable(::Type{SimpleSDMStack}) = true
-Tables.rowaccess(::Type{SimpleSDMStack}) = true
-function Tables.schema(s::SimpleSDMStack)
-    tp = first(s)
-    sc = Tables.Schema(keys(tp), typeof.(values(tp)))
-    return sc
-end
 
 using DataFrames
 DataFrame(datastack)

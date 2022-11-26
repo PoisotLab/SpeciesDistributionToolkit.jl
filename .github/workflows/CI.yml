@@ -135,13 +135,15 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/download-artifact@v3
         with:
-          name: codecoverage
+          name: coverage
           path: ./codecov
       - name: Check the coverage content
         run: ls -lah ./codecov
+      - name: Concatenate
+        run: cat ./codecov/*.info >> ./lcov.info
       - uses: codecov/codecov-action@v2
         with:
-          file: ./codecov/*.info
+          file: ./lcov.info
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false

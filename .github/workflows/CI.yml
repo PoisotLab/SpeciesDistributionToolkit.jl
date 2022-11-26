@@ -9,8 +9,8 @@ on:
   pull_request:
 
 jobs:
-  SimpleSDMDatasets:
-    name: ${{ matrix.package }} on Julia ${{ matrix.version }}
+  RunAllTests:
+    name: [${{ matrix.version }}] ${{ matrix.package }}
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
     strategy:
@@ -48,6 +48,12 @@ jobs:
         with:
           name: codecoverage
           path: ./lcov.info
+  ProcessCoverage:
+    needs: RunAllTests
+    name: "Upload coverage"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v2
       - uses: codecov/codecov-action@v1
         with:
           file: ./lcov.info

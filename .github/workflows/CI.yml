@@ -27,7 +27,7 @@ jobs:
           annotate: true
       - uses: julia-actions/julia-processcoverage@v1
         with:
-          directories: GBIF
+          directories: GBIF/src
       - run: mv lcov.info GBIF-lcov.info
       - uses: actions/upload-artifact@v3
         with:
@@ -51,7 +51,7 @@ jobs:
           annotate: true
       - uses: julia-actions/julia-processcoverage@v1
         with:
-          directories: SimpleSDMLayers
+          directories: SimpleSDMLayers/src
       - run: mv lcov.info SimpleSDMLayers-lcov.info
       - uses: actions/upload-artifact@v3
         with:
@@ -71,7 +71,7 @@ jobs:
           project: SimpleSDMDatasets
       - uses: julia-actions/julia-runtest@latest
         with:
-          project: SimpleSDMDatasets
+          project: SimpleSDMDatasets/src
           annotate: true
       - uses: julia-actions/julia-processcoverage@v1
         with:
@@ -100,7 +100,7 @@ jobs:
           annotate: true
       - uses: julia-actions/julia-processcoverage@v1
         with:
-          directories: Fauxcurrences
+          directories: Fauxcurrences/src
       - run: mv lcov.info Fauxcurrences-lcov.info
       - uses: actions/upload-artifact@v3
         with:
@@ -121,6 +121,8 @@ jobs:
         with:
           annotate: true
       - uses: julia-actions/julia-processcoverage@v1
+        with:
+          directories: src
       - run: mv lcov.info SpeciesDistributionToolkit-lcov.info
       - uses: actions/upload-artifact@v3
         with:

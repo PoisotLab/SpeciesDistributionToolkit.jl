@@ -30,7 +30,7 @@ jobs:
           directories: GBIF
   Codecoverage:
     name: "Upload coverage"
-    needs: [SpeciesDistributionToolkit]
+    needs: [GBIF]
     if: ${{ always() }}
     runs-on: "ubuntu-latest"
     steps:

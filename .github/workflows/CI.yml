@@ -63,7 +63,7 @@ jobs:
           path: ./codecov
       - name: Check the coverage content
         run: ls -lah ./codecov
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v2
         with:
           file: ./codecov/*.info
           flags: unittests

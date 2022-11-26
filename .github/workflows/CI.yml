@@ -21,7 +21,7 @@ jobs:
         experimental: [true]
         package: ['SimpleSDMDatasets', 'GBIF', 'Fauxcurrences', 'SimpleSDMLayers', '@.']
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.version }}
@@ -56,10 +56,16 @@ jobs:
     if: ${{ always() }}
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v2
-      - uses: codecov/codecov-action@v1
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
         with:
-          file: ./lcov.info
+          name: codecoverage
+          path: ./codecov
+      - name: Check the coverage content
+        run: ls -lah ./codecov
+      - uses: codecov/codecov-action@v3
+        with:
+          file: ./codecov/*.info
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false

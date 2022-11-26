@@ -44,10 +44,12 @@ jobs:
           PYTHON: ""
           GKSwstype: "100"
       - uses: julia-actions/julia-processcoverage@v1
+      - name: "Rename codecov file"
+        run: mv ./lcov.info ./${{ matrix.package }}-lcov.info
       - uses: actions/upload-artifact@v3
         with:
           name: codecoverage
-          path: ./lcov.info
+          path: ./${{ matrix.package }}-lcov.info
   ProcessCoverage:
     name: "Upload coverage"
     needs: RunAllTests

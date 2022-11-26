@@ -10,57 +10,24 @@ on:
 
 jobs:
   GBIF:
-    name: "Test GBIF"
+    name: "GBIF"
     runs-on: "ubuntu-latest"
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/test-pkg
+      - uses: julia-actions/setup-julia@v1
+      - name: "Bootstrap the package"
+        run: julia --project=./GBIF GBIF/bootstrap.jl
+      - uses: julia-actions/julia-buildpkg@latest
         with:
-          pkg: "GBIF"
-          version: "1.8"
-  SimpleSDMLayers:
-    name: "Test SimpleSDMLayers"
-    runs-on: "ubuntu-latest"
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/test-pkg
+          project: GBIF
+      - uses: julia-actions/julia-runtest@latest
         with:
-          pkg: "SimpleSDMLayers"
-          version: "1.8"
-  SimpleSDMDatasets:
-    name: "Test SimpleSDMDatasets"
-    runs-on: "ubuntu-latest"
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/test-pkg
+          project: GBIF
+          annotate: true
+      - uses: julia-actions/julia-processcoverage@v1
         with:
-          pkg: "SimpleSDMDatasets"
-          version: "1.8"
-  Fauxcurrences:
-    name: "Test Fauxcurrences"
-    needs: [GBIF, SimpleSDMLayers]
-    runs-on: "ubuntu-latest"
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/test-pkg
-        with:
-          pkg: "Fauxcurrences"
-          version: "1.8"
-  SpeciesDistributionToolkit:
-    name: "Test the full package"
-    needs: [GBIF, SimpleSDMLayers, Fauxcurrences, SimpleSDMDatasets]
-    runs-on: "ubuntu-latest"
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/test-pkg
-        with:
-          pkg: "SpeciesDistributionToolkit"
-          version: "1.8"
+          directories: GBIF
   Codecoverage:
     name: "Upload coverage"
     needs: [SpeciesDistributionToolkit]

@@ -10,7 +10,7 @@ on:
 
 jobs:
   RunAllTests:
-    name: ${{ matrix.version }} :: ${{ matrix.package }}
+    name: ${{ matrix.version }} ${{ matrix.package }}
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
     strategy:

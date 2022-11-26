@@ -10,7 +10,7 @@ on:
 
 jobs:
   RunAllTests:
-    name: [${{ matrix.version }}] ${{ matrix.package }}
+    name: ${{ matrix.version }} :: ${{ matrix.package }}
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
     strategy:
@@ -49,8 +49,9 @@ jobs:
           name: codecoverage
           path: ./lcov.info
   ProcessCoverage:
-    needs: RunAllTests
     name: "Upload coverage"
+    needs: RunAllTests
+    if: ${{ always() }}
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v2

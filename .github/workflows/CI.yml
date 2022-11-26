@@ -44,6 +44,8 @@ jobs:
           PYTHON: ""
           GKSwstype: "100"
       - uses: julia-actions/julia-processcoverage@v1
+      - run: ls -lah ${{ matrix.package }}
+        if: ${{ matrix.package != '@.' }}
       - name: "Rename codecov file"
         run: mv ./lcov.info ./${{ matrix.package }}-lcov.info
       - uses: actions/upload-artifact@v3

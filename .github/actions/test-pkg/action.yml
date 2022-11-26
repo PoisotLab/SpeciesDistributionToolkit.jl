@@ -1,0 +1,28 @@
+name: "Run the packages test"
+description: "waaah"
+inputs:
+  pkg:
+    required: true
+    description: "The name/path of the package to test"
+  version:
+    required: true
+    description: "Version of Julia to run the tests with"
+runs:
+  using: "composite"
+  steps:
+    - uses: julia-actions/setup-julia@v1
+      with:
+        version: ${{ inputs.version }}
+        arch: "x64"
+    - name: "Bootstrap the package"
+      run: julia --project=./${{ inputs.pkg }} ${{ inputs.pkg }}/bootstrap.jl
+    - uses: julia-actions/julia-buildpkg@latest
+      with:
+        project: ${{ inputs.pkg }}
+    - uses: julia-actions/julia-runtest@latest
+      with:
+        project: ${{ inputs.pkg }}
+        annotate: true
+    - uses: julia-actions/julia-processcoverage@v1
+      with:
+        directories: ${{ inputs.pkg }}

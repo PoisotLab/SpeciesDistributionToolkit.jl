@@ -9,61 +9,61 @@ on:
   pull_request:
 
 jobs:
-  RunAllTests:
-    name: ${{ matrix.version }} ${{ matrix.package }}
-    runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental }}
-    strategy:
-      matrix:
-        version: ['1.8']
-        os: ['ubuntu-latest']
-        arch: ['x64']
-        experimental: [true]
-        package: ['SimpleSDMDatasets', 'GBIF', 'Fauxcurrences', 'SimpleSDMLayers', '@.']
+  GBIF:
+    name: "Test GBIF"
+    runs-on: "ubuntu-latest"
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v3
-      - uses: julia-actions/setup-julia@v1
+      - uses: ./.github/actions/test-pkg
         with:
-          version: ${{ matrix.version }}
-          arch: ${{ matrix.arch }}
-      - name: Setup the component packages (globally)
-        run: julia --project bootstrap.jl
-      - name: Check the monorepo status
-        run: julia --project -e "import Pkg; Pkg.status()"
-      - name: Bootstrap ${{ matrix.package }}
-        run: julia --project=./${{ matrix.package }} ${{ matrix.package }}/bootstrap.jl
-        if: ${{ matrix.package != '@.' }}
-      - uses: julia-actions/julia-buildpkg@latest
+          pkg: "GBIF"
+          version: "1.8"
+  SimpleSDMLayers:
+    name: "Test SimpleSDMLayers"
+    runs-on: "ubuntu-latest"
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/test-pkg
         with:
-          project: ${{ matrix.package }}
-      - uses: julia-actions/julia-runtest@latest
+          pkg: "SimpleSDMLayers"
+          version: "1.8"
+  SimpleSDMDatasets:
+    name: "Test SimpleSDMDatasets"
+    runs-on: "ubuntu-latest"
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/test-pkg
         with:
-          project: ${{ matrix.package }}
-          annotate: true
-        env:
-          PYTHON: ""
-          GKSwstype: "100"
-      - uses: julia-actions/julia-processcoverage@v1
+          pkg: "SimpleSDMDatasets"
+          version: "1.8"
+  Fauxcurrences:
+    name: "Test Fauxcurrences"
+    needs: [GBIF, SimpleSDMLayers]
+    runs-on: "ubuntu-latest"
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/test-pkg
         with:
-          directories: ${{ matrix.package}}/src
-
-        if: ${{ matrix.package != '@.' }}
-      - uses: julia-actions/julia-processcoverage@v1
+          pkg: "Fauxcurrences"
+          version: "1.8"
+  SpeciesDistributionToolkit:
+    name: "Test the full package"
+    needs: [GBIF, SimpleSDMLayers, Fauxcurrences, SimpleSDMDatasets]
+    runs-on: "ubuntu-latest"
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/test-pkg
         with:
-          directories: src
-
-        if: ${{ matrix.package == '@.' }}
-      - run: ls -lah ${{ matrix.package }}
-        if: ${{ matrix.package != '@.' }}
-      - name: "Rename codecov file"
-        run: mv ./lcov.info ./${{ matrix.package }}-lcov.info
-      - uses: actions/upload-artifact@v3
-        with:
-          name: codecoverage
-          path: ./${{ matrix.package }}-lcov.info
-  ProcessCoverage:
+          pkg: "SpeciesDistributionToolkit"
+          version: "1.8"
+  Codecoverage:
     name: "Upload coverage"
-    needs: RunAllTests
+    needs: [SpeciesDistributionToolkit]
     if: ${{ always() }}
     runs-on: "ubuntu-latest"
     steps:

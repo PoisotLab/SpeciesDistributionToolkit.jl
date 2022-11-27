@@ -13,15 +13,29 @@ _dataset_catalogue = [
 ]
 
 # Compile the vignettes for the top-level package
-const _vignettes_dir = "docs/src/vignettes"
-_list_of_vignettes = filter(f -> endswith(f, ".jl"), readdir(_vignettes_dir; join = true))
-_vignettes_pages = Pair{String, String}[]
-for vignette in _list_of_vignettes
-    Literate.markdown(vignette, joinpath(pwd(), _vignettes_dir))
-    compiled_vignette = replace(vignette, ".jl" => ".md")
-    title = last(split(readlines(vignette)[1], "# # "))
-    path = joinpath(splitpath(compiled_vignette)[3:end])
-    push!(_vignettes_pages, title => path)
+_vignettes_categories = [
+    "layers" => "Working with layers",
+    "occurrences" => "Working with occurrences",
+    "integration" => "Integration examples",
+]
+_vignettes_pages = Dict{String, Vector{Pair{String, String}}}()
+for _category in _vignettes_categories
+    folder, title = _category
+    vignettes = filter(
+        endswith(".jl"),
+        readdir(joinpath("docs", "src", "vignettes", folder); join = true),
+    )
+    this_category = Pair{String, String}[]
+    for vignette in vignettes
+        Literate.markdown(vignette, joinpath("docs", "src", "vignettes", folder))
+        compiled_vignette = replace(vignette, ".jl" => ".md")
+        push!(
+            this_category,
+            last(split(readlines(vignette)[1], "# # ")) =>
+                joinpath(splitpath(compiled_vignette)[3:end]),
+        )
+    end
+    _vignettes_pages[title] = this_category
 end
 
 makedocs(;

@@ -1,7 +1,14 @@
 function report(data::RasterData{P, D}) where {P <: RasterProvider, D <: RasterDataset}
-    text = "## $(D)\n"
+    text = "## Layers\n"
     if ~isnothing(SimpleSDMDatasets.layers(data))
-        text *= "**Support for layers** - list with `SimpleSDMDatasets.layers($(typeof(data)))`"
+        text *= "The following layers are accessible through the `layer` keyword:\n"
+        text *= "| Layer code | Description |\n"
+        text *= "|------------|-------------|\n"
+        for (k, v) in SimpleSDMDatasets.layerdescriptions(data)
+            text *= "| `$(k)` | $(v) |\n"
+        end
+    else
+        text *= "This dataset has no support for the `layer` argument.\n"
     end
     text *= "\n\n"
     if ~isnothing(SimpleSDMDatasets.months(data))
@@ -31,9 +38,22 @@ function report(data::RasterData{P, D}) where {P <: RasterProvider, D <: RasterD
     return text
 end
 
-function report(::Type{P}) where {P <: RasterProvider}
+function report(::Type{P}, ::Type{D}) where {P <: RasterProvider, D <: RasterDataset}
     # Name of the provider
-    _header = "# $(P)"
+    _header = "# $(D)"
+    # Short description
+    _description = """
+    The `$(D)` dataset is provided as part of the `$(P)` provider. For more information about this dataset, please refer to: $(SimpleSDMDatasets.url(RasterData(P, D)))
+
+    To access this dataset:
+
+    ~~~julia
+    using SpeciesDistributionToolkit
+    layer = SimpleSDMPredictor(RasterData($(P), $(D)))
+    ~~~
+
+    The remainder of this page will list the keywords you can use to retrieve specific months, layers, etc.
+    """
     # List of supported datasets
     _datasets = [
         report(RasterData(P, D)) for
@@ -43,16 +63,33 @@ function report(::Type{P}) where {P <: RasterProvider}
     # Prepare and return
     full_text = """$(_header)
 
+    $(_description)
+
     $(reduce(*, _datasets))
     """
     return Markdown.parse(full_text)
 end
 
-# Make sure the path is there
-mkpath(joinpath("docs", "src", "SimpleSDMDatasets", "catalogue"))
+# Make sure the path is therethemes
+dataset_catalogue_path = joinpath("docs", "src", "datasets")
+if ~ispath(dataset_catalogue_path)
+    mkpath(dataset_catalogue_path)
+end
 
 for P in subtypes(RasterProvider)
-    open(joinpath("docs", "src", "SimpleSDMDatasets", "catalogue", "$(P).md"), "w") do io
-        return print(io, report(P))
+    # Create the path if it doesn't exist
+    if ~ispath(joinpath(dataset_catalogue_path, string(P)))
+        mkpath(joinpath(dataset_catalogue_path, string(P)))
+    end
+    # Run the report for each dataset
+    for D in subtypes(RasterDatasets)
+        if SimpleSDMDatasets.provides(P, D)
+            open(
+                joinpath(dataset_catalogue_path, string(P), "$(D).md"),
+                "w",
+            ) do io
+                return print(io, report(P, D))
+            end
+        end
     end
 end

@@ -91,4 +91,14 @@ l2 = SimpleSDMPredictor(rand(40, 40); left=-10.0, right=30.0, bottom=-10.0, top=
 @test_throws ArgumentError clip(l1, l2)
 @test stride(clip(l2, l1)) == stride(l1)
 
+# replacement
+l1 = SimpleSDMResponse(rand(Bool, 10, 10))
+l2 = replace(l1, true => false)
+@test all(l2.grid .== false)
+
+# Operations
+l1 = SimpleSDMResponse(ones(Int64, 2, 2))
+@test sum(2l1) == 2sum(l1)
+@test sum(l1 * 2) == 2sum(l1)
+
 end

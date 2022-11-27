@@ -82,7 +82,7 @@ for P in subtypes(RasterProvider)
         mkpath(joinpath(dataset_catalogue_path, string(P)))
     end
     # Run the report for each dataset
-    for D in subtypes(RasterDatasets)
+    for D in subtypes(RasterDataset)
         if SimpleSDMDatasets.provides(P, D)
             open(
                 joinpath(dataset_catalogue_path, string(P), "$(D).md"),

@@ -18,7 +18,7 @@ _vignettes_categories = [
     "occurrences" => "Working with occurrences",
     "integration" => "Integration examples",
 ]
-_vignettes_pages = Dict{String, Vector{Pair{String, String}}}()
+_vignettes_pages = Pair{String, Vector{Pair{String, String}}}[]
 for _category in _vignettes_categories
     folder, title = _category
     vignettes = filter(
@@ -35,7 +35,7 @@ for _category in _vignettes_categories
                 joinpath(splitpath(compiled_vignette)[3:end]),
         )
     end
-    _vignettes_pages[title] = this_category
+    push!(_vignettes_pages, title => this_category)
 end
 
 makedocs(;

@@ -76,20 +76,26 @@ if ~ispath(dataset_catalogue_path)
     mkpath(dataset_catalogue_path)
 end
 
+_dataset_catalogue = []
+
 for P in subtypes(RasterProvider)
     # Create the path if it doesn't exist
     if ~ispath(joinpath(dataset_catalogue_path, string(P)))
         mkpath(joinpath(dataset_catalogue_path, string(P)))
     end
+    this_cat = []
     # Run the report for each dataset
     for D in subtypes(RasterDataset)
         if SimpleSDMDatasets.provides(P, D)
+            cardfile = joinpath(dataset_catalogue_path, string(P), "$(D).md"),
+            push!(this_cat, string(D) => joinpath(splitpath(cardfile)[3:end]))
             open(
-                joinpath(dataset_catalogue_path, string(P), "$(D).md"),
+                cardfile,
                 "w",
             ) do io
                 return print(io, report(P, D))
             end
         end
     end
+    push!(_dataset_catalogue, this_cat)
 end

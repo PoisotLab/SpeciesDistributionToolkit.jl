@@ -7,10 +7,6 @@ using Literate
 
 # Generate a report card for each known dataset
 include("dataset_report.jl")
-_dataset_catalogue = [
-    string(P) => joinpath("SimpleSDMDatasets", "catalogue", "$(P).md")
-    for P in subtypes(RasterProvider)
-]
 
 # Compile the vignettes for the top-level package
 _vignettes_categories = [

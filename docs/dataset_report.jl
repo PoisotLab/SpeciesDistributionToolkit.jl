@@ -87,7 +87,7 @@ for P in subtypes(RasterProvider)
     # Run the report for each dataset
     for D in subtypes(RasterDataset)
         if SimpleSDMDatasets.provides(P, D)
-            cardfile = joinpath(dataset_catalogue_path, string(P), "$(D).md"),
+            cardfile = joinpath(dataset_catalogue_path, string(P), "$(D).md")
             push!(this_cat, string(D) => joinpath(splitpath(cardfile)[3:end]))
             open(
                 cardfile,

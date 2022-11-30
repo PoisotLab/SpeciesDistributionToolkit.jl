@@ -1,3 +1,5 @@
+# push!(LOAD_PATH, joinpath(splitpath(pwd())[1:(end - 1)]))
+
 using Documenter
 using SpeciesDistributionToolkit
 using InteractiveUtils
@@ -42,6 +44,7 @@ makedocs(;
     pages = [
         "Index" => "index.md",
         "Vignettes" => _vignettes_pages,
+        "List of datasets" => _dataset_catalogue,
         "GBIF.jl" => [
             "GBIF.jl" => "GBIF/index.md",
             "GBIF data representation" => "GBIF/types.md",
@@ -49,12 +52,9 @@ makedocs(;
         ],
         "SimpleSDMDatasets.jl" => [
             "SimpleSDMDatasets.jl" => "SimpleSDMDatasets/index.md",
-            "Dataset catalogue" => _dataset_catalogue,
-            "For developers" => [
-                "Data representation" => "SimpleSDMDatasets/dev/types.md",
-                "Data retrieval interface" => "SimpleSDMDatasets/dev/interface.md",
-                "Internals" => "SimpleSDMDatasets/dev/internals.md",
-            ],
+            "Data representation" => "SimpleSDMDatasets/dev/types.md",
+            "Data retrieval interface" => "SimpleSDMDatasets/dev/interface.md",
+            "Internals" => "SimpleSDMDatasets/dev/internals.md",
         ],
     ],
 )

@@ -97,5 +97,5 @@ for P in subtypes(RasterProvider)
             end
         end
     end
-    push!(_dataset_catalogue, this_cat)
+    push!(_dataset_catalogue, string(P) => this_cat)
 end

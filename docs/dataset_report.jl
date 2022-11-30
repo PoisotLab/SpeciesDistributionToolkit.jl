@@ -1,7 +1,7 @@
 function report(data::RasterData{P, D}) where {P <: RasterProvider, D <: RasterDataset}
-    text = "## Layers\n"
+    text = "## Layers\n\n"
     if ~isnothing(SimpleSDMDatasets.layers(data))
-        text *= "The following layers are accessible through the `layer` keyword:\n"
+        text *= "The following layers are accessible through the `layer` keyword:\n\n"
         text *= "| Layer code | Description |\n"
         text *= "|------------|-------------|\n"
         for (k, v) in SimpleSDMDatasets.layerdescriptions(data)

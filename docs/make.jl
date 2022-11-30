@@ -1,4 +1,4 @@
-# push!(LOAD_PATH, joinpath(splitpath(pwd())[1:(end - 1)]))
+# push!(LOAD_PATH, pwd())
 
 using Documenter
 using SpeciesDistributionToolkit
@@ -8,7 +8,7 @@ using Dates
 using Literate
 
 # Generate a report card for each known dataset
-include("dataset_report.jl")
+include("docs/dataset_report.jl")
 
 # Compile the vignettes for the top-level package
 _vignettes_categories = [

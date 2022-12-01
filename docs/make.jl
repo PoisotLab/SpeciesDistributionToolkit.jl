@@ -8,7 +8,7 @@ using Dates
 using Literate
 
 # Generate a report card for each known dataset
-include("docs/dataset_report.jl")
+include("dataset_report.jl")
 
 # Compile the vignettes for the top-level package
 _vignettes_categories = [

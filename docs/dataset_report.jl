@@ -1,15 +1,24 @@
-function report(data::RasterData{P, D}) where {P <: RasterProvider, D <: RasterDataset}
-    text = "## Layers\n\n"
-    if ~isnothing(SimpleSDMDatasets.layers(data))
-        text *= "The following layers are accessible through the `layer` keyword:\n\n"
-        text *= "| Layer code | Description |\n"
-        text *= "|------------|-------------|\n"
-        for (k, v) in SimpleSDMDatasets.layerdescriptions(data)
-            text *= "| `$(k)` | $(v) |\n"
-        end
-    else
-        text *= "This dataset has no support for the `layer` argument.\n"
+function _document_layers(
+    data::RasterData{P, D},
+) where {P <: RasterProvider, D <: RasterDataset}
+    if isnothing(SimpleSDMDatasets.layers(data))
+        return """
+        ## Layers
+
+        This dataset has no support for layers.
+        """
     end
+    text = "\n## Layers\n\n"
+    text *= "The following layers are accessible through the `layer` keyword:\n\n"
+    text *= "| Layer code | Description |\n"
+    text *= "|------------|-------------|\n"
+    for (k, v) in SimpleSDMDatasets.layerdescriptions(data)
+        text *= "| `$(k)` | $(v) |\n"
+    end
+    return text
+end
+
+function report(data::RasterData{P, D}) where {P <: RasterProvider, D <: RasterDataset}
     text *= "\n\n"
     if ~isnothing(SimpleSDMDatasets.months(data))
         text *= "**Support for months** - list with `SimpleSDMDatasets.months($(typeof(data)))`"
@@ -54,18 +63,12 @@ function report(::Type{P}, ::Type{D}) where {P <: RasterProvider, D <: RasterDat
 
     The remainder of this page will list the keywords you can use to retrieve specific months, layers, etc.
     """
-    # List of supported datasets
-    _datasets = [
-        report(RasterData(P, D)) for
-        D in subtypes(RasterDataset) if SimpleSDMDatasets.provides(P, D)
-    ]
-
     # Prepare and return
     full_text = """$(_header)
 
     $(_description)
 
-    $(reduce(*, _datasets))
+    $(_document_layers(RasterData(P, D)))
     """
     return Markdown.parse(full_text)
 end

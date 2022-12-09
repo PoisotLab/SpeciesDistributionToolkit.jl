@@ -1,4 +1,5 @@
 on: pull_request
+name: Add link to documentation on PR
 
 jobs:
   example_comment_pr:

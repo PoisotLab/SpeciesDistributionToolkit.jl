@@ -3,7 +3,6 @@ module GBIF
 using HTTP
 using JSON
 using Dates
-using Requires
 
 const gbifurl = "http://api.gbif.org/v1/"
 const gbifenums = Dict(
@@ -19,7 +18,7 @@ const gbifenums = Dict(
         "UNKNOWN",
     ],
     "occurrenceStatus" => [
-        "PRESENT", "ABSENT"
+        "PRESENT", "ABSENT",
     ],
     "continent" => [
         "AFRICA",
@@ -108,12 +107,5 @@ include("occurrence.jl")
 include("paging.jl")
 export occurrence, occurrences
 export occurrences!
-
-# Extends with DataFrames functionalities
-function __init__()
-    @require DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0" include(
-        "requires/dataframes.jl",
-    )
-end
 
 end # module

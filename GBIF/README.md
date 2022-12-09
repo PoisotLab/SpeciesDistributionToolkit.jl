@@ -1,5 +1,7 @@
 # GBIF wrapper for Julia
 
+***MAINTENANCE MODE*** - this repo is being move to a monorepo with better integration between features
+
 This is project offers an interface to the [GBIF] search API from
 Julia. Current efforts focus on querying and exporting occurrences through the
 `occurrence/search` endpoint. There is partial support for the taxonomic API.

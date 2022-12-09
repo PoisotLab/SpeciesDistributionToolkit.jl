@@ -1,5 +1,7 @@
-on: pull_request
 name: Add link to documentation on PR
+on:
+  pull_request:
+    types: [opened, reopened]
 
 jobs:
   example_comment_pr:

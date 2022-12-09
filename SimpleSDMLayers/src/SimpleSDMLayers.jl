@@ -34,7 +34,7 @@ export clip
 include("lib/generated.jl")
 
 include("lib/basics.jl")
-export latitudes, longitudes, boundingbox, grid
+export latitudes, longitudes, boundingbox, grid, cellsize
 
 include("operations/coarsen.jl")
 include("operations/sliding.jl")

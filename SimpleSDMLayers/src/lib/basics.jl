@@ -43,3 +43,23 @@ end
 function grid(layer::T) where {T <: SimpleSDMLayer}
     return copy(layer.grid)
 end
+
+"""
+    cellsize(layer::SimpleSDMLayer)
+
+Returns a layer of the same type (predictor or response) where the value of each cell is the surface area of this cell assuming that the Earth is round (not "round as opposed to flat", but "round as opposed to potato shaped").
+
+In practice, this function works by measuring the area of the spherical cap at the top and bottom of each cell, then subtracting one from the other, to get the area of the *ribbon* for this range of latitudes. This is divided by the number of cells needed to cover the entire ribbon, which is given by the ratio between the longitudinal size of each cell and 360 (being the breadth of possible longitudes).
+"""
+function cellsize(layer::T; R=6371.0) where {T <: SimpleSDMLayer}
+    lonstride, latstride = 2.0 .* stride(layer)
+    cells_per_ribbon = 360.0 / lonstride
+    latitudes_ranges = layer.bottom:latstride:layer.top
+    ϕ1 = deg2rad.(latitudes_ranges[1:(end-1)])
+    ϕ2 = deg2rad.(latitudes_ranges[2:end])
+    Δ = abs.(sin.(ϕ1) .- sin.(ϕ2))
+    A = 2π*(R^2.0).*Δ
+    cell_surface = A./cells_per_ribbon
+    # TODO: repeat to have a matrix
+    return LAYER
+end

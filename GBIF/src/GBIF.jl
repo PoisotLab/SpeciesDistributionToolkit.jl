@@ -3,7 +3,6 @@ module GBIF
 using HTTP
 using JSON
 using Dates
-using Requires
 
 const gbifurl = "http://api.gbif.org/v1/"
 const gbifenums = Dict(

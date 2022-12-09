@@ -31,7 +31,8 @@ include("io/read_write.jl")
 
 # Tables interface
 import Tables
-include("tables.jl")
+include("tables/layers.jl")
+include("tables/gbif.jl")
 
 # Functions for pseudo-absence generation
 include("pseudoabsences.jl")

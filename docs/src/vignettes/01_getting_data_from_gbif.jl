@@ -84,4 +84,5 @@ extrema(filter(!ismissing, [fren.date for fren in where_is_fren]))
 
 # Finally, the package implements the interface to *Tables.jl*, so that we may write:
 
-DataFrame(where_is_fren)
+fields_to_keep = [:key, :publishingCountry, :country, :latitude, :longitude, :date]
+select(DataFrame(where_is_fren), fields_to_keep)[1:20,:]

@@ -28,3 +28,8 @@ end
 function iterate(o::GBIFRecords, t::Union{Int64, Nothing})
     return iterate(collect(view(o)), t)
 end
+
+# Tables.jl interface
+Tables.istable(::Type{GBIFRecords}) = true
+Tables.rowaccess(::Type{GBIFRecords}) = true
+Tables.rows(records::GBIFRecords) = view(records)

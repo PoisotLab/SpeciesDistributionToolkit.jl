@@ -60,9 +60,16 @@ end
 """
     cellsize(layer::SimpleSDMLayer)
 
-Returns a layer of the same type (predictor or response) where the value of each cell is the surface area of this cell assuming that the Earth is round (not "round as opposed to flat", but "round as opposed to potato shaped").
+Returns a layer of the same type (predictor or response) where the value of each
+cell is the surface area of this cell assuming that the Earth is round (not
+"round as opposed to flat", but "round as opposed to potato shaped").
 
-In practice, this function works by measuring the area of the spherical cap at the top and bottom of each cell, then subtracting one from the other, to get the area of the *ribbon* for this range of latitudes. This is divided by the number of cells needed to cover the entire ribbon, which is given by the ratio between the longitudinal size of each cell and 360 (being the breadth of possible longitudes).
+In practice, this function works by measuring the area of the spherical cap at
+the top and bottom of each cell, then subtracting one from the other, to get the
+area of the *ribbon* for this range of latitudes. This is divided by the number
+of cells needed to cover the entire ribbon, which is given by the ratio between
+the longitudinal size of each cell and 360 (being the breadth of possible
+longitudes).
 """
 function cellsize(layer::T; R = 6371.0) where {T <: SimpleSDMLayer}
     lonstride, latstride = 2.0 .* stride(layer)
@@ -73,12 +80,12 @@ function cellsize(layer::T; R = 6371.0) where {T <: SimpleSDMLayer}
     ϕ1 = deg2rad.(latitudes_ranges[1:(end - 1)])
     ϕ2 = deg2rad.(latitudes_ranges[2:end])
     # The difference between the sin of each is what we want to get the area
-    Δ = abs.(sin.(ϕ1)) .- abs.(sin.(ϕ2))
+    Δ = abs.(sin.(ϕ1) .- sin.(ϕ2))
     A = 2π * (R^2.0) .* Δ
     cell_surface = A ./ cells_per_ribbon
     # We then reshape everything to a grid
     surface_grid = reshape(repeat(cell_surface, size(layer, 2)), size(layer))
     # And we return based on the actual type of the input
     RT = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
-    return RT(surface_grid; SimpleSDMLayers.boundingbox(layer)...)
+    return mask(layer, RT(surface_grid; SimpleSDMLayers.boundingbox(layer)...))
 end

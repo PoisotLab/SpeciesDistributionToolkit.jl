@@ -8,6 +8,7 @@ using GeometryBasics
 export Point, Polygon
 using PolygonOps
 using StatsBase
+using Tables
 
 # Basic types for the package
 include("lib/types.jl")

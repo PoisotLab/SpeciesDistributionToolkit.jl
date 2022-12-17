@@ -83,7 +83,7 @@ panel = GeoAxis(
     xlabel = "Longitude",
     ylabel = "Latitude",
 )
-heatmap!(
+surface!(
     panel,
     consensus;
     shading = false,

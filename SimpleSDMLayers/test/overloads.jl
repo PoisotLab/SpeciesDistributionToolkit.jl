@@ -12,7 +12,7 @@ for i in eachindex(S)
     @test S[i] == M[i]
 end
 
-@test typeof(S[0.2, 0.6]) == SimpleSDMLayers._inner_type(M)
+@test typeof(S[0.2, 0.6]) == eltype(M)
 @test S[0.2, 0.6] == S[Point(0.2, 0.6)]
 @test isnothing(S[1.2, 0.3])
 @test isnothing(S[1.2, 1.3])

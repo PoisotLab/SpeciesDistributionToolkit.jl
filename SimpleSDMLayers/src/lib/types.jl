@@ -143,3 +143,16 @@ for simplesdm_type in simplesdm_types
         end,
     )
 end
+
+struct RasterCell{L <: Number, T <: Any}
+    longitude::L
+    latitude::L
+    value::T
+end
+
+function RasterCell(layer::T, position) where {T <: SimpleSDMLayer}
+    lon = longitudes(layer)[last(position.I)]
+    lat = latitudes(layer)[first(position.I)]
+    val = layer.grid[position]
+    return RasterCell(lon, lat, val)
+end

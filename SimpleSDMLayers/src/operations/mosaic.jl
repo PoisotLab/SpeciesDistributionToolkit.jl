@@ -21,7 +21,7 @@ function mosaic(f::TF, layers::Vector{T}) where {TF <: Function, T <: SimpleSDML
     end
     
     # Check the types
-    itypes = eltype.(layers)
+    itypes = SimpleSDMLayers._inner_type.(layers)
     if length(unique(itypes)) > 1
         @warn """
         The numeric types of the layers are not unique, this can cause performance issues.

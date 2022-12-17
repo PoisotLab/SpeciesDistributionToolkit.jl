@@ -1,20 +1,5 @@
-struct RasterCell{L <: Number, T <: Any}
-    longitude::L
-    latitude::L
-    value::T
-end
-
-function RasterCell(layer::T, position) where {T <: SimpleSDMLayer}
-    lon = longitudes(layer)[last(position.I)]
-    lat = latitudes(layer)[first(position.I)]
-    val = layer.grid[position]
-    return RasterCell(lon, lat, val)
-end
-
 Base.IteratorSize(::T) where {T <: SimpleSDMLayer} = Base.HasLength()
-function Base.IteratorEltype(layer::T) where {T <: SimpleSDMLayer}
-    return RasterCell{eltype(latitudes(layer)), SimpleSDMLayers._inner_type(layer)}
-end
+Base.IteratorEltype(layer::T) where {T <: SimpleSDMLayer} = Base.HasEltype()
 
 function Base.iterate(layer::T) where {T <: SimpleSDMLayer}
     position = findfirst(!isnothing, layer.grid)

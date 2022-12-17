@@ -13,6 +13,7 @@ using Tables
 # Basic types for the package
 include("lib/types.jl")
 export SimpleSDMLayer, SimpleSDMResponse, SimpleSDMPredictor
+export RasterCell # eltype for the layers, very useful to build table interface later
 
 # Main functions to match coordinates
 include("lib/coordinateconversion.jl")
@@ -20,7 +21,6 @@ include("lib/coordinateconversion.jl")
 # Implements a series of interfaces (AbstractArray, iteration, and indexing)
 include("interfaces/common.jl")
 include("interfaces/iteration.jl")
-export RasterCell # eltype for the layers, very useful to build table interface later
 
 include("interfaces/indexing.jl")
 include("interfaces/broadcast.jl")

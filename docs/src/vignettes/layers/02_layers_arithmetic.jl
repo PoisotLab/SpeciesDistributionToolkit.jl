@@ -46,14 +46,14 @@ landuse = [
 # layer Lᵢ. In order to have the resistance layer expressed between 0 and 1, we finally call
 # the `rescale!` method with new endpoints for the layer:
 
-resistance_layer = reduce(+, landuse .* classes_resistance)
+resistance_layer = sum([landuse[i] .* classes_resistance[i] for i in eachindex(landuse)])
 rescale!(resistance_layer, (0.0, 1.0));
 
 # The remaining step is to visualize this resistance map, and add a little colorbar to show
 # which areas will be more difficult to cross:
 
 resistance_map = heatmap(
-    sprinkle(resistance_layer)...;
+    resistance_layer;
     colormap = Reverse(:linear_protanopic_deuteranopic_kbjyw_5_95_c25_n256),
     figure = (; resolution = (800, 350)),
     axis = (;

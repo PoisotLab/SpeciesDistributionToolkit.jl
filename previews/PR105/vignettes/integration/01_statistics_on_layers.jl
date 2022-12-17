@@ -48,11 +48,12 @@ std(temperature)
 
 z_temperature = (temperature - mean(temperature)) / std(temperature)
 
-# This can be plotted:
+# This can be plotted. Note that we do not need to do anything on the layer
+# itself, since the package comes pre-loaded with `Makie` recipes. This will be very useful when we start using `GeoMakie` axes to incorporate projections into our figures.
 
 fig, ax, hm = heatmap(
-    sprinkle(z_temperature)...;
-    colormap = :roma,
+    z_temperature;
+    colormap = :broc,
     colorrange = (-2, 2),
     figure = (; resolution = (800, 400)),
     axis = (; aspect = DataAspect()),
@@ -60,17 +61,19 @@ fig, ax, hm = heatmap(
 Colorbar(fig[:, end + 1], hm)
 current_figure()
 
-# Another option to modify the layers is to use the `rescale` method. When given two values,
-# it will rescale the layer to be between these two values. This is useful if you want to
-# bring a series of arbitrary values to some interval:
+# Another option to modify the layers is to use the `rescale` method. When given
+# two values, it will rescale the layer to be between these two values. This is
+# useful if you want to bring a series of arbitrary values to some interval. As
+# before, note that we can directly pass the GBIF object to `scatter` to show it
+# on a map:
 
 fig, ax, hm = heatmap(
-    sprinkle(rescale(precipitation, (0.0, 1.0)))...;
+    rescale(precipitation, (0.0, 1.0));
     colormap = :bamako,
     figure = (; resolution = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
-scatter!(ax, longitudes(presences), latitudes(presences))
+scatter!(ax, presences)
 Colorbar(fig[:, end + 1], hm)
 current_figure()
 
@@ -80,7 +83,7 @@ current_figure()
 # quantiles:
 
 fig, ax, hm = heatmap(
-    sprinkle(rescale(precipitation, collect(0.0:0.05:1.0)))...;
+    rescale(precipitation, collect(0.0:0.05:1.0));
     colormap = :bamako,
     figure = (; resolution = (800, 400)),
     axis = (; aspect = DataAspect()),
@@ -100,20 +103,21 @@ quantile(temperature, [0.05, 0.95])
 
 temp_limits = quantile(temperature[presences], [0.05, 0.95])
 
-# This can be used to mask the temperature layer:
+# This can be used to mask the temperature layer -- we can do this very
+# naturally using the broadcast notation, as it is fully supported on layers:
 
-temperature_range = broadcast(v -> temp_limits[1] <= v <= temp_limits[2], temperature)
+temperature_range = temp_limits[1] .<= temperature .<= temp_limits[2]
 
 # We can do the same for the precipitation:
 
 prec_limits = quantile(precipitation[presences], [0.05, 0.95])
-precipitation_range = broadcast(v -> prec_limits[1] <= v <= prec_limits[2], precipitation)
+precipitation_range = prec_limits[1] .<= precipitation .<= prec_limits[2]
 
 # The combined range map is simply the places where both variables match with species
 # occurrences, which we can get by multiplying the two boolean layers:
 
 fig, ax, hm = heatmap(
-    sprinkle(temperature_range * precipitation_range)...;
+    temperature_range * precipitation_range;
     colormap = :bamako,
     figure = (; resolution = (800, 400)),
     axis = (; aspect = DataAspect()),

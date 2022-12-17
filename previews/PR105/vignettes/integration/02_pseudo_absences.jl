@@ -66,13 +66,13 @@ bgmask = convert(Bool, 0x01 * background - 0x01 * buffer)
 # the layer, and plot all known occurrences as well:
 
 heatmap(
-    sprinkle(temperature)...;
+    temperature;
     colormap = :deep,
     axis = (; aspect = DataAspect()),
     figure = (; resolution = (800, 500)),
 )
-heatmap!(sprinkle(bgmask)...; colormap = cgrad([:transparent, :white]; alpha = 0.3))
-plot!(longitudes(presences), latitudes(presences); color = :black)
+heatmap!(bgmask; colormap = cgrad([:transparent, :white]; alpha = 0.3))
+scatter!(presences; color = :black)
 current_figure()
 
 # There are additional ways to produce pseudo-absences mask, notably the surface range
@@ -81,13 +81,13 @@ current_figure()
 sre = pseudoabsencemask(SurfaceRangeEnvelope, presencelayer)
 
 heatmap(
-    sprinkle(temperature)...;
+    temperature;
     colormap = :deep,
     axis = (; aspect = DataAspect()),
     figure = (; resolution = (800, 500)),
 )
-heatmap!(sprinkle(sre)...; colormap = cgrad([:transparent, :white]; alpha = 0.3))
-plot!(longitudes(presences), latitudes(presences); color = :black)
+heatmap!(sre; colormap = cgrad([:transparent, :white]; alpha = 0.3))
+scatter!(presences; color = :black)
 current_figure()
 
 # The `RandomSelection` method (not shown) uses the entire surface of the layer as
@@ -103,7 +103,7 @@ bgpoints = SpeciesDistributionToolkit.sample(bgmask, floor(Int, 0.5sum(presencel
 # So we can generate a map of the cell size:
 
 heatmap(
-    sprinkle(cellsize(temperature))...;
+    cellsize(temperature);
     colormap = :lapaz,
     axis = (; aspect = DataAspect()),
     figure = (; resolution = (800, 500)),
@@ -124,12 +124,12 @@ replace!(bgpoints, false => nothing)
 # And finally, we can make a plot:
 
 heatmap(
-    sprinkle(temperature)...;
+    temperature;
     colormap = :deep,
     axis = (; aspect = DataAspect()),
     figure = (; resolution = (800, 500)),
 )
-heatmap!(sprinkle(bgmask)...; colormap = cgrad([:transparent, :white]; alpha = 0.3))
-plot!(longitudes(presences), latitudes(presences); color = :black)
+heatmap!(bgmask; colormap = cgrad([:transparent, :white]; alpha = 0.3))
+scatter!(presences; color = :black)
 scatter!(keys(bgpoints); color = :red)
 current_figure()

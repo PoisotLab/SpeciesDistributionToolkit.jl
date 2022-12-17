@@ -36,4 +36,10 @@ end
 function Base.broadcasted(::Broadcast.Style{T}, f, args...) where {T <: SimpleSDMLayer}
     @info f
     @info args
+    @info length(args)
+end
+
+function copyto!(dest::T, bc::Base.Broadcast.Broadcasted{Broadcast.Style{T}},
+) where {T <: SimpleSDMLayer}
+@info "oh"
 end

@@ -18,6 +18,24 @@ function _document_layers(
     return text
 end
 
+function _document_extrakeys(
+    data::RasterData{P, D},
+) where {P <: RasterProvider, D <: RasterDataset}
+    if isnothing(SimpleSDMDatasets.extrakeys(data))
+        return """
+        ## Additional keyword arguments
+
+        This dataset has no non-standard keywords arguments.
+        """
+    end
+    text = "\n## Additional keyword arguments\n\n"
+    text *= "The following keyword arguments can be used with this dataset:\n\n"
+    for (k, v) in SimpleSDMDatasets.extrakeys(data)
+    text *= "**$(String(k))**: $(join(v, ", ", " and "))\n\n"
+    end
+    return text
+end
+
 function _document_resolutions(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
@@ -108,6 +126,8 @@ function report(::Type{P}, ::Type{D}) where {P <: RasterProvider, D <: RasterDat
     $(_document_layers(RasterData(P, D)))
 
     $(_document_resolutions(RasterData(P, D)))
+
+    $(_document_extrakeys(RasterData(P, D)))
 
     $(_document_months(RasterData(P, D)))
 

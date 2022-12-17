@@ -18,19 +18,44 @@ function _document_layers(
     return text
 end
 
+function _document_resolutions(
+    data::RasterData{P, D},
+) where {P <: RasterProvider, D <: RasterDataset}
+    if isnothing(SimpleSDMDatasets.resolutions(data))
+        return """
+        ## Resolutions
+
+        This dataset is provided in a single resolution
+        """
+    end
+    text = "\n## Resolutions\n\n"
+    text *= "The following resolutions are accessible through the `resolution` keyword argument:\n\n"
+    text *= "| Resolution | Key |\n"
+    text *= "|------------|-------------|\n"
+    for (k, v) in SimpleSDMDatasets.resolutions(data)
+        text *= "| `$(v)` | $(k) |\n"
+    end
+    text *= "\nYou can also list the resolutions using `SimpleSDMDatasets.resolutions($(typeof(data)))`.\n\n"
+    return text
+end
+
+function _document_months(
+    data::RasterData{P, D},
+) where {P <: RasterProvider, D <: RasterDataset}
+    if isnothing(SimpleSDMDatasets.months(data))
+        return """
+        ## Months
+
+        This dataset is not indexed by months
+        """
+    end
+    text = "\n## Months\n\n"
+    text *= "This dataset can be accessed monthly, using the `month` keyword argument.\n\n"
+    text *= "You can list the available months using `SimpleSDMDatasets.months($(typeof(data)))`.\n\n"
+    return text
+end
+
 function report(data::RasterData{P, D}) where {P <: RasterProvider, D <: RasterDataset}
-    text *= "\n\n"
-    if ~isnothing(SimpleSDMDatasets.months(data))
-        text *= "**Support for months** - list with `SimpleSDMDatasets.months($(typeof(data)))`"
-    end
-    text *= "\n\n"
-    if ~isnothing(SimpleSDMDatasets.resolutions(data))
-        text *= "**Support for resolutions** - list with `SimpleSDMDatasets.resolutions($(typeof(data)))`"
-    end
-    text *= "\n\n"
-    text *= "**Downloaded** as `$(SimpleSDMDatasets.downloadtype(data))`, **data stored** as `$(SimpleSDMDatasets.filetype(data))`\n"
-    text *= "\n\n"
-    # Supported futures?
     for S in subtypes(FutureScenario)
         models = []
         for M in subtypes(FutureModel)
@@ -69,6 +94,10 @@ function report(::Type{P}, ::Type{D}) where {P <: RasterProvider, D <: RasterDat
     $(_description)
 
     $(_document_layers(RasterData(P, D)))
+
+    $(_document_resolutions(RasterData(P, D)))
+
+    $(_document_months(RasterData(P, D)))
     """
     return Markdown.parse(full_text)
 end

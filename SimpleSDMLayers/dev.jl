@@ -18,6 +18,7 @@ lg = g.(layer)
 (lf .& lg).grid
 
 layer .+ 2
+2 .- layer
 
 layer .+ layer
 

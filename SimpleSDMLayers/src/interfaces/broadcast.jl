@@ -22,24 +22,49 @@ function Base.similar(
     bc::Base.Broadcast.Broadcasted{Broadcast.Style{T}},
     ::Type{ElType},
 ) where {T <: SimpleSDMLayer, ElType}
-    layer = finf_layer(bc)
+    @info "similar"
+    layer = find_layer(bc)
     return similar(layer, ElType)
 end
 
-function Base.Broadcast.instantiate(
-    bc::Base.Broadcast.Broadcasted{Broadcast.Style{T}},
-) where {T <: SimpleSDMLayer}
-    layer = find_layer(bc)
-    return Base.Broadcast.Broadcasted(bc.f, bc.args, axes(layer))
+function Base.broadcasted(::Broadcast.Style{T}, f, layer::T) where {T <: SimpleSDMLayer}
+    ElType = typeof(f(collect(layer)[1].value))
+    dest = similar(layer, ElType)
+    for cell in layer
+        dest[cell.longitude, cell.latitude] = f(cell.value)
+    end
+    return dest
 end
 
-function Base.broadcasted(::Broadcast.Style{T}, f, args...) where {T <: SimpleSDMLayer}
-    @info f
-    @info args
-    @info length(args)
+function Base.broadcasted(::Broadcast.Style{T}, f, layer::T, x) where {T <: SimpleSDMLayer}
+    ElType = typeof(f(collect(layer)[1].value, x))
+    dest = similar(layer, ElType)
+    for cell in layer
+        dest[cell.longitude, cell.latitude] = f(cell.value, x)
+    end
+    return dest
 end
 
-function copyto!(dest::T, bc::Base.Broadcast.Broadcasted{Broadcast.Style{T}},
-) where {T <: SimpleSDMLayer}
-@info "oh"
+function Base.broadcasted(::Broadcast.Style{T}, f, x, layer::T) where {T <: SimpleSDMLayer}
+    ElType = typeof(f(x, collect(layer)[1].value))
+    dest = similar(layer, ElType)
+    for cell in layer
+        dest[cell.longitude, cell.latitude] = f(x, cell.value)
+    end
+    return dest
+end
+
+function Base.broadcasted(
+    ::Broadcast.Style{T},
+    f,
+    layer1::T1,
+    layer2::T2,
+) where {T <: SimpleSDMLayer, T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
+    @assert SimpleSDMLayers._layers_are_compatible(layer1, layer2)
+    ElType = typeof(f(collect(layer1)[1].value, collect(layer2)[1].value))
+    dest = similar(layer1, ElType)
+    for cell in layer1
+        dest[cell.longitude, cell.latitude] = f(cell.value, layer2[cell.longitude, cell.latitude])
+    end
+    return dest
 end

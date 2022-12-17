@@ -41,7 +41,7 @@ isotherm_current = SimpleSDMPredictor(dataprovider; data_info..., spatial_extent
 # isothermality:
 
 density(
-    filter(!isnan, vec(last(sprinkle(isotherm_current)))); color = (:grey, 0.5),
+    filter(!isnan, values(isotherm_current)); color = (:grey, 0.5),
     figure = (; resolution = (800, 300)),
     axis = (; xlabel = "Raw isothermality data"),
 )

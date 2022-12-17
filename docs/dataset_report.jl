@@ -83,7 +83,7 @@ function report(::Type{P}, ::Type{D}) where {P <: RasterProvider, D <: RasterDat
 
     ~~~julia
     using SpeciesDistributionToolkit
-    layer = SimpleSDMPredictor(RasterData($(P), $(D)))
+    layer = SimpleSDMPredictor(RasterData($(P), $(D))) # You will probably need keyword arguments here
     ~~~
 
     The remainder of this page will list the keywords you can use to retrieve specific months, layers, etc.

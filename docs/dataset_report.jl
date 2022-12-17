@@ -55,17 +55,29 @@ function _document_months(
     return text
 end
 
-function report(data::RasterData{P, D}) where {P <: RasterProvider, D <: RasterDataset}
+function _document_scenarios(
+    data::RasterData{P, D},
+) where {P <: RasterProvider, D <: RasterDataset}
+    text = ""
     for S in subtypes(FutureScenario)
         models = []
+        spans = []
         for M in subtypes(FutureModel)
-            if SimpleSDMDatasets.provides(data, Projection(S, M))
+            F = Projection(S, M)
+            if SimpleSDMDatasets.provides(data, F)
                 push!(models, "`$(M)`")
+                if ~isnothing(SimpleSDMDatasets.timespans(data, F))
+                    append!(spans, SimpleSDMDatasets.timespans(data, F))
+                end
             end
         end
         if ~isempty(models)
-            text *= "**Future scenario `$(S)` supported** with models $(join(models, ", ", " and "))"
-            text *= "\n\n"
+            text *= "## Support for future scenario $(S)\n\n"
+            text *= "Note that the future scenarios support the *same* keyword arguments as the contemporary data.\n\n"
+            text *= "**Models**: $(join(models, ", ", " and "))\n\n"
+            if ~isempty(spans)
+                text *= "**Timespans**: $(join(spans, ", ", " and "))\n\n"
+            end
         end
     end
     text *= "\n\n"
@@ -98,6 +110,8 @@ function report(::Type{P}, ::Type{D}) where {P <: RasterProvider, D <: RasterDat
     $(_document_resolutions(RasterData(P, D)))
 
     $(_document_months(RasterData(P, D)))
+
+    $(_document_scenarios(RasterData(P, D)))
     """
     return Markdown.parse(full_text)
 end

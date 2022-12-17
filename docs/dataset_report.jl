@@ -94,7 +94,7 @@ function _document_scenarios(
             text *= "Note that the future scenarios support the *same* keyword arguments as the contemporary data.\n\n"
             text *= "**Models**: $(join(models, ", ", " and "))\n\n"
             if ~isempty(spans)
-                text *= "**Timespans**: $(join(spans, ", ", " and "))\n\n"
+                text *= "**Timespans**: $(join(unique(spans), ", ", " and "))\n\n"
             end
         end
     end

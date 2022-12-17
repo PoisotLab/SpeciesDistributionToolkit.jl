@@ -55,12 +55,9 @@ background = pseudoabsencemask(WithinRadius, presencelayer; distance = 120.0)
 
 buffer = pseudoabsencemask(WithinRadius, presencelayer; distance = 25.0)
 
-# We can now exclude the data that are in the buffer. There are a variety of ways to do
-# this (for example using `mosaic` and `all`), but the fastest way is to use layer
-# arithmetic (we can convert the layers to integer by mutliplying them by `0x01`, so that
-# they are `UInt8`, and therefore do not take up much memory):
+# We can now exclude the data that are in the buffer:
 
-bgmask = convert(Bool, 0x01 * background - 0x01 * buffer)
+bgmask = background .& (.! buffer)
 
 # Finally, we can plot the area in which we can put pseudo-absences as a shaded region over
 # the layer, and plot all known occurrences as well:
@@ -113,7 +110,7 @@ heatmap(
 
 bgpoints = SpeciesDistributionToolkit.sample(
     bgmask,
-    elevation(bgmask),
+    cellsize(bgmask),
     floor(Int, 0.5sum(presencelayer)),
 )
 

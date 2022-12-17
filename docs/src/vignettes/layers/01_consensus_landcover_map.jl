@@ -43,7 +43,7 @@ stack = [
 # create a mask for the pixels that are less than 100% open water.
 
 open_water_idx = findfirst(isequal("Open Water"), landcover_types)
-open_water_mask = broadcast(v -> v < 100.0f0, stack[open_water_idx])
+open_water_mask = stack[open_water_idx] .< 100.0f0
 
 # We can now mask all of the rasters in the stack, to remove the open water pixels:
 
@@ -89,7 +89,7 @@ panel = GeoAxis(
 )
 heatmap!(
     panel,
-    sprinkle(convert(Float32, consensus))...;
+    consensus;
     shading = false,
     interpolate = false,
     colormap = landcover_colors,

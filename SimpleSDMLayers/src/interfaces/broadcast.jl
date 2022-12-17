@@ -46,7 +46,7 @@ function Base.broadcasted(::Broadcast.Style{T}, f, layer::T, x) where {T <: Simp
 end
 
 function Base.broadcasted(::Broadcast.Style{T}, f, x, layer::T) where {T <: SimpleSDMLayer}
-    ElType = typeof(x, f(first(values(layer))))
+    ElType = typeof(f(x, first(values(layer))))
     dest = similar(layer, ElType)
     for index in findall(!isnothing, layer.grid)
         dest.grid[index] = f(x, layer.grid[index])

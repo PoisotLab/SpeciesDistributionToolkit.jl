@@ -7,10 +7,9 @@ using GeoMakie
 # In this vignette, we will look at the different landcover classes in Iceland. This is an
 # opportunity to see how we can edit, mask, and aggregate data for processing.
 
-# To begin with, we define a bounding box around Iceland. The website [bboxfinder.com][bbox]
-# is fantastic is you need to rapidly define bounding boxes!
-
-# [bbox]: http://bboxfinder.com/#0.000000,0.000000,0.000000,0.000000
+# To begin with, we define a bounding box around Iceland. The website
+# [bboxfinder.com](http://bboxfinder.com/) is fantastic for when you need to
+# rapidly define bounding boxes!
 
 spatial_extent = (left = -24.785, right = -12.634, top = 66.878, bottom = 62.935)
 
@@ -72,16 +71,13 @@ landcover_colors = [
     :transparent,
 ];
 
-# We can now make the plot - because the area is relatively small, we will keep the `latlon`
-# projection as the destination. Most of this code is really manually setting up a figure
-# and a legend. The `sprinkle` function is used to transform a layer into an `x, y, z` tuple
-# that can be used for plotting.
+# We can now create our plot:
 
 fig = Figure(; resolution = (1000, 500))
 panel = GeoAxis(
     fig[1, 1];
     source = "+proj=longlat +datum=WGS84",
-    dest = "+proj=longlat",
+    dest = "+proj=wintri",
     lonlims = extrema(longitudes(consensus)),
     latlims = extrema(latitudes(consensus)),
     xlabel = "Longitude",

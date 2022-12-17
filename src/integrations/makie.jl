@@ -7,4 +7,8 @@ function sprinkle(layer::T) where {T <: SimpleSDMLayer}
     )
 end
 
+# Surface-like plot for a layer
 MakieCore.convert_arguments(P::MakieCore.SurfaceLike, layer::T) where {T <: SimpleSDMLayer} = sprinkle(layer)
+
+# Scatter-like plot for GBIFRecords
+MakieCore.convert_arguments(P::MakieCore.PointBased, records::GBIFRecords) = (longitudes(records), latitudes(records))

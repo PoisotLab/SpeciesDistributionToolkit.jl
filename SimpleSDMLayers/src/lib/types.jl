@@ -1,3 +1,16 @@
+struct RasterCell{L <: Number, T <: Any}
+    longitude::L
+    latitude::L
+    value::T
+end
+
+function RasterCell(layer::T, position) where {T <: SimpleSDMLayer}
+    lon = longitudes(layer)[last(position.I)]
+    lat = latitudes(layer)[first(position.I)]
+    val = layer.grid[position]
+    return RasterCell(lon, lat, val)
+end
+
 """
 All types in the package are part of the abstract type `SimpleSDMLayer`. A
 `SimpleSDMLayer` has five core fields: `grid` is a matrix storing the cells, and

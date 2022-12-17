@@ -22,7 +22,7 @@ import Base: findmax, findmin, findall
 Shows a textual representation of the layer.
 """
 function Base.show(io::IO, ::MIME"text/plain", layer::T) where {T <: SimpleSDMLayer}
-    itype = eltype(layer)
+    itype = SimpleSDMLayers._inner_type(layer)
     otype = T <: SimpleSDMPredictor ? "predictor" : "response"
     return print(
         io,
@@ -33,7 +33,7 @@ function Base.show(io::IO, ::MIME"text/plain", layer::T) where {T <: SimpleSDMLa
 end
 
 function Base.show(io::IO, layer::T) where {T <: SimpleSDMLayer}
-    itype = eltype(layer)
+    itype = SimpleSDMLayers._inner_type(layer)
     otype = T <: SimpleSDMPredictor ? "predictor" : "response"
     return print(
         io,
@@ -89,11 +89,13 @@ end
 """
     Base.eltype(layer::SimpleSDMLayer{T}) where {T}
 
-Returns the type of the values stored in the grid, where the `Nothing` type is
-omitted.
+Returns the type of the RasterCell describing each entry in the layer.
 """
-Base.eltype(::SimpleSDMResponse{T}) where {T} = T
-Base.eltype(::SimpleSDMPredictor{T}) where {T} = T
+function Base.eltype(layer::T) where {T <: SimpleSDMLayer}
+    coord_type = eltype(latitudes(layer))
+    data_type = SimpleSDMLayers._inner_type(layer)
+    return RasterCell{coord_type, data_type}
+end
 
 """
     Base.stride(layer::T; dims::Union{Nothing,Integer}=nothing) where {T <: SimpleSDMLayer}
@@ -146,7 +148,7 @@ zero for the type. If not, the same result can always be achieved through the
 use of `copy`, manual update, and `convert`.
 """
 function Base.similar(layer::T) where {T <: SimpleSDMLayer}
-    return similar(layer, eltype(layer))
+    return similar(layer, SimpleSDMLayers._inner_type(layer))
 end
 
 """

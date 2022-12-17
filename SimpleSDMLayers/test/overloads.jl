@@ -12,13 +12,13 @@ for i in eachindex(S)
     @test S[i] == M[i]
 end
 
-@test typeof(S[0.2, 0.6]) == eltype(M)
+@test typeof(S[0.2, 0.6]) == SimpleSDMLayers._inner_type(M)
 @test S[0.2, 0.6] == S[Point(0.2, 0.6)]
 @test isnothing(S[1.2, 0.3])
 @test isnothing(S[1.2, 1.3])
 @test isnothing(S[0.2, 1.3])
 
-C = (left=0.2, bottom=0.5)
+C = (left = 0.2, bottom = 0.5)
 @test typeof(clip(S; C...)) == typeof(S)
 
 Y = SimpleSDMResponse(zeros(Float64, (5, 5)), 0.0, 1.0, 0.0, 1.0)
@@ -36,10 +36,10 @@ V = values(Z)
 
 # typed similar
 c2 = similar(Y, Bool)
-@test eltype(c2) == Bool
+@test SimpleSDMLayers._inner_type(c2) == Bool
 
-@test eltype(convert(Int64, c2)) == Int64
-@test eltype(convert(Float32, c2)) == Float32
+@test SimpleSDMLayers._inner_type(convert(Int64, c2)) == Int64
+@test SimpleSDMLayers._inner_type(convert(Float32, c2)) == Float32
 
 # replacement
 s1 = SimpleSDMResponse(collect(reshape(1:9, 3, 3)))
@@ -84,8 +84,9 @@ replace!(l4, nothing => NaN)
 @test hash(l4) == hash(l4)
 
 # getindex(layer1, layer2)
-l1 = SimpleSDMPredictor(rand(20, 20); left=0.0, right=20.0, bottom=0.0, top=20.0)
-l2 = SimpleSDMPredictor(rand(40, 40); left=-10.0, right=30.0, bottom=-10.0, top=30.0)
+l1 = SimpleSDMPredictor(rand(20, 20); left = 0.0, right = 20.0, bottom = 0.0, top = 20.0)
+l2 =
+    SimpleSDMPredictor(rand(40, 40); left = -10.0, right = 30.0, bottom = -10.0, top = 30.0)
 @test stride(l1) == stride(l2)
 
 @test_throws ArgumentError clip(l1, l2)

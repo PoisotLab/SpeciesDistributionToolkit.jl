@@ -102,4 +102,7 @@ l1 = SimpleSDMResponse(ones(Int64, 2, 2))
 @test sum(2l1) == 2sum(l1)
 @test sum(l1 * 2) == 2sum(l1)
 
+# Broadcast
+@test sqrt.(l1).grid == sqrt(l1).grid
+
 end

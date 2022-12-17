@@ -8,5 +8,4 @@ module TestDataFrames
 
   @test typeof(df) <: DataFrame
 
-
 end

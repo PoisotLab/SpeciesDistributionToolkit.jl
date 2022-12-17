@@ -1,0 +1,17 @@
+name: Add link to documentation on PR
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  example_comment_pr:
+    runs-on: ubuntu-latest
+    name: Comment on PR with documentation link
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: "Documentation for this PR at https://poisotlab.github.io/SpeciesDistributionToolkit.jl/previews/PR${{ github.event.number }}/"

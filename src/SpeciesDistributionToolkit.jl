@@ -29,10 +29,6 @@ include("io/geotiff.jl")
 include("io/ascii.jl")
 include("io/read_write.jl")
 
-# Tables interface
-import Tables
-include("tables.jl")
-
 # Functions for pseudo-absence generation
 include("pseudoabsences.jl")
 export WithinRadius, SurfaceRangeEnvelope, RandomSelection

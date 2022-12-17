@@ -8,6 +8,7 @@ using GeometryBasics
 export Point, Polygon
 using PolygonOps
 using StatsBase
+using Tables
 
 # Basic types for the package
 include("lib/types.jl")
@@ -34,7 +35,7 @@ export clip
 include("lib/generated.jl")
 
 include("lib/basics.jl")
-export latitudes, longitudes, boundingbox, grid
+export latitudes, longitudes, boundingbox, grid, cellsize
 
 include("operations/coarsen.jl")
 include("operations/sliding.jl")

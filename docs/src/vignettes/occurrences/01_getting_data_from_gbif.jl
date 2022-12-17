@@ -6,6 +6,7 @@
 # API, but this is at best a side effect. What matters is: capybaras slaps.
 
 using SpeciesDistributionToolkit
+using DataFrames
 
 # The first step is to understand how GBIF represents the taxonomic information. The `taxon`
 # function will take a string (or a GBIF taxonomic ID, but most people tend to call species
@@ -80,3 +81,8 @@ extrema(filter(!ismissing, [fren.date for fren in where_is_fren]))
 
 # The GBIF results can interact very seamlessly with the layer types, which is covered in
 # other vignettes.
+
+# Finally, the package implements the interface to *Tables.jl*, so that we may write:
+
+fields_to_keep = [:key, :publishingCountry, :country, :latitude, :longitude, :date]
+select(DataFrame(where_is_fren), fields_to_keep)[1:20,:]

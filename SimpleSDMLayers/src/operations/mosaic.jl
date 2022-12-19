@@ -3,7 +3,7 @@
 
 Joins a series of _possibly_ overlapping `layers` by applying the function `f`
 to the values that occupy the same cells. Note that the function `f`  should
-return a single value and accept an vector as input. Functions like
+return a single value and accept a vector as an input. Functions like
 `Statistics.mean`, etc, work well.
 
 Using `mosaic` with `maximum` is equivalent to `raster::merge` from the *R*

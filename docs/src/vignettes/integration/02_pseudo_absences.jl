@@ -55,24 +55,21 @@ background = pseudoabsencemask(WithinRadius, presencelayer; distance = 120.0)
 
 buffer = pseudoabsencemask(WithinRadius, presencelayer; distance = 25.0)
 
-# We can now exclude the data that are in the buffer. There are a variety of ways to do
-# this (for example using `mosaic` and `all`), but the fastest way is to use layer
-# arithmetic (we can convert the layers to integer by mutliplying them by `0x01`, so that
-# they are `UInt8`, and therefore do not take up much memory):
+# We can now exclude the data that are in the buffer:
 
-bgmask = convert(Bool, 0x01 * background - 0x01 * buffer)
+bgmask = background .& (.! buffer)
 
 # Finally, we can plot the area in which we can put pseudo-absences as a shaded region over
 # the layer, and plot all known occurrences as well:
 
 heatmap(
-    sprinkle(temperature)...;
+    temperature;
     colormap = :deep,
     axis = (; aspect = DataAspect()),
     figure = (; resolution = (800, 500)),
 )
-heatmap!(sprinkle(bgmask)...; colormap = cgrad([:transparent, :white]; alpha = 0.3))
-plot!(longitudes(presences), latitudes(presences); color = :black)
+heatmap!(bgmask; colormap = cgrad([:transparent, :white]; alpha = 0.3))
+scatter!(presences; color = :black)
 current_figure()
 
 # There are additional ways to produce pseudo-absences mask, notably the surface range
@@ -81,13 +78,13 @@ current_figure()
 sre = pseudoabsencemask(SurfaceRangeEnvelope, presencelayer)
 
 heatmap(
-    sprinkle(temperature)...;
+    temperature;
     colormap = :deep,
     axis = (; aspect = DataAspect()),
     figure = (; resolution = (800, 500)),
 )
-heatmap!(sprinkle(sre)...; colormap = cgrad([:transparent, :white]; alpha = 0.3))
-plot!(longitudes(presences), latitudes(presences); color = :black)
+heatmap!(sre; colormap = cgrad([:transparent, :white]; alpha = 0.3))
+scatter!(presences; color = :black)
 current_figure()
 
 # The `RandomSelection` method (not shown) uses the entire surface of the layer as
@@ -103,7 +100,7 @@ bgpoints = SpeciesDistributionToolkit.sample(bgmask, floor(Int, 0.5sum(presencel
 # So we can generate a map of the cell size:
 
 heatmap(
-    sprinkle(cellsize(temperature))...;
+    cellsize(temperature);
     colormap = :lapaz,
     axis = (; aspect = DataAspect()),
     figure = (; resolution = (800, 500)),
@@ -113,7 +110,7 @@ heatmap(
 
 bgpoints = SpeciesDistributionToolkit.sample(
     bgmask,
-    elevation(bgmask),
+    cellsize(bgmask),
     floor(Int, 0.5sum(presencelayer)),
 )
 
@@ -124,12 +121,12 @@ replace!(bgpoints, false => nothing)
 # And finally, we can make a plot:
 
 heatmap(
-    sprinkle(temperature)...;
+    temperature;
     colormap = :deep,
     axis = (; aspect = DataAspect()),
     figure = (; resolution = (800, 500)),
 )
-heatmap!(sprinkle(bgmask)...; colormap = cgrad([:transparent, :white]; alpha = 0.3))
-plot!(longitudes(presences), latitudes(presences); color = :black)
+heatmap!(bgmask; colormap = cgrad([:transparent, :white]; alpha = 0.3))
+scatter!(presences; color = :black)
 scatter!(keys(bgpoints); color = :red)
 current_figure()

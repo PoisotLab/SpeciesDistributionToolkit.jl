@@ -74,3 +74,27 @@ function rescale(layer::T, p::Vector{TI}) where {T <: SimpleSDMLayer, TI <: Abst
     rescale!(l, p)
     return l
 end
+
+function rescale(layer::T, lr::LinRange) where {T <: SimpleSDMLayer}
+    @assert 1.0 >= minimum(lr) >= 0.0
+    @assert 1.0 >= maximum(lr) >= 0.0
+    return rescale(layer, collect(lr))
+end
+
+function rescale!(layer::T, lr::LinRange) where {T <: SimpleSDMLayer}
+    @assert 1.0 >= minimum(lr) >= 0.0
+    @assert 1.0 >= maximum(lr) >= 0.0
+    return rescale!(layer, collect(lr))
+end
+
+function rescale(layer::T, srl::StepRangeLen) where {T <: SimpleSDMLayer}
+    @assert 1.0 >= minimum(srl) >= 0.0
+    @assert 1.0 >= maximum(srl) >= 0.0
+    return rescale(layer, collect(srl))
+end
+
+function rescale!(layer::T, srl::StepRangeLen) where {T <: SimpleSDMLayer}
+    @assert 1.0 >= minimum(srl) >= 0.0
+    @assert 1.0 >= maximum(srl) >= 0.0
+    return rescale!(layer, collect(srl))
+end

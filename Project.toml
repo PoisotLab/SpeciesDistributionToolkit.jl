@@ -15,7 +15,7 @@ SimpleSDMLayers = "2c645270-77db-11e9-22c3-0f302a89c64c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
-ArchGDAL = "0.9"
+ArchGDAL = "0.9, 0.10"
 Distances = "0.10"
 GBIF = "0.4"
 GDAL = "1"

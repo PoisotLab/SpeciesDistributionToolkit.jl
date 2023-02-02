@@ -21,6 +21,7 @@ r3 =
 n_stops = 4
 
 rscl = 0.0:0.001:1.0
+#rscl = (0., 1.)
 
 l1 = rescale(r1, rscl);
 l2 = rescale(r2, rscl);

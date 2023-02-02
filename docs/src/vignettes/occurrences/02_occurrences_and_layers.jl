@@ -35,7 +35,7 @@ observations = occurrences(
 )
 
 # We can now setup a figure with the correct axes, and use the `layer[occurrence]` indexing
-# method to extrac the values from the layers at the location of each occurrence.
+# method to extract the values from the layers at the location of each occurrence.
 
 figure = Figure(; resolution = (800, 400))
 
@@ -52,6 +52,6 @@ current_figure()
 map = Axis(figure[1, 2]; aspect = DataAspect())
 hidedecorations!(map)
 hidespines!(map)
-heatmap!(map, sprinkle(temperature)...; colormap = :heat)
-plot!(map, longitudes(observations), latitudes(observations))
+heatmap!(map, temperature; colormap = :heat)
+scatter!(observations; color=:black)
 current_figure()

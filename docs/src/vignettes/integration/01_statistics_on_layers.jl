@@ -49,7 +49,9 @@ std(temperature)
 z_temperature = (temperature - mean(temperature)) / std(temperature)
 
 # This can be plotted. Note that we do not need to do anything on the layer
-# itself, since the package comes pre-loaded with `Makie` recipes. This will be very useful when we start using `GeoMakie` axes to incorporate projections into our figures.
+# itself, since the package comes pre-loaded with `Makie` recipes. This will be
+# very useful when we start using `GeoMakie` axes to incorporate projections
+# into our figures (which we will not do here...).
 
 fig, ax, hm = heatmap(
     z_temperature;

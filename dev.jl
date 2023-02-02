@@ -4,6 +4,7 @@ using Statistics
 using CairoMakie
 using Colors
 using ColorBlendModes
+using TernaryDiagrams
 
 spatial_extent = (left = -5.77, right = 20.10, top = 49.90, bottom = 41.54)
 dataprovider = RasterData(WorldClim2, BioClim)
@@ -88,13 +89,38 @@ for i in CartesianIndices(trip)
     end
 end
 
-f = Figure(; resolution=(900,500))
-ax1 = Axis(f[1, 1]; aspect=DataAspect())
+f = Figure(; resolution = (900, 500))
+ax1 = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax1, r1; colormap = [:black, :red])
-ax2 = Axis(f[2, 1]; aspect=DataAspect())
+ax2 = Axis(f[2, 1]; aspect = DataAspect())
 heatmap!(ax2, r2; colormap = [:black, :green])
-ax3 = Axis(f[3, 1]; aspect=DataAspect())
+ax3 = Axis(f[3, 1]; aspect = DataAspect())
 heatmap!(ax3, r3; colormap = [:black, :blue])
-axn = Axis(f[1:3,2:3]; aspect=DataAspect())
+axn = Axis(f[1, 2:3]; aspect = DataAspect())
 heatmap!(axn, permutedims(trip))
+
+
+ax = Axis(f[2:3, 3]; aspect=1);
+
+S = values(l1 + l2 + l3)
+ord = sortperm(S)
+
+col = RGBA.(values(l1), values(l2), values(l3))
+
+ternaryaxis!(ax; labelx = "Temp", labely = "Prec.", labelz = "Elev.", label_fontsize=0);
+ws = rand(10)
+ternaryscatter!(
+    ax,
+    (values(l1)./S)[ord],
+    (values(l2)./S)[ord],
+    (values(l3)./S)[ord];
+    color = col[ord],
+    marker = :circle,
+    markersize = 1
+)
+
+xlims!(ax, -0.2, 1.2)
+ylims!(ax, -0.2, 1.2)
+hidedecorations!(ax)
+
 current_figure()

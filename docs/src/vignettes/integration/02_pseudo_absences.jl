@@ -97,16 +97,7 @@ current_figure()
 bgpoints = SpeciesDistributionToolkit.sample(bgmask, floor(Int, 0.5sum(presencelayer)))
 
 # But wait! The cells do not have the same size because the Earth is not flat.
-# So we can generate a map of the cell size:
-
-heatmap(
-    cellsize(temperature);
-    colormap = :lapaz,
-    axis = (; aspect = DataAspect()),
-    figure = (; resolution = (800, 500)),
-)
-
-# We can then sample the cells according to their surface as a weight:
+# We can sample the cells according to their surface as a weight:
 
 bgpoints = SpeciesDistributionToolkit.sample(
     bgmask,

@@ -3,6 +3,7 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
+import StatsBase
 
 # In this vignette, we will have a look at the ways to transform layers and apply some
 # functions from `Statistics`. As an illustration, we will produce a map of suitability for
@@ -85,7 +86,7 @@ current_figure()
 # quantiles:
 
 fig, ax, hm = heatmap(
-    rescale(precipitation, collect(0.0:0.05:1.0));
+    rescale(precipitation, 0.0:0.05:1.0);
     colormap = :bamako,
     figure = (; resolution = (800, 400)),
     axis = (; aspect = DataAspect()),
@@ -100,20 +101,19 @@ quantile(temperature, [0.05, 0.95])
 
 # We can attempt to use this information to build a presence-only range map of the species
 # of interest using the BIOCLIM model. In order to do so, we need to identify the value of
-# each predictor corresponding to the top abd bottom 5% of the ranges of values where the
-# species is:
+# each predictor corresponding to various quantiles of the distribution:
 
-temp_limits = quantile(temperature[presences], [0.05, 0.95])
+temp_limits = quantile(temperature[presences], [0.05, 0.5, 0.95])
 
 # This can be used to mask the temperature layer -- we can do this very
 # naturally using the broadcast notation, as it is fully supported on layers:
 
-temperature_range = temp_limits[1] .<= temperature .<= temp_limits[2]
+temperature_range = temp_limits[begin] .<= temperature .<= temp_limits[end]
 
 # We can do the same for the precipitation:
 
-prec_limits = quantile(precipitation[presences], [0.05, 0.95])
-precipitation_range = prec_limits[1] .<= precipitation .<= prec_limits[2]
+prec_limits = quantile(precipitation[presences], [0.05, 0.5, 0.95])
+precipitation_range = prec_limits[begin] .<= precipitation .<= prec_limits[end]
 
 # The combined range map is simply the places where both variables match with species
 # occurrences, which we can get by multiplying the two boolean layers:

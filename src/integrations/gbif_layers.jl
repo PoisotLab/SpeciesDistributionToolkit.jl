@@ -80,7 +80,8 @@ end
 Returns the values of a layer at all occurrences in a `GBIFRecords` collection.
 """
 function Base.getindex(layer::T, records::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
-   return convert(Vector{eltype(layer)}, filter(!isnothing, [layer[records[i]] for i in 1:length(records)]))
+    K = SimpleSDMLayers._inner_type(layer)
+   return convert(Vector{K}, filter(!isnothing, [layer[records[i]] for i in 1:length(records)]))
 end
 
 """

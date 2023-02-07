@@ -1,7 +1,5 @@
 module SimpleSDMLayers
 
-using RecipesBase
-using Colors, ColorBlendModes
 using Distances
 using Statistics
 using GeometryBasics
@@ -43,8 +41,5 @@ include("operations/mask.jl")
 include("operations/rescale.jl")
 include("operations/mosaic.jl")
 export coarsen, slidingwindow, mask, rescale!, rescale, mosaic
-
-include("recipes/recipes.jl")
-export bivariate
 
 end # module

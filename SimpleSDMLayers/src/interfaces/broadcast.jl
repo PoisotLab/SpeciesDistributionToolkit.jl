@@ -28,7 +28,7 @@ function Base.similar(
 end
 
 function Base.broadcasted(::Broadcast.Style{T}, f, layer::T) where {T <: SimpleSDMLayer}
-    ElType = typeof(f(collect(layer)[1].value))
+    ElType = typeof(f(first(values(layer))))
     dest = similar(layer, ElType)
     for cell in layer
         dest[cell.longitude, cell.latitude] = f(cell.value)
@@ -37,19 +37,19 @@ function Base.broadcasted(::Broadcast.Style{T}, f, layer::T) where {T <: SimpleS
 end
 
 function Base.broadcasted(::Broadcast.Style{T}, f, layer::T, x) where {T <: SimpleSDMLayer}
-    ElType = typeof(f(collect(layer)[1].value, x))
+    ElType = typeof(f(first(values(layer)), x))
     dest = similar(layer, ElType)
-    for cell in layer
-        dest[cell.longitude, cell.latitude] = f(cell.value, x)
+    for index in findall(!isnothing, layer.grid)
+        dest.grid[index] = f(layer.grid[index], x)
     end
     return dest
 end
 
 function Base.broadcasted(::Broadcast.Style{T}, f, x, layer::T) where {T <: SimpleSDMLayer}
-    ElType = typeof(f(x, collect(layer)[1].value))
+    ElType = typeof(f(x, first(values(layer))))
     dest = similar(layer, ElType)
-    for cell in layer
-        dest[cell.longitude, cell.latitude] = f(x, cell.value)
+    for index in findall(!isnothing, layer.grid)
+        dest.grid[index] = f(x, layer.grid[index])
     end
     return dest
 end
@@ -61,10 +61,10 @@ function Base.broadcasted(
     layer2::T2,
 ) where {T <: SimpleSDMLayer, T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
     @assert SimpleSDMLayers._layers_are_compatible(layer1, layer2)
-    ElType = typeof(f(collect(layer1)[1].value, collect(layer2)[1].value))
+    ElType = typeof(f(first(values(layer1)), first(values(layer2))))
     dest = similar(layer1, ElType)
-    for cell in layer1
-        dest[cell.longitude, cell.latitude] = f(cell.value, layer2[cell.longitude, cell.latitude])
+    for index in findall(!isnothing, layer1.grid)
+        dest.grid[index] = f(layer1.grid[index], layer2.grid[index])
     end
     return dest
 end

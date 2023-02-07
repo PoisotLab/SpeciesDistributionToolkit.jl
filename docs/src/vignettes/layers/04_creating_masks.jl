@@ -43,7 +43,7 @@ masked_prec2 = mask(prec1, prec2)
 # result will further show that we have accomplished our goal;
 
 heatmap(
-    sprinkle(masked_prec2)...;
+    masked_prec2;
     colormap = :deep,
     figure = (; resolution = (800, 300)),
     axis = (; xlabel = "Longitude", ylabel = "Latitude"),

@@ -26,7 +26,7 @@ data_info = (layer = "BIO3",)
 
 # We could also check the layer descriptions directly:
 
-layerdescriptions(dataprovider)
+layerdescriptions(dataprovider)["BIO3"]
 
 # Note that we do not *need* to give the bounding box and layer data as distinct variables,
 # but this is more convenient in terms of code re-use. For this reason, we follow this
@@ -38,10 +38,10 @@ layerdescriptions(dataprovider)
 isotherm_current = SimpleSDMPredictor(dataprovider; data_info..., spatial_extent...)
 
 # We can have a little look at this dataset by checking the density of the values for
-# isothermality:
+# isothermality (we can pass a layer to a Makie function directly):
 
 density(
-    filter(!isnan, values(isotherm_current)); color = (:grey, 0.5),
+    isotherm_current; color = (:grey, 0.5),
     figure = (; resolution = (800, 300)),
     axis = (; xlabel = "Raw isothermality data"),
 )
@@ -50,20 +50,19 @@ density(
 # ten; moving forward, we will need to call `0.1layer` to get a layer scaled by the correct
 # amount.
 
-# The packages interact with *Makie* (including *GeoMakie*) with the `sprinkle` function
-# (the name of which is obviously inspired by the *Makie* package) to make it easy to
+# The packages interact with *Makie* (including *GeoMakie*) to make it easy to
 # produce good quality maps:
 
 figure = Figure(; resolution = (800, 700))
 panel_current = GeoAxis(
     figure[1, 1];
-    dest = "+proj=latlon",
+    dest = "+proj=natearth2",
     lonlims = extrema(longitudes(isotherm_current)),
     latlims = extrema(latitudes(isotherm_current)),
 )
-iso_current_hm = heatmap!(
+iso_current_hm = surface!(
     panel_current,
-    sprinkle(convert(Float32, 0.1isotherm_current))...;
+    0.1 .* isotherm_current;
     shading = false,
     interpolate = false,
     colormap = :oslo,
@@ -94,16 +93,31 @@ isotherm_proj =
 
 panel_future = GeoAxis(
     figure[2, 1];
-    dest = "+proj=latlon",
+    dest = "+proj=natearth2",
     lonlims = extrema(longitudes(isotherm_current)),
     latlims = extrema(latitudes(isotherm_current)),
 )
-iso_future_hm = heatmap!(
+iso_future_hm = surface!(
     panel_future,
-    sprinkle(convert(Float32, 0.1(isotherm_proj - isotherm_current)))...;
+    0.1 .* (isotherm_proj .- isotherm_current);
     shading = false,
     interpolate = false,
     colormap = :roma,
 )
 Colorbar(figure[2, end + 1]; height = Relative(0.7), colorrange = (-2, 2), colormap = :roma)
 current_figure()
+
+# We can also very easily look at the relationship between current and future
+# climate (the `scatter` function would work just as well, but `hexbin` is good
+# at aggregating cells with more datapoints):
+
+hexbin(
+    isotherm_current,
+    isotherm_proj;
+    figure = (; resolution = (800, 700)),
+    axis = (;
+        aspect = DataAspect(),
+        xlabel = "Historical isothermality",
+        ylabel = "Projected isothermality",
+    ),
+)

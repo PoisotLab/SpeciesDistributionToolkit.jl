@@ -8,7 +8,6 @@ import Distances
 const _distance_function = Distances.Haversine(6371.0)
 
 using MakieCore
-import ColorBlendModes
 
 import StatsBase
 

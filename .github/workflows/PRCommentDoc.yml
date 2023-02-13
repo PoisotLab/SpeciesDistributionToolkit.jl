@@ -14,4 +14,4 @@ jobs:
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v2
         with:
-          message: "Documentation for this PR at https://poisotlab.github.io/SpeciesDistributionToolkit.jl/previews/PR${{ github.event.number }}/"
+          message: "Documentation for this PR at https://poisotlab.github.io/SpeciesDistributionToolkit.jl/previews/PR${{ github.event.number }}/"

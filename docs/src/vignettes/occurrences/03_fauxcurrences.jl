@@ -1,13 +1,13 @@
-# # Fauxcurrences.jl
+# # Generation of fauxcurrences
 
-# This package is a *clean-room*, *feature-equivalent* re-write in Julia of most
-# of the functionalities of the [`fauxcurrence` package for R][paper]. The
-# original code is licensed under the GPL, and this package is licensed under
-# the MIT. For this reason, the original code, and any document distributed with
-# it, has not been consulted during the implementation; the work is entirely
-# based on the published article. As detailed in the following sections, the two
-# packages do not have *feature parity*, but there is an overlap in the most
-# significant functions.
+# The `Fauxcurrences.jl` package is a *clean-room*, *feature-equivalent*
+# re-write in Julia of most of the functionalities of the [`fauxcurrence`
+# package for R][paper]. The original code is licensed under the GPL, and this
+# package is licensed under the MIT. For this reason, the original code, and any
+# document distributed with it, has not been consulted during the
+# implementation; the work is entirely based on the published article. As
+# detailed in the following sections, the two packages do not have *feature
+# parity*, but there is an overlap in the most significant functions.
 
 # [paper]: https://onlinelibrary.wiley.com/doi/full/10.1111/ecog.05880
 
@@ -24,8 +24,9 @@
 # ## Why?
 
 # Interoperability: this package uses `SimpleSDMLayers`, `Distances`, and `GBIF`
-# as backends, making it fit very snuggly with the rest of the (Eco)Julia
-# ecosystem, and working towards integration of tools to build SDMs at scale.
+# as backends, making it fit very snuggly with the rest of the
+# `SpeciesDistributionToolkit` ecosystem, and working towards integration of
+# tools to build SDMs at scale.
 
 # Expandability: the package is built on modular functions, to ensure that
 # custom workflows can be built, while maintaining a general interface.
@@ -61,9 +62,7 @@
 # (for example using the `GBIF.jl` package), and a layer (one of the
 # `SimpleSDMLayer` types, predictor or response does not matter).
 
-using Fauxcurrences
-using SimpleSDMLayers
-using GBIF
+using SpeciesDistributionToolkit
 
 #-
 
@@ -78,20 +77,27 @@ Random.seed!(616525434012345)
 # this is a matrix with longitudes in the first row, and latitudes in the second
 # row. The matrix *has* to be column-major, with observations as columns. To
 # make sure that we cover a reasonable spatial extent, we will look at the
-# default (small) raster distributed with `SimpleSDMLayers`.
+# rather small area in space (part of the Gaspésie region):
 
-layer = geotiff(SimpleSDMPredictor, joinpath(dirname(pathof(SimpleSDMLayers)), "..", "data", "connectivity.tiff"))
+bbox = (bottom = 43.285203, left = -68.631592, top = 47.487513, right = -59.458008)
+layer = SimpleSDMPredictor(RasterData(CHELSA1, BioClim); layer = 1, bbox...)
 
-# This covers a small area in the Laurentians, north of Montréal, so looking for
-# racoons, deers, and white-footed mice is a safe bet:
+# We will pick two species (a skunk, and *Iris versicolor*):
 
-taxa = taxon.(["Procyon lotor", "Odocoileus virginianus", "Peromyscus leucopus"])
+taxa =
+    taxon.([
+        "Mephitis mephitis",
+        "Iris versicolor",
+    ])
 
-observations = [occurrences(t,
-    "hasCoordinate" => "true",
-    "decimalLatitude" => extrema(latitudes(layer)),
-    "decimalLongitude" => extrema(longitudes(layer)),
-    "limit" => 100) for t in taxa]
+observations = [
+    occurrences(t,
+        "hasCoordinate" => "true",
+        "occurrenceStatus" => "PRESENT",
+        "decimalLatitude" => extrema(latitudes(layer)),
+        "decimalLongitude" => extrema(longitudes(layer)),
+        "limit" => 150) for t in taxa
+]
 
 # The last step is to turn these occurrences into a matrix of latitudes and
 # longitudes:
@@ -100,11 +106,13 @@ obs = [Fauxcurrences.get_valid_coordinates(o, layer) for o in observations]
 
 # ### Parameters for the run
 
-# Decide on the number of points to generate, and the weight matrix. The number
-# of points to generate is, by default, the number of observations in the
-# original dataset, but this can be changed to generate balanced samples:
+# We need to decide on the number of points (pseudo-occurrences) to generate,
+# and the weight matrix. The number of points to generate is, by default, the
+# number of observations in the original dataset, but this can be changed to
+# generate balanced samples. Here, we will pick 80 as a target number of
+# occurrences:
 
-points_to_generate = fill(30, length(obs))
+points_to_generate = fill(80, length(obs))
 
 # The weight matrix is used to determine whether intra or inter-specific
 # distances are more important in the distribution score. For example, this will
@@ -121,7 +129,8 @@ W = Fauxcurrences.weighted_components(length(obs), 0.75)
 # re-written many, many times. The upside is that, if this steps fits in your
 # memory, the entire workflow will also fit in your memory.
 
-obs_intra, obs_inter, sim_intra, sim_inter = Fauxcurrences.preallocate_distance_matrices(obs; samples=points_to_generate);
+obs_intra, obs_inter, sim_intra, sim_inter =
+    Fauxcurrences.preallocate_distance_matrices(obs; samples = points_to_generate);
 
 # The entire workflow is designed to use multiple species (as most relevant
 # questions will require multiple species). Using a single-species approach only
@@ -141,7 +150,7 @@ Fauxcurrences.measure_interspecific_distances!(obs_inter, obs);
 # This is a two-step process, involving first the pre-allocation of coordinate
 # matrices, and second the population of these matrices using random points.
 
-sim = Fauxcurrences.preallocate_simulated_points(obs; samples=points_to_generate);
+sim = Fauxcurrences.preallocate_simulated_points(obs; samples = points_to_generate);
 
 # The actual bootstrapping can be a little longer:
 
@@ -154,10 +163,22 @@ Fauxcurrences.bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_i
 # matrix where the maximum distance is larger than the maximum distance in the
 # empirical matrix.
 
-bin_intra = [Fauxcurrences._bin_distribution(obs_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)];
-bin_inter = [Fauxcurrences._bin_distribution(obs_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)];
-bin_s_intra = [Fauxcurrences._bin_distribution(sim_intra[i], maximum(obs_intra[i])) for i in 1:length(obs_intra)];
-bin_s_inter = [Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i])) for i in 1:length(obs_inter)];
+bin_intra = [
+    Fauxcurrences._bin_distribution(obs_intra[i], maximum(obs_intra[i])) for
+    i in axes(obs_intra, 1)
+];
+bin_inter = [
+    Fauxcurrences._bin_distribution(obs_inter[i], maximum(obs_inter[i])) for
+    i in axes(obs_inter, 1)
+];
+bin_s_intra = [
+    Fauxcurrences._bin_distribution(sim_intra[i], maximum(obs_intra[i])) for
+    i in axes(obs_intra, 1)
+];
+bin_s_inter = [
+    Fauxcurrences._bin_distribution(sim_inter[i], maximum(obs_inter[i])) for
+    i in axes(obs_inter, 1)
+];
 
 # This version of the `_bin_distribution` function is allocating an array for
 # the bins, but the internal function is over-writing it, to avoid unwanted
@@ -175,12 +196,12 @@ D = Fauxcurrences.score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_
 # ### Setup the actual run
 
 # This step has infinitely many variations, as `Fauxcurrences` only offers a
-# method to do *a single step forward*. In most cases, using *e.g.*
+# method to perform *a single step forward*. In most cases, using *e.g.*
 # `ProgressMeter` will be a good way to track the progress of the run, and to
-# allow, for example, to stop it when a condition of criteria (absolute/relative
-# divergence, globally, on average, or per-species) are met. For the sake of
-# simplicity, we return the sum of all divergences, measures for 500000
-# timesteps.
+# allow, for example, to stop it when a collection of criteria
+# (absolute/relative divergence, globally, on average, or per-species) are met.
+# For the sake of simplicity, we return the sum of all divergences, measures for
+# 500000 timesteps.
 
 progress = zeros(Float64, 500_000)
 progress[1] = sum(D)
@@ -197,33 +218,61 @@ progress[1] = sum(D)
 # structure of your points, the problem might be more or less difficult to
 # solve. In practice, using `ProgressMeter` will make the timing of the whole
 # process a lot more informative. In this simple version, we rely on a manually
-# created progress report:
+# created progress report. Note that we stop the process when we have done at
+# least 10⁴ steps, with no improvement over the last 10³.
 
-for i in 2:length(progress)
-    progress[i] = Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, progress[i-1])
-    if iszero(i%20_000)
-        println("[$(lpad(round(Int64, 100*(i/length(progress))), 3))%]\tJS-divergence: $(round(progress[i]; digits=3))")
+for i in axes(progress, 1)[2:end]
+    progress[i] = Fauxcurrences.step!(
+        sim,
+        layer,
+        W,
+        obs_intra,
+        obs_inter,
+        sim_intra,
+        sim_inter,
+        bin_intra,
+        bin_inter,
+        bin_s_intra,
+        bin_s_inter,
+        progress[i - 1],
+    )
+    if i > 10_000
+        if abs(progress[i] - progress[i - 1000]) <= 1e-3
+            break
+        end
+    end
+    if iszero(i % 20_000)
+        println(
+            "[$(lpad(round(Int64, 100*(i/length(progress))), 3))%]\tJS-divergence: $(round(progress[i]; digits=3))",
+        )
     end
 end
 
 # The call to `step!` is... lengthy. The reason for this is very simple: `step!`
 # will update as much information as it can *in place* when a change is made.
-# This means that there are no objects creates (only changed), but the downside
+# This means that there are no objects created (only changed). The downside
 # is that the function needs to be given a lot of information.
+
+# Depending on the number of species (and the structure of the weight matrix),
+# this step will be taking a little while. This is because, assuming we want *n*
+# points for *r* species, each step has a complexity on the order of *rn²*,
+# which isn't terribly good.
 
 # ### Congratulations, your run is done!
 
 # Here, it would make sense to look at the total improvement (or to plot the
 # timeseries of the improvement):
 
-println("Improvement: $(round(progress[begin]/progress[end]; digits=2)) ×")
+println(
+    "Improvement: $(round(progress[begin]/progress[findlast(x -> x>0, progress)]; digits=2)) ×",
+)
 
 # Note that for a small number of iterations (like we used here), this
 # improvement is unlikely to be very large; note also that the returns (in terms
 # of improvement over time) are very much diminishing. The good news is that
 # re-starting the process is as easy as running the loop with calls to `step!`
-# again, as the packages has modified the matrices, and is ready to restart at
-# any time.
+# again, as the package has modified the matrices, and is ready to restart at
+# any time. This is useful for checkpointing.
 
 # You can also look at the per-matrix score, out of all the distance bins (set
 # as a package-wide variable, `Fauxcurrences._number_of_bins`, which you are

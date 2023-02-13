@@ -18,7 +18,7 @@ using Reexport
 @reexport using SimpleSDMDatasets
 @reexport using GBIF
 @reexport using SimpleSDMLayers
-# @rexport using Fauxcurrences
+@reexport using Fauxcurrences
 
 # SimpleSDMLayers to wrap everything together
 include("integrations/datasets_layers.jl")

@@ -11,12 +11,16 @@ function clip(layer::T, p1::Point, p2::Point) where {T <: SimpleSDMLayer}
     pmin = _point_to_cartesian(layer, Point(minimum(lonextr), minimum(latextr)); side=:bottomleft)
     pmax = _point_to_cartesian(layer, Point(maximum(lonextr), maximum(latextr)); side=:topright)
     R = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
+    left = longitudes(layer)[last(pmin.I)]-stride(layer, 1)
+    right = longitudes(layer)[last(pmax.I)]+stride(layer, 1)
+    bottom = latitudes(layer)[first(pmin.I)]-stride(layer, 2)
+    top = latitudes(layer)[first(pmax.I)]+stride(layer, 2)
     return R(
-        layer.grid[pmin:pmax], 
-        longitudes(layer)[last(pmin.I)]-stride(layer, 1),
-        longitudes(layer)[last(pmax.I)]+stride(layer, 1),
-        latitudes(layer)[first(pmin.I)]-stride(layer, 2),
-        latitudes(layer)[first(pmax.I)]+stride(layer, 2)
+        layer.grid[pmin:pmax],
+        left = isapprox(left, round(left)) ? round(left) : left,
+        right = isapprox(right, round(right)) ? round(right) : right,
+        bottom = isapprox(bottom, round(bottom)) ? round(bottom) : bottom,
+        top = isapprox(top, round(top)) ? round(top) : top
     )
 end
 

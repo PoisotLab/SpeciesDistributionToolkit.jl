@@ -20,6 +20,9 @@ function _match_latitude(layer::T, lat::K; lower::Bool=true) where {T <: SimpleS
     relative = (lat - layer.bottom)/(layer.top - layer.bottom)
     fractional = relative * size(layer, 1)+1
     if lat in layer.bottom:2stride(layer,2):layer.top
+        if abs(fractional - round(fractional)) < stride(layer, 2)
+            fractional = round(fractional)
+        end
         f = lower ? floor : ceil
         d = lower ? 1 : 0
         return min(f(Int64, fractional-d), size(layer, 1))
@@ -35,6 +38,9 @@ function _match_longitude(layer::T, lon::K; lower::Bool=true) where {T <: Simple
     relative = (lon - layer.left)/(layer.right - layer.left)
     fractional = relative * size(layer, 2)+1
     if lon in layer.left:2stride(layer,1):layer.right
+        if abs(fractional - round(fractional)) < stride(layer, 1)
+            fractional = round(fractional)
+        end
         f = lower ? floor : ceil
         d = lower ? 1 : 0
         return min(f(Int64, fractional-d), size(layer, 2))

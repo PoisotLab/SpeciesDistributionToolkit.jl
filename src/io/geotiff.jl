@@ -183,7 +183,7 @@ function _prepare_layer_for_burnin(
     layer::SimpleSDMPredictor{T},
     nodata::T,
 ) where {T <: Number}
-    @assert eltype(layer) <: Number
+    @assert SimpleSDMLayers._inner_type(layer) <: Number
     array = replace(layer.grid, nothing => nodata)
     array = convert(Matrix{eltype(layer)}, array)
     dtype = eltype(array)

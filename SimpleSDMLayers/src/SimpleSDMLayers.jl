@@ -40,6 +40,7 @@ include("operations/sliding.jl")
 include("operations/mask.jl")
 include("operations/rescale.jl")
 include("operations/mosaic.jl")
-export coarsen, slidingwindow, mask, rescale!, rescale, mosaic
+include("operations/tiling.jl")
+export coarsen, slidingwindow, mask, rescale!, rescale, mosaic, tile, tile!, stitch
 
 end # module

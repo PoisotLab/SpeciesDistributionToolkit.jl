@@ -20,4 +20,13 @@ cl2 = clip(S; left=0.2, bottom=0.5)
 @test cl2.right ≈ 1.0
 @test cl2.left ≈ 0.2
 
+M2 = rand(Bool, (1080, 2160))
+S2 = SimpleSDMPredictor(M2, -180.0, 180.0, -90.0, 90.0)
+exact_lats = (S2.bottom+1.0):1.0:(S2.top-1.0)
+exact_lons = (S2.left+1.0):1.0:(S2.right-1.0)
+@test all([isequal(l, clip(S2; top=l).top) for l in exact_lats])
+@test all([isequal(l, clip(S2; bottom=l).bottom) for l in exact_lats])
+@test all([isequal(l, clip(S2; left=l).left) for l in exact_lons])
+@test all([isequal(l, clip(S2; right=l).right) for l in exact_lons])
+
 end

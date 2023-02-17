@@ -24,7 +24,7 @@ trees = sum([
 # The second argument (the size of the matrix) can be omitted, and will default
 # to `(5, 5)`.
 
-tiles = tile(trees, (4, 5))
+tiles = tile(trees, (8, 8))
 
 # This can now be plotted:
 
@@ -42,4 +42,8 @@ tile_plot = heatmap(
 Colorbar(tile_plot.figure[:, end + 1], tile_plot.plot; height = Relative(0.5))
 current_figure()
 
-# 
+# The inverse operation to `tile` is `stitch`, which (assuming you have not
+# moved tiles around!) will reconstruct a layer. For example, let's say we want
+# to double the quantity of trees, but we want to do so using `map`.
+
+more_trees  = stitch(map(x -> 2x, tiles))

@@ -21,4 +21,13 @@ tiles = tile(S)
 @test tiles[1, 1].left == tiles[2, 1].left
 @test tiles[1, 1].right == tiles[2, 1].right
 
+U = stitch(S)
+@test typeof(U) == typeof(S)
+@test size(U) == size(S)
+@test U.grid == S.grid
+@test U.left == S.left
+@test U.right == S.right
+@test U.bottom == S.bottom
+@test U.top == S.top
+
 end

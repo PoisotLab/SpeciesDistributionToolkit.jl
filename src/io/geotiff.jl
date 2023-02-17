@@ -183,9 +183,10 @@ function _prepare_layer_for_burnin(
     layer::SimpleSDMPredictor{T},
     nodata::T,
 ) where {T <: Number}
-    @assert eltype(layer) <: Number
+    K = SimpleSDMLayers._inner_type(layer)
+    @assert K <: Number
     array = replace(layer.grid, nothing => nodata)
-    array = convert(Matrix{eltype(layer)}, array)
+    array = convert(Matrix{K}, array)
     dtype = eltype(array)
     array_t = reverse(permutedims(array, [2, 1]); dims = 2)
     return array_t

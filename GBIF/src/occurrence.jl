@@ -38,12 +38,17 @@ throw an error.
 """
 function occurrence(key::String)::GBIFRecord
     occ_url = gbifurl * "occurrence/" * key
-    occ_key_req = HTTP.get(occ_url)
-    if occ_key_req.status == 200
+    try
+        occ_key_req = HTTP.get(occ_url)
         result = JSON.parse(String(occ_key_req.body))
         return GBIFRecord(result)
+    catch err
+        if err isa HTTP.Exceptions.StatusError
+            throw("Occurrence $(key) (at $(occ_url)) cannot be accessed - error code: $(err.status)")
+        else
+            throw("Occurrence $(key) cannot be accessed")
+        end
     end
-    throw("Occurrence $(key) cannot be accessed")
 end
 
 function occurrence(key::Integer)::GBIFRecord

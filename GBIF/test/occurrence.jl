@@ -9,13 +9,11 @@ o = occurrence(k)
 @test typeof(o) == GBIFRecord
 @test o.key == k
 
-# This piece of shit occurrence has been deleted, so this needs some wrapping
+# This occurrence has been deleted, so this needs some wrapping
 k = 1258202889
-o = occurrence(k)
-@test typeof(o) == GBIFRecord
-@test o.key == k
+@test_throws "cannot be accessed - error code" occurrence(k)
 
-# Piece of shit uncorrectly formatted occurence
+# This occurence is incorrectly formatted for some reason
 k = 1039645472
 o = occurrence(k)
 @test typeof(o) == GBIFRecord

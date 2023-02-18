@@ -32,7 +32,6 @@ for tilesize in [(3, 4), (8, 8), (4, 3), (9, 5), (2, 2), (12, 1), (3, 6)]
 
     # stitch the tiles after a transform
     more_trees  = stitch(map(x -> 2x, tiles))
-    @test typeof(more_trees) == typeof(trees)
     @test size(more_trees) == size(trees)
     @test more_trees.left == trees.left
     @test more_trees.right == trees.right

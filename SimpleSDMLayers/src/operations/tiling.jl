@@ -73,10 +73,10 @@ function stitch(tiles::Matrix{T}) where {T <: SimpleSDMLayer}
         end
     end
     # Bounding box of the tile
-    left = tiles[1].left
-    right = tiles[end].right
-    bottom = tiles[end].bottom
-    top = tiles[end].top
+    left = minimum([t.left for t in tiles])
+    right = maximum([t.right for t in tiles])
+    bottom = minimum([t.bottom for t in tiles])
+    top = maximum([t.top for t in tiles])
     # Size of the raster
     rows = size.(tiles[:,1], 1)
     cols = size.(tiles[1,:], 2)

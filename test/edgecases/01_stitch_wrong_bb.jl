@@ -14,7 +14,7 @@ trees = sum([
     i in 1:4
 ])
 
-for tilesize in [(8, 8), (4, 3), (9, 5), (2, 2), (12, 1), (3, 6)]
+for tilesize in [(3, 4), (8, 8), (4, 3), (9, 5), (2, 2), (12, 1), (3, 6)]
 
     # make the tiles
     tiles = tile(trees, tilesize)

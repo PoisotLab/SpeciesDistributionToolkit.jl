@@ -29,15 +29,30 @@ function pairs_to_querystring(query::Pair...)
 end
 
 """
-    occurrence(key::Union{String, Integer})
+    occurrence(key::String)
 
-Returns a GBIF occurrence identified by a key. The key can be given as a string or as an integer.
+Returns a GBIF occurrence identified by a key. The key can be given as a string
+or as an integer (there is a second method for integer keys). In case the status
+of the HTTP request is anything other than 200 (success), this function *will*
+throw an error.
 """
-function occurrence(key::Union{String, Integer})
-    occ_url = gbifurl * "occurrence/" * string(key)
-    occ_key_req = HTTP.get(occ_url)
-    result = JSON.parse(String(occ_key_req.body))
-    return GBIFRecord(result)
+function occurrence(key::String)::GBIFRecord
+    occ_url = gbifurl * "occurrence/" * key
+    try
+        occ_key_req = HTTP.get(occ_url)
+        result = JSON.parse(String(occ_key_req.body))
+        return GBIFRecord(result)
+    catch err
+        if err isa HTTP.Exceptions.StatusError
+            throw("Occurrence $(key) (at $(occ_url)) cannot be accessed - error code: $(err.status)")
+        else
+            throw("Occurrence $(key) cannot be accessed")
+        end
+    end
+end
+
+function occurrence(key::Integer)::GBIFRecord
+    return occurrence(string(key))
 end
 
 function _internal_occurrences_getter(query::Pair...)

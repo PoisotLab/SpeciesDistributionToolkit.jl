@@ -66,3 +66,5 @@ cl3 = clip(convert(Float32, S2); top=8.0);
 cl3 = clip(convert(Float32, S2); top=8.0);
 @test size(cl3) == (588, 2160)
 @test boundingbox(cl3) == (left = -180.0, right = 180.0, bottom = -90.0, top = 8.0)
+
+end

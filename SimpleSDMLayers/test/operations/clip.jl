@@ -30,4 +30,18 @@ S2 = SimpleSDMPredictor(M2, -180.0, 180.0, -90.0, 90.0)
 @test clip(S2; left = -180.0).left == -180.0
 @test clip(S2; left = -180.0, expand = [:left]).left == -180.0
 
+# Test clipping with natural coordinates exactly on the limit
+exact_lats = (S2.bottom+1.0):1.0:(S2.top-1.0)
+exact_lons = (S2.left+1.0):1.0:(S2.right-1.0)
+@test all([isequal(l, clip(S2; top=l).top) for l in exact_lats])
+@test all([isequal(l, clip(S2; bottom=l).bottom) for l in exact_lats])
+@test all([isequal(l, clip(S2; left=l).left) for l in exact_lons])
+@test all([isequal(l, clip(S2; right=l).right) for l in exact_lons])
+
+# Test clipping with non-natural coordinates
+@test all([isequal(l, clip(S; top=l).top) for l in 0.1:0.1:0.9])
+@test all([isequal(l, clip(S; bottom=l).bottom) for l in 0.1:0.1:0.9])
+@test all([isequal(l, clip(S; left=l).left) for l in 0.1:0.1:0.9])
+@test all([isequal(l, clip(S; right=l).right) for l in 0.1:0.1:0.9])
+
 end

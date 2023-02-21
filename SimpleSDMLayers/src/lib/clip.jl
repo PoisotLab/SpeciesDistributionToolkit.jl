@@ -30,7 +30,7 @@ function clip(
     lat_boundaries = LinRange(layer.bottom, layer.top, size(layer, 1) + 1)
 
     # Left to cell coordinate
-    left_cell = findlast(lon_boundaries .<= left)
+    left_cell = findlast(isapprox.(lon_boundaries, left) .|| lon_boundaries .<= left)
     if left == lon_boundaries[left_cell]
         if :left in expand
             left_cell = max(1, left_cell - 1)
@@ -38,7 +38,7 @@ function clip(
     end
 
     # Right to cell coordinate
-    right_cell = findfirst(lon_boundaries .>= right)
+    right_cell = findfirst(isapprox.(lon_boundaries, right) .||lon_boundaries .>= right)
     if right == lon_boundaries[right_cell]
         if :right in expand
             right_cell = min(size(layer, 2) + 1, right_cell + 1)
@@ -46,7 +46,7 @@ function clip(
     end
 
     # Bottom to cell coordinate
-    bottom_cell = findlast(lat_boundaries .<= bottom)
+    bottom_cell = findlast(isapprox.(lat_boundaries, bottom) .|| lat_boundaries .<= bottom)
     if bottom == lat_boundaries[bottom_cell]
         if :bottom in expand
             bottom_cell = max(1, bottom_cell - 1)
@@ -54,7 +54,7 @@ function clip(
     end
 
     # Top to cell coordinate
-    top_cell = findfirst(lat_boundaries .>= top)
+    top_cell = findfirst(isapprox.(lat_boundaries, top) .|| lat_boundaries .>= top)
     if top == lat_boundaries[top_cell]
         if :top in expand
             top_cell = min(size(layer, 1) + 1, top_cell + 1)

@@ -46,9 +46,9 @@ exact_lons = (S2.left+1.0):1.0:(S2.right-1.0)
 
 # Test that clip is consistent with GDAL.jl
 # This test requires to read and write the data, which is handled by
-# SpeciesDistributionToolkit, not SimpleSDMLayers. We'll leave the code
-# commented out here and test only with the values that should be returned when
-# using GDAL.
+# SpeciesDistributionToolkit, not SimpleSDMLayers. Here we'll test only with the
+# values that should be returned by GDAL and add a edge case test with the
+# writing/reading in SpeciesDistributionToolkit.
 #=
 using SpeciesDistributionToolkit
 using GDAL

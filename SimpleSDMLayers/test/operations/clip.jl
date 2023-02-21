@@ -44,4 +44,25 @@ exact_lons = (S2.left+1.0):1.0:(S2.right-1.0)
 @test all([isequal(l, clip(S; left=l).left) for l in 0.1:0.1:0.9])
 @test all([isequal(l, clip(S; right=l).right) for l in 0.1:0.1:0.9])
 
-end
+# Test that clip is consistent with GDAL.jl
+# This test requires to read and write the data, which is handled by
+# SpeciesDistributionToolkit, not SimpleSDMLayers. We'll leave the code
+# commented out here and test only with the values that should be returned when
+# using GDAL.
+#=
+using SpeciesDistributionToolkit
+using GDAL
+F2 = "$(tempname()).tif"
+F3 = "$(tempname()).tif"
+SpeciesDistributionToolkit.save(F2, convert(Float32, S2));
+run(`$(GDAL.gdalwarp_path()) $F2 $F3 -te -180.0 -90.0 180.0 8.0 -overwrite`)
+S3 = SpeciesDistributionToolkit._read_geotiff(F3, SimpleSDMPredictor);
+cl3 = clip(convert(Float32, S2); top=8.0);
+@test cl3 == S3
+@test size(cl3) == size(S3)
+@test boundingbox(cl3) == boundingbox(S3)
+=#
+
+cl3 = clip(convert(Float32, S2); top=8.0);
+@test size(cl3) == (588, 2160)
+@test boundingbox(cl3) == (left = -180.0, right = 180.0, bottom = -90.0, top = 8.0)

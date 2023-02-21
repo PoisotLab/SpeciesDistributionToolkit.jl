@@ -70,10 +70,10 @@ function clip(
     # Return with the correct bounding box
     return RT(
         newgrid;
-        left = lon_boundaries[left_cell],
-        right = lon_boundaries[right_cell],
-        bottom = lat_boundaries[bottom_cell],
-        top = lat_boundaries[top_cell],
+        left = isapprox(left, lon_boundaries[left_cell]) ? left : lon_boundaries[left_cell],
+        right = isapprox(right, lon_boundaries[right_cell]) ? right : lon_boundaries[right_cell],
+        bottom = isapprox(bottom, lat_boundaries[bottom_cell]) ? bottom : lat_boundaries[bottom_cell],
+        top = isapprox(top, lat_boundaries[top_cell]) ? top : lat_boundaries[top_cell],
     )
 end
 

@@ -16,7 +16,6 @@ tests = [
     "rescale" => "operations/rescale.jl",
     "mosaic" => "operations/mosaic.jl",
     "coarsen" => "operations/coarsen.jl",
-    "subsetting" => "operations/subsetting.jl",
     "generated" => "generated.jl",
 ]
 

@@ -39,6 +39,7 @@ function _read_geotiff(
     bottom = -90.0,
     top = 90.0,
     driver::String = "GTiff",
+    compress::String = "LZW",
 ) where {LT <: SimpleSDMLayer}
     try
         ArchGDAL.read(file) do stuff
@@ -160,7 +161,7 @@ function _write_geotiff(
         driver = ArchGDAL.getdriver(driver),
         width = width, height = height,
         nbands = 1, dtype = T,
-        options = ["COMPRESS=LZW"]) do dataset
+        options = ["COMPRESS=$compress"]) do dataset
         band = ArchGDAL.getband(dataset, 1)
 
         # Write data to band

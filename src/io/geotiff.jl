@@ -206,6 +206,7 @@ function _write_geotiff(
     layers::Vector{SimpleSDMPredictor{T}};
     nodata::T = convert(T, -9999),
     driver::String = "GTiff",
+    compress::String = "LZW"
 ) where {T <: Number}
     bands = 1:length(layers)
     SimpleSDMLayers._layers_are_compatible(layers)
@@ -223,10 +224,10 @@ function _write_geotiff(
     # Write
     prefix = first(split(last(splitpath(file)), '.'))
     ArchGDAL.create(prefix;
-        driver = ArchGDAL.getdriver("MEM"),
+        driver = ArchGDAL.getdriver(driver),
         width = width, height = height,
         nbands = length(layers), dtype = T,
-        options = ["COMPRESS=LZW"]) do dataset
+        options = ["COMPRESS=$compress"]) do dataset
         for i in 1:length(bands)
             band = ArchGDAL.getband(dataset, i)
 

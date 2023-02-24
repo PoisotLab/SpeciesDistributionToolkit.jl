@@ -38,6 +38,7 @@ function _read_geotiff(
     right = 180.0,
     bottom = -90.0,
     top = 90.0,
+    driver::String = "GTiff",
 ) where {LT <: SimpleSDMLayer}
     try
         ArchGDAL.read(file) do stuff
@@ -138,6 +139,8 @@ function _write_geotiff(
     file::AbstractString,
     layer::SimpleSDMPredictor{T};
     nodata::T = convert(T, -9999),
+    driver::String = "COG",
+    compress="LZW"
 ) where {T <: Number}
     array_t = _prepare_layer_for_burnin(layer, nodata)
     width, height = size(array_t)
@@ -154,7 +157,7 @@ function _write_geotiff(
     # Write
     prefix = first(split(last(splitpath(file)), '.'))
     ArchGDAL.create(prefix;
-        driver = ArchGDAL.getdriver("MEM"),
+        driver = ArchGDAL.getdriver(driver),
         width = width, height = height,
         nbands = 1, dtype = T,
         options = ["COMPRESS=LZW"]) do dataset
@@ -173,7 +176,7 @@ function _write_geotiff(
             dataset,
             file;
             driver = ArchGDAL.getdriver("GTiff"),
-            options = ["COMPRESS=LZW"],
+            options = ["COMPRESS=$compress"],
         )
     end
     return file

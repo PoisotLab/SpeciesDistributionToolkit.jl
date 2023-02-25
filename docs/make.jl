@@ -53,6 +53,9 @@ makedocs(;
             ],
             "SimpleSDMLayers.jl" => [
                 "Easy manipulation of layers" => "manual/SimpleSDMLayers/index.md",
+                "Layer data representation" => "manual/SimpleSDMLayers/types.md",
+                "Basic information on layers" => "manual/SimpleSDMLayers/basics.md",
+                "Operations on layers" => "manual/SimpleSDMLayers/operations.md",
             ],
             "GBIF.jl" => [
                 "Interface to GBIF data" => "manual/GBIF/index.md",
@@ -61,7 +64,7 @@ makedocs(;
             ],
             "SimpleSDMDatasets.jl" => [
                 "Interface to raster data" => "manual/SimpleSDMDatasets/index.md",
-                "Data representation" => "manual/SimpleSDMDatasets/dev/types.md",
+                "Dataset representation" => "manual/SimpleSDMDatasets/dev/types.md",
                 "Data retrieval interface" => "manual/SimpleSDMDatasets/dev/interface.md",
                 "Internals" => "manual/SimpleSDMDatasets/dev/internals.md",
             ],

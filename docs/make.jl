@@ -45,16 +45,24 @@ makedocs(;
         "Index" => "index.md",
         "Vignettes" => _vignettes_pages,
         "List of datasets" => _dataset_catalogue,
-        "GBIF.jl" => [
-            "GBIF.jl" => "GBIF/index.md",
-            "GBIF data representation" => "GBIF/types.md",
-            "GBIF data retrieval" => "GBIF/data.md",
-        ],
-        "SimpleSDMDatasets.jl" => [
-            "SimpleSDMDatasets.jl" => "SimpleSDMDatasets/index.md",
-            "Data representation" => "SimpleSDMDatasets/dev/types.md",
-            "Data retrieval interface" => "SimpleSDMDatasets/dev/interface.md",
-            "Internals" => "SimpleSDMDatasets/dev/internals.md",
+        "Component packages" => [
+            "SpeciesDistributionToolkit.jl" => [
+                "Work with species occurrence data" => "manual/SpeciesDistributionToolkit/index.md",
+            ],
+            "SimpleSDMLayers.jl" => [
+                "Easy manipulation of layers" => "manual/SimpleSDMLayers/index.md",
+            ],
+            "GBIF.jl" => [
+                "Interface to GBIF data" => "manual/GBIF/index.md",
+                "GBIF data representation" => "manual/GBIF/types.md",
+                "GBIF data retrieval" => "manual/GBIF/data.md",
+            ],
+            "SimpleSDMDatasets.jl" => [
+                "Interface to raster data" => "manual/SimpleSDMDatasets/index.md",
+                "Data representation" => "manual/SimpleSDMDatasets/dev/types.md",
+                "Data retrieval interface" => "manual/SimpleSDMDatasets/dev/interface.md",
+                "Internals" => "manual/SimpleSDMDatasets/dev/internals.md",
+            ],
         ],
     ],
 )

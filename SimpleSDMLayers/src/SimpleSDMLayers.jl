@@ -19,7 +19,6 @@ include("lib/coordinateconversion.jl")
 # Implements a series of interfaces (AbstractArray, iteration, and indexing)
 include("interfaces/common.jl")
 include("interfaces/iteration.jl")
-
 include("interfaces/indexing.jl")
 include("interfaces/broadcast.jl")
 

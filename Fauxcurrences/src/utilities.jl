@@ -73,7 +73,7 @@ end
     _distance_between_binned_distributions(p, q)
 
 Returns the Jensen-Shannon distance (i.e. the square root of the JS divergence)
-for the two distance matrices. This version is prefered to the KL divergence in
+for the two distance matrices. This version is preferred to the KL divergence in
 the original implementation as it prevents the `Inf` values when p(x)=0 and
 q(x)>0. The JS divergences is bounded between 0 and the natural log of 2, which
 gives an absolute measure of fit allowing to compare the solutions. Note that

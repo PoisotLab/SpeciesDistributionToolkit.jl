@@ -22,5 +22,5 @@ the data live).
 The purpose of the documentation is to (i) provide a high-level overview of how
 to get data from a user point of view, (ii) list the datasets that are
 accessible for users through the package alongside their most important features
-and (iii) give a comprehensive overview of the way the inteface works, to
+and (iii) give a comprehensive overview of the way the interface works, to
 facilitate the addition of new data sources.

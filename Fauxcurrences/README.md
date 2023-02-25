@@ -45,7 +45,7 @@ checked out with `]add Fauxcurrences#main`.
 There is an [online documentation][doc] for the `Fauxcurrences.jl` package, also
 available as a Jupyter [notebook][nb]. The documentation is a full-run of the
 package functions, which also serves as an integration test. The methods are all
-documented using the usual Julia docstrings, accessibles at the REPL.
+documented using the usual Julia docstrings, accessible at the REPL.
 
 [doc]: https://docs.ecojulia.org/Fauxcurrences.jl/
 [nb]: https://docs.ecojulia.org/Fauxcurrences.jl/fauxcurrences_demo.ipynb

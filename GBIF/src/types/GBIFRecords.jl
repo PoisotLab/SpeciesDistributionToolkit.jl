@@ -72,7 +72,7 @@ function GBIFRecord(o::Dict{String, Any})
     end
 
     # The name of the taxon is the generic name + specific epithet, but if the
-    # generic name is asbent, this defaults to the scientificName.
+    # generic name is absent, this defaults to the scientificName.
     if !ismissing(get(o, "genericName", missing))
         this_name = o["genericName"]
         if !ismissing(get(o, "specificEpithet", missing))

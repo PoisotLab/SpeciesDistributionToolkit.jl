@@ -49,7 +49,7 @@ end
 """
     clip(layer::T, records::GBIF.GBIFRecords)
 
-Returns a clipped version (with a 10% margin) around all occurences in a
+Returns a clipped version (with a 10% margin) around all occurrences in a
 GBIFRecords collection.
 """
 function SimpleSDMLayers.clip(layer::T, records::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}

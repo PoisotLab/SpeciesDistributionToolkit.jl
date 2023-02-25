@@ -13,7 +13,7 @@ o = occurrence(k)
 k = 1258202889
 @test_throws "cannot be accessed - error code" occurrence(k)
 
-# This occurence is incorrectly formatted for some reason
+# This occurrence is incorrectly formatted for some reason
 k = 1039645472
 o = occurrence(k)
 @test typeof(o) == GBIFRecord

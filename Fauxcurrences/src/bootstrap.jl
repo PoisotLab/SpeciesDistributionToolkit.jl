@@ -3,7 +3,7 @@
 
 Generates the initial proposition for points - this function generates the
 points for all taxa at once, so some knowledge of the distance matrices is
-required. Note that this function is modifying the *bootstraped* object, in
+required. Note that this function is modifying the *bootstrapped* object, in
 order to make be as efficient as possible.
 
 Specifically, the first point for each taxa is picked to respect the maximal

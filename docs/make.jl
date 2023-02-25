@@ -48,6 +48,8 @@ makedocs(;
         "Component packages" => [
             "SpeciesDistributionToolkit.jl" => [
                 "Work with species occurrence data" => "manual/SpeciesDistributionToolkit/index.md",
+                "Occurrences and layers" => "manual/SpeciesDistributionToolkit/gbif.jl.md",
+                "Pseudo-absences" => "manual/SpeciesDistributionToolkit/pseudoabsences.md",
             ],
             "SimpleSDMLayers.jl" => [
                 "Easy manipulation of layers" => "manual/SimpleSDMLayers/index.md",

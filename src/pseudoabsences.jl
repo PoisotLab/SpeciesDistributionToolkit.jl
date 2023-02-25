@@ -1,11 +1,35 @@
+"""
+    PseudoAbsenceGenerator
+
+Abstract type to which all of the pseudo-absences generator types belong. Note
+that the pseudo-absence types are *singleton* types, and the arguments are
+passed when generating the pseudo-absence mask.
+"""
 abstract type PseudoAbsenceGenerator end
 
+"""
+    WithinRadius
+
+Generates pseudo-absences within a set radius (in kilometers) around each
+occurrence
+"""
 struct WithinRadius <: PseudoAbsenceGenerator
 end
 
+"""
+    SurfaceRangeEnvelope
+
+Generates pseudo-absences at random within the geographic range covered by
+actual occurrences
+"""
 struct SurfaceRangeEnvelope <: PseudoAbsenceGenerator
 end
 
+"""
+    RandomSelection
+
+Generates pseudo-absences at random within the layer
+"""
 struct RandomSelection <: PseudoAbsenceGenerator
 end
 
@@ -81,6 +105,13 @@ function pseudoabsencemask(
     return background
 end
 
+"""
+    pseudoabsencemask( ::Type{SurfaceRangeEnvelope}, presences::T) where {T <: SimpleSDMLayer}
+
+Generates a mask from which pseudo-absences can be drawn, by picking cells that
+are (i) within the bounding box of occurrences, (ii) valued in the layer, and
+(iii) not already occupied by an occurrence
+"""
 function pseudoabsencemask(
     ::Type{SurfaceRangeEnvelope},
     presences::T) where {T <: SimpleSDMLayer}
@@ -101,6 +132,11 @@ function pseudoabsencemask(
     return background
 end
 
+"""
+    sample(layer::T, n::Integer = 1; kwargs...) where {T <: SimpleSDMLayer}
+
+Sample a series of points among a Boolean layer
+"""
 function sample(layer::T, n::Integer = 1; kwargs...) where {T <: SimpleSDMLayer}
     @assert SimpleSDMLayers._inner_type(layer) <: Bool
     pseudoabs = similar(layer, Bool)

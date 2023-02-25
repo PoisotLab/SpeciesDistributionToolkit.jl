@@ -22,7 +22,7 @@ package, `SimpleSDMLayers`), and the toolkit itself has its own version number.
 
 [mnrp]: https://monorepo.tools/
 
-Note that the packages *do* work indepently as well, but they are now *designed*
+Note that the packages *do* work independently as well, but they are now *designed*
 to work together. In particular, when installing `SpeciesDistributionToolkit`,
 you get access to all the functions and types exported by the component
 packages. This is the *recommended* way to interact with the packages.

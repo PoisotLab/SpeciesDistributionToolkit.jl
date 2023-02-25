@@ -7,7 +7,7 @@ and additional helper functions to build species distribution models. It does
 *not* implement any species distribution models, although there are a few
 examples of how this can be done in the documentation.
 
-**Who is developping this package**? This package is primarily maintained by the
+**Who is developing this package**? This package is primarily maintained by the
 [Quantitative & Computational Ecology][qce] group at Université de Montréal, and
 is part of the broader EcoJulia organisation.
 

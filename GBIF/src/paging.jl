@@ -32,7 +32,7 @@ for records that have already been retrieved.
 """
 function occurrences!(o::GBIFRecords)
     if length(o) == count(o)
-        @info "All occurences for this query have been returned"
+        @info "All occurrences for this query have been returned"
     else
         if isnothing(o.query)
             o.query = Dict{String, Any}()

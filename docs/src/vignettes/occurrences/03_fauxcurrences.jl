@@ -69,7 +69,7 @@ using SpeciesDistributionToolkit
 import Random
 Random.seed!(616525434012345)
 
-# ### Prepare the occurence data
+# ### Prepare the occurrence data
 
 # Get the observation data in the correct format, which is an array of matrices
 # with two rows (longitude, latitude) and one column for observed occurrence.
@@ -320,7 +320,7 @@ println(
 # the intra-specific distance cannot be larger than the observed intra-specific
 # distance, and the inter-specific distance cannot be larger than the observed
 # pairwise inter-specific distance. This is motivated by two reasons. First,
-# this makes the binning of the distributions a lot more stable, as the upport
+# this makes the binning of the distributions a lot more stable, as the support
 # bound of the distribution remains the same. Second, this ensures that the
 # optimizer does not "cheat" by over-expanding the simulated points.
 
@@ -334,7 +334,7 @@ println(
 # to decide whether all divergences need to decrease for the move to be
 # considered valid.
 
-# **KNOWN/removal** `Fauxcurrences.jl` does not offer non-pairwsie
+# **KNOWN/removal** `Fauxcurrences.jl` does not offer non-pairwise
 # inter-specific distances. This is a direct consequence of the next point,
 # which is one of the most significant additions to the package.
 

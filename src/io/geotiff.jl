@@ -38,7 +38,12 @@ function _read_geotiff(
     right = 180.0,
     bottom = -90.0,
     top = 90.0,
+    driver::String = "GTiff",
+    compress::String = "LZW",
 ) where {LT <: SimpleSDMLayer}
+
+    @assert driver ∈ keys(ArchGDAL.listdrivers()) || throw(ArgumentError("Not a valid driver."))
+    
     try
         ArchGDAL.read(file) do stuff
             wkt = ArchGDAL.importPROJ4(ArchGDAL.getproj(stuff))
@@ -138,7 +143,13 @@ function _write_geotiff(
     file::AbstractString,
     layer::SimpleSDMPredictor{T};
     nodata::T = convert(T, -9999),
+    driver::String = "COG",
+    compress="LZW"
 ) where {T <: Number}
+
+    @assert driver ∈ keys(ArchGDAL.listdrivers()) || throw(ArgumentError("Not a valid driver."))
+    #@assert compress ∈ keys(ArchGDAL.listcompress()) || throw(ArgumentError("Not a valid compression."))
+
     array_t = _prepare_layer_for_burnin(layer, nodata)
     width, height = size(array_t)
 
@@ -154,10 +165,10 @@ function _write_geotiff(
     # Write
     prefix = first(split(last(splitpath(file)), '.'))
     ArchGDAL.create(prefix;
-        driver = ArchGDAL.getdriver("MEM"),
+        driver = ArchGDAL.getdriver(driver),
         width = width, height = height,
         nbands = 1, dtype = T,
-        options = ["COMPRESS=LZW"]) do dataset
+        options = ["COMPRESS=$compress"]) do dataset
         band = ArchGDAL.getband(dataset, 1)
 
         # Write data to band
@@ -173,7 +184,7 @@ function _write_geotiff(
             dataset,
             file;
             driver = ArchGDAL.getdriver("GTiff"),
-            options = ["COMPRESS=LZW"],
+            options = ["COMPRESS=$compress"],
         )
     end
     return file
@@ -203,7 +214,14 @@ function _write_geotiff(
     layers::Vector{SimpleSDMPredictor{T}};
     nodata::T = convert(T, -9999),
     driver::String = "GTiff",
+    compress::String = "LZW"
 ) where {T <: Number}
+
+
+    @assert driver ∈ keys(ArchGDAL.listdrivers()) || throw(ArgumentError("Not a valid driver."))
+    # to be uncommented once ths getcompressions fcn exists
+    #@assert compress ∈ keys(ArchGDAL.listcompress()) || throw(ArgumentError("Not a valid compression."))
+
     bands = 1:length(layers)
     SimpleSDMLayers._layers_are_compatible(layers)
     width, height = size(_prepare_layer_for_burnin(layers[1], nodata))
@@ -220,10 +238,10 @@ function _write_geotiff(
     # Write
     prefix = first(split(last(splitpath(file)), '.'))
     ArchGDAL.create(prefix;
-        driver = ArchGDAL.getdriver("MEM"),
+        driver = ArchGDAL.getdriver(driver),
         width = width, height = height,
         nbands = length(layers), dtype = T,
-        options = ["COMPRESS=LZW"]) do dataset
+        options = ["COMPRESS=$compress"]) do dataset
         for i in 1:length(bands)
             band = ArchGDAL.getband(dataset, i)
 
@@ -241,7 +259,7 @@ function _write_geotiff(
             dataset,
             file;
             driver = ArchGDAL.getdriver(driver),
-            options = ["COMPRESS=LZW"],
+            options = ["COMPRESS=$compress"],
         )
     end
     return file

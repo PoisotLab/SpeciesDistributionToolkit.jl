@@ -38,7 +38,8 @@ function _read_geotiff(
     right = 180.0,
     bottom = -90.0,
     top = 90.0,
-    driver::String = "GTiff"
+    driver::String = "GTiff",
+    compress::String = "LZW",
 ) where {LT <: SimpleSDMLayer}
 
     @assert driver ∈ keys(ArchGDAL.listdrivers()) || throw(ArgumentError("Not a valid driver."))

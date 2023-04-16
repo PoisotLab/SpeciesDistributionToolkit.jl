@@ -24,7 +24,6 @@ function pairs_to_querystring(query::Pair...)
             # Then we can graft the pair string onto the query string
             pairstring = "$(delim)$(root)=$(stem)"
             querystring *= pairstring
-            @info querystring
         end
         return querystring
     end

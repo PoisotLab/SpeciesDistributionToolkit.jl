@@ -1,4 +1,6 @@
 module GBIFEdgeCasesTest
+using Test
+using GBIF
 
 # When there is a single argument used for a query, sometimes the second position gets
 # converted to not text

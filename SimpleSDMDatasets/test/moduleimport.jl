@@ -18,7 +18,6 @@ end
 export foo
 end
 
-@info TestModule.foo()
 @test isfile(first(TestModule.foo()))
 
 end

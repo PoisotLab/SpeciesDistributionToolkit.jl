@@ -5,6 +5,7 @@ global anyerrors = false
 
 tests = [
     "Type basics                 " => "type_construction.jl",
+    "Import from within module   " => "moduleimport.jl",
     "WorldClim2 provider         " => "worldclim_v2.jl",
     "EarthEnv provider           " => "earthenv.jl",
     "CHELSA1 provider            " => "chelsa_v1.jl",

@@ -1,3 +1,12 @@
+function _drop_package_name_from_path(path)
+    # Module name with a dot
+    _target = "$(@__MODULE__)."
+    path = replace(path, _target => "")
+    path = replace(path, lowercase(_target) => "")
+    path = replace(path, uppercase(_target) => "")
+    return path
+end
+
 function downloader(
     data::RasterData{P, D};
     kwargs...,
@@ -5,6 +14,11 @@ function downloader(
     keychecker(data; kwargs...)
 
     url, fnm, dir = SimpleSDMDatasets.source(data; kwargs...)
+
+    # Remove the package name from the path strings if present
+    url = _drop_package_name_from_path(url)
+    fnm = _drop_package_name_from_path(fnm)
+    dir = _drop_package_name_from_path(dir)
 
     # Check for path existence
     isdir(dir) || mkpath(dir)
@@ -44,6 +58,11 @@ function downloader(
     keychecker(data, future; kwargs...)
 
     url, fnm, dir = SimpleSDMDatasets.source(data, future; kwargs...)
+
+    # Remove the package name from the path strings if present
+    url = _drop_package_name_from_path(url)
+    fnm = _drop_package_name_from_path(fnm)
+    dir = _drop_package_name_from_path(dir)
 
     # Check for path existence
     isdir(dir) || mkpath(dir)

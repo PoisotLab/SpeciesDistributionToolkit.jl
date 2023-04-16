@@ -1,12 +1,12 @@
 # SimpleSDMDatasets
 
-This *will* serve as a replacement for the data system in *SimpleSDMLayers.jl*.
+This package serves as the data provisioning system for `SpeciesDistributionToolkit`.
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/PoisotLab/SimpleSDMDatasets.jl/Test%20suite?style=flat-square) ![Codecov](https://img.shields.io/codecov/c/github/PoisotLab/SimpleSDMDatasets.jl?style=flat-square)
 
 ![GitHub top language](https://img.shields.io/github/languages/top/PoisotLab/SimpleSDMDatasets.jl?style=flat-square&logo=julia)
 
-This package has a smaller mission statement, namely:
+This package has a very small mission statement, namely:
 
 1. provide a simple interface to get access to raster data
 2. implement this interface for commonly used data
@@ -14,4 +14,3 @@ This package has a smaller mission statement, namely:
 4. provide enough checks that users can build on top of it rapidly (for example,
    the wrapper for bioclim in CHELSA2.1 is only about 15 loc)
 
-For now this is a *work in progress*

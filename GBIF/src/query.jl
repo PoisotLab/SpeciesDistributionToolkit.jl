@@ -85,6 +85,8 @@ function validate_occurrence_query(query::Pair)
 
     # ENUMs
     if query.first ∈ keys(gbifenums)
-        @assert query.second ∈ gbifenums[query.first]
+        if !(query.second ∈ gbifenums[query.first])
+            @error "The value $(query.second) is not a valid value for $(query.first)"
+        end
     end
 end

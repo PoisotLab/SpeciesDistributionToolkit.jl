@@ -1,3 +1,4 @@
+format_querypair_stem(stem::Bool) = replace(string(stem), " " => "%20")
 format_querypair_stem(stem::Any) = replace(string(stem), " " => "%20")
 
 function format_querypair_stem(stem::Tuple{T, T}) where {T <: Number}
@@ -44,7 +45,9 @@ function occurrence(key::String)::GBIFRecord
         return GBIFRecord(result)
     catch err
         if err isa HTTP.Exceptions.StatusError
-            throw("Occurrence $(key) (at $(occ_url)) cannot be accessed - error code: $(err.status)")
+            throw(
+                "Occurrence $(key) (at $(occ_url)) cannot be accessed - error code: $(err.status)",
+            )
         else
             throw("Occurrence $(key) cannot be accessed")
         end

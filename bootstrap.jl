@@ -1,6 +1,6 @@
 import Pkg
 
-components = ["SimpleSDMDatasets", "SimpleSDMLayers", "GBIF", "Fauxcurrences"]
+components = ["SimpleSDMDatasets", "SimpleSDMLayers", "GBIF", "Fauxcurrences", "Phylopic"]
 
 # Cleanup local install and develop
 for package in components

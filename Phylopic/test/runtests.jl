@@ -5,6 +5,7 @@ global anyerrors = false
 
 tests = [
     "ping" => "ping.jl",
+    "name finder" => "names.jl"
 ]
 
 for test in tests

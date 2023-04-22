@@ -5,5 +5,7 @@ the entire API.
 
 ~~~julia
 using Phylopic
-Phylopic.images(Phylopic.names("Monogenea"); format=:svg)
+"chiroptera" |>
+    Phylopics.names |>
+    Phylopics.thumbnail
 ~~~

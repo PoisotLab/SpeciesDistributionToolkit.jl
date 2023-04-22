@@ -1,9 +1,14 @@
+"""
+    SimpleSDMLayers.SimpleSDMPredictor(data::R; kwargs...) where {R <: RasterData}
+
+Read a layer as a `SimpleSDMPredictor` (immutable) from a `RasterData` and a source of keywords. The allowed keywors are listed for each `RasterData`.
+"""
 function SimpleSDMLayers.SimpleSDMPredictor(data::R; kwargs...) where {R <: RasterData}
     # Split the bounding box from the rest of the data
     boundingbox, arguments = _boundingbox_out_of_kwargs(kwargs)
 
     # Get the data
-    filepath, filetype, bandnumber, crs = downloader(data; arguments...)
+    filepath, filetype, bandnumber, _ = downloader(data; arguments...)
 
     if isequal(SimpleSDMDatasets._tiff)(filetype)
         return SimpleSDMPredictor(filepath, "tiff"; bandnumber = bandnumber, boundingbox...)
@@ -12,6 +17,11 @@ function SimpleSDMLayers.SimpleSDMPredictor(data::R; kwargs...) where {R <: Rast
     return nothing
 end
 
+"""
+    SimpleSDMLayers.SimpleSDMPredictor(data::R, future::F; kwargs...) where {R <: RasterData, F <: Projection}
+
+Read a layer as a `SimpleSDMPredictor` (immutable) from a `RasterData`, a future `Projection`, and a source of keywords. The allowed keywors are listed for each `RasterData`.
+"""
 function SimpleSDMLayers.SimpleSDMPredictor(
     data::R,
     future::F;
@@ -21,7 +31,7 @@ function SimpleSDMLayers.SimpleSDMPredictor(
     boundingbox, arguments = _boundingbox_out_of_kwargs(kwargs)
 
     # Get the data
-    filepath, filetype, bandnumber, crs = downloader(data, future; arguments...)
+    filepath, filetype, bandnumber, _ = downloader(data, future; arguments...)
 
     if isequal(SimpleSDMDatasets._tiff)(filetype)
         return SimpleSDMPredictor(filepath, "tiff"; bandnumber = bandnumber, boundingbox...)

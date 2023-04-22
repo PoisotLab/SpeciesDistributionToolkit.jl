@@ -39,6 +39,4 @@ include("pseudoabsences.jl")
 export WithinRadius, SurfaceRangeEnvelope, RandomSelection
 export pseudoabsencemask
 
-
-
 end # module SpeciesDistributionToolkit

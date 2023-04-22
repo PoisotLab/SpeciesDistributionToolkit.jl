@@ -2,7 +2,7 @@ module Phylopic
 
 import HTTP
 import JSON
-using UUIDs
+import UUIDs
 
 const api = "https://api.phylopic.org/"
 

@@ -17,7 +17,7 @@ include(joinpath(pwd(), "src", "ping.jl"))
 const buildnumber = Phylopic.build()
 
 # the autocomplete endpoint is meant to give an overview of possible names starting from
-# a stem
+# a stem - this is not necessarilly going to give all of the names, and I am not sure why
 include(joinpath(pwd(), "src", "autocomplete.jl"))
 
 # the images endpoint does a lot of different things, which is very confusing but that's the

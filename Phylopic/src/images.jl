@@ -42,3 +42,7 @@ end
 function images(dict::Dict{String,UUIDs.UUID}; kwargs...)
     return [images(k.second; kwargs...) for k in dict]
 end
+
+function images(pair::Pair{String,UUIDs.UUID})
+    return images(pair.second)
+end

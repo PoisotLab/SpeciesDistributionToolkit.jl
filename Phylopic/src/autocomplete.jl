@@ -15,7 +15,7 @@ function autocomplete(query::AbstractString)
     if isequal(200)(req.status)
         matches = JSON.parse(String(req.body))["matches"]
         if ~isempty(matches)
-            return matches
+            return convert(Vector{String}, matches)
         end
     end
     return AbstractString[]

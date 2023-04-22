@@ -1,7 +1,8 @@
-import HTTP
-import JSON
-import UUIDs
+"""
+    _get_uuids_at_page(query, page)
 
+This function is an internal helped function to return an array of pairs, wherein each pair maps a name to a UUID, for a given query and page. These outpurs are collected in a dictionary by `Phylopic.names`.
+"""
 function _get_uuids_at_page(query, page)
     page_query = push!(query, "page" => page - 1)
     req = HTTP.get(Phylopic.api * "images", query=page_query)
@@ -29,7 +30,7 @@ function names(name::AbstractString; items=1)
         end
         n_pages = ceil(items / response["itemsPerPage"])
         uuids = Dict(vcat([_get_uuids_at_page(query, page) for page in n_pages]...))
-        return uuids
+        return length(uuids) == 1 ? only(collect(uuids)) : uuids
     end
     return nothing
 end

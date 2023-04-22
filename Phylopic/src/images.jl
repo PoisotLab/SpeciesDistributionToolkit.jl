@@ -1,21 +1,46 @@
+import JSON
+import HTTP
+import UUIDs
 
-function images(; filter_license_by=false, filter_license_nc=false, filter_license_sa=false, filter_name="")
-    query_parameters = ""
-    if filter_license_by
-        query_parameters *= "filter_license_by=$(filter_license_by)"
+"""
+This type exists only to dispatch the `_get_image_querystring_from_pairs` correctly.
+"""
+struct PhylopicImage end
+
+function _format(::Type{PhylopicImage}; prefix="filter", kwargs...)
+    querystring = ""
+    prefix_in_query = isempty(prefix) ? "" : "$(prefix)_"
+    for pair in kwargs
+        querystring *= "&$(prefix_in_query)$(pair.first)=$(pair.second)"
     end
-    if filter_license_nc
-        query_parameters *= "filter_license_nc=$(filter_license_nc)"
+    return querystring
+end
+
+function images(; filter=nothing, page=nothing)
+    querystring = ""
+    if ~isnothing(filter)
+        querystring *= _format(PhylopicImage; filter...)
     end
-    if filter_license_sa
-        query_parameters *= "filter_license_sa=$(filter_license_sa)"
+    if ~isnothing(page)
+        querystring *= "&page=$(page)&build=$(Phylopic.buildnumber)"
     end
-    if ~isempty(filter_name)
-        query_parameters *= "filter_name=$(lowercase(filter_name))"
-    end
-    req = HTTP.get(Phylopic.api * "images?" * replace(query_parameters, " " => "%20"))
+    req = HTTP.get(Phylopic.api * "images?" * replace(querystring, " " => "%20"))
     if isequal(200)(req.status)
-        @info JSON.parse(String(req.body))
+        result = JSON.parse(String(req.body))
+        if isnothing(page)
+            return result["totalPages"]
+        else
+            stripimg = (h) -> replace(h, "/images/" => "", "?build=$(Phylopic.buildnumber)" => "")
+            return Dict([link["title"] => UUIDs.UUID(stripimg(link["href"])) for link in result["_links"]["items"]])
+        end
     end
 end
 
+function images(u::UUIDs.UUID)
+    querystring = "images/$(string(u))?build=$(Phylopic.buildnumber)"
+    req = HTTP.get(Phylopic.api * querystring)
+    if isequal(200)(req.status)
+        results = JSON.parse(String(req.body))
+        return results
+    end
+end

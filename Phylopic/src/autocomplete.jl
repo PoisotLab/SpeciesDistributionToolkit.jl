@@ -18,5 +18,7 @@ function autocomplete(query::AbstractString)
             return convert(Vector{String}, matches)
         end
     end
+    # WARNING: This probably should not return an empty list here, maybe a `nothing` would
+    # make more sense
     return AbstractString[]
 end

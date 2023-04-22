@@ -93,6 +93,14 @@ function pseudoabsencemask(
     return background
 end
 
+"""
+    pseudoabsencemask(::Type{RandomSelection}, presence::T) where {T <: SimpleSDMLayer}
+
+Generates a mask for pseudo-absences using the random selection method. Candidate
+cells for the pseudo-absence mask are (i) within the bounding box of the _layer_
+(use `SurfaceRangeEnvelope` to use the presences bounding box), and (ii) valued in the
+layer.
+"""
 function pseudoabsencemask(
     ::Type{RandomSelection},
     presences::T) where {T <: SimpleSDMLayer}

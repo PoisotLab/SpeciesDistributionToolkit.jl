@@ -5,7 +5,14 @@ the entire API.
 
 ~~~julia
 using Phylopic
-"chiroptera" |>
-    Phylopics.names |>
-    Phylopics.thumbnail
+import Downloads
+
+# Get a series of UUIDs from a name
+org_uuid = Phylopic.names("chiroptera")
+
+# We can query the thumbnails for this UUID
+thumb_url = Phylopic.thumbnail(org_uuid)
+
+# We can download the thumbnail (to a temp file)
+thumb_file = Downloads.download(first(thumb_url))
 ~~~

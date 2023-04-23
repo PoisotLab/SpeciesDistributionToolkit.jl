@@ -62,7 +62,7 @@ current_figure()
 
 # We can now add a silhouette of a bat using Phylopic:
 
-bat_uuid = sample(Phylopic.names("chiroptera"))
+bat_uuid = first(Phylopic.names("chiroptera"))
 
 # The next step is to get the url of the image -- we are going to get the largest thumbnail
 # (which is the default):

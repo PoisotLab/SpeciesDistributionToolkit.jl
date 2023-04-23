@@ -64,6 +64,7 @@ makedocs(;
                 "Interface to GBIF data" => "manual/GBIF/index.md",
                 "GBIF data representation" => "manual/GBIF/types.md",
                 "GBIF data retrieval" => "manual/GBIF/data.md",
+                "Enumerated query parameters" => "manual/GBIF/enums.md",
             ],
             "SimpleSDMDatasets.jl" => [
                 "Interface to raster data" => "manual/SimpleSDMDatasets/index.md",

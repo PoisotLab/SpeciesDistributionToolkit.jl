@@ -1,5 +1,7 @@
 """
-**Checks that the queries for occurrences searches are well formatted**
+    validate_occurrence_query(query::Pair)
+
+Checks that the queries for occurrences searches are well formatted.
 
 This is used internally.
 

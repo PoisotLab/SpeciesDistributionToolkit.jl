@@ -1,3 +1,5 @@
+using SimpleSDMLayers
+
 @shorthands bivariate
 @shorthands bivariatelegend
 @shorthands trivariate
@@ -6,7 +8,7 @@
 """
 test 1
 """
-@recipe function plot(layer::T) where {T<:SimpleSDMLayer}
+@recipe function plot(layer::T) where {T <: SimpleSDMLayer}
     seriestype --> :heatmap
     if get(plotattributes, :seriestype, :heatmap) in [:heatmap, :contour]
         eltype(layer) <: AbstractFloat || throw(
@@ -32,20 +34,20 @@ test 2
 @recipe function plot(
     l1::FT,
     l2::ST;
-    classes::Int=3,
-    p0=colorant"#e8e8e8ff",
-    p1=colorant"#64acbeff",
-    p2=colorant"#c85a5aff",
-    quantiles=true,
-) where {FT<:SimpleSDMLayer,ST<:SimpleSDMLayer}
+    classes::Int = 3,
+    p0 = colorant"#e8e8e8ff",
+    p1 = colorant"#64acbeff",
+    p2 = colorant"#c85a5aff",
+    quantiles = true,
+) where {FT <: SimpleSDMLayer, ST <: SimpleSDMLayer}
     eltype(l1) <: Number || throw(
         ArgumentError(
-            "Plotting is only supported for layers with number values ($(eltype(l1)))"
+            "Plotting is only supported for layers with number values ($(eltype(l1)))",
         ),
     )
     eltype(l2) <: Number || throw(
         ArgumentError(
-            "Plotting is only supported for layers with number values ($(eltype(l2)))"
+            "Plotting is only supported for layers with number values ($(eltype(l2)))",
         ),
     )
     seriestype --> :scatter
@@ -130,21 +132,21 @@ end
 test 2
 """
 @recipe function plot(
-    x::FT, y::ST, z::TT; quantiles=true, simplex=false, red="", green="", blue=""
-) where {FT<:SimpleSDMLayer,ST<:SimpleSDMLayer,TT<:SimpleSDMLayer}
+    x::FT, y::ST, z::TT; quantiles = true, simplex = false, red = "", green = "", blue = "",
+) where {FT <: SimpleSDMLayer, ST <: SimpleSDMLayer, TT <: SimpleSDMLayer}
     eltype(x) <: Number || throw(
         ArgumentError(
-            "Plotting is only supported for layers with number values ($(eltype(x)))"
+            "Plotting is only supported for layers with number values ($(eltype(x)))",
         ),
     )
     eltype(y) <: Number || throw(
         ArgumentError(
-            "Plotting is only supported for layers with number values ($(eltype(y)))"
+            "Plotting is only supported for layers with number values ($(eltype(y)))",
         ),
     )
     eltype(z) <: Number || throw(
         ArgumentError(
-            "Plotting is only supported for layers with number values ($(eltype(z)))"
+            "Plotting is only supported for layers with number values ($(eltype(z)))",
         ),
     )
     SimpleSDMLayers._layers_are_compatible(x, y)
@@ -206,18 +208,25 @@ test 2
                 y0 = (row_number - 1) * h
                 push!(shapes_x, [x0, x0 + a / 2, x0 + a])
                 push!(shapes_y, [y0, y0 + h, y0])
-                push!(shapes_colors, rgb_from_xy(x0 + a / 2, y0 + h / 2; simplex=simplex))
+                push!(shapes_colors, rgb_from_xy(x0 + a / 2, y0 + h / 2; simplex = simplex))
                 if row_number > 1
                     push!(shapes_x, [x0, x0 + a / 2, x0 + a])
                     push!(shapes_y, [y0, y0 - h, y0])
-                    push!(shapes_colors, rgb_from_xy(x0 + a / 2, y0 - h / 2; simplex=simplex))
+                    push!(
+                        shapes_colors,
+                        rgb_from_xy(x0 + a / 2, y0 - h / 2; simplex = simplex),
+                    )
                 end
             end
         end
         _fs = get(plotattributes, :annotationfontsize, 14)
         @series begin
             seriestype := :shape
-            annotations := [(-0.05, 0.0, (red, _fs, :left, 60.0)), (1.0, -0.05, (green, _fs, :right, 0.0)), (0.5+0.05, sqrt(3)/2, (blue, _fs, :left, -60.0))]
+            annotations := [
+                (-0.05, 0.0, (red, _fs, :left, 60.0)),
+                (1.0, -0.05, (green, _fs, :right, 0.0)),
+                (0.5 + 0.05, sqrt(3) / 2, (blue, _fs, :left, -60.0)),
+            ]
             markersize := 0
             seriescolor := hcat(shapes_colors...)
             shapes_x, shapes_y
@@ -225,7 +234,7 @@ test 2
     end
 end
 
-function rgb_from_xy(x, y; simplex=false)
+function rgb_from_xy(x, y; simplex = false)
     b = 2y / sqrt(3)
     g = (2x - b) / 2
     r = 1 - (b + g)

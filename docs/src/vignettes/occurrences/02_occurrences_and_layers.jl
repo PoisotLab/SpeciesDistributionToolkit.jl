@@ -70,9 +70,15 @@ bat_uuid = first(Phylopic.names("chiroptera"))
 bat_thumbnail_url = Phylopic.thumbnail(bat_uuid)
 bat_thumbnail_tmp = Downloads.download(bat_thumbnail_url)
 bat_image = Images.load(bat_thumbnail_tmp)
-bat_size = Vec2f(reverse(size(bat_image) ./ 2)) # We make the thumbnail a little smaller
 
-# We can now use this image in a scatter plot:
+# We can now use this image in a scatter plot -- this uses the thumbnail as a scatter
+# symbol, so we need to plot this like any other point. Because the thumbnail returned by
+# default is rather large, we can rescale it based on the image size:
 
-scatter!(envirovars, [14.0], [2200.0]; marker = bat_image, markersize = bat_size)
+bat_size = Vec2f(reverse(size(bat_image) ./ 3))
+
+# Finally, we can plot everything (note that the Phylopic images have a transparent
+# background, so we are not hiding any information!):
+
+scatter!(envirovars, [14.0], [2400.0]; marker = bat_image, markersize = bat_size)
 current_figure()

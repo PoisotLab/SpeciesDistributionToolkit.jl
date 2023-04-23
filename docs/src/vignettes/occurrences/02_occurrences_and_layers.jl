@@ -68,7 +68,7 @@ bat_uuid = first(Phylopic.names("chiroptera"))
 # (which is the default):
 
 bat_thumbnail_url = Phylopic.thumbnail(bat_uuid)
-bat_thumbnail_tmp = Donwloads.download(bat_thumbnail_url)
+bat_thumbnail_tmp = Downloads.download(bat_thumbnail_url)
 bat_image = Images.load(bat_thumbnail_tmp)
 bat_size = Vec2f(reverse(size(bat_image) ./ 2)) # We make the thumbnail a little smaller
 

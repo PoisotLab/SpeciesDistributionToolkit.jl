@@ -107,6 +107,11 @@ CMIP6Model = Union{
     UKESM1_0_LL,
 }
 
+"""
+    CMIP5Scenario
+
+These scenarios are part of CMIP5. They can be `RCP26` to `RCP85` (with `RCPXX` the scenario).
+"""
 CMIP5Scenario = Union{RCP26, RCP45, RCP60, RCP85}
 CMIP5Model = Union{
     ACCESS1_0,

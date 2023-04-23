@@ -87,7 +87,7 @@ is "ABSENT"; therefore, for the majority of uses, your query will *at least* con
 `"occurrenceStatus" => "PRESENT"`.
 """
 function occurrences(query::Pair...)
-    retrieved, offset, of_max = _internal_occurrences_getter(query...)
+    retrieved, _, of_max = _internal_occurrences_getter(query...)
     if !isnothing(retrieved)
         store = Vector{GBIFRecord}(undef, of_max)
         store[1:length(retrieved)] = retrieved

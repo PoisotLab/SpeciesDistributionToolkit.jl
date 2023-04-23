@@ -6,89 +6,58 @@ using Dates
 using Tables
 
 const gbifurl = "http://api.gbif.org/v1/"
-const gbifenums = Dict(
-    "basisOfRecord" => [
-        "FOSSIL_SPECIMEN",
-        "HUMAN_OBSERVATION",
-        "LITERATURE",
-        "LIVING_SPECIMEN",
-        "MACHINE_OBSERVATION",
-        "MATERIAL_SAMPLE",
-        "OBSERVATION",
-        "PRESERVED_SPECIMEN",
-        "UNKNOWN",
-    ],
-    "occurrenceStatus" => [
-        "PRESENT", "ABSENT",
-    ],
-    "continent" => [
-        "AFRICA",
-        "ANTARCTICA",
-        "ASIA",
-        "EUROPE",
-        "NORTH_AMERICA",
-        "OCEANIA",
-        "SOUTH_AMERICA",
-    ],
-    "establishmentMeans" => [
-        "INTRODUCED",
-        "INVASIVE",
-        "MANAGED",
-        "NATIVE",
-        "NATURALISED",
-        "UNCERTAIN",
-    ],
-    "issue" => [
-        "BASIS_OF_RECORD_INVALID",
-        "CONTINENT_COUNTRY_MISMATCH",
-        "CONTINENT_DERIVED_FROM_COORDINATES",
-        "CONTINENT_INVALID",
-        "COORDINATE_INVALID",
-        "COORDINATE_OUT_OF_RANGE",
-        "COORDINATE_PRECISION_INVALID",
-        "COORDINATE_REPROJECTED",
-        "COORDINATE_REPROJECTION_FAILED",
-        "COORDINATE_REPROJECTION_SUSPICIOUS",
-        "COORDINATE_ROUNDED",
-        "COORDINATE_UNCERTAINTY_METERS_INVALID",
-        "COUNTRY_COORDINATE_MISMATCH",
-        "COUNTRY_DERIVED_FROM_COORDINATES",
-        "COUNTRY_INVALID",
-        "COUNTRY_MISMATCH",
-        "DEPTH_MIN_MAX_SWAPPED",
-        "DEPTH_NON_NUMERIC",
-        "DEPTH_NOT_METRIC",
-        "DEPTH_UNLIKELY",
-        "ELEVATION_MIN_MAX_SWAPPED",
-        "ELEVATION_NON_NUMERIC",
-        "ELEVATION_NOT_METRIC",
-        "ELEVATION_UNLIKELY",
-        "GEODETIC_DATUM_ASSUMED_WGS84",
-        "GEODETIC_DATUM_INVALID",
-        "IDENTIFIED_DATE_INVALID",
-        "IDENTIFIED_DATE_UNLIKELY",
-        "INDIVIDUAL_COUNT_INVALID",
-        "INTERPRETATION_ERROR",
-        "MODIFIED_DATE_INVALID",
-        "MODIFIED_DATE_UNLIKELY",
-        "MULTIMEDIA_DATE_INVALID",
-        "MULTIMEDIA_URI_INVALID",
-        "PRESUMED_NEGATED_LATITUDE",
-        "PRESUMED_NEGATED_LONGITUDE",
-        "PRESUMED_SWAPPED_COORDINATE",
-        "RECORDED_DATE_INVALID",
-        "RECORDED_DATE_MISMATCH",
-        "RECORDED_DATE_UNLIKELY",
-        "REFERENCES_URI_INVALID",
-        "TAXON_MATCH_FUZZY",
-        "TAXON_MATCH_HIGHERRANK",
-        "TAXON_MATCH_NONE",
-        "TYPE_STATUS_INVALID",
-        "ZERO_COORDINATE",
-    ],
-)
 
-# Load the main functions
+"""
+    enumerablevalues()
+
+Returns an *array* of values that can be enumerated by the GBIF API.
+"""
+function enumerablevalues()
+    endpoint = GBIF.gbifurl * "enumeration/basic"
+    req = HTTP.get(endpoint)
+    if isequal(200)(req.status)
+        response = JSON.parse(String(req.body))
+        return convert(Vector{String}, response)
+    end
+    return nothing
+end
+
+# We load the keys that can be enumerated when we load the package
+const gbifenumkeys = enumerablevalues()
+
+"""
+    enumeratedvalues(enumerable::String)
+
+For a given enumerable value (given as a string as reported by the output of the `enumerablevalues` function), this function will return an array of possible values.
+"""
+function enumeratedvalues(enumerable::String)
+    if enumerable in GBIF.gbifenumkeys
+        endpoint = GBIF.gbifurl * "enumeration/basic/$(enumerable)"
+        req = HTTP.get(endpoint)
+        if isequal(200)(req.status)
+            response = JSON.parse(String(req.body))
+            return convert(Vector{String}, response)
+        else
+            throw(ErrorException("Unable to enumerate the value $(enumerable)"))
+        end
+    else
+        throw(
+            ArgumentError(
+                "$(enumerable) is not an enumerable entity for GBIF -- see GBIF.enumerablevalues()",
+            ),
+        )
+    end
+end
+
+const gbifenums = Dict(
+    "basisOfRecord" => enumeratedvalues("BasisOfRecord"),
+    "occurrenceStatus" => enumeratedvalues("OccurrenceStatus"),
+    "continent" => enumeratedvalues("Continent"),
+    "country" => enumeratedvalues("Country"),
+    "establishmentMeans" => enumeratedvalues("EstablishmentMeans"),
+    "issue" => enumeratedvalues("OccurrenceIssue"),
+    "mediaType" => enumeratedvalues("MediaType"),
+)
 
 include("query.jl")
 

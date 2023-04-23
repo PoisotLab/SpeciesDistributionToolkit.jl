@@ -74,5 +74,5 @@ bat_size = Vec2f(reverse(size(bat_image) ./ 2)) # We make the thumbnail a little
 
 # We can now use this image in a scatter plot:
 
-scatter!(observations, [14.0], [2200.0]; marker = bat_image, markersize = bat_size)
+scatter!(envirovars, [14.0], [2200.0]; marker = bat_image, markersize = bat_size)
 current_figure()

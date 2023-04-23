@@ -52,7 +52,7 @@ makedocs(;
                 "Pseudo-absences" => "manual/SpeciesDistributionToolkit/pseudoabsences.md",
             ],
             "Phylopic.jl" => [
-                "Integration with Phylopic" => "manual/Phylopic.jl/index.md",
+                "Integration with Phylopic" => "manual/Phylopic/index.md",
             ],
             "SimpleSDMLayers.jl" => [
                 "Easy manipulation of layers" => "manual/SimpleSDMLayers/index.md",

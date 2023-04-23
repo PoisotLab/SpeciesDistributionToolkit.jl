@@ -27,6 +27,8 @@ const gbifenumkeys = enumerablevalues()
 
 """
     enumeratedvalues(enumerable::String)
+
+For a given enumerable value (given as a string as reported by the output of the `enumerablevalues` function), this function will return an array of possible values.
 """
 function enumeratedvalues(enumerable::String)
     if enumerable in GBIF.gbifenumkeys

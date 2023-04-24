@@ -13,10 +13,34 @@ function _get_uuids_at_page(query, page)
     return nothing
 end
 
-function names(name::AbstractString; items=1)
+"""
+    names(name::AbstractString; items=1, attribution=false, sharealike=false, nocommercial=false)
+
+Returns a mapping between names and UUIDs of images for a given text (see also `Phylopic.autocomplete` to find relevant names). By default, the search will return images that come without BY, SA, and NC clauses (*i.e.* public domain dedication), but this can be changed using the keyword arguments.
+
+`items`
+: Default to 1
+: Specifies the number of items to return. When a single item is returned, it is return as a pair mapping the name to the UUID; when there are more than 1, they are returned as a dictionary
+
+`attribution`
+: Default to `false`
+: Specifies whether the images returned require attribution to the creator
+
+`sharealike`
+: Default to `false`
+: Specifies whether the images returned require sharing of derived products using a license with a SA clause
+
+`nocommercial`
+: Default to `false`
+: Specifies whether the images returned are prevented from being used in commercial projects
+"""
+function names(name::AbstractString; items=1, attribution=false, sharealike=false, nocommercial=false)
     name = lowercase(replace(name, r"\s+" => " "))
     query = [
         "filter_name" => name,
+        "filter_license_by" => attribution,
+        "filter_license_nc" => nocommercial,
+        "filter_license_sa" => sharealike,
         "build" => Phylopic.buildnumber
     ]
     req = HTTP.get(Phylopic.api * "images", query=query)
@@ -29,8 +53,13 @@ function names(name::AbstractString; items=1)
             @warn "Only $(response["totalItems"]) are available, you requested $(items)"
         end
         n_pages = ceil(items / response["itemsPerPage"])
-        uuids = Dict(vcat([_get_uuids_at_page(query, page) for page in n_pages]...))
-        return length(uuids) == 1 ? only(collect(uuids)) : uuids
+        uuids = vcat([_get_uuids_at_page(query, page) for page in n_pages]...)
+        if isone(length(uuids))
+            return only(uuids)
+        else
+            toreturn = min(items, response["totalItems"])
+            return Dict(uuids[1:toreturn])
+        end
     end
     return nothing
 end

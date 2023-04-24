@@ -60,9 +60,11 @@ heatmap!(map, temperature; colormap = :heat)
 scatter!(observations; color = :black)
 current_figure()
 
-# We can now add a silhouette of a bat using Phylopic:
+# We can now add a silhouette of a bat using Phylopic. We only want a single item here, and
+# the search will by default be restricted to images that can be used with the least
+# constraints.
 
-bat_uuid = first(Phylopic.names("chiroptera"))
+bat_uuid = Phylopic.names("chiroptera"; items = 1)
 
 # The next step is to get the url of the image -- we are going to get the largest thumbnail
 # (which is the default):

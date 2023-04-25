@@ -35,6 +35,8 @@ thumbnail(pair::Pair{String,UUIDs.UUID}; kwargs...) = thumbnail(pair.second; kwa
 thumbnail(dict::Dict{String,UUIDs.UUID}; kwargs...) = thumbnail.(collect(dict); kwargs...)
 vector(pair::Pair{String,UUIDs.UUID}; kwargs...) = vector(pair.second; kwargs...)
 vector(dict::Dict{String,UUIDs.UUID}; kwargs...) = vector.(collect(dict); kwargs...)
+twitterimage(pair::Pair{String,UUIDs.UUID}; kwargs...) = twitterimage(pair.second; kwargs...)
+twitterimage(dict::Dict{String,UUIDs.UUID}; kwargs...) = twitterimage.(collect(dict); kwargs...)
 
 function images_links(uuid::UUIDs.UUID; format::Symbol=:png, resolution::Int=128)
     @assert format in [:png, :svg]

@@ -8,7 +8,7 @@ using Phylopic
 import Downloads
 
 # Get a series of UUIDs from a name
-org_uuid = Phylopic.names("chiroptera")
+org_uuid = Phylopic.imagesof("chiroptera"; items=1)
 
 # We can query the thumbnails for this UUID
 thumb_url = Phylopic.thumbnail(org_uuid)

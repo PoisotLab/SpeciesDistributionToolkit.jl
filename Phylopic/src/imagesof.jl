@@ -59,7 +59,7 @@ function imagesof(name::AbstractString; items=1, attribution=false, sharealike=f
         else
             toreturn = min(items, response["totalItems"])
             if isone(toreturn)
-                return only(uuids)
+                return first(uuids)
             else
                 return Dict(uuids[1:toreturn])
             end

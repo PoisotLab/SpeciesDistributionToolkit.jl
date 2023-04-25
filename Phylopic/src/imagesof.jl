@@ -14,7 +14,7 @@ function _get_uuids_at_page(query, page)
 end
 
 """
-    names(name::AbstractString; items=1, attribution=false, sharealike=false, nocommercial=false)
+    imagesof(name::AbstractString; items=1, attribution=false, sharealike=false, nocommercial=false)
 
 Returns a mapping between names and UUIDs of images for a given text (see also `Phylopic.autocomplete` to find relevant names). By default, the search will return images that come without BY, SA, and NC clauses (*i.e.* public domain dedication), but this can be changed using the keyword arguments.
 
@@ -34,7 +34,7 @@ Returns a mapping between names and UUIDs of images for a given text (see also `
 : Default to `false`
 : Specifies whether the images returned are prevented from being used in commercial projects
 """
-function names(name::AbstractString; items=1, attribution=false, sharealike=false, nocommercial=false)
+function imagesof(name::AbstractString; items=1, attribution=false, sharealike=false, nocommercial=false)
     name = lowercase(replace(name, r"\s+" => " "))
     query = [
         "filter_name" => name,
@@ -58,7 +58,11 @@ function names(name::AbstractString; items=1, attribution=false, sharealike=fals
             return only(uuids)
         else
             toreturn = min(items, response["totalItems"])
-            return Dict(uuids[1:toreturn])
+            if isone(toreturn)
+                return only(uuids)
+            else
+                return Dict(uuids[1:toreturn])
+            end
         end
     end
     return nothing

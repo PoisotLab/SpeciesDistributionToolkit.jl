@@ -5,8 +5,8 @@ global anyerrors = false
 
 tests = [
     "ping" => "ping.jl",
-    "name finder" => "names.jl"
-]
+    "images of" => "imagesof.jl",
+    "autocomplete" => "autocomplete.jl",]
 
 for test in tests
     try

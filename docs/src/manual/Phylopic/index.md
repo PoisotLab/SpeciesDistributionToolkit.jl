@@ -18,6 +18,12 @@ Phylopic.twitterimage
 Phylopic.source
 ```
 
+## Additional functions
+
+```@docs
+Phylopic.attribution
+```
+
 ## API interaction functions
 
 ```@docs

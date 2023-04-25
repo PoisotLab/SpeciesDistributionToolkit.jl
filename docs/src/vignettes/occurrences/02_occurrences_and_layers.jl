@@ -73,6 +73,11 @@ bat_thumbnail_url = Phylopic.thumbnail(bat_uuid)
 bat_thumbnail_tmp = Downloads.download(bat_thumbnail_url)
 bat_image = Images.load(bat_thumbnail_tmp)
 
+# We can also check how to credit the person who created this image. This will create
+# a markdown string, with the node name, the contributor name, and a link to the license.
+
+Phylopic.attribution(bat_uuid)
+
 # We can now use this image in a scatter plot -- this uses the thumbnail as a scatter
 # symbol, so we need to plot this like any other point. Because the thumbnail returned by
 # default is rather large, we can rescale it based on the image size:

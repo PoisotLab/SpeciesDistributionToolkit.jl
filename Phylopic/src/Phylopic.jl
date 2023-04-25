@@ -3,6 +3,7 @@ module Phylopic
 import HTTP
 import JSON
 import UUIDs
+using Markdown
 
 const api = "https://api.phylopic.org/"
 
@@ -27,5 +28,6 @@ include("autocomplete.jl")
 
 include("imagesof.jl")
 include("images.jl")
+include("attribution.jl")
 
 end # module hylopic

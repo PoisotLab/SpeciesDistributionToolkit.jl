@@ -1,8 +1,18 @@
+"""
+    Phylopic.vector(uuid::UUIDS.UUID)
+
+Returns the URL (if it exists) to the original vector image for the silhouette. Note that the image must be identified by its UUID, not by a string.
+"""
 function vector(uuid::UUIDs.UUID)
     lnks = Phylopic.images_links(uuid)
     return lnks["vectorFile"]["href"]
 end
 
+"""
+    Phylopic.thumbnail(uuid::UUIDS.UUID; resolution=192)
+
+Returns the URL (if it exists) to the thumbnails for the silhouette. The thumbnail `resolution` can be `64`, `128`, or `192` (the default).
+"""
 function thumbnail(uuid::UUIDs.UUID; resolution=192)
     @assert resolution in [64, 128, 192]
     lnks = Phylopic.images_links(uuid)

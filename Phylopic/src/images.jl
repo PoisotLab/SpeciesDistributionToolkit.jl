@@ -38,15 +38,18 @@ vector(dict::Dict{String,UUIDs.UUID}; kwargs...) = vector.(collect(dict); kwargs
 twitterimage(pair::Pair{String,UUIDs.UUID}; kwargs...) = twitterimage(pair.second; kwargs...)
 twitterimage(dict::Dict{String,UUIDs.UUID}; kwargs...) = twitterimage.(collect(dict); kwargs...)
 
-function images_links(uuid::UUIDs.UUID)
+function images_data(uuid::UUIDs.UUID)
     query = [
         "build" => Phylopic.buildnumber,
     ]
     req = HTTP.get(Phylopic.api * "images/$(string(uuid))", query=query)
     if isequal(200)(req.status)
         response = JSON.parse(String(req.body))
-        return response["_links"]
+        return response
     end
     return nothing
 end
 
+function image_links(uuid::UUIDs.UUID)
+    return images_data(uuid)["_links"]
+end

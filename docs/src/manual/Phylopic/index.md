@@ -14,7 +14,8 @@ Phylopic.imagesof
 ```@docs
 Phylopic.thumbnail
 Phylopic.vector
-Phylopic.twitter
+Phylopic.twitterimage
+Phylopic.source
 ```
 
 ## API interaction functions

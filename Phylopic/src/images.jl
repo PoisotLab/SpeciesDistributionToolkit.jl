@@ -19,6 +19,16 @@ function twitterimage(uuid::UUIDs.UUID)
 end
 
 """
+    Phylopic.source(uuid::UUIDs.UUID)
+
+Returns the source image for a UUID.
+"""
+function source(uuid::UUIDs.UUID)
+    links = Phylopic.images_links(uuid)
+    return links["sourceFile"]["href"]
+end
+
+"""
     Phylopic.thumbnail(uuid::UUIDs.UUID; resolution=192)
 
 Returns the URL (if it exists) to the thumbnails for the silhouette. The thumbnail `resolution` can be `64`, `128`, or `192` (the default).
@@ -37,6 +47,8 @@ vector(pair::Pair{String,UUIDs.UUID}; kwargs...) = vector(pair.second; kwargs...
 vector(dict::Dict{String,UUIDs.UUID}; kwargs...) = vector.(collect(dict); kwargs...)
 twitterimage(pair::Pair{String,UUIDs.UUID}; kwargs...) = twitterimage(pair.second; kwargs...)
 twitterimage(dict::Dict{String,UUIDs.UUID}; kwargs...) = twitterimage.(collect(dict); kwargs...)
+source(pair::Pair{String,UUIDs.UUID}; kwargs...) = source(pair.second; kwargs...)
+source(dict::Dict{String,UUIDs.UUID}; kwargs...) = source.(collect(dict); kwargs...)
 
 function images_data(uuid::UUIDs.UUID)
     query = [

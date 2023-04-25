@@ -62,6 +62,6 @@ function images_data(uuid::UUIDs.UUID)
     return nothing
 end
 
-function image_links(uuid::UUIDs.UUID)
+function images_links(uuid::UUIDs.UUID)
     return images_data(uuid)["_links"]
 end

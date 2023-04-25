@@ -1,5 +1,5 @@
 """
-    Phylopic.vector(uuid::UUIDS.UUID)
+    Phylopic.vector(uuid::UUIDs.UUID)
 
 Returns the URL (if it exists) to the original vector image for the silhouette. Note that the image must be identified by its UUID, not by a string.
 """
@@ -9,7 +9,17 @@ function vector(uuid::UUIDs.UUID)
 end
 
 """
-    Phylopic.thumbnail(uuid::UUIDS.UUID; resolution=192)
+    Phylopic.twitterimage(uuid::UUIDs.UUID)
+
+Returns the twitter image for a UUID.
+"""
+function twitterimage(uuid::UUIDs.UUID)
+    links = Phylopic.images_links(uuid)
+    return links["twitter:image"]["href"]
+end
+
+"""
+    Phylopic.thumbnail(uuid::UUIDs.UUID; resolution=192)
 
 Returns the URL (if it exists) to the thumbnails for the silhouette. The thumbnail `resolution` can be `64`, `128`, or `192` (the default).
 """

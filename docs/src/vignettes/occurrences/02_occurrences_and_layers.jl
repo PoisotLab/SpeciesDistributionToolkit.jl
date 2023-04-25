@@ -3,9 +3,13 @@
 # In this vignette, we will have a look at the ways in which occurrence data (from GBIF) and
 # layer data can interact. In order to illustrate this, we will get information about the
 # occurrences of *Mystacina tuberculata*, a species of bat endemic to Aotearoa New Zealand.
+# Finally, we will rely on the `Phylopic` package to download a silhouette of a bat to
+# illustrate the figure.
 
 using SpeciesDistributionToolkit
 using CairoMakie
+import Images
+import Downloads
 
 # This sets up a bounding box for the region of interest:
 
@@ -53,5 +57,35 @@ map = Axis(figure[1, 2]; aspect = DataAspect())
 hidedecorations!(map)
 hidespines!(map)
 heatmap!(map, temperature; colormap = :heat)
-scatter!(observations; color=:black)
+scatter!(observations; color = :black)
+current_figure()
+
+# We can now add a silhouette of a bat using Phylopic. We only want a single item here, and
+# the search will by default be restricted to images that can be used with the least
+# constraints.
+
+bat_uuid = Phylopic.imagesof("chiroptera"; items = 1)
+
+# The next step is to get the url of the image -- we are going to get the largest thumbnail
+# (which is the default):
+
+bat_thumbnail_url = Phylopic.thumbnail(bat_uuid)
+bat_thumbnail_tmp = Downloads.download(bat_thumbnail_url)
+bat_image = Images.load(bat_thumbnail_tmp)
+
+# We can also check how to credit the person who created this image. This will create
+# a markdown string, with the node name, the contributor name, and a link to the license.
+
+Phylopic.attribution(bat_uuid)
+
+# We can now use this image in a scatter plot -- this uses the thumbnail as a scatter
+# symbol, so we need to plot this like any other point. Because the thumbnail returned by
+# default is rather large, we can rescale it based on the image size:
+
+bat_size = Vec2f(reverse(size(bat_image) ./ 3))
+
+# Finally, we can plot everything (note that the Phylopic images have a transparent
+# background, so we are not hiding any information!):
+
+scatter!(envirovars, [14.0], [2400.0]; marker = bat_image, markersize = bat_size)
 current_figure()

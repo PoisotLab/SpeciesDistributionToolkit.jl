@@ -19,6 +19,7 @@ using Reexport
 @reexport using GBIF
 @reexport using SimpleSDMLayers
 @reexport using Fauxcurrences
+@reexport using Phylopic
 
 # SimpleSDMLayers to wrap everything together
 include("integrations/datasets_layers.jl")

@@ -49,7 +49,7 @@ As much as possible, we try to qualify the action by specifying which component 
 targeted by the commit (this might be apparent from the branch name, but especially when
 doing work in branches that start with `doc` or `sdt`, there may be changes in more
 than one package. For example, a commit that modifies the internals of `SimpleSDMLayers`
-would start with `refactor(layers):  `.
+would start with `refactor(layers): `.
 
 Note that the name of component packages are lowercase, and that abbreviations are OK.
 Specifically, `Phylopic.jl` is `phylopic`, `SpeciesDistributionToolkit.jl` is `sdt`,

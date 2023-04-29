@@ -27,6 +27,9 @@ include("integrations/datasets_layers.jl")
 # GBIF to get species occurrence data
 include("integrations/gbif_layers.jl")
 
+# GBIF and Phylopic integration
+include("integrations/gbif_phylopic.jl")
+
 # Plotting
 include("integrations/makie.jl")
 

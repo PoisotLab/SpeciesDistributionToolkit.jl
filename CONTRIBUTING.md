@@ -62,6 +62,8 @@ that introduces breaking changes. For example, a new feature in GBIF that would 
 re-write all code would have the prefix `feat(gbif)!: ` (and be followed by a `semver` commit
 to reflect the new version).
 
+In case of an *incomplete commit* (*e.g.* the code is only partly finished), the commit prefix **must** be followed by `?`. This is useful when leaving work unfinished at the end of a session. For example, a commit with an incomplete `SimpleSDMDatasets.jl` vignette can start with `doc(datasets)?: `.
+
 The commit message is on the same line as the commit prefix, and is (ideally) a short
 sentence in the imperative. The next line in the body of the message, if required, can be
 used to mention linked issues or close them. Additional information about the commit is

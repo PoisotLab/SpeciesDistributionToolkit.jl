@@ -16,12 +16,14 @@ Phylopic.thumbnail
 Phylopic.vector
 Phylopic.twitterimage
 Phylopic.source
+Phylopic.raster
 ```
 
 ## Additional functions
 
 ```@docs
 Phylopic.attribution
+Phylopic.available_resolutions
 ```
 
 ## API interaction functions

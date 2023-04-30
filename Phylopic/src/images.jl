@@ -50,6 +50,60 @@ twitterimage(dict::Dict{String,UUIDs.UUID}; kwargs...) = twitterimage.(collect(d
 source(pair::Pair{String,UUIDs.UUID}; kwargs...) = source(pair.second; kwargs...)
 source(dict::Dict{String,UUIDs.UUID}; kwargs...) = source.(collect(dict); kwargs...)
 
+"""
+    Phylopic.available_resolutions(uuid::UUIDs.UUID)
+
+Returns the available resolutions for a raster image given its UUID. The resolutions are given as a string, and can be passed as a second argument to the `Phylopic.raster` function. As the raster sizes can be different, there is no default argument to Phylopic.raster, and the first image will be used instead.
+"""
+function available_resolutions(uuid::UUIDs.UUID)
+    lnk = Phylopic.images_links(uuid)
+    resols = []
+    if haskey(lnk, "rasterFiles")
+        rasters = lnk["rasterFiles"]
+        for raster in rasters
+            push!(resols, raster["sizes"])
+        end
+        return resols
+    end
+    return nothing
+
+end
+
+"""
+    Phylopic.raster(uuid::UUIDs.UUID, resl)
+
+Returns the URL to an image in raster format, at the given resolution. Available resolutions for any image can be obtained with `Phylopic.available_resolutions`.
+"""
+function raster(uuid::UUIDs.UUID, resl)
+    lnk = Phylopic.images_links(uuid)
+    @assert resl in Phylopic.available_resolutions(uuid)
+    if ~isnothing(lnk)
+        res = filter(spec -> isequal(resl)(spec["sizes"]), lnk["rasterFiles"])
+        return first(res)["href"]
+    end
+    return nothing
+end
+
+"""
+    Phylopic.raster(uuid::UUIDs.UUID)
+
+Returns the URL to an image in raster format when no resolution is specified. In this case, the first (usually the largest) image will be returned.
+"""
+function raster(uuid::UUIDs.UUID)
+    lnk = Phylopic.images_links(uuid)
+    if ~isnothing(lnk)
+        return first(lnk)["href"]
+    end
+    return nothing
+end
+
+available_resolutions(pair::Pair{String,UUIDs.UUID}) = available_resolutions(pair.second)
+available_resolutions(dict::Dict{String,UUIDs.UUID}) = available_resolutions.(collect(dict))
+raster(pair::Pair{String,UUIDs.UUID}) = raster(pair.second)
+raster(dict::Dict{String,UUIDs.UUID}) = raster.(collect(dict))
+raster(pair::Pair{String,UUIDs.UUID}, resl) = raster(pair.second, resl)
+raster(dict::Dict{String,UUIDs.UUID}, resl) = raster.(collect(dict), resl)
+
 function images_data(uuid::UUIDs.UUID)
     query = [
         "build" => Phylopic.buildnumber,

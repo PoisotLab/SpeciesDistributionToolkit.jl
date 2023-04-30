@@ -1,16 +1,56 @@
 # Contributing guidelines
 
+## Repository structure
+
+This repository functions as a "monorepo", *i.e.* one where the top-level package
+(`SpeciesDistributionToolkit.jl`) and its components packages reside. The documentation for
+all packages is centralized in `docs`, and then each package has its code, unit tests, and `Project.toml`
+file in its own sub-folder. As a rule, we try to minimize the situations where a component
+package depends on another component package -- currently, only `Fauxcurrences` has direct
+dependences on other component packages. Code that is meant to facilitate the integration of
+multiple packages lives in `SpeciesDistributionToolkit.jl`.
+
+If some of the code in `SpeciesDistributionToolkit.jl` becomes too large, it can branched of
+to another component package. Note that because we re-export all of the component packages,
+this can be done without affecting existing code.
+
 ## How to contribute
+
+### Discussions
+
+There is a [discussion board][discussion] where you can talk about the package(s). Useful
+contributions there are feature ideas, use cases, and clarifications to the documentation.
+
+[discussion]: https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions
+
+### Issues
+
+Everything that doesn't feel right as a discussion can be opened as an issue. Issues are
+tracked in a central [project][pboard], which is used internally to prioritize the work. We
+have a tag system in place to sort issues in broad categories, based on what they target,
+the type of work required, the amount of effort needed, and the overall priority.
+
+[pboard]: https://github.com/orgs/PoisotLab/projects/3
+
+Issues are a good starting point (in fact, essentially a pre-requisite) to opening a pull
+request, as explained in the name paragraph.
+
+### Working on the code
 
 It is advised to **not** fork this repository to make a contribution -- instead, reach out
 to @tpoisot and ask for access to the repo; this will make it easier for other contributors
-to checkout your branch and contribute to it during the pull request process.
+to checkout your branch and contribute to it during the pull request process. Typically,
+you will be added to the repo when opening an issue or a discussion that you have indicated
+you would be willing to work on.
 
 It is advised to open a pull request *as soon as possible* (typically upon the first
 commit), so that the link to the preview documentation will be generated, and the tests can
-start running.
+start running. Each pull request is resulting in a new documentation build, which takes
+a lot of time as the vignettes are using almost all of the package(s) functionalities.
 
-## Naming of branches
+## Repository conventions
+
+### Naming of branches
 
 Branches are named with the following scheme: `<package>/<type>/<description>`
 
@@ -33,7 +73,7 @@ the GBIF component, adds a new feature, specifically about the map API interface
 **Do not** reference an issue number in the branch name -- this can be done in the issue
 itself on github. The branch name must convey more context than the issue number can.
 
-## Commit conventions
+### Commit conventions
 
 We use a variant of [conventional commits][convcom] for the commits. Specifically, in
 addition to the `fix` and `feat` actions, we also use `semver` (for changes to the versions
@@ -69,9 +109,11 @@ sentence in the imperative. The next line in the body of the message, if require
 used to mention linked issues or close them. Additional information about the commit is
 given *after* the links to issues.
 
-## Pull requests and merging
+### Pull requests and merging
 
 The commits in a pull request *will* be squashed before merging, and the list of commit
 messages will be kept in the body of the closing commit. The merge commit *must* follow the
-commit convention. The branches are automatically deleted when a pull request is merged.
+commit convention. The branches are automatically deleted when a pull request is merged. The
+commits that result from pulling/rebasing/conflicts operations *do not need* to follow the
+commit naming convention.
 

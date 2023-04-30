@@ -111,9 +111,12 @@ given *after* the links to issues.
 
 ### Pull requests and merging
 
-The commits in a pull request *will* be squashed before merging, and the list of commit
+The commits in a pull request *may* be squashed before merging, and the list of commit
 messages will be kept in the body of the closing commit. The merge commit *must* follow the
 commit convention. The branches are automatically deleted when a pull request is merged. The
 commits that result from pulling/rebasing/conflicts operations *do not need* to follow the
 commit naming convention.
 
+**When the changes in a pull request** affect more than one package, the best solution is
+to *not* squash the merge commit, because it will make tagging different versions more
+difficult. This can be decided at PR merging time.

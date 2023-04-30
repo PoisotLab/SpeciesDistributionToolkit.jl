@@ -1,7 +1,7 @@
 name = "Phylopic"
 uuid = "c889285c-44aa-4473-b1e1-56f5d4e3ccf5"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "0.0.1"
+version = "0.0.2"
 
 [deps]
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"

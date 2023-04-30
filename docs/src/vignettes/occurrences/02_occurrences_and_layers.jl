@@ -62,9 +62,10 @@ current_figure()
 
 # We can now add a silhouette of a bat using Phylopic. We only want a single item here, and
 # the search will by default be restricted to images that can be used with the least
-# constraints.
+# constraints. Note that we are searching using the `GBIFTaxon` object representing our
+# species.
 
-bat_uuid = Phylopic.imagesof("chiroptera"; items = 1)
+bat_uuid = Phylopic.imagesof(bat; items = 1)
 
 # The next step is to get the url of the image -- we are going to get the largest thumbnail
 # (which is the default):

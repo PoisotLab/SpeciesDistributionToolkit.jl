@@ -31,7 +31,7 @@ packages. This is the *recommended* way to interact with the packages.
 
 **Getting occurrence data**: `GBIF.jl`, a wrapper around the GBIF API, to
 retrieve taxa and occurrence datasets, and perform filtering on these occurrence
-data based on flags.
+data based on flags
 
 **Getting environmental data**: `SimpleSDMDatasets.jl`, an efficient way to
 download and store environmental raster data for consumption by other packages.
@@ -42,3 +42,7 @@ operations on raster data
 **Simulating occurrence data**: `Fauxcurrences.jl`, a package to simulate
 realistic species occurrence data from a know series of occurrences, with
 additional statistical constraints
+
+**Getting organisms silhouettes**: `Phylopic.jl`, a wrapper around the Phylopic
+API
+

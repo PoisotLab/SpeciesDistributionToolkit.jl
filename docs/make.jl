@@ -42,36 +42,34 @@ makedocs(;
         prettyurls = get(ENV, "CI", nothing) == true,
     ),
     pages = [
-        "Index" => "index.md",
-        "Vignettes" => _vignettes_pages,
-        "List of datasets" => _dataset_catalogue,
-        "Component packages" => [
-            "SpeciesDistributionToolkit.jl" => [
-                "Work with species occurrence data" => "manual/SpeciesDistributionToolkit/index.md",
-                "Occurrences and layers" => "manual/SpeciesDistributionToolkit/gbif.jl.md",
-                "Pseudo-absences" => "manual/SpeciesDistributionToolkit/pseudoabsences.md",
-            ],
-            "Phylopic.jl" => [
-                "Integration with Phylopic" => "manual/Phylopic/index.md",
-            ],
-            "SimpleSDMLayers.jl" => [
-                "Easy manipulation of layers" => "manual/SimpleSDMLayers/index.md",
-                "Layer data representation" => "manual/SimpleSDMLayers/types.md",
-                "Basic information on layers" => "manual/SimpleSDMLayers/basics.md",
-                "Operations on layers" => "manual/SimpleSDMLayers/operations.md",
-            ],
-            "GBIF.jl" => [
-                "Interface to GBIF data" => "manual/GBIF/index.md",
-                "GBIF data representation" => "manual/GBIF/types.md",
-                "GBIF data retrieval" => "manual/GBIF/data.md",
-                "Enumerated query parameters" => "manual/GBIF/enums.md",
-            ],
-            "SimpleSDMDatasets.jl" => [
-                "Interface to raster data" => "manual/SimpleSDMDatasets/index.md",
-                "Dataset representation" => "manual/SimpleSDMDatasets/dev/types.md",
-                "Data retrieval interface" => "manual/SimpleSDMDatasets/dev/interface.md",
-                "Internals" => "manual/SimpleSDMDatasets/dev/internals.md",
-            ],
+        "Home" => "index.md",
+        "User stories" => _vignettes_pages,
+        "SpeciesDistributionToolkit.jl" => [
+            "Home" => "manual/SpeciesDistributionToolkit/index.md",
+            "Occurrences and layers" => "manual/SpeciesDistributionToolkit/gbif.jl.md",
+            "Pseudo-absences" => "manual/SpeciesDistributionToolkit/pseudoabsences.md",
+        ],
+        "SimpleSDMLayers.jl" => [
+            "Home" => "manual/SimpleSDMLayers/index.md",
+            "Layer data representation" => "manual/SimpleSDMLayers/types.md",
+            "Basic information on layers" => "manual/SimpleSDMLayers/basics.md",
+            "Operations on layers" => "manual/SimpleSDMLayers/operations.md",
+        ],
+        "GBIF.jl" => [
+            "Home" => "manual/GBIF/index.md",
+            "GBIF data representation" => "manual/GBIF/types.md",
+            "GBIF data retrieval" => "manual/GBIF/data.md",
+            "Enumerated query parameters" => "manual/GBIF/enums.md",
+        ],
+        "Phylopic.jl" => [
+            "Home" => "manual/Phylopic/index.md",
+        ],
+        "SimpleSDMDatasets.jl" => [
+            "Home" => "manual/SimpleSDMDatasets/index.md",
+            "List of datasets" => _dataset_catalogue,
+            "Dataset representation" => "manual/SimpleSDMDatasets/dev/types.md",
+            "Data retrieval interface" => "manual/SimpleSDMDatasets/dev/interface.md",
+            "Internals" => "manual/SimpleSDMDatasets/dev/internals.md",
         ],
     ],
 )

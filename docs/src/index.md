@@ -1,7 +1,7 @@
 # Species Distributions Toolkit
 
 This package is a wrapper around a series of tools, *a.k.a.* component packages,
-that are meant to simplify the building of species distribution models. The
+that are meant to simplify the construction of species distribution models. The
 models themselves are *not* part of this package, which is intended to take the
 tedium out of data preparation.
 
@@ -15,10 +15,11 @@ In particular, the package offers
 - a simple way to represent layers as either mutable or immutable objects (`SimpleSDMLayers.jl`)
 - a way to collect historic and future climate and land-use data to feed into the models (`SimpleSDMDatasets.jl`)
 - interfaces to Makie for plotting and data visualisation
+- an integration of the phylopic API to get illustrations for organisms
 
 This documentation is therefore pretty vast: it offers an in-depth explanation of what the
 component packages are doing and how they work, discusses the interactions between these
-packages, and offers a series of illustrations which includes some examples of models of
+packages, and offers a series of user stories which includes some examples of models of
 species distributions.
 
 If you want to contribute to the project, the best way is likely to have a look

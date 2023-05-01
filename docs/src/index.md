@@ -22,6 +22,11 @@ component packages are doing and how they work, discusses the interactions betwe
 packages, and offers a series of user stories which includes some examples of models of
 species distributions.
 
+The *suggested* way to use this documentation is to start by having a look at "user
+stories", which show ways to use the package to solve well-defined problems. After this, the
+documentation of each of the components go into more detail about how to use the different
+methods.
+
 If you want to contribute to the project, the best way is likely to have a look
 at the [development dashboard](https://github.com/orgs/PoisotLab/projects/3), or
 look for [possible first

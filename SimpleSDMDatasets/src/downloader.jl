@@ -7,6 +7,11 @@ function _drop_package_name_from_path(path)
     return path
 end
 
+"""
+    SimpleSDMDatasets.downloader(data; kwargs...)
+
+This function will handle the downloading of raster data. It is not a part of the interface that has to be overloaded, and has been designed to be general purpose.
+"""
 function downloader(
     data::RasterData{P, D};
     kwargs...,

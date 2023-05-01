@@ -53,6 +53,11 @@ function _layers_are_compatible(layers::Array{T}) where {T <: SimpleSDMLayer}
     return all(layer -> _layers_are_compatible(layer, layers[1]), layers)
 end
 
+"""
+    grid(layer::T) where {T <: SimpleSDMLayer}
+
+Returns a *copy* of the grid for a given layer.
+"""
 function grid(layer::T) where {T <: SimpleSDMLayer}
     return copy(layer.grid)
 end

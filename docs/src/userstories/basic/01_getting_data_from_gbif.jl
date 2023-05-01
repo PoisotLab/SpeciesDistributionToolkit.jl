@@ -6,13 +6,26 @@
 # API, but this is at best a side effect. What matters is: capybaras slaps.
 
 using SpeciesDistributionToolkit
-using DataFrames
+using DataFrames, Images, Downloads
+
+# Right away, we can start by noticing that we only need to import the
+# `SpeciesDistributionToolkit` package. This is because it will re-export all of the content
+# of the packages that are nested under it, and so there is no need to remember where (most
+# of) the methods come from.
 
 # The first step is to understand how GBIF represents the taxonomic information. The `taxon`
 # function will take a string (or a GBIF taxonomic ID, but most people tend to call species
 # by their names...) and return a representation of this taxon.
 
 capybara = taxon("Hydrochoerus hydrochaeris")
+
+# In case we need a reminder of what a capybara looks like, we can call the Phylopic API:
+
+capybara |>
+Phylopic.imagesof |>
+Phylopic.thumbnail |>
+Downloads.download |>
+Images.load
 
 # An interesting property of the GBIF API is that it returns the full taxonomic information,
 # so we can for example check that the capybara is a chordate:
@@ -82,7 +95,11 @@ extrema(filter(!ismissing, [fren.date for fren in where_is_fren]))
 # The GBIF results can interact very seamlessly with the layer types, which is covered in
 # other vignettes.
 
-# Finally, the package implements the interface to *Tables.jl*, so that we may write:
+# Finally, the package implements the interface to *Tables.jl*, so that we may write a query
+# to go look for the 20 most recent observations:
 
-fields_to_keep = [:key, :publishingCountry, :country, :latitude, :longitude, :date]
-select(DataFrame(where_is_fren), fields_to_keep)[1:20,:]
+fields_to_keep = [:country, :latitude, :longitude, :date]
+first(
+    sort(dropmissing(select(DataFrame(where_is_fren), fields_to_keep)), :date; rev = true),
+    20,
+)

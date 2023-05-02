@@ -155,6 +155,11 @@ struct RasterCell{L <: Number, T <: Any}
     value::T
 end
 
+"""
+    RasterCell(layer::T, position) where {T <: SimpleSDMLayer}
+
+Creates a `RasterCell` from a layer and a position, where the `position` (second argument) refers to the cartesian position of the cell within the grid.
+"""
 function RasterCell(layer::T, position) where {T <: SimpleSDMLayer}
     lon = longitudes(layer)[last(position.I)]
     lat = latitudes(layer)[first(position.I)]

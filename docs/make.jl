@@ -6,6 +6,7 @@ using Dates
 using Literate
 
 # Generate a report card for each known dataset
+@info "Build the dataset report cards"
 include("dataset_report.jl")
 
 # Compile the stories for the top-level package
@@ -16,6 +17,7 @@ _stories_categories = [
 ]
 _stories_pages = Pair{String, Vector{Pair{String, String}}}[]
 for _category in _stories_categories
+    @info "Building the user stories for $(_category)"
     folder, title = _category
     stories = filter(
         endswith(".jl"),
@@ -25,6 +27,7 @@ for _category in _stories_categories
     for story in stories
         Literate.markdown(story, joinpath("docs", "src", "userstories", folder))
         compiled_story = replace(story, ".jl" => ".md")
+        @info "\t$(compiled_story)"
         push!(
             this_category,
             last(split(readlines(story)[1], "# # ")) =>
@@ -34,6 +37,7 @@ for _category in _stories_categories
     push!(_stories_pages, title => this_category)
 end
 
+@info "Starting makedocs"
 makedocs(;
     sitename = "Species Distribution Toolkit",
     format = Documenter.HTML(;

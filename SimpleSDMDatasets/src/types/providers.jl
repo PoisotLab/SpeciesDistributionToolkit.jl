@@ -13,8 +13,23 @@ This provider offers access to the version 2 of the WorldClim data, accessible f
 """
 struct WorldClim2 <: RasterProvider end
 
+"""
+    EarthEnv
+
+This provider offers access to the EarthEnv data, accessible from `https://www.earthenv.org/`.
+"""
 struct EarthEnv <: RasterProvider end
 
+"""
+    CHELSA1
+
+This providers offers access to the version 1 of CHELSA data, accessible from `https://chelsa-climate.org/`. See also `CHELSA2`.
+"""
 struct CHELSA1 <: RasterProvider end
 
+"""
+    CHELSA2
+
+This providers offers access to the version 2 of CHELSA data, accessible from `https://chelsa-climate.org/`. See also `CHELSA1`.
+"""
 struct CHELSA2 <: RasterProvider end

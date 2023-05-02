@@ -144,6 +144,11 @@ for simplesdm_type in simplesdm_types
     )
 end
 
+"""
+    RasterCell
+
+A `RasterCell` is the representation of the contents of a single cell in a raster, and carries information about latitude, longitude, and the value of the cell. This is an internal type, which is used to facilitate iteration and the construction of tables from raster data.
+"""
 struct RasterCell{L <: Number, T <: Any}
     longitude::L
     latitude::L

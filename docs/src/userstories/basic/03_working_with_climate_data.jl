@@ -1,49 +1,39 @@
 # # Working with climate data
 
-# The purpose of this vignette is to show how isothermality will change in Iceland under
-# a specific climate change scenario, and to map the results.
+# The purpose of this vignette is to measure the projected change in temperature in Iceland,
+# under a specific climate change scenario. We will also map areas representing temperature
+# values that are outside of the current range.
 
 using SpeciesDistributionToolkit
 using CairoMakie, GeoMakie
+using Dates
 
 # As with other vignettes, we will define a bounding box encompassing out region of
 # interest:
 
 spatial_extent = (left = -24.785, right = -12.634, top = 66.878, bottom = 62.935)
 
-# We will get the BioClim data from CHELSA v1. CHELSA v1 offers access to the 19 original
-# bioclim variable, and their projection under a variety of CMIP5 models/scenarios.
-# These are pretty large data, and so this operation may take a while in terms of download/read
-# time. The first time you run this command will download the data, and the next calls will
-# read them from disk.
+# In order to get the temperature data, we will query the `AverageTemperature` dataset from
+# the CHELSA1 provider.
 
-dataprovider = RasterData(CHELSA1, BioClim)
+dataprovider = RasterData(CHELSA1, AverageTemperature)
 
-# In the BioClim parlance, isothermality is `"BIO3"`, so this is the layer we will request.
-# We wrap this inside a tuple to make the subsequent function calls faster to write.
+# The first step is quite simply to grab the reference state for the temperature, by
+# specifying the spatial extent. The average temperature dataset has a single layer, but has
+# one slice for every month in the year. Here, we will focus on the temperature in April:
 
-data_info = (layer = "BIO3",)
+current_temperature = SimpleSDMPredictor(dataprovider; month = Month(4), spatial_extent...)
 
-# We could also check the layer descriptions directly:
-
-layerdescriptions(dataprovider)["BIO3"]
-
-# Note that we do not *need* to give the bounding box and layer data as distinct variables,
-# but this is more convenient in terms of code re-use. For this reason, we follow this
-# convention throughout the documentation.
-
-# The first step is quite simply to grab the reference state for the isothermality, by
-# specifying the layer and the spatial extent:
-
-isotherm_current = SimpleSDMPredictor(dataprovider; data_info..., spatial_extent...)
+# Note that we represent "April" as `Dates.Month(4)`, in order to convey that this is
+# actually a date.
 
 # We can have a little look at this dataset by checking the density of the values for
-# isothermality (we can pass a layer to a Makie function directly):
+# temperature (we can pass a layer to a Makie function directly):
 
 density(
-    isotherm_current; color = (:grey, 0.5),
+    current_temperature; color = (:grey, 0.5),
     figure = (; resolution = (800, 300)),
-    axis = (; xlabel = "Raw isothermality data"),
+    axis = (; xlabel = "Current temperature for April"),
 )
 
 # They look very high, because CHELSA1 stores the temperature-related data multiplied by
@@ -57,12 +47,12 @@ figure = Figure(; resolution = (800, 700))
 panel_current = GeoAxis(
     figure[1, 1];
     dest = "+proj=natearth2",
-    lonlims = extrema(longitudes(isotherm_current)),
-    latlims = extrema(latitudes(isotherm_current)),
+    lonlims = extrema(longitudes(current_temperature)),
+    latlims = extrema(latitudes(current_temperature)),
 )
-iso_current_hm = surface!(
+current_heatmap = surface!(
     panel_current,
-    0.1 .* isotherm_current;
+    0.1 .* current_temperature;
     shading = false,
     interpolate = false,
     colormap = :oslo,
@@ -85,8 +75,8 @@ SimpleSDMDatasets.timespans(dataprovider, projection)
 # timespan. Getting the projected isothermality is the *same* call as before, except we now pass an
 # additional argument -- the projection.
 
-isotherm_proj =
-    SimpleSDMPredictor(dataprovider, projection; data_info..., spatial_extent...)
+projected_temperature =
+    SimpleSDMPredictor(dataprovider, projection; month = Month(4), spatial_extent...)
 
 # With this information, we can update the existing figure, to add a second panel with the
 # difference in isothermality:
@@ -94,12 +84,12 @@ isotherm_proj =
 panel_future = GeoAxis(
     figure[2, 1];
     dest = "+proj=natearth2",
-    lonlims = extrema(longitudes(isotherm_current)),
-    latlims = extrema(latitudes(isotherm_current)),
+    lonlims = extrema(longitudes(current_temperature)),
+    latlims = extrema(latitudes(current_temperature)),
 )
-iso_future_hm = surface!(
+future_heatmap = surface!(
     panel_future,
-    0.1 .* (isotherm_proj .- isotherm_current);
+    0.1 * (projected_temperature - current_temperature);
     shading = false,
     interpolate = false,
     colormap = :roma,
@@ -108,16 +98,16 @@ Colorbar(figure[2, end + 1]; height = Relative(0.7), colorrange = (-2, 2), color
 current_figure()
 
 # We can also very easily look at the relationship between current and future
-# climate (the `scatter` function would work just as well, but `hexbin` is good
+# temperature (the `scatter` function would work just as well, but `hexbin` is good
 # at aggregating cells with more datapoints):
 
 hexbin(
-    isotherm_current,
-    isotherm_proj;
+    current_temperature,
+    projected_temperature;
     figure = (; resolution = (800, 700)),
     axis = (;
         aspect = DataAspect(),
-        xlabel = "Historical isothermality",
-        ylabel = "Projected isothermality",
+        xlabel = "Historical temperature",
+        ylabel = "Projected temperature",
     ),
 )

@@ -1,4 +1,4 @@
-# # Working with climate data
+# # Visualizing temperature changes
 
 # The purpose of this vignette is to measure the projected change in temperature in Iceland,
 # under a specific climate change scenario. We will also map areas representing temperature

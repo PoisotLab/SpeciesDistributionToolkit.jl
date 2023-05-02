@@ -23,7 +23,7 @@ This enum stores the possible types of returned files. They are listed with
 end
 
 """
-    RasterProjection
+    RasterCRS
 
 This enum stores the possible coordinate representation system of returned files. They are listed with `instances(RasterProjection)`.
 """

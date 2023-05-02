@@ -67,8 +67,9 @@ Colorbar(resistance_map.figure[:, end + 1], resistance_map.plot; height = Relati
 current_figure()
 
 # And there we have it. We can see the areas of higher resistances corresponding to urban
-# areas (Toronto, Ottawa, Montréal, and Québec to a lesser extent), and further confirm that
-# Sherbrooke is not an actual city. Areas with less forest cover around the St-Lawrence
+# areas (Toronto, Ottawa, Montréal, and Québec to a lesser extent).
+
+# Areas with less forest cover around the St-Lawrence
 # river, and around Toronto, are offering a medium resistance, while the primarily forested
 # areas are offering the least resistance to movement. This layer can then be used in
 # landscape connectivity analyses using *e.g.* Omniscape.jl.

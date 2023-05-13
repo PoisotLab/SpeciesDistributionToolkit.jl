@@ -17,4 +17,14 @@ layer2 = SpeciesDistributionToolkit._read_geotiff(f, SimpleSDMPredictor)
 @test typeof(layer2) <: SimpleSDMPredictor
 @test all(values(layer) .== values(layer2))
 
+# Write the data
+f = tempname()
+SpeciesDistributionToolkit.save(f, [layer]; nodata = typemax(D))
+@test isfile(f)
+
+# Read the data
+layer2 = SpeciesDistributionToolkit.read(f, SimpleSDMPredictor)
+@test typeof(layer2) <: SimpleSDMPredictor
+@test all(values(layer) .== values(layer2))
+
 end

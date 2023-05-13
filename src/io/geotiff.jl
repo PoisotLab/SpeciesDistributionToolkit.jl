@@ -41,9 +41,9 @@ function _read_geotiff(
     driver::String = "GTiff",
     compress::String = "LZW",
 ) where {LT <: SimpleSDMLayer}
+    @assert driver ∈ keys(ArchGDAL.listdrivers()) ||
+            throw(ArgumentError("Not a valid driver."))
 
-    @assert driver ∈ keys(ArchGDAL.listdrivers()) || throw(ArgumentError("Not a valid driver."))
-    
     try
         ArchGDAL.read(file) do stuff
             wkt = ArchGDAL.importPROJ4(ArchGDAL.getproj(stuff))
@@ -144,10 +144,10 @@ function _write_geotiff(
     layer::SimpleSDMPredictor{T};
     nodata::T = convert(T, -9999),
     driver::String = "GTiff",
-    compress="LZW"
+    compress = "LZW",
 ) where {T <: Number}
-
-    @assert driver ∈ keys(ArchGDAL.listdrivers()) || throw(ArgumentError("Not a valid driver."))
+    @assert driver ∈ keys(ArchGDAL.listdrivers()) ||
+            throw(ArgumentError("Not a valid driver."))
     #@assert compress ∈ keys(ArchGDAL.listcompress()) || throw(ArgumentError("Not a valid compression."))
 
     array_t = _prepare_layer_for_burnin(layer, nodata)
@@ -187,6 +187,7 @@ function _write_geotiff(
             options = ["COMPRESS=$compress"],
         )
     end
+    isfile(prefix) && rm(prefix)
     return file
 end
 
@@ -214,11 +215,10 @@ function _write_geotiff(
     layers::Vector{SimpleSDMPredictor{T}};
     nodata::T = convert(T, -9999),
     driver::String = "GTiff",
-    compress::String = "LZW"
+    compress::String = "LZW",
 ) where {T <: Number}
-
-
-    @assert driver ∈ keys(ArchGDAL.listdrivers()) || throw(ArgumentError("Not a valid driver."))
+    @assert driver ∈ keys(ArchGDAL.listdrivers()) ||
+            throw(ArgumentError("Not a valid driver."))
     # to be uncommented once ths getcompressions fcn exists
     #@assert compress ∈ keys(ArchGDAL.listcompress()) || throw(ArgumentError("Not a valid compression."))
 
@@ -262,6 +262,7 @@ function _write_geotiff(
             options = ["COMPRESS=$compress"],
         )
     end
+    isfile(prefix) && rm(prefix)
     return file
 end
 

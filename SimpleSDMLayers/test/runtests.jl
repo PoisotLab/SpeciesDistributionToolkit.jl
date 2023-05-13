@@ -12,6 +12,7 @@ tests = [
     "tiling" => "core/tiling.jl",
     "setindex" => "core/setindex.jl",
     "overloads" => "overloads.jl",
+    "minus" => "minus.jl",
     "clipping" => "operations/clip.jl",
     "rescale" => "operations/rescale.jl",
     "mosaic" => "operations/mosaic.jl",

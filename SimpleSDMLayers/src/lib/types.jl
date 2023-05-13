@@ -144,6 +144,14 @@ for simplesdm_type in simplesdm_types
     )
 end
 
+function SimpleSDMResponse(b::BitMatrix, args...)
+    return SimpleSDMResponse(Matrix(b), args...)
+end
+
+function SimpleSDMPredictor(b::BitMatrix, args...)
+    return SimpleSDMPredictor(Matrix(b), args...)
+end
+
 struct RasterCell{L <: Number, T <: Any}
     longitude::L
     latitude::L

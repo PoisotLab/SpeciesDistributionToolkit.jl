@@ -335,6 +335,14 @@ Base.://(n::Number, layer::T) where {T <: SimpleSDMLayer} = broadcast(x -> n // 
 Base.://(layer::T, n::Number) where {T <: SimpleSDMLayer} = broadcast(x -> x // n, layer)
 Base.:%(n::Number, layer::T) where {T <: SimpleSDMLayer} = broadcast(x -> n % x, layer)
 Base.:%(layer::T, n::Number) where {T <: SimpleSDMLayer} = broadcast(x -> x % n, layer)
+Base.:-(layer::T) where {T <: SimpleSDMLayer} = broadcast(-, layer)
+Base.:!(layer::T) where {T <: SimpleSDMLayer} = broadcast(!, layer)
+
+function Base.:!(layer::T) where {T <: SimpleSDMLayer}
+    ngrid = (!).(SimpleSDMLayers.grid(layer))
+    RT = T <: SimpleSDMResponse ? SimpleSDMResponse : SimpleSDMPredictor
+    return RT(ngrid, layer.left, layer.right, layer.bottom, layer.top)
+end
 
 function Base.findmax(layer::T) where {T <: SimpleSDMLayer}
     val, pos = findmax(values(layer))

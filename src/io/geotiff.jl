@@ -143,7 +143,7 @@ function _write_geotiff(
     file::AbstractString,
     layer::SimpleSDMPredictor{T};
     nodata::T = convert(T, -9999),
-    driver::String = "COG",
+    driver::String = "GTiff",
     compress="LZW"
 ) where {T <: Number}
 

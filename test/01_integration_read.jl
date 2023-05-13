@@ -18,12 +18,12 @@ layer2 = SpeciesDistributionToolkit._read_geotiff(f, SimpleSDMPredictor)
 @test all(values(layer) .== values(layer2))
 
 # Write the data
-f = tempname()
+f = tempname() * ".tiff" # This is important because the save function checks extensions
 SpeciesDistributionToolkit.save(f, [layer]; nodata = typemax(D))
 @test isfile(f)
 
 # Read the data
-layer2 = SpeciesDistributionToolkit.read(f, SimpleSDMPredictor)
+layer2 = SimpleSDMPredictor(f)
 @test typeof(layer2) <: SimpleSDMPredictor
 @test all(values(layer) .== values(layer2))
 

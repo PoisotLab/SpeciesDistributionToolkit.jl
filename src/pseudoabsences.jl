@@ -151,13 +151,13 @@ function pseudoabsencemask(
 end
 
 """
-    sample(layer::T, n::Integer = 1; kwargs...) where {T <: SimpleSDMLayer}
+    rarefy(layer::T, n::Integer = 1; kwargs...) where {T <: SimpleSDMLayer}
 
 Sample a series of background points from a Boolean layer. The `kwargs`
 arguments are passed to `StatsBase.sample`. This method returns a Boolean layer
 where the values of `true` correspond to a background point.
 """
-function sample(layer::T, n::Integer = 1; kwargs...) where {T <: SimpleSDMLayer}
+function rarefy(layer::T, n::Integer = 1; kwargs...) where {T <: SimpleSDMLayer}
     @assert SimpleSDMLayers._inner_type(layer) <: Bool
     pseudoabs = similar(layer, Bool)
     for k in StatsBase.sample(keys(replace(layer, false => nothing)), n; kwargs...)
@@ -167,14 +167,14 @@ function sample(layer::T, n::Integer = 1; kwargs...) where {T <: SimpleSDMLayer}
 end
 
 """
-    sample( layer::T, weights::T2, n::Integer = 1; kwargs..., ) where {T <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
+    rarefy(layer::T, weights::T2, n::Integer = 1; kwargs..., ) where {T <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
 
 Sample a series of background points from a Boolean layer, where each point has
 a probability of being included in the background given by the second layer.
 This methods works like (and is, in fact, a wrapper around) `StatsBase.sample`,
 where the cell values in the weight layers are transformed into weights.
 """
-function sample(
+function rarefy(
     layer::T,
     weights::T2,
     n::Integer = 1;

@@ -36,7 +36,10 @@ end
 """
     _random_point(ref, d; R = 6371.0)
 
-This function is used _internally_ to create a random point located within a distance `d` of point `ref`, assuming that the radius of the Earth is `R`. All it does is to generate a random angle in degrees, and the using the `_known_point` method to generate the new point.
+This function is used _internally_ to create a random point located within a
+distance `d` of point `ref`, assuming that the radius of the Earth is `R`. All
+it does is to generate a random angle in degrees, and the using the
+`_known_point` method to generate the new point.
 """
 function _random_point(ref, d; R = 6371.0)
     α = deg2rad(rand() * 360.0)
@@ -46,7 +49,8 @@ end
 """
     _known_point(ref, d, α; R = 6371.0)
 
-This function will generate a new point set at a distance `d` and angle `α` from the `ref` point, assuming the radius of the Earth is `R`.
+This function will generate a new point set at a distance `d` and angle `α` from
+the `ref` point, assuming the radius of the Earth is `R`.
 """
 function _known_point(ref, d, α; R = 6371.0)
     # Convert the coordinates from degrees to radians
@@ -106,10 +110,10 @@ end
 """
     pseudoabsencemask(::Type{RandomSelection}, presence::T) where {T <: SimpleSDMLayer}
 
-Generates a mask for pseudo-absences using the random selection method. Candidate
-cells for the pseudo-absence mask are (i) within the bounding box of the _layer_
-(use `SurfaceRangeEnvelope` to use the presences bounding box), and (ii) valued in the
-layer.
+Generates a mask for pseudo-absences using the random selection method.
+Candidate cells for the pseudo-absence mask are (i) within the bounding box of
+the _layer_ (use `SurfaceRangeEnvelope` to use the presences bounding box), and
+(ii) valued in the layer.
 """
 function pseudoabsencemask(
     ::Type{RandomSelection},

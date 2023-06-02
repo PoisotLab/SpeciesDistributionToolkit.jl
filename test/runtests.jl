@@ -5,6 +5,7 @@ global anyerrors = false
 
 tests = [
     "read/write layers" => "01_integration_read.jl",
+    "rarefy pseudo-absences" => "02_rarefy.jl",
     "EDGE: stitch bounding box" => "edgecases/01_stitch_wrong_bb.jl",
     "EDGE: clip & GDAL" => "edgecases/02_clip_gdalwarp.jl",
     "EDGE: keychecker" => "edgecases/03_layers_keycheck.jl",

@@ -42,5 +42,6 @@ include("io/read_write.jl")
 include("pseudoabsences.jl")
 export WithinRadius, SurfaceRangeEnvelope, RandomSelection
 export pseudoabsencemask
+export rarefy
 
 end # module SpeciesDistributionToolkit

@@ -73,33 +73,58 @@ function pseudoabsencemask(
     distance::Number = 100.0,
 ) where {T <: SimpleSDMLayer}
     _layer_works_for_pseudoabsence(presences)
-    presence_only = mask(presences, presences)
-    background = similar(presences, Bool)
-    keypool = keys(background)
-    # We only need to allocate this once, this is going to be written over for every
-    # iteration
-    lon = zeros(Float64, 4)
-    lat = zeros(Float64, 4)
-    for occupied_cell in keys(presence_only)
-        for (i, angl) in enumerate((0:3) / 4)
-            α = deg2rad(360.0angl)
-            lon[i], lat[i] = _known_point(occupied_cell, distance, α)
-        end
-        # Approximate bounding box for the cells to deal with
-        max_lat = min(presences.top, maximum(lat))
-        min_lat = max(presences.bottom, minimum(lat))
-        max_lon = min(presences.right, maximum(lon))
-        min_lon = max(presences.left, minimum(lon))
-        valid_keys = filter(
-            k -> (min_lon <= k[1] <= max_lon) & (min_lat <= k[2] <= max_lat),
-            keypool,
-        )
-        filter!(k -> _distance_function(occupied_cell, k) <= distance, valid_keys)
-        for background_cell in valid_keys
-            background[background_cell] = true
-        end
-        deleteat!(keypool, indexin(valid_keys, keypool))
+
+    function _check_bounds(template, i)
+        sz = size(template)
+        i[1] <= 0 && return false
+        i[2] <= 0 && return false
+        i[1] > sz[1] && return false
+        i[2] > sz[2] && return false
+        return true
     end
+
+    presence_only = mask(presences, presences)
+    presence_idx = findall(x->x==1,presence_only.grid)
+
+    background = similar(presences, Bool)
+    background.grid .= true
+
+    y,x = size(presences)
+    bbox = boundingbox(presences)
+    Δx = (bbox[:right] - bbox[:left])/ x   # how much a raster cell is in long
+    Δy = (bbox[:top] - bbox[:bottom])/ y   # how much a raster cell is in lat
+    
+    lon = zeros(Float64, 2)
+    lat = zeros(Float64, 2)
+    for (i, angl) in enumerate((0:1) / 4)
+        α = deg2rad(360.0angl)
+        lon[i], lat[i] = SpeciesDistributionToolkit._known_point([0.0, 0.0], distance, α)
+    end
+
+    max_cells_x, max_cells_y =  Int32.(floor.([lon[2] / Δx, lat[1] / Δy])) 
+
+    radius_mask = OffsetArrays.OffsetArray(ones(Bool, 2max_cells_x+1, 2max_cells_y+1), -max_cells_x:max_cells_x, -max_cells_y:max_cells_y) 
+
+    for i in CartesianIndices(radius_mask)
+        long_offset, lat_offset = abs.([i[1], i[2]]) .* [Δx, Δy]
+
+        total_dist = sqrt(long_offset^2 + lat_offset^2)
+        radius_mask[i] = total_dist <= max(lon[2], lat[1])  # there consequence of using min here are fewer cells are PAs, so why not take the upper bound
+    end
+
+    # Mask radius around each presence point 
+    for occ_idx in presence_idx
+        offs = CartesianIndices((-max_cells_x:max_cells_x, -max_cells_y:max_cells_y))
+        I = offs .+ occ_idx
+
+        # very clear var names here:
+        for (i, idx) in enumerate(I)
+            if _check_bounds(background, idx) && radius_mask[offs[i]]
+                background[idx] = false
+            end 
+        end 
+    end
+    
     return background
 end
 

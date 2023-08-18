@@ -111,22 +111,24 @@ function pseudoabsencemask(
     # method of filtering coordinates, but may be significantly slower than the
     # simpler methods.  
 
+    # The second issue is that the previous version and my version use flipped
+    # versions of whether true/false means included/excluded, so the doc
+    # building fails.
 
-    # Replace this with direct calc of max_cells_x/y using rad 
-    for (i, angl) in enumerate((0:1) / 4)
-        α = deg2rad(360.0angl)
-        lon[i], lat[i] = SpeciesDistributionToolkit._known_point([0.0, 0.0], distance, α)
-    end
+    # todo: replace centroid with raster centroid as the quick fix version
+    centroid = [0.0, 0.0]
+    _, lat = SpeciesDistributionToolkit._known_point(centroid, distance, 0)
+    lon, _ = SpeciesDistributionToolkit._known_point(centroid, distance, π/2)
 
     # total offset from origin in each direction 
-    max_cells_x, max_cells_y =  Int32.(floor.([lon[2] / Δx, lat[1] / Δy])) 
+    max_cells_x, max_cells_y =  Int32.(floor.([lon / Δx, lat / Δy])) 
 
     radius_mask = OffsetArrays.OffsetArray(ones(Bool, 2max_cells_x+1, 2max_cells_y+1), -max_cells_x:max_cells_x, -max_cells_y:max_cells_y) 
 
     for i in CartesianIndices(radius_mask)
         long_offset, lat_offset = abs.([i[1], i[2]]) .* [Δx, Δy]
         total_dist = sqrt(long_offset^2 + lat_offset^2)
-        radius_mask[i] = total_dist <= max(lon[2], lat[1])  # there consequence of using min here are fewer cells are PAs, so why not take the upper bound
+        radius_mask[i] = total_dist <= max(lon, lat)  # there consequence of using min here are fewer cells are PAs, so why not take the upper bound
     end
 
     # Mask radius around each presence point 

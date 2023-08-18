@@ -5,6 +5,7 @@ version = "0.0.7"
 
 [deps]
 ArchGDAL = "c9ce4bd3-c3d5-55b8-8973-c0e20141b8c3"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
 Fauxcurrences = "a2d61402-033a-4ca9-aef4-652d70cf7c9c"
 GBIF = "ee291a33-5a6c-5552-a3c8-0f29a1181037"

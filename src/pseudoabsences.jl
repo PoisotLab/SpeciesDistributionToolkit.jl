@@ -96,6 +96,23 @@ function pseudoabsencemask(
     
     lon = zeros(Float64, 2)
     lat = zeros(Float64, 2)
+
+    # Okay, so this is a bad idea to use (0,0) 🤦
+    # 
+    # It's reasonable to use the centroid of the raster as a basis and use the
+    # same sliding mask for each point.
+
+    # However, if the extent is large enough, this assumption might break down
+    # and the size of the sliding window should be calculated for each
+    # occurrence (or for some subbdivision of the raster into subsections).
+
+    # The slowest (but most accurrate) version would create an offset mask for
+    # each occurrence. This is still likely faster than the current version
+    # method of filtering coordinates, but may be significantly slower than the
+    # simpler methods.  
+
+
+    # Replace this with direct calc of max_cells_x/y using rad 
     for (i, angl) in enumerate((0:1) / 4)
         α = deg2rad(360.0angl)
         lon[i], lat[i] = SpeciesDistributionToolkit._known_point([0.0, 0.0], distance, α)

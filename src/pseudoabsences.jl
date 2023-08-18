@@ -89,7 +89,7 @@ function pseudoabsencemask(
     background = similar(presences, Bool)
     background.grid .= true
 
-    y,x = size(presences)
+    y, x = size(presences) # axes returned by size are flipped 
     bbox = boundingbox(presences)
     Δx = (bbox[:right] - bbox[:left])/ x   # how much a raster cell is in long
     Δy = (bbox[:top] - bbox[:bottom])/ y   # how much a raster cell is in lat
@@ -101,26 +101,26 @@ function pseudoabsencemask(
         lon[i], lat[i] = SpeciesDistributionToolkit._known_point([0.0, 0.0], distance, α)
     end
 
+    # total offset from origin in each direction 
     max_cells_x, max_cells_y =  Int32.(floor.([lon[2] / Δx, lat[1] / Δy])) 
 
     radius_mask = OffsetArrays.OffsetArray(ones(Bool, 2max_cells_x+1, 2max_cells_y+1), -max_cells_x:max_cells_x, -max_cells_y:max_cells_y) 
 
     for i in CartesianIndices(radius_mask)
         long_offset, lat_offset = abs.([i[1], i[2]]) .* [Δx, Δy]
-
         total_dist = sqrt(long_offset^2 + lat_offset^2)
         radius_mask[i] = total_dist <= max(lon[2], lat[1])  # there consequence of using min here are fewer cells are PAs, so why not take the upper bound
     end
 
     # Mask radius around each presence point 
     for occ_idx in presence_idx
-        offs = CartesianIndices((-max_cells_x:max_cells_x, -max_cells_y:max_cells_y))
-        I = offs .+ occ_idx
+        offsets = CartesianIndices((-max_cells_x:max_cells_x, -max_cells_y:max_cells_y))
+        within_radius_idx = offsets .+ occ_idx
 
         # very clear var names here:
-        for (i, idx) in enumerate(I)
-            if _check_bounds(background, idx) && radius_mask[offs[i]]
-                background[idx] = false
+        for (i, cartesian_idx) in enumerate(within_radius_idx)
+            if _check_bounds(background, cartesian_idx) && radius_mask[offsets[i]]
+                background[cartesian_idx] = false
             end 
         end 
     end

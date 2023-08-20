@@ -86,21 +86,15 @@ function pseudoabsencemask(
     presence_only = mask(presences, presences)
     presence_idx = findall(x->x==1,presence_only.grid)
 
-    background = similar(presences, Bool)
-    background.grid .= true
-
+    
     y, x = size(presences) # axes returned by size are flipped 
     bbox = boundingbox(presences)
     Δx = (bbox[:right] - bbox[:left])/ x   # how much a raster cell is in long
     Δy = (bbox[:top] - bbox[:bottom])/ y   # how much a raster cell is in lat
     
-    lon = zeros(Float64, 2)
-    lat = zeros(Float64, 2)
-
-    # Okay, so this is a bad idea to use (0,0) 🤦
-    # 
     # It's reasonable to use the centroid of the raster as a basis and use the
     # same sliding mask for each point.
+    centroid = [0.5(bbox[:right]+bbox[:left]), 0.5(bbox[:bottom]+bbox[:top])]
 
     # However, if the extent is large enough, this assumption might break down
     # and the size of the sliding window should be calculated for each
@@ -111,40 +105,53 @@ function pseudoabsencemask(
     # method of filtering coordinates, but may be significantly slower than the
     # simpler methods.  
 
-    # The second issue is that the previous version and my version use flipped
-    # versions of whether true/false means included/excluded, so the doc
-    # building fails.
-
-    # todo: replace centroid with raster centroid as the quick fix version
-    centroid = [0.0, 0.0]
     _, lat = SpeciesDistributionToolkit._known_point(centroid, distance, 0)
     lon, _ = SpeciesDistributionToolkit._known_point(centroid, distance, π/2)
 
-    # total offset from origin in each direction 
-    max_cells_x, max_cells_y =  Int32.(floor.([lon / Δx, lat / Δy])) 
+    # magnitude of the maximum offset in lon/lat from raster centroid in each direction 
+    max_offset_x, max_offset_y =  Int32.(floor.([(lon-centroid[1]) / Δx, (lat-centroid[2]) / Δy])) 
 
-    radius_mask = OffsetArrays.OffsetArray(ones(Bool, 2max_cells_x+1, 2max_cells_y+1), -max_cells_x:max_cells_x, -max_cells_y:max_cells_y) 
-
+    radius_mask = OffsetArrays.OffsetArray(
+        ones(Bool, 2max_offset_x+1, 2max_offset_y+1), 
+        -max_offset_x:max_offset_x, 
+        -max_offset_y:max_offset_y
+    ) 
     for i in CartesianIndices(radius_mask)
         long_offset, lat_offset = abs.([i[1], i[2]]) .* [Δx, Δy]
         total_dist = sqrt(long_offset^2 + lat_offset^2)
-        radius_mask[i] = total_dist <= max(lon, lat)  # there consequence of using min here are fewer cells are PAs, so why not take the upper bound
+        radius_mask[i] = total_dist <= min(lon-centroid[1], lat-centroid[2])  
     end
 
     # Mask radius around each presence point 
+    offsets = CartesianIndices((-max_offset_x:max_offset_x, -max_offset_y:max_offset_y))
+
+    # 3 states 
+    # State 1: unseen
+    # State 2: seen, still a candidate bg point
+    # State 3: seen, no longer a cnadidate bg point
+    UNSEEN, CANDIDATE, UNAVAILABLE = 1, 2, 3 
+
+    background = similar(presences, Int32)
+    background.grid[findall(!isnothing, background.grid)] .= UNSEEN
+
     for occ_idx in presence_idx
-        offsets = CartesianIndices((-max_cells_x:max_cells_x, -max_cells_y:max_cells_y))
         within_radius_idx = offsets .+ occ_idx
 
-        # very clear var names here:
         for (i, cartesian_idx) in enumerate(within_radius_idx)
-            if _check_bounds(background, cartesian_idx) && radius_mask[offsets[i]]
-                background[cartesian_idx] = false
-            end 
+            if _check_bounds(background, cartesian_idx) && !isnothing(background.grid[cartesian_idx])
+                if background.grid[cartesian_idx] != UNAVAILABLE && !radius_mask[offsets[i]] 
+                    background.grid[cartesian_idx] = CANDIDATE
+                else
+                    background.grid[cartesian_idx] = UNAVAILABLE
+                end 
+            end
         end 
     end
     
-    return background
+    background.grid[findall(isequal(CANDIDATE), background.grid)] .= true
+    background.grid[findall(isequal(UNAVAILABLE), background.grid)] .= false
+
+    return convert(Bool, background)
 end
 
 """

@@ -57,7 +57,7 @@ buffer = pseudoabsencemask(WithinRadius, presencelayer; distance = 25.0)
 
 # We can now exclude the data that are in the buffer:
 
-bgmask = background .& (.! buffer)
+bgmask = .!background .& buffer
 
 # Finally, we can plot the area in which we can put pseudo-absences as a shaded region over
 # the layer, and plot all known occurrences as well:
@@ -95,15 +95,6 @@ current_figure()
 # the `StatsBase.sample` function internally.
 
 bgpoints = SpeciesDistributionToolkit.sample(bgmask, floor(Int, 0.5sum(presencelayer)))
-
-# But wait! The cells do not have the same size because the Earth is not flat.
-# We can sample the cells according to their surface as a weight:
-
-bgpoints = SpeciesDistributionToolkit.sample(
-    bgmask,
-    cellsize(bgmask),
-    floor(Int, 0.5sum(presencelayer)),
-)
 
 # We can set the non-pseudo-absences to `nothing` (this helps with visualisation):
 

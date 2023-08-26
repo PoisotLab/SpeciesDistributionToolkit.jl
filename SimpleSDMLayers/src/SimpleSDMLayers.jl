@@ -7,6 +7,7 @@ export Point, Polygon
 using PolygonOps
 using StatsBase
 using Tables
+import OffsetArrays
 
 # Basic types for the package
 include("lib/types.jl")

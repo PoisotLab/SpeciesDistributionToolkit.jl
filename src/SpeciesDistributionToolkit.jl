@@ -10,7 +10,6 @@ const _distance_function = Distances.Haversine(6371.0)
 using MakieCore
 
 import StatsBase
-import OffsetArrays
 
 # We make ample use of re-export
 using Reexport

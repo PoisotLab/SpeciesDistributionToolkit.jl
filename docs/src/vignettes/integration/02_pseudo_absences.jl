@@ -96,15 +96,6 @@ current_figure()
 
 bgpoints = SpeciesDistributionToolkit.sample(bgmask, floor(Int, 0.5sum(presencelayer)))
 
-# But wait! The cells do not have the same size because the Earth is not flat.
-# We can sample the cells according to their surface as a weight:
-
-bgpoints = SpeciesDistributionToolkit.sample(
-    bgmask,
-    cellsize(bgmask),
-    floor(Int, 0.5sum(presencelayer)),
-)
-
 # We can set the non-pseudo-absences to `nothing` (this helps with visualisation):
 
 replace!(bgpoints, false => nothing)

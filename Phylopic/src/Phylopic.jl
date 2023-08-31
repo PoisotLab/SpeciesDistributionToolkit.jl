@@ -16,11 +16,8 @@ include("ping.jl")
 @assert isnothing(Phylopic.ping())
 
 # We put the buildnumber in a const to avoid calling it multiple times -- this is a required
-# parameter for a large number of queries (most of the queries, in fact), so it makes sense
-# to get it as a const ASAP
-const buildnumber = Phylopic.build()
-# TODO: allow an environmental variable to specify a different build version for
-# reproducibility
+# parameter for a large number of queries (most of the queries, in fact)
+buildnumber = Phylopic.build()
 
 # The autocomplete endpoint is meant to give an overview of possible names starting from
 # a stem - this is not necessarilly going to give all of the names, and I am not sure why

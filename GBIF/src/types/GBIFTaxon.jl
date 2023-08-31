@@ -69,6 +69,6 @@ function GBIFTaxon(o::Dict{String, Any})
       r["genus"],
       r["species"],
       get(o, "confidence", missing),
-      o["synonym"]
+      get(o, "synonym", false)
    )
 end

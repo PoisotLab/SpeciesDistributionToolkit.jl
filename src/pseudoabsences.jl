@@ -34,6 +34,14 @@ struct RandomSelection <: PseudoAbsenceGenerator
 end
 
 """
+    DistanceToEvent
+
+Generates a weight for the pseudo-absences based on the distance to cells with a `true` value
+"""
+struct DistanceToEvent <: PseudoAbsenceGenerator
+end
+
+"""
     _random_point(ref, d; R = 6371.0)
 
 This function is used _internally_ to create a random point located within a distance `d` of point `ref`, assuming that the radius of the Earth is `R`. All it does is to generate a random angle in degrees, and the using the `_known_point` method to generate the new point.
@@ -185,18 +193,37 @@ function pseudoabsencemask(
     ::Type{SurfaceRangeEnvelope},
     presences::T) where {T <: SimpleSDMLayer}
     _layer_works_for_pseudoabsence(presences)
+    background = similar(presences, Float64)
     presence_only = mask(presences, presences)
-    background = similar(presences, Bool)
-    lon = extrema([k[1] for k in keys(presence_only)])
-    lat = extrema([k[2] for k in keys(presence_only)])
-    for occupied_cell in keys(presences)
-        if lon[1] <= occupied_cell[1] <= lon[2]
-            if lat[1] <= occupied_cell[2] <= lat[2]
-                if ~(presences[occupied_cell])
-                    background[occupied_cell] = true
-                end
-            end
-        end
+    
+    points = keys(presence_only)
+
+    for k in keys(background)
+        dfunc = SpeciesDistributionToolkit.Fauxcurrences._distancefunction
+        background[k] = minimum([dfunc(k, ko) for ko in points])
+    end
+    
+    return background
+end
+
+"""
+    pseudoabsencemask(::Type{DistanceToEvent}, presence::T; f=minimum) where {T <: SimpleSDMLayer}
+
+Generates a mask for pseudo-absences using the distance to event method.
+Candidate cells are weighted according to their distance to a known observation,
+with far away places being more likely. Depending on the distribution of
+distances, it may be a very good idea to flatten this layer using `log` or an
+exponent. The `f` function is used to determine which distance is reported
+(minimum by default, can also be mean or median).
+"""
+function pseudoabsencemask(
+    ::Type{DistanceToEvent},
+    presences::T; f=minimum) where {T <: SimpleSDMLayer}
+    _layer_works_for_pseudoabsence(presences)
+    presence_only = mask(presences, presences)
+    background = replace(similar(presences, Bool), false => true)
+    for occupied_cell in keys(presence_only)
+        background[occupied_cell] = false
     end
     return background
 end

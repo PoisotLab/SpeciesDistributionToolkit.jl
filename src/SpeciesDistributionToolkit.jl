@@ -42,6 +42,6 @@ include("io/read_write.jl")
 # Functions for pseudo-absence generation
 include("pseudoabsences.jl")
 export WithinRadius, SurfaceRangeEnvelope, RandomSelection
-export pseudoabsencemask
+export pseudoabsencemask, backgroundpoints
 
 end # module SpeciesDistributionToolkit

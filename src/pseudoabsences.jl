@@ -202,42 +202,19 @@ function pseudoabsencemask(
 end
 
 """
-    sample(layer::T, n::Integer = 1; kwargs...) where {T <: SimpleSDMLayer}
+    backgroundpoints(layer::T, n::Int; replace::Bool=false, kwargs...) where {T <: SimpleSDMLayer}
 
-Sample a series of background points from a Boolean layer. The `kwargs`
-arguments are passed to `StatsBase.sample`. This method returns a Boolean layer
-where the values of `true` correspond to a background point.
+Generates background points based on a layer that gives either the location of
+possible points (`Bool`) or the weight of each cell in the final sample
+(`Number`). Note that the default value is to draw without replacement, but this
+can be changed using `replace=true`. The additional keywors arguments are passed
+to `StatsBase.sample`, which is used internally.
 """
-function sample(layer::T, n::Integer = 1; kwargs...) where {T <: SimpleSDMLayer}
-    @assert SimpleSDMLayers._inner_type(layer) <: Bool
-    pseudoabs = similar(layer, Bool)
-    for k in StatsBase.sample(keys(replace(layer, false => nothing)), n; kwargs...)
-        pseudoabs[k] = true
+function backgroundpoints(layer::T, n::Int; replace::Bool=false, kwargs...) where {T <: SimpleSDMLayer}
+    background = similar(layer, Bool)
+    selected_points = StatsBase.sample(keys(layer), StatsBase.Weights(values(layer)), n; replace=replace, kwargs...)
+    for sp in selected_points
+        background[sp] = true
     end
-    return pseudoabs
-end
-
-"""
-    sample( layer::T, weights::T2, n::Integer = 1; kwargs..., ) where {T <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
-
-Sample a series of background points from a Boolean layer, where each point has
-a probability of being included in the background given by the second layer.
-This methods works like (and is, in fact, a wrapper around) `StatsBase.sample`,
-where the cell values in the weight layers are transformed into weights.
-"""
-function sample(
-    layer::T,
-    weights::T2,
-    n::Integer = 1;
-    kwargs...,
-) where {T <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
-    @assert SimpleSDMLayers._inner_type(layer) <: Bool
-    @assert SimpleSDMLayers._inner_type(weights) <: Number
-    pseudoabs = similar(layer, Bool)
-    void = replace(layer, false => nothing)
-    vals = weights[keys(void)]
-    for k in StatsBase.sample(keys(void), StatsBase.Weights(vals), n; kwargs...)
-        pseudoabs[k] = true
-    end
-    return pseudoabs
+    return background
 end

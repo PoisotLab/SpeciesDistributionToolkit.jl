@@ -1,10 +1,10 @@
 # # Occurrences and layers
 
-# In this vignette, we will have a look at the ways in which occurrence data (from GBIF) and
-# layer data can interact. In order to illustrate this, we will get information about the
-# occurrences of *Mystacina tuberculata*, a species of bat endemic to Aotearoa New Zealand.
-# Finally, we will rely on the `Phylopic` package to download a silhouette of a bat to
-# illustrate the figure.
+# In this vignette, we will have a look at the ways in which occurrence data
+# (from GBIF) and layer data can interact. In order to illustrate this, we will
+# get information about the occurrences of *Sitta whiteheadi*, a species of bird
+# endemic to Corsica. Finally, we will rely on the `Phylopic` package to
+# download a silhouette of a bat to illustrate the figure.
 
 using SpeciesDistributionToolkit
 using CairoMakie
@@ -13,8 +13,7 @@ import Downloads
 
 # This sets up a bounding box for the region of interest:
 
-spatial_extent =
-    (left = 163.828125, bottom = -48.672068, right = 181.230469, top = -33.410924)
+spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
 
 # We will get our bioclimatic variable from CHELSA:
 
@@ -26,17 +25,19 @@ dataprovider = RasterData(CHELSA1, BioClim)
 temperature = 0.1SimpleSDMPredictor(dataprovider; layer = "BIO1", spatial_extent...)
 precipitation = SimpleSDMPredictor(dataprovider; layer = "BIO12", spatial_extent...)
 
-# Once we have the layer, we can grab the occurrence data from GBIF. There is a very small
-# number of occurrences, so we only need to do a single call to collect them all:
+# Once we have the layer, we can grab the occurrence data from GBIF:
 
-bat = taxon("Mystacina tuberculata")
+species = taxon("Sitta whiteheadi")
 observations = occurrences(
-    bat,
-    "country" => "NZ",
-    "hasCoordinate" => true,
+    species,
+    "decimalLatitude" => (spatial_extent.bottom, spatial_extent.top),
+    "decimalLongitude" => (spatial_extent.left, spatial_extent.right),
     "limit" => 300,
     "occurrenceStatus" => "PRESENT",
 )
+while length(observations) < count(observations)
+    occurrences!(observations)
+end
 
 # We can now setup a figure with the correct axes, and use the `layer[occurrence]` indexing
 # method to extract the values from the layers at the location of each occurrence.
@@ -65,28 +66,28 @@ current_figure()
 # constraints. Note that we are searching using the `GBIFTaxon` object representing our
 # species.
 
-bat_uuid = Phylopic.imagesof(bat; items = 1)
+sp_uuid = Phylopic.imagesof(species; items = 1)
 
 # The next step is to get the url of the image -- we are going to get the largest thumbnail
 # (which is the default):
 
-bat_thumbnail_url = Phylopic.thumbnail(bat_uuid)
-bat_thumbnail_tmp = Downloads.download(bat_thumbnail_url)
-bat_image = Images.load(bat_thumbnail_tmp)
+sp_thumbnail_url = Phylopic.thumbnail(sp_uuid)
+sp_thumbnail_tmp = Downloads.download(sp_thumbnail_url)
+sp_image = Images.load(sp_thumbnail_tmp)
 
 # We can also check how to credit the person who created this image. This will create
 # a markdown string, with the node name, the contributor name, and a link to the license.
 
-Phylopic.attribution(bat_uuid)
+Phylopic.attribution(sp_uuid)
 
 # We can now use this image in a scatter plot -- this uses the thumbnail as a scatter
 # symbol, so we need to plot this like any other point. Because the thumbnail returned by
 # default is rather large, we can rescale it based on the image size:
 
-bat_size = Vec2f(reverse(size(bat_image) ./ 3))
+sp_size = Vec2f(reverse(size(sp_image) ./ 3))
 
 # Finally, we can plot everything (note that the Phylopic images have a transparent
 # background, so we are not hiding any information!):
 
-scatter!(envirovars, [14.0], [2400.0]; marker = bat_image, markersize = bat_size)
+scatter!(envirovars, [14.0], [2400.0]; marker = sp_image, markersize = sp_size)
 current_figure()

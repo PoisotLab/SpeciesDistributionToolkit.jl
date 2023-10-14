@@ -12,7 +12,7 @@ using CairoMakie
 # *EarthEnv* dataset, for a small spatial extent.
 
 dataprovider = RasterData(EarthEnv, LandCover)
-spatial_extent = (left = -80.00, bottom = 43.19, right = -70.94, top = 46.93)
+spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
 trees = sum([
     SimpleSDMPredictor(dataprovider; layer = i, full = true, spatial_extent...) for
     i in 1:4
@@ -29,7 +29,7 @@ tiles = tile(trees, (8, 8))
 # This can now be plotted:
 
 tile_plot = heatmap(
-    tiles[1, 2];
+    tiles[4, 2];
     colormap = :Greens,
     figure = (; resolution = (800, 350)),
     axis = (;
@@ -44,6 +44,9 @@ current_figure()
 
 # The inverse operation to `tile` is `stitch`, which (assuming you have not
 # moved tiles around!) will reconstruct a layer. For example, let's say we want
-# to double the quantity of trees, but we want to do so using `map`.
+# to double the quantity of trees:
 
 more_trees  = stitch(map(x -> 2x, tiles))
+
+# This construct is very useful when your problem lends itself to naive
+# parallelism.

@@ -23,5 +23,5 @@ pseudoabsencemask
 ## Sampling of background points
 
 ```@docs
-SpeciesDistributionToolkit.sample
+backgroundpoints
 ```

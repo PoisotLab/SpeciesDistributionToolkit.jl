@@ -34,6 +34,14 @@ struct RandomSelection <: PseudoAbsenceGenerator
 end
 
 """
+    DistanceToEvent
+
+Generates a weight for the pseudo-absences based on the distance to cells with a `true` value
+"""
+struct DistanceToEvent <: PseudoAbsenceGenerator
+end
+
+"""
     _random_point(ref, d; R = 6371.0)
 
 This function is used _internally_ to create a random point located within a distance `d` of point `ref`, assuming that the radius of the Earth is `R`. All it does is to generate a random angle in degrees, and the using the `_known_point` method to generate the new point.
@@ -181,63 +189,55 @@ Generates a mask from which pseudo-absences can be drawn, by picking cells that
 are (i) within the bounding box of occurrences, (ii) valued in the layer, and
 (iii) not already occupied by an occurrence
 """
-function pseudoabsencemask(
-    ::Type{SurfaceRangeEnvelope},
-    presences::T) where {T <: SimpleSDMLayer}
+function pseudoabsencemask(::Type{SurfaceRangeEnvelope}, presences::T) where {T <: SimpleSDMLayer}
     _layer_works_for_pseudoabsence(presences)
     presence_only = mask(presences, presences)
-    background = similar(presences, Bool)
-    lon = extrema([k[1] for k in keys(presence_only)])
-    lat = extrema([k[2] for k in keys(presence_only)])
-    for occupied_cell in keys(presences)
-        if lon[1] <= occupied_cell[1] <= lon[2]
-            if lat[1] <= occupied_cell[2] <= lat[2]
-                if ~(presences[occupied_cell])
-                    background[occupied_cell] = true
-                end
-            end
-        end
+    background = replace(similar(presences, Bool), false => true)
+    for occupied_cell in keys(presence_only)
+        background[occupied_cell] = false
     end
     return background
 end
 
 """
-    sample(layer::T, n::Integer = 1; kwargs...) where {T <: SimpleSDMLayer}
+    pseudoabsencemask(::Type{DistanceToEvent}, presence::T; f=minimum) where {T <: SimpleSDMLayer}
 
-Sample a series of background points from a Boolean layer. The `kwargs`
-arguments are passed to `StatsBase.sample`. This method returns a Boolean layer
-where the values of `true` correspond to a background point.
+Generates a mask for pseudo-absences using the distance to event method.
+Candidate cells are weighted according to their distance to a known observation,
+with far away places being more likely. Depending on the distribution of
+distances, it may be a very good idea to flatten this layer using `log` or an
+exponent. The `f` function is used to determine which distance is reported
+(minimum by default, can also be mean or median).
 """
-function sample(layer::T, n::Integer = 1; kwargs...) where {T <: SimpleSDMLayer}
-    @assert SimpleSDMLayers._inner_type(layer) <: Bool
-    pseudoabs = similar(layer, Bool)
-    for k in StatsBase.sample(keys(replace(layer, false => nothing)), n; kwargs...)
-        pseudoabs[k] = true
+function pseudoabsencemask(::Type{DistanceToEvent}, presences::T; f=minimum) where {T <: SimpleSDMLayer}
+    _layer_works_for_pseudoabsence(presences)
+    background = similar(presences, Float64)
+    presence_only = mask(presences, presences)
+    d = SpeciesDistributionToolkit.Fauxcurrences._distancefunction
+
+    points = keys(presence_only)
+
+    for k in keys(background)    
+        background[k] = f([d(k, ko) for ko in points])
     end
-    return pseudoabs
+    
+    return background
 end
 
 """
-    sample( layer::T, weights::T2, n::Integer = 1; kwargs..., ) where {T <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
+    backgroundpoints(layer::T, n::Int; replace::Bool=false, kwargs...) where {T <: SimpleSDMLayer}
 
-Sample a series of background points from a Boolean layer, where each point has
-a probability of being included in the background given by the second layer.
-This methods works like (and is, in fact, a wrapper around) `StatsBase.sample`,
-where the cell values in the weight layers are transformed into weights.
+Generates background points based on a layer that gives either the location of
+possible points (`Bool`) or the weight of each cell in the final sample
+(`Number`). Note that the default value is to draw without replacement, but this
+can be changed using `replace=true`. The additional keywors arguments are passed
+to `StatsBase.sample`, which is used internally.
 """
-function sample(
-    layer::T,
-    weights::T2,
-    n::Integer = 1;
-    kwargs...,
-) where {T <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
-    @assert SimpleSDMLayers._inner_type(layer) <: Bool
-    @assert SimpleSDMLayers._inner_type(weights) <: Number
-    pseudoabs = similar(layer, Bool)
-    void = replace(layer, false => nothing)
-    vals = weights[keys(void)]
-    for k in StatsBase.sample(keys(void), StatsBase.Weights(vals), n; kwargs...)
-        pseudoabs[k] = true
+function backgroundpoints(layer::T, n::Int; replace::Bool=false, kwargs...) where {T <: SimpleSDMLayer}
+    background = similar(layer, Bool)
+    selected_points = StatsBase.sample(keys(layer), StatsBase.Weights(values(layer)), n; replace=replace, kwargs...)
+    for sp in selected_points
+        background[sp] = true
     end
-    return pseudoabs
+    return background
 end

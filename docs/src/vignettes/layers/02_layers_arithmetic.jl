@@ -13,10 +13,9 @@ using CairoMakie
 dataprovider = RasterData(EarthEnv, LandCover)
 
 # In order to only read what is relevant to our illustration we will define a bounding
-# box, encompassing part of the Montérégie, Laurentians, and part of the U.S. Eastern
-# seaboard.
+# box over Corsica.
 
-spatial_extent = (left = -80.00, bottom = 43.19, right = -70.94, top = 46.93)
+spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
 
 # As a good practice, we check the names of the layers again. Note that checking the name of
 # the layers will *not* download the data, so this may be a good time to remove some layers
@@ -55,7 +54,7 @@ rescale!(resistance_layer, (0.0, 1.0));
 resistance_map = heatmap(
     resistance_layer;
     colormap = Reverse(:linear_protanopic_deuteranopic_kbjyw_5_95_c25_n256),
-    figure = (; resolution = (800, 350)),
+    figure = (; resolution = (400, 350)),
     axis = (;
         aspect = DataAspect(),
         xlabel = "Latitude",
@@ -66,9 +65,5 @@ resistance_map = heatmap(
 Colorbar(resistance_map.figure[:, end + 1], resistance_map.plot; height = Relative(0.5))
 current_figure()
 
-# And there we have it. We can see the areas of higher resistances corresponding to urban
-# areas (Toronto, Ottawa, Montréal, and Québec to a lesser extent), and further confirm that
-# Sherbrooke is not an actual city. Areas with less forest cover around the St-Lawrence
-# river, and around Toronto, are offering a medium resistance, while the primarily forested
-# areas are offering the least resistance to movement. This layer can then be used in
-# landscape connectivity analyses using *e.g.* Omniscape.jl.
+# This layer can then be used in landscape connectivity analyses using *e.g.*
+# Omniscape.jl.

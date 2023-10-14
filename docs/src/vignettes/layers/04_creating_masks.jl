@@ -10,9 +10,9 @@ using SpeciesDistributionToolkit
 using Dates
 using CairoMakie
 
-# We will focus on the various islands around the Java sea:
+# We will focus on Corsica:
 
-spatial_extent = (left = 104.523, bottom = -9.925, right = 128.979, top = -1.669)
+spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
 
 # Getting the precipitation layer for september in the CHELSA2 dataset is simply:
 

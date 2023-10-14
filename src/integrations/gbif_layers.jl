@@ -124,7 +124,7 @@ end
 Fills a layer (most likely created with `similar`) so that the values are `true`
 if an occurrence is found in the cell, `false` if not.
 """
-function mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Bool}
+function SimpleSDMLayers.mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Bool}
     for record in records
         if !isnothing(layer[record])
             layer[record] = true
@@ -139,7 +139,7 @@ end
 Fills a layer (most likely created with `similar`) so that the values reflect
 the number of occurrences in the cell.
 """
-function mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Number}
+function SimpleSDMLayers.mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Number}
     for record in records
         if !isnothing(layer[record])
             layer[record] = layer[record] + one(T)
@@ -155,7 +155,7 @@ Create a new layer storing information about the presence of occurrences in the
 cells, either counting (numeric types) or presence-absence-ing (boolean types)
 them.
 """
-function mask(layer::SimpleSDMLayer, records::GBIF.GBIFRecords, element_type::Type = Bool)
+function SimpleSDMLayers.mask(layer::SimpleSDMLayer, records::GBIF.GBIFRecords, element_type::Type = Bool)
     returnlayer = similar(layer, element_type)
     mask!(returnlayer, records)
     return returnlayer

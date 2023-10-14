@@ -6,6 +6,6 @@ SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords)
 ```
 
 ```@docs
-mask
-mask!
+SimpleSDMLayers.mask
+SimpleSDMLayers.mask!
 ```

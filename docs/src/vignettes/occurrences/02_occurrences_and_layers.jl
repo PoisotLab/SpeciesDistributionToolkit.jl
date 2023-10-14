@@ -47,21 +47,21 @@ figure = Figure(; resolution = (800, 400))
 envirovars =
     Axis(figure[1, 1]; xlabel = "Temperature (°C)", ylabel = "Precipitation (kg×m⁻²)")
 
-plot!(envirovars, temperature[observations], precipitation[observations])
+scatter!(envirovars, temperature[observations], precipitation[observations], markersize=6, color=:black)
 
 current_figure()
 
 # In order to also show these on the map, we will add a simple heatmap to the left of the
 # figure, and overlay the points using `longitudes` and `latitudes` for the observations:
 
-map = Axis(figure[1, 2]; aspect = DataAspect())
-hidedecorations!(map)
-hidespines!(map)
-heatmap!(map, temperature; colormap = :heat)
-scatter!(observations; color = :black)
+spmap = Axis(figure[1, 2]; aspect = DataAspect())
+hidedecorations!(spmap)
+hidespines!(spmap)
+heatmap!(spmap, temperature; colormap = :heat)
+scatter!(spmap, observations; color = :black, markersize=6)
 current_figure()
 
-# We can now add a silhouette of a bat using Phylopic. We only want a single item here, and
+# We can now add a silhouette of the species using Phylopic. We only want a single item here, and
 # the search will by default be restricted to images that can be used with the least
 # constraints. Note that we are searching using the `GBIFTaxon` object representing our
 # species.
@@ -89,5 +89,5 @@ sp_size = Vec2f(reverse(size(sp_image) ./ 3))
 # Finally, we can plot everything (note that the Phylopic images have a transparent
 # background, so we are not hiding any information!):
 
-scatter!(envirovars, [14.0], [2400.0]; marker = sp_image, markersize = sp_size)
+scatter!(envirovars, [3.0], [700.0]; marker = sp_image, markersize = sp_size)
 current_figure()

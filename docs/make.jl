@@ -38,6 +38,7 @@ end
 
 makedocs(;
     sitename = "Species Distribution Toolkit",
+    warnonly = true,
     format = Documenter.HTML(;
         prettyurls = get(ENV, "CI", nothing) == true,
     ),

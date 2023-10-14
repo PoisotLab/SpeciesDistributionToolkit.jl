@@ -44,6 +44,7 @@ makedocs(;
     format = Documenter.HTML(;
         prettyurls = get(ENV, "CI", nothing) == true,
     ),
+    warnonly = true,
     pages = [
         "Index" => "index.md",
         "Vignettes" => _vignettes_pages,

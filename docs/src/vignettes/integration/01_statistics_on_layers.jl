@@ -7,24 +7,20 @@ import StatsBase
 
 # In this vignette, we will have a look at the ways to transform layers and apply some
 # functions from `Statistics`. As an illustration, we will produce a map of suitability for
-# *Rangifer tarandus tarandus* based on temperature and precipitation.
+# *Sitta whiteheadi* based on temperature and precipitation.
 
-spatial_extent = (left = 3.0, bottom = 54.0, right = 33.0, top = 73.0)
+spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
 
-# We can collect the data for occurrences with several `"country"` arguments:
-
-rangifer = taxon("Rangifer tarandus tarandus"; strict = false)
+species = taxon("Sitta whiteheadi"; strict = false)
 query = [
     "occurrenceStatus" => "PRESENT",
     "hasCoordinate" => true,
-    "country" => "NO",
-    "country" => "SE",
-    "country" => "FI",
-    "country" => "DE",
+    "decimalLatitude" => (spatial_extent.bottom, spatial_extent.top),
+    "decimalLongitude" => (spatial_extent.left, spatial_extent.right),
     "limit" => 300,
 ]
-presences = occurrences(rangifer, query...)
-while length(presences) <= 3000
+presences = occurrences(species, query...)
+while length(presences) < count(presences)
     occurrences!(presences)
 end
 
@@ -99,11 +95,12 @@ current_figure()
 
 quantile(temperature, [0.05, 0.95])
 
-# We can attempt to use this information to build a presence-only range map of the species
-# of interest using the BIOCLIM model. In order to do so, we need to identify the value of
-# each predictor corresponding to various quantiles of the distribution:
+# We can attempt to use this information to build a presence-only range map of
+# the species of interest using a simplified BIOCLIM model. In order to do so,
+# we need to identify the value of each predictor corresponding to various
+# quantiles of the distribution:
 
-temp_limits = quantile(temperature[presences], [0.05, 0.5, 0.95])
+temp_limits = quantile(temperature[presences], [0.05, 0.95])
 
 # This can be used to mask the temperature layer -- we can do this very
 # naturally using the broadcast notation, as it is fully supported on layers:
@@ -112,7 +109,7 @@ temperature_range = temp_limits[begin] .<= temperature .<= temp_limits[end]
 
 # We can do the same for the precipitation:
 
-prec_limits = quantile(precipitation[presences], [0.05, 0.5, 0.95])
+prec_limits = quantile(precipitation[presences], [0.05, 0.95])
 precipitation_range = prec_limits[begin] .<= precipitation .<= prec_limits[end]
 
 # The combined range map is simply the places where both variables match with species
@@ -125,3 +122,6 @@ fig, ax, hm = heatmap(
     axis = (; aspect = DataAspect()),
 )
 current_figure()
+
+# This is a *reasonable* approximation of the range of *Sitta whiteheadi* (given
+# the simplicity of the approach).

@@ -5,10 +5,17 @@ that are meant to simplify the building of species distribution models. The
 models themselves are *not* part of this package, which is intended to take the
 tedium out of data preparation.
 
+This package is now used in some of the default pipelines in [BON in a
+Box][biab], GEOBON's project to automate the calculation and representation of
+the pos-2020 GBF indicators.
+
+[biab]: https://boninabox.geobon.org/frontend/index
+
 In particular, the package offers
 
 - a wrapper around the GBIF occurrences API to access occurrence data
   (`GBIF.jl`)
+- a wrapper around the Phylopic images API (`Phylopic.jl`)
 - ways to generate pseudo-absences based on a series of heuristics
 - ways to generate fake occurrences with statistical properties similar to
   actual occurrences (`Fauxcurrences.jl`)

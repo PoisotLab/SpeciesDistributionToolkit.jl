@@ -189,20 +189,13 @@ Generates a mask from which pseudo-absences can be drawn, by picking cells that
 are (i) within the bounding box of occurrences, (ii) valued in the layer, and
 (iii) not already occupied by an occurrence
 """
-function pseudoabsencemask(
-    ::Type{SurfaceRangeEnvelope},
-    presences::T) where {T <: SimpleSDMLayer}
+function pseudoabsencemask(::Type{SurfaceRangeEnvelope}, presences::T) where {T <: SimpleSDMLayer}
     _layer_works_for_pseudoabsence(presences)
-    background = similar(presences, Float64)
     presence_only = mask(presences, presences)
-    
-    points = keys(presence_only)
-
-    for k in keys(background)
-        dfunc = SpeciesDistributionToolkit.Fauxcurrences._distancefunction
-        background[k] = minimum([dfunc(k, ko) for ko in points])
+    background = replace(similar(presences, Bool), false => true)
+    for occupied_cell in keys(presence_only)
+        background[occupied_cell] = false
     end
-    
     return background
 end
 
@@ -216,15 +209,18 @@ distances, it may be a very good idea to flatten this layer using `log` or an
 exponent. The `f` function is used to determine which distance is reported
 (minimum by default, can also be mean or median).
 """
-function pseudoabsencemask(
-    ::Type{DistanceToEvent},
-    presences::T; f=minimum) where {T <: SimpleSDMLayer}
+function pseudoabsencemask(::Type{DistanceToEvent}, presences::T; f=minimum) where {T <: SimpleSDMLayer}
     _layer_works_for_pseudoabsence(presences)
+    background = similar(presences, Float64)
     presence_only = mask(presences, presences)
-    background = replace(similar(presences, Bool), false => true)
-    for occupied_cell in keys(presence_only)
-        background[occupied_cell] = false
+    d = SpeciesDistributionToolkit.Fauxcurrences._distancefunction
+
+    points = keys(presence_only)
+
+    for k in keys(background)    
+        background[k] = f([d(k, ko) for ko in points])
     end
+    
     return background
 end
 

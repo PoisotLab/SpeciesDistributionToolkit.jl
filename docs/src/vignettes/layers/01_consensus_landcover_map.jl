@@ -2,16 +2,11 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-using GeoMakie
 
-# In this vignette, we will look at the different landcover classes in Iceland. This is an
+# In this vignette, we will look at the different landcover classes in Corsica. This is an
 # opportunity to see how we can edit, mask, and aggregate data for processing.
 
-# To begin with, we define a bounding box around Iceland. The website
-# [bboxfinder.com](http://bboxfinder.com/) is fantastic for when you need to
-# rapidly define bounding boxes!
-
-spatial_extent = (left = -24.785, right = -12.634, top = 66.878, bottom = 62.935)
+spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
 
 # Defining a bounding box is important because, although we can clip any layer, the package
 # will only *read* what is required. For large data (like landcover data), this is
@@ -57,37 +52,32 @@ consensus = mosaic(argmax, stack)
 # different categories in our data:
 
 landcover_colors = [
-    :forestgreen,
-    :forestgreen,
-    :forestgreen,
-    :forestgreen,
-    :darkseagreen3,
-    :goldenrod1,
-    :wheat2,
-    :blue,
-    :red,
+    colorant"#117733",
+    colorant"#668822",
+    colorant"#99BB55",
+    colorant"#55aa22",
+    colorant"#ddcc66",
+    colorant"#aaddcc",
+    colorant"#44aa88",
+    colorant"#88bbaa",
+    colorant"#bb0011",
     :aqua,
-    :grey74,
-    :transparent,
+    colorant"#FFEE88",
+    colorant"#5566AA",
 ];
 
 # We can now create our plot:
 
-fig = Figure(; resolution = (1000, 500))
-panel = GeoAxis(
+fig = Figure(; resolution = (900, 1000))
+panel = Axis(
     fig[1, 1];
-    source = "+proj=longlat +datum=WGS84",
-    dest = "+proj=wintri",
-    lonlims = extrema(longitudes(consensus)),
-    latlims = extrema(latitudes(consensus)),
     xlabel = "Longitude",
     ylabel = "Latitude",
+    aspect = DataAspect()
 )
-surface!(
+heatmap!(
     panel,
     consensus;
-    shading = false,
-    interpolate = false,
     colormap = landcover_colors,
 )
 Legend(

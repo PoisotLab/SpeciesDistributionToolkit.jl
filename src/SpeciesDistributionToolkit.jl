@@ -12,6 +12,9 @@ using MakieCore
 import StatsBase
 import OffsetArrays
 
+import MultivariateStats
+import StatsAPI
+
 # We make ample use of re-export
 using Reexport
 
@@ -32,7 +35,10 @@ include("integrations/gbif_layers.jl")
 include("integrations/gbif_phylopic.jl")
 
 # Plotting
-include("integrations/makie.jl")
+include("external/Makie.jl")
+
+# Plotting
+include("external/MultivariateStats.jl")
 
 # Functions for IO
 include("io/geotiff.jl")

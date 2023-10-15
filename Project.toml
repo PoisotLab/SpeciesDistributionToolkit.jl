@@ -1,7 +1,7 @@
 name = "SpeciesDistributionToolkit"
 uuid = "72b53823-5c0b-4575-ad0e-8e97227ad13b"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "0.0.9"
+version = "0.0.10"
 
 [deps]
 ArchGDAL = "c9ce4bd3-c3d5-55b8-8973-c0e20141b8c3"

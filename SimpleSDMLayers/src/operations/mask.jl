@@ -4,13 +4,16 @@ _inner_type(::SimpleSDMPredictor{T}) where {T <: Any} = T
 """
     mask!(l1::T1, l2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
 
-Changes the second layer so that the positions for which the first layer is zero
-(of the appropriate type) or `nothing` are set to `nothing`. This is mostly
+Changes the second layer so that the positions for which the first layer is `false`
+(for Boolean layers) or `nothing` are set to `nothing`. This is mostly
 useful in cases where you have a `Bool` layer.
 """
 function mask!(l1::T1, l2::T2) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
     _itype = _inner_type(l1)
-    dropfunc = (x) -> isnothing(x) || (x == zero(_itype))
+    dropfunc = (x) -> isnothing(x)
+    if _itype == Bool
+        dropfunc = (x) -> (isnothing(x) || (x == false))
+    end
     todrop = findall(dropfunc, l1.grid)
     l2.grid[todrop] .= nothing
 end

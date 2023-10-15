@@ -1,4 +1,3 @@
-# Function to turn a layer into something (Geo)Makie can use
 function sprinkle(layer::T) where {T <: SimpleSDMLayer}
     return (
         longitudes(layer),

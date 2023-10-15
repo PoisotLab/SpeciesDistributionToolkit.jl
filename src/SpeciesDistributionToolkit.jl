@@ -31,8 +31,8 @@ include("integrations/gbif_layers.jl")
 # GBIF and Phylopic integration
 include("integrations/gbif_phylopic.jl")
 
-# Plotting
-include("external/Makie.jl")
+# Makie recipes
+include("integrations/makie.jl")
 
 # Functions for IO
 include("io/geotiff.jl")

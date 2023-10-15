@@ -170,9 +170,7 @@ cells for the pseudo-absence mask are (i) within the bounding box of the _layer_
 (use `SurfaceRangeEnvelope` to use the presences bounding box), and (ii) valued in the
 layer.
 """
-function pseudoabsencemask(
-    ::Type{RandomSelection},
-    presences::T) where {T <: SimpleSDMLayer}
+function pseudoabsencemask(::Type{RandomSelection}, presences::T) where {T <: SimpleSDMLayer}
     _layer_works_for_pseudoabsence(presences)
     presence_only = mask(presences, presences)
     background = replace(similar(presences, Bool), false => true)
@@ -193,8 +191,16 @@ function pseudoabsencemask(::Type{SurfaceRangeEnvelope}, presences::T) where {T 
     _layer_works_for_pseudoabsence(presences)
     presence_only = mask(presences, presences)
     background = replace(similar(presences, Bool), false => true)
-    for occupied_cell in keys(presence_only)
-        background[occupied_cell] = false
+    lon = extrema([k[1] for k in keys(presence_only)])
+    lat = extrema([k[2] for k in keys(presence_only)])
+    for occupied_cell in keys(presences)
+        if lon[1] <= occupied_cell[1] <= lon[2]
+            if lat[1] <= occupied_cell[2] <= lat[2]
+                if ~(presences[occupied_cell])
+                    background[occupied_cell] = true
+                end
+            end
+        end
     end
     return background
 end

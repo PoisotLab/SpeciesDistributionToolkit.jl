@@ -190,7 +190,7 @@ are (i) within the bounding box of occurrences, (ii) valued in the layer, and
 function pseudoabsencemask(::Type{SurfaceRangeEnvelope}, presences::T) where {T <: SimpleSDMLayer}
     _layer_works_for_pseudoabsence(presences)
     presence_only = mask(presences, presences)
-    background = replace(similar(presences, Bool), false => true)
+    background = similar(presences, Bool)
     lon = extrema([k[1] for k in keys(presence_only)])
     lat = extrema([k[2] for k in keys(presence_only)])
     for occupied_cell in keys(presences)

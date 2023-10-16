@@ -16,6 +16,10 @@ function ping()
     return nothing
 end
 
+@testitem "We can ping the API" begin
+    @test isnothing(Phylopic.ping())
+end
+
 """
     Phylopic.build()
 

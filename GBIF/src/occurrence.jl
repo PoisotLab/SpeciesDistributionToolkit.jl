@@ -164,53 +164,78 @@ end
 end
 
 @testitem "We can pass the taxon data manually" begin
-set1 = occurrences("scientificName" => "Mus musculus", "year" => 1999, "hasCoordinate" => true)
-@test typeof(set1) == GBIFRecords
-@test length(set1) == 20
+    set1 = occurrences(
+        "scientificName" => "Mus musculus",
+        "year" => 1999,
+        "hasCoordinate" => true,
+    )
+    @test typeof(set1) == GBIFRecords
+    @test length(set1) == 20
 end
 
 @testitem "We can get the latest occurrences" begin
-set2 = occurrences()
-@test typeof(set2) == GBIFRecords
-@test length(set2) == 20
+    set2 = occurrences()
+    @test typeof(set2) == GBIFRecords
+    @test length(set2) == 20
 end
 
 @testitem "We can use tuples to show intervals" begin
-set3 = occurrences("scientificName" => "Mus musculus", "year" => 1999, "hasCoordinate" => true, "decimalLatitude" => (0.0, 50.0))
-@test typeof(set3) == GBIFRecords
-@test length(set3) == 20
+    set3 = occurrences(
+        "scientificName" => "Mus musculus",
+        "year" => 1999,
+        "hasCoordinate" => true,
+        "decimalLatitude" => (0.0, 50.0),
+    )
+    @test typeof(set3) == GBIFRecords
+    @test length(set3) == 20
 end
 
 @testitem "We can complete a query using a while loop" begin
-serval = GBIF.taxon("Leptailurus serval", strict=true)
-obs = occurrences(serval, "hasCoordinate" => "true", "continent" => "AFRICA", "decimalLongitude" => (-30, 40))
-while length(obs) < count(obs)
-    occurrences!(obs)
-end
-@test length(obs) == count(obs)
+    serval = GBIF.taxon("Leptailurus serval"; strict = true)
+    obs = occurrences(
+        serval,
+        "hasCoordinate" => "true",
+        "continent" => "AFRICA",
+        "decimalLongitude" => (-30, 40),
+    )
+    while length(obs) < count(obs)
+        occurrences!(obs)
+    end
+    @test length(obs) == count(obs)
 end
 
 @testitem "We can query multiple taxa at once" begin
-serval = GBIF.taxon("Leptailurus serval", strict=true)
-leopard = GBIF.taxon("Panthera pardus", strict=true)
-obs = occurrences([leopard, serval], "hasCoordinate" => true, "occurrenceStatus" => "PRESENT")
-@test typeof(obs) == GBIFRecords
+    serval = GBIF.taxon("Leptailurus serval"; strict = true)
+    leopard = GBIF.taxon("Panthera pardus"; strict = true)
+    obs = occurrences(
+        [leopard, serval],
+        "hasCoordinate" => true,
+        "occurrenceStatus" => "PRESENT",
+    )
+    @test typeof(obs) == GBIFRecords
 end
 
 @testitem "We can complete a query with a specific page size" begin
-obs = occurrences(serval, "hasCoordinate" => "true", "continent" => "AFRICA", "decimalLongitude" => (-30, 40), "limit" => 45)
-while length(obs) < count(obs)
-    occurrences!(obs)
-end
-@test length(obs) == count(obs)
+    serval = GBIF.taxon("Leptailurus serval"; strict = true)
+    obs = occurrences(
+        serval,
+        "hasCoordinate" => "true",
+        "continent" => "AFRICA",
+        "decimalLongitude" => (-30, 40),
+        "limit" => 45,
+    )
+    while length(obs) < count(obs)
+        occurrences!(obs)
+    end
+    @test length(obs) == count(obs)
 end
 
 @testitem "Records of absence are correctly represented" begin
-o = occurrences("occurrenceStatus" => "ABSENT")
-@test o[1].presence == false
+    o = occurrences("occurrenceStatus" => "ABSENT")
+    @test o[1].presence == false
 end
 
 @testitem "Records of presence are correctly represented" begin
-o = occurrences("occurrenceStatus" => "PRESENT")
-@test o[1].presence == true
+    o = occurrences("occurrenceStatus" => "PRESENT")
+    @test o[1].presence == true
 end

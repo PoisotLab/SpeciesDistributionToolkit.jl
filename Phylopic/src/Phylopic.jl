@@ -1,5 +1,7 @@
 module Phylopic
 
+using TestItems
+
 import HTTP
 import JSON
 import UUIDs

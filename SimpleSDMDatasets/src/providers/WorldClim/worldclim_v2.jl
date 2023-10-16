@@ -113,3 +113,35 @@ function layername(
     var_code = _var_slug(data)
     return "wc2.1_$(res_code)_$(var_code).tif"
 end
+
+@testitem "WorldClim2 has no habitat heterogeneity layer" begin
+    @test_throws "dataset is not provided by" RasterData(WorldClim2, HabitatHeterogeneity)
+end
+
+@testitem "WorldClim2 layers need to be numeric" begin
+    @test_throws "does not allow for layer" downloader(
+        RasterData(WorldClim2, AverageTemperature);
+        layer = "Some stuff I guess",
+    )
+end
+
+@testitem "WorldClim2 layers needs to be in bounds" begin
+    @test_throws ["dataset only has"] downloader(
+        RasterData(WorldClim2, BioClim);
+        layer = 420,
+    )
+end
+
+@testitem "WorldClim2 months need to be in domain" begin
+    @test_throws ["The month", "not supported by the"] downloader(
+        RasterData(WorldClim2, AverageTemperature);
+        month = "Marchtober",
+    )
+end
+
+@testitem "WorldClim2 has a specific series of resolutions" begin
+    @test_throws ["The resolution", "is not supported by the"] downloader(
+        RasterData(WorldClim2, BioClim);
+        resolution = π,
+    )
+end

@@ -114,3 +114,31 @@ function source(
         outdir = destination(data),
     )
 end
+
+@testitem "EarthEnv layers need to be supported" begin
+    @test_throws ["The layer", "not supported by the"] downloader(
+        RasterData(EarthEnv, LandCover);
+        layer = "LMFAO",
+    )
+end
+
+@testitem "EarthEnv has no month support" begin
+    @test_throws "does not allow for month" downloader(
+        RasterData(EarthEnv, LandCover);
+        month = true,
+    )
+end
+
+@testitem "EarthEnv parameters need to be an allowed value" begin
+    @test_throws "no thank you is not supported for the keyword argument full" downloader(
+       RasterData(EarthEnv, LandCover);
+        full = "no thank you",
+    )
+end
+
+@testitem "EarthEnv has no support for resolution" begin
+    @test_throws "does not support multiple resolutions" downloader(
+       RasterData(EarthEnv, LandCover);
+        resolution = π,
+    )
+end

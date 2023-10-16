@@ -1,5 +1,7 @@
 module SpeciesDistributionToolkit
 
+using TestItems
+
 import ArchGDAL
 import GDAL
 

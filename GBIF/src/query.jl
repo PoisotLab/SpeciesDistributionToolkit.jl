@@ -92,3 +92,26 @@ function validate_occurrence_query(query::Pair)
         end
     end
 end
+
+@testitem "Using a single argument does not change the type of the argument" begin
+    queryset = ["hasCoordinate" => true]
+    @test length(occurrences(queryset...)) > 0
+
+    queryset = ["hasCoordinate" => true]
+    @test length(occurrences(taxon("Alces alces"), queryset...)) > 0
+end
+
+@testitem "We cannot search for a wrong country code" begin
+  qpars = Pair("country", "ABC")
+  @test_warn "country code" GBIF.validate_occurrence_query(qpars)
+end
+
+@testitem "We cannot search with an unsupported keyword" begin
+  qpars = Pair("years", "1234")
+  @test_warn "parameter is not allowed" GBIF.validate_occurrence_query(qpars)
+end
+
+@testitem "We cannot search with an unsupported enumerated value" begin
+  qpars = Pair("establishmentMeans", "just vibes")
+  @test_warn "is not a valid value" GBIF.validate_occurrence_query(qpars)
+end

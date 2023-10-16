@@ -58,6 +58,20 @@ function occurrence(key::Integer)::GBIFRecord
     return occurrence(string(key))
 end
 
+@testitem "We can get an occurrence by its ID" begin
+    k = 3986160931
+    o = occurrence(k)
+    @test typeof(o) == GBIFRecord
+    @test o.key == k
+end
+
+@testitem "We can get a malformed occurrence" begin
+    k = 1039645472
+    o = occurrence(k)
+    @test typeof(o) == GBIFRecord
+    @test o.key == k
+end
+
 function _internal_occurrences_getter(query::Pair...)
     validate_occurrence_query.(query)
     occ_s_url = gbifurl * "occurrence/search"
@@ -112,6 +126,20 @@ function occurrences(t::GBIFTaxon, query::Pair...)
     return occurrences(taxon_query, query...)
 end
 
+@testitem "Getting occurrences by taxon returns a GBIFRecords" begin
+    iver_id = taxon(5298019)
+    @test typeof(occurrences(iver_id)) <: GBIFRecords
+end
+
+@testitem "Getting occurrences by taxon returns the correct taxa" begin
+    t = taxon(5298019)
+    occ = occurrences(t)
+    @test typeof(occ) <: GBIFRecords
+    for o in occ
+        @test o.taxon.species == Pair("Iris versicolor", 5298019)
+    end
+end
+
 """
     occurrences(t::Vector{GBIFTaxon}, query::Pair...)
 
@@ -125,4 +153,64 @@ function occurrences(ts::Vector{GBIFTaxon}, query::Pair...)
         push!(taxon_query, String(level) * "Key" => getfield(t, level).second)
     end
     return occurrences(taxon_query..., query...)
+end
+
+@testitem "We get the correct country when looking for occurrences by country" begin
+    occ = occurrences("country" => "ES")
+    @test typeof(occ) <: GBIFRecords
+    for o in occ
+        @test o.country == "Spain"
+    end
+end
+
+@testitem "We can pass the taxon data manually" begin
+set1 = occurrences("scientificName" => "Mus musculus", "year" => 1999, "hasCoordinate" => true)
+@test typeof(set1) == GBIFRecords
+@test length(set1) == 20
+end
+
+@testitem "We can get the latest occurrences" begin
+set2 = occurrences()
+@test typeof(set2) == GBIFRecords
+@test length(set2) == 20
+end
+
+@testitem "We can use tuples to show intervals" begin
+set3 = occurrences("scientificName" => "Mus musculus", "year" => 1999, "hasCoordinate" => true, "decimalLatitude" => (0.0, 50.0))
+@test typeof(set3) == GBIFRecords
+@test length(set3) == 20
+end
+
+@testitem "We can complete a query using a while loop" begin
+serval = GBIF.taxon("Leptailurus serval", strict=true)
+obs = occurrences(serval, "hasCoordinate" => "true", "continent" => "AFRICA", "decimalLongitude" => (-30, 40))
+while length(obs) < count(obs)
+    occurrences!(obs)
+end
+@test length(obs) == count(obs)
+end
+
+@testitem "We can query multiple taxa at once" begin
+serval = GBIF.taxon("Leptailurus serval", strict=true)
+leopard = GBIF.taxon("Panthera pardus", strict=true)
+obs = occurrences([leopard, serval], "hasCoordinate" => true, "occurrenceStatus" => "PRESENT")
+@test typeof(obs) == GBIFRecords
+end
+
+@testitem "We can complete a query with a specific page size" begin
+obs = occurrences(serval, "hasCoordinate" => "true", "continent" => "AFRICA", "decimalLongitude" => (-30, 40), "limit" => 45)
+while length(obs) < count(obs)
+    occurrences!(obs)
+end
+@test length(obs) == count(obs)
+end
+
+@testitem "Records of absence are correctly represented" begin
+o = occurrences("occurrenceStatus" => "ABSENT")
+@test o[1].presence == false
+end
+
+@testitem "Records of presence are correctly represented" begin
+o = occurrences("occurrenceStatus" => "PRESENT")
+@test o[1].presence == true
 end

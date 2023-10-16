@@ -1,5 +1,7 @@
 module GBIF
 
+using TestItems
+
 using HTTP
 using JSON
 using Dates
@@ -77,5 +79,20 @@ include("occurrence.jl")
 include("paging.jl")
 export occurrence, occurrences
 export occurrences!
+
+@testitem "We can use the Query package" begin
+    using Query
+    using DataFrames
+    t = taxon("Mammalia", strict=false)
+    set = occurrences(t)
+    [occurrences!(set) for i in 1:10]
+
+    tdf = view(set) |>
+        @filter(_.rank == "SPECIES") |>
+        @map({_.key, _.taxon.name, _.country}) |>
+        DataFrame
+
+    @test typeof(tdf) <: DataFrame
+end
 
 end # module

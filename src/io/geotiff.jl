@@ -292,8 +292,7 @@ function _write_geotiff(
     return _write_geotiff(file, convert.(SimpleSDMPredictor, layers); kwargs...)
 end
 
-@testitem "We can write a GeoTiff file" begin
-    
+@testitem "We can write a GeoTiff file" begin 
     layer = SimpleSDMPredictor(RasterData(EarthEnv, LandCover); layer = 1)
     D = SimpleSDMLayers._inner_type(layer)
     

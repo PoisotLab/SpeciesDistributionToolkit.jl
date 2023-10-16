@@ -291,3 +291,13 @@ function _write_geotiff(
 ) where {T <: Number}
     return _write_geotiff(file, convert.(SimpleSDMPredictor, layers); kwargs...)
 end
+
+@testitem "We can write a GeoTiff file" begin
+    
+    layer = SimpleSDMPredictor(RasterData(EarthEnv, LandCover); layer = 1)
+    D = SimpleSDMLayers._inner_type(layer)
+    
+    f = tempname()
+    SpeciesDistributionToolkit._write_geotiff(f, [layer]; driver = "GTiff", nodata = typemax(D))
+    @test isfile(f)
+end

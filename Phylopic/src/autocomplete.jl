@@ -22,3 +22,7 @@ function autocomplete(query::AbstractString)
     # make more sense
     return AbstractString[]
 end
+
+@testitem "We can autocomplete from a string" begin
+    @test ~isempty(Phylopic.autocomplete("chiro"))
+end

@@ -1,5 +1,7 @@
 module SimpleSDMDatasets
 
+using TestItems
+
 import Downloads
 using Dates
 using ZipFile

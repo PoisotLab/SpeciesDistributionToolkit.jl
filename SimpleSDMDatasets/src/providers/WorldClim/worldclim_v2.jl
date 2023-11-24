@@ -113,3 +113,142 @@ function layername(
     var_code = _var_slug(data)
     return "wc2.1_$(res_code)_$(var_code).tif"
 end
+
+@testitem "WorldClim2 has no habitat heterogeneity layer" begin
+    @test_throws "dataset is not provided by" RasterData(WorldClim2, HabitatHeterogeneity)
+end
+
+@testitem "WorldClim2 layers need to be numeric" begin
+    @test_throws "does not allow for layer" downloader(
+        RasterData(WorldClim2, AverageTemperature);
+        layer = "Some stuff I guess",
+    )
+end
+
+@testitem "WorldClim2 layers needs to be in bounds" begin
+    @test_throws ["dataset only has"] downloader(
+        RasterData(WorldClim2, BioClim);
+        layer = 420,
+    )
+end
+
+@testitem "WorldClim2 months need to be in domain" begin
+    @test_throws ["The month", "not supported by the"] downloader(
+        RasterData(WorldClim2, AverageTemperature);
+        month = "Marchtober",
+    )
+end
+
+@testitem "WorldClim2 has a specific series of resolutions" begin
+    @test_throws ["The resolution", "is not supported by the"] downloader(
+        RasterData(WorldClim2, BioClim);
+        resolution = π,
+    )
+end
+
+@testitem "WorldClim2 has the correct support for months" begin
+    @test SimpleSDMDatasets.months(RasterData(WorldClim2, BioClim)) |> isnothing
+    @test SimpleSDMDatasets.months(RasterData(WorldClim2, AverageTemperature)) |> !isnothing
+    @test SimpleSDMDatasets.months(RasterData(WorldClim2, AverageTemperature)) |> !isempty
+    @test SimpleSDMDatasets.layers(RasterData(WorldClim2, AverageTemperature)) |> isnothing
+    @test SimpleSDMDatasets.layers(RasterData(WorldClim2, BioClim)) |> !isnothing
+end
+
+@testitem "WorldClim2 has support for resolutions" begin
+    for T in Base.uniontypes(SimpleSDMDatasets.WorldClim2Dataset)
+        @test SimpleSDMDatasets.provides(WorldClim2, T)
+        data = RasterData(WorldClim2, T)
+        @test typeof(data) == RasterData{WorldClim2, T}
+        @test SimpleSDMDatasets.resolutions(data) |> !isnothing
+    end
+end
+
+@testitem "WorldClim2 has a layer description" begin
+    @test layerdescriptions(RasterData(WorldClim2, BioClim))["BIO1"] ==
+          "Annual Mean Temperature"
+end
+
+@testitem "WorldClim2 downloader interface is working" begin
+    using Dates
+    begin
+        out = downloader(RasterData(WorldClim2, BioClim); resolution = 10.0, layer = "BIO8")
+        @test isfile(first(out))
+        @test out[2] == SimpleSDMDatasets.filetype(RasterData(WorldClim2, BioClim))
+    end
+
+    begin
+        out = downloader(RasterData(WorldClim2, BioClim); resolution = 5.0, layer = "BIO4")
+        @test isfile(first(out))
+        @test out[2] == SimpleSDMDatasets.filetype(RasterData(WorldClim2, BioClim))
+    end
+
+    begin
+        out = downloader(RasterData(WorldClim2, Elevation); resolution = 5.0)
+        @test isfile(first(out))
+        @test out[2] == SimpleSDMDatasets.filetype(RasterData(WorldClim2, Elevation))
+    end
+
+    begin
+        out = downloader(
+            RasterData(WorldClim2, MaximumTemperature);
+            resolution = 10.0,
+            month = Dates.Month(4),
+        )
+        @test isfile(first(out))
+        @test out[2] ==
+              SimpleSDMDatasets.filetype(RasterData(WorldClim2, MaximumTemperature))
+    end
+
+    begin
+        out = downloader(
+            RasterData(WorldClim2, MinimumTemperature);
+            resolution = 2.5,
+            month = Dates.Month(12),
+        )
+        @test isfile(first(out))
+        @test out[2] ==
+              SimpleSDMDatasets.filetype(RasterData(WorldClim2, MinimumTemperature))
+    end
+
+    begin
+        out = downloader(
+            RasterData(WorldClim2, AverageTemperature);
+            resolution = 10.0,
+            month = Dates.Month(4),
+        )
+        @test isfile(first(out))
+        @test out[2] ==
+              SimpleSDMDatasets.filetype(RasterData(WorldClim2, AverageTemperature))
+    end
+
+    begin
+        out = downloader(
+            RasterData(WorldClim2, SolarRadiation);
+            resolution = 10.0,
+            month = Dates.Month(4),
+        )
+        @test isfile(first(out))
+        @test out[2] == SimpleSDMDatasets.filetype(RasterData(WorldClim2, SolarRadiation))
+    end
+
+    begin
+        out = downloader(
+            RasterData(WorldClim2, WindSpeed);
+            resolution = 10.0,
+            month = Dates.Month(4),
+        )
+        @test isfile(first(out))
+        @test out[2] == SimpleSDMDatasets.filetype(RasterData(WorldClim2, WindSpeed))
+    end
+
+    begin
+        out = downloader(
+            RasterData(WorldClim2, WaterVaporPressure);
+            resolution = 10.0,
+            month = Dates.Month(4),
+        )
+        @test isfile(first(out))
+        @test out[2] ==
+              SimpleSDMDatasets.filetype(RasterData(WorldClim2, WaterVaporPressure))
+    end
+end

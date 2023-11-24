@@ -47,3 +47,24 @@ function occurrences!(o::GBIFRecords)
         o.occurrences[start:stop] = retrieved
     end
 end
+
+@testitem "We always get one page by default" begin
+    set = occurrences()
+    occurrences!(set)
+    @test length(set) == 40
+end
+
+@testitem "We can get multiple pages on repeated calls" begin
+    set = occurrences("limit" => 40)
+    occurrences!(set)
+    @test length(set) == 80
+    @test length(set) == length(unique([o.key for o in set]))
+end
+
+@testitem "We can page over queries" begin
+    setQ = occurrences(taxon("Iris versicolor", rank=:SPECIES), "limit" => 10)
+    occurrences!(setQ)
+    @test length(setQ) == 20
+    occurrences!(setQ)
+    @test length(setQ) == length(unique([o.key for o in setQ]))
+end

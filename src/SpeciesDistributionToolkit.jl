@@ -24,6 +24,9 @@ using Reexport
 @reexport using Fauxcurrences
 @reexport using Phylopic
 
+# Quality of life functions
+include("quality_of_life.jl")
+
 # SimpleSDMLayers to wrap everything together
 include("integrations/datasets_layers.jl")
 
@@ -33,7 +36,7 @@ include("integrations/gbif_layers.jl")
 # GBIF and Phylopic integration
 include("integrations/gbif_phylopic.jl")
 
-# Plotting
+# Makie recipes
 include("integrations/makie.jl")
 
 # Functions for IO

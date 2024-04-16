@@ -92,7 +92,11 @@ Returns the URL to an image in raster format when no resolution is specified. In
 function raster(uuid::UUIDs.UUID)
     lnk = Phylopic.images_links(uuid)
     if ~isnothing(lnk)
-        return first(lnk)["href"]
+        if haskey(lnk, "rasterFiles")
+            return first(lnk["rasterFiles"])["href"]
+        else
+            return nothing
+        end
     end
     return nothing
 end

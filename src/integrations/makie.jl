@@ -14,7 +14,7 @@ function sprinkle(records::GBIFRecords)
 end
 
 MakieCore.convert_arguments(
-    P::MakieCore.SurfaceLike,
+    P::MakieCore.GridBased,
     layer::T,
 ) where {T <: SimpleSDMLayer} = sprinkle(layer)
 

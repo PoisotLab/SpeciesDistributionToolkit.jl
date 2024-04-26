@@ -64,12 +64,6 @@ makedocs(;
                 "Basic information on layers" => "manual/SimpleSDMLayers/basics.md",
                 "Operations on layers" => "manual/SimpleSDMLayers/operations.md",
             ],
-            "GBIF.jl" => [
-                "Interface to GBIF data" => "manual/GBIF/index.md",
-                "GBIF data representation" => "manual/GBIF/types.md",
-                "GBIF data retrieval" => "manual/GBIF/data.md",
-                "Enumerated query parameters" => "manual/GBIF/enums.md",
-            ],
             "SimpleSDMDatasets.jl" => [
                 "Interface to raster data" => "manual/SimpleSDMDatasets/index.md",
                 "Dataset representation" => "manual/SimpleSDMDatasets/dev/types.md",

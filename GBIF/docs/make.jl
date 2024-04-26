@@ -5,6 +5,12 @@ makedocs(;
     sitename = "GBIF",
     format = Documenter.HTML(),
     modules = [GBIF],
+    pages = [
+        "GBIF.jl" => "index.md",
+        "Data representation" => "types.md",
+        "Data retrieval" => "data.md",
+        "Enumerated query parameters" => "enums.md",
+    ],
 )
 
 deploydocs(; repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl.git",

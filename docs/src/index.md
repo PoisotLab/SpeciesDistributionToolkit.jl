@@ -27,6 +27,11 @@ component packages are doing and how they work, discusses the interactions betwe
 packages, and offers a series of illustrations which includes some examples of models of
 species distributions.
 
+Each package also comes with its specific documentation:
+
+- [GBIF.jl](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/)
+- [Phylopic.jl](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/)
+
 If you want to contribute to the project, the best way is likely to have a look
 at the [development dashboard](https://github.com/orgs/PoisotLab/projects/3), or
 look for [possible first

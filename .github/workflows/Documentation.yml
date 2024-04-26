@@ -26,6 +26,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+      - name: "Instantiate GBIF documentation"
+        run: julia --project=GBIF/docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
       - name: "Build GBIF documentation"
         run: julia --project=GBIF/docs/ GBIF/docs/make.jl
         env:

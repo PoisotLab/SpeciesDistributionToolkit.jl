@@ -1,7 +1,7 @@
 name = "SpeciesDistributionToolkit"
 uuid = "72b53823-5c0b-4575-ad0e-8e97227ad13b"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "0.0.10"
+version = "0.0.11"
 
 [deps]
 ArchGDAL = "c9ce4bd3-c3d5-55b8-8973-c0e20141b8c3"
@@ -18,16 +18,16 @@ SimpleSDMLayers = "2c645270-77db-11e9-22c3-0f302a89c64c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
-ArchGDAL = "0.9, 0.10"
+ArchGDAL = "0.10"
 Distances = "0.10"
 Fauxcurrences = "0.1"
 GBIF = "0.4"
 GDAL = "1.5"
-MakieCore = "0.6, 0.7"
+MakieCore = "0.7"
 OffsetArrays = "1"
 Phylopic = "0.0"
 Reexport = "1.2"
 SimpleSDMDatasets = "0.1"
 SimpleSDMLayers = "0.9"
-StatsBase = "0.33, 0.34"
+StatsBase = "0.34"
 julia = "1.8"

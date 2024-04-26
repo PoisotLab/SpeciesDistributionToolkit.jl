@@ -8,7 +8,7 @@ function _get_uuids_at_page(query, page)
     req = HTTP.get(Phylopic.api * "images", query=page_query)
     if isequal(200)(req.status)
         response = JSON.parse(String(req.body))
-        return [item["title"] => UUIDs.UUID(replace(item["href"], "/images/" => "", "?build=$(Phylopic.buildnumber)" => "")) for item in response["_links"]["items"]]
+        return [item["title"] => UUIDs.UUID(replace(item["href"], "/images/" => "", "?build=$(Phylopic.build())" => "")) for item in response["_links"]["items"]]
     end
     return nothing
 end
@@ -41,7 +41,7 @@ function imagesof(name::AbstractString; items=1, attribution=false, sharealike=f
         "filter_license_by" => attribution,
         "filter_license_nc" => nocommercial,
         "filter_license_sa" => sharealike,
-        "build" => Phylopic.buildnumber
+        "build" => Phylopic.build()
     ]
     req = HTTP.get(Phylopic.api * "images", query=query)
     if isequal(200)(req.status)

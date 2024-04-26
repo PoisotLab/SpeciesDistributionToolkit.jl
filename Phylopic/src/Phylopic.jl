@@ -12,14 +12,6 @@ const api = "https://api.phylopic.org/"
 # of the current build by default, as it is required for most operations.
 include("ping.jl")
 
-function __init__()
-    # We do a first ping to fail ASAP if the API is not responsive
-    @assert isnothing(Phylopic.ping())
-    # We put the buildnumber in a package-level variable
-    Phylopic.buildnumber = Phylopic.build()
-    return nothing
-end
-
 # The autocomplete endpoint is meant to give an overview of possible names starting from
 # a stem - this is not necessarilly going to give all of the names, and I am not sure why
 include("autocomplete.jl")

@@ -110,7 +110,7 @@ raster(dict::Dict{String,UUIDs.UUID}, resl) = raster.(collect(dict), resl)
 
 function images_data(uuid::UUIDs.UUID)
     query = [
-        "build" => Phylopic.buildnumber,
+        "build" => Phylopic.build(),
     ]
     req = HTTP.get(Phylopic.api * "images/$(string(uuid))", query=query)
     if isequal(200)(req.status)

@@ -38,6 +38,7 @@ The queries must be given as pairs of values.
 ```@docs
 occurrences(query::Pair...)
 occurrences(t::GBIFTaxon, query::Pair...)
+occurrences(t::Vector{GBIFTaxon}, query::Pair...)
 ```
 
 ### Batch-download of occurrences

@@ -10,6 +10,7 @@ makedocs(;
         "Data representation" => "types.md",
         "Data retrieval" => "data.md",
         "Enumerated query parameters" => "enums.md",
+        "Internals" => "internals.md",
     ],
 )
 

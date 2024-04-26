@@ -41,6 +41,8 @@ function SimpleSDMLayers.SimpleSDMPredictor(
 end
 
 """
+    _boundingbox_out_of_kwargs(kwargs)
+
 Takes the input to a function and split the bounding box from the actual arguments
 """
 function _boundingbox_out_of_kwargs(kwargs)

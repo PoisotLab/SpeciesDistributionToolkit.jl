@@ -10,13 +10,15 @@ jobs:
     permissions:
       contents: write
       pull-requests: read
+      statuses: write
     name: Documentation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v1
         with:
           version: '1.8'
+      - uses: julia-actions/cache@v1
       - name: Setup the component packages (globally)
         run: julia --project bootstrap.jl
       - name: "Instantiate GBIF documentation"

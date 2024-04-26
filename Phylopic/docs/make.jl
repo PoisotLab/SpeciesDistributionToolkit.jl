@@ -7,6 +7,7 @@ makedocs(
     modules = [Phylopic],
     pages = [
         "Phylopic.jl" => "index.md",
+        "Internals" => "internals.md",
     ],
 )
 

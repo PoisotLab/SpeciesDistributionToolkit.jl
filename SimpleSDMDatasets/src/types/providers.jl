@@ -13,8 +13,17 @@ This provider offers access to the version 2 of the WorldClim data, accessible f
 """
 struct WorldClim2 <: RasterProvider end
 
+"""
+    EarthEnv
+"""
 struct EarthEnv <: RasterProvider end
 
+"""
+    CHELSA1
+"""
 struct CHELSA1 <: RasterProvider end
 
+"""
+    CHELSA2
+"""
 struct CHELSA2 <: RasterProvider end

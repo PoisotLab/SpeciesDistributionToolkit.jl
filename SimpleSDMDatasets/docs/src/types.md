@@ -42,9 +42,17 @@ CHELSA1
 CHELSA2
 ```
 
+## List of projections
+
+```@docs
+Projection
+SimpleSDMDatasets.CMIP5Scenario
+```
+
 ## List of enumerated types
 
 ```@docs
 SimpleSDMDatasets.RasterDownloadType
 SimpleSDMDatasets.RasterFileType
+SimpleSDMDatasets.RasterCRS
 ```

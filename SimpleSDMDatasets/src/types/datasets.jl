@@ -6,22 +6,62 @@ given by `RasterProvider`s, and the same dataset can have multiple providers.
 """
 abstract type RasterDataset end
 
-# List of datasets
-# TODO write documentation to also mention what they can be used for, e.g. all DEM can
-# provide Elevation
+"""
+    BioClim
+"""
 struct BioClim <: RasterDataset end
 
+"""
+    Elevation
+"""
 struct Elevation <: RasterDataset end
 
+"""
+    MinimumTemperature
+"""
 struct MinimumTemperature <: RasterDataset end
+
+"""
+    MaximumTemperature
+"""
 struct MaximumTemperature <: RasterDataset end
+
+"""
+    AverageTemperature
+"""
 struct AverageTemperature <: RasterDataset end
+
+"""
+    Precipitation
+"""
 struct Precipitation <: RasterDataset end
+
+"""
+    SolarRadiation
+"""
 struct SolarRadiation <: RasterDataset end
+
+"""
+    WindSpeed
+"""
 struct WindSpeed <: RasterDataset end
+
+"""
+    WaterVaporPressure
+"""
 struct WaterVaporPressure <: RasterDataset end
 
+"""
+    LandCover
+"""
 struct LandCover <: RasterDataset end
 
+"""
+    HabitatHeterogeneity
+"""
 struct HabitatHeterogeneity <: RasterDataset end
+
+"""
+    Topography
+"""
 struct Topography <: RasterDataset end

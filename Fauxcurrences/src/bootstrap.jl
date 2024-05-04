@@ -22,12 +22,12 @@ function bootstrap!(sim, layer, obs, obs_intra, obs_inter, sim_intra, sim_inter)
     max_inter = map(maximum, obs_inter)
 
     # Get an initial point for each species, respecting the inter-specific distance constraint
-    for i in 1:length(sim)
+    for i in eachindex(sim)
         sim[i][:, :] .= _generate_new_random_point(layer, obs[i], obs_intra[i])
     end
     Fauxcurrences.measure_interspecific_distances!(sim_inter, sim)
     while ~all(map(maximum, sim_inter) .<= max_inter)
-        for i in 1:length(sim)
+        for i in eachindex(sim)
             sim[i][:, :] .= _generate_new_random_point(layer, obs[i], obs_intra[i])
         end
         Fauxcurrences.measure_interspecific_distances!(sim_inter, sim)
@@ -64,7 +64,7 @@ to keep in the simulated dataset for each series of observations.
 function preallocate_simulated_points(obs; samples=size.(obs, 2))
     sim = [
         reshape(repeat(obs[i][:, 1], outer=samples[i]), (2, samples[i]))
-        for i in 1:length(obs)
+        for i in eachindex(obs)
     ]
     return sim
 end

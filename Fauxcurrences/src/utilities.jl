@@ -105,7 +105,7 @@ Updates the matrices for intraspecific distances; note that internally, the
 replaced.
 """
 function measure_intraspecific_distances!(intra, obs; updated=1:length(obs))
-    for i in 1:length(obs)
+    for i in eachindex(obs)
         if i in updated
             Distances.pairwise!(intra[i], Fauxcurrences._distancefunction, obs[i])
         end
@@ -139,7 +139,7 @@ Performs the actual score of the distributions, based on the weight matrix.
 function score_distributions(W, bin_intra, bin_s_intra, bin_inter, bin_s_inter)
     M = similar(W)
     cursor = 1
-    for i in 1:length(bin_intra)
+    for i in eachindex(bin_intra)
         for j in 1:length(bin_intra)
             if j >= i
                 if i == j

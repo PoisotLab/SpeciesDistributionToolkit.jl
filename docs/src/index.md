@@ -31,6 +31,7 @@ Each package also comes with its specific documentation:
 
 - [GBIF.jl](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/)
 - [Phylopic.jl](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/)
+- [SimpleSDMDatasets.jl](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/)
 
 If you want to contribute to the project, the best way is likely to have a look
 at the [development dashboard](https://github.com/orgs/PoisotLab/projects/3), or

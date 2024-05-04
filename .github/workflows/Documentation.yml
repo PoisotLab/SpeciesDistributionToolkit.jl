@@ -35,6 +35,13 @@ jobs:
         run: julia --project=Phylopic/docs/ Phylopic/docs/make.jl
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+      - name: "Instantiate SimpleSDMDatasets documentation"
+        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+        working-directory: SimpleSDMDatasets/
+      - name: "Build SimpleSDMDatasets documentation"
+        run: julia --project=SimpleSDMDatasets/docs/ SimpleSDMDatasets/docs/make.jl
+        env:
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-docdeploy@v1
         env:

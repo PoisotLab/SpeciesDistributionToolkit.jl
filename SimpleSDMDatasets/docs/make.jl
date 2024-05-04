@@ -7,7 +7,7 @@ makedocs(;
     modules = [SimpleSDMDatasets],
     pages = [
         "Index" => "index.md",
-        "Interface" => "iterface.md",
+        "Interface" => "interface.md",
         "Types" => "types.md",
         "Internals" => "internals.md",
     ],

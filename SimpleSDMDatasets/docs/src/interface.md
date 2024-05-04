@@ -50,10 +50,6 @@ The return type of the `downloadtype` must be one of the `RasterDownloadType`
 enum, which can be extended if adding a new provider requires a new format for
 the download.
 
-```@docs
-SimpleSDMDatasets.RasterDownloadType
-```
-
 ## Type of object stored
 
 The specification about the format of the information contained in the
@@ -69,10 +65,6 @@ SimpleSDMDatasets.filetype
 The return type of the `filetype` must be one of the `RasterFileType`
 enum, which can be extended if adding a new provider requires a new format for
 the download.
-
-```@docs
-SimpleSDMDatasets.RasterFileType
-```
 
 ## Available resolutions
 

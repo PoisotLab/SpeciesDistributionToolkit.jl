@@ -6,6 +6,18 @@ the goal of these packages put together is to provide a consistent way to handle
 occurrence data, put them on a map, and make it interact with environmental
 information.
 
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=v*)
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=gbif*)
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=phylopic*)
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=fauxcurrences*)
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=simplesdmdatasets*)
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=simplesdmlayers*)
+
 > To get a sense of the next steps and help with the development, see the 
 [issues/bugs tracker](https://github.com/orgs/PoisotLab/projects/3)
 

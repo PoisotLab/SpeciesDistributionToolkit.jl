@@ -8,7 +8,7 @@ tedium out of data preparation.
 This package is now used in some of the default pipelines in [BON in a
 Box](https://boninabox.geobon.org/frontend/index),
 [GEOBON](https://geobon.org/)'s project to automate the calculation and
-representation of the pos-2020 [GBF](https://www.cbd.int/gbf) indicators.
+representation of the post-2020 [GBF](https://www.cbd.int/gbf) indicators.
 
 In particular, the package offers
 

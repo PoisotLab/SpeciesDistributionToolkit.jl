@@ -1,3 +1,9 @@
+"""
+    SimpleSDMDatasets.keychecker(data::R; kwargs...) where {R <: RasterData}
+
+Checks that the keyword arguments passed to a downloader are correct, *i.e.* the
+data provider / source being retrieved supports them.
+"""
 function keychecker(data::R; kwargs...) where {R <: RasterData}
 
     # Check for month

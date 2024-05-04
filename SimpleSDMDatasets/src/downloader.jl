@@ -7,6 +7,11 @@ function _drop_package_name_from_path(path)
     return path
 end
 
+"""
+    SimpleSDMDatasets.downloader
+
+...
+"""
 function downloader(
     data::RasterData{P, D};
     kwargs...,

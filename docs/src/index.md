@@ -37,3 +37,4 @@ If you want to contribute to the project, the best way is likely to have a look
 at the [development dashboard](https://github.com/orgs/PoisotLab/projects/3), or
 look for [possible first
 PRs](https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+

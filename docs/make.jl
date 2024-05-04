@@ -60,13 +60,7 @@ makedocs(;
                 "Layer data representation" => "manual/SimpleSDMLayers/types.md",
                 "Basic information on layers" => "manual/SimpleSDMLayers/basics.md",
                 "Operations on layers" => "manual/SimpleSDMLayers/operations.md",
-            ],
-            "SimpleSDMDatasets.jl" => [
-                "Interface to raster data" => "manual/SimpleSDMDatasets/index.md",
-                "Dataset representation" => "manual/SimpleSDMDatasets/dev/types.md",
-                "Data retrieval interface" => "manual/SimpleSDMDatasets/dev/interface.md",
-                "Internals" => "manual/SimpleSDMDatasets/dev/internals.md",
-            ],
+            ]
         ],
     ],
 )

@@ -81,6 +81,22 @@ of packages, following [semantic versioning][semver]), `compat` (for compatibili
 changes in the Julia [package management][pkg]), `dependencies` (for changes in
 requirements), `doc` (for documentation), and `test` (for unit testing).
 
+As a reference, this table summarizes what type of commit may go with each prefix:
+
+| Prefix | Explanation |
+|---|---|
+| `fix` | Solves a bug / closes a PR |
+| `feat` | Adds a new feature |
+| `semver` | Commit that will be tagged in a new release -- this should contain a change in `Project.toml` |
+| `compat` | Changes `Project.toml` to add dependencies or their compatibility |
+| `ci` | Acts on github actions / workflows |
+| `doc` | Changes or adds documentation, including docstrings, and possibly comments |
+| `perf` | Improves the performance of the code |
+| `test` | Adds (or fixes) unit tests |
+| `style` | Applies the formatter without modifying the content |
+| `refactor` | Changes the internals of a function, or changes to methods that are not exported |
+| `chore` | General housekeeping |
+
 [convcom]: https://www.conventionalcommits.org/en/v1.0.0/#summary
 [semver]: https://semver.org/
 [pkg]: https://pkgdocs.julialang.org/v1/compatibility/
@@ -120,3 +136,12 @@ commit naming convention.
 **When the changes in a pull request** affect more than one package, the best solution is
 to *not* squash the merge commit, because it will make tagging different versions more
 difficult. This can be decided at PR merging time.
+
+## Releases
+
+Releases are handled by @tpoisot - we use the [Julia
+Registrator](https://github.com/JuliaRegistries/Registrator.jl) bot to create
+new releases. Ideally, the release process is: merging a PR in `main`,
+confirming that the unit tests pass and the documentation build, and then
+commenting on the commit with  `@JuliaRegistrator register()`, adding
+`subdir="<PKGNAME>"` when the release is about a sub-package.

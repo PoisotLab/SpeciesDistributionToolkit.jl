@@ -31,7 +31,7 @@ packages. This is the *recommended* way to interact with the packages.
 
 ## Current component packages
 
-> **Note**
+> [!NOTE]
 > The badges will not pick up old releases of the component packages, and so they be show "no matching release found" until a new release is done. The packages still work.
 
 **Getting occurrence data**: `GBIF.jl`, a wrapper around the GBIF API, to

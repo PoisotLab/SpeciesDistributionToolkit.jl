@@ -8,14 +8,20 @@ information.
 
 ![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=v*&style=flat-square&label=Main%20package) [![DOC](https://img.shields.io/badge/Manual-teal?style=flat-square)](https://poisotlab.github.io/SpeciesDistributionToolkit.jl)
 
+> [!IMPORTANT]
+> This package is *not* intended to perform any actual modeling,
+> but can serve as a robust basis for such models. We offer an interface from
+> this package to `MLJ` to facilitate prediction.
+
+🔄 Note that the packages *do* work independently as well, but they are *designed*
+to work together. In particular, when installing `SpeciesDistributionToolkit`,
+you get access to all the functions and types exported by the component
+packages. This is the *recommended* way to interact with the packages.
+
 🧑‍💻 To get a sense of the next steps and help with the development, see the 
 [issues/bugs tracker](https://github.com/orgs/PoisotLab/projects/3)
 
-💁 This package is *not* intended to perform any actual modeling, but can serve as
-a robust basis for such models. We offer an interface from this package to `MLJ`
-to facilitate prediction.
-
-🤓 Form a technical point of view, this *repository* is a [Monorepo][mnrp]
+🤓 From a technical point of view, this *repository* is a [Monorepo][mnrp]
 consisting of several related packages to work with species distribution data.
 These packages were formerly independent and tied together with moxie and
 `Require`, which was less than ideal. All the packages forming the toolkit share
@@ -24,15 +30,10 @@ package, `SimpleSDMLayers`), and the toolkit itself has its own version number.
 
 [mnrp]: https://monorepo.tools/
 
-🔄 Note that the packages *do* work independently as well, but they are *designed*
-to work together. In particular, when installing `SpeciesDistributionToolkit`,
-you get access to all the functions and types exported by the component
-packages. This is the *recommended* way to interact with the packages.
-
 ## Current component packages
 
 > [!NOTE]
-> The badges will not pick up old releases of the component packages, and so they be show "no matching release found" until a new release is done. The packages still work.
+> The badges will not pick up old releases of the component packages, and so they will show "no matching release found" until a new release is done. The packages still work.
 
 **Getting occurrence data**: `GBIF.jl`, a wrapper around the GBIF API, to
 retrieve taxa and occurrence datasets, and perform filtering on these occurrence

@@ -10,8 +10,7 @@ information.
 
 > [!IMPORTANT]
 > This package is *not* intended to perform any actual modeling,
-> but can serve as a robust basis for such models. We offer an interface from
-> this package to `MLJ` to facilitate prediction.
+> but can serve as a robust basis for such models.
 
 🔄 Note that the packages *do* work independently as well, but they are *designed*
 to work together. In particular, when installing `SpeciesDistributionToolkit`,

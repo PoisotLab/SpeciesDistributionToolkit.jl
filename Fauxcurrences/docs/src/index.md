@@ -8,6 +8,7 @@ Fauxcurrences.step!
 Fauxcurrences._random_point
 Fauxcurrences._generate_new_random_point
 Fauxcurrences._bin_distribution
+Fauxcurrences._bin_distribution!
 Fauxcurrences._distance_between_binned_distributions
 Fauxcurrences.preallocate_distance_matrices
 Fauxcurrences.measure_intraspecific_distances!

@@ -49,18 +49,10 @@ makedocs(;
         "Index" => "index.md",
         "Vignettes" => _vignettes_pages,
         "List of datasets" => _dataset_catalogue,
-        "Component packages" => [
-            "SpeciesDistributionToolkit.jl" => [
-                "Work with species occurrence data" => "manual/SpeciesDistributionToolkit/index.md",
-                "Occurrences and layers" => "manual/SpeciesDistributionToolkit/gbif.jl.md",
-                "Pseudo-absences" => "manual/SpeciesDistributionToolkit/pseudoabsences.md",
-            ],
-            "SimpleSDMLayers.jl" => [
-                "Easy manipulation of layers" => "manual/SimpleSDMLayers/index.md",
-                "Layer data representation" => "manual/SimpleSDMLayers/types.md",
-                "Basic information on layers" => "manual/SimpleSDMLayers/basics.md",
-                "Operations on layers" => "manual/SimpleSDMLayers/operations.md",
-            ]
+        "Documentation" => [
+            "Work with species occurrence data" => "manual/SpeciesDistributionToolkit/index.md",
+            "Occurrences and layers" => "manual/SpeciesDistributionToolkit/gbif.jl.md",
+            "Pseudo-absences" => "manual/SpeciesDistributionToolkit/pseudoabsences.md",
         ],
     ],
 )

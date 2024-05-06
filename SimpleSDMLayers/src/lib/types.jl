@@ -152,6 +152,11 @@ function SimpleSDMPredictor(b::BitMatrix, args...)
     return SimpleSDMPredictor(Matrix(b), args...)
 end
 
+"""
+    RasterCell{L <: Number, T <: Any}
+
+A cell with a longitude, a latitude, and a value
+"""
 struct RasterCell{L <: Number, T <: Any}
     longitude::L
     latitude::L

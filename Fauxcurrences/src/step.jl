@@ -1,3 +1,8 @@
+"""
+    Fauxcurrences.step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, distance)
+
+
+"""
 function step!(sim, layer, W, obs_intra, obs_inter, sim_intra, sim_inter, bin_intra, bin_inter, bin_s_intra, bin_s_inter, distance)
     # Get a random set of points to change
     updated_set = rand(1:length(sim))

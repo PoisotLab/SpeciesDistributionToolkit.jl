@@ -1,4 +1,4 @@
-name: CI
+name: Monorepo tests
 
 on:
   schedule:

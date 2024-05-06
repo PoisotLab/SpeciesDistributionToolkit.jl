@@ -1,4 +1,5 @@
 using Documenter
+using Statistics
 using SimpleSDMLayers
 
 makedocs(;

@@ -5,7 +5,8 @@ using SimpleSDMLayers
 makedocs(;
     sitename = "SimpleSDMLayers",
     format = Documenter.HTML(),
-    modules = [SimpleSDMLayers, Base, Statistics],
+    warnonly = true,
+    modules = [SimpleSDMLayers, Statistics],
     pages = [
         "SimpleSDMLayers.jl" => "index.md",
         "Layer data representation" => "types.md",

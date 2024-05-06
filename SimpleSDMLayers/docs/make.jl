@@ -10,6 +10,7 @@ makedocs(;
         "Layer data representation" => "types.md",
         "Basic information on layers" => "basics.md",
         "Operations on layers" => "operations.md",
+        "Overloads" => "overloads.md",
     ],
 )
 

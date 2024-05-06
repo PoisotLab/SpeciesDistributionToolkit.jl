@@ -4,7 +4,7 @@ using Fauxcurrences
 makedocs(
     sitename = "Fauxcurrences",
     format = Documenter.HTML(),
-    modules = [Phylopic],
+    modules = [Fauxcurrences],
     pages = [
         "Fauxcurrences.jl" => "index.md",
     ],

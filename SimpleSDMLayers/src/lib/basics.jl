@@ -49,10 +49,20 @@ function _layers_are_compatible(
            throw(ArgumentError("The layers have different right coordinates"))
 end
 
+"""
+    _layers_are_compatible(layers::Array{T}) where {T <: SimpleSDMLayer}
+
+Are the layers compatibles?
+"""
 function _layers_are_compatible(layers::Array{T}) where {T <: SimpleSDMLayer}
     return all(layer -> _layers_are_compatible(layer, layers[1]), layers)
 end
 
+"""
+    grid(layer::T) where {T <: SimpleSDMLayer}
+
+Returns a copy of the grid of values
+"""
 function grid(layer::T) where {T <: SimpleSDMLayer}
     return copy(layer.grid)
 end

@@ -13,6 +13,11 @@ Returns the size of the grid alongside a dimension.
 """
 Base.size(layer::T, i...) where {T <: SimpleSDMLayer} = size(layer.grid, i...)
 
+"""
+    Base.length(layer::T)
+
+Number of elements in the grid that are not nothing
+"""
 Base.length(layer::T) where {T <: SimpleSDMLayer} = count(!isnothing, layer.grid)
 
 """

@@ -1,0 +1,19 @@
+# Generation of fauxcurrences
+
+```@docs
+Fauxcurrences.bootstrap!
+Fauxcurrences.preallocate_simulated_points
+Fauxcurrences.get_valid_coordinates
+Fauxcurrences.step!
+Fauxcurrences._random_point
+Fauxcurrences._generate_new_random_point
+Fauxcurrences._bin_distribution
+Fauxcurrences._distance_between_binned_distributions
+Fauxcurrences.preallocate_distance_matrices
+Fauxcurrences.measure_intraspecific_distances!
+Fauxcurrences.measure_interspecific_distances!
+Fauxcurrences.score_distributions
+Fauxcurrences.equal_weights
+Fauxcurrences.weighted_components
+Fauxcurrences.equally_weighted_components
+```

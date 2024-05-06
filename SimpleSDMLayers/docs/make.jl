@@ -7,10 +7,9 @@ makedocs(;
     modules = [SimpleSDMLayers],
     pages = [
         "SimpleSDMLayers.jl" => "index.md",
-        "Easy manipulation of layers" => "manual/SimpleSDMLayers/index.md",
-        "Layer data representation" => "manual/SimpleSDMLayers/types.md",
-        "Basic information on layers" => "manual/SimpleSDMLayers/basics.md",
-        "Operations on layers" => "manual/SimpleSDMLayers/operations.md",
+        "Layer data representation" => "types.md",
+        "Basic information on layers" => "basics.md",
+        "Operations on layers" => "operations.md",
     ],
 )
 

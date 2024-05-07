@@ -1,6 +1,5 @@
 function Base.getindex(layer::SDMLayer, i...)
-    p = Base.getindex(layer.grid, i...)
-    return p == layer.nodata ? nothing : p
+    return layer.indices[i...] ? Base.getindex(layer.grid, i...) : nothing
 end
 
 function Base.setindex!(layer::SDMLayer, i...)
@@ -17,15 +16,13 @@ end
     @test (layer[1, 1] = 0x02) == 0x02
 end
 
-@testitem "We can set a position to nodata" begin
-    layer = SDMLayer(rand(UInt8, (10, 20)); nodata=0x06)
-    @test (layer[1, 1] = layer.nodata) == layer.nodata
-end
-
 @testitem "We get nothing when accessing at a nodata position" begin
     layer = SDMLayer(rand(UInt8, (10, 20)); nodata=0x06)
-    layer[1, 1] = layer.nodata
-    @test isnothing(layer[1, 1])
+    for i in eachindex(layer.grid)
+        if !layer.indices[i]
+            @test isnothing(layer[i])
+        end
+    end
 end
 
 function __get_grid_coordinate_by_latlon(layer::SDMLayer, longitude::AbstractFloat, latitude::AbstractFloat)

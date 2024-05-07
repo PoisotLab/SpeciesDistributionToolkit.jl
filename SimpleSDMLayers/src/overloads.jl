@@ -12,8 +12,8 @@ Base.values(layer::SDMLayer) = layer[CartesianIndices(layer)]
 
 function Base.similar(layer::SDMLayer)
     grd = similar(layer.grid)
-    grd[findall(isequal(layer.nodata), layer.grid)] .= layer.nodata
-    return SDMLayer(grid=grd, nodata=layer.nodata, x=layer.x, y=layer.y, crs=layer.crs)
+    idx = copy(layer.indices)
+    return SDMLayer(grid=grd, indices=idx, x=layer.x, y=layer.y, crs=layer.crs)
 end
 
 @testitem "We can generate a similar layer" begin
@@ -24,9 +24,8 @@ end
 
 function Base.similar(layer::SDMLayer, ::Type{S}) where {S}
     grd = similar(layer.grid, S)
-    newnodata = convert(S, layer.nodata)
-    grd[findall(isequal(layer.nodata), layer.grid)] .= newnodata
-    return SDMLayer(grid=grd, nodata=newnodata, x=layer.x, y=layer.y, crs=layer.crs)
+    idx = copy(layer.indices)
+    return SDMLayer(grid=grd, indices=idx, x=layer.x, y=layer.y, crs=layer.crs)
 end
 
 @testitem "We can generate a similar layer of a different type" begin

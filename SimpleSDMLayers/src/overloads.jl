@@ -66,3 +66,13 @@ function Base.convert(::Type{SDMLayer{T}}, layer::SDMLayer{N}) where {T,N}
     grd = convert(Matrix{T}, layer.grid)
     return SDMLayer(grid=grd, indices=layer.indices, x=layer.x, y=layer.y, crs=layer.crs)
 end
+
+function Base.stride(layer::SDMLayer)
+    Δx = (layer.x[2]-layer.x[1])/(2size(layer, 2))
+    Δy = (layer.y[2]-layer.y[1])/(2size(layer, 1))
+    return (Δy, Δx)
+end
+
+function Base.stride(layer::SDMLayer, i)
+    return stride(layer)[i]
+end

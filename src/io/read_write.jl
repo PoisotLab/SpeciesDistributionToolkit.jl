@@ -18,7 +18,7 @@ function SimpleSDMLayers.SDMLayer(
     @error "Only tiff files are supported at the moment"
 end
 
-function save(file::String, layers::Vector{SDMLayer{T}}; kwargs...) where {T <: Number}
+function FileIO.save(file::String, layers::Vector{SDMLayer{T}}; kwargs...) where {T <: Number}
     if endswith(file, ".tif") | endswith(file, ".tiff")
         _write_geotiff(file, layers; kwargs...)
         return file
@@ -26,6 +26,6 @@ function save(file::String, layers::Vector{SDMLayer{T}}; kwargs...) where {T <: 
     @error "Only tiff files are supported at the moment"
 end
 
-function save(file::String, layer::SDMLayer{T}; kwargs...) where {T <: Number}
+function FileIO.save(file::String, layer::SDMLayer{T}; kwargs...) where {T <: Number}
     return SpeciesDistributionToolkit.save(file, [layer]; kwargs...)
 end

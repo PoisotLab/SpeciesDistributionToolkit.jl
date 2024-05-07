@@ -22,6 +22,10 @@ jobs:
       - name: Setup the component packages (globally)
         run: julia --project bootstrap.jl
         if: github.event_name != 'pull_request'
+      - name: "Bootstrap GBIF"
+        if: github.event_name == 'pull_request'
+        run: julia --project bootstrap.jl && julia --project 'using Pkg; Pkg.dev(".")'
+        working-directory: GBIF/
       - name: "Instantiate GBIF documentation"
         run: julia --project=docs/ -e 'using Pkg; Pkg.instantiate()'
         working-directory: GBIF/

@@ -24,6 +24,10 @@ using Reexport
 @reexport using Fauxcurrences
 @reexport using Phylopic
 
+# Functions to get latitudes/longitudes
+include("latlon.jl")
+export latitudes, longitudes
+
 # SimpleSDMLayers to wrap everything together
 include("integrations/datasets_layers.jl")
 

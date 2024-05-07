@@ -18,29 +18,6 @@ function SimpleSDMLayers.SDMLayer(data::R; kwargs...) where {R <: RasterData}
 end
 
 """
-    SimpleSDMLayers.SimpleSDMPredictor(data::R, future::F; kwargs...) where {R <: RasterData, F <: Projection}
-
-Read a layer as a `SimpleSDMPredictor` (immutable) from a `RasterData`, a future `Projection`, and a source of keywords. The allowed keywors are listed for each `RasterData`.
-"""
-function SimpleSDMLayers.SimpleSDMPredictor(
-    data::R,
-    future::F;
-    kwargs...,
-) where {R <: RasterData, F <: Projection}
-    # Split the bounding box from the rest of the data
-    boundingbox, arguments = _boundingbox_out_of_kwargs(kwargs)
-
-    # Get the data
-    filepath, filetype, bandnumber, _ = downloader(data, future; arguments...)
-
-    if isequal(SimpleSDMDatasets._tiff)(filetype)
-        return SimpleSDMPredictor(filepath, "tiff"; bandnumber = bandnumber, boundingbox...)
-    end
-
-    return nothing
-end
-
-"""
     _boundingbox_out_of_kwargs(kwargs)
 
 Takes the input to a function and split the bounding box from the actual arguments

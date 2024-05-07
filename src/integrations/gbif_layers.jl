@@ -1,36 +1,6 @@
 import Base: getindex
 import Base: setindex!
-import SimpleSDMLayers: clip, latitudes, longitudes, mask!, mask
-
-"""
-    SimpleSDMLayers.longitudes(record::GBIF.GBIFRecord)
-
-Returns the longitude associated to a GBIF record
-"""
-SimpleSDMLayers.longitudes(record::GBIF.GBIFRecord) = record.longitude
-
-"""
-    SimpleSDMLayers.latitudes(record::GBIF.GBIFRecord)
-
-Returns the latitude associated to a GBIF record
-"""
-SimpleSDMLayers.latitudes(record::GBIF.GBIFRecord) = record.latitude
-
-"""
-    SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords)
-
-Returns the non-missing latitudes from a series of records
-"""
-SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords) =
-    filter(!ismissing, [latitudes(record) for record in records])
-
-"""
-    SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords)
-
-Returns the non-missing latitudes from a series of records
-"""
-SimpleSDMLayers.longitudes(records::GBIF.GBIFRecords) =
-    filter(!ismissing, [longitudes(record) for record in records])
+import SimpleSDMLayers: clip, mask!, mask
 
 """
     Base.getindex(p::T, occurrence::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}

@@ -24,7 +24,7 @@ jobs:
         if: github.event_name != 'pull_request'
       - name: "Bootstrap GBIF"
         if: github.event_name == 'pull_request'
-        run: julia --project bootstrap.jl && julia --project 'using Pkg; Pkg.dev(".")'
+        run: julia --project bootstrap.jl && julia --project -e 'using Pkg; Pkg.dev(".")'
         working-directory: GBIF/
       - name: "Instantiate GBIF documentation"
         run: julia --project=docs/ -e 'using Pkg; Pkg.instantiate()'

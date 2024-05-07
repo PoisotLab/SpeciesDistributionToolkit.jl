@@ -50,7 +50,7 @@ function Base.broadcasted(::Broadcast.Style{SDMLayer}, f, x, layer::SDMLayer)
 end
 
 @testitem "We can broadcast over a layer" begin
-    layer = SDMLayers.__demodata(reduced=true)
+    layer = SimpleSDMLayers.__demodata(reduced=true)
     doubled = 0x02 .* layer
     @test doubled isa SDMLayer
     @test doubled[1, 1] == 2layer[1, 1]

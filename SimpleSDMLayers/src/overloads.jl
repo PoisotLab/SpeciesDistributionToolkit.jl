@@ -16,7 +16,7 @@ function Base.similar(layer::SDMLayer)
 end
 
 @testitem "We can generate a similar layer" begin
-    layer = SDMLayers.__demodata(reduced=true)
+    layer = SimpleSDMLayers.__demodata(reduced=true)
     sim = similar(layer)
     @test eltype(sim) == eltype(layer)
 end
@@ -29,7 +29,7 @@ function Base.similar(layer::SDMLayer, ::Type{S}) where {S}
 end
 
 @testitem "We can generate a similar layer of a different type" begin
-    layer = SDMLayers.__demodata(reduced=true)
+    layer = SimpleSDMLayers.__demodata(reduced=true)
     sim = similar(layer, Int32)
     @test eltype(sim) == Int32
 end
@@ -55,7 +55,7 @@ function Base.copy(layer::SDMLayer)
 end
 
 @testitem "We can copy a layer" begin
-    layer = SDMLayers.__demodata()
+    layer = SimpleSDMLayers.__demodata()
     copied = copy(layer)
     copied[1, 1] *= 2
     @test layer[1, 1] != copied[1, 1]

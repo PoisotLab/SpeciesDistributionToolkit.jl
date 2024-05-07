@@ -57,10 +57,10 @@ function __window(layer::SDMLayer, center::CartesianIndex, radius::AbstractFloat
     min_lon = center_latlon[1] - (360.0 * 1.001radius) / (π * 6371.0)
 
     # Convert to grid coordinates
-    lower_left = SDMLayers.__get_bounded_grid_coordinate_by_latlon(layer, min_lon, min_lat)
-    lower_right = SDMLayers.__get_bounded_grid_coordinate_by_latlon(layer, max_lon, min_lat)
-    upper_left = SDMLayers.__get_bounded_grid_coordinate_by_latlon(layer, min_lon, max_lat)
-    upper_right = SDMLayers.__get_bounded_grid_coordinate_by_latlon(layer, max_lon, max_lat)
+    lower_left = SimpleSDMLayers.__get_bounded_grid_coordinate_by_latlon(layer, min_lon, min_lat)
+    lower_right = SimpleSDMLayers.__get_bounded_grid_coordinate_by_latlon(layer, max_lon, min_lat)
+    upper_left = SimpleSDMLayers.__get_bounded_grid_coordinate_by_latlon(layer, min_lon, max_lat)
+    upper_right = SimpleSDMLayers.__get_bounded_grid_coordinate_by_latlon(layer, max_lon, max_lat)
 
     # Get the range for approximate window
     irange = extrema(first.([lower_left, lower_right, upper_left, upper_right]))

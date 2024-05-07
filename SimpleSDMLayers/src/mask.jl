@@ -13,7 +13,7 @@ function mask(layer::SDMLayer, template::SDMLayer)
 end
 
 @testitem "We can get a mask of a layer" begin
-    layer = SDMLayers.__demodata()
+    layer = SimpleSDMLayers.__demodata()
     random_mask = rand(Bool, size(layer))
     template = SDMLayer{Bool}(grid=random_mask, nodata=typemin(Bool), x=layer.x, y=layer.y, crs=layer.crs)
     @test length(mask(layer, template)) == length(template)

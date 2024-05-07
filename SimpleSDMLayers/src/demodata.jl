@@ -1,5 +1,5 @@
 function __demodata(; reduced::Bool = false)
-    dpath = joinpath(@__DIR__, "..", "data")
+    dpath = joinpath(@__DIR__, "..", "..", "data")
     grd = parse.(UInt16, hcat(split.(readlines(joinpath(dpath, "grid.dat")), '\t')...))
     crs = only(readlines(joinpath(dpath, "grid.crs")))
     metadata = readlines(joinpath(dpath, "grid.info"))
@@ -19,19 +19,19 @@ function __demodata(; reduced::Bool = false)
 end
 
 @testitem "We can load the demo layer" begin
-    layer = SDMLayers.__demodata()
+    layer = SimpleSDMLayers.__demodata()
     @test layer.crs == "NAD83 / Quebec Albers"
 end
 
 @testitem "We can load the reduced demo layer" begin
-    layer = SDMLayers.__demodata(reduced=true)
+    layer = SimpleSDMLayers.__demodata(reduced=true)
     @test layer.crs == "NAD83 / Quebec Albers"
     @test size(layer) == (400, 400)
 end
 
 @testitem "We read the correct WGS84 bounds for the demo layer" begin
-    layer = SDMLayers.__demodata()
-    prj = SDMLayers.Proj.Transformation(layer.crs, "EPSG:4326"; always_xy=true)
+    layer = SimpleSDMLayers.__demodata()
+    prj = SimpleSDMLayers.Proj.Transformation(layer.crs, "EPSG:4326"; always_xy=true)
     
     ll_ll = prj(layer.x[1], layer.y[1])
     @test ll_ll[1] ≈ -80.00 atol = 0.01

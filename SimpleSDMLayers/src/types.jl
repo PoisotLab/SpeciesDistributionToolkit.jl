@@ -73,7 +73,7 @@ function nodata!(layer::SDMLayer{T}, nodata::T) where {T}
 end
 
 @testitem "We can change the nodata value of a layer" begin
-    layer = SDMLayers.__demodata(reduced=true)
+    layer = SimpleSDMLayers.__demodata(reduced=true)
     nodata!(layer, typemax(eltype(layer)))
     @test layer.nodata == typemax(eltype(layer))
 end

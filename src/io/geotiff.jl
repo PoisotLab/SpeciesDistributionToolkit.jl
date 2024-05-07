@@ -162,7 +162,7 @@ end
 
 function _prepare_layer_for_burnin(layer::SDMLayer{T}, nodata::T) where {T <: Number}
     array = copy(layer.grid)
-    array[findall(layer.indices)] .= nodata
+    array[findall(.!layer.indices)] .= nodata
     array_t = reverse(permutedims(array, [2, 1]); dims = 2)
     return array_t
 end

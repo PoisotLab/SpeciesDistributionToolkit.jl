@@ -27,5 +27,13 @@ function FileIO.save(file::String, layers::Vector{SDMLayer{T}}; kwargs...) where
 end
 
 function FileIO.save(file::String, layer::SDMLayer{T}; kwargs...) where {T <: Number}
-    return SpeciesDistributionToolkit.save(file, [layer]; kwargs...)
+    return FileIO.save(file, [layer]; kwargs...)
+end
+
+@testitem "We can save a layer to a file and it does not fuck it up" begin
+    t = SDMLayer(RasterData(WorldClim2, WindSpeed); bottom=-10., top=25.0, left=-10.0, right=15.0)
+    f = tempname()*".tiff"
+    save(f, t)
+    k = SDMLayer(f)
+    @test SimpleSDMLayers._layers_are_compatible(t, k)
 end

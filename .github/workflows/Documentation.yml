@@ -44,6 +44,10 @@ jobs:
         run: julia --project=Phylopic/docs/ Phylopic/docs/make.jl
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+      - name: "Bootstrap SimpleSDMDatasets"
+        if: github.event_name == 'pull_request'
+        run: julia --project=docs bootstrap.jl && julia --project=docs/ -e 'using Pkg; Pkg.develop(path=".")'
+        working-directory: SimpleSDMDatasets/
       - name: "Instantiate SimpleSDMDatasets documentation"
         run: julia --project=docs/ -e 'using Pkg; Pkg.instantiate()'
         working-directory: SimpleSDMDatasets/
@@ -51,6 +55,10 @@ jobs:
         run: julia --project=SimpleSDMDatasets/docs/ SimpleSDMDatasets/docs/make.jl
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+      - name: "Bootstrap Fauxcurrences"
+        if: github.event_name == 'pull_request'
+        run: julia --project=docs bootstrap.jl && julia --project=docs/ -e 'using Pkg; Pkg.develop(path=".")'
+        working-directory: Fauxcurrences/
       - name: "Instantiate Fauxcurrences documentation"
         run: julia --project=docs/ -e 'using Pkg; Pkg.instantiate()'
         working-directory: Fauxcurrences/
@@ -58,6 +66,10 @@ jobs:
         run: julia --project=Fauxcurrences/docs/ Fauxcurrences/docs/make.jl
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+      - name: "Bootstrap SimpleSDMLayers"
+        if: github.event_name == 'pull_request'
+        run: julia --project=docs bootstrap.jl && julia --project=docs/ -e 'using Pkg; Pkg.develop(path=".")'
+        working-directory: SimpleSDMLayers/
       - name: "Instantiate SimpleSDMLayers documentation"
         run: julia --project=docs/ -e 'using Pkg; Pkg.instantiate()'
         working-directory: SimpleSDMLayers/

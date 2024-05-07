@@ -191,10 +191,10 @@ function _write_geotiff(
 
     # Geotransform
     gt = zeros(Float64, 6)
-    gt[1] = layers[1].left
+    gt[1] = layers[1].x[1]
     gt[2] = 2stride(layers[1], 1)
     gt[3] = 0.0
-    gt[4] = layers[1].top
+    gt[4] = layers[1].y[2]
     gt[5] = 0.0
     gt[6] = -2stride(layers[1], 2)
 
@@ -230,7 +230,7 @@ function _write_geotiff(
 end
 
 @testitem "We can write a GeoTiff file" begin
-    layer = SDMLayer(RasterData(EarthEnv, LandCover); layer = 1)
+    layer = SDMLayer(RasterData(WorldClim2, BioClim); layer = 1)
     D = eltype(layer)
 
     f = tempname()

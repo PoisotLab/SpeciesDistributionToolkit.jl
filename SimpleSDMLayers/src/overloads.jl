@@ -74,5 +74,5 @@ function Base.stride(layer::SDMLayer)
 end
 
 function Base.stride(layer::SDMLayer, i)
-    return stride(layer)[i]
+    return Base.stride(layer)[i]
 end

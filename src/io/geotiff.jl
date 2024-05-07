@@ -21,7 +21,7 @@ function _find_span(n, m, M, pos, side)
 end
 
 """
-    geotiff(file; bandnumber::Integer=1, left=nothing, right=nothing, bottom=nothing, top=nothing) where {LT <: SimpleSDMLayer}
+    geotiff(file; bandnumber::Integer=1, left=nothing, right=nothing, bottom=nothing, top=nothing, driver)
 
 The geotiff function reads a geotiff file, and returns it as a matrix of the
 correct type. The optional arguments `left`, `right`, `bottom`, and `left` are
@@ -35,8 +35,7 @@ function _read_geotiff(
     right = 180.0,
     bottom = -90.0,
     top = 90.0,
-    driver::String = "GTiff",
-    compress::String = "LZW",
+    driver::String = "GTiff"
 )
     @assert driver ∈ keys(ArchGDAL.listdrivers()) ||
             throw(ArgumentError("Not a valid driver."))
@@ -95,10 +94,10 @@ function _read_geotiff(
         )
         return SDMLayer(
             rotl90(buffer),
-            convert(eltype(buffer), nodata),
+            rotl90(buffer .!= nodata),
             (left_pos - 0.5lon_stride, right_pos + 0.5lon_stride),
             (bottom_pos - 0.5lat_stride, top_pos + 0.5lat_stride),
-            string(wkt)
+            string(wkt),
         )
     end
 
@@ -161,28 +160,22 @@ function _write_geotiff(
     return file
 end
 
-function _prepare_layer_for_burnin(
-    layer::SimpleSDMPredictor{T},
-    nodata::T,
-) where {T <: Number}
-    K = SimpleSDMLayers._inner_type(layer)
-    @assert K <: Number
-    array = replace(layer.grid, nothing => nodata)
-    array = convert(Matrix{K}, array)
-    dtype = eltype(array)
+function _prepare_layer_for_burnin(layer::SDMLayer{T}, nodata::T) where {T <: Number}
+    array = copy(layer.grid)
+    array[findall(layer.indices)] .= nodata
     array_t = reverse(permutedims(array, [2, 1]); dims = 2)
     return array_t
 end
 
 """
-    geotiff(file::AbstractString, layers::Vector{SimpleSDMPredictor{T}}; nodata::T=convert(T, -9999)) where {T <: Number}
+    geotiff(file::AbstractString, layers::Vector{SDMLayer{T}}; nodata::T=convert(T, -9999)) where {T <: Number}
 
 Stores a series of `layers` in a `file`, where every layer in a band. See
 `geotiff` for other options.
 """
 function _write_geotiff(
     file::AbstractString,
-    layers::Vector{SimpleSDMPredictor{T}};
+    layers::Vector{SDMLayer{T}};
     nodata::T = convert(T, -9999),
     driver::String = "GTiff",
     compress::String = "LZW",
@@ -236,42 +229,18 @@ function _write_geotiff(
     return file
 end
 
-"""
-    geotiff(file::AbstractString, layer::SimpleSDMResponse{T}; nodata::T=convert(T, -9999)) where {T <: Number}
-
-Write a single `SimpleSDMResponse` layer to a file.
-"""
-function _write_geotiff(
-    file::AbstractString,
-    layer::SimpleSDMResponse{T};
-    kwargs...,
-) where {T <: Number}
-    return _write_geotiff(file, convert(SimpleSDMPredictor, layer); kwargs...)
-end
-
-"""
-    geotiff(file::AbstractString, layers::Vector{SimpleSDMResponse{T}}; nodata::T=convert(T, -9999)) where {T <: Number}
-
-Write a vector of `SimpleSDMResponse` layers to bands in a file.
-"""
-function _write_geotiff(
-    file::AbstractString,
-    layers::Vector{SimpleSDMResponse{T}};
-    kwargs...,
-) where {T <: Number}
-    return _write_geotiff(file, convert.(SimpleSDMPredictor, layers); kwargs...)
-end
-
 @testitem "We can write a GeoTiff file" begin
     layer = SDMLayer(RasterData(EarthEnv, LandCover); layer = 1)
-    D = SimpleSDMLayers._inner_type(layer)
+    D = eltype(layer)
 
     f = tempname()
+    
     SpeciesDistributionToolkit._write_geotiff(
         f,
         [layer];
         driver = "GTiff",
         nodata = typemax(D),
     )
+
     @test isfile(f)
 end

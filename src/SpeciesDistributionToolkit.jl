@@ -32,22 +32,23 @@ export latitudes, longitudes
 include("integrations/datasets_layers.jl")
 
 # GBIF to get species occurrence data
-include("integrations/gbif_layers.jl")
+# include("integrations/gbif_layers.jl")
+# export clip
 
 # GBIF and Phylopic integration
-include("integrations/gbif_phylopic.jl")
+# include("integrations/gbif_phylopic.jl")
 
 # Plotting
 include("integrations/makie.jl")
 
 # Functions for IO
-include("io/geotiff.jl")
-include("io/ascii.jl")
 include("io/read_write.jl")
+include("io/geotiff.jl")
+#include("io/ascii.jl")
 
 # Functions for pseudo-absence generation
-include("pseudoabsences.jl")
-export WithinRadius, SurfaceRangeEnvelope, RandomSelection, DistanceToEvent
-export pseudoabsencemask, backgroundpoints
+# include("pseudoabsences.jl")
+# export WithinRadius, SurfaceRangeEnvelope, RandomSelection, DistanceToEvent
+ #export pseudoabsencemask, backgroundpoints
 
 end # module SpeciesDistributionToolkit

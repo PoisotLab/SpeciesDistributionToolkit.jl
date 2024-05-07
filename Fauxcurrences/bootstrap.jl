@@ -13,5 +13,5 @@ for package in components
 end
 for package in components
     @info "Dev'ing $(package)"
-    Pkg.develop(; path = "./$(package)")
+    Pkg.develop(; path = "../$(package)")
 end

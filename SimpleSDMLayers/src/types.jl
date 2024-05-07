@@ -101,3 +101,40 @@ end
     @test length(layer) < ol
     @test layer.crs == "EPSG:4326"
 end
+
+function _layers_are_compatible(l1::SDMLayer, l2::SDMLayer)
+    l1.crs == l2.crs || return false
+    l1.x == l2.x || return false
+    l1.y == l2.y || return false
+    return true
+end
+
+function _layers_are_compatible(layers::Vector{T}) where {T <: SDMLayer}
+    return all(l -> _layers_are_compatible(l, layers[1]), layers)
+end
+
+function eastings(layer::SDMLayer)
+    Δx = (layer.x[2]-layer.x[1])/(2size(layer, 2))
+    return LinRange(layer.x[1]+Δx, layer.x[2]-Δx, size(layer, 2))
+end
+
+@testitem "We get the correct eastings from a layer" begin
+    l = SDMLayer(rand(0x00:0x02, (19, 37)))
+    e = eastings(l)
+    @test e[19] ≈ 0.0
+    @test e[1] ≈ -175.0 atol=0.2
+    @test e[37] ≈ 175.0 atol=0.2
+end
+
+function northings(layer::SDMLayer)
+    Δy = (layer.y[2]-layer.y[1])/(2size(layer, 1))
+    return LinRange(layer.y[1]+Δy, layer.y[2]-Δy, size(layer, 1))
+end
+
+@testitem "We get the correct northings from a layer" begin
+    l = SDMLayer(rand(0x00:0x02, (19, 37)))
+    n = northings(l)
+    @test n[10] ≈ 0.0
+    @test n[1] ≈ -90.0 atol=5.0
+    @test n[19] ≈ 90.0 atol=5.0
+end

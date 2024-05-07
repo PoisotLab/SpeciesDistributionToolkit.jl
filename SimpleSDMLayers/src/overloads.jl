@@ -61,3 +61,8 @@ end
     copied[1, 1] *= 2
     @test layer[1, 1] != copied[1, 1]
 end
+
+function Base.convert(::Type{SDMLayer{T}}, layer::SDMLayer{N}) where {T,N}
+    grd = convert(Matrix{T}, layer.grid)
+    return SDMLayer(grid=grd, indices=layer.indices, x=layer.x, y=layer.y, crs=layer.crs)
+end

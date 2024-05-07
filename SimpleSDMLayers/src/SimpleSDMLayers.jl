@@ -19,6 +19,7 @@ import Distances
 include("types.jl")
 export SDMLayer
 export nodata!
+export eastings, northings
 
 # Include a demo dataset in a non-WGS84 projection
 include("demodata.jl")

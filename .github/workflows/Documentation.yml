@@ -21,36 +21,37 @@ jobs:
       - uses: julia-actions/cache@v1
       - name: Setup the component packages (globally)
         run: julia --project bootstrap.jl
+        if: github.event_name != 'pull_request'
       - name: "Instantiate GBIF documentation"
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+        run: julia --project=docs/ -e 'using Pkg; Pkg.instantiate()'
         working-directory: GBIF/
       - name: "Build GBIF documentation"
         run: julia --project=GBIF/docs/ GBIF/docs/make.jl
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
       - name: "Instantiate Phylopic documentation"
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+        run: julia --project=docs/ -e 'using Pkg; Pkg.instantiate()'
         working-directory: Phylopic/
       - name: "Build Phylopic documentation"
         run: julia --project=Phylopic/docs/ Phylopic/docs/make.jl
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
       - name: "Instantiate SimpleSDMDatasets documentation"
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+        run: julia --project=docs/ -e 'using Pkg; Pkg.instantiate()'
         working-directory: SimpleSDMDatasets/
       - name: "Build SimpleSDMDatasets documentation"
         run: julia --project=SimpleSDMDatasets/docs/ SimpleSDMDatasets/docs/make.jl
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
       - name: "Instantiate Fauxcurrences documentation"
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+        run: julia --project=docs/ -e 'using Pkg; Pkg.instantiate()'
         working-directory: Fauxcurrences/
       - name: "Build Fauxcurrences documentation"
         run: julia --project=Fauxcurrences/docs/ Fauxcurrences/docs/make.jl
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
       - name: "Instantiate SimpleSDMLayers documentation"
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+        run: julia --project=docs/ -e 'using Pkg; Pkg.instantiate()'
         working-directory: SimpleSDMLayers/
       - name: "Build SimpleSDMLayers documentation"
         run: julia --project=SimpleSDMLayers/docs/ SimpleSDMLayers/docs/make.jl

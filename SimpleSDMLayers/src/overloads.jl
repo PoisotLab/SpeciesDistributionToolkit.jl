@@ -36,7 +36,7 @@ end
 
 function Base.show(io::IO, ::MIME"text/plain", layer::SDMLayer)
     info_str = [
-        "SDM Layer with $(length(layer)) $(eltype(layer)) cells",
+        "SDM Layer with $(count(layer)) $(eltype(layer)) cells",
         "\tCRS: $(layer.crs)",
         "\tGrid size: $(size(layer))",
     ]

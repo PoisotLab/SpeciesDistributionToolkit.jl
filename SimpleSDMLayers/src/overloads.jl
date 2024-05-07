@@ -2,13 +2,13 @@ Base.size(layer::SDMLayer) = size(layer.grid)
 Base.size(layer::SDMLayer, i) = size(layer.grid, i)
 Base.eltype(::SDMLayer{T}) where {T} = T
 Base.IndexStyle(::Type{SDMLayer}) = IndexCartesian()
-Base.CartesianIndices(layer::SDMLayer) = layer.indices
+Base.CartesianIndices(layer::SDMLayer) = findall(layer.indices)
 Base.count(layer::SDMLayer) = count(layer.indices)
 Base.length(layer::SDMLayer) = count(layer)
 Base.IteratorSize(::SDMLayer) = Base.HasLength()
 Base.IteratorEltype(::SDMLayer) = Base.HasEltype()
 Base.keys(layer::SDMLayer) = CartesianIndices(layer)
-Base.values(layer::SDMLayer) = layer[CartesianIndices(layer)]
+Base.values(layer::SDMLayer) = layer.grid[layer.indices]
 
 function Base.similar(layer::SDMLayer)
     grd = similar(layer.grid)

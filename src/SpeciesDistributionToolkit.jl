@@ -3,6 +3,8 @@ module SpeciesDistributionToolkit
 import ArchGDAL
 import GDAL
 
+using TestItems
+
 import Distances
 # TODO: call the one from Fauxcurrences when integrated
 const _distance_function = Distances.Haversine(6371.0)

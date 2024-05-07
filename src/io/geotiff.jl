@@ -21,18 +21,15 @@ function _find_span(n, m, M, pos, side)
 end
 
 """
-    geotiff(file, ::Type{LT}; bandnumber::Integer=1, left=nothing, right=nothing, bottom=nothing, top=nothing) where {LT <: SimpleSDMLayer}
+    geotiff(file; bandnumber::Integer=1, left=nothing, right=nothing, bottom=nothing, top=nothing) where {LT <: SimpleSDMLayer}
 
 The geotiff function reads a geotiff file, and returns it as a matrix of the
 correct type. The optional arguments `left`, `right`, `bottom`, and `left` are
 defining the bounding box to read from the file. This is particularly useful if
 you want to get a small subset from large files.
-
-The first argument is the type of the `SimpleSDMLayer` to be returned.
 """
 function _read_geotiff(
-    file::AbstractString,
-    ::Type{LT};
+    file::AbstractString;
     bandnumber::Integer = 1,
     left = -180.0,
     right = 180.0,
@@ -40,39 +37,16 @@ function _read_geotiff(
     top = 90.0,
     driver::String = "GTiff",
     compress::String = "LZW",
-) where {LT <: SimpleSDMLayer}
+)
     @assert driver ∈ keys(ArchGDAL.listdrivers()) ||
             throw(ArgumentError("Not a valid driver."))
-
-    try
-        ArchGDAL.read(file) do stuff
-            wkt = ArchGDAL.importPROJ4(ArchGDAL.getproj(stuff))
-            wgs84 = ArchGDAL.importEPSG(4326)
-            # The next comparison is complete bullshit but for some reason, ArchGDAL has no
-            # mechanism to test the equality of coordinate systems. I sort of understand why,
-            # but it's still nonsense. So we are left with checking the string representations.
-            if string(wkt) != string(wgs84)
-                @warn """The dataset is not in WGS84
-                We will convert it to WGS84 using gdal_warp, and write it to a temporary file.
-                This is not an apology, this is a warning.
-                Proceed with caution.
-                """
-                newfile = tempname()
-                run(
-                    `$(GDAL.gdalwarp_path()) $file $newfile -t_srs "+proj=longlat +ellps=WGS84"`,
-                )
-                file = newfile
-            end
-        end
-    catch err
-        @info err
-    end
 
     # This next block is reading the geotiff file, but also making sure that we
     # clip the file correctly to avoid reading more than we need.
     layer = ArchGDAL.read(file) do dataset
-        transform = ArchGDAL.getgeotransform(dataset)
+        wkt = ArchGDAL.importPROJ4(ArchGDAL.getproj(dataset))
         # wkt = ArchGDAL.getproj(dataset)
+        transform = ArchGDAL.getgeotransform(dataset)
 
         # The data we need is pretty much always going to be stored in the first
         # band, but this is not the case for the future WorldClim data.
@@ -119,14 +93,12 @@ function _read_geotiff(
             min_height:max_height,
             min_width:max_width,
         )
-        buffer = convert(Matrix{Union{Nothing, eltype(buffer)}}, rotl90(buffer))
-        replace!(buffer, nodata => nothing)
-        return LT(
-            buffer,
-            left_pos - 0.5lon_stride,
-            right_pos + 0.5lon_stride,
-            bottom_pos - 0.5lat_stride,
-            top_pos + 0.5lat_stride,
+        return SDMLayer(
+            rotl90(buffer),
+            convert(eltype(buffer), nodata),
+            (left_pos - 0.5lon_stride, right_pos + 0.5lon_stride),
+            (bottom_pos - 0.5lat_stride, top_pos + 0.5lat_stride),
+            string(wkt)
         )
     end
 
@@ -134,18 +106,16 @@ function _read_geotiff(
 end
 
 """
-    geotiff(file::AbstractString, layer::SimpleSDMPredictor{T}; nodata::T=convert(T, -9999)) where {T <: Number}
+    geotiff(file::AbstractString, layer::SDMLayer; kwargs...)
 
-Write a single `layer` to a `file`, where the `nodata` field is set to an
-arbitrary value.
+Write a single `layer` to a `file`.
 """
 function _write_geotiff(
     file::AbstractString,
-    layer::SimpleSDMPredictor{T};
-    nodata::T = convert(T, -9999),
+    layer::SDMLayer;
     driver::String = "GTiff",
     compress = "LZW",
-) where {T <: Number}
+)
     @assert driver ∈ keys(ArchGDAL.listdrivers()) ||
             throw(ArgumentError("Not a valid driver."))
     #@assert compress ∈ keys(ArchGDAL.listcompress()) || throw(ArgumentError("Not a valid compression."))
@@ -290,4 +260,18 @@ function _write_geotiff(
     kwargs...,
 ) where {T <: Number}
     return _write_geotiff(file, convert.(SimpleSDMPredictor, layers); kwargs...)
+end
+
+@testitem "We can write a GeoTiff file" begin
+    layer = SDMLayer(RasterData(EarthEnv, LandCover); layer = 1)
+    D = SimpleSDMLayers._inner_type(layer)
+
+    f = tempname()
+    SpeciesDistributionToolkit._write_geotiff(
+        f,
+        [layer];
+        driver = "GTiff",
+        nodata = typemax(D),
+    )
+    @test isfile(f)
 end

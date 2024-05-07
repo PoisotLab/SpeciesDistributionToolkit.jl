@@ -46,9 +46,10 @@ end
 
 function Base.copy(layer::SDMLayer)
     n = copy(layer.grid)
+    i = copy(layer.indices)
     return SDMLayer(
-        grid=n,
-        nodata=layer.nodata,
+        n;
+        indices=i,
         crs=layer.crs,
         x=layer.x,
         y=layer.y

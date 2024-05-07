@@ -6,7 +6,6 @@ function __demodata(; reduced::Bool = false)
     x = tuple(parse.(Float64, metadata[1:2])...)
     y = tuple(parse.(Float64, metadata[3:4])...)
     nodata = convert(UInt16, parse(Float64, metadata[end]))
-    idx = findall(!isequal(nodata), grd)
     if reduced
         xrange = 100:499
         yrange = 100:499
@@ -16,7 +15,7 @@ function __demodata(; reduced::Bool = false)
         x = extrema(eastings[xrange])
         y = extrema(northings[yrange])
     end
-    return SDMLayer(grid=grd, crs=crs, x=x, y=y, indices=idx)
+    return SDMLayer(grd; crs=crs, x=x, y=y, nodata=nodata)
 end
 
 @testitem "We can load the demo layer" begin

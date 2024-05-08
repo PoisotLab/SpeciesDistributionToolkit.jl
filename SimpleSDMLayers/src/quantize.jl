@@ -7,8 +7,8 @@ end
 
 function rescale!(layer::SDMLayer, m, M)
     rescale!(layer)
-    layer .*= (M-m)
-    layer .+= m
+    layer.grid .*= (M-m)
+    layer.grid .+= m
     return layer
 end
 
@@ -26,6 +26,6 @@ end
 @testitem "We can rescale a layer between m and M" begin
     layer = convert(SDMLayer{Float16}, SimpleSDMLayers.__demodata())
     rescale!(layer, -1.5, 2.6)
-    @test isequal(-1.5)(minimum(layer))
-    @test isequal(2.6)(maximum(layer))
+    @test -1.5 ≈ minimum(layer)
+    @test 2.6 ≈ maximum(layer)
 end

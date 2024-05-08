@@ -44,6 +44,8 @@ include("integrations/makie.jl")
 
 # Functions for IO
 include("io/read_write.jl")
+export save
+
 include("io/geotiff.jl")
 #include("io/ascii.jl")
 

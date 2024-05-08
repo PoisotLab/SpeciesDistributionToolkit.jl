@@ -37,7 +37,7 @@ classes_resistance = classes_resistance ./ sum(classes_resistance)
 # get a vector of layers:
 
 landuse = [
-    SimpleSDMPredictor(dataprovider; layer = class, full = true, spatial_extent...) for
+    SDMLayer(dataprovider; layer = class, full = true, spatial_extent...) for
     class in landcover_classes
 ]
 

@@ -51,4 +51,8 @@ export slidingwindow
 include("tiling.jl")
 export tiles
 
+# Quantiles, etc
+include("quantize.jl")
+export rescale!, rescale
+
 end # module

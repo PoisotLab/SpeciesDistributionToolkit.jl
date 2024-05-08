@@ -76,3 +76,50 @@ end
 function Base.stride(layer::SDMLayer, i)
     return Base.stride(layer)[i]
 end
+
+function Base.:+(l1::SDMLayer, l2::SDMLayer)
+    @assert SimpleSDMLayers._layers_are_compatible(l1, l2)
+    r = copy(l1)
+    r.grid = l1.grid .+ l2.grid
+    r.indices = l1.indices .& l2.indices
+    return r
+end
+
+function Base.:*(l1::SDMLayer, l2::SDMLayer)
+    @assert SimpleSDMLayers._layers_are_compatible(l1, l2)
+    r = copy(l1)
+    r.grid = l1.grid .* l2.grid
+    r.indices = l1.indices .& l2.indices
+    return r
+end
+
+function Base.:/(l1::SDMLayer, l2::SDMLayer)
+    @assert SimpleSDMLayers._layers_are_compatible(l1, l2)
+    r = copy(l1)
+    r.grid = l1.grid ./ l2.grid
+    r.indices = l1.indices .& l2.indices
+    return r
+end
+
+function Base.:-(l1::SDMLayer, l2::SDMLayer)
+    @assert SimpleSDMLayers._layers_are_compatible(l1, l2)
+    r = copy(l1)
+    r.grid = l1.grid .- l2.grid
+    r.indices = l1.indices .& l2.indices
+    return r
+end
+
+@testitem "We can do + - / * on layers" begin
+    l1 = SimpleSDMLayers.__demodata()
+    l2 = SimpleSDMLayers.__demodata()
+    plus = l1 + l2
+    minus = l1 - l2
+    multiply = l1 * l2
+    divide = l1 / l2
+    for i in eachindex(plus)
+        @test plus[i] == l1[i] + l2[i]
+        @test minus[i] == l1[i] - l2[i]
+        @test multiply[i] == l1[i] * l2[i]
+        @test divide[i] == l1[i] / l2[i]
+    end
+end

@@ -77,6 +77,7 @@ jobs:
         run: julia --project=SimpleSDMLayers/docs/ SimpleSDMLayers/docs/make.jl
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-docdeploy@v1
         env:

@@ -33,6 +33,7 @@ jobs:
         run: julia --project=GBIF/docs/ GBIF/docs/make.jl
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "Bootstrap Phylopic"
         if: github.event_name == 'pull_request'
         run: julia --project=docs bootstrap.jl && julia --project=docs/ -e 'using Pkg; Pkg.develop(path=".")'
@@ -44,6 +45,7 @@ jobs:
         run: julia --project=Phylopic/docs/ Phylopic/docs/make.jl
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "Bootstrap SimpleSDMDatasets"
         if: github.event_name == 'pull_request'
         run: julia --project=docs bootstrap.jl && julia --project=docs/ -e 'using Pkg; Pkg.develop(path=".")'
@@ -55,6 +57,7 @@ jobs:
         run: julia --project=SimpleSDMDatasets/docs/ SimpleSDMDatasets/docs/make.jl
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "Bootstrap Fauxcurrences"
         if: github.event_name == 'pull_request'
         run: julia --project=docs bootstrap.jl && julia --project=docs/ -e 'using Pkg; Pkg.develop(path=".")'
@@ -66,6 +69,7 @@ jobs:
         run: julia --project=Fauxcurrences/docs/ Fauxcurrences/docs/make.jl
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "Bootstrap SimpleSDMLayers"
         if: github.event_name == 'pull_request'
         run: julia --project=docs bootstrap.jl && julia --project=docs/ -e 'using Pkg; Pkg.develop(path=".")'
@@ -82,3 +86,4 @@ jobs:
       - uses: julia-actions/julia-docdeploy@v1
         env:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

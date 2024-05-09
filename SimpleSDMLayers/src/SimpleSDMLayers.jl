@@ -55,4 +55,8 @@ export tiles
 include("quantize.jl")
 export rescale!, rescale
 
+# Mosaic
+include("mosaic.jl")
+export mosaic
+
 end # module

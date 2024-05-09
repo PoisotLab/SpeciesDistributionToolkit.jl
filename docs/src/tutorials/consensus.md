@@ -13,12 +13,13 @@ using CairoMakie
 spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
 ```
 
-Defining a bounding box is important because, although we can clip any layer, the package
+Defining a bounding box is important because, although we can clip any layer,
+the package
 will only *read* what is required. For large data (like landcover data), this is
 a significant improvement in memory footprint.
 
-We now define our data provider, composed of a data source (`EarthEnv`) and a dataset
-(`LandCover`).
+We now define our data provider, composed of a data source (`EarthEnv`) and a
+dataset (`LandCover`).
 
 ```@example 1
 dataprovider = RasterData(EarthEnv, LandCover)
@@ -36,8 +37,9 @@ For more information, you can also refer to the URL of the original dataset:
 SimpleSDMDatasets.url(dataprovider)
 ```
 
-We can download all the layers using a list comprehension. Note that the name (`stack`) is
-a little misleading, as the packages have no concept of what a stack of raster is.
+We can download all the layers using a list comprehension. Note that the name
+(`stack`) is a little misleading, as the packages have no concept of what a
+stack of raster is.
 
 ```@example 1
 stack = [
@@ -46,15 +48,16 @@ stack = [
 ]
 ```
 
-We know that the last layer (`"Open Water"`) is a little less interesting, so we can
-create a mask for the pixels that are less than 100% open water.
+We know that the last layer (`"Open Water"`) is a little less interesting, so we
+can create a mask for the pixels that are less than 100% open water.
 
 ```@example 1
 open_water_idx = findfirst(isequal("Open Water"), landcover_types)
 open_water_mask = nodata(stack[open_water_idx], 100.0f0)
 ```
 
-We can now mask all of the rasters in the stack, to remove the open water pixels:
+We can now mask all of the rasters in the stack, to remove the open water
+pixels:
 
 ```@example 1
 for i in eachindex(stack)
@@ -62,15 +65,15 @@ for i in eachindex(stack)
 end
 ```
 
-At this point, we are ready to get the most important land use category for each pixel,
-using the `mosaic` function:
+At this point, we are ready to get the most important land use category for each
+pixel, using the `mosaic` function:
 
 ```@example 1
 consensus = mosaic(argmax, stack)
 ```
 
-In order to represent the output, we will define a color palette corresponding to the
-different categories in our data:
+In order to represent the output, we will define a color palette corresponding
+to the different categories in our data:
 
 ```@example 1
 landcover_colors = [

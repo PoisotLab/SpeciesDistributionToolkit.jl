@@ -26,6 +26,10 @@ makedocs(;
             "Arithmetic on layers" => "tutorials/arithmetic.md",
             "Landcover consensus" => "tutorials/consensus.md",
         ],
+        "How-to..." => [
+            "Index" => "howtos/index.md",
+            "... get GBIF data?" => "howtos/gbifdata.md",
+        ],
         "Documentation" => [
             "Work with species occurrence data" => "manual/SpeciesDistributionToolkit/index.md",
             "Occurrences and layers" => "manual/SpeciesDistributionToolkit/gbif.jl.md",

@@ -87,7 +87,7 @@ end
 
 Removes the data matching a function
 """
-function nodata!(layer::SDMLayer{T}, f) where {T}
+function nodata!(layer::SDMLayer, f::T) where {T <: Function}
     new_nodata = f.(layer.grid)
     layer.indices = layer.indices .& (.! new_nodata)
     return layer
@@ -99,6 +99,39 @@ end
     ol = length(layer)
     nodata!(layer, ==(0x01))
     @test length(layer) < ol
+    @test layer.crs == "EPSG:4326"
+end
+
+function nodata!(layer::SDMLayer, v)
+    return nodata!(layer, convert(eltype(layer), v))
+end
+
+
+"""
+    nodata(layer::SDMLayer, args...)
+
+Makes a copy and calls `nodata!` on it
+"""
+function nodata(layer::SDMLayer, args...)
+    c = copy(layer)
+    return nodata!(c, args...)
+end
+
+@testitem "We can do nodata with a different type" begin
+    m = rand(0x00:0x02, (10, 20))
+    layer = SDMLayer(m)
+    ol = length(layer)
+    nodata!(layer, 1)
+    @test length(layer) < ol
+    @test layer.crs == "EPSG:4326"
+end
+
+@testitem "We can do nodata with a copy" begin
+    m = rand(0x00:0x02, (10, 20))
+    layer = SDMLayer(m)
+    ol = length(layer)
+    nl = nodata(layer, 1)
+    @test length(nl) < length(layer)
     @test layer.crs == "EPSG:4326"
 end
 

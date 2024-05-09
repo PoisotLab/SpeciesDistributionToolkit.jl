@@ -13,32 +13,6 @@ using Dates
 # Generate a report card for each known dataset
 include("dataset_report.jl")
 
-# Compile the vignettes for the top-level package
-_vignettes_categories = [
-    "layers" => "Working with layers",
-    "occurrences" => "Working with occurrences",
-    "integration" => "Integration examples",
-]
-_vignettes_pages = Pair{String, Vector{Pair{String, String}}}[]
-for _category in _vignettes_categories
-    folder, title = _category
-    vignettes = filter(
-        endswith(".jl"),
-        readdir(joinpath("docs", "src", "vignettes", folder); join = true),
-    )
-    this_category = Pair{String, String}[]
-    for vignette in vignettes
-        Literate.markdown(vignette, joinpath("docs", "src", "vignettes", folder))
-        compiled_vignette = replace(vignette, ".jl" => ".md")
-        push!(
-            this_category,
-            last(split(readlines(vignette)[1], "# # ")) =>
-                joinpath(splitpath(compiled_vignette)[3:end]),
-        )
-    end
-    push!(_vignettes_pages, title => this_category)
-end
-
 makedocs(;
     sitename = "Species Distribution Toolkit",
     format = Documenter.HTML(;
@@ -47,13 +21,16 @@ makedocs(;
     warnonly = true,
     pages = [
         "Index" => "index.md",
-        "Vignettes" => _vignettes_pages,
-        "List of datasets" => _dataset_catalogue,
+        "Tutorials" => [
+            "Index" => "tutorials/index.md",
+            "Arithmetic on layers" => "tutorials/arithmetic.md",
+        ],
         "Documentation" => [
             "Work with species occurrence data" => "manual/SpeciesDistributionToolkit/index.md",
             "Occurrences and layers" => "manual/SpeciesDistributionToolkit/gbif.jl.md",
             "Pseudo-absences" => "manual/SpeciesDistributionToolkit/pseudoabsences.md",
         ],
+        "Appendix: datasets" => _dataset_catalogue,
     ],
 )
 

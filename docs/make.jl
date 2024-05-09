@@ -24,6 +24,7 @@ makedocs(;
         "Tutorials" => [
             "Index" => "tutorials/index.md",
             "Arithmetic on layers" => "tutorials/arithmetic.md",
+            "Landcover consensus" => "tutorials/consensus.md",
         ],
         "Documentation" => [
             "Work with species occurrence data" => "manual/SpeciesDistributionToolkit/index.md",

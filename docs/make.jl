@@ -22,13 +22,11 @@ makedocs(;
     pages = [
         "Index" => "index.md",
         "Tutorials" => [
-            "Index" => "tutorials/index.md",
-            "Arithmetic on layers" => "tutorials/arithmetic.md",
-            "Landcover consensus" => "tutorials/consensus.md",
+            "tutorials/arithmetic.md",
+            "tutorials/consensus.md",
         ],
         "How-to..." => [
-            "Index" => "howtos/index.md",
-            "... get GBIF data?" => "howtos/gbifdata.md",
+            "howtos/gbifdata.md",
         ],
         "Documentation" => [
             "Work with species occurrence data" => "manual/SpeciesDistributionToolkit/index.md",

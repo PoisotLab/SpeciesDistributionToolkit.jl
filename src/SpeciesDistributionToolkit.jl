@@ -12,7 +12,6 @@ const _distance_function = Distances.Haversine(6371.0)
 using MakieCore
 
 import StatsBase
-import FileIO
 import OffsetArrays
 
 # We make ample use of re-export
@@ -44,8 +43,6 @@ include("integrations/makie.jl")
 
 # Functions for IO
 include("io/read_write.jl")
-export save
-
 include("io/geotiff.jl")
 #include("io/ascii.jl")
 

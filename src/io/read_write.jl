@@ -18,7 +18,7 @@ function SimpleSDMLayers.SDMLayer(
     @error "Only tiff files are supported at the moment"
 end
 
-function FileIO.save(file::String, layers::Vector{SDMLayer{T}}; kwargs...) where {T <: Number}
+function save(file::String, layers::Vector{SDMLayer{T}}; kwargs...) where {T <: Number}
     if endswith(file, ".tif") | endswith(file, ".tiff")
         _write_geotiff(file, layers; kwargs...)
         return file
@@ -26,14 +26,14 @@ function FileIO.save(file::String, layers::Vector{SDMLayer{T}}; kwargs...) where
     @error "Only tiff files are supported at the moment"
 end
 
-function FileIO.save(file::String, layer::SDMLayer{T}; kwargs...) where {T <: Number}
-    return FileIO.save(file, [layer]; kwargs...)
+function save(file::String, layer::SDMLayer{T}; kwargs...) where {T <: Number}
+    return save(file, [layer]; kwargs...)
 end
 
 @testitem "We can save a layer to a file and it does not fuck it up" begin
     t = SDMLayer(RasterData(WorldClim2, WindSpeed); bottom=-10., top=25.0, left=-10.0, right=15.0)
     f = tempname()*".tiff"
-    save(f, t)
+    SpeciesDistributionToolkit.save(f, t)
     k = SDMLayer(f)
     @test SimpleSDMLayers._layers_are_compatible(t, k)
 end

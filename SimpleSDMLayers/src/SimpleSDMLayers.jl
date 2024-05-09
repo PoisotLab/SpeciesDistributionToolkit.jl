@@ -18,7 +18,7 @@ import Distances
 # Definition of the SDMLayer type and its constructors
 include("types.jl")
 export SDMLayer
-export nodata!
+export nodata!, nodata
 export eastings, northings
 
 # Include a demo dataset in a non-WGS84 projection

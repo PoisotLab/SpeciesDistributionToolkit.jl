@@ -32,7 +32,7 @@ export latitudes, longitudes
 include("integrations/datasets_layers.jl")
 
 # GBIF to get species occurrence data
-# include("integrations/gbif_layers.jl")
+include("integrations/gbif_layers.jl")
 # export clip
 
 # GBIF and Phylopic integration

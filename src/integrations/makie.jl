@@ -9,8 +9,8 @@ function sprinkle(layer::SDMLayer)
 end
 
 function sprinkle(records::GBIFRecords)
-    lon = Float32.(replace(eastings(records), missing => NaN))
-    lat = Float32.(replace(northings(records), missing => NaN))
+    lon = Float32.(replace(longitudes(records), missing => NaN))
+    lat = Float32.(replace(latitudes(records), missing => NaN))
     return (lon, lat)
 end
 

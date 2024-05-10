@@ -1,7 +1,8 @@
 """
     SimpleSDMLayers.SDMLayer(data::R; kwargs...) where {R <: RasterData}
 
-Read a layer as a `SDMLayer` from a `RasterData` and a source of keywords. The allowed keywords are listed for each `RasterData`.
+Read a layer as a `SDMLayer` from a `RasterData` and a source of keywords. The
+allowed keywords are listed for each `RasterData`.
 """
 function SimpleSDMLayers.SDMLayer(data::R; kwargs...) where {R <: RasterData}
     # Split the bounding box from the rest of the data
@@ -9,6 +10,26 @@ function SimpleSDMLayers.SDMLayer(data::R; kwargs...) where {R <: RasterData}
 
     # Get the data
     filepath, filetype, bandnumber, _ = downloader(data; arguments...)
+
+    if isequal(SimpleSDMDatasets._tiff)(filetype)
+        return SDMLayer(filepath, "tiff"; bandnumber = bandnumber, boundingbox...)
+    end
+
+    return nothing
+end
+
+"""
+    SimpleSDMLayers.SDMLayer(data::R, future::F; kwargs...) where {R <: RasterData, F <: Projection}
+
+Read a layer as a `SDMLayer` from a `RasterData`, a `Projection`, and a source
+of keywords. The allowed keywords are listed for each `RasterData`.
+"""
+function SimpleSDMLayers.SDMLayer(data::R, future::F; kwargs...) where {R <: RasterData, F <: Projection}
+    # Split the bounding box from the rest of the data
+    boundingbox, arguments = _boundingbox_out_of_kwargs(kwargs)
+
+    # Get the data
+    filepath, filetype, bandnumber, _ = downloader(data, future; arguments...)
 
     if isequal(SimpleSDMDatasets._tiff)(filetype)
         return SDMLayer(filepath, "tiff"; bandnumber = bandnumber, boundingbox...)

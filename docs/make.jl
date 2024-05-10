@@ -26,6 +26,7 @@ makedocs(;
         ],
         "How-to..." => [
             "howto/get_gbif_data.md",
+            "howto/know_layers_provided.md",
             "howto/mask_a_layer.md",
         ],
         "Documentation" => [

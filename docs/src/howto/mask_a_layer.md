@@ -30,7 +30,7 @@ temp2 =
 
 ```@example 1
 heatmap(temp2, colormap=:navia, axis=(;aspect=DataAspect())) # hide
-savefig("mask-original.png", current_figure()); nothing # hide
+save("mask-original.png", current_figure()); nothing # hide
 ```
 
 ![Original layer](mask-original.png)
@@ -48,7 +48,7 @@ nodata(temp2, v -> !(m <= v <= M))
 
 ```@example 1
 heatmap(nodata(temp2, v -> !(m <= v <= M)), colormap=:navia, axis=(;aspect=DataAspect())) # hide
-savefig("mask-nodata.png", current_figure()); nothing # hide
+save("mask-nodata.png", current_figure()); nothing # hide
 ```
 
 ![mask with nodata](mask-nodata.png)
@@ -79,7 +79,7 @@ mask(temp2, temp1)
 
 ```@example 1
 heatmap(mask(temp2, temp1), colormap=:navia, axis=(;aspect=DataAspect())) # hide
-savefig("mask-mask.png", current_figure()); nothing # hide
+save("mask-mask.png", current_figure()); nothing # hide
 ```
 
 ![mask with mask](mask-mask.png)

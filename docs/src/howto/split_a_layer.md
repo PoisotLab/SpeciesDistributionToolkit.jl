@@ -1,4 +1,4 @@
-# Splitting layers in tiles
+# ... split a layer in tiles?
 
 This document illustrates the use of the `tiles` function, to rapidly split a
 layer into multiple layers. This is useful if you want to perform operations on

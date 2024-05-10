@@ -24,6 +24,7 @@ makedocs(;
             "tutorials/arithmetic.md",
             "tutorials/consensus.md",
             "tutorials/futureclimate.md",
+            "tutorials/fauxcurrences.md",
         ],
         "How-to..." => [
             "howto/get_gbif_data.md",

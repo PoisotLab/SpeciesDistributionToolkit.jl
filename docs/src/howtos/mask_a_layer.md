@@ -1,4 +1,4 @@
-# ... mask a layer
+# ... mask a layer?
 
 The process of *masking* refers to turning cells on a layer's grid to *off*,
 which will result in them being excluded from the analysis/display.
@@ -28,6 +28,13 @@ temp2 =
     )
 ```
 
+```@example 1
+heatmap(temp2, colormap=:navia, axis=(;aspect=DataAspect())) # hide
+savefig("mask-original.png", current_figure()); nothing # hide
+```
+
+![Original layer](mask-original.png)
+
 ## Using `nodata!`
 
 When using `nodata!`, we can either indicate a value to remove from the layer,
@@ -39,7 +46,55 @@ m, M = Statistics.quantile(values(temp2), [0.05, 0.95])
 nodata(temp2, v -> !(m <= v <= M))
 ```
 
-!!! warning "A note about `nodata!`
-    The function given as the second argument must returm `true` for a point that will be excluded from the layer. In other words, this behaves as the *opposite* of `filter!`.
+```@example 1
+heatmap(nodata(temp2, v -> !(m <= v <= M)), colormap=:navia, axis=(;aspect=DataAspect())) # hide
+savefig("mask-nodata.png", current_figure()); nothing # hide
+```
+
+![mask with nodata](mask-nodata.png)
+
+The function given as the second argument must return `true` for a point that
+will be excluded from the layer. In other words, this behaves as the *opposite*
+of `filter!`.
 
 ## Using `mask!`
+
+When using `mask!`, the first layer will be modified so that only the cells that
+are also valued in the second layer are used. For example, we can use the fact
+that the CHELSA1 layers do not have values outside of land, to mask the CHELSA2
+data:
+
+```@example 1
+temp1 =
+    SDMLayer(
+        RasterData(CHELSA1, AverageTemperature);
+        month = Month(9),
+        spatial_extent...,
+    )
+```
+
+```@example 1
+mask(temp2, temp1)
+```
+
+```@example 1
+heatmap(mask(temp2, temp1), colormap=:navia, axis=(;aspect=DataAspect())) # hide
+savefig("mask-mask.png", current_figure()); nothing # hide
+```
+
+![mask with mask](mask-mask.png)
+
+## Related documentation
+
+```@docs; canonical=false
+nodata!
+nodata
+mask!
+mask
+```
+
+## A note about how this works
+
+The `SDMLayer` type stores a `BitMatrix` (in the `indices` field) that tracks
+which cells in the raster are visible. This costs a little more memory, but
+allows to rapidly turn pixels on and off.

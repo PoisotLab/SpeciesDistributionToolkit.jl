@@ -45,7 +45,7 @@ function _read_geotiff(
     layer = ArchGDAL.read(file) do dataset
         thisproj = ArchGDAL.getproj(dataset)
         default = """GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AXIS["Latitude",NORTH],AXIS["Longitude",EAST],AUTHORITY["EPSG","4326"]]"""
-        wkt = isempty(thisproj) ? ArchGDAL.importPROJ4(default) : ArchGDAL.importPROJ4(thisproj)
+        wkt = isempty(thisproj) ? ArchGDAL.importWKT(default) : ArchGDAL.importWKT(thisproj)
         transform = ArchGDAL.getgeotransform(dataset)
 
         # The data we need is pretty much always going to be stored in the first
@@ -98,7 +98,7 @@ function _read_geotiff(
             rotl90(buffer .!= nodata),
             (left_pos - 0.5lon_stride, right_pos + 0.5lon_stride),
             (bottom_pos - 0.5lat_stride, top_pos + 0.5lat_stride),
-            string(wkt),
+            replace(string(wkt), "Spatial Reference System: " => ""),
         )
     end
 

@@ -26,8 +26,8 @@ makedocs(;
             "tutorials/consensus.md",
         ],
         "How-to..." => [
-            "howtos/get_gbif_data.md",
-            "howtos/mask_a_layer.md",
+            "howto/get_gbif_data.md",
+            "howto/mask_a_layer.md",
         ],
         "Documentation" => [
             "Work with species occurrence data" => "manual/SpeciesDistributionToolkit/index.md",

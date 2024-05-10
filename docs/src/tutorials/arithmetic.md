@@ -13,6 +13,10 @@ using CairoMakie
 
 We will work on the twelve classes of landcover provided by the *EarthEnv* data:
 
+```@example 1
+dataprovider = RasterData(EarthEnv, LandCover)
+```
+
 In order to only read what is relevant to our illustration we will define a
 bounding box over Corsica.
 
@@ -56,7 +60,7 @@ The aggregation of the layers is simply ∑wᵢLᵢ, where wᵢ is the resistanc
 
 ```@example 1
 resistance_layer = reduce(.+, [landuse[i] .* classes_resistance[i] for i in eachindex(landuse)])
-rescale!(resistance_layer);
+rescale!(resistance_layer)
 ```
 
 The remaining step is to visualize this resistance map, and add a little
@@ -76,7 +80,10 @@ resistance_map = heatmap(
 )
 Colorbar(resistance_map.figure[:, end + 1], resistance_map.plot; height = Relative(0.5))
 current_figure()
+save("resistance-map.png", current_figure()); nothing # hide
 ```
+
+![Landscape resistance map](resistance-map.png)
 
 This layer can then be used in landscape connectivity analyses using *e.g.*
 [Omniscape.jl](https://juliapackages.com/p/omniscape).

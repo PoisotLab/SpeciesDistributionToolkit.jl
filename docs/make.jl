@@ -23,6 +23,7 @@ makedocs(;
         "Tutorials" => [
             "tutorials/arithmetic.md",
             "tutorials/consensus.md",
+            "tutorials/futureclimate.md",
         ],
         "How-to..." => [
             "howto/get_gbif_data.md",

@@ -6,7 +6,7 @@ correspond to valid layer positions. Valid layer positions are defined as
 falling within a valued pixel from the layer.
 """
 function get_valid_coordinates(observations::GBIFRecords, layer::T) where {T <: SDMLayer}
-    xy = [(observations[i].longitude, observations[i].latitude) for i in eachindex(observations)]
+    xy = [(obs.longitude, obs.latitude) for obs in observations]
     filter!(c -> !isnothing(layer[c...]), xy)
     return hcat(collect.(unique(xy))...)
 end

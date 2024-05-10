@@ -28,6 +28,6 @@ function MakieCore.convert_arguments(
     layer1::T1,
     layer2::T2,
 ) where {T1 <: SDMLayer, T2 <: SDMLayer}
-    k = layer1.indices .& layer2.indices
+    k = findall(layer1.indices .& layer2.indices)
     return MakieCore.convert_arguments(P, layer1[k], layer2[k])
 end

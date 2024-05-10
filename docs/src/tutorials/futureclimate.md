@@ -60,6 +60,7 @@ hist(
     current; color = (:grey, 0.5),
     figure = (; size = (800, 300)),
     axis = (; xlabel = "Annual Precipitation"),
+    bins = 100
 )
 save("precipitation-density.png", current_figure()); nothing # hide
 ```
@@ -87,34 +88,37 @@ closest timespan. Getting the projected temperature is the *same* call as
 before, except we now pass an additional argument -- the projection.
 
 ```@example 1
-projected = SDMLayer(dataprovider, projection; data_info..., spatial_extent...)
+projected = SDMLayer(dataprovider, projection; data_info..., spatial_extent..., timespan = Year(2061) => Year(2080))
 ```
 
 With this information, we can update the existing figure, to add a second panel
 with the difference in temperature:
 
-panel_future = Axis(
-    figure[2, 1];
-)
-tmp_future_hm = heatmap!(
-    panel_future,
-    0.1(temperature_proj .- temperature_current);
-    colormap = :dense,
-)
-Colorbar(figure[2, end + 1]; height = Relative(0.7), colorrange = (1, 3), colormap = :dense)
-current_figure()
+```@example 1
+hist!(projected, color=(:salmon, 0.5), bins=100)
+save("precipitation-density-updated.png", current_figure()); nothing # hide
+```
 
-# We can also very easily look at the relationship between current and future
-# climate (the `scatter` function would work just as well, but `hexbin` is good
-# at aggregating cells with more datapoints):
+![Density of precipitation updated](precipitation-density-updated.png)
 
+We can also very easily look at the relationship between current and future
+climate (the `scatter` function would work just as well, but `hexbin` is good at
+aggregating cells with more datapoints):
+
+```@example 1
 hexbin(
-    0.1temperature_current,
-    0.1temperature_proj;
-    figure = (; resolution = (800, 700)),
+    current,
+    projected;
+    bins = 100,
+    figure = (; size = (800, 700)),
     axis = (;
         aspect = DataAspect(),
-        xlabel = "Historical temperature",
-        ylabel = "Projected temperature",
+        xlabel = "Historical precipitation",
+        ylabel = "Future precipitation",
     ),
 )
+ablines!([0.0], [1.0], color=:black) # hide
+save("precipitation-density-relationship.png", current_figure()); nothing # hide
+```
+
+![Density of precipitation compared](precipitation-density-relationship.png)

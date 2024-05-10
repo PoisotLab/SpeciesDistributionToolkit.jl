@@ -2,6 +2,11 @@ function Base.getindex(layer::SDMLayer, i...)
     return layer.indices[i...] ? Base.getindex(layer.grid, i...) : nothing
 end
 
+function Base.getindex(layer::SDMLayer, i::Vector{CartesianIndex{2}})
+    i = filter(ci -> layer.indices[ci], i)
+    return layer.grid[i]
+end
+
 function Base.setindex!(layer::SDMLayer, i...)
     return Base.setindex!(layer.grid, i...)
 end

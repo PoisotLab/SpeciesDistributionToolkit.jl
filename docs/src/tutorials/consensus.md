@@ -14,9 +14,8 @@ spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
 ```
 
 Defining a bounding box is important because, although we can clip any layer,
-the package
-will only *read* what is required. For large data (like landcover data), this is
-a significant improvement in memory footprint.
+the package will only *read* what is required. For large data (like landcover
+data), this is a significant improvement in memory footprint.
 
 We now define our data provider, composed of a data source (`EarthEnv`) and a
 dataset (`LandCover`).
@@ -114,5 +113,7 @@ Legend(
     orientation = :horizontal,
     nbanks = 4,
 )
-current_figure()
+save("consensus-map.png", current_figure()); nothing # hide
 ```
+
+![Consensus map](consensus-map.png)

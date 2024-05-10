@@ -1,4 +1,4 @@
-# How to get data from GBIF?
+# ... get data from GBIF?
 
 ```@example 1
 using SpeciesDistributionToolkit

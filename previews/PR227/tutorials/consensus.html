@@ -32,7 +32,9 @@ open_water_mask = nodata(stack[open_water_idx], 100.0f0)</code></pre><pre class=
 	CRS: Spatial Reference System: +proj=longlat +datum=WGS84 +no_defs
 	Grid size: (209, 151)</code></pre><p>We can now mask all of the rasters in the stack, to remove the open water pixels:</p><pre><code class="language-julia hljs">for i in eachindex(stack)
     mask!(stack[i], open_water_mask)
-end</code></pre><p>At this point, we are ready to get the most important land use category for each pixel, using the <code>mosaic</code> function:</p><pre><code class="language- hljs">consensus = mosaic(argmax, stack)</code></pre><p>In order to represent the output, we will define a color palette corresponding to the different categories in our data:</p><pre><code class="language-julia hljs">landcover_colors = [
+end</code></pre><p>At this point, we are ready to get the most important land use category for each pixel, using the <code>mosaic</code> function:</p><pre><code class="language-julia hljs">consensus = mosaic(argmax, stack)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">SDM Layer with 14262 Int64 cells
+	CRS: Spatial Reference System: +proj=longlat +datum=WGS84 +no_defs
+	Grid size: (209, 151)</code></pre><p>In order to represent the output, we will define a color palette corresponding to the different categories in our data:</p><pre><code class="language-julia hljs">landcover_colors = [
     colorant&quot;#117733&quot;,
     colorant&quot;#668822&quot;,
     colorant&quot;#99BB55&quot;,
@@ -57,7 +59,7 @@ end</code></pre><p>At this point, we are ready to get the most important land us
  RGB{N0f8}(0.733,0.0,0.067)
  :aqua
  RGB{N0f8}(1.0,0.933,0.533)
- RGB{N0f8}(0.333,0.4,0.667)</code></pre><p>We can now create our plot:</p><pre><code class="language- hljs">fig = Figure(; size = (900, 1000))
+ RGB{N0f8}(0.333,0.4,0.667)</code></pre><p>We can now create our plot:</p><pre><code class="language-julia hljs">fig = Figure(; size = (900, 1000))
 panel = Axis(
     fig[1, 1];
     xlabel = &quot;Easting&quot;,
@@ -76,4 +78,4 @@ Legend(
     orientation = :horizontal,
     nbanks = 4,
 )
-current_figure()</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="arithmetic.html">« Arithmetic on layers</a><a class="docs-footer-nextpage" href="../howtos/gbifdata.html">How to get data from GBIF? »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Thursday 9 May 2024 18:56">Thursday 9 May 2024</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+current_figure()</code></pre><img src="consensus-00d4457d.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="arithmetic.html">« Arithmetic on layers</a><a class="docs-footer-nextpage" href="../howtos/gbifdata.html">How to get data from GBIF? »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Friday 10 May 2024 13:37">Friday 10 May 2024</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

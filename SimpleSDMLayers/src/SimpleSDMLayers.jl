@@ -14,6 +14,7 @@ using TestItems
 import Proj
 import Tables
 import Distances
+import StatsBase
 
 # Definition of the SDMLayer type and its constructors
 include("types.jl")

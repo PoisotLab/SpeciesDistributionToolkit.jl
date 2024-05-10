@@ -36,9 +36,9 @@ function quantize!(layer::SDMLayer)
     return layer
 end
 
-function quantize!(layer::SDMLayer, n::Integer=10)
+function quantize!(layer::SDMLayer, n::Integer)
     quantize!(layer)
-    map!(x -> round(x*(n+1), digits=0)/(n+1), layer.grid)
+    map!(x -> round(x*(n+1), digits=0)/(n+1), layer.grid, layer.grid)
     return layer
 end
 

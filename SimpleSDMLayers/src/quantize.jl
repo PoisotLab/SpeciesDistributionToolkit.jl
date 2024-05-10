@@ -29,3 +29,21 @@ end
     @test -1.5 ≈ minimum(layer)
     @test 2.6 ≈ maximum(layer)
 end
+
+function quantize!(layer::SDMLayer)
+    ef = StatsBase.ecdf(values(layer))
+    map!(ef, layer.grid, layer.grid)
+    return layer
+end
+
+function quantize!(layer::SDMLayer, n::Integer=10)
+    quantize!(layer)
+    map!(x -> round(x*(n+1), digits=0)/(n+1), layer.grid)
+    return layer
+end
+
+function quantize(layer::SDMLayer, args...)
+    lc = copy(layer)
+    quantize!(lc, args...)
+    return lc
+end

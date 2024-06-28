@@ -20,11 +20,11 @@ include("types/datasets.jl")
 export RasterDataset
 export BioClim, Elevation, MinimumTemperature, MaximumTemperature, AverageTemperature,
     Precipitation, SolarRadiation, WindSpeed, WaterVaporPressure, LandCover,
-    HabitatHeterogeneity, Topography
+    HabitatHeterogeneity, Topography, SpeciesRichness
 
 include("types/providers.jl")
 export RasterProvider
-export WorldClim2, EarthEnv, CHELSA1, CHELSA2
+export WorldClim2, EarthEnv, CHELSA1, CHELSA2, BiodiversityMapping
 
 include("types/futures.jl")
 export FutureScenario, FutureModel
@@ -61,6 +61,7 @@ include("providers/CHELSA/chelsa_future_v2.jl")
 include("providers/EarthEnv/earthenv.jl")
 include("providers/WorldClim/worldclim_v2.jl")
 include("providers/WorldClim/worldclim_future_v2.jl")
+include("providers/BiodiversityMapping/biodiversitymapping.jl")
 
 # Key checker
 include("keychecker.jl")

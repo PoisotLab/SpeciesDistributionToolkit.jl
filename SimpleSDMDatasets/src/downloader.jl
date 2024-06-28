@@ -38,8 +38,10 @@ function downloader(
         # Extract only the layername
         r = ZipFile.Reader(joinpath(dir, fnm))
         for f in r.files
-            if isequal(layername(data; kwargs...))(f.name)
-                fnm = layername(data; kwargs...)
+            if isequal(SimpleSDMDatasets.layername(data; kwargs...))(f.name)
+                fnm = SimpleSDMDatasets.layername(data; kwargs...)
+                # If the zip file had nested folders, we need to make sure the paths exist
+                ispath(dirname(joinpath(dir, f.name))) || mkpath(dirname(joinpath(dir, f.name)))
                 write(joinpath(dir, f.name), read(f, String))
             end
         end

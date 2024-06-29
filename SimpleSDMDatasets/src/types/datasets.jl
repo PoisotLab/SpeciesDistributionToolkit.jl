@@ -67,6 +67,16 @@ struct HabitatHeterogeneity <: RasterDataset end
 struct Topography <: RasterDataset end
 
 """
-    SpeciesRichness
+    MammalRichness
 """
-struct SpeciesRichness <: RasterDataset end
+struct MammalRichness <: RasterDataset end
+
+"""
+    BirdRichness
+"""
+struct BirdRichness <: RasterDataset end
+
+"""
+    AmphibianRichness
+"""
+struct AmphibianRichness <: RasterDataset end

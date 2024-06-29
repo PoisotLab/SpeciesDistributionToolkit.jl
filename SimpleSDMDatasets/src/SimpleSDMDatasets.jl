@@ -19,8 +19,9 @@ isdir(_LAYER_PATH) || mkpath(_LAYER_PATH)
 include("types/datasets.jl")
 export RasterDataset
 export BioClim, Elevation, MinimumTemperature, MaximumTemperature, AverageTemperature,
-    Precipitation, SolarRadiation, WindSpeed, WaterVaporPressure, LandCover,
-    HabitatHeterogeneity, Topography, SpeciesRichness
+    Precipitation, SolarRadiation, WindSpeed, WaterVaporPressure
+export LandCover, HabitatHeterogeneity, Topography
+export MammalRichness, BirdRichness, AmphibianRichness
 
 include("types/providers.jl")
 export RasterProvider

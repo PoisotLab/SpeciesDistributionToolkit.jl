@@ -1,10 +1,13 @@
-provides(::Type{BiodiversityMapping}, ::Type{SpeciesRichness}) = true
+bdmap = [MammalRichness, AmphibianRichness, BirdRichness]
+BiodivMap = Union{bdmap...}
 
-downloadtype(::RasterData{BiodiversityMapping, SpeciesRichness}) = _zip
+provides(::Type{BiodiversityMapping}, ::Type{T}) where {T <: BiodivMap} = true
 
-url(::RasterData{BiodiversityMapping, SpeciesRichness}) = "https://biodiversitymapping.org/"
+downloadtype(::RasterData{BiodiversityMapping, T}) where {T <: BiodivMap} = _zip
 
-_var_slug(::RasterData{BiodiversityMapping, SpeciesRichness}) = "richness"
+url(::RasterData{BiodiversityMapping, T}) where {T <: BiodivMap} = "https://biodiversitymapping.org/"
+
+_var_slug(::RasterData{BiodiversityMapping, T}) where {T <: BiodivMap} = "richness"
 
 extrakeys(::RasterData{BiodiversityMapping, SpeciesRichness}) = Dict([:taxa => ("birds", "mammals", "amphibians")])
 

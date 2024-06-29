@@ -1,16 +1,15 @@
 function slidingwindow(f::Function, layer::SDMLayer, radius::AbstractFloat; threads::Bool=true)
-    return_type = eltype(f(values(layer)[1:min(3, length(layer))]))
-    # TODO handle the different type if required
-    windowed = similar(layer)
+    _rtype = eltype(f(values(layer)[1:min(3, length(layer))]))
+    windowed = similar(layer, _rtype)
     if threads
         @info "Running on threads"
         Threads.@threads for center in CartesianIndices(layer)
-            windowed[center] = f(SDMLayers.__window(layer, center, radius))
+            windowed[center] = f(SimpleSDMLayers.__window(layer, center, radius))
         end
     else
         @info "Running on single thread"
         for center in CartesianIndices(layer)
-            windowed[center] = f(SDMLayers.__window(layer, center, radius))
+            windowed[center] = f(SimpleSDMLayers.__window(layer, center, radius))
         end
     end
     return windowed
@@ -73,5 +72,5 @@ function __window(layer::SDMLayer, center::CartesianIndex, radius::AbstractFloat
         valid_indices
     )
 
-    return filter(!isequal(layer.nodata), layer[positions])
+    return layer[positions]
 end

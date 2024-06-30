@@ -6,12 +6,12 @@ function _centers(layer::SDMLayer, prj)
     # Northings and eastings for the layer
     nrt, est = northings(layer), eastings(layer)
 
-    # Prepare the centers
-    centers = Vector{Tuple{Float64, Float64}}(undef, count(layer))
+    # Prepare the centers as a matrix (for distances!)
+    centers = zeros(Float64, (2, count(layer)))
 
     # Fill in the information
     for (i,idx) in enumerate(CartesianIndices(layer))
-        centers[i] = prfunc(est[idx.I[2]], nrt[idx.I[1]])
+        centers[:,i] .= prfunc(est[idx.I[2]], nrt[idx.I[1]])
     end
 
     return centers
@@ -19,22 +19,23 @@ end
 
 function __get_idx_within_radius(centers, idx, radius)
     # Approximate lat/lon for the valid coordinates
-    max_lat = centers[idx][2] + (180.0 * 1.001radius) / (π * 6371.0)
-    min_lat = centers[idx][2] - (180.0 * 1.001radius) / (π * 6371.0)
-    max_lon = centers[idx][1] + (360.0 * 1.001radius) / (π * 6371.0)
-    min_lon = centers[idx][1] - (360.0 * 1.001radius) / (π * 6371.0)
+    max_lat = centers[2,idx] + (180.0 * 1.001radius) / (π * 6371.0)
+    min_lat = centers[2,idx] - (180.0 * 1.001radius) / (π * 6371.0)
+    max_lon = centers[1,idx] + (360.0 * 1.001radius) / (π * 6371.0)
+    min_lon = centers[1,idx] - (360.0 * 1.001radius) / (π * 6371.0)
 
     # Reduce the list of centers
-    candidates = findall(c -> (min_lon <= c[1] <= max_lon)&(min_lat <= c[2] <= max_lat), centers)
+    candidates = findall((min_lon .<= centers[1,:] .<= max_lon).*(min_lat .<= centers[2,:] .<= max_lat))
+
+    # Distance function
+    H = Distances.Haversine(6371.0)
+    D = Distances.colwise(H, centers[:,idx], centers[:,candidates])
 
     # Filter by distance
-    window = filter(
-        cnd -> Distances.haversine(centers[idx], centers[cnd], 6371.0) <= radius,
-        candidates
-    )
+    window = findall(D .<= radius)
 
     # Return
-    return window
+    return candidates[window]
 end
 
 
@@ -61,3 +62,11 @@ function slidingwindow!(destination::SDMLayer, f::Function, layer::SDMLayer; rad
     end
     return destination
 end
+
+#=
+layer = SDMLayer(RasterData(BiodiversityMapping, BirdRichness); top=0, bottom=-1_000_000, right=-5_000_000, left=-6_000_000)
+using Statistics
+stdric = slidingwindow(std, layer; radius=100.0)
+avgric = slidingwindow(mean, layer; radius=100.0)
+zric = (layer .- avgric)./stdric
+=#

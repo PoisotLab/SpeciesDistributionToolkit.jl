@@ -15,7 +15,7 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
       - name: "Bootstrap the package"
         run: julia --project=./GBIF GBIF/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -39,7 +39,7 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
       - name: "Bootstrap the package"
         run: julia --project=./Phylopic Phylopic/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -63,7 +63,7 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
       - name: "Bootstrap the package"
         run: julia --project=./SimpleSDMLayers SimpleSDMLayers/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -87,7 +87,7 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
       - name: "Bootstrap the package"
         run: julia --project=./SimpleSDMDatasets SimpleSDMDatasets/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -112,7 +112,7 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
       - name: "Bootstrap the package"
         run: julia --project=./Fauxcurrences Fauxcurrences/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -137,7 +137,7 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
       - name: "Bootstrap the package"
         run: julia --project=. bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest

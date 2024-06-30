@@ -1,36 +1,6 @@
 import Base: getindex
 import Base: setindex!
-import SimpleSDMLayers: clip, latitudes, longitudes, mask!, mask
-
-"""
-    SimpleSDMLayers.longitudes(record::GBIF.GBIFRecord)
-
-Returns the longitude associated to a GBIF record
-"""
-SimpleSDMLayers.longitudes(record::GBIF.GBIFRecord) = record.longitude
-
-"""
-    SimpleSDMLayers.latitudes(record::GBIF.GBIFRecord)
-
-Returns the latitude associated to a GBIF record
-"""
-SimpleSDMLayers.latitudes(record::GBIF.GBIFRecord) = record.latitude
-
-"""
-    SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords)
-
-Returns the non-missing latitudes from a series of records
-"""
-SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords) =
-    filter(!ismissing, [latitudes(record) for record in records])
-
-"""
-    SimpleSDMLayers.latitudes(records::GBIF.GBIFRecords)
-
-Returns the non-missing latitudes from a series of records
-"""
-SimpleSDMLayers.longitudes(records::GBIF.GBIFRecords) =
-    filter(!ismissing, [longitudes(record) for record in records])
+import SimpleSDMLayers: mask!, mask
 
 """
     Base.getindex(p::T, occurrence::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
@@ -38,40 +8,119 @@ SimpleSDMLayers.longitudes(records::GBIF.GBIFRecords) =
 Extracts the value of a layer at a given position for a `GBIFRecord`. If the
 `GBIFRecord` has no latitude or longitude, this will return `nothing`.
 """
-function Base.getindex(layer::T, record::GBIF.GBIFRecord) where {T <: SimpleSDMLayer}
+function Base.getindex(layer::SDMLayer, record::GBIF.GBIFRecord)
     ismissing(record.latitude) && return nothing
     ismissing(record.longitude) && return nothing
-    return layer[Point(record.longitude, record.latitude)]
+    return layer[record.longitude, record.latitude]
 end
 
 """
-    Base.setindex!(layer::T, v, record::GBIFRecord) where {T <: SimpleSDMResponse}
+    Base.setindex!(layer::SDMLayer, v, record::GBIFRecord)
 
 Changes the values of the cell including the point at the requested latitude and
-longitude. **Be careful**, this function will not update a cell that has
-`nothing`.
+longitude.
 """
 function Base.setindex!(
-    layer::SimpleSDMResponse{T},
+    layer::SDMLayer{T},
     v::T,
     record::GBIF.GBIFRecord,
 ) where {T}
     ismissing(record.latitude) && return nothing
     ismissing(record.longitude) && return nothing
-    isnothing(layer[record]) && return nothing
-    return setindex!(layer, v, Point(record.longitude, record.latitude))
+    return setindex!(layer, v, record.longitude, record.latitude)
 end
 
 """
-    clip(layer::T, records::GBIF.GBIFRecords)
+    Base.getindex(layer::T, records::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
 
-Returns a clipped version (with a 10% margin) around all occurrences in a
+Returns the values of a layer at all occurrences in a `GBIFRecords` collection.
+"""
+function Base.getindex(layer::SDMLayer, records::GBIF.GBIFRecords)
+    K = eltype(layer)
+    return convert(
+        Vector{K},
+        filter(!isnothing, [layer[r] for r in records]),
+    )
+end
+
+"""
+    Base.getindex(layer::SDMLayer, records::Vector{GBIF.GBIFRecord})
+
+Returns the values of a layer at all occurrences in a `GBIFRecord` array.
+"""
+function Base.getindex(layer::SDMLayer, records::Vector{GBIF.GBIFRecord})
+    return [layer[record] for record in records]
+end
+
+function SimpleSDMLayers.quantize!(layer::SDMLayer, records::GBIFRecords)
+    ef = StatsBase.ecdf(layer[records])
+    map!(ef, layer.grid, layer.grid)
+    return layer
+end
+
+#=
+
+"""
+    mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: AbstractBool}
+
+Fills a layer (most likely created with `similar`) so that the values are `true`
+if an occurrence is found in the cell, `false` if not.
+"""
+function SimpleSDMLayers.mask!(
+    layer::SDMLayer{T},
+    records::GBIF.GBIFRecords,
+) where {T <: Bool}
+    for record in records
+        if !isnothing(layer[record])
+            layer[record] = true
+        end
+    end
+    return layer
+end
+
+"""
+    mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Number}
+
+Fills a layer (most likely created with `similar`) so that the values reflect
+the number of occurrences in the cell.
+"""
+function SimpleSDMLayers.mask!(
+    layer::SDMLayer{T},
+    records::GBIF.GBIFRecords,
+) where {T <: Number}
+    for record in records
+        if !isnothing(layer[record])
+            layer[record] = layer[record] + one(T)
+        end
+    end
+    return layer
+end
+
+"""
+    mask(layer::SimpleSDMLayer, records::GBIF.GBIFRecords, element_type::Type=Bool)
+
+Create a new layer storing information about the presence of occurrences in the
+cells, either counting (numeric types) or presence-absence-ing (boolean types)
+them.
+"""
+function SimpleSDMLayers.mask(
+    layer::SDMLayer,
+    records::GBIF.GBIFRecords,
+    element_type::Type = Bool,
+)
+    returnlayer = similar(layer, element_type)
+    mask!(returnlayer, records)
+    return returnlayer
+end
+
+
+"""
+    clip(layer::SDMLayer, records::GBIF.GBIFRecords)
+
+Returns a clipped version around all occurrences in a
 GBIFRecords collection.
 """
-function SimpleSDMLayers.clip(
-    layer::T,
-    records::GBIF.GBIFRecords,
-) where {T <: SimpleSDMLayer}
+function clip(layer::SDMLayer, records::GBIF.GBIFRecords)
     occ_latitudes = latitudes(records)
     occ_longitudes = longitudes(records)
 
@@ -93,70 +142,4 @@ function SimpleSDMLayers.clip(
     return clip(layer; left = lon_min, right = lon_max, bottom = lat_min, top = lat_max)
 end
 
-"""
-    Base.getindex(layer::T, records::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
-
-Returns the values of a layer at all occurrences in a `GBIFRecords` collection.
-"""
-function Base.getindex(layer::T, records::GBIF.GBIFRecords) where {T <: SimpleSDMLayer}
-    K = SimpleSDMLayers._inner_type(layer)
-    return convert(
-        Vector{K},
-        filter(!isnothing, [layer[records[i]] for i in 1:length(records)]),
-    )
-end
-
-"""
-    Base.getindex(layer::T, records::Vector{GBIF.GBIFRecord}) where {T <: SimpleSDMLayer}
-
-Returns the values of a layer at all occurrences in a `GBIFRecord` array.
-"""
-function Base.getindex(
-    layer::T,
-    records::Vector{GBIF.GBIFRecord},
-) where {T <: SimpleSDMLayer}
-    return [layer[record] for record in records]
-end
-
-"""
-    mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: AbstractBool}
-
-Fills a layer (most likely created with `similar`) so that the values are `true`
-if an occurrence is found in the cell, `false` if not.
-"""
-function SimpleSDMLayers.mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Bool}
-    for record in records
-        if !isnothing(layer[record])
-            layer[record] = true
-        end
-    end
-    return layer
-end
-
-"""
-    mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Number}
-
-Fills a layer (most likely created with `similar`) so that the values reflect
-the number of occurrences in the cell.
-"""
-function SimpleSDMLayers.mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Number}
-    for record in records
-        if !isnothing(layer[record])
-            layer[record] = layer[record] + one(T)
-        end
-    end
-    return layer
-end
-
-"""
-    mask(layer::SimpleSDMLayer, records::GBIF.GBIFRecords, element_type::Type=Bool)
-
-Create a new layer storing information about the presence of occurrences in the
-cells, either counting (numeric types) or presence-absence-ing (boolean types)
-them.
-"""
-function SimpleSDMLayers.mask(layer::SimpleSDMLayer, records::GBIF.GBIFRecords, element_type::Type = Bool)
-    returnlayer = similar(layer, element_type)
-    mask!(returnlayer, records)
-    return returnlayer
-end
+=#

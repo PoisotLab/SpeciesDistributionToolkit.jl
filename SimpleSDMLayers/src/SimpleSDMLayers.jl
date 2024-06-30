@@ -1,46 +1,64 @@
+"""
+### SimpleSDMLayers
+
+`SimpleSDMLayers` is a package to provide easy to use, georeferenced representations
+of raster data to assist with the construction of species distribution models.
+The package provides a *single* type, `SDMLayer`, which behaves like an array,
+an iterable object, and a table. It furthers implements core operations on
+rasters.
+"""
 module SimpleSDMLayers
 
-using Distances
-using Statistics
-using GeometryBasics
-export Point, Polygon
-using PolygonOps
-using StatsBase
-using Tables
-import OffsetArrays
+using TestItems
 
-# Basic types for the package
-include("lib/types.jl")
-export SimpleSDMLayer, SimpleSDMResponse, SimpleSDMPredictor
-export RasterCell # eltype for the layers, very useful to build table interface later
+import Proj
+import Tables
+import Distances
+import StatsBase
 
-# Main functions to match coordinates
-include("lib/coordinateconversion.jl")
+# Definition of the SDMLayer type and its constructors
+include("types.jl")
+export SDMLayer
+export nodata!, nodata
+export eastings, northings
 
-# Implements a series of interfaces (AbstractArray, iteration, and indexing)
-include("interfaces/common.jl")
-include("interfaces/iteration.jl")
-include("interfaces/indexing.jl")
-include("interfaces/broadcast.jl")
+# Include a demo dataset in a non-WGS84 projection
+include("demodata.jl")
 
-# Additional overloads
-include("lib/overloads.jl")
+# Useful overloads for the rest of the package
+include("overloads.jl")
 
-# Raster clipping
-include("lib/clip.jl")
-export clip
+# getindex and setindex for layers
+include("indexing.jl")
 
-include("lib/generated.jl")
+# Iteration interface
+include("iterate.jl")
 
-include("lib/basics.jl")
-export latitudes, longitudes, boundingbox, grid, cellsize
+# Tables interface
+include("tables.jl")
 
-include("operations/coarsen.jl")
-include("operations/sliding.jl")
-include("operations/mask.jl")
-include("operations/rescale.jl")
-include("operations/mosaic.jl")
-include("operations/tiling.jl")
-export coarsen, slidingwindow, mask, rescale!, rescale, mosaic, tile, tile!, stitch
+# Broadcasting interface
+include("broadcasting.jl")
+
+# Mask layers
+include("mask.jl")
+export mask, mask!
+
+# Sliding window
+include("slidingwindow.jl")
+export slidingwindow
+
+# Tiling
+include("tiling.jl")
+export tiles
+
+# Quantiles, etc
+include("quantize.jl")
+export rescale!, rescale
+export quantize!, quantize
+
+# Mosaic
+include("mosaic.jl")
+export mosaic
 
 end # module

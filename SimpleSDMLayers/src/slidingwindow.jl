@@ -25,7 +25,7 @@ function __get_idx_within_radius(centers, idx, radius)
     min_lon = centers[1,idx] - (360.0 * 1.001radius) / (π * 6371.0)
 
     # Reduce the list of centers
-    candidates = findall((min_lon .<= centers[1,:] .<= max_lon).*(min_lat .<= centers[2,:] .<= max_lat))
+    candidates = findall((min_lon .<= centers[1,:]) .& (centers[1,:] .<= max_lon).&(min_lat .<= centers[2,:]) .& (centers[2,:] .<= max_lat))
 
     # Distance function
     H = Distances.Haversine(6371.0)
@@ -45,7 +45,7 @@ function slidingwindow(f::Function, layer::SDMLayer; kwargs...)
     return slidingwindow!(destination, f, layer; kwargs...)
 end
 
-function slidingwindow!(destination::SDMLayer, f::Function, layer::SDMLayer; radius::AbstractFloat=100.0)
+function slidingwindow!(destination::SDMLayer, f::Function, layer::SDMLayer; radius::AbstractFloat=100.0, threads::Bool=true)
     # Infer the return type of the operation
     _rtype = eltype(f(values(layer)[1:min(3, length(layer))]))
     if _rtype != eltype(destination)
@@ -55,10 +55,26 @@ function slidingwindow!(destination::SDMLayer, f::Function, layer::SDMLayer; rad
     # Prepare the function to get the lat/lon
     centers = SimpleSDMLayers._centers(layer)
 
+    # NOTE: very likely that this would be sped up by chunking all the positions
+    # rather than doing them one at a time, but not sure how to actually do this
+    # yet
+
     # Go to town
-    for (idx,pos) in enumerate(CartesianIndices(layer))
-        window = SimpleSDMLayers.__get_idx_within_radius(centers, idx, radius)
-        destination[pos] = f(values(layer)[window])
+    if !threads
+        for (idx,pos) in enumerate(CartesianIndices(layer))
+            window = SimpleSDMLayers.__get_idx_within_radius(centers, idx, radius)
+            destination[pos] = f(values(layer)[window])
+        end
+    else
+        batchsize = max(floor(Int, size(centers, 2) / Threads.nthreads()), 1)
+        Threads.@threads for thrid in 1:Threads.nthreads()
+            start = (Threads.threadid()-1)*batchsize + 1
+            stop = Threads.threadid()==Threads.nthreads() ? size(centers, 2) : start + batchsize
+            for idx in start:stop
+                window = SimpleSDMLayers.__get_idx_within_radius(centers, idx, radius)
+                destination[CartesianIndices(layer)[idx]] = f(values(layer)[window])
+            end
+        end
     end
     return destination
 end

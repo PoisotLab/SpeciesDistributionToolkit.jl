@@ -1,80 +1,63 @@
-function slidingwindow(f::Function, layer::SDMLayer, radius::AbstractFloat; threads::Bool=true)
-    
-    # Return type for the operation
-    _rtype = eltype(f(values(layer)[1:min(3, length(layer))]))
+_centers(layer::SDMLayer) = _centers(layer, "EPSG:4326")
+function _centers(layer::SDMLayer, prj)
+    # Projection function
+    prfunc = Proj.Transformation(layer.crs, prj; always_xy=true)
 
-    # Allocate the return object
-    windowed = similar(layer, _rtype)
+    # Northings and eastings for the layer
+    nrt, est = northings(layer), eastings(layer)
 
-    # Prepare the projection to EPSG:4326
-    prj = Proj.Transformation(layer.crs, "EPSG:4326"; always_xy=true)
+    # Prepare the centers
+    centers = Vector{Tuple{Float64, Float64}}(undef, count(layer))
 
-    if threads
-        @info "Running on threads"
-        Threads.@threads for center in CartesianIndices(layer)
-            windowed[center] = f(SimpleSDMLayers.__window(layer, center, radius, prj))
-        end
-    else
-        @info "Running on single thread"
-        for center in CartesianIndices(layer)
-            windowed[center] = f(SimpleSDMLayers.__window(layer, center, radius, prj))
-        end
+    # Fill in the information
+    for (i,idx) in enumerate(CartesianIndices(layer))
+        centers[i] = prfunc(est[idx.I[2]], nrt[idx.I[1]])
     end
-    return windowed
+
+    return centers
 end
 
-function __get_bounded_grid_coordinate_by_latlon(layer::SDMLayer, longitude, latitude, prj)
-    eastings = LinRange(layer.x..., size(layer.grid, 2) + 1)
-    northings = LinRange(layer.y..., size(layer.grid, 1) + 1)
-    
-    easting, northing = prj(longitude, latitude)
+function __get_idx_within_radius(centers, idx, radius)
+    # Approximate lat/lon for the valid coordinates
+    max_lat = centers[idx][2] + (180.0 * 1.001radius) / (π * 6371.0)
+    min_lat = centers[idx][2] - (180.0 * 1.001radius) / (π * 6371.0)
+    max_lon = centers[idx][1] + (360.0 * 1.001radius) / (π * 6371.0)
+    min_lon = centers[idx][1] - (360.0 * 1.001radius) / (π * 6371.0)
 
-    # Prepare the coordinate
-    ei = findfirst(easting .<= eastings)-1
-    ni = findfirst(northing .<= northings)-1
+    # Reduce the list of centers
+    candidates = findall(c -> (min_lon <= c[1] <= max_lon)&(min_lat <= c[2] <= max_lat), centers)
 
-    ei = iszero(ei) ? 1 : ei
-    ni = iszero(ni) ? 1 : ni
-
-    return (ni, ei)
-end
-
-function __window(layer::SDMLayer, center::CartesianIndex, radius::AbstractFloat, prj)
-    easting_stride = 0.5 * (layer.x[2] - layer.x[1]) / size(layer, 2)
-    northing_stride = 0.5 * (layer.y[2] - layer.y[1]) / size(layer, 1)
-
-    eastings = LinRange(layer.x..., size(layer.grid, 2) + 1)[1:(end-1)] .+ easting_stride
-    northings = LinRange(layer.y..., size(layer.grid, 1) + 1)[1:(end-1)] .+ northing_stride
-
-    # Center in coordinates
-    ce = eastings[center.I[2]]
-    cn = northings[center.I[1]]
-
-    # Get the center of the focal cell
-    center_latlon = prj(ce, cn)
-
-    # Approximate lat/lon
-    max_lat = center_latlon[2] + (180.0 * 1.001radius) / (π * 6371.0)
-    min_lat = center_latlon[2] - (180.0 * 1.001radius) / (π * 6371.0)
-    max_lon = center_latlon[1] + (360.0 * 1.001radius) / (π * 6371.0)
-    min_lon = center_latlon[1] - (360.0 * 1.001radius) / (π * 6371.0)
-
-    # Convert to grid coordinates
-    lower_left = SimpleSDMLayers.__get_bounded_grid_coordinate_by_latlon(layer, min_lon, min_lat, prj)
-    lower_right = SimpleSDMLayers.__get_bounded_grid_coordinate_by_latlon(layer, max_lon, min_lat, prj)
-    upper_left = SimpleSDMLayers.__get_bounded_grid_coordinate_by_latlon(layer, min_lon, max_lat, prj)
-    upper_right = SimpleSDMLayers.__get_bounded_grid_coordinate_by_latlon(layer, max_lon, max_lat, prj)
-
-    # Get the range for approximate window
-    irange = extrema(first.([lower_left, lower_right, upper_left, upper_right]))
-    jrange = extrema(last.([lower_left, lower_right, upper_left, upper_right]))
-
-    valid_indices = CartesianIndices((irange[1]:irange[2], jrange[1]:jrange[2]))
-
-    positions = filter(
-        I -> Distances.haversine(center_latlon, prj(eastings[I[2]], northings[I[1]]), 6371.0) < radius,
-        valid_indices
+    # Filter by distance
+    window = filter(
+        cnd -> Distances.haversine(centers[idx], centers[cnd], 6371.0) <= radius,
+        candidates
     )
 
-    return layer[positions]
+    # Return
+    return window
+end
+
+
+function slidingwindow(f::Function, layer::SDMLayer; kwargs...)
+    _rtype = eltype(f(values(layer)[1:min(3, length(layer))]))
+    destination = similar(layer, _rtype)
+    return slidingwindow!(destination, f, layer; kwargs...)
+end
+
+function slidingwindow!(destination::SDMLayer, f::Function, layer::SDMLayer; radius::AbstractFloat=100.0)
+    # Infer the return type of the operation
+    _rtype = eltype(f(values(layer)[1:min(3, length(layer))]))
+    if _rtype != eltype(destination)
+        throw(TypeError(:swin!, "The destination layer must have the correct type", eltype(destination), _rtype))
+    end
+
+    # Prepare the function to get the lat/lon
+    centers = SimpleSDMLayers._centers(layer)
+
+    # Go to town
+    for (idx,pos) in enumerate(CartesianIndices(layer))
+        window = SimpleSDMLayers.__get_idx_within_radius(centers, idx, radius)
+        destination[pos] = f(values(layer)[window])
+    end
+    return destination
 end

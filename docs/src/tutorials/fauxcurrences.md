@@ -3,6 +3,7 @@
 ```@example 1
 using SpeciesDistributionToolkit
 import Random
+using CairoMakie
 Random.seed!(616525434012345)
 ```
 

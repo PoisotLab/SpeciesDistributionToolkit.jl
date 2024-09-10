@@ -31,3 +31,10 @@ function MakieCore.convert_arguments(
     k = findall(layer1.indices .& layer2.indices)
     return MakieCore.convert_arguments(P, layer1[k], layer2[k])
 end
+
+function MakieCore.convert_arguments(
+    P::MakieCore.PointBased,
+    layer::T
+) where {T <: SDMLayer{Bool}}
+    return MakieCore.convert_arguments(P, sprinkle(ones(nodata(layer, false), Float32))...)
+end

@@ -90,7 +90,6 @@ save("precipitation-rescaled.png", current_figure()); nothing # hide
 
 ![Density of precipitation](precipitation-rescaled.png)
 
-
 To get a little more insights about the distribution of precipitation, we can
 look at the quantiles, given by the `quantize` function:
 

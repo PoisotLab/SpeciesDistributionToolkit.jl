@@ -39,6 +39,9 @@ function Base.ones(layer::SDMLayer, ::Type{T}) where {T}
     return out
 end
 
+Base.zeros(layer::SDMLayer) = ones(layer, eltype(layer))
+Base.ones(layer::SDMLayer) = zeros(layer, eltype(layer))
+
 @testitem "We can generate a similar layer" begin
     layer = SimpleSDMLayers.__demodata(reduced=true)
     sim = similar(layer)
@@ -168,3 +171,4 @@ end
 
 Base.:&(l1::SDMLayer{Bool}, l2::SDMLayer{Bool}) = l1 .& l2
 Base.:|(l1::SDMLayer{Bool}, l2::SDMLayer{Bool}) = l1 .| l2
+Base.:!(l1::SDMLayer{Bool}) = .! l1

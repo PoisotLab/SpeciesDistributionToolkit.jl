@@ -142,3 +142,6 @@ Base.:%(x, l::SDMLayer) = l % x
         @test twice[i] == 2l1[i]
     end
 end
+
+Base.:&(l1::SDMLayer{Bool}, l2::SDMLayer{Bool}) = l1 .& l2
+Base.:|(l1::SDMLayer{Bool}, l2::SDMLayer{Bool}) = l1 .| l2

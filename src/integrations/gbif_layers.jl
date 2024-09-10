@@ -58,87 +58,19 @@ function SimpleSDMLayers.quantize!(layer::SDMLayer, records::GBIFRecords)
     return layer
 end
 
-#=
-
-"""
-    mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: AbstractBool}
-
-Fills a layer (most likely created with `similar`) so that the values are `true`
-if an occurrence is found in the cell, `false` if not.
-"""
-function SimpleSDMLayers.mask!(
-    layer::SDMLayer{T},
-    records::GBIF.GBIFRecords,
-) where {T <: Bool}
+function SimpleSDMLayers.mask(layer::SDMLayer, records::GBIF.GBIFRecords)
+    out = zeros(layer, Bool)
     for record in records
-        if !isnothing(layer[record])
-            layer[record] = true
-        end
+        out[record] = true
     end
-    return layer
+    return out
 end
 
-"""
-    mask!(layer::SimpleSDMResponse{T}, records::GBIF.GBIFRecords) where {T <: Number}
 
-Fills a layer (most likely created with `similar`) so that the values reflect
-the number of occurrences in the cell.
-"""
-function SimpleSDMLayers.mask!(
-    layer::SDMLayer{T},
-    records::GBIF.GBIFRecords,
-) where {T <: Number}
+function SimpleSDMLayers.mask(layer::SDMLayer, records::GBIF.GBIFRecords, ::Type{T}) where {T <: Number}
+    out = zeros(layer, T)
     for record in records
-        if !isnothing(layer[record])
-            layer[record] = layer[record] + one(T)
-        end
+        out[record] += one(T)
     end
-    return layer
+    return out
 end
-
-"""
-    mask(layer::SimpleSDMLayer, records::GBIF.GBIFRecords, element_type::Type=Bool)
-
-Create a new layer storing information about the presence of occurrences in the
-cells, either counting (numeric types) or presence-absence-ing (boolean types)
-them.
-"""
-function SimpleSDMLayers.mask(
-    layer::SDMLayer,
-    records::GBIF.GBIFRecords,
-    element_type::Type = Bool,
-)
-    returnlayer = similar(layer, element_type)
-    mask!(returnlayer, records)
-    return returnlayer
-end
-
-"""
-    clip(layer::SDMLayer, records::GBIF.GBIFRecords)
-
-Returns a clipped version around all occurrences in a
-GBIFRecords collection.
-"""
-function clip(layer::SDMLayer, records::GBIF.GBIFRecords)
-    occ_latitudes = latitudes(records)
-    occ_longitudes = longitudes(records)
-
-    lat_min, lat_max = extrema(occ_latitudes)
-    lon_min, lon_max = extrema(occ_longitudes)
-
-    lat_Δ = abs(lat_max - lat_min)
-    lon_Δ = abs(lon_max - lon_min)
-
-    scaling = 0.1
-    lon_s = scaling * lon_Δ
-    lat_s = scaling * lat_Δ
-
-    lat_max = min(layer.top, lat_max + lat_s)
-    lat_min = max(layer.bottom, lat_min - lat_s)
-    lon_max = min(layer.right, lon_max + lon_s)
-    lon_min = max(layer.left, lon_min - lon_s)
-
-    return clip(layer; left = lon_min, right = lon_max, bottom = lat_min, top = lat_max)
-end
-
-=#

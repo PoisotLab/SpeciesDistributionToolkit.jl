@@ -32,7 +32,6 @@ the observations represent a *presence*, so we will use the "occurrenceStatus"
 flag to get these records only.
 
 ```@example 1
-
 query = [
     "hasCoordinate" => true,
     "country" => "FR",

@@ -123,3 +123,22 @@ end
         @test divide[i] == l1[i] / l2[i]
     end
 end
+
+Base.:*(l::SDMLayer, x) = x .* l
+Base.:*(x, l::SDMLayer) = l * x
+Base.:+(l::SDMLayer, x) = x .+ l
+Base.:+(x, l::SDMLayer) = l + x
+Base.:-(l::SDMLayer, x) = x .- l
+Base.:-(x, l::SDMLayer) = l - x
+Base.:/(l::SDMLayer, x) = x ./ l
+Base.:/(x, l::SDMLayer) = l / x
+Base.:%(l::SDMLayer, x) = x .% l
+Base.:%(x, l::SDMLayer) = l % x
+
+@testitem "We can do + - / * on layers and numbers" begin
+    l1 = SimpleSDMLayers.__demodata()
+    twice = 2l1
+    for i in eachindex(twice)
+        @test twice[i] == 2l1[i]
+    end
+end

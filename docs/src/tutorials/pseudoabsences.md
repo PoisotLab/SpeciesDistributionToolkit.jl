@@ -101,7 +101,9 @@ envelope method, which uses the bounding box of observations to allow pseudo-abs
 
 ```@example 1
 sre = pseudoabsencemask(SurfaceRangeEnvelope, presencelayer)
+```
 
+```@example 1
 heatmap(
     temperature;
     colormap = :deep,

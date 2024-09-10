@@ -25,6 +25,7 @@ makedocs(;
             "tutorials/statistics.md",
             "tutorials/consensus.md",
             "tutorials/occlayers.md",
+            "tutorials/pseudoabsences.md",
             "tutorials/futureclimate.md",
             "tutorials/fauxcurrences.md",
         ],

@@ -69,128 +69,35 @@ function _known_point(ref, d, α; R = 6371.0)
     return rad2deg.((λ2, φ2))
 end
 
-function _layer_works_for_pseudoabsence(layer::T) where {T <: SimpleSDMLayer}
-    @assert SimpleSDMLayers._inner_type(layer) <: Bool
-    n_occ = sum(layer)
-    return iszero(n_occ) && throw(ArgumentError("The presences layer is empty"))
-end
-
-function pseudoabsencemask(
-    ::Type{WithinRadius},
-    presences::T;
-    distance::Number = 100.0,
-) where {T <: SimpleSDMLayer}
-    _layer_works_for_pseudoabsence(presences)
-
-    function _check_bounds(template, i)
-        sz = size(template)
-        i[1] <= 0 && return false
-        i[2] <= 0 && return false
-        i[1] > sz[1] && return false
-        i[2] > sz[2] && return false
-        return true
-    end
-
-    presence_only = mask(presences, presences)
-    presence_idx = findall(x->x==1,presence_only.grid)
-
-    
-    y, x = size(presences) # axes returned by size are flipped 
-    bbox = boundingbox(presences)
-    Δx = (bbox[:right] - bbox[:left])/ x   # how much a raster cell is in long
-    Δy = (bbox[:top] - bbox[:bottom])/ y   # how much a raster cell is in lat
-    
-    # It's reasonable to use the centroid of the raster as a basis and use the
-    # same sliding mask for each point.
-    centroid = [0.5(bbox[:right]+bbox[:left]), 0.5(bbox[:bottom]+bbox[:top])]
-
-    # However, if the extent is large enough, this assumption might break down
-    # and the size of the sliding window should be calculated for each
-    # occurrence (or for some subbdivision of the raster into subsections).
-
-    # The slowest (but most accurrate) version would create an offset mask for
-    # each occurrence. This is still likely faster than the current version
-    # method of filtering coordinates, but may be significantly slower than the
-    # simpler methods.  
-
-    _, lat = SpeciesDistributionToolkit._known_point(centroid, distance, 0)
-    lon, _ = SpeciesDistributionToolkit._known_point(centroid, distance, π/2)
-
-    # magnitude of the maximum offset in lon/lat from raster centroid in each direction 
-    max_offset_x, max_offset_y =  Int32.(floor.([(lon-centroid[1]) / Δx, (lat-centroid[2]) / Δy])) 
-
-    radius_mask = OffsetArrays.OffsetArray(
-        ones(Bool, 2max_offset_x+1, 2max_offset_y+1), 
-        -max_offset_x:max_offset_x, 
-        -max_offset_y:max_offset_y
-    ) 
-    for i in CartesianIndices(radius_mask)
-        long_offset, lat_offset = abs.([i[1], i[2]]) .* [Δx, Δy]
-        total_dist = sqrt(long_offset^2 + lat_offset^2)
-        radius_mask[i] = total_dist <= min(lon-centroid[1], lat-centroid[2])  
-    end
-
-    # Mask radius around each presence point 
-    offsets = CartesianIndices((-max_offset_x:max_offset_x, -max_offset_y:max_offset_y))
-
-    # 3 states 
-    # State 1: unseen
-    # State 2: seen, still a candidate bg point
-    # State 3: seen, no longer a cnadidate bg point
-    UNSEEN, CANDIDATE, UNAVAILABLE = 1, 2, 3 
-
-    background = similar(presences, Int32)
-    background.grid[findall(!isnothing, background.grid)] .= UNSEEN
-
-    for occ_idx in presence_idx
-        within_radius_idx = offsets .+ occ_idx
-
-        for (i, cartesian_idx) in enumerate(within_radius_idx)
-            if _check_bounds(background, cartesian_idx) && !isnothing(background.grid[cartesian_idx])
-                if background.grid[cartesian_idx] != UNAVAILABLE && !radius_mask[offsets[i]] 
-                    background.grid[cartesian_idx] = CANDIDATE
-                else
-                    background.grid[cartesian_idx] = UNAVAILABLE
-                end 
-            end
-        end 
-    end
-    
-    background.grid[findall(isequal(CANDIDATE), background.grid)] .= true
-    background.grid[findall(isequal(UNAVAILABLE), background.grid)] .= false
-
-    return convert(Bool, background)
+function _layer_works_for_pseudoabsence(layer::SDMLayer{T}) where {T <: Bool}
+    iszero(sum(layer)) && throw(ArgumentError("The presences layer is empty"))
+    return nothing
 end
 
 """
-    pseudoabsencemask(::Type{RandomSelection}, presence::T) where {T <: SimpleSDMLayer}
+    pseudoabsencemask(::Type{RandomSelection}, presence::T) where {T <: SDMLayer}
 
 Generates a mask for pseudo-absences using the random selection method. Candidate
 cells for the pseudo-absence mask are (i) within the bounding box of the _layer_
 (use `SurfaceRangeEnvelope` to use the presences bounding box), and (ii) valued in the
 layer.
 """
-function pseudoabsencemask(::Type{RandomSelection}, presences::T) where {T <: SimpleSDMLayer}
+function pseudoabsencemask(::Type{RandomSelection}, presences::T) where {T <: SDMLayer}
     _layer_works_for_pseudoabsence(presences)
-    presence_only = mask(presences, presences)
-    background = replace(similar(presences, Bool), false => true)
-    for occupied_cell in keys(presence_only)
-        background[occupied_cell] = false
-    end
-    return background
+    return !presences
 end
 
 """
-    pseudoabsencemask( ::Type{SurfaceRangeEnvelope}, presences::T) where {T <: SimpleSDMLayer}
+    pseudoabsencemask( ::Type{SurfaceRangeEnvelope}, presences::T) where {T <: SDMLayer}
 
 Generates a mask from which pseudo-absences can be drawn, by picking cells that
 are (i) within the bounding box of occurrences, (ii) valued in the layer, and
 (iii) not already occupied by an occurrence
 """
-function pseudoabsencemask(::Type{SurfaceRangeEnvelope}, presences::T) where {T <: SimpleSDMLayer}
+function pseudoabsencemask(::Type{SurfaceRangeEnvelope}, presences::T) where {T <: SDMLayer}
     _layer_works_for_pseudoabsence(presences)
-    presence_only = mask(presences, presences)
-    background = similar(presences, Bool)
+    presence_only = nodata(presences, false)
+    background = zeros(presences, Bool)
     lon = extrema([k[1] for k in keys(presence_only)])
     lat = extrema([k[2] for k in keys(presence_only)])
     for occupied_cell in keys(presences)
@@ -215,18 +122,42 @@ distances, it may be a very good idea to flatten this layer using `log` or an
 exponent. The `f` function is used to determine which distance is reported
 (minimum by default, can also be mean or median).
 """
-function pseudoabsencemask(::Type{DistanceToEvent}, presences::T; f=minimum) where {T <: SimpleSDMLayer}
+function pseudoabsencemask(
+    ::Type{DistanceToEvent},
+    presences::T;
+    f = minimum,
+) where {T <: SDMLayer}
     _layer_works_for_pseudoabsence(presences)
-    background = similar(presences, Float64)
-    presence_only = mask(presences, presences)
+    presence_only = nodata(presences, false)
+    background = zeros(presences, Float64)
+
     d = SpeciesDistributionToolkit.Fauxcurrences._distancefunction
 
-    points = keys(presence_only)
+    prj = SimpleSDMLayers.Proj.Transformation(presences.crs, "EPSG:4326"; always_xy = true)
+    E, N = eastings(presences), northings(presences)
 
-    for k in keys(background)    
-        background[k] = f([d(k, ko) for ko in points])
+    points = [prj(E[i.I[2]], N[i.I[1]]) for i in keys(presence_only)]
+
+    for k in keys(background)
+        pk = prj(E[k.I[2]], N[k.I[1]])
+        background[k] = f([d(pk, ko) for ko in points])
     end
-    
+
+    return background
+end
+
+function pseudoabsencemask(
+    ::Type{WithinRadius},
+    presences::T;
+    distance::Number = 100.0,
+) where {T <: SDMLayer}
+    _layer_works_for_pseudoabsence(presences)
+
+    bg = pseudoabsencemask(DistanceToEvent, presences; f = minimum)
+    background = bg .<= distance
+    for i in keys(nodata(presences, false))
+        background[i] = false
+    end
     return background
 end
 
@@ -239,9 +170,20 @@ possible points (`Bool`) or the weight of each cell in the final sample
 can be changed using `replace=true`. The additional keywors arguments are passed
 to `StatsBase.sample`, which is used internally.
 """
-function backgroundpoints(layer::T, n::Int; replace::Bool=false, kwargs...) where {T <: SimpleSDMLayer}
+function backgroundpoints(
+    layer::T,
+    n::Int;
+    replace::Bool = false,
+    kwargs...,
+) where {T <: SDMLayer}
     background = similar(layer, Bool)
-    selected_points = StatsBase.sample(keys(layer), StatsBase.Weights(values(layer)), n; replace=replace, kwargs...)
+    selected_points = StatsBase.sample(
+        keys(layer),
+        StatsBase.Weights(values(layer)),
+        n;
+        replace = replace,
+        kwargs...,
+    )
     for sp in selected_points
         background[sp] = true
     end

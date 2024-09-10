@@ -145,6 +145,7 @@ end
 _dataset_catalogue = []
 
 for P in subtypes(RasterProvider)
+    @info P
     # Create the path if it doesn't exist
     if ~ispath(joinpath(dataset_catalogue_path, string(P)))
         mkpath(joinpath(dataset_catalogue_path, string(P)))

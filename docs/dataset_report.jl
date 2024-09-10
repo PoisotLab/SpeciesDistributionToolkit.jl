@@ -113,7 +113,7 @@ function report(::Type{P}, ::Type{D}) where {P <: RasterProvider, D <: RasterDat
 
     ~~~julia
     using SpeciesDistributionToolkit
-    layer = SimpleSDMPredictor(RasterData($(P), $(D))) # You will probably need keyword arguments here
+    layer = SDMLayer(RasterData($(P), $(D))) # You will probably need keyword arguments here
     ~~~
 
     The remainder of this page will list the keywords you can use to retrieve specific months, layers, etc.
@@ -145,7 +145,6 @@ end
 _dataset_catalogue = []
 
 for P in subtypes(RasterProvider)
-    @info P
     # Create the path if it doesn't exist
     if ~ispath(joinpath(dataset_catalogue_path, string(P)))
         mkpath(joinpath(dataset_catalogue_path, string(P)))

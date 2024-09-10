@@ -47,8 +47,8 @@ include("io/geotiff.jl")
 #include("io/ascii.jl")
 
 # Functions for pseudo-absence generation
-# include("pseudoabsences.jl")
-# export WithinRadius, SurfaceRangeEnvelope, RandomSelection, DistanceToEvent
- #export pseudoabsencemask, backgroundpoints
+include("pseudoabsences.jl")
+export WithinRadius, SurfaceRangeEnvelope, RandomSelection, DistanceToEvent
+export pseudoabsencemask, backgroundpoints
 
 end # module SpeciesDistributionToolkit

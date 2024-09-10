@@ -173,15 +173,13 @@ to `StatsBase.sample`, which is used internally.
 function backgroundpoints(
     layer::T,
     n::Int;
-    replace::Bool = false,
-    kwargs...,
+    kwargs...
 ) where {T <: SDMLayer}
-    background = similar(layer, Bool)
+    background = zeros(layer, Bool)
     selected_points = StatsBase.sample(
         keys(layer),
         StatsBase.Weights(values(layer)),
         n;
-        replace = replace,
         kwargs...,
     )
     for sp in selected_points

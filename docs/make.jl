@@ -22,6 +22,7 @@ makedocs(;
         "Index" => "index.md",
         "Tutorials" => [
             "tutorials/arithmetic.md",
+            "tutorials/statistics.md",
             "tutorials/consensus.md",
             "tutorials/futureclimate.md",
             "tutorials/fauxcurrences.md",

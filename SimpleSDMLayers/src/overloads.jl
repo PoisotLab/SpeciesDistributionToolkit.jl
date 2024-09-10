@@ -16,6 +16,29 @@ function Base.similar(layer::SDMLayer)
     return SDMLayer(grid=grd, indices=idx, x=layer.x, y=layer.y, crs=layer.crs)
 end
 
+function Base.fill!(layer::SDMLayer{T}, val::T) where {T}
+    fill!(layer.grid, val)
+    return layer
+end
+
+function Base.fill(layer::SDMLayer{T}, val::T) where {T}
+    out = similar(layer, T)
+    fill!(out, val)
+    return out
+end
+
+function Base.zeros(layer::SDMLayer, ::Type{T}) where {T}
+    out = similar(layer, T)
+    fill!(out, zero(T))
+    return out
+end
+
+function Base.ones(layer::SDMLayer, ::Type{T}) where {T}
+    out = similar(layer, T)
+    fill!(out, one(T))
+    return out
+end
+
 @testitem "We can generate a similar layer" begin
     layer = SimpleSDMLayers.__demodata(reduced=true)
     sim = similar(layer)

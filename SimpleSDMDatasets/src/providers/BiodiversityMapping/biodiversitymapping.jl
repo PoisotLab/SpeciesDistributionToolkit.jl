@@ -17,7 +17,7 @@ layers(::RasterData{BiodiversityMapping, BirdRichness}) = ["Birds", "Passeriform
 
 function layerdescriptions(::RasterData{BiodiversityMapping, T}) where {T <: BiodivMap}
     layername = layers(RasterData(BiodiversityMapping, T))
-    return Dict(zip(layername))
+    return Dict(zip(layername, layername))
 end
 
 function source(data::RasterData{BiodiversityMapping, T}; kwargs...) where {T <: BiodivMap}

@@ -113,7 +113,6 @@ function SimpleSDMLayers.mask(
     return returnlayer
 end
 
-
 """
     clip(layer::SDMLayer, records::GBIF.GBIFRecords)
 

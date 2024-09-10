@@ -24,7 +24,11 @@ end
 Read a layer as a `SDMLayer` from a `RasterData`, a `Projection`, and a source
 of keywords. The allowed keywords are listed for each `RasterData`.
 """
-function SimpleSDMLayers.SDMLayer(data::R, future::F; kwargs...) where {R <: RasterData, F <: Projection}
+function SimpleSDMLayers.SDMLayer(
+    data::R,
+    future::F;
+    kwargs...,
+) where {R <: RasterData, F <: Projection}
     # Split the bounding box from the rest of the data
     boundingbox, arguments = _boundingbox_out_of_kwargs(kwargs)
 

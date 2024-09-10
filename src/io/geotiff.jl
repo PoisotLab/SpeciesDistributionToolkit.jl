@@ -35,7 +35,7 @@ function _read_geotiff(
     right = 180.0,
     bottom = -90.0,
     top = 90.0,
-    driver::String = "GTiff"
+    driver::String = "GTiff",
 )
     @assert driver ∈ keys(ArchGDAL.listdrivers()) ||
             throw(ArgumentError("Not a valid driver."))
@@ -45,7 +45,11 @@ function _read_geotiff(
     layer = ArchGDAL.read(file) do dataset
         thisproj = ArchGDAL.getproj(dataset)
         default = """GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AXIS["Latitude",NORTH],AXIS["Longitude",EAST],AUTHORITY["EPSG","4326"]]"""
-        wkt = isempty(thisproj) ? ArchGDAL.importWKT(default) : ArchGDAL.importWKT(thisproj)
+        wkt = if isempty(thisproj)
+            ArchGDAL.importWKT(default)
+        else
+            ArchGDAL.importWKT(thisproj)
+        end
         transform = ArchGDAL.getgeotransform(dataset)
 
         # The data we need is pretty much always going to be stored in the first
@@ -235,7 +239,7 @@ end
     D = eltype(layer)
 
     f = tempname()
-    
+
     SpeciesDistributionToolkit._write_geotiff(
         f,
         [layer];

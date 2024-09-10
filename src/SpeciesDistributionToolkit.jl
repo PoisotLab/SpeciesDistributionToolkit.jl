@@ -36,7 +36,7 @@ include("integrations/gbif_layers.jl")
 # export clip
 
 # GBIF and Phylopic integration
-# include("integrations/gbif_phylopic.jl")
+include("integrations/gbif_phylopic.jl")
 
 # Plotting
 include("integrations/makie.jl")

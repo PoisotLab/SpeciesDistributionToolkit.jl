@@ -1,13 +1,13 @@
 function rescale!(layer::SDMLayer)
     m, M = extrema(layer)
     layer.grid .-= m
-    layer.grid ./= (M-m)
+    layer.grid ./= (M - m)
     return layer
 end
 
 function rescale!(layer::SDMLayer, m, M)
     rescale!(layer)
-    layer.grid .*= (M-m)
+    layer.grid .*= (M - m)
     layer.grid .+= m
     return layer
 end
@@ -15,6 +15,9 @@ end
 function rescale(layer::SDMLayer, args...)
     return rescale!(copy(layer), args...)
 end
+
+rescale(layer::SDMLayer, ep::Tuple) = rescale(layer, ep...)
+rescale!(layer::SDMLayer, ep::Tuple) = rescale!(layer, ep...)
 
 @testitem "We can rescale a layer between 0 and 1" begin
     layer = convert(SDMLayer{Float16}, SimpleSDMLayers.__demodata())
@@ -38,7 +41,8 @@ end
 
 function quantize!(layer::SDMLayer, n::Integer)
     quantize!(layer)
-    map!(x -> round(x*(n+1), digits=0)/(n+1), layer.grid, layer.grid)
+    n = n - 2
+    map!(x -> round(x * (n + 1); digits = 0) / (n + 1), layer.grid, layer.grid)
     return layer
 end
 

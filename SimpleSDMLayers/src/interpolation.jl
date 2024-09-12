@@ -17,7 +17,6 @@ function interpolate(layer::SDMLayer; dest="+proj=natearth2", newsize=nothing, i
 
     # Prepare a new layer
     newsize = isnothing(newsize) ? size(layer) : newsize
-    @info newsize
     newlayer = SDMLayer(zeros(Float32, newsize); crs = dest, x = nx, y = ny)
     nodata!(newlayer, zero(eltype(newlayer)))
     EI = eastings(newlayer)

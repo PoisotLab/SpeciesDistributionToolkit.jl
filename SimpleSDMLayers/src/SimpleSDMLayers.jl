@@ -61,4 +61,8 @@ export quantize!, quantize
 include("mosaic.jl")
 export mosaic
 
+# Interpolation
+include("interpolation.jl")
+export interpolate
+
 end # module

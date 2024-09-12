@@ -9,6 +9,7 @@ Base.IteratorSize(::SDMLayer) = Base.HasLength()
 Base.IteratorEltype(::SDMLayer) = Base.HasEltype()
 Base.keys(layer::SDMLayer) = CartesianIndices(layer)
 Base.values(layer::SDMLayer) = layer.grid[layer.indices]
+Base.axes(layer::SDMLayer, i...) = axes(layer.grid, i...)
 
 function Base.similar(layer::SDMLayer)
     grd = similar(layer.grid)

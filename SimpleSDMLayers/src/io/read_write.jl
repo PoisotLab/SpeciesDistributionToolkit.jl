@@ -31,8 +31,9 @@ function save(file::String, layer::SDMLayer{T}; kwargs...) where {T <: Number}
 end
 
 @testitem "We can save a layer to a file and it does not fuck it up" begin
-    t = SDMLayer(RasterData(WorldClim2, WindSpeed); bottom=-10., top=25.0, left=-10.0, right=15.0)
+    t = SimpleSDMLayers.__demodata()
     f = tempname()*".tiff"
+    f = "test.tiff"
     SimpleSDMLayers.save(f, t)
     k = SDMLayer(f)
     @test SimpleSDMLayers._layers_are_compatible(t, k)

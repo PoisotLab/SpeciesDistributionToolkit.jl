@@ -50,6 +50,7 @@ function _read_geotiff(
         else
             ArchGDAL.importWKT(thisproj)
         end
+        wkt = ArchGDAL.toPROJ4(wkt)
         transform = ArchGDAL.getgeotransform(dataset)
 
         # The data we need is pretty much always going to be stored in the first
@@ -122,7 +123,6 @@ function _write_geotiff(
 )
     @assert driver ∈ keys(ArchGDAL.listdrivers()) ||
             throw(ArgumentError("Not a valid driver."))
-    #@assert compress ∈ keys(ArchGDAL.listcompress()) || throw(ArgumentError("Not a valid compression."))
 
     array_t = _prepare_layer_for_burnin(layer, nodata)
     width, height = size(array_t)
@@ -181,7 +181,7 @@ Stores a series of `layers` in a `file`, where every layer in a band. See
 function _write_geotiff(
     file::AbstractString,
     layers::Vector{SDMLayer{T}};
-    nodata::T = convert(T, -9999),
+    nodata::T = convert(T, typemax(T)),
     driver::String = "GTiff",
     compress::String = "LZW",
 ) where {T <: Number}
@@ -220,7 +220,7 @@ function _write_geotiff(
             ArchGDAL.setnodatavalue!(band, nodata)
         end
         ArchGDAL.setgeotransform!(dataset, gt)
-        ArchGDAL.setproj!(dataset, layer.crs)
+        ArchGDAL.setproj!(dataset, layers[1].crs)
 
         # Write !
         return ArchGDAL.write(
@@ -235,12 +235,12 @@ function _write_geotiff(
 end
 
 @testitem "We can write a GeoTiff file" begin
-    layer = SDMLayer(RasterData(WorldClim2, BioClim); layer = 1)
+    layer = SimpleSDMLayers.__demodata()
     D = eltype(layer)
 
     f = tempname()
 
-    SpeciesDistributionToolkit._write_geotiff(
+    SimpleSDMLayers._write_geotiff(
         f,
         [layer];
         driver = "GTiff",

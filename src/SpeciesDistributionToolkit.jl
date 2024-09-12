@@ -4,7 +4,6 @@ module SpeciesDistributionToolkit
 using TestItems
 
 using MakieCore
-
 import StatsBase
 
 # We make ample use of re-export

@@ -19,7 +19,7 @@ The geospatial information is represented by three positional fields:
   values are `(-180., 180.)` and `(-90., 90.)`, which represents the entire
   surface of the globe in WGS84
 - **crs**: any `String` representation of the CRS which can be handled by
-  `Proj.jl` - the default is  `"EPSG:4326"`, which represents a
+  `Proj.jl` - the default is  `"+proj=longlat +datum=WGS84 +no_defs"`, which represents a
   latitude/longitude coordinate system
 """
 Base.@kwdef mutable struct SDMLayer{T}
@@ -27,7 +27,7 @@ Base.@kwdef mutable struct SDMLayer{T}
     indices::BitMatrix
     x::Tuple = (-180.0, 180.0)
     y::Tuple = (-90.0, 90.0)
-    crs::String = "EPSG:4326"
+    crs::String = "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 function SDMLayer(grid::Matrix; kwargs...)
@@ -39,7 +39,7 @@ end
 @testitem "We can construct a SDMLayer with all data" begin
     m = rand(0x00:0x02, (10, 20))
     idx = BitArray(ones(size(m)))
-    crs = "EPSG:4326"
+    crs = "+proj=longlat +datum=WGS84 +no_defs"
     layer = SDMLayer(m, idx, (10.0, 20.0), (30.0, 40.0), crs)
     @test typeof(layer.grid) == Matrix{eltype(m)}
 end
@@ -48,7 +48,7 @@ end
     m = rand(0x00:0x02, (10, 20))
     layer = SDMLayer(m)
     @test typeof(layer.grid) == Matrix{eltype(m)}
-    @test layer.crs == "EPSG:4326"
+    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 @testitem "We can construct a SDMLayer the grid of values and kwargs" begin
@@ -56,7 +56,7 @@ end
     layer = SDMLayer(m; nodata=0x01)
     @test count(layer) < prod(size(m))
     @test typeof(layer.grid) == Matrix{eltype(m)}
-    @test layer.crs == "EPSG:4326"
+    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 """
@@ -77,7 +77,7 @@ end
     ol = count(layer)
     nodata!(layer, 0x00)
     @test length(layer) < ol
-    @test layer.crs == "EPSG:4326"
+    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 """
@@ -97,7 +97,7 @@ end
     ol = length(layer)
     nodata!(layer, ==(0x01))
     @test length(layer) < ol
-    @test layer.crs == "EPSG:4326"
+    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 function nodata!(layer::SDMLayer, v)
@@ -121,7 +121,7 @@ end
     ol = length(layer)
     nodata!(layer, 1)
     @test length(layer) < ol
-    @test layer.crs == "EPSG:4326"
+    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 @testitem "We can do nodata with a copy" begin
@@ -130,7 +130,7 @@ end
     ol = length(layer)
     nl = nodata(layer, 1)
     @test length(nl) < length(layer)
-    @test layer.crs == "EPSG:4326"
+    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 function _layers_are_compatible(l1::SDMLayer, l2::SDMLayer)

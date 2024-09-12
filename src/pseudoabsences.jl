@@ -133,7 +133,7 @@ function pseudoabsencemask(
 
     d = SpeciesDistributionToolkit.Fauxcurrences._distancefunction
 
-    prj = SimpleSDMLayers.Proj.Transformation(presences.crs, "EPSG:4326"; always_xy = true)
+    prj = SimpleSDMLayers.Proj.Transformation(presences.crs, "+proj=longlat +datum=WGS84 +no_defs"; always_xy = true)
     E, N = eastings(presences), northings(presences)
 
     points = [prj(E[i.I[2]], N[i.I[1]]) for i in keys(presence_only)]

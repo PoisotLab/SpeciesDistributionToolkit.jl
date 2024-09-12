@@ -1,4 +1,4 @@
-_centers(layer::SDMLayer) = _centers(layer, "EPSG:4326")
+_centers(layer::SDMLayer) = _centers(layer, "+proj=longlat +datum=WGS84 +no_defs")
 function _centers(layer::SDMLayer, prj)
     # Projection function
     prfunc = Proj.Transformation(layer.crs, prj; always_xy=true)

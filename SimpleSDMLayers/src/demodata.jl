@@ -31,7 +31,7 @@ end
 
 @testitem "We read the correct WGS84 bounds for the demo layer" begin
     layer = SimpleSDMLayers.__demodata()
-    prj = SimpleSDMLayers.Proj.Transformation(layer.crs, "EPSG:4326"; always_xy=true)
+    prj = SimpleSDMLayers.Proj.Transformation(layer.crs, "+proj=longlat +datum=WGS84 +no_defs"; always_xy=true)
     
     ll_ll = prj(layer.x[1], layer.y[1])
     @test ll_ll[1] ≈ -80.00 atol = 0.01

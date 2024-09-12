@@ -11,6 +11,7 @@ module SimpleSDMLayers
 
 using TestItems
 
+import ArchGDAL
 import Proj
 import Tables
 import Distances

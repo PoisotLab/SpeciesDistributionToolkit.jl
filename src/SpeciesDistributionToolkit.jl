@@ -1,18 +1,11 @@
 module SpeciesDistributionToolkit
 
-import ArchGDAL
-import GDAL
 
 using TestItems
-
-import Distances
-# TODO: call the one from Fauxcurrences when integrated
-const _distance_function = Distances.Haversine(6371.0)
 
 using MakieCore
 
 import StatsBase
-import OffsetArrays
 
 # We make ample use of re-export
 using Reexport
@@ -23,6 +16,9 @@ using Reexport
 @reexport using SimpleSDMLayers
 @reexport using Fauxcurrences
 @reexport using Phylopic
+
+import Distances
+const _distance_function = Fauxcurrences._distancefunction
 
 # Functions to get latitudes/longitudes
 include("latlon.jl")

@@ -7,13 +7,14 @@ function interpolate(layer::SDMLayer; dest="+proj=natearth2", newsize=nothing, i
     prj = SimpleSDMLayers.Proj.Transformation(layer.crs, dest; always_xy = true)
     revprj = SimpleSDMLayers.Proj.Transformation(dest, layer.crs; always_xy = true)
 
-    # New coordinates for the layer
-    ll = prj(layer.x[1], layer.y[1])
-    lr = prj(layer.x[2], layer.y[1])
-    ul = prj(layer.x[1], layer.y[2])
-    ur = prj(layer.x[2], layer.y[2])
-    nx = extrema(first.([ll, lr, ul, ur]))
-    ny = extrema(last.([ll, lr, ul, ur]))
+    # New coordinates for the layer - we need to do the entire exterior!
+    b1 = [prj(EL[1], n) for n in NL]
+    b2 = [prj(EL[end], n) for n in NL]
+    b3 = [prj(e, NL[1]) for e in EL]
+    b4 = [prj(e, NL[end]) for e in EL]
+    bands = vcat(b1, b2, b3, b4)
+    nx = extrema(first.(bands))
+    ny = extrema(last.(bands))
 
     # Prepare a new layer
     newsize = isnothing(newsize) ? size(layer) : newsize

@@ -34,3 +34,10 @@ struct CHELSA2 <: RasterProvider end
 Global biodiveristy data from https://biodiversitymapping.org/ - see this website for citation information
 """
 struct BiodiversityMapping <: RasterProvider end
+
+"""
+    PaleoClim
+
+Paleoclimate data from http://www.paleoclim.org/ - see this website for citation information
+"""
+struct PaleoClim <: RasterProvider end

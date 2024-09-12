@@ -25,7 +25,7 @@ export MammalRichness, BirdRichness, AmphibianRichness
 
 include("types/providers.jl")
 export RasterProvider
-export WorldClim2, EarthEnv, CHELSA1, CHELSA2, BiodiversityMapping
+export WorldClim2, EarthEnv, CHELSA1, CHELSA2, BiodiversityMapping, PaleoClim
 
 include("types/futures.jl")
 export FutureScenario, FutureModel
@@ -63,6 +63,7 @@ include("providers/EarthEnv/earthenv.jl")
 include("providers/WorldClim/worldclim_v2.jl")
 include("providers/WorldClim/worldclim_future_v2.jl")
 include("providers/BiodiversityMapping/biodiversitymapping.jl")
+include("providers/PaleoClim/bioclim.jl")
 
 # Key checker
 include("keychecker.jl")

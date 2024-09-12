@@ -44,6 +44,7 @@ EarthEnv
 CHELSA1
 CHELSA2
 BiodiversityMapping
+PaleoClim
 ```
 
 ## List of projections

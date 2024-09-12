@@ -102,3 +102,15 @@ end
     layer[-70.0, 50.0] = 0x002a
     @test layer[-70.0, 50.0] == 0x002a
 end
+
+function reveal!(layer::SDMLayer, longitude::AbstractFloat, latitude::AbstractFloat)
+    grid_pos = SimpleSDMLayers.__get_grid_coordinate_by_latlon(layer, longitude, latitude)
+    layer.indices[grid_pos...] = true
+    return layer
+end
+
+
+function reveal!(layer::SDMLayer, est::Integer, nrt::Integer)
+    layer.indices[nrt, est] = true
+    return layer
+end

@@ -151,7 +151,7 @@ function _write_geotiff(
         # Write nodata and projection info
         ArchGDAL.setnodatavalue!(band, nodata)
         ArchGDAL.setgeotransform!(dataset, gt)
-        ArchGDAL.setproj!(dataset, "EPSG:4326")
+        ArchGDAL.setproj!(dataset, layer.crs)
 
         # Write !
         return ArchGDAL.write(
@@ -220,7 +220,7 @@ function _write_geotiff(
             ArchGDAL.setnodatavalue!(band, nodata)
         end
         ArchGDAL.setgeotransform!(dataset, gt)
-        ArchGDAL.setproj!(dataset, "EPSG:4326")
+        ArchGDAL.setproj!(dataset, layer.crs)
 
         # Write !
         return ArchGDAL.write(

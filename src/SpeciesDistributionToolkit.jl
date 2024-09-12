@@ -41,11 +41,6 @@ include("integrations/gbif_phylopic.jl")
 # Plotting
 include("integrations/makie.jl")
 
-# Functions for IO
-include("io/read_write.jl")
-include("io/geotiff.jl")
-#include("io/ascii.jl")
-
 # Functions for pseudo-absence generation
 include("pseudoabsences.jl")
 export WithinRadius, SurfaceRangeEnvelope, RandomSelection, DistanceToEvent

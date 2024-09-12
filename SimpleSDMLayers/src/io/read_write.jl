@@ -10,7 +10,7 @@ function SimpleSDMLayers.SDMLayer(
     @assert isfile(file)
     if endswith(file, ".tif") | endswith(file, ".tiff") |
        (format in ["tiff", "tif"])
-        return SpeciesDistributionToolkit._read_geotiff(
+        return SimpleSDMLayers._read_geotiff(
             file; bandnumber = bandnumber, left = left,
             right = right, bottom = bottom, top = top,
         )
@@ -33,7 +33,7 @@ end
 @testitem "We can save a layer to a file and it does not fuck it up" begin
     t = SDMLayer(RasterData(WorldClim2, WindSpeed); bottom=-10., top=25.0, left=-10.0, right=15.0)
     f = tempname()*".tiff"
-    SpeciesDistributionToolkit.save(f, t)
+    SimpleSDMLayers.save(f, t)
     k = SDMLayer(f)
     @test SimpleSDMLayers._layers_are_compatible(t, k)
 end

@@ -22,6 +22,10 @@ export SDMLayer
 export nodata!, nodata
 export eastings, northings
 
+# Functions for IO
+include("io/read_write.jl")
+include("io/geotiff.jl")
+
 # Include a demo dataset in a non-WGS84 projection
 include("demodata.jl")
 

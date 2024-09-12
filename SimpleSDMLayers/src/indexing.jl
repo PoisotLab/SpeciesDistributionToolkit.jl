@@ -12,17 +12,17 @@ function Base.setindex!(layer::SDMLayer, i...)
 end
 
 @testitem "We can index a layer by position" begin
-    layer = SDMLayer(rand(UInt8, (10, 20)); nodata=0x06)
+    layer = SDMLayer(rand(UInt8, (10, 20)); nodata = 0x06)
     @test layer[1, 1] == layer.grid[1, 1]
 end
 
 @testitem "We can edit a layer by position" begin
-    layer = SDMLayer(rand(UInt8, (10, 20)); nodata=0x06)
+    layer = SDMLayer(rand(UInt8, (10, 20)); nodata = 0x06)
     @test (layer[1, 1] = 0x02) == 0x02
 end
 
 @testitem "We get nothing when accessing at a nodata position" begin
-    layer = SDMLayer(rand(UInt8, (10, 20)); nodata=0x06)
+    layer = SDMLayer(rand(UInt8, (10, 20)); nodata = 0x06)
     for i in eachindex(layer.grid)
         if !layer.indices[i]
             @test isnothing(layer[i])
@@ -30,11 +30,15 @@ end
     end
 end
 
-function __get_grid_coordinate_by_latlon(layer::SDMLayer, longitude::AbstractFloat, latitude::AbstractFloat)
+function __get_grid_coordinate_by_latlon(
+    layer::SDMLayer,
+    longitude::AbstractFloat,
+    latitude::AbstractFloat,
+)
     if isequal("EPSG:4326")(layer.crs)
         return __get_grid_coordinate_by_crs(layer, longitude, latitude)
     else
-        prj = Proj.Transformation("EPSG:4326", layer.crs; always_xy=true)
+        prj = Proj.Transformation("EPSG:4326", layer.crs; always_xy = true)
         return __get_grid_coordinate_by_crs(layer, prj(longitude, latitude)...)
     end
 end
@@ -50,8 +54,8 @@ function __get_grid_coordinate_by_crs(layer::SDMLayer, easting, northing)
     (northing > maximum(northings)) && return nothing
 
     # Return the coordinate
-    ei = findfirst(easting .<= eastings)-1
-    ni = findfirst(northing .<= northings)-1
+    ei = findfirst(easting .<= eastings) - 1
+    ni = findfirst(northing .<= northings) - 1
     return (ni, ei)
 end
 
@@ -75,20 +79,28 @@ end
 
 @testitem "We get the correct cell when indexing the ends of the bounding box" begin
     layer = SimpleSDMLayers.__demodata()
-    prj = SimpleSDMLayers.Proj.Transformation(layer.crs, "EPSG:4326"; always_xy=true)
-    
+    prj = SimpleSDMLayers.Proj.Transformation(layer.crs, "EPSG:4326"; always_xy = true)
+
     ll_ll = prj(layer.x[1], layer.y[1]) .+ (0.001, 0.001)
     lr_ll = prj(layer.x[2], layer.y[1]) .+ (-0.001, 0.001)
     ul_ll = prj(layer.x[1], layer.y[2]) .+ (0.001, -0.001)
     ur_ll = prj(layer.x[2], layer.y[2]) .+ (-0.001, -0.001)
 
     @test SimpleSDMLayers.__get_grid_coordinate_by_latlon(layer, ll_ll...) == (1, 1)
-    @test SimpleSDMLayers.__get_grid_coordinate_by_latlon(layer, lr_ll...) == (1, size(layer.grid, 2))
-    @test SimpleSDMLayers.__get_grid_coordinate_by_latlon(layer, ul_ll...) == (size(layer.grid, 1), 1)
-    @test SimpleSDMLayers.__get_grid_coordinate_by_latlon(layer, ur_ll...) == size(layer.grid)
+    @test SimpleSDMLayers.__get_grid_coordinate_by_latlon(layer, lr_ll...) ==
+          (1, size(layer.grid, 2))
+    @test SimpleSDMLayers.__get_grid_coordinate_by_latlon(layer, ul_ll...) ==
+          (size(layer.grid, 1), 1)
+    @test SimpleSDMLayers.__get_grid_coordinate_by_latlon(layer, ur_ll...) ==
+          size(layer.grid)
 end
 
-function Base.setindex!(layer::SDMLayer, X, longitude::AbstractFloat, latitude::AbstractFloat)
+function Base.setindex!(
+    layer::SDMLayer,
+    X,
+    longitude::AbstractFloat,
+    latitude::AbstractFloat,
+)
     grid_pos = SimpleSDMLayers.__get_grid_coordinate_by_latlon(layer, longitude, latitude)
     if ~isnothing(grid_pos)
         return Base.setindex!(layer, X, grid_pos...)
@@ -108,7 +120,6 @@ function reveal!(layer::SDMLayer, longitude::AbstractFloat, latitude::AbstractFl
     layer.indices[grid_pos...] = true
     return layer
 end
-
 
 function reveal!(layer::SDMLayer, est::Integer, nrt::Integer)
     layer.indices[nrt, est] = true

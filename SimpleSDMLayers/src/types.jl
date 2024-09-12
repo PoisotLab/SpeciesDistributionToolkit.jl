@@ -6,9 +6,7 @@ Defines a layer of geospatial information.
 The type has two data fields:
 
 - **grid**: a `Matrix` of type `T`
-- **nodata**: a single value of type `T`, which indicates missing data - the
-  default value is the `typemin(T)`, but this value should be set according to
-  the content of the file you are reading
+- **indices**: a `BitMatrix` to see which positions are valued
 
 Each *row* in the `grid` field represents a slice of the raster of equal
 *northing*, *i.e.* the information is laid out in the matrix as it would be

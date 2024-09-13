@@ -5,8 +5,8 @@ All matrices have the same weight
 """
 function equal_weights(n)
     M = ones(Float64, n, n)
-    for i in 1:(n-1)
-        for j in (i+1):n
+    for i in 1:(n - 1)
+        for j in (i + 1):n
             M[j, i] = zero(eltype(M))
         end
     end
@@ -23,8 +23,8 @@ function weighted_components(n, intra)
     @assert 0.0 <= intra <= 1.0
     inter = 1.0 - intra
     M = ones(Float64, n, n)
-    for i in 1:(n-1)
-        for j in (i+1):n
+    for i in 1:(n - 1)
+        for j in (i + 1):n
             M[j, i] = zero(eltype(M))
             M[i, j] = inter / (n * (n - 1) / 2)
         end

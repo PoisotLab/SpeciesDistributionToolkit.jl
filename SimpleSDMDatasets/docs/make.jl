@@ -15,7 +15,7 @@ makedocs(;
 
 deploydocs(; repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl.git",
     dirname = "SimpleSDMDatasets",
-    tag_prefix = "SimpleSDMDatasets",
+    tag_prefix = "SimpleSDMDatasets-",
     devbranch = "main",
     push_preview = true,
 )

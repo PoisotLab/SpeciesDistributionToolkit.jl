@@ -1,0 +1,10 @@
+name = "STACApi"
+uuid = "e315a7d8-4f39-4f5c-8deb-3dcd6f9393e1"
+authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
+version = "0.1.0"
+
+[deps]
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
+TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"

@@ -12,7 +12,7 @@ makedocs(
 
 deploydocs(; repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl.git",
     dirname = "Fauxcurrences",
-    tag_prefix = "Fauxcurrences",
+    tag_prefix = "Fauxcurrences-",
     devbranch = "main",
     push_preview = true,
 )

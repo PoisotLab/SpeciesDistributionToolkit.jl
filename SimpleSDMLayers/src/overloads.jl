@@ -162,11 +162,35 @@ Base.:/(x, l::SDMLayer) = l / x
 Base.:%(l::SDMLayer, x) = x .% l
 Base.:%(x, l::SDMLayer) = l % x
 
-@testitem "We can do + - / * on layers and numbers" begin
+@testitem "We can multiply a layer and a number" begin
     l1 = SimpleSDMLayers.__demodata()
     twice = 2l1
     for i in eachindex(twice)
         @test twice[i] == 2l1[i]
+    end
+end
+
+@testitem "We can divide a layer by a number" begin
+    l1 = SimpleSDMLayers.__demodata()
+    half = l1/2
+    for i in eachindex(half)
+        @test half[i] == l1[i]/2
+    end
+end
+
+@testitem "We can add a number to a layer" begin
+    l1 = SimpleSDMLayers.__demodata()
+    chg = l1 + 1
+    for i in eachindex(chg)
+        @test chg[i] == l1[i] + 1
+    end
+end
+
+@testitem "We can substract a number from a layer" begin
+    l1 = SimpleSDMLayers.__demodata()
+    chg = l1 - 1
+    for i in eachindex(chg)
+        @test chg[i] == l1[i] - 1
     end
 end
 

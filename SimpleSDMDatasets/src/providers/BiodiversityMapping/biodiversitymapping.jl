@@ -7,10 +7,6 @@ downloadtype(::RasterData{BiodiversityMapping, T}) where {T <: BiodivMap} = _zip
 
 destination(::RasterData{BiodiversityMapping, T}; kwargs...) where {T <: BiodivMap} = joinpath(SimpleSDMDatasets._LAYER_PATH, string(BiodiversityMapping))
 
-url(::RasterData{BiodiversityMapping, T}) where {T <: BiodivMap} = "https://biodiversitymapping.org/"
-
-_var_slug(::RasterData{BiodiversityMapping, T}) where {T <: BiodivMap} = "richness"
-
 layers(::RasterData{BiodiversityMapping, MammalRichness}) = ["Mammals", "Carnivora", "Cetartiodactyla", "Chiroptera", "Eulipotyphla", "Marsupialia", "Primates", "Rodentia"]
 layers(::RasterData{BiodiversityMapping, AmphibianRichness}) = ["Amphibians", "Anura", "Caudata", "Gymnophiona"]
 layers(::RasterData{BiodiversityMapping, BirdRichness}) = ["Birds", "Passeriformes", "Psittaciformes", "Trochilidae"]

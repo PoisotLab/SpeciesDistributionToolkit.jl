@@ -1,4 +1,10 @@
-function interpolate(layer::SDMLayer; dest="+proj=natearth2", newsize=nothing, interpolator=SimpleSDMLayers.polynomialinterpolation)
+"""
+    interpolate(layer::SDMLayer; dest="+proj=natearth2", newsize=nothing)
+
+Returns an interpolated version of the later under the new destination CRS
+(natearth2 by default), and with optionally a new size of `newsize`.
+"""
+function interpolate(layer::SDMLayer; dest = "+proj=natearth2", newsize = nothing)
     # We'll use this later
     EL = eastings(layer)
     NL = northings(layer)
@@ -42,7 +48,18 @@ function interpolate(layer::SDMLayer; dest="+proj=natearth2", newsize=nothing, i
                 Q21 = layer[j2, i1]
                 Q22 = layer[j2, i2]
                 if !any(isnothing, [Q11, Q12, Q21, Q22])
-                    newlayer[j,i] = interpolator(x1, x, x2, y1, y, y2, Q11, Q12, Q21, Q22)
+                    newlayer[j, i] = SimpleSDMLayers.polynomialinterpolation(
+                        x1,
+                        x,
+                        x2,
+                        y1,
+                        y,
+                        y2,
+                        Q11,
+                        Q12,
+                        Q21,
+                        Q22,
+                    )
                     SimpleSDMLayers.reveal!(newlayer, i, j)
                 end
             end
@@ -53,8 +70,8 @@ end
 
 function polynomialinterpolation(x1, x, x2, y1, y, y2, Q11, Q12, Q21, Q22)
     Q = [Q11; Q12; Q21; Q22]
-    corr = (1.0/((x2-x1)*(y2 - y1)))
+    corr = (1.0 / ((x2 - x1) * (y2 - y1)))
     X = [x2*y2 -x2*y1 -x1*y2 x1*y1; -y2 y1 y2 -y1; -x2 x2 x1 -x1; 1 -1 -1 1]
     coeff = corr * X * Q
-    return coeff[1] + coeff[2]*x + coeff[3]*y + coeff[4]*x*y
+    return coeff[1] + coeff[2] * x + coeff[3] * y + coeff[4] * x * y
 end

@@ -54,7 +54,8 @@ end
 @testitem "Broadcasting preserves the nodata correctly" begin
     m = rand(0:6, (10, 10))
     m[2, 2] = m[3, 3] = 0
-    layer = SDMLayer(m; nodata=0)
+    layer = SDMLayer(m)
+    nodata!(layer, 0)
     added = layer .+ 1
     @test added isa SDMLayer
     @test length(added) == length(layer)
@@ -63,7 +64,8 @@ end
 @testitem "Broadcasting preserves the nodata correctly even with a change of type" begin
     m = rand(0:6, (10, 10))
     m[2, 2] = m[3, 3] = 0
-    layer = SDMLayer(m; nodata=0)
+    layer = SDMLayer(m)
+    nodata!(layer, 0)
     cosed = cos.(layer)
     @test cosed isa SDMLayer
     @test length(cosed) == length(layer)
@@ -71,7 +73,6 @@ end
 end
 
 function Base.broadcasted(::Broadcast.Style{SDMLayer}, f, l1::SDMLayer, l2::SDMLayer)
-    #@assert SimpleSDMLayers._layers_are_compatible(layer1, layer2)
     ElType = typeof(f(first(values(l1)), first(values(l2))))
     dest = similar(l1, ElType)
     for index in CartesianIndices(l1)
@@ -83,7 +84,8 @@ end
 @testitem "We can do layer-layer broadcast operations" begin
     m = rand(0:6, (10, 10))
     m[2, 2] = m[3, 3] = 0
-    l1 = SDMLayer(m; nodata=0)
+    l1 = SDMLayer(m)
+    nodata!(l1, 0)
     l2 = l1 .+ 1
     @test typeof(l1) == typeof(l2)
     @test l1 .- l2 isa SDMLayer

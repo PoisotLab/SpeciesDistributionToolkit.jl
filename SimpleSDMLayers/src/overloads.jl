@@ -64,7 +64,7 @@ end
 function Base.show(io::IO, ::MIME"text/plain", layer::SDMLayer)
     info_str = [
         "SDM Layer with $(count(layer)) $(eltype(layer)) cells",
-        "\tCRS: $(layer.crs)",
+        "\tProj string: $(layer.crs)",
         "\tGrid size: $(size(layer))",
     ]
     return print(io, join(info_str, "\n"))

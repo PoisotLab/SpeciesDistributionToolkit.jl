@@ -91,20 +91,20 @@ requirements), `doc` (for documentation), and `test` (for unit testing).
 As a reference, this table summarizes what type of commit may go with each
 prefix:
 
-| Prefix | Explanation |
-|---|---|
-| `fix` | Solves a bug / closes a PR |
-| `feat` | Adds a new feature |
-| `semver` | Commit that will be tagged in a new release -- this should contain a change in `Project.toml` |
-| `dependencies` | Changes in `Project.toml` to add or drop a dependency |
-| `compat` | Changes in `Project.toml` to change the compatibility entry |
-| `ci` | Acts on github actions / workflows |
-| `doc` | Changes or adds documentation, including docstrings, and possibly comments |
-| `perf` | Improves the performance of the code |
-| `test` | Adds (or fixes) unit tests |
-| `style` | Applies the formatter without modifying the content |
-| `refactor` | Changes the internals of a function, or changes to methods that are not exported |
-| `chore` | General housekeeping |
+| Prefix         | Explanation                                                                                   |
+|----------------|-----------------------------------------------------------------------------------------------|
+| `fix`          | Solves a bug / closes a PR                                                                    |
+| `feat`         | Adds a new feature                                                                            |
+| `semver`       | Commit that will be tagged in a new release -- this should contain a change in `Project.toml` |
+| `dependencies` | Changes in `Project.toml` to add or drop a dependency                                         |
+| `compat`       | Changes in `Project.toml` to change the compatibility entry                                   |
+| `ci`           | Acts on github actions / workflows                                                            |
+| `doc`          | Changes or adds documentation, including docstrings, and possibly comments                    |
+| `perf`         | Improves the performance of the code                                                          |
+| `test`         | Adds (or fixes) unit tests                                                                    |
+| `style`        | Applies the formatter without modifying the content                                           |
+| `refactor`     | Changes the internals of a function, or changes to methods that are not exported              |
+| `chore`        | General housekeeping                                                                          |
 
 [convcom]: https://www.conventionalcommits.org/en/v1.0.0/#summary
 [semver]: https://semver.org/

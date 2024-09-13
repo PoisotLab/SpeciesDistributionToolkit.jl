@@ -1,7 +1,8 @@
 """
-    mosaic(f, layers::Vector{<:SDMLayer})
+    mosaic(f, stack::Vector{<:SDMLayer})
 
-For overlapping layers only!!!
+Returns a layer that is the application of `f` to the values at each cell in the
+array of layers given as the second argument.
 """
 function mosaic(f, stack::Vector{<:SDMLayer})
     @assert SimpleSDMLayers._layers_are_compatible(stack)

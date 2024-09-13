@@ -13,6 +13,11 @@ function mask!(layer::SDMLayer, template::SDMLayer)
     return layer
 end
 
+"""
+    mask(layer::SDMLayer, template::SDMLayer)
+
+Returns a copy of the first layer masked according to the second layer. See also `mask!`.
+"""
 function mask(layer::SDMLayer, template::SDMLayer)
     copied = copy(layer)
     return mask!(copied, template)

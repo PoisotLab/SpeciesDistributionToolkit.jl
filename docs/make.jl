@@ -26,8 +26,7 @@ makedocs(;
             "tutorials/consensus.md",
             "tutorials/occlayers.md",
             "tutorials/pseudoabsences.md",
-            "tutorials/futureclimate.md",
-            "tutorials/fauxcurrences.md",
+            "tutorials/futureclimate.md"
         ],
         "How-to..." => [
             "howto/get_gbif_data.md",

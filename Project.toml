@@ -17,7 +17,7 @@ TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
 [compat]
 Distances = "0.10"
-Fauxcurrences = "0.2"
+Fauxcurrences = "0.2, 0.1"
 GBIF = "0.4"
 MakieCore = "0.8"
 Phylopic = "0.0"

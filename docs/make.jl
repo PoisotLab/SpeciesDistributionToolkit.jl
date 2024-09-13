@@ -26,14 +26,14 @@ makedocs(;
             "tutorials/consensus.md",
             "tutorials/occlayers.md",
             "tutorials/pseudoabsences.md",
-            "tutorials/futureclimate.md"
+            "tutorials/futureclimate.md",
         ],
         "How-to..." => [
             "howto/get_gbif_data.md",
             "howto/know_layers_provided.md",
             "howto/mask_a_layer.md",
             "howto/split_a_layer.md",
-            "howto/interpolate.md"
+            "howto/interpolate.md",
         ],
         "Documentation" => [
             "Work with species occurrence data" => "manual/SpeciesDistributionToolkit/index.md",

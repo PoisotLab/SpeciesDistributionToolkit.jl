@@ -1,9 +1,10 @@
-# Function to turn a layer into something (Geo)Makie can use
-function sprinkle(layer::T) where {T <: SimpleSDMLayer}
+function sprinkle(layer::SDMLayer)
+    content = copy(layer.grid)
+    content[.!layer.indices] .= NaN
     return (
-        longitudes(layer),
-        latitudes(layer),
-        transpose(replace(layer.grid, nothing => NaN)),
+        eastings(layer),
+        northings(layer),
+        transpose(content),
     )
 end
 
@@ -13,16 +14,12 @@ function sprinkle(records::GBIFRecords)
     return (lon, lat)
 end
 
-MakieCore.convert_arguments(
-    ::MakieCore.GridBased,
-    layer::T,
-) where {T <: SimpleSDMLayer} = sprinkle(layer)
+function MakieCore.convert_arguments(::MakieCore.GridBased, layer::SDMLayer)
+    return sprinkle(convert(SDMLayer{Float32}, layer))
+end
 
-MakieCore.convert_arguments(
-    P::MakieCore.NoConversion,
-    layer::T,
-) where {T <: SimpleSDMLayer} = MakieCore.convert_arguments(P, values(layer))
-
+MakieCore.convert_arguments(P::MakieCore.NoConversion, layer::SDMLayer) =
+    MakieCore.convert_arguments(P, values(layer))
 MakieCore.convert_arguments(P::MakieCore.PointBased, records::GBIFRecords) =
     MakieCore.convert_arguments(P, sprinkle(records)...)
 
@@ -30,9 +27,14 @@ function MakieCore.convert_arguments(
     P::MakieCore.PointBased,
     layer1::T1,
     layer2::T2,
-) where {T1 <: SimpleSDMLayer, T2 <: SimpleSDMLayer}
-    k = intersect(keys(layer1), keys(layer2))
-    v1 = replace(layer1[k], nothing => NaN)
-    v2 = replace(layer2[k], nothing => NaN)
-    return MakieCore.convert_arguments(P, v1, v2)
+) where {T1 <: SDMLayer, T2 <: SDMLayer}
+    k = findall(layer1.indices .& layer2.indices)
+    return MakieCore.convert_arguments(P, layer1[k], layer2[k])
+end
+
+function MakieCore.convert_arguments(
+    P::MakieCore.PointBased,
+    layer::T
+) where {T <: SDMLayer{Bool}}
+    return MakieCore.convert_arguments(P, sprinkle(ones(nodata(layer, false), Float32))...)
 end

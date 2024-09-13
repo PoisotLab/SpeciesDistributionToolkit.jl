@@ -1,39 +1,19 @@
-using SimpleSDMLayers
-using Test
+using TestItemRunner
 
-global anyerrors = false
+@run_package_tests filter=ti->!(:skipci in ti.tags)
 
-tests = [
-    "construction" => "core/construction.jl",
-    "lat./lon." => "core/latlon.jl",
-    "lat./lon. conversion" => "core/coordconvert.jl",
-    "iteration" => "core/iteration.jl",
-    "extrema" => "core/extrema.jl",
-    "tiling" => "core/tiling.jl",
-    "setindex" => "core/setindex.jl",
-    "overloads" => "overloads.jl",
-    "minus" => "minus.jl",
-    "clipping" => "operations/clip.jl",
-    "rescale" => "operations/rescale.jl",
-    "mosaic" => "operations/mosaic.jl",
-    "coarsen" => "operations/coarsen.jl",
-    "generated" => "generated.jl",
-]
+# write tests here
 
-for test in tests
-    try
-        include(test.second)
-        println("\033[1m\033[32m✓\033[0m\t$(test.first)")
-    catch e
-        global anyerrors = true
-        println("\033[1m\033[31m×\033[0m\t$(test.first)")
-        println("\033[1m\033[38m→\033[0m\ttest/$(test.second)")
-        showerror(stdout, e, backtrace())
-        println()
-        break
-    end
-end
+## NOTE add JET to the test environment, then uncomment
+# using JET
+# @testset "static analysis with JET.jl" begin
+#     @test isempty(JET.get_reports(report_package(SDMLayers, target_modules=(SDMLayers,))))
+# end
 
-if anyerrors
-    throw("Tests failed")
-end
+## NOTE add Aqua to the test environment, then uncomment
+# @testset "QA with Aqua" begin
+#     import Aqua
+#     Aqua.test_all(SDMLayers; ambiguities = false)
+#     # testing separately, cf https://github.com/JuliaTesting/Aqua.jl/issues/77
+#     Aqua.test_ambiguities(SDMLayers)
+# end

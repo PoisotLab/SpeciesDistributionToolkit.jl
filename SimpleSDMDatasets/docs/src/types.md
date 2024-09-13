@@ -31,6 +31,9 @@ WaterVaporPressure
 LandCover
 HabitatHeterogeneity
 Topography
+BirdRichness
+MammalRichness
+AmphibianRichness
 ```
 
 ## List of providers
@@ -40,6 +43,8 @@ WorldClim2
 EarthEnv
 CHELSA1
 CHELSA2
+BiodiversityMapping
+PaleoClim
 ```
 
 ## List of projections

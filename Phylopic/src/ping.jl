@@ -30,5 +30,4 @@ function build()
         throw(ErrorException("The API at $(Phylopic.api) is not responding"))
     end
     return nothing
-
 end

@@ -1,4 +1,4 @@
-name: Monorepo tests
+name: Testing
 
 on:
   schedule:

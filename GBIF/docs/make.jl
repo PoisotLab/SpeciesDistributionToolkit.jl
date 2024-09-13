@@ -16,7 +16,7 @@ makedocs(;
 
 deploydocs(; repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl.git",
     dirname = "GBIF",
-    tag_prefix = "GBIF",
+    tag_prefix = "GBIF-",
     devbranch = "main",
     push_preview = true,
 )

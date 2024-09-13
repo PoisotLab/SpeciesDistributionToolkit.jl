@@ -13,7 +13,7 @@ makedocs(
 
 deploydocs(; repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl.git",
     dirname = "Phylopic",
-    tag_prefix = "Phylopic",
+    tag_prefix = "Phylopic-",
     devbranch = "main",
     push_preview = true,
 )

@@ -6,13 +6,11 @@ makedocs(;
     sitename = "SimpleSDMLayers",
     format = Documenter.HTML(),
     warnonly = true,
-    modules = [SimpleSDMLayers, Statistics],
+    modules = [SimpleSDMLayers],
     pages = [
-        "SimpleSDMLayers.jl" => "index.md",
-        "Layer data representation" => "types.md",
-        "Basic information on layers" => "basics.md",
-        "Operations on layers" => "operations.md",
-        "Overloads" => "overloads.md",
+        "index.md",
+        "types.md",
+        "operations.md",
     ],
 )
 

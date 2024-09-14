@@ -40,12 +40,12 @@ layers_code = findall(
 historical = [SDMLayer(dataprovider; layer=l, spatial_extent...) for l in layers_code]
 
 # We can have a little look at this dataset by checking the density of the values
-# for temperature (we can pass a layer to a Makie function directly):
+# for the first layer (we can pass a layer to a Makie function directly):
 
 hist(
     historical[1]; color = (:grey, 0.5),
     figure = (; size = (800, 300)),
-    axis = (; xlabel = "Annual Mean Temperature"),
+    axis = (; xlabel = layerdescriptions(dataprovider)[layers_code[1]]),
     bins = 100,
 )
 current_figure() #hide

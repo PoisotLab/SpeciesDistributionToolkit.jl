@@ -14,9 +14,6 @@ hero:
       text: Getting Started
       link: /getting_started
     - theme: alt
-      text: Getting started
-      link: /getting_started
-    - theme: alt
       text: View on Github
       link: https://github.com/PoisotLab/SpeciesDistributionToolkit.jl
     - theme: alt

@@ -11,8 +11,8 @@ hero:
     alt: SpeciesDistributionToolkit
   actions:
     - theme: brand
-      text: Getting Started
-      link: /getting_started
+      text: Documentation
+      link: /documentation
     - theme: alt
       text: View on Github
       link: https://github.com/PoisotLab/SpeciesDistributionToolkit.jl

@@ -4,7 +4,8 @@
 layout: home
 
 hero:
-  name: "SpeciesDistributionToolkit.jl"
+  name: "Species Distribution Toolkit"
+  text: "dot jl
   tagline: An ecosystem of Julia packages for species distribution modeling and biodiversity research
   image:
     src: /logo.svg

@@ -66,7 +66,7 @@ resistance_map = heatmap(
     ),
 )
 Colorbar(resistance_map.figure[:, end + 1], resistance_map.plot; height = Relative(0.5))
-current_figure() # hide
+current_figure() #hide
 
 # This layer can then be used in landscape connectivity analyses using *e.g.*
 # [Omniscape.jl](https://juliapackages.com/p/omniscape).

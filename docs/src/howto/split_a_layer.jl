@@ -39,12 +39,7 @@ tile_plot = heatmap(
     ),
 )
 Colorbar(tile_plot.figure[:, end + 1], tile_plot.plot; height = Relative(0.5))
-save("tile-tree-cover.png", current_figure());
-nothing; # hide
-
-#-
-
-# ![Tile for tree cover](tile-tree-cover.png)
+current_figure() #hide
 
 # This construct is very useful when your problem lends itself to naive
 # parallelism.

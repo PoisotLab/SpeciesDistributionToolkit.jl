@@ -94,9 +94,4 @@ Legend(
     orientation = :horizontal,
     nbanks = 4,
 )
-save("consensus-map.png", current_figure());
-nothing; # hide
-
-#-
-
-# ![Consensus map](consensus-map.png)
+current_figure() #hide

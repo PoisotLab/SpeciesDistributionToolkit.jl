@@ -5,6 +5,8 @@ using SpeciesDistributionToolkit
 
 # Load the rest of the build environment
 using Documenter
+using DocumenterVitepress
+using Literate
 using Markdown
 using InteractiveUtils
 using Dates
@@ -12,14 +14,27 @@ using Dates
 # Generate a report card for each known dataset
 include("dataset_report.jl")
 
+# Render the tutorials and how-to using Literate
+for folder in ["howto", "tutorials"]
+    fpath = joinpath(@__DIR__, "src", folder)
+    for docfile in filter(endswith(".jl"), readdir(fpath; join=true))
+        Literate.markdown(
+            docfile, fpath;
+            flavor = Literate.DocumenterFlavor(),
+            config = Dict("credit" => false, "execute" => true),
+        )
+    end
+end
+
 makedocs(;
     sitename = "Species Distribution Toolkit",
-    format = Documenter.HTML(;
-        prettyurls = get(ENV, "CI", nothing) == true,
+    format = MarkdownVitepress(;
+        repo = "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl",
     ),
     warnonly = true,
     pages = [
         "Index" => "index.md",
+        "Packages" => "packages.md",
         "Tutorials" => [
             "tutorials/arithmetic.md",
             "tutorials/statistics.md",

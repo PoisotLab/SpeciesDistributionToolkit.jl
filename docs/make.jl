@@ -15,13 +15,21 @@ using Dates
 include("dataset_report.jl")
 
 # Render the tutorials and how-to using Literate
-for folder in ["howto", "tutorial"]
-    @info @__DIR__
+for folder in ["howto", "tutorials"]
+    fpath = joinpath(@__DIR__, "src", folder)
+    for docfile in filter(endswith(".jl"), readdir(fpath))
+        Literate.markdown(
+            docfile;
+            outputdir = fpath,
+            flavor = Literate.DocumenterFlavor(),
+            config = Dict("credit" => false, "execute" => true),
+        )
+    end
 end
 
 makedocs(;
     sitename = "Species Distribution Toolkit",
-    format = MarkdownVitepress(
+    format = MarkdownVitepress(;
         repo = "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl",
     ),
     warnonly = true,

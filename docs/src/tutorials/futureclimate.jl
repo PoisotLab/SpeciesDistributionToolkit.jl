@@ -97,9 +97,12 @@ cr_projected = (projected .- μ) ./ σ
 # smallest Euclidean distance between a cell in the raster and all the possible
 # cells in the future raster.
 
+# To have a way to store the results, we will start by making a copy of one of
+# the input rasters:
+
 Δclim = similar(cr_historical[1])
 
-#-
+# And then, we can loop over the positions to find the minimum distance:
 
 for position in keys(cr_historical[1])
     dtemp = (cr_historical[1][position] .- values(cr_projected[1])).^2.0
@@ -107,8 +110,14 @@ for position in keys(cr_historical[1])
     Δclim[position] = minimum(sqrt.(dtemp .+ dprec))
 end
 
-#-
+# Because we have stored this information directly inside the raster, we can
+# plot it:
 
-heatmap(Δclim)
-
-#-
+fig, ax, hm = heatmap(
+    Δclim;
+    colormap = :lipari,
+    figure = (; resolution = (800, 400)),
+    axis = (; aspect = DataAspect()),
+)
+Colorbar(fig[:, end + 1], hm)
+current_figure() #hide

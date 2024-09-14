@@ -1,0 +1,8 @@
+@font-face {
+    font-family: JuliaMono-Light;
+    src: url("https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.056/JuliaMono-Light.woff2");
+}
+
+:root {
+    --vp-font-family-mono: JuliaMono-Light;
+}

@@ -12,6 +12,7 @@
 using SpeciesDistributionToolkit
 using Dates, Statistics
 using CairoMakie
+CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
 # We will illustrate both approaches using the CHELSA2 temperature data for the
 # month of September.

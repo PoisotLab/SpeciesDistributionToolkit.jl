@@ -1,76 +1,56 @@
 function _document_layers(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
-    if isnothing(SimpleSDMDatasets.layers(data))
-        return """
-        ### Layers
-
-        This dataset has no support for layers.
-        """
+    if !isnothing(SimpleSDMDatasets.layers(data))
+        text = "\n### Layers\n\n"
+        text *= "The following layers are accessible through the `layer` keyword:\n\n"
+        text *= "| Layer code | Description |\n"
+        text *= "|------------|-------------|\n"
+        for (k, v) in SimpleSDMDatasets.layerdescriptions(data)
+            text *= "| `$(k)` | $(v) |\n"
+        end
+        return text
     end
-    text = "\n### Layers\n\n"
-    text *= "The following layers are accessible through the `layer` keyword:\n\n"
-    text *= "| Layer code | Description |\n"
-    text *= "|------------|-------------|\n"
-    for (k, v) in SimpleSDMDatasets.layerdescriptions(data)
-        text *= "| `$(k)` | $(v) |\n"
-    end
-    return text
 end
 
 function _document_extrakeys(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
-    if isnothing(SimpleSDMDatasets.extrakeys(data))
-        return """
-        ### Additional keyword arguments
-
-        This dataset has no non-standard keywords arguments.
-        """
+    if !isnothing(SimpleSDMDatasets.extrakeys(data))
+        text = "\n### Additional keyword arguments\n\n"
+        text *= "The following keyword arguments can be used with this dataset:\n\n"
+        for (k, v) in SimpleSDMDatasets.extrakeys(data)
+            text *= "**$(String(k))**: $(join(v, ", ", " and "))\n\n"
+        end
+        return text
     end
-    text = "\n### Additional keyword arguments\n\n"
-    text *= "The following keyword arguments can be used with this dataset:\n\n"
-    for (k, v) in SimpleSDMDatasets.extrakeys(data)
-        text *= "**$(String(k))**: $(join(v, ", ", " and "))\n\n"
-    end
-    return text
 end
 
 function _document_resolutions(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
-    if isnothing(SimpleSDMDatasets.resolutions(data))
-        return """
-        ### Resolutions
-
-        This dataset is provided in a single resolution
-        """
+    if !isnothing(SimpleSDMDatasets.resolutions(data))
+        text = "\n### Resolutions\n\n"
+        text *= "The following resolutions are accessible through the `resolution` keyword argument:\n\n"
+        text *= "| Resolution | Key |\n"
+        text *= "|------------|-------------|\n"
+        for (k, v) in SimpleSDMDatasets.resolutions(data)
+            text *= "| `$(v)` | $(k) |\n"
+        end
+        text *= "\nYou can also list the resolutions using `SimpleSDMDatasets.resolutions($(typeof(data)))`.\n\n"
+        return text
     end
-    text = "\n### Resolutions\n\n"
-    text *= "The following resolutions are accessible through the `resolution` keyword argument:\n\n"
-    text *= "| Resolution | Key |\n"
-    text *= "|------------|-------------|\n"
-    for (k, v) in SimpleSDMDatasets.resolutions(data)
-        text *= "| `$(v)` | $(k) |\n"
-    end
-    text *= "\nYou can also list the resolutions using `SimpleSDMDatasets.resolutions($(typeof(data)))`.\n\n"
-    return text
 end
 
 function _document_months(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
-    if isnothing(SimpleSDMDatasets.months(data))
-        return """
-        ### Months
-
-        This dataset is not indexed by months
-        """
+    if !isnothing(SimpleSDMDatasets.months(data))   
+        text = "\n### Months\n\n"
+        text *= "This dataset can be accessed monthly, using the `month` keyword argument.\n\n"
+        text *= "You can list the available months using `SimpleSDMDatasets.months($(typeof(data)))`.\n\n"
+        return text
     end
-    text = "\n### Months\n\n"
-    text *= "This dataset can be accessed monthly, using the `month` keyword argument.\n\n"
-    text *= "You can list the available months using `SimpleSDMDatasets.months($(typeof(data)))`.\n\n"
-    return text
 end
 
 function _document_scenarios(
@@ -107,16 +87,15 @@ function report(::Type{P}, ::Type{D}) where {P <: RasterProvider, D <: RasterDat
     _header = "## $(D)"
     # Short description
     _description = """
-    The `$(D)` dataset is provided as part of the `$(P)` provider. For more information about this dataset, please refer to: $(SimpleSDMDatasets.url(RasterData(P, D)))
+    For more information about this dataset, please refer to: $(SimpleSDMDatasets.url(RasterData(P, D)))
 
     To access this dataset:
 
     ~~~julia
     using SpeciesDistributionToolkit
-    layer = SDMLayer(RasterData($(P), $(D))) # You will probably need keyword arguments here
+    layer = SDMLayer(RasterData($(P), $(D)))
     ~~~
 
-    The remainder of this page will list the keywords you can use to retrieve specific months, layers, etc.
     """
     # Prepare and return
     full_text = """$(_header)

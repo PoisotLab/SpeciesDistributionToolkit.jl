@@ -17,7 +17,7 @@ include("dataset_report.jl")
 # Render the tutorials and how-to using Literate
 for folder in ["howto", "tutorials"]
     fpath = joinpath(@__DIR__, "src", folder)
-    for docfile in filter(endswith(".jl"), readdir(fpath))
+    for docfile in filter(endswith(".jl"), readdir(fpath; join=true))
         Literate.markdown(
             docfile;
             outputdir = fpath,

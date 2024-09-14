@@ -17,7 +17,6 @@ makedocs(;
     sitename = "Species Distribution Toolkit",
     format = MarkdownVitepress(
         repo = "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl",
-        prettyurls = get(ENV, "CI", nothing) == true,
     ),
     warnonly = true,
     pages = [

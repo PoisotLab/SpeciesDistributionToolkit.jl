@@ -43,7 +43,7 @@ jobs:
             ssh: ${{ secrets.DOCUMENTER_KEY }}
             subdir: SimpleSDMLayers
       - name: Tag SSD
-        uses: IanButterworth/TagBot@ib/is_backport_monorepo
+        uses: JuliaRegistries/TagBot@v1
         with:
             token: ${{ secrets.GITHUB_TOKEN }}
             ssh: ${{ secrets.DOCUMENTER_KEY }}

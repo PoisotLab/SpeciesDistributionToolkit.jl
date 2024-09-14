@@ -6,6 +6,7 @@ using SpeciesDistributionToolkit
 # Load the rest of the build environment
 using Documenter
 using DocumenterVitepress
+using Literate
 using Markdown
 using InteractiveUtils
 using Dates

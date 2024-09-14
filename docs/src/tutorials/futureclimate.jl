@@ -6,6 +6,7 @@
 
 using SpeciesDistributionToolkit
 import Dates
+using Statistics
 using CairoMakie
 CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
@@ -76,3 +77,38 @@ projected = [SDMLayer(
 ) for l in layers_code]
 
 # ## Re-scaling the variables
+
+# In order to compare the variables, we will first re-scale them so that they
+# have mean zero and unit variance. More accurately, because we want to
+# *compare* the historical and projected data, we will use the mean and standard
+# deviation of the historical data as the baseline:
+
+μ = mean.(historical)
+σ = std.(historical)
+
+#-
+
+cr_historical = (historical .- μ) ./ σ
+cr_projected = (projected .- μ) ./ σ
+
+# ## Measuring climate novelty
+
+# We will use a simple measure of climate novelty, which is defined as the
+# smallest Euclidean distance between a cell in the raster and all the possible
+# cells in the future raster.
+
+Δclim = similar(cr_historical[1])
+
+#-
+
+for position in keys(cr_historical[1])
+    dtemp = (cr_historical[1][position] .- values(cr_projected[1])).^2.0
+    dprec = (cr_historical[2][position] .- values(cr_projected[2])).^2.0
+    Δclim[position] = minimum(sqrt.(dtemp .+ dprec))
+end
+
+#-
+
+heatmap(Δclim)
+
+#-

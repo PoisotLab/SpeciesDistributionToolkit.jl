@@ -34,7 +34,21 @@ export default defineConfig({
         detailedView: true
       }
     },
-    nav: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
+    nav: [
+        {text: 'Index', link:'/index'},
+        {text: 'Packages', link:'/packages'},
+        {
+                text: 'Datasets',
+                items : [
+                    {
+                        text: "CHELSA 1",
+                        items: [
+                            {text: "MinimumTemperature", link: "/datasets/CHELSA1/MinimumTemperature"}
+                        ]
+                    }
+                ]
+        }
+    ],
     sidebar: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
     editLink: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
     socialLinks: [

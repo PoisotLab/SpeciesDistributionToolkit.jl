@@ -82,7 +82,6 @@ fig, ax, hm = heatmap(
     figure = (; resolution = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
-scatter!(ax, presences)
 Colorbar(fig[:, end + 1], hm)
 current_figure()
 save("precipitation-rescaled.png", current_figure()); nothing # hide

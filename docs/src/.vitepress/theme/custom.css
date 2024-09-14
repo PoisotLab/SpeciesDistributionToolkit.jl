@@ -29,3 +29,8 @@
             var(--pl-green-dark));
     --vp-home-hero-image-filter: blur(40px);
 }
+
+.VPImage .image-src {
+    max-width: 300px;
+    max-height: 300px;
+}

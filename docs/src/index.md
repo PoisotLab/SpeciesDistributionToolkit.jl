@@ -4,9 +4,8 @@
 layout: home
 
 hero:
-  name: "SpeciesDistributionToolkit.jl"
-  text: "Deal with occurrence data"
-  tagline: An ecosystem of Julia packages for species distribution modeling
+  name: "Species Distribution Toolkit"
+  tagline: An ecosystem of Julia packages for species distribution modeling and biodiversity research
   image:
     src: /logo.svg
     alt: SpeciesDistributionToolkit
@@ -15,10 +14,10 @@ hero:
       text: Getting Started
       link: /getting_started
     - theme: alt
-      text: List of packages
-      link: /packages
-    - theme: alt
       text: View on Github
       link: https://github.com/PoisotLab/SpeciesDistributionToolkit.jl
+    - theme: alt
+      text: Reach out!
+      link: https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions
 ---
 ```

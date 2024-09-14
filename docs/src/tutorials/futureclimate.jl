@@ -23,7 +23,10 @@ dataprovider = RasterData(CHELSA1, BioClim)
 # We can search the layer that correspond to annual precipitation in the list of
 # provided layers:
 
-findall(v -> contains(v, "Annual Precipitation"), SimpleSDMDatasets.layerdescriptions(dataprovider))
+findall(
+    v -> contains(v, "Annual Precipitation"),
+    SimpleSDMDatasets.layerdescriptions(dataprovider),
+)
 
 # In the BioClim parlance, isothermality is `"BIO12"`, so this is the layer we
 # will request. We wrap this inside a tuple to make the subsequent function calls
@@ -47,11 +50,9 @@ hist(
     current; color = (:grey, 0.5),
     figure = (; size = (800, 300)),
     axis = (; xlabel = "Annual Precipitation"),
-    bins = 100
+    bins = 100,
 )
-save("precipitation-density.png", current_figure()); nothing # hide
-
-# ![Density of precipitation](precipitation-density.png)
+current_figure() #hide
 
 # In the next step, we will download the projected climate data under RCP26. This
 # requires setting up a projection object, which is composed of a scenario and a
@@ -69,13 +70,20 @@ SimpleSDMDatasets.timespans(dataprovider, projection)
 # closest timespan. Getting the projected temperature is the *same* call as
 # before, except we now pass an additional argument -- the projection.
 
-projected = SDMLayer(dataprovider, projection; data_info..., spatial_extent..., timespan = Year(2061) => Year(2080))
+projected = SDMLayer(
+    dataprovider,
+    projection;
+    data_info...,
+    spatial_extent...,
+    timespan = Year(2061) => Year(2080),
+)
 
 # With this information, we can update the existing figure, to add a second panel
 # with the difference in temperature:
 
-hist!(projected, color=(:salmon, 0.5), bins=100)
-save("precipitation-density-updated.png", current_figure()); nothing # hide
+hist!(projected; color = (:salmon, 0.5), bins = 100)
+save("precipitation-density-updated.png", current_figure());
+nothing; # hide
 
 # ![Density of precipitation updated](precipitation-density-updated.png)
 
@@ -94,7 +102,5 @@ hexbin(
         ylabel = "Future precipitation",
     ),
 )
-ablines!([0.0], [1.0], color=:black) # hide
-save("precipitation-density-relationship.png", current_figure()); nothing # hide
-
-# ![Density of precipitation compared](precipitation-density-relationship.png)
+ablines!([0.0], [1.0]; color = :black)
+current_figure() #hide

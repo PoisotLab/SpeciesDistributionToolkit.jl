@@ -49,9 +49,7 @@ envirovars =
     Axis(figure[1, 1]; xlabel = "Temperature (°C)", ylabel = "Precipitation (kg×m⁻²)")
 
 scatter!(envirovars, temperature[observations], precipitation[observations], markersize=6, color=:black)
-save("occlayers-scatter.png", current_figure()); nothing # hide
-
-# ![Consensus map](occlayers-scatter.png)
+current_figure() #hide
 
 # In order to also show these on the map, we will add a simple heatmap to the left of the
 # figure, and overlay the points using `longitudes` and `latitudes` for the observations:
@@ -61,10 +59,7 @@ hidedecorations!(spmap)
 hidespines!(spmap)
 heatmap!(spmap, temperature; colormap = :heat)
 scatter!(spmap, observations; color = :black, markersize=6)
-current_figure()
-save("occlayers-heatmap.png", current_figure()); nothing # hide
-
-# ![Consensus map](occlayers-heatmap.png)
+current_figure() #hide
 
 # We can now add a silhouette of the species using Phylopic. We only want a single item here, and
 # the search will by default be restricted to images that can be used with the least
@@ -95,7 +90,4 @@ sp_size = Vec2f(reverse(size(sp_image) ./ 3))
 # background, so we are not hiding any information!):
 
 scatter!(envirovars, [3.0], [700.0]; marker = sp_image, markersize = sp_size)
-current_figure()
-save("occlayers-final.png", current_figure()); nothing # hide
-
-# ![Consensus map](occlayers-final.png)
+current_figure() #hide

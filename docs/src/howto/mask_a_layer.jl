@@ -27,9 +27,7 @@ temp2 =
 #-
 
 heatmap(temp2, colormap=:navia, axis=(;aspect=DataAspect())) # hide
-save("mask-original.png", current_figure()); nothing # hide
-
-# ![Original layer](mask-original.png)
+current_figure() #hide
 
 # ## Using `nodata!`
 
@@ -43,9 +41,7 @@ nodata(temp2, v -> !(m <= v <= M))
 #-
 
 heatmap(nodata(temp2, v -> !(m <= v <= M)), colormap=:navia, axis=(;aspect=DataAspect())) # hide
-save("mask-nodata.png", current_figure()); nothing # hide
-
-# ![mask with nodata](mask-nodata.png)
+current_figure() #hide
 
 # The function given as the second argument must return `true` for a point that
 # will be excluded from the layer. In other words, this behaves as the *opposite*
@@ -72,11 +68,7 @@ mask(temp2, temp1)
 #-
 
 heatmap(mask(temp2, temp1), colormap=:navia, axis=(;aspect=DataAspect())) # hide
-save("mask-mask.png", current_figure()); nothing # hide
-
-#-
-
-# ![mask with mask](mask-mask.png)
+current_figure() #hide
 
 # ## Related documentation
 # 

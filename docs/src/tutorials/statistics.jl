@@ -50,10 +50,7 @@ fig, ax, hm = heatmap(
     axis = (; aspect = DataAspect()),
 )
 Colorbar(fig[:, end + 1], hm)
-current_figure()
-save("temperature-zscore.png", current_figure()); nothing # hide
-
-# ![z-score of temperature](temperature-zscore.png)
+current_figure() #hide
 
 # Another option to modify the layers is to use the `rescale` method. When given
 # two values, it will rescale the layer to be between these two values. This is
@@ -68,10 +65,7 @@ fig, ax, hm = heatmap(
     axis = (; aspect = DataAspect()),
 )
 Colorbar(fig[:, end + 1], hm)
-current_figure()
-save("precipitation-rescaled.png", current_figure()); nothing # hide
-
-# ![Density of precipitation](precipitation-rescaled.png)
+current_figure() #hide
 
 # To get a little more insights about the distribution of precipitation, we can
 # look at the quantiles, given by the `quantize` function:
@@ -83,10 +77,7 @@ fig, ax, hm = heatmap(
     axis = (; aspect = DataAspect()),
 )
 Colorbar(fig[:, end + 1], hm)
-current_figure()
-save("precipitation-quantiles.png", current_figure()); nothing # hide
-
-# ![Density of precipitation](precipitation-quantiles.png)
+current_figure() #hide
 
 # The `quantile` function also has an overload, and so we can get the 5th and 95th
 # percentiles of the distribution in the layer:

@@ -5,8 +5,7 @@ layout: home
 
 hero:
   name: "SpeciesDistributionToolkit.jl"
-  text: "Deal with occurrence data"
-  tagline: An ecosystem of Julia packages for species distribution modeling
+  tagline: An ecosystem of Julia packages for species distribution modeling and biodiversity research
   image:
     src: /logo.svg
     alt: SpeciesDistributionToolkit

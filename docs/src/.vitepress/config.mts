@@ -47,6 +47,16 @@ export default defineConfig({
                         ]
                     }
                 ]
+        },
+        {
+            text: "Ecosystem",
+            items: [
+                {text: "GBIF.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/dev/"},
+                {text: "Phylopic.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/dev/"},
+                {text: "Fauxcurrences.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Fauxcurrences/dev/"},
+                {text: "SimpleSDMLayers.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/dev/"},
+                {text: "SimpleSDMDatasets.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/dev/"}
+            ]
         }
     ],
     sidebar: 'REPLACE_ME_DOCUMENTER_VITEPRESS',

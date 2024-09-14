@@ -33,12 +33,14 @@ makedocs(;
     ),
     warnonly = true,
     pages = [
+        "Documentation" => "documentation.md",
         "Tutorials" => [
             "tutorials/arithmetic.md",
             "tutorials/statistics.md",
             "tutorials/consensus.md",
             "tutorials/occlayers.md",
             "tutorials/pseudoabsences.md",
+            "tutorials/fauxcurrences.md",
             "tutorials/futureclimate.md",
         ],
         "How-to..." => [

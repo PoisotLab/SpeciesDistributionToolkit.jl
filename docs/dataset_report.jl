@@ -148,6 +148,9 @@ for P in subtypes(RasterProvider)
         cardfile,
         "w",
     ) do io
+        print(io, "---\n")
+        print(io, "outline: 2\n")
+        print(io, "---\n\n")
         print(io, "# $(P) \n\n")
     end
     # Run the report for each dataset

@@ -7,6 +7,7 @@ using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
 import StatsBase
+CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
 # In this tutorial, we will have a look at the ways to transform layers and apply
 # some functions from `Statistics`. As an illustration, we will produce a map of

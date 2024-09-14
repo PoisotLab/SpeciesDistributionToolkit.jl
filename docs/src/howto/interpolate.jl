@@ -1,7 +1,6 @@
 # # ... interpolate to a new projection?
 
 using SpeciesDistributionToolkit
-using CairoMakie
 
 # The `interpolate` method can be used to project data into another coordinate
 # system. For example, we can get data in ESPG:4326:

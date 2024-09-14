@@ -36,7 +36,7 @@ export default defineConfig({
     },
     nav: [
         {text: 'Index', link:'/index'},
-        {text: 'Packages', link:'/packages'},
+        {text: 'Getting started', link:'/getting_started'},
         {
                 text: 'Datasets',
                 items : [

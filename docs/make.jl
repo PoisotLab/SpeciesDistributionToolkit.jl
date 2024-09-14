@@ -19,8 +19,7 @@ for folder in ["howto", "tutorials"]
     fpath = joinpath(@__DIR__, "src", folder)
     for docfile in filter(endswith(".jl"), readdir(fpath; join=true))
         Literate.markdown(
-            docfile;
-            outputdir = fpath,
+            docfile, fpath;
             flavor = Literate.DocumenterFlavor(),
             config = Dict("credit" => false, "execute" => true),
         )

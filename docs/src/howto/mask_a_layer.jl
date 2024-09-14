@@ -76,7 +76,7 @@ save("mask-mask.png", current_figure()); nothing # hide
 
 #-
 
-![mask with mask](mask-mask.png)
+# ![mask with mask](mask-mask.png)
 
 # ## Related documentation
 # 

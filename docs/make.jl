@@ -5,6 +5,7 @@ using SpeciesDistributionToolkit
 
 # Load the rest of the build environment
 using Documenter
+using DocumenterVitepress
 using Markdown
 using InteractiveUtils
 using Dates
@@ -14,7 +15,8 @@ include("dataset_report.jl")
 
 makedocs(;
     sitename = "Species Distribution Toolkit",
-    format = Documenter.HTML(;
+    format = MarkdownVitepress(
+        repo = "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl",
         prettyurls = get(ENV, "CI", nothing) == true,
     ),
     warnonly = true,

@@ -14,6 +14,11 @@ using Dates
 # Generate a report card for each known dataset
 include("dataset_report.jl")
 
+# Render the tutorials and how-to using Literate
+for folder in ["howto", "tutorial"]
+    @info @__DIR__
+end
+
 makedocs(;
     sitename = "Species Distribution Toolkit",
     format = MarkdownVitepress(

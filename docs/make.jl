@@ -35,6 +35,7 @@ makedocs(;
     warnonly = true,
     pages = [
         "Index" => "index.md",
+        "Packages" => "packages.md",
         "Tutorials" => [
             "tutorials/arithmetic.md",
             "tutorials/statistics.md",

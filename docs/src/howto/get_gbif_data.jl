@@ -3,6 +3,8 @@
 using SpeciesDistributionToolkit
 using DataFrames
 
+# ## Identify the taxa
+
 # The first step is to understand how GBIF represents the taxonomic information.
 # The `taxon` function will take a string (or a GBIF taxonomic ID, but most people
 # tend to call species by their names...) and return a representation of this
@@ -14,6 +16,8 @@ species = taxon("Sitta whiteheadi")
 # information, so we can for example check the phylum of this species:
 
 species.phylum
+
+# ## Establish search parameters
 
 # Now that we are fairly confident that we have the right animal, we can start
 # setting up some search parameters. The search parameters are *not* given as
@@ -32,6 +36,8 @@ query = [
     "limit" => 300,
     "occurrenceStatus" => "PRESENT",
 ]
+
+# ## Query occurrence data
 
 # We have enough information to start our search of occurrences:
 
@@ -68,6 +74,8 @@ length(places)
 while length(places) < count(places)
     occurrences!(places)
 end
+
+# ## Get information on occurrence data
 
 # When this is done, we can have a look at the countries in which the observations
 # were made:

@@ -5,7 +5,7 @@ function interpolate!(destination::SDMLayer, source::SDMLayer)
     NI = northings(destination)
 
     # Functions for projection
-    revprj = SimpleSDMLayers.Proj.Transformation(destination.crs, layer.crs; always_xy = true)
+    revprj = SimpleSDMLayers.Proj.Transformation(destination.crs, source.crs; always_xy = true)
 
     Threads.@threads for i in axes(destination, 2)
         dx = EI[i]
@@ -45,7 +45,7 @@ function interpolate!(destination::SDMLayer, source::SDMLayer)
             end
         end
     end
-    return newlayer
+    return destination
 end
 
 function _create_destination_layer(source::SDMLayer, dest, newsize)
@@ -75,7 +75,7 @@ Returns an interpolated version of the later under the new destination CRS
 """
 function interpolate(layer::SDMLayer; dest = "+proj=natearth2", newsize = nothing)
     destination = _create_destination_layer(layer, dest, isnothing(newsize) ? size(layer) : newsize)
-    interpolate!(destination, source)
+    interpolate!(destination, layer)
     return destination
 end
 

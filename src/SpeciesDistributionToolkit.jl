@@ -18,7 +18,7 @@ using Reexport
 import Distances
 const _distance_function = Fauxcurrences._distancefunction
 
-import GeoJSON
+import PolygonOps
 
 # Functions to get latitudes/longitudes
 include("latlon.jl")

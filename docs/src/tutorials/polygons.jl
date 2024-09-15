@@ -9,6 +9,14 @@ CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 # In this tutorial, we will clip a layer to a polygon (in GeoJSON format), then
 # use the same polygon to filter GBIF records.
 
+# ::: warning About coordinates
+# 
+# [GeoJSON](https://geojson.org/) coordinates are expressed in WGS84. For this
+# reason, *any* polygon is assumed to be in this CRS, and all operations will be
+# done by projecting the layer coordinates to this CRS.
+# 
+# :::
+
 # Thanks to the good people in the French Open Street Map community, it is very
 # simple to query a `.geojson` file for any OSM identifier. In our case, we will
 # download the polygon that describes the state of Vermont:

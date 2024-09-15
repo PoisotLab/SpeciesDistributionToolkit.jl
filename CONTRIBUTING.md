@@ -119,8 +119,8 @@ internals of `SimpleSDMLayers` would start with `refactor(layers): `.
 Note that the name of component packages are lowercase, and that abbreviations
 are OK. Specifically, `Phylopic.jl` is `phylopic`,
 `SpeciesDistributionToolkit.jl` is `sdt`, `GBIF.jl` is `gbif`,
-`SimpleSDMLayers.jl` is `layers`, `Fauxcurrences.jl` is `faux`, and
-`SimpleSDMDatasets.jl` is `datasets`.
+`SimpleSDMLayers.jl` is `layers`, `Fauxcurrences.jl` is `faux`, `STACApi.jl` is
+`stac`, and `SimpleSDMDatasets.jl` is `datasets`.
 
 In case of breaking changes, the commit prefix **must** be followed by `!`. This
 is **not** limited to commits with the `semver` prefix, but is meant to be used

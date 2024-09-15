@@ -130,8 +130,32 @@ jobs:
         with:
           name: coverage
           path: Fauxcurrences-lcov.info
+  STACApi:
+    name: "STACApi"
+    runs-on: "ubuntu-latest"
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: julia-actions/setup-julia@v2
+      - name: "Bootstrap the package"
+        run: julia --project=./STACApi STACApi/bootstrap.jl
+      - uses: julia-actions/julia-buildpkg@latest
+        with:
+          project: STACApi
+      - uses: julia-actions/julia-runtest@latest
+        with:
+          project: STACApi
+          annotate: true
+      - uses: julia-actions/julia-processcoverage@v1
+        with:
+          directories: STACApi/src
+      - run: mv lcov.info STACApi-lcov.info
+      - uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: STACApi-lcov.info
   SpeciesDistributionToolkit:
-    needs: [GBIF, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, Phylopic]
+    needs: [GBIF, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, Phylopic, STACApi]
     name: "SpeciesDistributionToolkit"
     runs-on: "ubuntu-latest"
     continue-on-error: true

@@ -18,7 +18,7 @@ query = [
     "limit" => 300,
 ]
 presences = occurrences(species, query...)
-for i in 1:5
+while length(presences) < count(presences)
     occurrences!(presences)
 end
 
@@ -65,10 +65,6 @@ fig, ax, hm = heatmap(
     figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
-scatter!(presences, color=:black, markersize=2)
+scatter!(presences, color=:orange, markersize=1, colorrange=(0,1))
 Colorbar(fig[:, end + 1], hm)
 current_figure() #hide
-
-# rangemap
-
-heatmap(bc .> .05)

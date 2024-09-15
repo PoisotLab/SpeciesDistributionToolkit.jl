@@ -2,13 +2,14 @@ function _document_layers(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
     if !isnothing(SimpleSDMDatasets.layers(data))
-        text = "\n### Layers\n\n"
+        text = "\n::: details Multiple layers\n\n"
         text *= "The following layers are accessible through the `layer` keyword:\n\n"
         text *= "| Layer code | Description |\n"
         text *= "|------------|-------------|\n"
         for (k, v) in SimpleSDMDatasets.layerdescriptions(data)
             text *= "| `$(k)` | $(v) |\n"
         end
+        text *= "\n:::\n\n"
         return text
     end
     return ""

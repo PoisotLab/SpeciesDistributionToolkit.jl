@@ -13,7 +13,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 # simple to query a `.geojson` file for any OSM identifier. In our case, we will
 # download the polygon that describes the state of Vermont:
 
-VT = GeoJSON.read(Downloads.download("http://polygons.openstreetmap.fr/get_geojson.py?id=60759", tempname()))[1][1]
+VT = GeoJSON.read(Downloads.download("http://polygons.openstreetmap.fr/get_geojson.py?id=60759", tempname()))[1][1];
 
 # The next step is to get a layer, and so we will download the data about
 # deciduous broadleaf trees from [EarthEnv](/datasets/EarthEnv#landcover):
@@ -39,7 +39,8 @@ heatmap(layer; colormap = [:lightgrey, :black], axis = (; aspect = DataAspect())
 # :::
 
 # The opposite operation to `hide!` is `reveal!`, which will show the cells that
-# are inside the polygon.
+# are inside the polygon. This is the inverse operation from `hide!`, so we can
+# use this to return to the original layer.
 
 reveal!(layer, VT)
 heatmap(layer; colormap = [:lightgrey, :black], axis = (; aspect = DataAspect()))

@@ -75,3 +75,9 @@ function reveal!(
     end
     return layer
 end
+
+function Base.getindex(layer::SDMLayer, polygon::Vector{Tuple{T,T}}) where {T <: AbstractFloat}
+    v = copy(layer)
+    mask!(v, polygon)
+    return values(v)
+end

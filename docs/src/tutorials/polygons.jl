@@ -3,6 +3,7 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 import GeoJSON
+using Statistics
 import Downloads
 CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
@@ -101,3 +102,7 @@ end
 scatter!(mask(presences, VT), color=:orange, markersize=3)
 current_figure() #hide
 
+# Note that we can also use polygons to index layers:
+
+layer = SDMLayer(provider; layer = "Urban/Built-up", bbox...)
+layer[VT] |> extrema

@@ -1,14 +1,16 @@
 # # The BIOCLIM model
 
+# In this tutorial, we will build the BIOCLIM model of species distribution,
+# using only basic functions from `SpeciesDistributionToolkit`.
+
 using SpeciesDistributionToolkit
 using CairoMakie
 CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
+# We will get the same occurrence and spatial data as in other examples in this
+# documentation (*Sitta whiteheadi* in Corsica):
+
 spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
-
-# Pseudo-absence generation requires occurrences super-imposed on a layer, so we
-# will collect a few occurrences:
-
 species = taxon("Sitta whiteheadi"; strict = false)
 query = [
     "occurrenceStatus" => "PRESENT",
@@ -22,21 +24,44 @@ while length(presences) < count(presences)
     occurrences!(presences)
 end
 
-# We will get a single layer (temperature) from CHELSA1.
+# We will get our environmental variables from [CHELSA](/datasets/CHELSA1#BioClim):
 
 dataprovider = RasterData(CHELSA1, BioClim)
 
-# Layers
+# The two layers we use to build this model are annual mean temperature and
+# annual total precipitation:
 
 temp = SDMLayer(dataprovider; layer=1, spatial_extent...)
 prec = SDMLayer(dataprovider; layer=12, spatial_extent...)
 
-# quantize
+#::: details The BIOCLIM model
+# 
+# The [BIOCLIM
+# model](https://support.bccvl.org.au/support/solutions/articles/6000083201-bioclim)
+# is an envelope model in which the percentile of an environmental condition in
+# the sites where the species is found is transformed into a score.
+# Specifically, a species at the 50th percentile has a score of 0, and a species
+# at the 1st and 99th percentile are considered to be equivalent. In other
+# words, species should "prefer" their median environment.
+# 
+# The score is calculated as 
+#
+# ```math
+# 2 \times (\frac{1}{2} - \|Q - \frac{1}{2} \|)
+# ```
+# 
+# where ``Q`` is the quantile for one variable at one pixel; the final score is
+# the minimum value for each pixel across all variables.
+# 
+#:::
+
+# To calculate the scores of the BIOCLIM model, we need to get the quantiles for
+# each variable by *only* considering the sites where the species is present:
 
 Qt = quantize(temp, presences)
 Qp = quantize(prec, presences)
 
-# check
+# We can plot the map of quantiles for precipitation:
 
 fig, ax, hm = heatmap(
     Qp;

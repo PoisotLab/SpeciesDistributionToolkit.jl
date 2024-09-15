@@ -36,74 +36,40 @@ export default defineConfig({
     },
     nav: [
         {text: 'Index', link:'/index'},
-        {text: 'Documentation', link:'/documentation'},
+        {text: 'Manual', link:'/manual'},
         {
-                text: 'Datasets',
-                items : [
-                    {
-                        text: "CHELSA 1",
-                        items: [
-                            {text: "MinimumTemperature", link: "/datasets/CHELSA1/MinimumTemperature"},
-                            {text: "AverageTemperature", link: "/datasets/CHELSA1/AverageTemperature"},
-                            {text: "MaximumTemperature", link: "/datasets/CHELSA1/MaximumTemperature"},
-                            {text: "Precipitation", link: "/datasets/CHELSA1/Precipitation"},
-                            {text: "BioClim", link: "/datasets/CHELSA1/BioClim"},
-                        ]
-                    },
-                    {
-                        text: "CHELSA 2",
-                        items: [
-                            {text: "MinimumTemperature", link: "/datasets/CHELSA2/MinimumTemperature"},
-                            {text: "AverageTemperature", link: "/datasets/CHELSA2/AverageTemperature"},
-                            {text: "MaximumTemperature", link: "/datasets/CHELSA2/MaximumTemperature"},
-                            {text: "Precipitation", link: "/datasets/CHELSA2/Precipitation"},
-                            {text: "BioClim", link: "/datasets/CHELSA2/BioClim"},
-                        ]
-                    },
-                    {
-                        text: "WorldClim 2",
-                        items: [
-                            {text: "MinimumTemperature", link: "/datasets/WorldClim2/MinimumTemperature"},
-                            {text: "AverageTemperature", link: "/datasets/WorldClim2/AverageTemperature"},
-                            {text: "MaximumTemperature", link: "/datasets/WorldClim2/MaximumTemperature"},
-                            {text: "Precipitation", link: "/datasets/WorldClim2/Precipitation"},
-                            {text: "SolarRadiation", link: "/datasets/WorldClim2/SolarRadiation"},
-                            {text: "WaterVaporPressure", link: "/datasets/WorldClim2/WaterVaporPressure"},
-                            {text: "WindSpeed", link: "/datasets/WorldClim2/WindSpeed"},
-                            {text: "BioClim", link: "/datasets/WorldClim2/BioClim"},
-                        ]
-                    },
-                    {
-                        text: "PaleoClim",
-                        items: [
-                            {text: "BioClim", link: "/datasets/PaleoClim/BioClim"},
-                        ]
-                    },
-                    {
-                        text: "BiodiversityMapping",
-                        items: [
-                            {text: "AmphibianRichness", link: "/datasets/BiodiversityMapping/AmphibianRichness"},
-                            {text: "BirdRichness", link: "/datasets/BiodiversityMapping/BirdRichness"},
-                            {text: "MammalRichness", link: "/datasets/BiodiversityMapping/MammalRichness"},
-                        ]
-                    },
-                    {
-                        text: "EarthEnv",
-                        items: [
-                            {text: "LandCover", link: "/datasets/EarthEnv/LandCover"},
-                            {text: "HabitatHeterogeneity", link: "/datasets/EarthEnv/HabitatHeterogeneity"},
-                        ]
-                    }
-                ]
+            text: 'Datasets',
+            items : [
+                {text: "CHELSA 1", link: "/datasets/CHELSA1"},
+                {text: "CHELSA 2", link: "/datasets/CHELSA2"},
+                {text: "WorldClim 2", link: "/datasets/WorldClim2"},
+                {text: "PaleoClim", link: "/datasets/PaleoClim"},
+                {text: "EarthEnv", link: "/datasets/EarthEnv"},
+                {text: "BiodiversityMapping", link: "/datasets/BiodiversityMapping"},
+            ]
         },
         {
             text: "Ecosystem",
             items: [
-                {text: "GBIF.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/dev/"},
-                {text: "Phylopic.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/dev/"},
-                {text: "Fauxcurrences.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Fauxcurrences/dev/"},
-                {text: "SimpleSDMLayers.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/dev/"},
-                {text: "SimpleSDMDatasets.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/dev/"}
+                {
+                    text: "Core packages",
+                    items: [
+                        {text: "GBIF.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/dev/"},
+                        {text: "Phylopic.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/dev/"},
+                        {text: "Fauxcurrences.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Fauxcurrences/dev/"},
+                        {text: "SimpleSDMLayers.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/dev/"},
+                        {text: "SimpleSDMDatasets.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/dev/"}
+                
+                    ]
+                },
+                {
+                    text: "Other packages",
+                    items: [
+                        {text: "BON.jl", link: "https://poisotlab.github.io/BiodiversityObservationNetworks.jl/dev/"},
+                        {text: "SpatialBoundaries.jl", link: "https://poisotlab.github.io/SpatialBoundaries.jl/dev/"}        
+                    ]
+                }
+                
             ]
         }
     ],

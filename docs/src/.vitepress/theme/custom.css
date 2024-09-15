@@ -11,15 +11,15 @@
 }
 
 :root {
-    --vp-c-brand-1: var(--pl-green-light);
-    --vp-c-brand-2: var(--pl-blue);
+    --vp-c-brand-1: var(--pl-blue);
+    --vp-c-brand-2: var(--pl-green-light);
     --vp-c-brand-3: var(--pl-green-dark);
     --vp-c-brand-soft: var(--vp-c-indigo-soft);
 }
 
 :root {
     --vp-home-hero-name-color: transparent;
-    --vp-home-hero-name-background: -webkit-linear-gradient(120deg, var(--pl-blue), var(--pl-green-light));
+    --vp-home-hero-name-background: -webkit-linear-gradient(120deg, var(--pl-blue), var(--pl-green-light), var(--pl-green-dark));
 }
 
 :root {

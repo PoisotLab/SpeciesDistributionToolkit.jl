@@ -7,8 +7,15 @@ on:
     tags: '*'
   pull_request:
 
+concurrency:
+    group: doc-build
+    cancel-in-progress: true
+
 jobs:
   GBIF:
+    concurrency:
+      group: doc-build
+      cancel-in-progress: true
     permissions:
       actions: write
       contents: write
@@ -30,7 +37,9 @@ jobs:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
         run: julia --project=GBIF/docs/ GBIF/docs/make.jl
   Phylopic:
-    needs: [GBIF]
+    concurrency:
+      group: doc-build
+      cancel-in-progress: true
     permissions:
       actions: write
       contents: write
@@ -52,7 +61,9 @@ jobs:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
         run: julia --project=Phylopic/docs/ Phylopic/docs/make.jl
   Fauxcurrences:
-    needs: [Phylopic]
+    concurrency:
+      group: doc-build
+      cancel-in-progress: true
     permissions:
       actions: write
       contents: write
@@ -74,7 +85,9 @@ jobs:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
         run: julia --project=Fauxcurrences/docs/ Fauxcurrences/docs/make.jl
   SimpleSDMLayers:
-    needs: [Fauxcurrences]
+    concurrency:
+      group: doc-build
+      cancel-in-progress: true
     permissions:
       actions: write
       contents: write
@@ -96,7 +109,9 @@ jobs:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
         run: julia --project=SimpleSDMLayers/docs/ SimpleSDMLayers/docs/make.jl
   SimpleSDMDatasets:
-    needs: [SimpleSDMLayers]
+    concurrency:
+        group: doc-build
+        cancel-in-progress: true
     permissions:
       actions: write
       contents: write
@@ -118,7 +133,9 @@ jobs:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
         run: julia --project=SimpleSDMDatasets/docs/ SimpleSDMDatasets/docs/make.jl
   SpeciesDistributionToolkit:
-    needs: [SimpleSDMDatasets]
+    concurrency:
+        group: doc-build
+        cancel-in-progress: true
     permissions:
       actions: write
       contents: write

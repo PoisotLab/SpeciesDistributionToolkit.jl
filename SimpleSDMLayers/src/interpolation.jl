@@ -21,10 +21,10 @@ function interpolate!(destination::SDMLayer, source::SDMLayer)
                 x2 = EL[i2]
                 y1 = NL[j1]
                 y2 = NL[j2]
-                Q11 = layer[j1, i1]
-                Q12 = layer[j1, i2]
-                Q21 = layer[j2, i1]
-                Q22 = layer[j2, i2]
+                Q11 = source[j1, i1]
+                Q12 = source[j1, i2]
+                Q21 = source[j2, i1]
+                Q22 = source[j2, i2]
                 if !any(isnothing, [Q11, Q12, Q21, Q22])
                     destination[j, i] = SimpleSDMLayers.polynomialinterpolation(
                         x1,
@@ -77,6 +77,25 @@ function interpolate(layer::SDMLayer; dest = "+proj=natearth2", newsize = nothin
     destination = _create_destination_layer(layer, dest, isnothing(newsize) ? size(layer) : newsize)
     interpolate!(destination, layer)
     return destination
+end
+
+@testitem "We can interpolate a layer given a new destination crs" begin
+    layer = SimpleSDMLayers.__demodata(reduced=true)
+    dest = interpolate(layer; dest="+proj=natearth2")
+    @test dest.crs == "+proj=natearth2"
+end
+
+@testitem "We can interpolate a layer with a new size" begin
+    layer = SimpleSDMLayers.__demodata(reduced=true)
+    dest = interpolate(layer; newsize=(120, 120))
+    @test size(dest) == (120, 120)
+end
+
+@testitem "We can interpolate a layer with a new size and a new crs" begin
+    layer = SimpleSDMLayers.__demodata(reduced=true)
+    dest = interpolate(layer; newsize=(120, 120), dest="+proj=natearth")
+    @test size(dest) == (120, 120)
+    @test dest.crs == "+proj=natearth"
 end
 
 function polynomialinterpolation(x1, x, x2, y1, y, y2, Q11, Q12, Q21, Q22)

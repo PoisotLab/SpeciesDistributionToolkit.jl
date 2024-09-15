@@ -32,7 +32,9 @@ Colorbar(fig[:, end + 1], hm)
 current_figure() #hide
 
 # ::: tip Overwrite a layer
+# 
 # There is an `interpolate!` method that will perform interpolation on an
 # already existing layer. This is useful if you want to rapidly bring data from
 # a layer to something compatible with another layer.
+#
 # :::

@@ -14,8 +14,8 @@ concurrency:
 jobs:
   GBIF:
     concurrency:
-      group: doc-build
-      cancel-in-progress: true
+        group: doc-build
+        cancel-in-progress: false
     permissions:
       actions: write
       contents: write
@@ -38,8 +38,8 @@ jobs:
         run: julia --project=GBIF/docs/ GBIF/docs/make.jl
   Phylopic:
     concurrency:
-      group: doc-build
-      cancel-in-progress: true
+        group: doc-build
+        cancel-in-progress: false
     permissions:
       actions: write
       contents: write
@@ -62,8 +62,8 @@ jobs:
         run: julia --project=Phylopic/docs/ Phylopic/docs/make.jl
   Fauxcurrences:
     concurrency:
-      group: doc-build
-      cancel-in-progress: true
+        group: doc-build
+        cancel-in-progress: false
     permissions:
       actions: write
       contents: write
@@ -86,8 +86,8 @@ jobs:
         run: julia --project=Fauxcurrences/docs/ Fauxcurrences/docs/make.jl
   SimpleSDMLayers:
     concurrency:
-      group: doc-build
-      cancel-in-progress: true
+        group: doc-build
+        cancel-in-progress: false
     permissions:
       actions: write
       contents: write
@@ -111,7 +111,7 @@ jobs:
   SimpleSDMDatasets:
     concurrency:
         group: doc-build
-        cancel-in-progress: true
+        cancel-in-progress: false
     permissions:
       actions: write
       contents: write
@@ -135,7 +135,7 @@ jobs:
   SpeciesDistributionToolkit:
     concurrency:
         group: doc-build
-        cancel-in-progress: true
+        cancel-in-progress: false
     permissions:
       actions: write
       contents: write

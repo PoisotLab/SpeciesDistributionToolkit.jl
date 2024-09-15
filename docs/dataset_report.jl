@@ -23,7 +23,7 @@ function _document_extrakeys(
         for (k, v) in SimpleSDMDatasets.extrakeys(data)
             text *= "**$(String(k))**: $(join(v, ", ", " and "))\n\n"
         end
-        text *= ":::\n\n"
+        text *= "\n:::\n\n"
         return text
     end
     return ""
@@ -41,7 +41,7 @@ function _document_resolutions(
             text *= "| `$(v)` | $(k) |\n"
         end
         text *= "\nYou can also list the resolutions using `SimpleSDMDatasets.resolutions($(typeof(data)))`.\n\n"
-        text *= ":::\n\n"
+        text *= "\n:::\n\n"
         return text
     end
     return ""
@@ -51,9 +51,10 @@ function _document_months(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
     if !isnothing(SimpleSDMDatasets.months(data))   
-        text = "\n### Months\n\n"
+        text = "\n::: details Indexed by months\n\n"
         text *= "This dataset can be accessed monthly, using the `month` keyword argument.\n\n"
         text *= "You can list the available months using `SimpleSDMDatasets.months($(typeof(data)))`.\n\n"
+        text *= "\n:::\n\n"
         return text
     end
     return ""
@@ -76,12 +77,13 @@ function _document_scenarios(
             end
         end
         if ~isempty(models)
-            text *= "### Support for future scenario $(S)\n\n"
+            text *= "\n::: details Projections for $(S)\n\n"
             text *= "Note that the future scenarios support the *same* keyword arguments as the contemporary data.\n\n"
             text *= "**Models**: $(join(models, ", ", " and "))\n\n"
             if ~isempty(spans)
                 text *= "**Timespans**: $(join(unique(spans), ", ", " and "))\n\n"
             end
+            text *= "\n:::\n\n"
         end
     end
     text *= "\n\n"

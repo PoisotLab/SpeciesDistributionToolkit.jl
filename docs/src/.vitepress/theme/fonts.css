@@ -1,11 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
 
 @font-face {
-    font-family: JuliaMono-Medium;
-    src: url("https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.056/JuliaMono-Medium.woff2");
+    font-family: JuliaMono-Regular;
+    src: url("https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.056/JuliaMono-Regular.woff2");
 }
 
 :root {
-    --vp-font-family-base: "Manrope", system-ui;
-    --vp-font-family-mono: JuliaMono-Medium;
+    --vp-font-family-mono: JuliaMono-Regular;
 }
+
+.VPHero .name {
+    font-family: "Inter Tight", "Inter", system-ui;
+  }

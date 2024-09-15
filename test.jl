@@ -6,7 +6,10 @@ using PolygonOps
 using CairoMakie
 using Downloads
 
-jsonfile = "http://polygons.openstreetmap.fr/get_geojson.py?id=8114679"
+# Maine 63512
+# Vermont 60759
+
+jsonfile = "http://polygons.openstreetmap.fr/get_geojson.py?id=60759"
 out = Downloads.download(jsonfile, tempname())
 polygon = GeoJSON.read(out)
 

@@ -5,18 +5,16 @@ using CairoMakie
 CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
 # The `interpolate` method can be used to project data into another coordinate
-# system. For example, we can get data in ESPG:4326:
+# system. For example, we can get elevation data about metropolitan France and
+# Corsica, in ESPG:4326:
 
 spatial_extent = (; left = -4.87, right=9.63, bottom=41.31, top=51.14)
-dataprovider = RasterData(WorldClim2, BioClim)
-layer = SDMLayer(dataprovider; layer="BIO1", resolution=2.5, spatial_extent...)
+dataprovider = RasterData(WorldClim2, Elevation)
+layer = SDMLayer(dataprovider; resolution=2.5, spatial_extent...)
 
-# And project them to the more locally appropriate EPSG:27574:
+# And project them to the more locally appropriate [EPSG:27574](https://epsg.io/27574):
 
-proj_string = 27574 |>
-    SimpleSDMLayers.ArchGDAL.importEPSG  |>
-    SimpleSDMLayers.ArchGDAL.toPROJ4 |>
-    String
+proj_string = "+proj=lcc +lat_1=42.165 +lat_0=42.165 +lon_0=0 +k_0=0.99994471 +x_0=234.358 +y_0=4185861.369 +ellps=clrk80ign +pm=paris +towgs84=-168,-60,320,0,0,0,0 +units=m +no_defs"
 ws = interpolate(layer; dest=proj_string)
 
 # By default, this produces a layer with the same dimension as the input, and

@@ -52,13 +52,9 @@ function _document_months(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
     if !isnothing(SimpleSDMDatasets.months(data))
-        text = """
-        ::: details Index by month
-        This dataset can be accessed monthly, using the `month` keyword
-        argument. You can list the available months using
-        `SimpleSDMDatasets.months($(typeof(data)))`.
-        :::
-        """
+        text = "\n::: details Index by month\n\n"
+        text *= "\nThis dataset can be accessed monthly, using the `month` keyword argument. You can list the available months using `SimpleSDMDatasets.months($(typeof(data)))`.\n\n"
+        text *= "\n:::\n\n"
         return text
     end
     return ""

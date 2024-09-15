@@ -42,9 +42,10 @@ prec = SDMLayer(dataprovider; layer = 12, spatial_extent...)
 # model](https://support.bccvl.org.au/support/solutions/articles/6000083201-bioclim)
 # is an envelope model in which the percentile of an environmental condition in
 # the sites where the species is found is transformed into a score.
-# Specifically, a species at the 50th percentile has a score of 0, and a species
-# at the 1st and 99th percentile are considered to be equivalent. In other
-# words, species should "prefer" their median environment.
+# Specifically, a species at the 50th percentile has a score of 1 (the highest
+# possible value), and a species at the 1st and 99th percentile are considered
+# to be equivalent. In other words, species should "prefer" their median
+# environment.
 # 
 # The score is calculated as 
 #

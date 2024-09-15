@@ -34,7 +34,9 @@ dataprovider = RasterData(CHELSA1, BioClim)
 temp = SDMLayer(dataprovider; layer = 1, spatial_extent...)
 prec = SDMLayer(dataprovider; layer = 12, spatial_extent...)
 
-#::: details The BIOCLIM model
+#-
+
+# ::: details The BIOCLIM model
 # 
 # The [BIOCLIM
 # model](https://support.bccvl.org.au/support/solutions/articles/6000083201-bioclim)
@@ -53,7 +55,7 @@ prec = SDMLayer(dataprovider; layer = 12, spatial_extent...)
 # where ``Q`` is the quantile for one variable at one pixel; the final score is
 # the minimum value for each pixel across all variables.
 # 
-#:::
+# :::
 
 # To calculate the scores of the BIOCLIM model, we need to get the quantiles for
 # each variable by *only* considering the sites where the species is present:

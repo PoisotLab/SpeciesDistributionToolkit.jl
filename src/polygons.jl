@@ -32,7 +32,7 @@ function SimpleSDMLayers.mask(
     )
 end
 
-function SimpleSDMLayers.hide!(
+function hide!(
     layer::SDMLayer,
     polygon::Vector{Tuple{T, T}};
     strict::Bool = false,
@@ -54,7 +54,7 @@ function SimpleSDMLayers.hide!(
     return layer
 end
 
-function SimpleSDMLayers.reveal!(
+function reveal!(
     layer::SDMLayer,
     polygon::Vector{Tuple{T, T}};
     strict::Bool = false,

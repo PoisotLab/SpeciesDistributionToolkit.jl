@@ -5,6 +5,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
+CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
 # In order to work on a region that is not too big, we will define our spatial
 # extent:
@@ -73,10 +74,7 @@ heatmap(
 )
 heatmap!(bgmask; colormap = cgrad([:transparent, :white]; alpha = 0.3))
 scatter!(presences; color = :black)
-current_figure()
-save("psabs-init.png", current_figure()); nothing # hide
-
-# ![Consensus map](psabs-init.png)
+current_figure() #hide
 
 # There are additional ways to produce pseudo-absences mask, notably the surface range
 # envelope method, which uses the bounding box of observations to allow pseudo-absences:
@@ -93,12 +91,7 @@ heatmap(
 )
 heatmap!(sre; colormap = cgrad([:transparent, :white]; alpha = 0.3))
 scatter!(presences; color = :black)
-current_figure()
-save("psabs-sre.png", current_figure()); nothing # hide
-
-#-
-
-# ![Consensus map](psabs-sre.png)
+current_figure() #hide
 
 # The `RandomSelection` method (not shown) uses the entire surface of the layer as
 # a possible pseudo-absence location.
@@ -120,7 +113,4 @@ heatmap(
 heatmap!(bgmask; colormap = cgrad([:transparent, :white]; alpha = 0.3))
 scatter!(presences; color = :black)
 scatter!(bgpoints; color = :red, markersize = 4)
-current_figure()
-save("psabs-final.png", current_figure()); nothing # hide
-
-# ![Consensus map](psabs-final.png)
+current_figure() #hide

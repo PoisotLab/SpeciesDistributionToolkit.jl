@@ -7,6 +7,10 @@ on:
     tags: '*'
   pull_request:
 
+concurrency:
+    group: doc-build-pipeline
+    cancel-in-progress: true
+
 jobs:
   GBIF:
     permissions:

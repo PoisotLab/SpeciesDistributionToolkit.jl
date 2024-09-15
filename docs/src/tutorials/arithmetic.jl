@@ -8,6 +8,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
+CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
 # We will work on the twelve classes of landcover provided by the *EarthEnv* data:
 
@@ -65,13 +66,7 @@ resistance_map = heatmap(
     ),
 )
 Colorbar(resistance_map.figure[:, end + 1], resistance_map.plot; height = Relative(0.5))
-current_figure()
-save("resistance-map.png", current_figure());
-nothing; # hide
-
-#-
-
-# ![Landscape resistance map](resistance-map.png)
+current_figure() #hide
 
 # This layer can then be used in landscape connectivity analyses using *e.g.*
 # [Omniscape.jl](https://juliapackages.com/p/omniscape).

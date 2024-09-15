@@ -72,17 +72,33 @@ fig, ax, hm = heatmap(
 Colorbar(fig[:, end + 1], hm)
 current_figure() #hide
 
-# turn into score
+# In order to turn the quantiles into a score, we will be chaining together a
+# few operations. First, the transformation of layers into layers of quantiles,
+# then the transformation of the score, and finally the selection of the minimum
+# value across all layers:
 
-BIOCLIM(score::Float64) = 2*(0.5-abs(score-0.5))
-BIOCLIM(layer::SDMLayer) = BIOCLIM.(layer)
-BIOCLIM(layers::Vector{<:SDMLayer}) = mosaic(minimum, BIOCLIM.(layers))
+function BIOCLIM(layers::Vector{<:SDMLayer}, presences::GBIFRecords)
+    score = (Q) -> 2*(0.5-abs(Q-0.5))
+    Q = [quantize(layer, presences) for layer in layers]
+    S = score.(Q)
+    return mosaic(minimum, S)
+end
 
-# produce layer
+# ::: warning Be careful about the occurrence status!
+#
+# We have requested only presences from the GBIF API, but if we were to write a
+# more general version of this function, it would make sense to filter the
+# records with an occurrence status of "absent".
+#
+# :::
 
-bc = BIOCLIM([Qt, Qp])
+# We can now call this function to get the score at each pixel:
 
-# output
+bc = BIOCLIM([temp, prec])
+
+# The interpretation of this score is, essentially, the most restrictive
+# environmental condition found at this specific place. We can map this, and
+# also superimpose the presence data:
 
 fig, ax, hm = heatmap(
     bc;

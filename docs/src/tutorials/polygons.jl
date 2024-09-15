@@ -35,3 +35,25 @@ heatmap(layer; colormap = [:lightgrey, :black], axis = (; aspect = DataAspect())
 
 mask!(layer, VT)
 heatmap(layer; colormap = [:lightgrey, :black], axis = (; aspect = DataAspect()))
+
+#-
+
+
+species = taxon("Procyon lotor")
+query = [
+    "hasCoordinate" => true,
+    "country" => "US",
+    "limit" => 300,
+    "occurrenceStatus" => "PRESENT",
+    "decimalLatitude" => (bbox.bottom, bbox.top),
+    "decimalLongitude" => (bbox.left, bbox.right),
+]
+presences = occurrences(species, query...)
+while length(presences) < count(presences)
+    occurrences!(presences)
+end
+
+#-
+
+scatter!(mask(presences, VT), color=:orange, markersize=3)
+current_figure()

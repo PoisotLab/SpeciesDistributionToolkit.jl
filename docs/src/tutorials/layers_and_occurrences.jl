@@ -76,10 +76,17 @@ sp_thumbnail_url = Phylopic.thumbnail(sp_uuid)
 sp_thumbnail_tmp = Downloads.download(sp_thumbnail_url)
 sp_image = Images.load(sp_thumbnail_tmp)
 
-# We can also check how to credit the person who created this image. This will create
-# a markdown string, with the node name, the contributor name, and a link to the license.
+# ::: tip Credit where credit is due!
+# 
+# The images on Phylopic are *all* created by volunteers. It is important to
+# provide correct credit and attribution for their work. The `attribution`
+# method will return the name of the creator and the correct license associated
+# to this illustration:
 
 Phylopic.attribution(sp_uuid)
+
+#
+# :::
 
 # We can now use this image in a scatter plot -- this uses the thumbnail as a scatter
 # symbol, so we need to plot this like any other point. Because the thumbnail returned by

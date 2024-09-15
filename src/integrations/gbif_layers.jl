@@ -52,10 +52,9 @@ function Base.getindex(layer::SDMLayer, records::Vector{GBIF.GBIFRecord})
     return [layer[record] for record in records]
 end
 
-function SimpleSDMLayers.quantize!(layer::SDMLayer, records::GBIFRecords)
+function SimpleSDMLayers.quantize(layer::SDMLayer, records::GBIFRecords)
     ef = StatsBase.ecdf(layer[records])
-    map!(ef, layer.grid, layer.grid)
-    return layer
+    return ef.(layer)
 end
 
 function SimpleSDMLayers.mask(layer::SDMLayer, records::GBIF.GBIFRecords)
@@ -65,7 +64,6 @@ function SimpleSDMLayers.mask(layer::SDMLayer, records::GBIF.GBIFRecords)
     end
     return out
 end
-
 
 function SimpleSDMLayers.mask(layer::SDMLayer, records::GBIF.GBIFRecords, ::Type{T}) where {T <: Number}
     out = zeros(layer, T)

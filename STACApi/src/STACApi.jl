@@ -16,9 +16,9 @@ function __handle_get_response(req)
     return nothing
 end
 
-include("core.jl")
-include("collections.jl")
-include("features.jl")
+include("catalog.jl")
+include("collection.jl")
+include("item.jl")
 
 # https://stac.geobon.org/ for testing
 

@@ -1,6 +1,5 @@
 struct Collection
     id::String
-    title::String
     description::String
     license::String
     bbox::Vector{Number}
@@ -15,7 +14,7 @@ function collections(catalog::STACApi.Catalog)
     collecs = STACApi.Collection[]
     for collec in output["collections"]
         push!(collecs, Collection(
-            collec.id, collec.title, collec.description, collec.license,
+            collec.id, collec.description, collec.license,
             collect(first(collec.extent.spatial.bbox)),
             parse.(DateTime, collec.extent.temporal.interval[1], dateformat"yyyy-mm-ddTH:M:SZ")...
         ))
@@ -29,6 +28,11 @@ end
     @test !isnothing(findfirst(x -> x.id == "gfw-gain", coll))
 end
 
-function Base.show(io::IO, collection::STACApi.Collection)
-    print(io, "📃 $(collection.id) - $(collection.title)")
+Base.show(io::IO, collection::STACApi.Collection) = print(io, "📃 $(collection.id)")
+
+Base.getindex(catalog::Catalog, id::String) = collections(catalog)[findfirst(x -> x.id == id, collections(catalog))]
+
+@testitem "We can get a collection by id" begin
+    geobon = STACApi.Catalog("https://stac.geobon.org/")
+    @test geobon["colombia-lc"].id == "colombia-lc"
 end

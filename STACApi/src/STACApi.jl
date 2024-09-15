@@ -18,7 +18,7 @@ end
 
 include("catalog.jl")
 include("collection.jl")
-include("item.jl")
+include("search.jl")
 
 # https://stac.geobon.org/ for testing
 

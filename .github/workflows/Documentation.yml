@@ -9,7 +9,7 @@ on:
 
 concurrency:
     group: doc-build-pipeline
-    cancel-in-progress: true
+    cancel-in-progress: ${{ !contains(github.ref, 'main')}}
 
 jobs:
   GBIF:

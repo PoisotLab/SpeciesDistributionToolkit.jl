@@ -9,7 +9,8 @@ CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 # In this tutorial, we will clip a layer to a polygon (in GeoJSON format), then
 # use the same polygon to filter GBIF records.
 
-# We can get a GeoJSON representation of any Open Street Maps features:
+# Thanks to the good people in the French Open Street Map community, it is very
+# simple to query a `.geojson` file for any OSM identifier:
 
 VT = GeoJSON.read(Downloads.download("http://polygons.openstreetmap.fr/get_geojson.py?id=60759", tempname()))[1][1]
 

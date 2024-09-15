@@ -44,5 +44,6 @@ export pseudoabsencemask, backgroundpoints
 
 # Functions to deal with polygons
 include("polygons.jl")
+export hide!, reveal!
 
 end # module SpeciesDistributionToolkit

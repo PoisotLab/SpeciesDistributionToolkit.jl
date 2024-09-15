@@ -19,7 +19,7 @@
 
 :root {
     --vp-home-hero-name-color: transparent;
-    --vp-home-hero-name-background: -webkit-linear-gradient(120deg, var(--pl-blue), var(--pl-green-light));
+    --vp-home-hero-name-background: -webkit-linear-gradient(120deg, var(--pl-blue), var(--pl-green-light), var(--pl-green-dark));
 }
 
 :root {

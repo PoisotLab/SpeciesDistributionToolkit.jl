@@ -11,26 +11,29 @@ function _document_layers(
         end
         return text
     end
+    return ""
 end
 
 function _document_extrakeys(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
     if !isnothing(SimpleSDMDatasets.extrakeys(data))
-        text = "\n### Additional keyword arguments\n\n"
+        text = "\n::: details Additional keywords\n\n"
         text *= "The following keyword arguments can be used with this dataset:\n\n"
         for (k, v) in SimpleSDMDatasets.extrakeys(data)
             text *= "**$(String(k))**: $(join(v, ", ", " and "))\n\n"
         end
+        text *= ":::\n\n"
         return text
     end
+    return ""
 end
 
 function _document_resolutions(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
     if !isnothing(SimpleSDMDatasets.resolutions(data))
-        text = "\n### Resolutions\n\n"
+        text = "\n::: details Spatial resolution\n\n"
         text *= "The following resolutions are accessible through the `resolution` keyword argument:\n\n"
         text *= "| Resolution | Key |\n"
         text *= "|------------|-------------|\n"
@@ -38,8 +41,10 @@ function _document_resolutions(
             text *= "| `$(v)` | $(k) |\n"
         end
         text *= "\nYou can also list the resolutions using `SimpleSDMDatasets.resolutions($(typeof(data)))`.\n\n"
+        text *= ":::\n\n"
         return text
     end
+    return ""
 end
 
 function _document_months(
@@ -51,6 +56,7 @@ function _document_months(
         text *= "You can list the available months using `SimpleSDMDatasets.months($(typeof(data)))`.\n\n"
         return text
     end
+    return ""
 end
 
 function _document_scenarios(
@@ -127,9 +133,6 @@ for P in subtypes(RasterProvider)
         cardfile,
         "w",
     ) do io
-        print(io, "---\n")
-        print(io, "outline: 2\n")
-        print(io, "---\n\n")
         print(io, "# $(P) \n\n")
     end
     # Run the report for each dataset

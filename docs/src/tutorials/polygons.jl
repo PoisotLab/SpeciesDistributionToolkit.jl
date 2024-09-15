@@ -28,7 +28,7 @@ NH = GeoJSON.read(Downloads.download("http://polygons.openstreetmap.fr/get_geojs
 # The next step is to get a layer, and so we will download the data about
 # deciduous broadleaf trees from [EarthEnv](/datasets/EarthEnv#landcover):
 
-bbox = (; left = -73.7, right = -65., bottom = 42.5, top = 45.5)
+bbox = (; left = -73.7, right = -70., bottom = 42.5, top = 45.5)
 provider = RasterData(EarthEnv, LandCover)
 layer = SDMLayer(provider; layer = "Deciduous Broadleaf Trees", bbox...)
 

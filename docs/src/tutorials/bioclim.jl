@@ -24,7 +24,8 @@ while length(presences) < count(presences)
     occurrences!(presences)
 end
 
-# We will get our environmental variables from [CHELSA](/datasets/CHELSA1#BioClim):
+# We will get our environmental variables from
+# [CHELSA1](/datasets/CHELSA1#bioclim):
 
 dataprovider = RasterData(CHELSA1, BioClim)
 

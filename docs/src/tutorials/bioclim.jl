@@ -31,8 +31,8 @@ dataprovider = RasterData(CHELSA1, BioClim)
 # The two layers we use to build this model are annual mean temperature and
 # annual total precipitation:
 
-temp = SDMLayer(dataprovider; layer=1, spatial_extent...)
-prec = SDMLayer(dataprovider; layer=12, spatial_extent...)
+temp = SDMLayer(dataprovider; layer = 1, spatial_extent...)
+prec = SDMLayer(dataprovider; layer = 12, spatial_extent...)
 
 #::: details The BIOCLIM model
 # 
@@ -78,7 +78,7 @@ current_figure() #hide
 # value across all layers:
 
 function BIOCLIM(layers::Vector{<:SDMLayer}, presences::GBIFRecords)
-    score = (Q) -> 2*(0.5-abs(Q-0.5))
+    score = (Q) -> 2.0 .* (0.5 .- abs.(Q .- 0.5))
     Q = [quantize(layer, presences) for layer in layers]
     S = score.(Q)
     return mosaic(minimum, S)
@@ -106,6 +106,6 @@ fig, ax, hm = heatmap(
     figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
-scatter!(presences, color=:orange, markersize=1, colorrange=(0,1))
+scatter!(presences; color = :orange, markersize = 1, colorrange = (0, 1))
 Colorbar(fig[:, end + 1], hm)
 current_figure() #hide

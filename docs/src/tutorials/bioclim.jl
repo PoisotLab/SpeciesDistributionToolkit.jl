@@ -94,7 +94,7 @@ end
 
 # We can now call this function to get the score at each pixel:
 
-bc = BIOCLIM([temp, prec])
+bc = BIOCLIM([temp, prec], presences)
 
 # The interpretation of this score is, essentially, the most restrictive
 # environmental condition found at this specific place. We can map this, and

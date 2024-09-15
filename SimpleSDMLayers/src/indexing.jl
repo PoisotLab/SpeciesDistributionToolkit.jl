@@ -125,3 +125,14 @@ function reveal!(layer::SDMLayer, est::Integer, nrt::Integer)
     layer.indices[nrt, est] = true
     return layer
 end
+
+function hide!(layer::SDMLayer, longitude::AbstractFloat, latitude::AbstractFloat)
+    grid_pos = SimpleSDMLayers.__get_grid_coordinate_by_latlon(layer, longitude, latitude)
+    layer.indices[grid_pos...] = false
+    return layer
+end
+
+function hide!(layer::SDMLayer, est::Integer, nrt::Integer)
+    layer.indices[nrt, est] = false
+    return layer
+end

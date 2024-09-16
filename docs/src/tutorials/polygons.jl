@@ -3,8 +3,6 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 import GeoJSON
-using Statistics
-import Downloads
 CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
 # In this tutorial, we will clip a layer to a polygon (in GeoJSON format), then

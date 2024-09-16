@@ -14,6 +14,12 @@ function sprinkle(records::GBIFRecords)
     return (lon, lat)
 end
 
+function sprinkle(records::Vector{GBIFRecord})
+    lon = Float32.(replace(longitudes.(records), missing => NaN))
+    lat = Float32.(replace(latitudes.(records), missing => NaN))
+    return (lon, lat)
+end
+
 function MakieCore.convert_arguments(::MakieCore.GridBased, layer::SDMLayer)
     return sprinkle(convert(SDMLayer{Float32}, layer))
 end
@@ -21,6 +27,8 @@ end
 MakieCore.convert_arguments(P::MakieCore.NoConversion, layer::SDMLayer) =
     MakieCore.convert_arguments(P, values(layer))
 MakieCore.convert_arguments(P::MakieCore.PointBased, records::GBIFRecords) =
+    MakieCore.convert_arguments(P, sprinkle(records)...)
+MakieCore.convert_arguments(P::MakieCore.PointBased, records::Vector{GBIFRecord}) =
     MakieCore.convert_arguments(P, sprinkle(records)...)
 
 function MakieCore.convert_arguments(

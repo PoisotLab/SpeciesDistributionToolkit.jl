@@ -18,6 +18,11 @@ using Reexport
 import Distances
 const _distance_function = Fauxcurrences._distancefunction
 
+import GeoJSON
+import PolygonOps
+import ZipFile
+import Downloads
+
 # Functions to get latitudes/longitudes
 include("latlon.jl")
 export latitudes, longitudes
@@ -39,5 +44,10 @@ include("integrations/makie.jl")
 include("pseudoabsences.jl")
 export WithinRadius, SurfaceRangeEnvelope, RandomSelection, DistanceToEvent
 export pseudoabsencemask, backgroundpoints
+
+# Functions to deal with polygons
+include("polygons/polygons.jl")
+include("polygons/gadm.jl")
+export trim
 
 end # module SpeciesDistributionToolkit

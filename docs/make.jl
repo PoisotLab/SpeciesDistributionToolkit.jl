@@ -40,6 +40,7 @@ makedocs(;
             "tutorials/consensus.md",
             "tutorials/layers_and_occurrences.md",
             "tutorials/bioclim.md",
+            "tutorials/polygons.md",
             "tutorials/pseudoabsences.md",
             "tutorials/fauxcurrences.md",
             "tutorials/futureclimate.md",

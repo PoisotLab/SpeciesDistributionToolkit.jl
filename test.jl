@@ -1,42 +1,17 @@
 using Revise
 using SpeciesDistributionToolkit
-using GeoJSON
-using GeoInterface
-using PolygonOps
+import Downloads
+import GeoJSON
 using CairoMakie
-using Downloads
+using PolygonOps
 
-# Maine 63512
-# Vermont 60759
+url_gadm = "https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_CHE_0.json"
+poly = GeoJSON.read(Downloads.download(url_gadm, tempname()))
 
-jsonfile = "http://polygons.openstreetmap.fr/get_geojson.py?id=60759"
-out = Downloads.download(jsonfile, tempname())
-polygon = GeoJSON.read(out)
+provider = RasterData(WorldClim2, Elevation)
+layer = SDMLayer(provider; resolution=0.5, left=0.0, right=20.0, bottom=35.0, top=55.0)
 
-poly = polygon[1][1]
+heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
 
-lon = extrema(first.(poly))
-lat = extrema(last.(poly))
-
-bbox = (; left = lon[1], right = lon[2], bottom = lat[1], top = lat[2])
-provider = RasterData(EarthEnv, LandCover)
-layer = SDMLayer(provider; layer = "Cultivated and Managed Vegetation", bbox...)
-
-# Clip
-prj = SimpleSDMLayers.Proj.Transformation(
-    "+proj=longlat +datum=WGS84 +no_defs",
-    layer.crs;
-    always_xy = true,
-)
-
-E, N = eastings(layer), northings(layer)
-
-Threads.@threads for i in axes(layer, 2)
-    for j in axes(layer, 1)
-        if iszero(inpolygon(prj(E[i], N[j]), poly))
-            layer.indices[j, i] = false
-        end
-    end
-end
-
-heatmap(layer; colormap = :navia, axis = (; aspect=DataAspect()))
+mask!(layer, poly[1].geometry)
+heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))

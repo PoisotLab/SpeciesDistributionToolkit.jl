@@ -57,6 +57,6 @@ function SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolyg
             end
         end
     end
-    layer.indices = inclusion
+    layer.indices .&= inclusion
     return layer
 end

@@ -44,7 +44,14 @@ SpeciesDistributionToolkit.gadmlist("FRA", 3)[1:3]
 # deciduous broadleaf trees from [EarthEnv](/datasets/EarthEnv#landcover):
 
 provider = RasterData(WorldClim2, Elevation)
-layer = SDMLayer(provider; resolution=0.5, left=0.0, right=20.0, bottom=35.0, top=55.0)
+layer = SDMLayer(
+    provider;
+    resolution = 0.5,
+    left = 0.0,
+    right = 20.0,
+    bottom = 35.0,
+    top = 55.0,
+)
 
 # We can check that this polygon is larger than we want:
 
@@ -58,3 +65,54 @@ heatmap(layer; colormap = :navia, axis = (; aspect = DataAspect()))
 # This is a much larger layer than we need! For this reason, we will trim it so that the empty areas are removed:
 
 heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
+
+# Let's now get some occurrences in the area defined by the layer boundingbox,
+# while specifying the dataset key for the [eBird Observation
+# Dataset](https://www.gbif.org/dataset/4fa7b334-ce0d-4e88-aaae-2e0c138d049e):
+
+ouzel = taxon("Turdus torquatus")
+presences = occurrences(
+    ouzel,
+    trim(layer),
+    "occurrenceStatus" => "PRESENT",
+    "limit" => 300,
+    "datasetKey" => "4fa7b334-ce0d-4e88-aaae-2e0c138d049e",
+)
+
+# ::: details Occurrences from a layer
+# 
+# The `GBIF.occurrences` method can accept a layer as its second argument, to
+# limit to the occurrence of a species within the bounding box of this layer. If
+# a layer is used as the sole argument, all occurrences in the bounding box are
+# queried.
+# 
+# :::
+
+while length(presences) < count(presences)
+    occurrences!(presences)
+end
+
+# We can plot the layer and all occurrences:
+
+heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
+scatter!(presences; color = :orange, markersize = 4)
+current_figure() #hide
+
+# Some of these occurrences are outside of the masked region in the layer. For
+# this reason, we will use the *non-mutating* `mask` method on the GBIF records:
+
+heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
+scatter!(mask(presences, CHE[1].geometry); color = :orange, markersize = 4)
+current_figure() #hide
+
+# ::: details A note about vectors of occurrences
+# 
+# The reason why `mask` called on a GBIF result is not mutating the result is
+# that GBIF results also store the query that was used. For this reason, it
+# makes little sense to modify this object. The non-mutating `mask` returns a
+# vector of GBIF records, which for most purposes can be used in-place of the
+# result.
+# 
+# :::
+
+#-

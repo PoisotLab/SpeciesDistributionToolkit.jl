@@ -60,3 +60,22 @@ function SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolyg
     layer.indices .&= inclusion
     return layer
 end
+
+function SimpleSDMLayers.mask(records::GBIFRecords, multipolygon::GeoJSON.MultiPolygon)
+    inclusion = zeros(Bool, length(records))
+    for element in multipolygon
+        for i in eachindex(inclusion)
+            if PolygonOps.inpolygon((records[i].longitude, records[i].latitude), element[1]) != 0
+                inclusion[i] = true
+                if length(element) > 2
+                    for i in 2:length(element)
+                        if PolygonOps.inpolygon((records[i].longitude, records[i].latitude), elements[i]) != 0
+                            inclusion[i] = false
+                        end
+                    end
+                end
+            end
+        end        
+    end
+    return records.occurrences[findall(inclusion)]
+end

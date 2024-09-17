@@ -15,6 +15,16 @@ WorldClim2Dataset = Union{wcdat...}
 url(::RasterData{WorldClim2, D}) where {D <: WorldClim2Dataset} =
     "https://www.worldclim.org/data/index.html"
 
+blurb(::Type{WorldClim2}) = md"""
+WorldClim is a database of high spatial resolution global weather and climate
+data. These data can be used for mapping and spatial modeling. The data are
+provided for use in research and related activities.
+
+Fick, S.E. and R.J. Hijmans, 2017. WorldClim 2: new 1km spatial resolution
+climate surfaces for global land areas. International Journal of Climatology 37
+(12): 4302-4315. 
+"""
+
 # Update provisioning
 provides(::Type{WorldClim2}, ::Type{T}) where {T <: WorldClim2Dataset} = true
 

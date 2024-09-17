@@ -142,6 +142,9 @@ for P in subtypes(RasterProvider)
         "w",
     ) do io
         print(io, "# $(P) \n\n")
+        print(io, "\n\n")
+        print(io, "$(SimpleSDMDatasets.blurb(P))")
+        print(io, "\n\n")
     end
     # Run the report for each dataset
     for D in subtypes(RasterDataset)

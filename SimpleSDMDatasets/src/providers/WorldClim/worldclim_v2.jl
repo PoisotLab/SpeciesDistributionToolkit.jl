@@ -37,8 +37,12 @@ provides(::Type{WorldClim2}, ::Type{T}) where {T <: WorldClim2Dataset} = true
 downloadtype(::RasterData{WorldClim2, T}) where {T <: WorldClim2Dataset} = _zip
 
 # Update the resolution
-resolutions(::RasterData{WorldClim2, T}) where {T <: WorldClim2Dataset} =
-    Dict([0.5 => "30s", 2.5 => "2.5m", 5.0 => "5m", 10.0 => "10m"])
+resolutions(::RasterData{WorldClim2, T}) where {T <: WorldClim2Dataset} = Dict([
+    0.5 => ("30s", "30 arc seconds, approx. 1×1 km"),
+    2.5 => ("2.5m", "2.5 arc minutes, approx 4×4 km"),
+    5.0 => ("5m", "5 arc minutes"),
+    10.0 => ("10m", "10 arc minutes"),
+])
 
 # Update the months
 months(::RasterData{WorldClim2, T}) where {T <: WorldClim2Dataset} = Month.(1:12)

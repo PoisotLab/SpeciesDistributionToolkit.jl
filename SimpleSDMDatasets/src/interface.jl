@@ -83,8 +83,9 @@ set resolution.
 
 An overload of this method is *required* when there are multiple resolutions
 available, and *must* return a `Dict` with numeric keys (for the resolution) and
-string values (giving the textual representation of these keys, usually in the
-way that is usable to build the url).
+a tuple value (giving the textual representation of these keys, usually in the
+way that is usable to build the url, followed by a textual description of the
+resolution if required).
 
 Any dataset with a return value that is not `nothing` *must* accept the
 `resolution` keyword.

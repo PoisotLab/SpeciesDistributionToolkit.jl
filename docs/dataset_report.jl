@@ -38,13 +38,9 @@ function _document_resolutions(
 ) where {P <: RasterProvider, D <: RasterDataset}
     if !isnothing(SimpleSDMDatasets.resolutions(data))
         text = "\n::: details Keyword argument `resolution`\n\n"
-        text *= "The following resolutions are accessible through the `resolution` keyword argument:\n\n"
-        text *= "| Resolution | Key |\n"
-        text *= "|------------|-------------|\n"
         for (k, v) in SimpleSDMDatasets.resolutions(data)
-            text *= "| `$(v)` | $(k) |\n"
+            text *= "\n\n$(v[2]) - `$(k)`"
         end
-        text *= "\nYou can also list the resolutions using `SimpleSDMDatasets.resolutions($(typeof(data)))`.\n\n"
         text *= "\n:::\n\n"
         return text
     end

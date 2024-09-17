@@ -25,8 +25,11 @@ layers(::RasterData{PaleoClim, BioClim}) = layers(RasterData(CHELSA2, BioClim))
 layerdescriptions(::RasterData{PaleoClim, BioClim}) =
     layerdescriptions(RasterData(CHELSA2, BioClim))
 
-resolutions(::RasterData{PaleoClim, BioClim}) =
-    Dict([2.5 => "2_5m", 5.0 => "5m", 10.0 => "10m"])
+resolutions(::RasterData{PaleoClim, BioClim}) where {T <: WorldClim2Dataset} = Dict([
+    2.5 => ("2_5m", "2.5 arc minutes, approx 4×4 km"),
+    5.0 => ("5m", "5 arc minutes"),
+    10.0 => ("10m", "10 arc minutes"),
+])
 
 extrakeys(::RasterData{PaleoClim, BioClim}) = Dict([
     :timeperiod => (

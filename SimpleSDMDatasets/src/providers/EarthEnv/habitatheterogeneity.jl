@@ -35,8 +35,11 @@ layers(::RasterData{EarthEnv, HabitatHeterogeneity}) = [
     "Variance",
 ]
 
-resolutions(::RasterData{EarthEnv, HabitatHeterogeneity}) =
-    Dict([0.5 => "1km", 2.5 => "5km", 12.5 => "25km"])
+resolutions(::RasterData{EarthEnv, HabitatHeterogeneity}) = Dict([
+    0.5 => ("1km" ,"1km"),
+    2.5 => ("5km" ,"5km"),
+    12.5 => ("25km" ,"25km"),
+])
 
 function source(
     data::RasterData{EarthEnv, HabitatHeterogeneity};

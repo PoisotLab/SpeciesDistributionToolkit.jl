@@ -1,18 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Asap:ital,wght@0,100..900;1,100..900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @font-face {
     font-family: JuliaMono-Regular;
     src: url("https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.056/JuliaMono-Medium.woff2");
 }
 
 :root {
-    --vp-font-family-base: "Asap", "Inter", "Pretendard", system-ui, sans-serif;
+    --vp-font-family-base: "Inter", "Pretendard", system-ui, sans-serif;
     --vp-font-family-mono: JuliaMono-Medium, monospace;
 }
 
 .VPHero .name {
-    font-weight: 900;
-    font-family: "Asap Narrow", var(--vp-font-family-base);
+    font-weight: 700;
+    font-family: "Inter Tight", var(--vp-font-family-base);
 }
 
 .VPHero .tagline {

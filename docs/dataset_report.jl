@@ -2,8 +2,8 @@ function _document_layers(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
     if !isnothing(SimpleSDMDatasets.layers(data))
-        text = "\n::: details Multiple layers\n\n"
-        text *= "The following layers are accessible through the `layer` keyword:\n\n"
+        text = "\n::: details Keyword argument `layer`\n\n"
+        text *= "\n\n"
         text *= "| Layer code | Description |\n"
         text *= "|------------|-------------|\n"
         for (k, v) in SimpleSDMDatasets.layerdescriptions(data)
@@ -37,7 +37,7 @@ function _document_resolutions(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
     if !isnothing(SimpleSDMDatasets.resolutions(data))
-        text = "\n::: details Spatial resolution\n\n"
+        text = "\n::: details Keyword argument `resolution`\n\n"
         text *= "The following resolutions are accessible through the `resolution` keyword argument:\n\n"
         text *= "| Resolution | Key |\n"
         text *= "|------------|-------------|\n"
@@ -55,7 +55,7 @@ function _document_months(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
     if !isnothing(SimpleSDMDatasets.months(data))
-        text = "\n::: details Index by month\n\n"
+        text = "\n::: details Keyword argument `month`\n\n"
         text *= "\nThis dataset can be accessed monthly, using the `month` keyword argument. You can list the available months using `SimpleSDMDatasets.months($(typeof(data)))`.\n\n"
         text *= "\n:::\n\n"
         return text

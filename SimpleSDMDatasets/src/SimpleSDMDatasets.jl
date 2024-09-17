@@ -3,6 +3,7 @@ module SimpleSDMDatasets
 import Downloads
 using Dates
 using ZipFile
+using Markdown
 
 # Set the potential paths for downloads
 const _data_storage_folders = first([
@@ -54,15 +55,24 @@ export RasterData, Projection
 include("interface.jl")
 export layers, layerdescriptions
 
+# Default blurbs
+include("blurbs.jl")
+
 # Providers
 include("providers/CHELSA/chelsa_v1.jl")
 include("providers/CHELSA/chelsa_future_v1.jl")
 include("providers/CHELSA/chelsa_v2.jl")
 include("providers/CHELSA/chelsa_future_v2.jl")
+
 include("providers/EarthEnv/earthenv.jl")
+include("providers/EarthEnv/landcover.jl")
+include("providers/EarthEnv/habitatheterogeneity.jl")
+
 include("providers/WorldClim/worldclim_v2.jl")
 include("providers/WorldClim/worldclim_future_v2.jl")
+
 include("providers/BiodiversityMapping/biodiversitymapping.jl")
+
 include("providers/PaleoClim/bioclim.jl")
 
 # Key checker

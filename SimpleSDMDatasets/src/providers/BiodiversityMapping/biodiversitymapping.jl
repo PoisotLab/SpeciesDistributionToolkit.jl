@@ -3,6 +3,20 @@ BiodivMap = Union{bdmap...}
 
 provides(::Type{BiodiversityMapping}, ::Type{T}) where {T <: BiodivMap} = true
 
+url(::Type{BiodiversityMapping}) = "https://biodiversitymapping.org/"
+
+blurb(::Type{BiodiversityMapping}) = md"""
+Summary of the richness of different taxonomic groups at a 10x10 km resolution.
+
+::: details Citation
+
+Jenkins, C.N., Pimm, S.L., and Joppa, L.N. (2013). Global patterns of
+terrestrial vertebrate diversity and conservation. Proc. Natl. Acad. Sci. U. S.
+A. 110, E2602-10.
+
+:::
+"""
+
 downloadtype(::RasterData{BiodiversityMapping, T}) where {T <: BiodivMap} = _zip
 
 destination(::RasterData{BiodiversityMapping, T}; kwargs...) where {T <: BiodivMap} = joinpath(SimpleSDMDatasets._LAYER_PATH, string(BiodiversityMapping))

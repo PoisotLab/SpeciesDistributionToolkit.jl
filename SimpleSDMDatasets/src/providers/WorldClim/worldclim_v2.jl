@@ -15,6 +15,21 @@ WorldClim2Dataset = Union{wcdat...}
 url(::RasterData{WorldClim2, D}) where {D <: WorldClim2Dataset} =
     "https://www.worldclim.org/data/index.html"
 
+blurb(::Type{WorldClim2}) = md"""
+WorldClim is a database of high spatial resolution global weather and climate
+data. These data can be used for mapping and spatial modeling. The data are
+provided for use in research and related activities.
+
+::: details Citation
+
+Fick, S.E. and R.J. Hijmans, 2017. WorldClim 2: new 1km spatial resolution
+climate surfaces for global land areas. International Journal of Climatology 37
+(12): 4302-4315. 
+
+:::
+
+"""
+
 # Update provisioning
 provides(::Type{WorldClim2}, ::Type{T}) where {T <: WorldClim2Dataset} = true
 
@@ -22,8 +37,14 @@ provides(::Type{WorldClim2}, ::Type{T}) where {T <: WorldClim2Dataset} = true
 downloadtype(::RasterData{WorldClim2, T}) where {T <: WorldClim2Dataset} = _zip
 
 # Update the resolution
-resolutions(::RasterData{WorldClim2, T}) where {T <: WorldClim2Dataset} =
-    Dict([0.5 => "30s", 2.5 => "2.5m", 5.0 => "5m", 10.0 => "10m"])
+resolutions(::RasterData{WorldClim2, T}) where {T <: WorldClim2Dataset} = Dict([
+    0.5 => "30 arc seconds, approx. 1×1 km",
+    2.5 => "2.5 arc minutes, approx 4×4 km",
+    5.0 => "5 arc minutes",
+    10.0 => "10 arc minutes",
+])
+
+_worldclim2_resolution(res) = Dict(0.5 => "30s", 2.5 => "2.5m", 5.0 => "5m", 10.0 => "10m")[res]
 
 # Update the months
 months(::RasterData{WorldClim2, T}) where {T <: WorldClim2Dataset} = Month.(1:12)
@@ -72,7 +93,7 @@ function source(
     resolution = 10.0,
     args...,
 ) where {D <: WorldClim2Dataset}
-    res_code = get(resolutions(data), resolution, "10m")
+    res_code = _worldclim2_resolution(resolution)
     var_code = _var_slug(data)
     root = "https://geodata.ucdavis.edu/climate/worldclim/2_1/base/"
     stem = "wc2.1_$(res_code)_$(var_code).zip"
@@ -88,7 +109,7 @@ function layername(
     resolution = 10.0,
     month = Month(1),
 ) where {D <: WorldClim2Dataset}
-    res_code = get(resolutions(data), resolution, "10m")
+    res_code = _worldclim2_resolution(resolution)
     var_code = _var_slug(data)
     layer_code = lpad(string(month.value), 2, '0')
     return "wc2.1_$(res_code)_$(var_code)_$(layer_code).tif"
@@ -99,7 +120,7 @@ function layername(
     resolution = 10.0,
     layer = "BIO1",
 )
-    res_code = get(resolutions(data), resolution, "10m")
+    res_code = _worldclim2_resolution(resolution)
     var_code = _var_slug(data)
     layer_code = (layer isa Integer) ? layer : findfirst(isequal(layer), layers(data))
     return "wc2.1_$(res_code)_$(var_code)_$(layer_code).tif"
@@ -109,7 +130,7 @@ function layername(
     data::RasterData{WorldClim2, Elevation};
     resolution = 10.0,
 )
-    res_code = get(resolutions(data), resolution, "10m")
+    res_code = _worldclim2_resolution(resolution)
     var_code = _var_slug(data)
     return "wc2.1_$(res_code)_$(var_code).tif"
 end

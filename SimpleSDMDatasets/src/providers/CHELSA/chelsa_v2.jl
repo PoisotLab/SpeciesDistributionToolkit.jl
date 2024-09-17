@@ -1,3 +1,23 @@
+blurb(::Type{CHELSA2}) = md"""
+CHELSA (Climatologies at high resolution for the earth’s land surface areas) is
+a very high resolution (30 arc sec, ~1km) global downscaled climate data set
+currently hosted by the Swiss Federal Institute for Forest, Snow and Landscape
+Research WSL. It is built to provide free access to high resolution climate data
+for research and application, and is constantly updated and refined.
+
+::: details Citations
+
+Karger, D.N., Conrad, O., Böhner, J., Kawohl, T., Kreft, H., Soria-Auza, R.W.,
+Zimmermann, N.E., Linder, P., Kessler, M. (2017): Climatologies at high
+resolution for the Earth land surface areas. Scientific Data. 4 170122.
+
+Karger D.N., Conrad, O., Böhner, J., Kawohl, T., Kreft, H., Soria-Auza, R.W.,
+Zimmermann, N.E, Linder, H.P., Kessler, M. (2018): Data from: Climatologies at
+high resolution for the earth’s land surface areas. EnviDat.
+
+:::
+"""
+
 CHELSA2Dataset = Union{
     BioClim,
     Precipitation,
@@ -9,6 +29,7 @@ CHELSA2Dataset = Union{
 # Update provisioning
 provides(::Type{CHELSA2}, ::Type{T}) where {T <: CHELSA2Dataset} = true
 
+url(::Type{CHELSA2}) = "https://chelsa-climate.org/"
 url(::RasterData{CHELSA2, D}) where {D <: CHELSA2Dataset} = "https://chelsa-climate.org/"
 
 # Update the layers

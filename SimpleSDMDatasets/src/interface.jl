@@ -83,8 +83,7 @@ set resolution.
 
 An overload of this method is *required* when there are multiple resolutions
 available, and *must* return a `Dict` with numeric keys (for the resolution) and
-string values (giving the textual representation of these keys, usually in the
-way that is usable to build the url).
+a string value giving an explanation of the resolution.
 
 Any dataset with a return value that is not `nothing` *must* accept the
 `resolution` keyword.
@@ -166,9 +165,11 @@ the default keys specified in this interface.
 
 An overload of this method is *required* when there are additional keywords
 needed to access the data (*e.g.* `full=true` for the `EarthEnv` land-cover
-data), and *must* return a `Dict`, with `Symbol` keys and `Tuple` arguments,
-where the key is the keyword argument passed to `downloader` and the tuple lists
-all accepted values.
+data), and *must* return a `Dict`, with `Symbol` keys and `Tuple`s of pairs as
+values.
+
+The key is the keyword argument passed to `downloader` and the tuple lists all
+accepted values, in the format `value => explanation`.
 
 Any dataset with a return value that is not `nothing` *must* accept the keyword
 arguments specified in the return value.
@@ -224,5 +225,18 @@ bandnumber(::R, ::F; kwargs...) where {R <: RasterData, F <: Projection} = 1
 crs(::R) where {R <: RasterData} = _wgs84
 crs(data::R, ::F) where {R <: RasterData, F <: Projection} = crs(data)
 
-url(::R) where {R <: RasterData} = ""
+"""
+    url(::P) where {P <: DataProvider}
+
+The URL for the data provider - if there is no specific URL for each dataset, it
+is enough to define this one.
+"""
+url(::Type{P}) where {P <: RasterProvider} = ""
+url(::RasterData{P, D}) where {P <: RasterProvider, D <: RasterDataset} = url(P)
 url(data::R, ::F) where {R <: RasterData, F <: Projection} = url(data)
+
+"""
+    blurb(::Type{P}) where {P <: RasterProvider}
+"""
+blurb(::Type{P}) where {P <: RasterProvider} = ""
+blurb(::RasterData{P, D}) where {P <: RasterProvider, D <: RasterDataset} = blurb(P)

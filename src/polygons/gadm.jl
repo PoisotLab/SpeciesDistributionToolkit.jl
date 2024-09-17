@@ -43,7 +43,10 @@ function gadm(code::String, places::String...)
         reduce(
             intersect,
             [
-                findall(isequal(replace(places[i], " " => "")), getproperty(avail, Symbol("NAME_$(i)")))
+                findall(
+                    isequal(replace(places[i], " " => "")),
+                    getproperty(avail, Symbol("NAME_$(i)")),
+                )
                 for
                 i in 1:level
             ],
@@ -61,9 +64,29 @@ function gadmlist(code::String, places::String...)
     position = reduce(
         intersect,
         [
-            findall(isequal(replace(places[i], " " => "")), getproperty(avail, Symbol("NAME_$(i)"))) for
+            findall(
+                isequal(replace(places[i], " " => "")),
+                getproperty(avail, Symbol("NAME_$(i)")),
+            ) for
             i in 1:(level - 1)
         ],
     )
     return getproperty(avail, Symbol("NAME_$(level)"))[position]
+end
+
+function gadm(code::String, level::Integer, places::String...)
+    level = max(length(places), level)
+    avail = _get_gadm_file(code, level)
+    position = reduce(
+        intersect,
+        [
+            findall(
+                isequal(replace(p, " " => "")),
+                getproperty(avail, Symbol("NAME_$(i)")),
+            )
+            for
+            (i, p) in enumerate(places)
+        ],
+    )
+    return avail.geometry[position]
 end

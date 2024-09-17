@@ -44,6 +44,7 @@ makedocs(;
             "tutorials/pseudoabsences.md",
             "tutorials/fauxcurrences.md",
             "tutorials/futureclimate.md",
+            "tutorials/zonal.md",
         ],
         "How-to..." => [
             "howto/get_gbif_data.md",

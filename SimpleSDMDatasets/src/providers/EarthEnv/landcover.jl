@@ -7,9 +7,11 @@ classes at 1-km resolution. For additional information about the integration
 approach and the evaluations of the datasets, please see the associated journal
 article:
 
+:::details Citation
 Tuanmu, M.-N. and W. Jetz. 2014. A global 1-km consensus land-cover product for
 biodiversity and ecosystem modeling. Global Ecology and Biogeography 23(9):
 1031-1045.
+:::
 """
 
 # Additional keys for search

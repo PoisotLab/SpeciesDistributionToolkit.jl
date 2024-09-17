@@ -99,16 +99,14 @@ function report(::Type{P}, ::Type{D}) where {P <: RasterProvider, D <: RasterDat
     # Short description
     _description = """
 
+    ~~~julia
+    using SpeciesDistributionToolkit
+    layer = SDMLayer(RasterData($(P), $(D)))  # [!code focus]
+    ~~~
+
     $(SimpleSDMDatasets.blurb(RasterData(P, D)))
 
     For more information about this provider: $(SimpleSDMDatasets.url(RasterData(P, D)))
-
-    To access this dataset:
-
-    ~~~julia
-    using SpeciesDistributionToolkit
-    layer = SDMLayer(RasterData($(P), $(D)))
-    ~~~
 
     """
     # Prepare and return

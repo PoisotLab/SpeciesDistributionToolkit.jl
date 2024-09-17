@@ -1,37 +1,15 @@
-"""
-    interpolate(layer::SDMLayer; dest="+proj=natearth2", newsize=nothing)
-
-Returns an interpolated version of the later under the new destination CRS
-(natearth2 by default), and with optionally a new size of `newsize`.
-"""
-function interpolate(layer::SDMLayer; dest = "+proj=natearth2", newsize = nothing)
-    # We'll use this later
-    EL = eastings(layer)
-    NL = northings(layer)
+function interpolate!(destination::SDMLayer, source::SDMLayer)
+    EL = eastings(source)
+    NL = northings(source)
+    EI = eastings(destination)
+    NI = northings(destination)
 
     # Functions for projection
-    prj = SimpleSDMLayers.Proj.Transformation(layer.crs, dest; always_xy = true)
-    revprj = SimpleSDMLayers.Proj.Transformation(dest, layer.crs; always_xy = true)
+    revprj = SimpleSDMLayers.Proj.Transformation(destination.crs, source.crs; always_xy = true)
 
-    # New coordinates for the layer - we need to do the entire exterior!
-    b1 = [prj(EL[1], n) for n in NL]
-    b2 = [prj(EL[end], n) for n in NL]
-    b3 = [prj(e, NL[1]) for e in EL]
-    b4 = [prj(e, NL[end]) for e in EL]
-    bands = vcat(b1, b2, b3, b4)
-    nx = extrema(first.(bands))
-    ny = extrema(last.(bands))
-
-    # Prepare a new layer
-    newsize = isnothing(newsize) ? size(layer) : newsize
-    newlayer = SDMLayer(zeros(Float32, newsize); crs = dest, x = nx, y = ny)
-    nodata!(newlayer, zero(eltype(newlayer)))
-    EI = eastings(newlayer)
-    NI = northings(newlayer)
-
-    Threads.@threads for i in axes(newlayer, 2)
+    Threads.@threads for i in axes(destination, 2)
         dx = EI[i]
-        for j in axes(newlayer, 1)
+        for j in axes(destination, 1)
             dy = NI[j]
             x, y = revprj(dx, dy)
             i1 = findlast(EL .< x)
@@ -43,12 +21,12 @@ function interpolate(layer::SDMLayer; dest = "+proj=natearth2", newsize = nothin
                 x2 = EL[i2]
                 y1 = NL[j1]
                 y2 = NL[j2]
-                Q11 = layer[j1, i1]
-                Q12 = layer[j1, i2]
-                Q21 = layer[j2, i1]
-                Q22 = layer[j2, i2]
+                Q11 = source[j1, i1]
+                Q12 = source[j1, i2]
+                Q21 = source[j2, i1]
+                Q22 = source[j2, i2]
                 if !any(isnothing, [Q11, Q12, Q21, Q22])
-                    newlayer[j, i] = SimpleSDMLayers.polynomialinterpolation(
+                    destination[j, i] = SimpleSDMLayers.polynomialinterpolation(
                         x1,
                         x,
                         x2,
@@ -60,12 +38,64 @@ function interpolate(layer::SDMLayer; dest = "+proj=natearth2", newsize = nothin
                         Q21,
                         Q22,
                     )
-                    SimpleSDMLayers.reveal!(newlayer, i, j)
+                    SimpleSDMLayers.reveal!(destination, i, j)
+                else
+                    SimpleSDMLayers.hide!(destination, i, j)
                 end
             end
         end
     end
-    return newlayer
+    return destination
+end
+
+function _create_destination_layer(source::SDMLayer, dest, newsize)
+    EL = eastings(source)
+    NL = northings(source)
+    prj = SimpleSDMLayers.Proj.Transformation(source.crs, dest; always_xy = true)
+    
+    b1 = [prj(EL[1], n) for n in NL]
+    b2 = [prj(EL[end], n) for n in NL]
+    b3 = [prj(e, NL[1]) for e in EL]
+    b4 = [prj(e, NL[end]) for e in EL]
+    bands = vcat(b1, b2, b3, b4)
+    
+    nx = extrema(first.(bands))
+    ny = extrema(last.(bands))
+
+    destination = SDMLayer(zeros(Float32, newsize); crs = dest, x = nx, y = ny)
+    nodata!(destination, zero(eltype(destination)))
+    return destination
+end
+
+"""
+    interpolate(layer::SDMLayer; dest="+proj=natearth2", newsize=nothing)
+
+Returns an interpolated version of the later under the new destination CRS
+(natearth2 by default), and with optionally a new size of `newsize`.
+"""
+function interpolate(layer::SDMLayer; dest = "+proj=natearth2", newsize = nothing)
+    destination = _create_destination_layer(layer, dest, isnothing(newsize) ? size(layer) : newsize)
+    interpolate!(destination, layer)
+    return destination
+end
+
+@testitem "We can interpolate a layer given a new destination crs" begin
+    layer = SimpleSDMLayers.__demodata(reduced=true)
+    dest = interpolate(layer; dest="+proj=natearth2")
+    @test dest.crs == "+proj=natearth2"
+end
+
+@testitem "We can interpolate a layer with a new size" begin
+    layer = SimpleSDMLayers.__demodata(reduced=true)
+    dest = interpolate(layer; newsize=(120, 120))
+    @test size(dest) == (120, 120)
+end
+
+@testitem "We can interpolate a layer with a new size and a new crs" begin
+    layer = SimpleSDMLayers.__demodata(reduced=true)
+    dest = interpolate(layer; newsize=(120, 120), dest="+proj=natearth")
+    @test size(dest) == (120, 120)
+    @test dest.crs == "+proj=natearth"
 end
 
 function polynomialinterpolation(x1, x, x2, y1, y, y2, Q11, Q12, Q21, Q22)

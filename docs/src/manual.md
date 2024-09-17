@@ -1,21 +1,53 @@
-# List of packages
+# Manual
+
+`SpeciesDistributionToolkit.jl` is a collection of packages for species
+distribution modeling and biodiversity research, for the
+[Julia](https://julialang.org/) programming language.
+
+::: info Not just for research!
+
+This package is now used in pipelines in [BON in a
+Box](https://boninabox.geobon.org/index), [GEOBON](https://geobon.org/)'s
+project to automate the calculation and representation of the post-2020 [GBF
+indicators](https://www.cbd.int/gbf).
+
+:::
+
+## Contents of the package
+
+The package offers a series of methods to acces data required to build species distribution models, including:
 
 - a wrapper around the [GBIF](https://www.gbif.org/) occurrences API to access occurrence data
-  (`GBIF.jl`)
-- a wrapper around the [Phylopic](https://www.phylopic.org/) images API (`Phylopic.jl`)
+- a wrapper around the [Phylopic](https://www.phylopic.org/) images API
+- ways to generate fake occurrences with statistical properties similar to actual occurrences
 - ways to generate pseudo-absences based on a series of heuristics
-- ways to generate fake occurrences with statistical properties similar to
-  actual occurrences (`Fauxcurrences.jl`)
-- a simple way to represent layers as either mutable or immutable objects (`SimpleSDMLayers.jl`)
-- a way to collect historic and future climate and land-use data to feed into the models (`SimpleSDMDatasets.jl`), pre-loaded with data from [CHELSA](https://chelsa-climate.org/), [EarthEnv](https://www.earthenv.org/), and [WorldClim](https://www.worldclim.org/)
-- interfaces to [Makie](https://docs.makie.org/stable/) for plotting and data visualisation
+- a simple way to represent layers as mutable objectcs
+- a way to collect historic and future climate and land-use data to feed into the models, pre-loaded with datasets like CHELSA, WorldClim, EarthEnv, PaleoClim, etc
+- an interface to [Makie](https://docs.makie.org/stable/) for plotting and data visualisation
 
-This documentation is therefore pretty vast: it offers an in-depth explanation of what the
-component packages are doing and how they work, discusses the interactions between these
-packages, and offers a series of illustrations which includes some examples of models of
-species distributions.
+::: details Installation
 
-Each package also comes with its specific documentation:
+The only package you need to install is `SpeciesDistributionToolkit` itself,
+which can be done using
+
+```julia
+import Pkg
+Pkg.add("SpeciesDistributionToolkit") # [!code focus]
+```
+
+This will automatically install all the sub-packages.
+
+:::
+
+## Contents of the manual
+
+This manual is split into two sections: tutorials, which are medium to long
+examples of using the full functionality of the package; and how-tos, which are
+shorter (and denser) summaries of how to achieve a specific task.
+
+In addition, each of the component packages has its own documentation.
+
+## List of components
 
 - [GBIF.jl](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/)
 - [Phylopic.jl](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/)

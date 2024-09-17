@@ -18,13 +18,16 @@ end
 function _document_extrakeys(
     data::RasterData{P, D},
 ) where {P <: RasterProvider, D <: RasterDataset}
-    if !isnothing(SimpleSDMDatasets.extrakeys(data))
-        text = "\n::: details Additional keywords\n\n"
-        text *= "The following keyword arguments can be used with this dataset:\n\n"
-        for (k, v) in SimpleSDMDatasets.extrakeys(data)
-            text *= "**$(String(k))**: $(join(v, ", ", " and "))\n\n"
+    exk = SimpleSDMDatasets.extrakeys(data)
+    if !isnothing(exk)
+        text = ""
+        for (k,v) in exk
+            text *= "\n\n::: details Keyword argument `$(k)`\n\n"
+            for (val,def) in v
+                text *= "\n\n$(def) - `$(val)`\n\n"
+            end
+            text *= "\n:::\n\n"
         end
-        text *= "\n:::\n\n"
         return text
     end
     return ""

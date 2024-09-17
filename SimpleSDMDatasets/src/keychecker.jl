@@ -129,7 +129,7 @@ function keychecker(data::R, future::F; kwargs...) where {R <: RasterData, F <: 
                 error("The keyword argument $(k) is not supported by the $(R) dataset")
             end
             if k in keys(extrakeys(data))
-                if ~(values(kwargs)[k] in extrakeys(data)[k])
+                if ~(values(kwargs)[k] in first.(extrakeys(data)[k]))
                     error(
                         "The value $(values(kwargs)[k]) is not supported for the keyword argument $(k) to $(R) under $(F)",
                     )

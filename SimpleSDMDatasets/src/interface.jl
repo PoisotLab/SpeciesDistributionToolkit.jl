@@ -224,5 +224,18 @@ bandnumber(::R, ::F; kwargs...) where {R <: RasterData, F <: Projection} = 1
 crs(::R) where {R <: RasterData} = _wgs84
 crs(data::R, ::F) where {R <: RasterData, F <: Projection} = crs(data)
 
-url(::R) where {R <: RasterData} = ""
+"""
+    url(::P) where {P <: DataProvider}
+
+The URL for the data provider - if there is no specific URL for each dataset, it
+is enough to define this one.
+"""
+url(::Type{P}) where {P <: RasterProvider} = ""
+url(::RasterData{P, D}) where {P <: RasterProvider, D <: RasterDataset} = url(P)
 url(data::R, ::F) where {R <: RasterData, F <: Projection} = url(data)
+
+"""
+    blurb(::Type{P}) where {P <: RasterProvider}
+"""
+blurb(::Type{P}) where {P <: RasterProvider} = ""
+blurb(::RasterData{P, D}) where {P <: RasterProvider, D <: RasterDataset} = blurb(P)

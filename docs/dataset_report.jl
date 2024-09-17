@@ -95,6 +95,9 @@ function report(::Type{P}, ::Type{D}) where {P <: RasterProvider, D <: RasterDat
     _header = "## $(D)"
     # Short description
     _description = """
+
+    $(SimpleSDMDatasets.blurb(RasterData(P, D)))
+
     For more information about this dataset, please refer to: $(SimpleSDMDatasets.url(RasterData(P, D)))
 
     To access this dataset:

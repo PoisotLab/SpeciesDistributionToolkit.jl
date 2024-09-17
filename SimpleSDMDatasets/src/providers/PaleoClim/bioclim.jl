@@ -6,9 +6,12 @@ modeling and GIS. The data were generated based in part on
 [CHELSA](https://chelsa-climate.org/last-glacial-maximum-climate/) data.
 
 ::: details Citation
+
 Brown, Hill, Dolan, Carnaval, Haywood. PaleoClim, high spatial resolution
 paleoclimate surfaces for global land areas. Scientific Data. 5:18025 (2018).
+
 :::
+
 """
 
 provides(::Type{PaleoClim}, ::Type{BioClim}) = true

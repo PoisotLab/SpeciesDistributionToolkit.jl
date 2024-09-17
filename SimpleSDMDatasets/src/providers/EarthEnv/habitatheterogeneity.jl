@@ -9,10 +9,13 @@ evaluations of their utility for biodiversity modeling, please see the
 associated journal article:
 
 :::details Citation
+
 Tuanmu, M.-N. and W. Jetz. (2015) A global, remote sensing-based
 characterization of terrestrial habitat heterogeneity for biodiversity and
 ecosystem modeling. Global Ecology and Biogeography. DOI: 10.1111/geb.12365.
+
 :::
+
 """
 
 layers(::RasterData{EarthEnv, HabitatHeterogeneity}) = [

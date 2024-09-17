@@ -91,7 +91,7 @@ function source(
     resolution = 10.0,
     args...,
 ) where {D <: WorldClim2Dataset}
-    res_code = get(resolutions(data), resolution, "10m")
+    res_code = resolutions(data)[resolution][2]
     var_code = _var_slug(data)
     root = "https://geodata.ucdavis.edu/climate/worldclim/2_1/base/"
     stem = "wc2.1_$(res_code)_$(var_code).zip"
@@ -107,7 +107,7 @@ function layername(
     resolution = 10.0,
     month = Month(1),
 ) where {D <: WorldClim2Dataset}
-    res_code = get(resolutions(data), resolution, "10m")
+    res_code = resolutions(data)[resolution][2]
     var_code = _var_slug(data)
     layer_code = lpad(string(month.value), 2, '0')
     return "wc2.1_$(res_code)_$(var_code)_$(layer_code).tif"
@@ -118,7 +118,7 @@ function layername(
     resolution = 10.0,
     layer = "BIO1",
 )
-    res_code = get(resolutions(data), resolution, "10m")
+    res_code = resolutions(data)[resolution][2]
     var_code = _var_slug(data)
     layer_code = (layer isa Integer) ? layer : findfirst(isequal(layer), layers(data))
     return "wc2.1_$(res_code)_$(var_code)_$(layer_code).tif"

@@ -102,7 +102,7 @@ function report(::Type{P}, ::Type{D}) where {P <: RasterProvider, D <: RasterDat
 
     $(SimpleSDMDatasets.blurb(RasterData(P, D)))
 
-    For more information about this provider: $(SimpleSDMDatasets.url(RasterData(P, D)))
+    For more information about this dataset: $(SimpleSDMDatasets.url(RasterData(P, D)))
 
     """
     # Prepare and return

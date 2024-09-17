@@ -108,3 +108,28 @@ SimpleSDMDatasets.source
 ```@docs
 SimpleSDMDatasets.destination
 ```
+
+## URL for additional information
+
+The `url` method will display one URL re-directing users to either the
+description of the provider, or the description of the dataset. *A minima*, the
+version for the `RasterProvider` should be specified. Note that this must return
+a **Markdown** string.
+
+Most of the `RasterDataset` will have a *default* blurb, but more specific
+(*i.e.* adapted to a particular prodiver) ones can be provided.
+
+```@docs
+SimpleSDMDatasets.url
+```
+
+## Additional information about a dataset
+
+The `blurb` is a short text explaining what the dataset / provider is about. *A
+minima*, the version for the `RasterProvider` should be specified. In some
+cases, it is acceptable to only define a version for one `RasterDataset` and any
+`RasterProvider`, although a more specific dispatch can be implemented.
+
+```@docs
+SimpleSDMDatasets.blurb
+```

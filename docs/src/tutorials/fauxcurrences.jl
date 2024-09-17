@@ -6,7 +6,6 @@ using CairoMakie
 Random.seed!(616525434012345) #hide
 CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
-
 # Get the observation data in the correct format, which is an array of matrices
 # with two rows (longitude, latitude) and one column for observed occurrence.
 # This is usually an array of GBIF observations, but all that matters is that
@@ -15,7 +14,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 # make sure that we cover a reasonable spatial extent, we will look at the
 # rather small area in space (part of the Gaspésie region):
 
-bbox = (bottom = 43.285203, left = -68.631592, top = 47.487513, right = -59.458008)
+bbox = (bottom = 43.28, left = -66.5, top = 47.20, right = -59.45)
 layer = SDMLayer(RasterData(CHELSA1, BioClim); layer = 1, bbox...)
 
 # We will pick three species of *Iris* that are found in this area:
@@ -23,11 +22,9 @@ layer = SDMLayer(RasterData(CHELSA1, BioClim); layer = 1, bbox...)
 taxa = taxon.(["Iris hookeri", "Iris versicolor", "Iris pseudacorus"])
 observations = [
     occurrences(t,
-        "hasCoordinate" => "true",
+        layer,
         "occurrenceStatus" => "PRESENT",
-        "decimalLatitude" => extrema(northings(layer)),
-        "decimalLongitude" => extrema(eastings(layer)),
-        "limit" => 250) for t in taxa
+        "limit" => 300) for t in taxa
 ]
 
 # The last step is to turn these occurrences into a matrix of latitudes and
@@ -152,7 +149,7 @@ progress[1] = sum(D)
 # solve. In practice, using `ProgressMeter` will make the timing of the whole
 # process a lot more informative. In this simple version, we rely on a manually
 # created progress report. Note that we stop the process when we have done at
-# least 5×10⁴ steps, with no improvement over the last 10³.
+# least 1×10⁵ steps, with no improvement over the last 2×10³.
 
 for i in axes(progress, 1)[2:end] 
     progress[i] = Fauxcurrences.step!(
@@ -169,12 +166,12 @@ for i in axes(progress, 1)[2:end]
         bin_s_inter,
         progress[i - 1],
     )
-    if i > 50_000
-        if abs(progress[i] - progress[i - 1000]) <= 1e-5
+    if i > 100_000
+        if abs(progress[i] - progress[i - 2000]) <= 1e-5
             break
         end
     end
-    if iszero(i % 20_000)
+    if iszero(i % 10_000)
         println(
             "[$(lpad(round(Int64, 100*(i/length(progress))), 3))%]\tJS-divergence: $(round(progress[i]; digits=3))",
         )
@@ -198,6 +195,10 @@ println(
     "Improvement: $(round(progress[begin]/progress[findlast(x -> x>0, progress)]; digits=2)) ×",
 )
 
+#-
+
+lines(progress[1:findlast(x -> x>0, progress)]; axis=(; yscale=sqrt, xlabel="Iteration", ylabel="JS divergence"), color=:black) #hide
+
 # Note that for a small number of iterations (like we used here), this
 # improvement is unlikely to be very large; note also that the returns (in terms
 # of improvement over time) are very much diminishing. The good news is that
@@ -205,13 +206,58 @@ println(
 # again, as the package has modified the matrices, and is ready to restart at
 # any time. This is useful for checkpointing.
 
-# You can also look at the per-matrix score, out of all the distance bins (set
-# as a package-wide variable, `Fauxcurrences._number_of_bins`, which you are
-# encouraged to tweak) -- under a *good* fit, the lines in `bin_intra` and
-# `bin_s_intra` would overlap (same with `..._inter`).
+# The final disposition of the fauxcurrences is:
 
 heatmap(layer, colormap=[:white, :gray])
 for i in eachindex(taxa)
     scatter!(sim[i], label=taxa[i].name)
 end
 current_figure() #hide
+
+# We can also look at the per-matrix score, out of all the distance bins (set as
+# a package-wide variable, `Fauxcurrences._number_of_bins`, which you are
+# encouraged to tweak) -- under a *good* fit, the lines in `bin_intra` and
+# `bin_s_intra` would overlap (same with `..._inter`).
+
+# For the intra-specific distances, with observations in black and the
+# simulation in orange, this looks like:
+
+f = Figure(; size=(700, 250))
+ax1 = Axis(f[1,1])
+scatterlines!(ax1, bin_intra[1]; color=:black)
+scatter!(ax1, bin_s_intra[1], color=:transparent, strokewidth=2, strokecolor=:orange, markersize=10, marker=:rect)
+
+ax2 = Axis(f[1,2])
+scatterlines!(ax2, bin_intra[2]; color=:black)
+scatter!(ax2, bin_s_intra[2], color=:transparent, strokewidth=2, strokecolor=:orange, markersize=10, marker=:rect)
+
+ax3 = Axis(f[1,3])
+scatterlines!(ax3, bin_intra[3]; color=:black)
+scatter!(ax3, bin_s_intra[3], color=:transparent, strokewidth=2, strokecolor=:orange, markersize=10, marker=:rect)
+
+[hidespines!(ax) for ax in [ax1, ax2, ax3]] #hide
+[hidedecorations!(ax) for ax in [ax1, ax2, ax3]] #hide
+current_figure() #hide
+
+# For the components of the inter-specific distance matrix, this looks like:
+
+f = Figure(; size=(700, 250))
+ax1 = Axis(f[1,1])
+scatterlines!(ax1, bin_inter[1]; color=:black)
+scatter!(ax1, bin_s_inter[1], color=:transparent, strokewidth=2, strokecolor=:purple, markersize=10, marker=:rect)
+
+ax2 = Axis(f[1,2])
+scatterlines!(ax2, bin_inter[2]; color=:black)
+scatter!(ax2, bin_s_inter[2], color=:transparent, strokewidth=2, strokecolor=:purple, markersize=10, marker=:rect)
+
+ax3 = Axis(f[1,3])
+scatterlines!(ax3, bin_inter[3]; color=:black)
+scatter!(ax3, bin_s_inter[3], color=:transparent, strokewidth=2, strokecolor=:purple, markersize=10, marker=:rect)
+
+[hidespines!(ax) for ax in [ax1, ax2, ax3]] #hide
+[hidedecorations!(ax) for ax in [ax1, ax2, ax3]] #hide
+current_figure() #hide
+
+# Note that the inter-specific distances are not fully respected, but this is
+# because we decided to give more weight to the intra-specific distances in the
+# initial parameters.

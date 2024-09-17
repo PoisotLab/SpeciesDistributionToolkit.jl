@@ -1,3 +1,32 @@
+blurb(::Type{CHELSA1}) = md"""
+::: warning Deprecated dataset
+
+This dataset is included for reference, but is considered deprecated, and should
+be replaced by `CHELSA2`.
+
+:::
+
+CHELSA (Climatologies at high resolution for the earth’s land surface areas) is
+a very high resolution (30 arc sec, ~1km) global downscaled climate data set
+currently hosted by the Swiss Federal Institute for Forest, Snow and Landscape
+Research WSL. It is built to provide free access to high resolution climate data
+for research and application, and is constantly updated and refined.
+
+::: details Citations
+
+Karger, D.N., Conrad, O., Böhner, J., Kawohl, T., Kreft, H., Soria-Auza, R.W.,
+Zimmermann, N.E., Linder, P., Kessler, M. (2017): Climatologies at high
+resolution for the Earth land surface areas. Scientific Data. 4 170122.
+
+Karger D.N., Conrad, O., Böhner, J., Kawohl, T., Kreft, H., Soria-Auza, R.W.,
+Zimmermann, N.E, Linder, H.P., Kessler, M. (2018): Data from: Climatologies at
+high resolution for the earth’s land surface areas. Dryad digital repository.
+http://dx.doi.org/doi:10.5061/dryad.kd1d4
+
+:::
+"""
+
+
 CHELSA1Dataset = Union{
     BioClim,
     AverageTemperature,
@@ -9,7 +38,8 @@ CHELSA1Dataset = Union{
 # Update provisioning
 provides(::Type{CHELSA1}, ::Type{T}) where {T <: CHELSA1Dataset} = true
 
-url(::RasterData{CHELSA1, D}) where {D <: CHELSA1Dataset} = "https://chelsa-climate.org/"
+url(::Type{CHELSA1}) = "https://chelsa-climate.org/"
+url(::RasterData{CHELSA1, BioClim}) = "https://chelsa-climate.org/bioclim/"
 
 # Update the layers
 layers(::RasterData{CHELSA1, BioClim}) = "BIO" .* string.(1:19)

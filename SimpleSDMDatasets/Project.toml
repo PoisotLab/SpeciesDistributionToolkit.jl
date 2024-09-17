@@ -1,11 +1,12 @@
 name = "SimpleSDMDatasets"
 uuid = "2c7d61d0-5c73-410d-85b2-d2e7fbbdcefa"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "0.2.1"
+version = "0.2.2"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
 
 [compat]

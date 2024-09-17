@@ -77,7 +77,7 @@ function source(
         "Uniformity",
         "Variance",
     ]
-    res_code = resolutions(data)[resolution][2]
+    res_code = resolutions(data)[resolution][1]
     root = "https://data.earthenv.org/habitat_heterogeneity/$(res_code)/"
     stem = "$(file_codes[var_code])_01_05_$(res_code)_$(file_enc).tif"
     return (

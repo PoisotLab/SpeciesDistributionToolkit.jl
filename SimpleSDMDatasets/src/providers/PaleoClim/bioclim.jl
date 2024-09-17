@@ -49,7 +49,7 @@ function source(
     resolution = 10.0,
     kwargs...,
 )
-    rescode = resolutions(data)[resolution][2]
+    rescode = resolutions(data)[resolution][1]
     filename = "$(timeperiod)_v1_$(rescode).zip"
     url = "http://sdmtoolbox.org/paleoclim.org/data/$(timeperiod)/$(filename)"
     outdir = destination(data)
@@ -63,7 +63,7 @@ function layername(
     layer = "BIO1",
 )
     lname = replace(layer, "BIO" => "bio_")
-    rescode = resolutions(data)[resolution][2]
+    rescode = resolutions(data)[resolution][1]
     root = "$(timeperiod)_v1_$(rescode)"
     fname = "$(lname).tif"
     return fname

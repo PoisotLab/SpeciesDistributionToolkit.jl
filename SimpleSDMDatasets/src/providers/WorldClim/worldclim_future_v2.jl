@@ -81,7 +81,7 @@ function source(
     args...,
 ) where {T <: WorldClim2FutureDataset, S <: WorldClim2Scenario, M <: WorldClim2Model}
     var_code = T <: BioClim ? "bioc" : _var_slug(data)
-    res_code = resolutions(data)[resolution][2]
+    res_code = resolutions(data)[resolution][1]
     year_sep = string(timespan.first.value) * "-" * string(timespan.second.value)
     mod_code = replace(string(M), "_" => "-")
     ssp_code = lowercase(string(S))

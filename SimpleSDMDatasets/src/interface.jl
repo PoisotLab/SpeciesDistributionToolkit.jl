@@ -166,9 +166,11 @@ the default keys specified in this interface.
 
 An overload of this method is *required* when there are additional keywords
 needed to access the data (*e.g.* `full=true` for the `EarthEnv` land-cover
-data), and *must* return a `Dict`, with `Symbol` keys and `Tuple` arguments,
-where the key is the keyword argument passed to `downloader` and the tuple lists
-all accepted values.
+data), and *must* return a `Dict`, with `Symbol` keys and `Tuple`s of pairs as
+values.
+
+The key is the keyword argument passed to `downloader` and the tuple lists all
+accepted values, in the format `value => explanation`.
 
 Any dataset with a return value that is not `nothing` *must* accept the keyword
 arguments specified in the return value.

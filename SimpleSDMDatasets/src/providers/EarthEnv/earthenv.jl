@@ -4,7 +4,12 @@ EarthEnvDataset = Union{LandCover, HabitatHeterogeneity}
 provides(::Type{EarthEnv}, ::Type{T}) where {T <: EarthEnvDataset} = true
 
 # Additional keys for search
-extrakeys(::RasterData{EarthEnv, LandCover}) = Dict([:full => (true, false)])
+extrakeys(::RasterData{EarthEnv, LandCover}) = Dict([
+    :full => (
+        true => "Version with GlobCover (2005-06; v2.2), MODIS land-cover product (MCD12Q1; v051), GLC2000 (global product; v1.1), and DISCover (GLCC; v2)",
+        false => "Version without DISCover",
+    ),
+])
 
 url(::RasterData{EarthEnv, LandCover}) = "https://www.earthenv.org/landcover"
 url(::RasterData{EarthEnv, HabitatHeterogeneity}) = "https://www.earthenv.org/texture"

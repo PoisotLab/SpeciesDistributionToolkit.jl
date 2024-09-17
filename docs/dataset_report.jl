@@ -101,7 +101,7 @@ function report(::Type{P}, ::Type{D}) where {P <: RasterProvider, D <: RasterDat
 
     $(SimpleSDMDatasets.blurb(RasterData(P, D)))
 
-    For more information about this dataset, please refer to: $(SimpleSDMDatasets.url(RasterData(P, D)))
+    For more information about this provider: $(SimpleSDMDatasets.url(RasterData(P, D)))
 
     To access this dataset:
 
@@ -144,6 +144,8 @@ for P in subtypes(RasterProvider)
         print(io, "# $(P) \n\n")
         print(io, "\n\n")
         print(io, "$(SimpleSDMDatasets.blurb(P))")
+        print(io, "\n\n")
+        print(io, "For more information about this provider: $(SimpleSDMDatasets.url(P))")
         print(io, "\n\n")
     end
     # Run the report for each dataset

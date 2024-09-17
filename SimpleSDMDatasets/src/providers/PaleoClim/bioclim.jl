@@ -26,10 +26,12 @@ layerdescriptions(::RasterData{PaleoClim, BioClim}) =
     layerdescriptions(RasterData(CHELSA2, BioClim))
 
 resolutions(::RasterData{PaleoClim, BioClim}) = Dict([
-    2.5 => ("2_5m", "2.5 arc minutes, approx 4×4 km"),
-    5.0 => ("5m", "5 arc minutes"),
-    10.0 => ("10m", "10 arc minutes"),
+    2.5 => "2.5 arc minutes, approx 4×4 km",
+    5.0 => "5 arc minutes",
+    10.0 => "10 arc minutes",
 ])
+
+_paleoclim_resolution(res) = Dict(2.5 => "2_5m", 5.0 => "5m", 10.0 => "10m")[res]
 
 extrakeys(::RasterData{PaleoClim, BioClim}) = Dict([
     :timeperiod => (
@@ -49,7 +51,7 @@ function source(
     resolution = 10.0,
     kwargs...,
 )
-    rescode = resolutions(data)[resolution][1]
+    rescode = _paleoclim_resolution(resolution)
     filename = "$(timeperiod)_v1_$(rescode).zip"
     url = "http://sdmtoolbox.org/paleoclim.org/data/$(timeperiod)/$(filename)"
     outdir = destination(data)
@@ -63,7 +65,7 @@ function layername(
     layer = "BIO1",
 )
     lname = replace(layer, "BIO" => "bio_")
-    rescode = resolutions(data)[resolution][1]
+    rescode = _paleoclim_resolution(resolution)
     root = "$(timeperiod)_v1_$(rescode)"
     fname = "$(lname).tif"
     return fname

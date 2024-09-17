@@ -39,7 +39,7 @@ function _document_resolutions(
     if !isnothing(SimpleSDMDatasets.resolutions(data))
         text = "\n::: details Keyword argument `resolution`\n\n"
         for (k, v) in SimpleSDMDatasets.resolutions(data)
-            text *= "\n\n$(v[2]) - `$(k)`"
+            text *= "\n\n$(v) - `$(k)`"
         end
         text *= "\n:::\n\n"
         return text

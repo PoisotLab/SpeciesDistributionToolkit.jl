@@ -36,10 +36,13 @@ layers(::RasterData{EarthEnv, HabitatHeterogeneity}) = [
 ]
 
 resolutions(::RasterData{EarthEnv, HabitatHeterogeneity}) = Dict([
-    0.5 => ("1km" ,"1km"),
-    2.5 => ("5km" ,"5km"),
-    12.5 => ("25km" ,"25km"),
+    0.5 => "1km",
+    2.5 => "5km",
+    12.5 => "25km",
 ])
+
+_earthenv_heterogeneity_resolution(res) =
+    Dict(0.5 => "1km", 2.5 => "5km", 12.5 => "25km")[res]
 
 function source(
     data::RasterData{EarthEnv, HabitatHeterogeneity};
@@ -77,7 +80,7 @@ function source(
         "Uniformity",
         "Variance",
     ]
-    res_code = resolutions(data)[resolution][1]
+    res_code = _earthenv_heterogeneity_resolution(resolution)
     root = "https://data.earthenv.org/habitat_heterogeneity/$(res_code)/"
     stem = "$(file_codes[var_code])_01_05_$(res_code)_$(file_enc).tif"
     return (

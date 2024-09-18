@@ -11,7 +11,9 @@ webpages.
 A wrapper around the GBIF API, to retrieve taxa and occurrence datasets, and
 perform filtering on these occurrence data based on flags.
 
-![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=GBIF-*&style=flat-square&label=GBIF.jl) [![DOC](https://img.shields.io/badge/Manual-teal?style=flat-square)](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/) ![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
+[Read the documentation](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/)
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=GBIF-*&style=flat-square&label=GBIF.jl) ![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
 
 :::
 
@@ -20,7 +22,9 @@ perform filtering on these occurrence data based on flags.
 An efficient way to download and store environmental raster data for consumption
 by other packages.
 
-![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=SimpleSDMDatasets-*&style=flat-square&label=SimpleSDMDatasets.jl) [![DOC](https://img.shields.io/badge/Manual-teal?style=flat-square)](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/) ![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
+[Read the documentation](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/) 
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=SimpleSDMDatasets-*&style=flat-square&label=SimpleSDMDatasets.jl) ![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
 
 :::
 
@@ -29,7 +33,9 @@ by other packages.
 
 A series of types and common operations on raster data.
 
-![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=SimpleSDMLayers-*&style=flat-square&label=SimpleSDMLayers.jl) [![DOC](https://img.shields.io/badge/Manual-teal?style=flat-square)](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/) ![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6?style=flat-square)
+[Read the documentation](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/)
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=SimpleSDMLayers-*&style=flat-square&label=SimpleSDMLayers.jl) ![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6?style=flat-square)
 
 :::
 
@@ -38,7 +44,9 @@ A series of types and common operations on raster data.
 A package to simulate realistic species occurrence data from a know series of
 occurrences, with additional statistical constraints.
 
-![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=Fauxcurrences-*&style=flat-square&label=Fauxcurrences.jl) [![DOC](https://img.shields.io/badge/Manual-teal?style=flat-square)](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Fauxcurrences/) ![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6?style=flat-square)
+[Read the documentation](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Fauxcurrences/)
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=Fauxcurrences-*&style=flat-square&label=Fauxcurrences.jl) ![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6?style=flat-square)
 
 :::
 
@@ -47,6 +55,8 @@ occurrences, with additional statistical constraints.
 
 A wrapper around the Phylopic API.
 
-![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=Phylopic-*&style=flat-square&label=Phylopic.jl) [![DOC](https://img.shields.io/badge/Manual-teal?style=flat-square)](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/) ![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
+[Read the documentation](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/)
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=Phylopic-*&style=flat-square&label=Phylopic.jl) ![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
 
 :::

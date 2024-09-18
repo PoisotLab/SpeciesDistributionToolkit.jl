@@ -8,8 +8,8 @@ polygon are assumed to be WGS84.
 ## Masking
 
  ```@docs
- SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolygon)
- SimpleSDMLayers.mask(records::GBIFRecords, multipolygon::GeoJSON.MultiPolygon)
+ mask!
+ mask
  ```
 
 ## Trimming
@@ -21,7 +21,7 @@ trim
 ## Mosaic and zonal-like operations
 
 ```@docs
-SimpleSDMLayers.mosaic(f, layer::SDMLayer, polygons::T, args...; kwargs...) where {T <: GeoJSON.GeoJSONT}
+mosaic
 zone
 byzone
 ```

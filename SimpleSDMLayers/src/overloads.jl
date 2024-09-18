@@ -11,10 +11,18 @@ Base.keys(layer::SDMLayer) = CartesianIndices(layer)
 Base.values(layer::SDMLayer) = layer.grid[layer.indices]
 Base.axes(layer::SDMLayer, i...) = axes(layer.grid, i...)
 
-function Base.similar(layer::SDMLayer)
-    grd = similar(layer.grid)
+function Base.similar(layer::SDMLayer, el=eltype(layer))
+    grd = similar(layer.grid, el)
     idx = copy(layer.indices)
     return SDMLayer(grid=grd, indices=idx, x=layer.x, y=layer.y, crs=layer.crs)
+end
+
+@testitem "We can get a similar layer" begin
+    d = SimpleSDMLayers.__demodata(; reduced=true)
+    s = similar(d)
+    @test eltype(s) == eltype(d)
+    t = similar(d, Float64)
+    @test eltype(t) == Float64
 end
 
 function Base.fill!(layer::SDMLayer{T}, val::T) where {T}

@@ -44,6 +44,7 @@ makedocs(;
             "tutorials/pseudoabsences.md",
             "tutorials/fauxcurrences.md",
             "tutorials/futureclimate.md",
+            "tutorials/zonal.md",
         ],
         "How-to..." => [
             "howto/get_gbif_data.md",
@@ -54,9 +55,11 @@ makedocs(;
             "howto/makie.md",
         ],
         "Documentation" => [
-            "Work with species occurrence data" => "manual/SpeciesDistributionToolkit/index.md",
-            "Occurrences and layers" => "manual/SpeciesDistributionToolkit/gbif.jl.md",
-            "Pseudo-absences" => "manual/SpeciesDistributionToolkit/pseudoabsences.md",
+            "manual/index.md",
+            "manual/gbif.jl.md",
+            "manual/pseudoabsences.md",
+            "manual/polygons.md",
+            "manual/gadm.md",
         ]
     ],
 )

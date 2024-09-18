@@ -47,7 +47,10 @@ export pseudoabsencemask, backgroundpoints
 
 # Functions to deal with polygons
 include("polygons/polygons.jl")
+include("polygons/zonal.jl")
+include("polygons/mosaic.jl")
 include("polygons/gadm.jl")
 export trim
+export zone, byzone
 
 end # module SpeciesDistributionToolkit

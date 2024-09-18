@@ -51,13 +51,13 @@ layer = SDMLayer(
     top = 55.0,
 )
 
-# We can check that this polygon is larger than we want:
+# We can check that this polygon is larger than the area we want:
 
 heatmap(layer; colormap = :navia, axis = (; aspect = DataAspect()))
 
 # We can now mask this layer according to the polygon:
 
-mask!(layer, CHE[1].geometry)
+mask!(layer, CHE)
 heatmap(layer; colormap = :navia, axis = (; aspect = DataAspect()))
 
 # This is a much larger layer than we need! For this reason, we will trim it so that the empty areas are removed:
@@ -100,7 +100,7 @@ current_figure() #hide
 # this reason, we will use the *non-mutating* `mask` method on the GBIF records:
 
 heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
-scatter!(mask(presences, CHE[1].geometry); color = :orange, markersize = 4)
+scatter!(mask(presences, CHE); color = :orange, markersize = 4)
 current_figure() #hide
 
 # ::: details A note about vectors of occurrences

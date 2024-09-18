@@ -24,12 +24,12 @@ function trim(layer::SDMLayer)
 end
 
 """
-    trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSON}
+    trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT}
 
 Return a trimmed version of a layer, according to the feature defined a
 `GeoJSON` object.
 """
-trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSON} =
+trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT} =
     trim(mask!(copy(layer), feature))
 
 function change_inclusion!(inclusion, layer, polygon, op)

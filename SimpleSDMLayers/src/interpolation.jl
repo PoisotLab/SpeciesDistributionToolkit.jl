@@ -5,7 +5,8 @@ function interpolate!(destination::SDMLayer, source::SDMLayer)
     NI = northings(destination)
 
     # Functions for projection
-    revprj = SimpleSDMLayers.Proj.Transformation(destination.crs, source.crs; always_xy = true)
+    revprj =
+        SimpleSDMLayers.Proj.Transformation(destination.crs, source.crs; always_xy = true)
 
     Threads.@threads for i in axes(destination, 2)
         dx = EI[i]
@@ -52,13 +53,13 @@ function _create_destination_layer(source::SDMLayer, dest, newsize)
     EL = eastings(source)
     NL = northings(source)
     prj = SimpleSDMLayers.Proj.Transformation(source.crs, dest; always_xy = true)
-    
+
     b1 = [prj(EL[1], n) for n in NL]
     b2 = [prj(EL[end], n) for n in NL]
     b3 = [prj(e, NL[1]) for e in EL]
     b4 = [prj(e, NL[end]) for e in EL]
     bands = vcat(b1, b2, b3, b4)
-    
+
     nx = extrema(first.(bands))
     ny = extrema(last.(bands))
 
@@ -74,11 +75,11 @@ Returns an interpolated version of the later under the new destination CRS
 (natearth2 by default), and with optionally a new size of `newsize`.
 """
 function interpolate(layer::SDMLayer; dest = "+proj=natearth2", newsize = nothing)
-    destination = _create_destination_layer(layer, dest, isnothing(newsize) ? size(layer) : newsize)
+    destination =
+        _create_destination_layer(layer, dest, isnothing(newsize) ? size(layer) : newsize)
     interpolate!(destination, layer)
     return destination
 end
-
 
 """
     interpolate(layer::SDMLayer, destination::SDMLayer)
@@ -86,23 +87,24 @@ end
 Interpolates a layer `target` so that it uses the same grid, crs, etc as
 `destination`.
 """
-interpolate(layer::SDMLayer, destination::SDMLayer) = interpolate!(similar(destination, eltype(layer)), layer)
+interpolate(layer::SDMLayer, destination::SDMLayer) =
+    interpolate!(similar(destination, eltype(layer)), layer)
 
 @testitem "We can interpolate a layer given a new destination crs" begin
-    layer = SimpleSDMLayers.__demodata(reduced=true)
-    dest = interpolate(layer; dest="+proj=natearth2")
+    layer = SimpleSDMLayers.__demodata(; reduced = true)
+    dest = interpolate(layer; dest = "+proj=natearth2")
     @test dest.crs == "+proj=natearth2"
 end
 
 @testitem "We can interpolate a layer with a new size" begin
-    layer = SimpleSDMLayers.__demodata(reduced=true)
-    dest = interpolate(layer; newsize=(120, 120))
+    layer = SimpleSDMLayers.__demodata(; reduced = true)
+    dest = interpolate(layer; newsize = (120, 120))
     @test size(dest) == (120, 120)
 end
 
 @testitem "We can interpolate a layer with a new size and a new crs" begin
-    layer = SimpleSDMLayers.__demodata(reduced=true)
-    dest = interpolate(layer; newsize=(120, 120), dest="+proj=natearth")
+    layer = SimpleSDMLayers.__demodata(; reduced = true)
+    dest = interpolate(layer; newsize = (120, 120), dest = "+proj=natearth")
     @test size(dest) == (120, 120)
     @test dest.crs == "+proj=natearth"
 end

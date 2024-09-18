@@ -27,7 +27,7 @@ heatmap(layer; axis=(; aspect=DataAspect()))
 
 #-
 
-districts = SpeciesDistributionToolkit.gadm("NZL", 2)
+districts = SpeciesDistributionToolkit.gadm("NZL", 2);
 
 # We can start looking at how these map onto the landscape:
 
@@ -47,6 +47,7 @@ heatmap(z; axis=(; aspect=DataAspect()))
 #-
 
 districtnames = SpeciesDistributionToolkit.gadmlist("NZL", 2)
+districtnames[1:10]
 
 #- 
 

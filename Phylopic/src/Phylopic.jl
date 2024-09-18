@@ -4,6 +4,7 @@ import HTTP
 import JSON
 import UUIDs
 using Markdown
+using TestItems
 
 const api = "https://api.phylopic.org/"
 

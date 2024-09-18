@@ -31,7 +31,7 @@ districts = SpeciesDistributionToolkit.gadm("NZL", 2)
 
 # We can start looking at how these map onto the landscape:
 
-heatmap(zone(layer, districts); colormap=:autumn, axis=(; aspect=DataAspect()))
+heatmap(zone(layer, districts); colormap=:hokusai, axis=(; aspect=DataAspect()))
 
 # The layer resulting from the `zone` operation has integer values, and the
 # values correspond to the polygon to which each pixel belongs. Note that the

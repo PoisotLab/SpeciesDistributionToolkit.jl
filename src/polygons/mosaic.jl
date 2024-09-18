@@ -1,7 +1,7 @@
 """
     SimpleSDMLayers.mosaic(f, layer, polygons)
 """
-function SimpleSDMLayers.mosaic(f, layer::SDMLayer, polygons::T, args...; kwargs...) where {T <: GeoJSON.GeoJSONT}
+function SimpleSDMLayers.mosaic(f, layer::SDMLayer, polygons::Vector{T}, args...; kwargs...) where {T <: GeoJSON.GeoJSONT}
     rtype = eltype(f(layer, args...; kwargs...))
     out = zeros(layer, rtype)
     zones = [mask!(copy(layer), poly) for poly in polygons]

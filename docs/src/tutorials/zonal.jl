@@ -54,7 +54,7 @@ top10 = first.(sort(byzone(median, layer, districts, districtnames); by=(x) -> x
 
 #-
 
-heatmap(z)
+heatmap(z; axis=(; aspect=DataAspect()))
 [lines!(districts[i], color=:red) for i in indexin(top10, districtnames)]
 current_figure()
 

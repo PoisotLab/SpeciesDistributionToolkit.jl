@@ -79,6 +79,15 @@ function interpolate(layer::SDMLayer; dest = "+proj=natearth2", newsize = nothin
     return destination
 end
 
+
+"""
+    interpolate(layer::SDMLayer, destination::SDMLayer)
+
+Interpolates a layer `target` so that it uses the same grid, crs, etc as
+`destination`.
+"""
+interpolate(layer::SDMLayer, destination::SDMLayer) = interpolate!(similar(destination, eltype(layer)), layer)
+
 @testitem "We can interpolate a layer given a new destination crs" begin
     layer = SimpleSDMLayers.__demodata(reduced=true)
     dest = interpolate(layer; dest="+proj=natearth2")

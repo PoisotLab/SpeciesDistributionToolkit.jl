@@ -15,3 +15,7 @@ function ping()
     end
     return nothing
 end
+
+@testitem "We can connect" begin
+    @test isnothing(Phylopic.ping())
+end

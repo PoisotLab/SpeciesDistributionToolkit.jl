@@ -5,10 +5,13 @@ This function is an internal helped function to return an array of pairs, wherei
 """
 function _get_uuids_at_page(query, page)
     page_query = push!(query, "page" => page - 1)
-    req = HTTP.get(Phylopic.api * "images", query=page_query)
+    req = HTTP.get(Phylopic.api * "images"; query = page_query)
     if isequal(200)(req.status)
         response = JSON.parse(String(req.body))
-        return [item["title"] => UUIDs.UUID(replace(item["href"], "/images/" => "")) for item in response["_links"]["items"]]
+        return [
+            item["title"] => UUIDs.UUID(replace(item["href"], "/images/" => "")) for
+            item in response["_links"]["items"]
+        ]
     end
     return nothing
 end
@@ -34,15 +37,21 @@ Returns a mapping between names and UUIDs of images for a given text (see also `
 : Default to `false`
 : Specifies whether the images returned are prevented from being used in commercial projects
 """
-function imagesof(name::AbstractString; items=1, attribution=false, sharealike=false, nocommercial=false)
+function imagesof(
+    name::AbstractString;
+    items = 1,
+    attribution = false,
+    sharealike = false,
+    nocommercial = false,
+)
     name = lowercase(replace(name, r"\s+" => " "))
     query = [
         "filter_name" => name,
         "filter_license_by" => attribution,
         "filter_license_nc" => nocommercial,
-        "filter_license_sa" => sharealike
+        "filter_license_sa" => sharealike,
     ]
-    req = HTTP.get(Phylopic.api * "images", query=query)
+    req = HTTP.get(Phylopic.api * "images"; query = query)
     if isequal(200)(req.status)
         response = JSON.parse(String(req.body))
         if iszero(response["totalItems"])
@@ -65,4 +74,9 @@ function imagesof(name::AbstractString; items=1, attribution=false, sharealike=f
         end
     end
     return nothing
+end
+
+@testitem "We can get images" begin
+    @test typeof(Phylopic.imagesof("chiroptera")) == Pair{String, Base.UUID}
+    @test typeof(Phylopic.imagesof("chiroptera"; items = 2)) == Dict{String, Base.UUID}
 end

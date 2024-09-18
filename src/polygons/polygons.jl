@@ -112,3 +112,8 @@ function SimpleSDMLayers.mask(records::GBIFRecords, multipolygon::GeoJSON.MultiP
     end
     return records.occurrences[findall(inclusion)]
 end
+
+SimpleSDMLayers.mask!(layer::SDMLayer, features::GeoJSON.FeatureCollection, feature=1) = mask!(layer, features[feature])
+SimpleSDMLayers.mask(gbif::GBIFRecords, features::GeoJSON.FeatureCollection, feature=1) = mask(gbif, features[feature])
+SimpleSDMLayers.mask!(layer::SDMLayer, feature::GeoJSON.Feature) = mask!(layer, feature.geometry)
+SimpleSDMLayers.mask(gbif::GBIFRecords, feature::GeoJSON.Feature) = mask(gbif, feature.geometry)

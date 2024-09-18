@@ -1,3 +1,9 @@
+"""
+    trim(layer::SDMLayer)
+
+Returns a layer in which there are no empty rows/columns around the valued cell.
+This returns a *new* object.
+"""
 function trim(layer::SDMLayer)
     nx = vec(sum(layer.indices, dims=1))
     ny = vec(sum(layer.indices, dims=2))

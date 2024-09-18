@@ -34,6 +34,11 @@ function _get_gadm_file(code, level)
     return GeoJSON.read(replace(gadm_file, ".zip" => ""))
 end
 
+"""
+    gadm(code::String)
+
+Returns the 
+"""
 gadm(code::String) = _get_gadm_file(code, 0)
 
 function gadm(code::String, places::String...)

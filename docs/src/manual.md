@@ -44,13 +44,3 @@ This will automatically install all the sub-packages.
 This manual is split into two sections: tutorials, which are medium to long
 examples of using the full functionality of the package; and how-tos, which are
 shorter (and denser) summaries of how to achieve a specific task.
-
-In addition, each of the component packages has its own documentation.
-
-## List of components
-
-- [GBIF.jl](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/)
-- [Phylopic.jl](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/)
-- [SimpleSDMDatasets.jl](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/)
-- [SimpleSDMLayers.jl](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/)
-- [Fauxcurrences.jl](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Fauxcurrences/)

@@ -5,17 +5,32 @@ Returns a layer in which there are no empty rows/columns around the valued cell.
 This returns a *new* object.
 """
 function trim(layer::SDMLayer)
-    nx = vec(sum(layer.indices, dims=1))
-    ny = vec(sum(layer.indices, dims=2))
+    nx = vec(sum(layer.indices; dims = 1))
+    ny = vec(sum(layer.indices; dims = 2))
     rx = findfirst(!iszero, nx):findlast(!iszero, nx)
     ry = findfirst(!iszero, ny):findlast(!iszero, ny)
-    nrt = northings(layer)[ry][[1,end]]
-    est = eastings(layer)[rx][[1,end]]
+    nrt = northings(layer)[ry][[1, end]]
+    est = eastings(layer)[rx][[1, end]]
     Sy, Sx = stride(layer)
     nrt .+= (-1, 1) .* Sy
     est .+= (-1, 1) .* Sx
-    return SDMLayer(grid=layer.grid[ry,rx], indices=layer.indices[ry,rx], x=tuple(est...), y=tuple(nrt...), crs=layer.crs)
+    return SDMLayer(;
+        grid = layer.grid[ry, rx],
+        indices = layer.indices[ry, rx],
+        x = tuple(est...),
+        y = tuple(nrt...),
+        crs = layer.crs,
+    )
 end
+
+"""
+    trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSON}
+
+Return a trimmed version of a layer, according to the feature defined a
+`GeoJSON` object.
+"""
+trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSON} =
+    trim(mask!(copy(layer), feature))
 
 function change_inclusion!(inclusion, layer, polygon, op)
     xytrans = SimpleSDMLayers.Proj.Transformation(
@@ -53,6 +68,9 @@ function change_inclusion!(inclusion, layer, polygon, op)
     return inclusion
 end
 
+"""
+    SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolygon)
+"""
 function SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolygon)
     inclusion = zeros(eltype(layer.indices), size(layer))
     for element in multipolygon
@@ -67,21 +85,30 @@ function SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolyg
     return layer
 end
 
+"""
+    SimpleSDMLayers.mask(records::GBIFRecords, multipolygon::GeoJSON.MultiPolygon)
+"""
 function SimpleSDMLayers.mask(records::GBIFRecords, multipolygon::GeoJSON.MultiPolygon)
     inclusion = zeros(Bool, length(records))
     for element in multipolygon
         for i in eachindex(inclusion)
-            if PolygonOps.inpolygon((records[i].longitude, records[i].latitude), element[1]) != 0
+            if PolygonOps.inpolygon(
+                (records[i].longitude, records[i].latitude),
+                element[1],
+            ) != 0
                 inclusion[i] = true
                 if length(element) > 2
                     for i in 2:length(element)
-                        if PolygonOps.inpolygon((records[i].longitude, records[i].latitude), elements[i]) != 0
+                        if PolygonOps.inpolygon(
+                            (records[i].longitude, records[i].latitude),
+                            elements[i],
+                        ) != 0
                             inclusion[i] = false
                         end
                     end
                 end
             end
-        end        
+        end
     end
     return records.occurrences[findall(inclusion)]
 end

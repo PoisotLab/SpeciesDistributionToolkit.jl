@@ -90,3 +90,20 @@ function gadm(code::String, level::Integer, places::String...)
     )
     return avail.geometry[position]
 end
+
+function gadmlist(code::String, level::Integer, places::String...)
+    level = max(length(places), level)
+    avail = _get_gadm_file(code, level)
+    position = reduce(
+        intersect,
+        [
+            findall(
+                isequal(replace(p, " " => "")),
+                getproperty(avail, Symbol("NAME_$(i)")),
+            )
+            for
+            (i, p) in enumerate(places)
+        ],
+    )
+    return getproperty(avail, Symbol("NAME_$(level)"))[position]
+end

@@ -21,7 +21,7 @@ layer = SDMLayer(dataprovider; layer = "BIO19", spatial_extent...)
 
 #-
 
-mask!(layer, SpeciesDistributionToolkit.gadm("NZL")[1].geometry)
+mask!(layer, SpeciesDistributionToolkit.gadm("NZL"))
 layer = trim(layer)
 heatmap(layer; axis=(; aspect=DataAspect()))
 

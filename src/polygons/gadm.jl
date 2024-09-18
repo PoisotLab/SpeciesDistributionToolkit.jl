@@ -74,6 +74,11 @@ function gadmlist(code::String, places::String...)
     return getproperty(avail, Symbol("NAME_$(level)"))[position]
 end
 
+function gadm(code::String, level::Integer)
+    avail = _get_gadm_file(code, level)
+    return avail.geometry
+end
+
 function gadm(code::String, level::Integer, places::String...)
     level = max(length(places), level)
     avail = _get_gadm_file(code, level)
@@ -89,6 +94,11 @@ function gadm(code::String, level::Integer, places::String...)
         ],
     )
     return avail.geometry[position]
+end
+
+function gadmlist(code::String, level::Integer)
+    avail = _get_gadm_file(code, level)
+    return getproperty(avail, Symbol("NAME_$(level)"))
 end
 
 function gadmlist(code::String, level::Integer, places::String...)

@@ -17,7 +17,7 @@ dataprovider = RasterData(CHELSA2, BioClim)
 
 # precipitation of coldest quarter
 
-layer = SDMLayer(dataprovider; layer = "BIO3", spatial_extent...)
+layer = SDMLayer(dataprovider; layer = "BIO19", spatial_extent...)
 
 #-
 
@@ -50,11 +50,14 @@ districtnames = SpeciesDistributionToolkit.gadmlist("NZL", 2)
 
 #- 
 
-top10 = first.(sort(byzone(median, layer, districts, districtnames); by=(x) -> x.second, rev=true)[1:10])
+top5 = first.(sort(byzone(median, layer, districts, districtnames); by=(x) -> x.second, rev=true)[1:5])
 
 #-
 
-heatmap(z; axis=(; aspect=DataAspect()))
-[lines!(districts[i], color=:red) for i in indexin(top10, districtnames)]
-current_figure()
+f, ax, plt = heatmap(layer; axis=(; aspect=DataAspect()), colormap=[:lightgrey, :black])
+[lines!(ax, districts[i], label=districtnames[i], linewidth=3) for i in indexin(top5, districtnames)]
+axislegend(position=(0, 0.7), nbanks=1)
+hidedecorations!(ax) #hide
+hidespines!(ax) #hide
+current_figure() #hide
 

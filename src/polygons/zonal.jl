@@ -13,6 +13,6 @@ function byzone(f, layer::SDMLayer, polygons, polygonsnames = 1:length(polygons)
     z = zone(layer, polygons)
     return [
         (polygonsnames[i] => f(layer.grid[findall(z.grid .== i)])) for
-        i in eachindex(polygons)
+        i in unique(z)
     ]
 end

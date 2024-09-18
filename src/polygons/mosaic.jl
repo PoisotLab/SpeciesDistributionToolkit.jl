@@ -6,7 +6,9 @@ function SimpleSDMLayers.mosaic(f, layer, polygons)
     out = zeros(layer, rtype)
     zones = [mask!(copy(layer), poly) for poly in polygons]
     for i in eachindex(zones)
-        out.grid[findall(zones[i].indices)] .= f(zones[i])
+        if ~isempty(zones[i])
+            out.grid[findall(zones[i].indices)] .= f(zones[i])
+        end
     end
     return out
 end

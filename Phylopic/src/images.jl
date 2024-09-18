@@ -109,10 +109,7 @@ raster(pair::Pair{String,UUIDs.UUID}, resl) = raster(pair.second, resl)
 raster(dict::Dict{String,UUIDs.UUID}, resl) = raster.(collect(dict), resl)
 
 function images_data(uuid::UUIDs.UUID)
-    query = [
-        "build" => Phylopic.build(),
-    ]
-    req = HTTP.get(Phylopic.api * "images/$(string(uuid))", query=query)
+    req = HTTP.get(Phylopic.api * "images/$(string(uuid))")
     if isequal(200)(req.status)
         response = JSON.parse(String(req.body))
         return response

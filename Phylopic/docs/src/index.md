@@ -30,5 +30,4 @@ Phylopic.available_resolutions
 
 ```@docs
 Phylopic.ping
-Phylopic.build
 ```

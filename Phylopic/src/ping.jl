@@ -15,19 +15,3 @@ function ping()
     end
     return nothing
 end
-
-"""
-    Phylopic.build()
-
-Returns the current build to perform the queries
-"""
-function build()
-    req = HTTP.get(Phylopic.api)
-    if isequal(200)(req.status)
-        infostring = JSON.parse(String(req.body))
-        return infostring["build"]
-    else
-        throw(ErrorException("The API at $(Phylopic.api) is not responding"))
-    end
-    return nothing
-end

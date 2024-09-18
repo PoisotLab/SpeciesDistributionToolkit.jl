@@ -1,3 +1,6 @@
+"""
+    zone(layer::SDMLayer, polygons)
+"""
 function zone(layer::SDMLayer, polygons)
     out = similar(layer, Int16) # This should be enough
     fill!(out, zero(eltype(out)))
@@ -9,6 +12,9 @@ function zone(layer::SDMLayer, polygons)
     return out
 end
 
+"""
+    byzone(f, layer::SDMLayer, polygons, polygonsnames = 1:length(polygons))
+"""
 function byzone(f, layer::SDMLayer, polygons, polygonsnames = 1:length(polygons))
     z = zone(layer, polygons)
     return [

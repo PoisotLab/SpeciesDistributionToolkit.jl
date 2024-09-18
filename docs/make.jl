@@ -58,6 +58,7 @@ makedocs(;
             "manual/index.md",
             "manual/gbif.jl.md",
             "manual/pseudoabsences.md",
+            "manual/polygons.md",
             "manual/gadm.md",
         ]
     ],

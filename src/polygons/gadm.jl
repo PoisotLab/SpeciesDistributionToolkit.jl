@@ -37,10 +37,18 @@ end
 """
     gadm(code::String)
 
-Returns the 
+Returns the `GeoJSON` object associated to a the alpha-3 code defined by
+[ISO](https://www.iso.org/obp/ui/#search/code/).
 """
 gadm(code::String) = _get_gadm_file(code, 0)
 
+"""
+    gadm(code::String, places::String...)
+
+Returns all polygons nested within an arbitrary sequence of areas according to
+GADM. For example, getting all counties in Oklahoma is achieved with the
+arguments `"USA", "Oklahoma"`.
+"""
 function gadm(code::String, places::String...)
     level = length(places)
     avail = _get_gadm_file(code, level)
@@ -60,30 +68,25 @@ function gadm(code::String, places::String...)
     return avail.geometry[position]
 end
 
-gadmlist(code::String) = getproperty(_get_gadm_file(code, 1), :NAME_1)
-gadmlist(code::String, level::Integer) =
-    getproperty(_get_gadm_file(code, level), Symbol("NAME_$(level)"))
-function gadmlist(code::String, places::String...)
-    level = length(places) + 1
-    avail = _get_gadm_file(code, level)
-    position = reduce(
-        intersect,
-        [
-            findall(
-                isequal(replace(places[i], " " => "")),
-                getproperty(avail, Symbol("NAME_$(i)")),
-            ) for
-            i in 1:(level - 1)
-        ],
-    )
-    return getproperty(avail, Symbol("NAME_$(level)"))[position]
-end
+"""
+    gadm(code::String, level::Integer)
 
+Returns all areas within the top-level territory `code`, at the level `level`.
+For example, getting all *départements* in France is done with the arguments
+`"FRA", 2`.
+"""
 function gadm(code::String, level::Integer)
     avail = _get_gadm_file(code, level)
     return avail.geometry
 end
 
+"""
+    gadm(code::String, level::Integer, places::String...)
+
+Returns all areas within the `places` within a country defined by `code` at a
+specific level. For example, the *districts* in the French region of Bretagne
+are obtained with the arguments `"FRA", 3, "Bretagne"`.
+"""
 function gadm(code::String, level::Integer, places::String...)
     level = max(length(places), level)
     avail = _get_gadm_file(code, level)
@@ -101,11 +104,46 @@ function gadm(code::String, level::Integer, places::String...)
     return avail.geometry[position]
 end
 
+"""
+    gadmlist(code::String)
+
+Returns all top-level divisions of the territory defined by its `code`.
+"""
+gadmlist(code::String) = getproperty(_get_gadm_file(code, 1), :NAME_1)
+
+function gadmlist(code::String, places::String...)
+    level = length(places) + 1
+    avail = _get_gadm_file(code, level)
+    position = reduce(
+        intersect,
+        [
+            findall(
+                isequal(replace(places[i], " " => "")),
+                getproperty(avail, Symbol("NAME_$(i)")),
+            ) for
+            i in 1:(level - 1)
+        ],
+    )
+    return getproperty(avail, Symbol("NAME_$(level)"))[position]
+end
+
+"""
+    gadmlist(code::String, level::Integer)
+
+Returns all `level` divisions of the territory defined by its `code`, regardless
+of which higher-level divisions they belong to.
+"""
 function gadmlist(code::String, level::Integer)
     avail = _get_gadm_file(code, level)
     return getproperty(avail, Symbol("NAME_$(level)"))
 end
 
+"""
+    gadmlist(code::String, level::Integer, places::String...)
+
+Returns all `level` divisions of the territory defined by its `code`, that
+belong to the hierarchy defined by `places`.
+"""
 function gadmlist(code::String, level::Integer, places::String...)
     level = max(length(places), level)
     avail = _get_gadm_file(code, level)

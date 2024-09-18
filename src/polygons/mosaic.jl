@@ -1,7 +1,7 @@
 """
     SimpleSDMLayers.mosaic(f, layer, polygons)
 """
-function SimpleSDMLayers.mosaic(f, layer, polygons)
+function SimpleSDMLayers.mosaic(f, layer::SDMLayer, polygons)
     rtype = eltype(f(layer))
     out = zeros(layer, rtype)
     zones = [mask!(copy(layer), poly) for poly in polygons]

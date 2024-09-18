@@ -21,6 +21,7 @@ trim
 ## Mosaic and zonal-like operations
 
 ```@docs
+SimpleSDMLayers.mosaic(f, layer::SDMLayer, polygons::T, args...; kwargs...) where {T <: GeoJSON.GeoJSONT}
 zone
 byzone
 ```

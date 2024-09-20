@@ -38,3 +38,19 @@ end
     k = SDMLayer(f)
     @test SimpleSDMLayers._layers_are_compatible(t, k)
 end
+
+@testitem "We can save a layer and read with the correct bbox" begin
+    t = SimpleSDMLayers.__demodata(; reduced=true)
+    f = tempname()*".tiff"
+    f = "test.tiff"
+    SimpleSDMLayers.save(f, t)
+    # WGS84 smaller bounding box
+    bbox = (left=-79., right=-75., bottom=47., top=49.)
+    k = SDMLayer(f; bandnumber=1, bbox...)
+    @test all(size(k) .< size(t))
+    @test k.crs == t.crs
+    @test k.x[1] > t.x[1]
+    @test k.x[2] < t.x[2]
+    @test k.y[1] > t.y[1]
+    @test k.y[2] < t.y[2]
+end

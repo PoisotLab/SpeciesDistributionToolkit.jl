@@ -71,6 +71,12 @@ function _read_geotiff(
         maxlon = minlon + size(band, 1) * transform[2]
         minlat = maxlat - abs(size(band, 2) * transform[6])
 
+        # We need to make sure the WGS84 coordinates for the boundingbox are included in the layer
+        prj = Proj.Transformation("+proj=longlat +datum=WGS84 +no_defs +type=crs", wkt; always_xy=true)
+        left, bottom = prj(left, bottom)
+        right, top = prj(right, top)
+        
+        # And now we crop
         left = isnothing(left) ? minlon : max(left, minlon)
         right = isnothing(right) ? maxlon : min(right, maxlon)
         bottom = isnothing(bottom) ? minlat : max(bottom, minlat)

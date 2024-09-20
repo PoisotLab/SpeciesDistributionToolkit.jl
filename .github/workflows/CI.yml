@@ -130,6 +130,31 @@ jobs:
         with:
           name: coverage
           path: Fauxcurrences-lcov.info
+  SDeMo:
+    needs: [SimpleSDMLayers]
+    name: "SDeMo"
+    runs-on: "ubuntu-latest"
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: julia-actions/setup-julia@v2
+      - name: "Bootstrap the package"
+        run: julia --project=./SDeMo SDeMo/bootstrap.jl
+      - uses: julia-actions/julia-buildpkg@latest
+        with:
+          project: SDeMo
+      - uses: julia-actions/julia-runtest@latest
+        with:
+          project: SDeMo
+          annotate: true
+      - uses: julia-actions/julia-processcoverage@v1
+        with:
+          directories: SDeMo/src
+      - run: mv lcov.info SpeciesDistributionToolkit-lcov.info
+      - uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: SpeciesDistributionToolkit-lcov.info
   SpeciesDistributionToolkit:
     needs: [GBIF, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, Phylopic]
     name: "SpeciesDistributionToolkit"

@@ -14,7 +14,7 @@ StatsAPI.predict(::RawData, X) = X
 A transformer that scales and centers the data, using only the data that are
 avaiable to the model at training time.
 """
-Base.@kwdef mutable struct  <: Transformer
+Base.@kwdef mutable struct ZScore <: Transformer
     μ::AbstractArray = zeros(1)
     σ::AbstractArray = zeros(1)
 end

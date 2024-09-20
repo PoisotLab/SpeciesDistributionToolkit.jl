@@ -1,3 +1,6 @@
+"""
+    bootstrap(y, X; n = 50)
+"""
 function bootstrap(y, X; n = 50)
     @assert size(y, 1) == size(X, 2)
     bags = []
@@ -9,34 +12,39 @@ function bootstrap(y, X; n = 50)
     return bags
 end
 
+"""
+    Bagging
+"""
 mutable struct Bagging
     model::SDM
     bags::Vector{Tuple{Vector{Int64}, Vector{Int64}}}
     models::Vector{SDM}
 end
 
+"""
+    Bagging(model::SDM, bags::Vector)
+
+blah
+"""
 function Bagging(model::SDM, bags::Vector)
     return Bagging(model, bags, [deepcopy(model) for _ in eachindex(bags)])
 end
 
-function train!(ensemble::Bagging; kwargs...)
-    Threads.@threads for m in eachindex(ensemble.models)
-        train!(ensemble.models[m]; training=ensemble.bags[m][1], kwargs...)
-    end
-    train!(ensemble.model; kwargs...)
-    return ensemble
+"""
+    Bagging(model::SDM, n::Integer)
+
+Creates a bag from SDM
+"""
+function Bagging(model::SDM, n::Integer)
+    bags= bootstrap(labels(model), features(model); n=n)
+    return Bagging(model, bags, [deepcopy(model) for _ in eachindex(bags)])
 end
 
-function StatsAPI.predict(ensemble::Bagging, X; consensus = median, kwargs...)
-    ŷ = [predict(component, X; kwargs...) for component in ensemble.models]
-    ỹ = vec(mapslices(consensus, hcat(ŷ...); dims = 2))
-    return isone(length(ỹ)) ? only(ỹ) : ỹ
-end
 
-function StatsAPI.predict(ensemble::Bagging; kwargs...)
-    return StatsAPI.predict(ensemble, ensemble.model.X; kwargs...)
-end
+"""
+    outofbag(ensemble::Bagging; kwargs...)
 
+"""
 function outofbag(ensemble::Bagging; kwargs...)
     instance = rand(eachindex(y))
     done_instances = Int64[]

@@ -79,4 +79,12 @@ export NaiveBayes
 include("classifiers/bioclim.jl")
 export BIOCLIM
 
+include("pipeline.jl")
+export train!
+
+include("bagging/bootstrap.jl")
+include("bagging/pipeline.jl")
+export Bagging, outofbag, bootstrap
+
+
 end # module SDeMo

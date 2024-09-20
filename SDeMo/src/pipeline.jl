@@ -38,9 +38,7 @@ function reset!(sdm::SDM; τ=0.5)
     return sdm
 end
 
-function predictors(sdm::SDM)
-    return copy(sdm.v)
-end
+predictors(sdm::SDM) = copy(variables(sdm))
 
 function StatsAPI.predict(sdm::SDM, layers::Vector{T}; kwargs...) where {T <: SimpleSDMLayer}
     pr = convert(Float64, similar(first(layers)))
@@ -55,14 +53,3 @@ function StatsAPI.predict(ensemble::Bagging, layers::Vector{T}; kwargs...) where
     pr.grid[findall(!isnothing, layers[1].grid)] .= predict(ensemble, F; kwargs...)
     return pr
 end
-
-function ConfusionMatrix(sdm::SDM; kwargs...)
-    ŷ = predict(sdm; kwargs...)
-    return ConfusionMatrix(ŷ, sdm.y)
-end
-
-function ConfusionMatrix(ensemble::Bagging; kwargs...)
-    return [ConfusionMatrix(m; kwargs...) for m in ensemble.models]
-end
-
-rangediff(new, old) = SpeciesDistributionToolkit.mask(new .| old, new .- old)

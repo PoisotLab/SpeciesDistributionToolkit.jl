@@ -46,3 +46,11 @@ BIOCLIM
 ## Partial responses
 
 ## IO and utility functions
+
+## Bagging
+
+```@docs
+Bagging
+outofbag
+bootstrap
+```

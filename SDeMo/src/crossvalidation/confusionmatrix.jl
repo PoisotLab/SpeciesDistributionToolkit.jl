@@ -33,6 +33,15 @@ function ConfusionMatrix(pred::BitVector, truth::BitVector, args...)
     )
 end
 
+function ConfusionMatrix(sdm::SDM; kwargs...)
+    ŷ = predict(sdm; kwargs...)
+    return ConfusionMatrix(ŷ, sdm.y)
+end
+
+function ConfusionMatrix(ensemble::Bagging; kwargs...)
+    return [ConfusionMatrix(m; kwargs...) for m in ensemble.models]
+end
+
 function Base.Matrix(c::ConfusionMatrix)
     return [c.tp c.fp; c.fn c.tn]
 end

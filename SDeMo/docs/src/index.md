@@ -37,6 +37,12 @@ BIOCLIM
 
 ```@docs
 train!
+predict
+```
+
+### Other model functions
+
+```@docs
 reset!
 ```
 

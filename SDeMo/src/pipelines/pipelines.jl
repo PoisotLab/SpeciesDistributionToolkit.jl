@@ -1,31 +1,3 @@
-import StatsAPI
-import LinearAlgebra
-using MultivariateStats
-using Distributions
-
-abstract type Transformer end
-abstract type Classifier end
-
-mutable struct SDM{F,L}
-    transformer::Transformer
-    classifier::Classifier
-    τ::Number # Threshold
-    X::Matrix{F} # Features
-    y::Vector{L} # Labels
-    v::AbstractVector # Variables
-end
-
-include("univariatetransforms.jl")
-include("multivariatetransforms.jl")
-include("nbc.jl")
-include("confusionmatrix.jl")
-include("crossvalidation.jl")
-include("mocks.jl")
-include("vif.jl")
-include("variableselection.jl")
-include("bootstrap.jl")
-include("io.jl")
-
 function train!(sdm::SDM; threshold=true, training=:, optimality=mcc)
     train!(sdm.transformer, sdm.X[sdm.v,training])
     X₁ = predict(sdm.transformer, sdm.X[sdm.v,training])

@@ -35,6 +35,16 @@ BIOCLIM
 
 ## Cross-validation
 
+### Confusion matrix
+
+### Folds
+
+### Cross-validation
+
+### Thresholding
+
+### List of performance measures
+
 ## Feature selection
 
 ## Feature importance

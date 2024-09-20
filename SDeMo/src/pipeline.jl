@@ -40,6 +40,7 @@ end
 
 predictors(sdm::SDM) = copy(variables(sdm))
 
+#=
 function StatsAPI.predict(sdm::SDM, layers::Vector{T}; kwargs...) where {T <: SimpleSDMLayer}
     pr = convert(Float64, similar(first(layers)))
     F = permutedims(hcat(values.(layers)...))
@@ -53,3 +54,4 @@ function StatsAPI.predict(ensemble::Bagging, layers::Vector{T}; kwargs...) where
     pr.grid[findall(!isnothing, layers[1].grid)] .= predict(ensemble, F; kwargs...)
     return pr
 end
+=#

@@ -154,7 +154,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-        run: julia --project=Phylopic/docs/ Phylopic/docs/make.jl
+        run: julia --project=SDeMo/docs/ SDeMo/docs/make.jl
   SpeciesDistributionToolkit:
     needs: [SDeMo]
     permissions:

@@ -41,4 +41,8 @@ export Transformer
 export Classifier
 export SDM
 
+# RawData, ZScore
+include("pipelines/univariatetransforms.jl")
+export RawData, ZScore
+
 end # module SDeMo

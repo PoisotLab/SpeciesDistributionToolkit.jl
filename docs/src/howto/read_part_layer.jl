@@ -6,17 +6,17 @@ CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
 # To illustrate the process, we will load the demo dataset:
 
-t = SimpleSDMLayers.__demodata(; reduced = true)
+t = SimpleSDMLayers.__demodata()
 f = tempname() * ".tiff"
 SimpleSDMLayers.save(f, t)
 
 # We can check the look of this layer as a reference:
 
-heatmap(t; colormap = :magma)
+heatmap(t; colormap = :navia)
 
 # We now define a bounding box:
 
-bbox = (left = -78.0, right = -75.0, bottom = 47.0, top = 49.0)
+bbox = (left = -76.0, right = -73.0, bottom = 48.0, top = 50.0)
 
 # ::: warning WGS84 is used for the bounding box
 # 
@@ -32,7 +32,7 @@ k = SDMLayer(f; bandnumber = 1, bbox...)
 
 # Note that this layer is indeed cropped, but has retained its CRS:
 
-heatmap(k; colormap = :magma)
+heatmap(k; colormap = :navia)
 
 # We can also plot this layer projected under WGS84, and overlay the
 # boundingbox:
@@ -45,8 +45,8 @@ poly = [
     (bbox.left, bbox.bottom),
 ]
 heatmap(
-    interpolate(k; dest = "+proj=longlat +datum=WGS84 +no_defs +type=crs");
-    colormap = :magma,
+    interpolate(k; dest = "+proj=longlat +datum=WGS84 +no_defs +type=crs", newsize=(500, 500));
+    colormap = :navia,
 )
 lines!(poly; color = :black, linewidth = 2, linestyle = :dash)
 current_figure() #hide

@@ -1,3 +1,8 @@
+"""
+    BIOCLIM
+
+BIOCLIM
+"""
 Base.@kwdef mutable struct BIOCLIM <: Classifier
     ecdf::Vector = [(x) -> 0.0]
 end

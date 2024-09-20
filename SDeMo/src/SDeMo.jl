@@ -48,8 +48,13 @@ labels(sdm::SDM) = sdm.y
 variables(sdm::SDM) = sdm.v
 export threshold, features, labels, variables
 
-# RawData, ZScore
-include("pipelines/univariatetransforms.jl")
+include("transformers/univariate.jl")
 export RawData, ZScore
+
+include("classifiers/naivebayes.jl")
+export NaiveBayes
+
+include("classifiers/bioclim.jl")
+export BIOCLIM
 
 end # module SDeMo

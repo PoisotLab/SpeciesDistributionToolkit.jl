@@ -19,6 +19,11 @@ ZScore
 
 ### Classifiers
 
+```@docs
+NaiveBayes
+BIOCLIM
+```
+
 ## Cross-validation
 
 ## Feature selection

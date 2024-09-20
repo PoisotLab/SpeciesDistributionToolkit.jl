@@ -1,8 +1,8 @@
 function __tosymbol(cl::Type{T}) where T <: Classifier
     str = string(cl)
-    contains(str, "NBC") && return :NBC
+    contains(str, "NaiveBayes") && return :NaiveBayes
     contains(str, "BioClim") && return :BioClim
-    return :NBC
+    return :NaiveBayes
 end
 
 function __tosymbol(tr::Type{T}) where T <: Transformer
@@ -18,7 +18,7 @@ function __fromsymbol(s)
     s == :ZScore && return ZScore
     s == Symbol("MultivariateTransform{PCA}") && return MultivariateTransform{PCA}
     s == Symbol("MultivariateTransform{Whitening}") && return MultivariateTransform{Whitening}
-    s == :NBC && return NBC
+    s == :NaiveBayes && return NaiveBayes
     s == :BioClim && return BioClim
 end
 

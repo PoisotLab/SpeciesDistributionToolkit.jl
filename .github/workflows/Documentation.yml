@@ -145,11 +145,11 @@ jobs:
         with:
           version: '1'
       - name: "Bootstrap the package"
-        run: julia --project=./Phylopic Phylopic/bootstrap.jl
+        run: julia --project=./SDeMo SDeMo/bootstrap.jl
       - uses: julia-actions/cache@v2
       - name: Install dependencies
         run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-        working-directory: Phylopic/
+        working-directory: SDeMo/
       - name: Build and deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

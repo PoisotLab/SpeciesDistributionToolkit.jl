@@ -131,7 +131,6 @@ jobs:
           name: coverage
           path: Fauxcurrences-lcov.info
   SDeMo:
-    needs: [SimpleSDMLayers]
     name: "SDeMo"
     runs-on: "ubuntu-latest"
     continue-on-error: true
@@ -156,7 +155,7 @@ jobs:
           name: coverage
           path: SpeciesDistributionToolkit-lcov.info
   SpeciesDistributionToolkit:
-    needs: [GBIF, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, Phylopic]
+    needs: [GBIF, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, Phylopic, SDeMo]
     name: "SpeciesDistributionToolkit"
     runs-on: "ubuntu-latest"
     continue-on-error: true

@@ -15,6 +15,7 @@ using LinearAlgebra
 TODO
 """
 abstract type Transformer end
+export Transformer
 
 """
     Classifier
@@ -22,6 +23,7 @@ abstract type Transformer end
 TODO
 """
 abstract type Classifier end
+export Classifier
 
 """
     SDM
@@ -36,10 +38,13 @@ mutable struct SDM{F,L}
     y::Vector{L} # Labels
     v::AbstractVector # Variables
 end
-
-export Transformer
-export Classifier
 export SDM
+
+threshold(sdm::SDM) = sdm.τ
+features(sdm::SDM) = sdm.X
+labels(sdm::SDM) = sdm.y
+variables(sdm::SDM) = sdm.v
+export threshold, features, labels, variables
 
 # RawData, ZScore
 include("pipelines/univariatetransforms.jl")

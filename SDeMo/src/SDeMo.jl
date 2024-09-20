@@ -4,6 +4,7 @@ using TestItems
 
 import GLM
 import StatsAPI
+using Distributions
 import MultivariateStats
 using StatsBase
 using Random

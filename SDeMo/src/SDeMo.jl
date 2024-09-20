@@ -30,7 +30,14 @@ export Classifier
 """
     SDM
 
-TODO
+This type specifies a *full* model, which is composed of a transformer (which
+applies a transformation on the data), a classifier (which returns a
+quantitative score), a threshold (above which the score corresponds to the
+prediction of a presence).
+
+In addition, the SDM carries with it the training features and labels, as well
+as a vector of indices indicating which variables are actually used by the
+model.
 """
 mutable struct SDM{F,L}
     transformer::Transformer
@@ -42,9 +49,24 @@ mutable struct SDM{F,L}
 end
 export SDM
 
+"""
+    threshold(sdm::SDM)
+"""
 threshold(sdm::SDM) = sdm.τ
+
+"""
+    features(sdm::SDM)
+"""
 features(sdm::SDM) = sdm.X
+
+"""
+    labels(sdm::SDM)
+"""
 labels(sdm::SDM) = sdm.y
+
+"""
+    variables(sdm::SDM)
+"""
 variables(sdm::SDM) = sdm.v
 export threshold, features, labels, variables
 

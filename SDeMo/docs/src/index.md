@@ -8,6 +8,15 @@ Transformer
 Classifier
 ```
 
+### Utility functions
+
+```@docs
+features
+labels
+threshold
+variables
+```
+
 ### Transformers (univariate)
 
 ```@docs

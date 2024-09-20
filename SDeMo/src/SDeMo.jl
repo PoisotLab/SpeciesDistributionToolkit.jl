@@ -1,5 +1,7 @@
 module SDeMo
 
+using TestItems
+
 import GLM
 import StatsAPI
 import MultivariateStats

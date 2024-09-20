@@ -49,6 +49,7 @@ makedocs(;
         "How-to..." => [
             "howto/get_gbif_data.md",
             "howto/know_layers_provided.md",
+            "howto/read_part_layer.md",
             "howto/mask_a_layer.md",
             "howto/split_a_layer.md",
             "howto/interpolate.md",

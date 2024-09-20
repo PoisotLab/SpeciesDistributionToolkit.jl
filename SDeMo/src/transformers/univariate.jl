@@ -1,7 +1,8 @@
 """
     RawData
 
-A transformer that does *nothing* to the data.
+A transformer that does *nothing* to the data. This is passing the raw data to
+the classifier.
 """
 struct RawData <: Transformer end
 
@@ -12,7 +13,9 @@ StatsAPI.predict(::RawData, X) = X
     ZScore
 
 A transformer that scales and centers the data, using only the data that are
-avaiable to the model at training time.
+avaiable to the model at training time. For all variables in the SDM features
+(regardless of whether they are used), this transformer will store the observed
+mean and standard deviation.
 """
 Base.@kwdef mutable struct ZScore <: Transformer
     μ::AbstractArray = zeros(1)

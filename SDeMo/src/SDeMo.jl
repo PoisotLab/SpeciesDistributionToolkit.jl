@@ -95,7 +95,7 @@ include("classifiers/bioclim.jl")
 export BIOCLIM
 
 include("pipeline.jl")
-export train!
+export reset!, train!
 
 include("bagging/bootstrap.jl")
 include("bagging/pipeline.jl")

@@ -33,6 +33,13 @@ NaiveBayes
 BIOCLIM
 ```
 
+### Training and prediction
+
+```@docs
+train!
+reset!
+```
+
 ## Cross-validation
 
 ### Confusion matrix

@@ -1,3 +1,8 @@
+"""
+    train!(sdm::SDM; threshold=true, training=:, optimality=mcc)
+
+TODO
+"""
 function train!(sdm::SDM; threshold=true, training=:, optimality=mcc)
     train!(sdm.transformer, sdm.X[sdm.v,training])
     X₁ = predict(sdm.transformer, sdm.X[sdm.v,training])
@@ -12,6 +17,11 @@ function train!(sdm::SDM; threshold=true, training=:, optimality=mcc)
     return sdm
 end
 
+"""
+    StatsAPI.predict(sdm::SDM, X; threshold = true)
+
+TODO
+"""
 function StatsAPI.predict(sdm::SDM, X; threshold = true)
     X₁ = predict(sdm.transformer, X[sdm.v,:])
     ŷ = predict(sdm.classifier, X₁)
@@ -32,13 +42,17 @@ function StatsAPI.predict(sdm::SDM; kwargs...)
     return StatsAPI.predict(sdm::SDM, sdm.X; kwargs...)
 end
 
-function reset!(sdm::SDM; τ=0.5)
+"""
+    reset!(sdm::SDM, τ=0.5)
+
+Resets a model, with a potentially specified value of the threshold. This
+amounts to re-using all the variables, and removing the tuned threshold version.
+"""
+function reset!(sdm::SDM, τ=0.5)
     sdm.v = collect(axes(sdm.X, 1))
     sdm.τ = τ
     return sdm
 end
-
-predictors(sdm::SDM) = copy(variables(sdm))
 
 #=
 function StatsAPI.predict(sdm::SDM, layers::Vector{T}; kwargs...) where {T <: SimpleSDMLayer}

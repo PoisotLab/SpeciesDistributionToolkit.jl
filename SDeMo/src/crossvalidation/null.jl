@@ -1,5 +1,4 @@
 function noskill(labels::Vector{Bool})
-    n = length(labels)
     p = mean(labels)
     tp = p^2
     tn = (1 - p)^2

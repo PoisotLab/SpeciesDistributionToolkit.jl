@@ -50,6 +50,10 @@ reset!
 
 ### Confusion matrix
 
+```@docs
+ConfusionMatrix
+```
+
 ### Folds
 
 ### Cross-validation

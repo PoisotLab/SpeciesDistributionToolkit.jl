@@ -60,7 +60,7 @@ function constantnegative(labels::Vector{Bool})
     return ConfusionMatrix(tp, tn, fp, fn)
 end
 
-for nullclass in (:noskill, :coinflip, :constantpositive, :constantnegative)
+for op in (:noskill, :coinflip, :constantpositive, :constantnegative)
     eval(quote
         """
             $($op)(sdm::SDM)

@@ -63,9 +63,9 @@ end
 for nullclass in (:noskill, :coinflip, :constantpositive, :constantnegative)
     eval(quote
         """
-            $op(sdm::SDM)
+            $($op)(sdm::SDM)
 
-        Version of `$op` using the training labels for an SDM.
+        Version of `$($op)` using the training labels for an SDM.
         """
         $op(sdm::SDM) = $op(labels(sdm))
     end)

@@ -90,9 +90,9 @@ end
 for splitter in (:leaveoneout, :holdout, :montecarlo, :kfold)
     eval(quote
         """
-            $op(sdm::SDM)
+            $($op)(sdm::SDM)
 
-        Version of `$op` using the instances and labels of an SDM.
+        Version of `$($op)` using the instances and labels of an SDM.
         """
         $op(sdm::SDM, args...) = $op(labels(sdm), features(sdm), args...)
     end)

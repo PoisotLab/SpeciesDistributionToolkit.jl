@@ -19,8 +19,8 @@ CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 # We provide a very lightweight wrapper around the
 # [GADM](https://gadm.org/index.html) database, which will return data as
 # ready-to-use GeoJSON files. For example, we can get the borders of
-# Switzerland, as featured in [Damaris Zurell excellent SDM
-# tutorial](https://damariszurell.github.io/SDM-Intro/).
+# Switzerland, as featured in [the excellent tutorial on SDMs by Damaris
+# Zurell](https://damariszurell.github.io/SDM-Intro/).
 
 CHE = SpeciesDistributionToolkit.gadm("CHE")
 

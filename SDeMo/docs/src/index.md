@@ -56,9 +56,23 @@ ConfusionMatrix
 
 ### Folds
 
+These method will all take as input a vector of labels and a matrix of features,
+and return a vector of tuples, that have the training indices in the first
+position, and the validation data in the second. This is not true for `holdout`,
+which returns a single tuple.
+
+```@docs
+holdout
+montecarlo
+leaveoneout
+kfolds
+```
+
 ### Cross-validation
 
-### Thresholding
+```@docs
+crossvalidate
+```
 
 ### List of performance measures
 

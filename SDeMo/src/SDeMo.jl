@@ -42,6 +42,9 @@ export reset!, train!, predict
 # Cross-validation code
 include("crossvalidation/confusionmatrix.jl")
 export ConfusionMatrix
+include("crossvalidation/crossvalidation.jl")
+export leaveoneout, kfold, holdout, montecarlo
+export crossvalidate
 
 
 end # module SDeMo

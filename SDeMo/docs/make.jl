@@ -7,6 +7,12 @@ makedocs(
     modules = [SDeMo],
     pages = [
         "index.md",
+        "models.md",
+        "crossvalidation.md",
+        "features.md",
+        "explanations.md",
+        "ensembles.md",
+        "saving.md"
     ],
 )
 

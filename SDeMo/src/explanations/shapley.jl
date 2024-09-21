@@ -48,6 +48,19 @@ function shap_all_points(f, X, Z, j, n)
     return shap_list_points(f, X, Z, axes(X, 2), j, n)
 end
 
+"""
+    explain(model::SDM, j; observation = nothing, instances = nothing, samples = 100, kwargs..., )
+
+Uses the MCMC approximation of Shapley values to provide explanations to
+specific predictions. The second argument `j` is the variable for which the
+explanation should be provided.
+
+The `observation` keywords is a row in the `instances` dataset for which
+explanations must be provided. If `instances` is `nothing`, the explanations
+will be given on the training data.
+
+All other keyword arguments are passed to `predict`.
+"""
 function explain(
     model::SDM,
     j;

@@ -1,3 +1,26 @@
+function _project_bbox_to_crs(
+    eastmin,
+    eastmax,
+    northmin,
+    northmax,
+    proj,
+    left,
+    right,
+    bottom,
+    top,
+)
+    wgs2proj = Proj.Transformation(
+        "+proj=longlat +datum=WGS84 +no_defs +type=crs",
+        proj;
+        always_xy = true,
+    )
+    pts = [(e, n) for e in (left, right) for n in (bottom, top)]
+    ext = [wgs2proj(pt...) for pt in pts]
+    eastmin, eastmax = extrema(first.(ext))
+    northmin, northmax = extrema(last.(ext))
+    return (eastmin, eastmax, northmin, northmax)
+end
+
 function _find_span(n, m, M, pos, side)
     side in [:left, :right, :bottom, :top] ||
         throw(ArgumentError("side must be one of :left, :right, :bottom, top"))
@@ -71,6 +94,21 @@ function _read_geotiff(
         maxlon = minlon + size(band, 1) * transform[2]
         minlat = maxlat - abs(size(band, 2) * transform[6])
 
+        if !any(isnothing, [left, right, bottom, top])
+            left, right, bottom, top = _project_bbox_to_crs(
+                minlon,
+                maxlon,
+                minlat,
+                maxlat,
+                wkt,
+                left,
+                right,
+                bottom,
+                top,
+            )
+        end
+
+        # And now we crop
         left = isnothing(left) ? minlon : max(left, minlon)
         right = isnothing(right) ? maxlon : min(right, maxlon)
         bottom = isnothing(bottom) ? minlat : max(bottom, minlat)

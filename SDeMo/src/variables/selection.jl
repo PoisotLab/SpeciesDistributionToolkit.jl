@@ -1,9 +1,23 @@
+"""
+    noselection!(model, folds; verbose::Bool = false, kwargs...)
+
+Returns the model to the state where all variables are used.
+
+All keyword arguments are passed to `train!`.
+"""
 function noselection!(model, folds; verbose::Bool = false, kwargs...)
     model.v = collect(axes(model.X, 1))
     train!(model; kwargs...)
     return model
 end
 
+"""
+    backwardselection!(model, folds; verbose::Bool = false, optimality=mcc, kwargs...)
+
+Removes variables one at a time until the `optimality` measure stops increasing.
+
+All keyword arguments are passed to `crossvalidate!`.
+"""
 function backwardselection!(model, folds; verbose::Bool = false, optimality=mcc, kwargs...)
     pool = collect(axes(model.X, 1))
     best_perf = -Inf
@@ -39,7 +53,15 @@ function backwardselection!(model, folds; verbose::Bool = false, optimality=mcc,
     return model
 end
 
-function constrainedselection!(model, folds, pool; verbose::Bool = false, optimality=mcc, kwargs...)
+"""
+    forwardselection!(model, folds, pool; verbose::Bool = false, optimality=mcc, kwargs...)
+
+Adds variables one at a time until the `optimality` measure stops increasing.
+The variables in `pool` are added at the start. 
+
+All keyword arguments are passed to `crossvalidate!`.
+"""
+function forwardselection!(model, folds, pool; verbose::Bool = false, optimality=mcc, kwargs...)
     on_top = filter(p -> !(p in pool), collect(axes(X, 1)))
     best_perf = -Inf
     while ~isempty(on_top)
@@ -75,7 +97,14 @@ function constrainedselection!(model, folds, pool; verbose::Bool = false, optima
     return model
 end
 
+"""
+    forwardselection!(model, folds; verbose::Bool = false, optimality=mcc, kwargs...)
+
+Adds variables one at a time until the `optimality` measure stops increasing.
+
+All keyword arguments are passed to `crossvalidate!`.
+"""
 function forwardselection!(model, folds; kwargs...)
     pool = Int64[]
-    return constrainedselection!(model, folds, pool; kwargs...)
+    return forwardselection!(model, folds, pool; kwargs...)
 end

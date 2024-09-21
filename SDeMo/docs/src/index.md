@@ -65,7 +65,7 @@ which returns a single tuple.
 holdout
 montecarlo
 leaveoneout
-kfolds
+kfold
 ```
 
 ### Cross-validation

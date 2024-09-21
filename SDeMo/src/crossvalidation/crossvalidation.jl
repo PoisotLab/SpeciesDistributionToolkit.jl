@@ -19,7 +19,7 @@ end
 Sets aside a proportion (given by the `proportion` keyword, defaults to `0.2`)
 of observations to use for validation, and the rest for training. An additional
 argument `permute` (defaults to `true`) can be used to shuffle the order of
-observations before they are split. 
+observations before they are split.
 
 This method returns a single tuple with the training data first and the
 validation data second.
@@ -55,8 +55,7 @@ end
     kfold(y, X; k = 10, permute = true)
 
 Returns splits of the data in which 1 group is used for validation, and `k`-1
-groups are used for training. All `k`` groups have the (approximate) same size,
-and each instance is only used once for validation (and `k`-1 times for
+groups are used for training. All `k`` groups have the (approximate) same size, and each instance is only used once for validation (and `k`-1 times for
 training).
 
 This method returns a vector of tuples, with each entry have the training data
@@ -85,7 +84,6 @@ function kfold(y, X; k = 10, permute = true)
     end
     return folds
 end
-
 
 for op in (:leaveoneout, :holdout, :montecarlo, :kfold)
     eval(quote
@@ -124,4 +122,3 @@ function crossvalidate(sdm, folds; thr = nothing, kwargs...)
     end
     return Cv, Ct
 end
-

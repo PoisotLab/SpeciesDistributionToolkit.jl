@@ -64,7 +64,7 @@ end
     ConfusionMatrix(sdm::SDM; kwargs...)
 
 Performs the predictions for an SDM, and compare to the labels used for
-training. The keyword arguments are passed to the `predict` method. 
+training. The keyword arguments are passed to the `predict` method.
 """
 function ConfusionMatrix(sdm::SDM; kwargs...)
     ŷ = predict(sdm; kwargs...)
@@ -75,7 +75,7 @@ end
     ConfusionMatrix(sdm::SDM; kwargs...)
 
 Performs the predictions for an SDM, and compare to the labels used for
-training. The keyword arguments are passed to the `predict` method. 
+training. The keyword arguments are passed to the `predict` method.
 """
 function ConfusionMatrix(ensemble::Bagging; kwargs...)
     return [ConfusionMatrix(m; kwargs...) for m in ensemble.models]

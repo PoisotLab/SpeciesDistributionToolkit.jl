@@ -145,8 +145,7 @@ Applies the MCC (`mcc`) to all confusion matrices in the vector, and returns the
 """
 ci(C::Vector{ConfusionMatrix}) = ci(C, mcc)
 
-crossentropyloss(y, p) = mean(.-(y .* log.(p) .+ (1.0 .- y) .* log.( 1.0 .- p)))
-
+crossentropyloss(y, p) = mean(.-(y .* log.(p) .+ (1.0 .- y) .* log.(1.0 .- p)))
 
 """
     sensitivity(M::ConfusionMatrix)
@@ -154,7 +153,6 @@ crossentropyloss(y, p) = mean(.-(y .* log.(p) .+ (1.0 .- y) .* log.( 1.0 .- p)))
 Alias for `tpr`, the true positive rate
 """
 sensitivity(M::ConfusionMatrix) = tpr(M)
-
 
 """
     recall(M::ConfusionMatrix)
@@ -169,7 +167,6 @@ recall(M::ConfusionMatrix) = tpr(M)
 Alias for `tnr`, the true negative rate
 """
 specificity(M::ConfusionMatrix) = tnr(M)
-
 
 """
     precision(M::ConfusionMatrix)

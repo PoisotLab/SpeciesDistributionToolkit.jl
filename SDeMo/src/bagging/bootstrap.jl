@@ -36,14 +36,12 @@ end
 Creates a bag from SDM
 """
 function Bagging(model::SDM, n::Integer)
-    bags= bootstrap(labels(model), features(model); n=n)
+    bags = bootstrap(labels(model), features(model); n = n)
     return Bagging(model, bags, [deepcopy(model) for _ in eachindex(bags)])
 end
 
-
 """
     outofbag(ensemble::Bagging; kwargs...)
-
 """
 function outofbag(ensemble::Bagging; kwargs...)
     instance = rand(eachindex(y))
@@ -55,7 +53,8 @@ function outofbag(ensemble::Bagging; kwargs...)
         if !isempty(valid_models)
             push!(done_instances, instance)
             pred = [
-                predict(ensemble.models[i], ensemble.model.X[:, instance]; kwargs...) for
+                predict(ensemble.models[i], ensemble.model.X[:, instance]; kwargs...)
+                for
                 i in valid_models
             ]
             push!(outcomes, count(pred) > count(pred) // 2)

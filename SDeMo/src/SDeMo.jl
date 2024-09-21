@@ -22,6 +22,9 @@ export threshold, features, labels, variables
 include("transformers/univariate.jl")
 export RawData, ZScore
 
+include("transformers/multivariate.jl")
+export MultivariateTransform
+
 # Naive Bayes
 include("classifiers/naivebayes.jl")
 export NaiveBayes

@@ -1,6 +1,6 @@
 function dmad(model, x, xprime)
-    Xbar = vec(median(model.X, dims=2))
-    MAD = vec(median(abs.(model.X .- Xbar); dims=2))
+    Xbar = vec(median(model.X; dims = 2))
+    MAD = vec(median(abs.(model.X .- Xbar); dims = 2))
     dfs = abs.(x .- xprime) ./ MAD
     return sum(dfs[model.v])
 end
@@ -14,23 +14,33 @@ end
 
 function shrink!(xn, xl; α = 1.0, β = 0.5, γ = 2.0, δ = 0.5)
     for i in eachindex(xn)
-        xn[i] = xl .+ δ.*(xn[i] .- xl)
+        xn[i] = xl .+ δ .* (xn[i] .- xl)
     end
     return xn
 end
 
-function neldermead!(xn, L, model, x, yhat, λ; α = 1.0, β = 0.5, γ = 2.0, δ = 0.5, kwargs...)
-
+function neldermead!(
+    xn,
+    L,
+    model,
+    x,
+    yhat,
+    λ;
+    α = 1.0,
+    β = 0.5,
+    γ = 2.0,
+    δ = 0.5,
+    kwargs...,
+)
     best = partialsortperm(L, 1)
     second = partialsortperm(L, length(L) - 1)
     worst = partialsortperm(L, length(L))
-    
+
     xh, xs, xl = xn[worst], xn[second], xn[best]
     fh, fs, fl = L[worst], L[second], L[best]
-    
+
     bestside = filter(!isequal(worst), eachindex(xn))
     centroid = reduce(.+, xn[bestside]) ./ length(bestside)
-    
 
     # Reflection
     xr = centroid .+ α .* (centroid .- xh)
@@ -87,7 +97,7 @@ function initialprop(model, x)
 end
 
 function xncenter(xn)
-    return reduce(.+, xn)./length(xn)
+    return reduce(.+, xn) ./ length(xn)
 end
 
 """
@@ -99,14 +109,22 @@ used in the Nelder-Mead algorithm is `maxiter`, and the variance improvement
 under which the model will stop is `minvar`. Other keywords are passed to
 `predict`.
 """
-function counterfactual(model::SDM, x::Vector{T}, yhat, λ; maxiter=100, minvar=5e-5, kwargs...) where {T <: Number}
+function counterfactual(
+    model::SDM,
+    x::Vector{T},
+    yhat,
+    λ;
+    maxiter = 100,
+    minvar = 5e-5,
+    kwargs...,
+) where {T <: Number}
     xn = initialprop(model, x)
     L = [nmloss(model, x, xp, yhat, λ; kwargs...) for xp in xn]
     L0 = var(L)
     for _ in Base.OneTo(maxiter)
         neldermead!(xn, L, model, x, yhat, λ; kwargs...)
         L = [nmloss(model, x, xp, yhat, λ; kwargs...) for xp in xn]
-        if var(L)/L0 <= minvar
+        if var(L) / L0 <= minvar
             break
         end
     end

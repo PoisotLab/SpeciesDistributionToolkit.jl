@@ -2,8 +2,15 @@
 types_to_train = [:PCA, :PPCA, :KernelPCA, :Whitening]
 types_with_transform = [:Whitening]
 
+"""
+    MultivariateTransform{T} <: Transformer
+
+`T` is a multivariate transformation, likely offered through the
+`MultivariateStats` package. The transformations currently supported are `PCA`,
+`PPCA`, `KernelPCA`, and `Whitening`.
+"""
 Base.@kwdef mutable struct MultivariateTransform{T} <: Transformer
-    trf::T = StatsAPI.fit(T, Matrix(LinearAlgebra.I(2).*1.0))
+    trf::T = StatsAPI.fit(T, Matrix(LinearAlgebra.I(2) .* 1.0))
 end
 
 for tf in types_to_train

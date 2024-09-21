@@ -48,6 +48,10 @@ export crossvalidate
 include("crossvalidation/null.jl")
 export noskill, coinflip, constantnegative, constantpositive
 
+# Variable selection
+include("variables/selection.jl")
+export noselection!, forwardselection!, backwardselection!
+
 # Explanations, etc
 include("explanations/counterfactual.jl")
 export counterfactual

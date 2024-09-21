@@ -26,8 +26,6 @@ kfold
 crossvalidate
 ```
 
-## List of performance measures
-
 ## Null classifiers
 
 ```@docs
@@ -35,4 +33,36 @@ noskill
 coinflip
 constantnegative
 constantpositive
+```
+
+## List of performance measures
+
+```@docs
+tpr
+tnr
+fpr
+fnr
+ppv
+npv
+fdir
+fomr
+plr
+nlr
+accuracy
+balancedaccuracy
+```
+
+## Confidence interval
+
+```@docs
+ci
+```
+
+## Aliases
+
+```@docs
+specificity
+sensitivity
+recall
+precision
 ```

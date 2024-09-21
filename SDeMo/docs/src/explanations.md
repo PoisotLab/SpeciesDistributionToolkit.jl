@@ -2,6 +2,10 @@
 
 ## Shapley values
 
+```@docs
+explain
+```
+
 ## Counterfactuals
 
 ```@docs

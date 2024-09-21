@@ -87,7 +87,7 @@ function kfold(y, X; k = 10, permute = true)
 end
 
 
-for splitter in (:leaveoneout, :holdout, :montecarlo, :kfold)
+for op in (:leaveoneout, :holdout, :montecarlo, :kfold)
     eval(quote
         """
             $($op)(sdm::SDM)

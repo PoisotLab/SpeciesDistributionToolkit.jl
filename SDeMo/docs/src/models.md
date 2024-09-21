@@ -9,6 +9,10 @@ ZScore
 
 ## Transformers (multivariate)
 
+```@docs
+MultivariateTransform
+```
+
 ## Classifiers
 
 ```@docs

@@ -65,14 +65,14 @@ function StatsAPI.predict(sdm::SDM; kwargs...)
 end
 
 """
-    reset!(sdm::SDM, τ=0.5)
+    reset!(sdm::SDM, thr=0.5)
 
 Resets a model, with a potentially specified value of the threshold. This
 amounts to re-using all the variables, and removing the tuned threshold version.
 """
-function reset!(sdm::SDM, τ = 0.5)
+function reset!(sdm::SDM, thr = 0.5)
     sdm.v = collect(axes(sdm.X, 1))
-    sdm.τ = τ
+    sdm.τ = thr
     return sdm
 end
 

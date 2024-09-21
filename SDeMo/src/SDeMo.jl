@@ -48,5 +48,8 @@ export crossvalidate
 include("crossvalidation/null.jl")
 export noskill, coinflip, constantnegative, constantpositive
 
+# Explanations, etc
+include("explanations/counterfactual.jl")
+export counterfactual
 
 end # module SDeMo

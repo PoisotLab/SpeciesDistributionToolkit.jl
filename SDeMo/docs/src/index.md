@@ -93,6 +93,10 @@ constantpositive
 
 ## Counterfactuals
 
+```@docs
+counterfactual
+```
+
 ## Partial responses
 
 ## IO and utility functions

@@ -1,5 +1,3 @@
-rangediff(new, old) = mask(new .| old, new .- old)
-
 function iqr(x)
     if all(isnan.(x))
         return 0.0

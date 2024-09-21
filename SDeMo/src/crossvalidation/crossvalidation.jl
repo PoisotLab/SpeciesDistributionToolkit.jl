@@ -86,10 +86,17 @@ function kfold(y, X; k = 10, permute = true)
     return folds
 end
 
-kfold(sdm::SDM; kwargs...) = kfold(labels(sdm), features(sdm); kwargs...)
-holdout(sdm::SDM; kwargs...) = holdout(labels(sdm), features(sdm); kwargs...)
-montecarlo(sdm::SDM; kwargs...) = montecarlo(labels(sdm), features(sdm); kwargs...)
-leaveoneout(sdm::SDM; kwargs...) = leaveoneout(labels(sdm), features(sdm); kwargs...)
+
+for splitter in (:leaveoneout, :holdout, :montecarlo, :kfold)
+    eval(quote
+        """
+            $op(sdm::SDM)
+
+        Version of `$op` using the instances and labels of an SDM.
+        """
+        $op(sdm::SDM, args...) = $op(labels(sdm), features(sdm), args...)
+    end)
+end
 
 """
     crossvalidate(sdm, folds; thr = nothing, kwargs...)

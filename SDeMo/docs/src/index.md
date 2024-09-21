@@ -76,6 +76,15 @@ crossvalidate
 
 ### List of performance measures
 
+### Null classifiers
+
+```@docs
+noskill
+coinflip
+constantnegative
+constantpositive
+```
+
 ## Feature selection
 
 ## Feature importance

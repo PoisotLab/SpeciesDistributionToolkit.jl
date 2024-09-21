@@ -45,6 +45,8 @@ export ConfusionMatrix
 include("crossvalidation/crossvalidation.jl")
 export leaveoneout, kfold, holdout, montecarlo
 export crossvalidate
+include("crossvalidation/null.jl")
+export noskill, coinflip, constantnegative, constantpositive
 
 
 end # module SDeMo

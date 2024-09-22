@@ -7,10 +7,10 @@ polygon are assumed to be WGS84.
 
 ## Masking
 
- ```@docs
- mask!
- mask
- ```
+```@docs
+mask!
+mask
+```
 
 ## Trimming
 

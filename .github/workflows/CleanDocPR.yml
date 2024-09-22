@@ -21,6 +21,7 @@ jobs:
               git rm -rf "GBIF/previews/PR$PRNUM"
               git rm -rf "Phylopic/previews/PR$PRNUM"
               git rm -rf "SimpleSDMLayers/previews/PR$PRNUM"
+              git rm -rf "SDeMo/previews/PR$PRNUM"
               git rm -rf "SimpleSDMDatasets/previews/PR$PRNUM"
               git rm -rf "Fauxcurrences/previews/PR$PRNUM"
               git commit -m "delete preview"

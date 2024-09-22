@@ -158,6 +158,18 @@ lines!(ax, prx, pry, color=:black)
 hlines!(ax, [threshold(sdm)], color=:red, linestyle=:dash)
 current_figure() #hide
 
+# We can also show the response surface using two variables:
+
+prx, pry, prz = partialresponse(sdm, variables(sdm)[1:2]..., (100, 100); threshold=false);
+
+#-
+
+f = Figure()
+ax = Axis(f[1, 1], xlabel="BIO$(variables(sdm)[1])", ylabel="BIO$(variables(sdm)[2])")
+cm = heatmap!(prx, pry, prz, colormap=:Oranges)
+Colorbar(f[1,2], cm)
+current_figure() #hide
+
 # ## Measuring uncertainty with bagging
 
 # We can wrap our model into an homogeneous ensemble:

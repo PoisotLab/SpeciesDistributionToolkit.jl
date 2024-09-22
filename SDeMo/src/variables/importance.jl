@@ -12,9 +12,11 @@ function variableimportance(model, folds, variable; reps=10, optimality=mcc, kwa
 end
 
 function varimp_shuffle(model, fold, var; kwargs...)
-    X = model.X[:, fold[1]]
+    X = copy(model.X[:, fold[1]])
     orig = ConfusionMatrix(predict(model, X; kwargs...), model.y[fold[1]])
     X[var,:] =  shuffle(X[var,:])
     perm = ConfusionMatrix(predict(model, X; kwargs...), model.y[fold[1]])
     return (orig, perm)
 end
+
+variableimportance(model, folds; kwargs...) = [variableimportance(model, folds, v; kwargs...) for v in variables(model)]

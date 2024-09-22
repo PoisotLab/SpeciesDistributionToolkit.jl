@@ -66,7 +66,7 @@ function explain(
     j;
     observation = nothing,
     instances = nothing,
-    samples = 100,
+    samples = 200,
     kwargs...,
 )
     predictor = (x) -> predict(model, x; kwargs...)
@@ -74,6 +74,6 @@ function explain(
     if isnothing(observation)
         return shap_all_points(predictor, instances, model.X, j, samples)
     else
-        return shap_one_point(predictor, instances, model.X, i, j, samples)
+        return shap_one_point(predictor, instances, model.X, observation, j, samples)
     end
 end

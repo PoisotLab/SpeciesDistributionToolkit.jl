@@ -15,6 +15,7 @@ features
 labels
 threshold
 variables
+instance
 ```
 
 ### Training and predicting

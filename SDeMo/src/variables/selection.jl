@@ -62,7 +62,7 @@ The variables in `pool` are added at the start.
 All keyword arguments are passed to `crossvalidate!`.
 """
 function forwardselection!(model, folds, pool; verbose::Bool = false, optimality=mcc, kwargs...)
-    on_top = filter(p -> !(p in pool), collect(axes(X, 1)))
+    on_top = filter(p -> !(p in pool), collect(axes(model.X, 1)))
     best_perf = -Inf
     while ~isempty(on_top)
         if verbose

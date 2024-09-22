@@ -51,6 +51,27 @@ output of this function *will* change the content of the SDM features.
 """
 features(sdm::SDM) = sdm.X
 
+
+"""
+    features(sdm::SDM, n)
+
+Returns the *n*-th feature stored in the field `X` of the SDM.
+"""
+features(sdm::SDM, n) = sdm.X[n, :]
+
+"""
+    instance(sdm::SDM, n)
+
+Returns the *n*-th instance stored in the field `X` of the SDM.
+"""
+function instance(sdm::SDM, n; strict=true)
+    if strict
+        return features(sdm)[variables(sdm), n]
+    else
+        return features(sdm)[:, n]
+    end
+end
+
 """
     labels(sdm::SDM)
 

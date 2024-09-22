@@ -19,7 +19,7 @@ include("utilities/demodata.jl")
 include("models.jl")
 export Transformer, Classifier
 export SDM
-export threshold, features, labels, variables
+export threshold, features, labels, variables, instance
 
 # Univariate transforms
 include("transformers/univariate.jl")
@@ -64,6 +64,9 @@ export ci
 # Variable selection
 include("variables/selection.jl")
 export noselection!, forwardselection!, backwardselection!
+
+include("variables/importance.jl")
+export variableimportance
 
 # Explanations, etc
 include("explanations/counterfactual.jl")

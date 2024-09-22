@@ -43,7 +43,7 @@ folds = kfold(sdm; k=10);
 # this will return a named tuple with the confusion matrices for validation and
 # training data:
 
-cv = crossvalidate(sdm, folds)
+cv = crossvalidate(sdm, folds);
 
 # The reason why we return the confusion matrices as opposed to directly
 # measuring statistics is that we have more freedom to manipulate the data,

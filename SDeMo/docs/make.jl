@@ -3,7 +3,6 @@ using SDeMo
 using Literate
 using CairoMakie
 
-
 # Render the tutorials and how-to using Literate
 for vignette in ["demo.jl"]
     fpath = joinpath(@__DIR__, "src")
@@ -14,10 +13,9 @@ for vignette in ["demo.jl"]
     )
 end
 
-
 makedocs(
     sitename="SDeMo",
-    format=Documenter.HTML(),
+    format=Documenter.HTML(size_threshold_ignore=["demo.md"]),
     modules=[SDeMo],
     pages=[
         "index.md",

@@ -25,7 +25,7 @@ In addition, the SDM carries with it the training features and labels, as well
 as a vector of indices indicating which variables are actually used by the
 model.
 """
-mutable struct SDM{F,L}
+mutable struct SDM{F, L}
     transformer::Transformer
     classifier::Classifier
     τ::Number # Threshold
@@ -34,14 +34,19 @@ mutable struct SDM{F,L}
     v::AbstractVector # Variables
 end
 
-function SDM(::Type{TF}, ::Type{CF}, X::Matrix{T}, y::Vector{Bool}) where {TF <: Transformer, CF <: Classifier, T <: Number}
+function SDM(
+    ::Type{TF},
+    ::Type{CF},
+    X::Matrix{T},
+    y::Vector{Bool},
+) where {TF <: Transformer, CF <: Classifier, T <: Number}
     return SDM(
         TF(),
         CF(),
         zero(CF),
         X,
         y,
-        collect(1:size(X,1))
+        collect(1:size(X, 1)),
     )
 end
 
@@ -54,6 +59,13 @@ to be a presence.
 threshold(sdm::SDM) = sdm.τ
 
 """
+    threshold!(sdm::SDM, τ)
+
+Sets the value of the threshold.
+"""
+threshold!(sdm::SDM, τ) = sdm.τ = τ
+
+"""
     features(sdm::SDM)
 
 Returns the features stored in the field `X` of the SDM. Note that the features
@@ -61,7 +73,6 @@ are an array, and this does not return a copy of it -- any change made to the
 output of this function *will* change the content of the SDM features.
 """
 features(sdm::SDM) = sdm.X
-
 
 """
     features(sdm::SDM, n)
@@ -75,7 +86,7 @@ features(sdm::SDM, n) = sdm.X[n, :]
 
 Returns the *n*-th instance stored in the field `X` of the SDM.
 """
-function instance(sdm::SDM, n; strict=true)
+function instance(sdm::SDM, n; strict = true)
     if strict
         return features(sdm)[variables(sdm), n]
     else
@@ -99,3 +110,10 @@ importance. This does not return a copy of the variables array, but the array
 itself.
 """
 variables(sdm::SDM) = sdm.v
+
+"""
+    variables!(sdm::SDM, v)
+
+Sets the list of variables.
+"""
+variables!(sdm::SDM, v) = sdm.v = copy(v)

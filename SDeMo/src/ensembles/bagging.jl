@@ -1,11 +1,11 @@
 """
     bootstrap(y, X; n = 50)
 """
-function bootstrap(y, X; n = 50)
+function bootstrap(y, X; n=50)
     @assert size(y, 1) == size(X, 2)
     bags = []
     for _ in 1:n
-        inbag = sample(1:size(X, 2), size(X, 2); replace = true)
+        inbag = sample(1:size(X, 2), size(X, 2); replace=true)
         outbag = setdiff(axes(X, 2), inbag)
         push!(bags, (inbag, outbag))
     end
@@ -24,7 +24,7 @@ end
 """
 mutable struct Bagging
     model::SDM
-    bags::Vector{Tuple{Vector{Int64}, Vector{Int64}}}
+    bags::Vector{Tuple{Vector{Int64},Vector{Int64}}}
     models::Vector{SDM}
 end
 
@@ -43,7 +43,7 @@ end
 Creates a bag from SDM
 """
 function Bagging(model::SDM, n::Integer)
-    bags = bootstrap(labels(model), features(model); n = n)
+    bags = bootstrap(labels(model), features(model); n=n)
     return Bagging(model, bags, [deepcopy(model) for _ in eachindex(bags)])
 end
 

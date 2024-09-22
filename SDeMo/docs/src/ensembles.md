@@ -8,3 +8,9 @@ outofbag
 bootstrap
 iqr
 ```
+
+## Heterogeneous ensembles
+
+```@docs
+Ensemble
+```

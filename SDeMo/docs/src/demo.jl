@@ -186,6 +186,28 @@ train!(ensemble)
 uncert = predict(ensemble; consensus=iqr, threshold=false)
 hist(uncert, color=:grey; axis=(; xlabel="Uncertainty (IQR)"))
 
+# ## Heterogeneous ensembles
+
+# We can setup an heterogeneous ensemble model by passing several SDMs to
+# `Ensemble`:
+
+m1 = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+m2 = SDM(RawData, BIOCLIM, X, y)
+m3 = SDM(MultivariateTransform{PCA}, BIOCLIM, X, y)
+variables!(m2, [1, 12])
+hm = Ensemble(m1, m2, m3)
+
+# We can train this model in the same way:
+
+train!(hm)
+
+# And get predictions:
+
+predict(hm; consensus=median, threshold=false)[1:10]
+
+# Note taht *for now*, `Ensemble` and `Bagging` models are not supported by
+# methods like `variableimportance`, `partialresponse`, etc.
+
 # ## Explaining predictions
 
 # We can perform the (MCMC version of) Shapley values measurement, using the

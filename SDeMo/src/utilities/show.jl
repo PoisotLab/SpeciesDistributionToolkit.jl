@@ -5,6 +5,12 @@ function Base.show(io::IO, ensemble::Bagging)
     return print(io, join(strs, "\n"))
 end
 
+function Base.show(io::IO, ensemble::Ensemble)
+    strs = ["\t $(m)" for m in ensemble.models]
+    pushfirst!(strs, "An ensemble model with:")
+    return print(io, join(strs, "\n"))
+end
+
 function Base.show(io::IO, sdm::SDM)
     strs = [
         "$(typeof(sdm.transformer))",

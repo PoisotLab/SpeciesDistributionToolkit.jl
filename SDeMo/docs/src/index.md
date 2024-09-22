@@ -14,7 +14,9 @@ Classifier
 features
 labels
 threshold
+threshold!
 variables
+variables!
 instance
 ```
 

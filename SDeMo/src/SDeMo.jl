@@ -20,6 +20,7 @@ include("models.jl")
 export Transformer, Classifier
 export SDM
 export threshold, features, labels, variables, instance
+export threshold!, variables!
 
 # Univariate transforms
 include("transformers/univariate.jl")
@@ -37,10 +38,14 @@ export NaiveBayes
 include("classifiers/bioclim.jl")
 export BIOCLIM
 
-# Bagging
-include("bagging/bootstrap.jl")
-include("bagging/pipeline.jl")
+# Bagging and ensembles
+include("ensembles/bagging.jl")
 export Bagging, outofbag, bootstrap
+
+include("ensembles/ensemble.jl")
+export Ensemble
+
+include("ensembles/pipeline.jl")
 
 # Main pipeline
 include("pipeline.jl")

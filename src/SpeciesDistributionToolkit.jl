@@ -14,6 +14,7 @@ using Reexport
 @reexport using SimpleSDMLayers
 @reexport using Fauxcurrences
 @reexport using Phylopic
+@reexport using SDeMo
 
 import Distances
 const _distance_function = Fauxcurrences._distancefunction
@@ -39,6 +40,9 @@ include("integrations/gbif_phylopic.jl")
 
 # Plotting
 include("integrations/makie.jl")
+
+# SDeMo
+include("integrations/sdemo.jl")
 
 # Functions for pseudo-absence generation
 include("pseudoabsences.jl")

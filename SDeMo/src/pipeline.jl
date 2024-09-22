@@ -75,19 +75,3 @@ function reset!(sdm::SDM, thr = 0.5)
     sdm.τ = thr
     return sdm
 end
-
-#=
-function StatsAPI.predict(sdm::SDM, layers::Vector{T}; kwargs...) where {T <: SimpleSDMLayer}
-    pr = convert(Float64, similar(first(layers)))
-    F = permutedims(hcat(values.(layers)...))
-    pr.grid[findall(!isnothing, layers[1].grid)] .= predict(sdm, F; kwargs...)
-    return pr
-end
-
-function StatsAPI.predict(ensemble::Bagging, layers::Vector{T}; kwargs...) where {T <: SimpleSDMLayer}
-    pr = convert(Float64, similar(first(layers)))
-    F = permutedims(hcat(values.(layers)...))
-    pr.grid[findall(!isnothing, layers[1].grid)] .= predict(ensemble, F; kwargs...)
-    return pr
-end
-=#

@@ -4,6 +4,7 @@ authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 version = "0.1.2"
 
 [deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 Fauxcurrences = "a2d61402-033a-4ca9-aef4-652d70cf7c9c"
@@ -13,6 +14,7 @@ MakieCore = "20f20a25-4f0e-4fdf-b5d1-57303727442b"
 Phylopic = "c889285c-44aa-4473-b1e1-56f5d4e3ccf5"
 PolygonOps = "647866c9-e3ac-4575-94e7-e3d426903924"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+SDeMo = "3e5feb82-bcca-434d-9cd5-c11731a21467"
 SimpleSDMDatasets = "2c7d61d0-5c73-410d-85b2-d2e7fbbdcefa"
 SimpleSDMLayers = "2c645270-77db-11e9-22c3-0f302a89c64c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"

@@ -45,6 +45,7 @@ makedocs(;
             "tutorials/fauxcurrences.md",
             "tutorials/futureclimate.md",
             "tutorials/zonal.md",
+            "tutorials/use_with_sdemo.md"
         ],
         "How-to..." => [
             "howto/get_gbif_data.md",

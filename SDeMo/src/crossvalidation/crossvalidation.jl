@@ -92,8 +92,15 @@ for op in (:leaveoneout, :holdout, :montecarlo, :kfold)
 
         Version of `$($op)` using the instances and labels of an SDM.
         """
-        $op(sdm::SDM, args...) = $op(labels(sdm), features(sdm), args...)
+        $op(sdm::SDM, args...; kwargs...) = $op(labels(sdm), features(sdm), args...; kwargs...)
     end)
+end
+
+@testitem "We can split data in an SDM" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.01, X, y, 1:size(X, 1))
+    folds = montecarlo(sdm; n=10)
+    @test length(folds) == 10
 end
 
 """
@@ -114,11 +121,20 @@ function crossvalidate(sdm, folds; thr = nothing, kwargs...)
     Threads.@threads for i in eachindex(folds)
         trn, val = folds[i]
         train!(models[Threads.threadid()]; training = trn, kwargs...)
-        pred = predict(models[Threads.threadid()], X[:, val]; threshold = false)
-        ontrn = predict(models[Threads.threadid()], X[:, trn]; threshold = false)
+        pred = predict(models[Threads.threadid()], features(sdm)[:, val]; threshold = false)
+        ontrn = predict(models[Threads.threadid()], features(sdm)[:, trn]; threshold = false)
         thr = isnothing(thr) ? threshold(sdm) : thr
-        Cv[i] = ConfusionMatrix(pred, y[val], thr)
-        Ct[i] = ConfusionMatrix(ontrn, y[trn], thr)
+        Cv[i] = ConfusionMatrix(pred, labels(sdm)[val], thr)
+        Ct[i] = ConfusionMatrix(ontrn, labels(sdm)[trn], thr)
     end
-    return Cv, Ct
+    return (validation = Cv, training = Ct)
+end
+
+@testitem "We can crossvalidate an SDM" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.5, X, y, [1,2,12])
+    train!(sdm)
+    cv = crossvalidate(sdm, kfold(sdm; k=15))
+    @test eltype(cv.validation) <: ConfusionMatrix
+    @test eltype(cv.training) <: ConfusionMatrix
 end

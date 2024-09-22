@@ -72,6 +72,9 @@ export variableimportance
 include("explanations/counterfactual.jl")
 export counterfactual
 
+include("explanations/partialresponse.jl")
+export partialresponse
+
 include("explanations/shapley.jl")
 export explain
 

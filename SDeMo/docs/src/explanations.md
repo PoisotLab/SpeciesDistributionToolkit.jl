@@ -13,3 +13,7 @@ counterfactual
 ```
 
 ## Partial responses
+
+```@docs
+partialresponse
+```

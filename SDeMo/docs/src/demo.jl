@@ -143,22 +143,19 @@ pretty_table(
 
 # ## Partial response curve (IN PROGRESS)
 
-# Another way to look at the effect of variables is to use the partial response curves:
+# Another way to look at the effect of variables is to use the partial response
+# curves. For example, we can look at the predictions of the model between 5 and
+# 15 degrees:
 
-nX = zeros(Float64, (19, 300))
-for i in axes(nX, 1)
-    if i == 1
-        nX[i, :] .= LinRange(extrema(features(sdm, i))..., size(nX, 2))
-    else
-        nX[i, :] .= mean(features(sdm, i))
-    end
-end
+prx, pry = partialresponse(sdm, 1, LinRange(5., 15., 100); threshold=false)
 
-# figure
+# Note that we use `threshold=false` to make sure that we look at the score that
+# is returned by the classifier, and not the thresholded version.
 
 f = Figure()
 ax = Axis(f[1, 1], xlabel="BIO1", ylabel="Partial response")
-lines!(ax, nX[1, :], predict(sdm, nX; threshold=false), color=:black)
+lines!(ax, prx, pry, color=:black)
+hlines!(ax, [threshold(sdm)], color=:red, linestyle=:dash)
 current_figure() #hide
 
 # ## Measuring uncertainty with bagging

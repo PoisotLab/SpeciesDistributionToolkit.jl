@@ -14,3 +14,13 @@ Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 StatsAPI = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
+
+[compat]
+Distributions = "0.25"
+GLM = "1.9"
+JSON = "0.21"
+MultivariateStats = "0.10"
+StatsAPI = "1.7"
+StatsBase = "0.34"
+TestItems = "1.0"
+Statistics = "1.10"

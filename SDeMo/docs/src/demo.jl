@@ -141,7 +141,7 @@ pretty_table(
     formatters=(ft_printf("%5.3f", 2), ft_printf("%d", 1))
 )
 
-# ## Partial response curve (IN PROGRESS)
+# ## Partial response curve
 
 # Another way to look at the effect of variables is to use the partial response
 # curves. For example, we can look at the predictions of the model between 5 and

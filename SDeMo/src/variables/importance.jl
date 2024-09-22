@@ -8,7 +8,7 @@ function variableimportance(model, folds, variable; reps=10, optimality=mcc, kwa
             O[i,rep] = abs(optimality(o) - optimality(p))
         end
     end
-    return O
+    return mean(O)
 end
 
 function varimp_shuffle(model, fold, var; kwargs...)

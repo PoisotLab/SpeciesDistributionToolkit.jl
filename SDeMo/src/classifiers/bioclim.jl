@@ -7,6 +7,8 @@ Base.@kwdef mutable struct BIOCLIM <: Classifier
     ecdf::Vector = [(x) -> 0.0]
 end
 
+Base.zero(::Type{BIOCLIM}) = 0.01
+
 function train!(bc::BIOCLIM, y::Vector{Bool}, X::Matrix{T}) where {T <: Number}
     presences = findall(y)
     obs = X[:, presences]

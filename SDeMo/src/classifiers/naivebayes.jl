@@ -13,6 +13,8 @@ Base.@kwdef mutable struct NaiveBayes <: Classifier
 end
 export NaiveBayes
 
+Base.zero(::Type{NaiveBayes}) = 0.5
+
 function train!(
     nbc::NaiveBayes,
     y::Vector{Bool},

@@ -34,6 +34,17 @@ mutable struct SDM{F,L}
     v::AbstractVector # Variables
 end
 
+function SDM(::Type{TF}, ::Type{CF}, X::Matrix{T}, y::Vector{Bool}) where {TF <: Transformer, CF <: Classifier, T <: Number}
+    return SDM(
+        TF(),
+        CF(),
+        zero(CF),
+        X,
+        y,
+        collect(1:size(X,1))
+    )
+end
+
 """
     threshold(sdm::SDM)
 

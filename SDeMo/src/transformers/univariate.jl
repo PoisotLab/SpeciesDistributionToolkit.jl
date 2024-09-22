@@ -30,3 +30,10 @@ end
 function StatsAPI.predict(zs::ZScore, x::AbstractArray)
     return (x .- zs.μ) ./ (zs.σ)
 end
+
+@testitem "We can train a z-score transformer" begin
+    X, y = SDeMo.__demodata()
+    zs = ZScore()
+    train!(zs, X)
+    @info zs
+end

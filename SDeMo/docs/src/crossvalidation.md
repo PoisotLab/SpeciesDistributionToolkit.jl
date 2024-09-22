@@ -61,8 +61,8 @@ ci
 ## Aliases
 
 ```@docs
-specificity
-sensitivity
-recall
-precision
+SDeMo.specificity
+SDeMo.sensitivity
+SDeMo.recall
+SDeMo.precision
 ```

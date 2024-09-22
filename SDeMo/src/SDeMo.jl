@@ -12,20 +12,8 @@ using Statistics
 import JSON
 using LinearAlgebra
 
-function __demodata()
-    datapath = joinpath(dirname(@__DIR__), "data")
-    y = convert(Vector{Bool}, parse.(Bool, readlines(joinpath(datapath, "labels.csv"))))
-    X = parse.(Float64, hcat(split.(readlines(joinpath(datapath, "features.csv")), "\t")...))
-    return (X, y)
-end
-
-@testitem "We can load the demonstration data" begin
-    X, y = SDeMo.__demodata()
-    @assert length(y) == 1484
-    @assert length(X) == (19, 1484)
-    @assert eltype(y) isa Bool
-    @assert eltype(X) isa Float64
-end
+# Demo data
+include("utilities/demodata.jl")
 
 # Types
 include("models.jl")
@@ -68,7 +56,6 @@ export noskill, coinflip, constantnegative, constantpositive
 include("crossvalidation/validation.jl")
 export tpr, tnr, fpr, fnr, ppv, npv, fdir, fomr, plr, nlr, accuracy, balancedaccuracy
 export ci
-export sensitivity, specificity, recall, precision
 
 # Variable selection
 include("variables/selection.jl")

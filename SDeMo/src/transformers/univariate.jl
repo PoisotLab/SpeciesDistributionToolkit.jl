@@ -9,6 +9,16 @@ struct RawData <: Transformer end
 train!(::RawData, args...) = nothing
 StatsAPI.predict(::RawData, X) = X
 
+@testitem "We can train a raw data transformer" begin
+    X, y = SDeMo.__demodata()
+    rd = RawData()
+    train!(rd, X)
+    px = predict(rd, X)
+    for c in rand(CartesianIndices(X), 10)
+        @test X[c] == px[c]
+    end
+end
+
 """
     ZScore
 
@@ -32,8 +42,17 @@ function StatsAPI.predict(zs::ZScore, x::AbstractArray)
 end
 
 @testitem "We can train a z-score transformer" begin
+    using SDeMo.Statistics
     X, y = SDeMo.__demodata()
     zs = ZScore()
     train!(zs, X)
-    @info zs
+    @test length(zs.μ) == size(X, 1)
+    @test length(zs.σ) == size(X, 1)
+    px = predict(zs, X)
+    for m in mean(px, dims=2)
+        @test m ≈ 0 atol = 1e-6
+    end
+    for s in std(px, dims=2)
+        @test s ≈ 1 atol = 1e-6
+    end
 end

@@ -9,7 +9,7 @@ function Base.show(io::IO, sdm::SDM)
     strs = [
         "$(typeof(sdm.transformer))",
         "$(typeof(sdm.classifier))",
-        "P(x) ≥ $(round(sdm.threshold.cutoff; digits=3))",
+        "P(x) ≥ $(round(sdm.τ; digits=3))",
     ]
     return print(io, join(strs, " → "))
 end

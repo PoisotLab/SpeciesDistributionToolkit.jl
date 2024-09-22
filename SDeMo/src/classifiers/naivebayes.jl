@@ -37,3 +37,17 @@ end
 function StatsAPI.predict(nbc::NaiveBayes, X::Matrix{T}) where {T <: Number}
     return vec(mapslices(x -> predict(nbc, x), X; dims = 1))
 end
+
+@testitem "We can declare a NBC SDM" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, 1:size(X,1))
+    @test threshold(sdm) == 0.5
+    @test variables(sdm) == 1:size(X, 1)
+end
+
+@testitem "We can train a NBC SDM" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, 1:size(X,1))
+    train!(sdm)
+    @test threshold(sdm) != 0.5
+end

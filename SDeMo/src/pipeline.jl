@@ -61,7 +61,7 @@ This method performs the prediction on the entire set of training data available
 for the training of an SDM.
 """
 function StatsAPI.predict(sdm::SDM; kwargs...)
-    return StatsAPI.predict(sdm, features(X); kwargs...)
+    return StatsAPI.predict(sdm, features(sdm); kwargs...)
 end
 
 """

@@ -51,3 +51,26 @@ end
     train!(sdm)
     @test threshold(sdm) != 0.5
 end
+
+@testitem "We can train a NBC SDM with some indices only" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, 1:size(X,1))
+    train!(sdm; training=rand(axes(X,2), 150))
+    @test threshold(sdm) != 0.5
+end
+
+@testitem "We can train a NBC SDM without thresholding" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, 1:size(X,1))
+    train!(sdm; threshold=false)
+    @test threshold(sdm) == 0.5
+end
+
+@testitem "We can predict with a NBC SDM" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, 1:size(X,1))
+    train!(sdm)
+    @test eltype(predict(sdm)) <: Bool
+    @test eltype(predict(sdm; threshold=false)) <: Float64
+    @test length(predict(sdm, X[:,rand(axes(X, 2), 100)])) == 100
+end

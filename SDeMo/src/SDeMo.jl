@@ -73,5 +73,7 @@ include("explanations/shapley.jl")
 export explain
 
 include("utilities/show.jl")
+include("utilities/varia.jl")
+export iqr
 
 end # module SDeMo

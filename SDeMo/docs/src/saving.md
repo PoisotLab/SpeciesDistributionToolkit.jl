@@ -1,3 +1,6 @@
 # Saving models
 
-## IO and utility functions
+```@docs
+loadsdm
+writesdm
+```

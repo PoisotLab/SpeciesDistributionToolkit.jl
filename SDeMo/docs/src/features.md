@@ -10,3 +10,6 @@ forwardselection!
 
 ## Feature importance
 
+```@docs
+variableimportance
+```

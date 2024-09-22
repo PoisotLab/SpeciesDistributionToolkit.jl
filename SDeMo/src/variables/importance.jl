@@ -1,3 +1,12 @@
+
+"""
+    variableimportance(model, folds, variable; reps=10, optimality=mcc, kwargs...)
+
+Returns the importance of one variable in the model. The `reps` keyword fixes
+the number of bootstraps to run (defaults to `10`, which is not enough!).
+
+The keywords are passed to `ConfusionMatrix`.
+"""
 function variableimportance(model, folds, variable; reps=10, optimality=mcc, kwargs...)
     O = zeros(length(folds), reps)
     for (i, fold) in enumerate(folds)
@@ -19,4 +28,10 @@ function varimp_shuffle(model, fold, var; kwargs...)
     return (orig, perm)
 end
 
+"""
+    variableimportance(model, folds; kwargs...)
+
+Returns the importance of all variables in the model. The keywords are passed to
+`variableimportance`.
+"""
 variableimportance(model, folds; kwargs...) = [variableimportance(model, folds, v; kwargs...) for v in variables(model)]

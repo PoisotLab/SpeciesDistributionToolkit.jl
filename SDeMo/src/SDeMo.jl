@@ -73,6 +73,9 @@ include("explanations/shapley.jl")
 export explain
 
 include("utilities/show.jl")
+include("utilities/io.jl")
+export writesdm, loadsdm
+
 include("utilities/varia.jl")
 export iqr
 

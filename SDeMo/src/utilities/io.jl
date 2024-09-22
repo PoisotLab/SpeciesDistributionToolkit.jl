@@ -33,12 +33,24 @@ function _sdm_to_dict(sdm::SDM)
     return w
 end
 
+"""
+    writesdm(file::String, model::SDM)
+
+Writes a model to a `JSON` file. This method is very bare-bones, and only saves
+the *structure* of the model, as well as the data.
+"""
 function writesdm(file::String, model::SDM)
     open(file, "w") do f
         JSON.print(f, _sdm_to_dict(model), 4)
     end
 end
 
+"""
+    loadsdm(file::String; kwargs...)
+
+Loads a model to a `JSON` file. The keyword arguments are passed to `train!`.
+The model is trained in full upon loading.
+"""
 function loadsdm(file::String; kwargs...)
     f = JSON.parsefile(file)
     X = hcat(f["instances"]...)
@@ -50,4 +62,17 @@ function loadsdm(file::String; kwargs...)
     model = SDM(transformer, classifier, τ, X, y, v)
     train!(model; kwargs...)
     return model
+end
+
+@testitem "We can write a model and load it back" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.5, X, y, [1,2,12])
+    train!(sdm)
+    tf = tempname()
+    writesdm(tf, sdm)
+    nsdm = loadsdm(tf; threshold=false)
+    @test threshold(sdm) == threshold(nsdm)
+    @test variables(sdm) == variables(nsdm)
+    @test labels(sdm) == labels(nsdm)
+    @test features(sdm) == features(nsdm)
 end

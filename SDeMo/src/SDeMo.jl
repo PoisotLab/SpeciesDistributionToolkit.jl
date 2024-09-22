@@ -59,7 +59,7 @@ export noselection!, forwardselection!, backwardselection!
 include("explanations/counterfactual.jl")
 export counterfactual
 
-include("explanations/counterfactual.jl")
+include("explanations/shapley.jl")
 export explain
 
 end # module SDeMo

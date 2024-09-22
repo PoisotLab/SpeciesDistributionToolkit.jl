@@ -2,7 +2,7 @@
 
 ## Feature selection
 
-```@doc
+```@docs
 noselection!
 backwardselection!
 forwardselection!

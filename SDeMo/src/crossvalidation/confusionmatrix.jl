@@ -27,6 +27,16 @@ function ConfusionMatrix(pred::Vector{Bool}, truth::Vector{Bool})
     return ConfusionMatrix(tp, tn, fp, fn)
 end
 
+@testitem "We can predict a confusion matrix from Bool Bool" begin
+    pred = [true, false, true, false, true]
+    truth = [true, true, false, false, false]
+    C = ConfusionMatrix(pred, truth)
+    @test C.tp == 1
+    @test C.tn == 1
+    @test C.fp == 2
+    @test C.fn == 1
+end
+
 """
     ConfusionMatrix(pred::Vector{T}, truth::Vector{Bool}, τ::T) where {T <: Number}
 
@@ -35,6 +45,16 @@ transforms the score into binary predictions and returns the confusion matrix.
 """
 function ConfusionMatrix(pred::Vector{T}, truth::Vector{Bool}, τ::T) where {T <: Number}
     return ConfusionMatrix(convert(Vector{Bool}, pred .>= τ), truth)
+end
+
+@testitem "We can predict a confusion matrix from Float Bool" begin
+    pred = [1., 0., 0.8, 0.2, 0.6]
+    truth = [true, true, false, false, false]
+    C = ConfusionMatrix(pred, truth, 0.55)
+    @test C.tp == 1
+    @test C.tn == 1
+    @test C.fp == 2
+    @test C.fn == 1
 end
 
 """
@@ -46,6 +66,16 @@ one half.
 """
 function ConfusionMatrix(pred::Vector{T}, truth::Vector{Bool}) where {T <: Number}
     return ConfusionMatrix(pred, truth, 0.5)
+end
+
+@testitem "We can predict a confusion matrix from Float Bool - default threshold" begin
+    pred = [1., 0., 0.8, 0.2, 0.6]
+    truth = [true, true, false, false, false]
+    C = ConfusionMatrix(pred, truth)
+    @test C.tp == 1
+    @test C.tn == 1
+    @test C.fp == 2
+    @test C.fn == 1
 end
 
 function ConfusionMatrix(pred::BitVector, args...)

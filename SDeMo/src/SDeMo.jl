@@ -62,4 +62,6 @@ export counterfactual
 include("explanations/shapley.jl")
 export explain
 
+include("utilities/show.jl")
+
 end # module SDeMo

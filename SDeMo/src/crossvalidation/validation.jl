@@ -173,4 +173,4 @@ specificity(M::ConfusionMatrix) = tnr(M)
 
 Alias for `ppv`, the positive predictive value
 """
-recall(M::ConfusionMatrix) = ppv(M)
+precision(M::ConfusionMatrix) = ppv(M)

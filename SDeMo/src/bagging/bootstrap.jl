@@ -58,11 +58,10 @@ is a simple majority rule.
 The additional keywords arguments are passed to `predict`.
 """
 function outofbag(ensemble::Bagging; kwargs...)
-    instance = rand(eachindex(y))
     done_instances = Int64[]
     outcomes = Bool[]
 
-    for instance in eachindex(y)
+    for instance in eachindex(labels(ensemble.model))
         valid_models = findall(x -> !(instance in x[1]), ensemble.bags)
         if !isempty(valid_models)
             push!(done_instances, instance)

@@ -102,17 +102,74 @@ Balanced accuracy
 """
 balancedaccuracy(M::ConfusionMatrix) = (tpr(M) + tnr(M)) * 0.5
 
-f1(M::ConfusionMatrix) = 2 * (ppv(M) * tpr(M)) / (ppv(M) + tpr(M))
+"""
+    f1(M::ConfusionMatrix)
+    
+F₁ score, defined as the harmonic mean between precision and recall:
+
+``2\\times\\frac{PPV\\times TPR}{PPV + TPR}``
+
+This uses the more general `fscore` internally.
+"""
+f1(M::ConfusionMatrix) = fscore(M, 1.0)
+
+
+"""
+    fscore(M::ConfusionMatrix, β=1.0)
+    
+Fᵦ score, defined as the harmonic mean between precision and recall, using a
+positive factor β indicating the relative importance of recall over precision:
+
+``(1 + \\beta^2)\\times\\frac{PPV\\times TPR}{(\\beta^2 \\times PPV) + TPR}``
+"""
+fscore(M::ConfusionMatrix, β=1.0) = 2 * (ppv(M) * tpr(M)) / (ppv(M) + tpr(M))
+
+
+"""
+    trueskill(M::ConfusionMatrix)
+
+True skill statistic (a.k.a Youden's J, or informedness)
+
+``TPR + TNR - 1``
+"""
 trueskill(M::ConfusionMatrix) = tpr(M) + tnr(M) - 1.0
+
+"""
+    markedness(M::ConfusionMatrix)
+
+Markedness, a measure similar to informedness (TSS) that emphasizes negative
+predictions
+
+``PPV + NPV -1 ``
+"""
 markedness(M::ConfusionMatrix) = ppv(M) + npv(M) - 1.0
+
+"""
+    dor(M::ConfusionMatrix)
+
+Diagnostic odd ratio, defined as `plr`/`nlr`. A useful test has a value larger
+than unity, and this value has no upper bound.
+"""
 dor(M::ConfusionMatrix) = plr(M) / nlr(M)
 prevalence(M::ConfusionMatrix) = (M.tp + M.fn) / (M.tp + M.fp + M.tn + M.fn)
 
+"""
+    κ(M::ConfusionMatrix)
+
+Cohen's κ
+"""
 function κ(M::ConfusionMatrix)
     return 2.0 * (M.tp * M.tn - M.fn * M.fp) /
            ((M.tp + M.fp) * (M.fp + M.tn) + (M.tp + M.fn) * (M.fn + M.tn))
 end
 
+"""
+    mcc(M::ConfusionMatrix)
+
+Matthew's correlation coefficient. This is the default measure of model
+performance, and there are rarely good reasons to use anything else to decide
+which model to use.
+"""
 function mcc(M::ConfusionMatrix)
     ret =
         (M.tp * M.tn - M.fp * M.fn) /
@@ -120,10 +177,10 @@ function mcc(M::ConfusionMatrix)
     return isnan(ret) ? 0.0 : ret
 end
 
-function auc(x::Array{T}, y::Array{T}) where {T <: Number}
+function auc(x::Array{T}, y::Array{T}) where {T<:Number}
     S = zero(Float64)
     for i in 2:length(x)
-        S += (x[i] - x[i - 1]) * (y[i] + y[i - 1]) * 0.5
+        S += (x[i] - x[i-1]) * (y[i] + y[i-1]) * 0.5
     end
     return .-S
 end

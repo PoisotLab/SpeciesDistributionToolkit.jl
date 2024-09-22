@@ -74,3 +74,11 @@ end
     @test eltype(predict(sdm; threshold=false)) <: Float64
     @test length(predict(sdm, X[:,rand(axes(X, 2), 100)])) == 100
 end
+
+@testitem "We can get the confusion matrix of a trained NBC SDM" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, 1:size(X,1))
+    train!(sdm)
+    cm = ConfusionMatrix(sdm)
+    @test sum(Matrix(cm)) == length(y)
+end

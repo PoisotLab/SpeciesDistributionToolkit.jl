@@ -50,6 +50,13 @@ plr
 nlr
 accuracy
 balancedaccuracy
+f1
+fscore
+trueskill
+markedness
+dor
+κ
+mcc
 ```
 
 ## Confidence interval

@@ -5,7 +5,7 @@ using TestItems
 import GLM
 import StatsAPI
 using Distributions
-using MultivariateStats
+import MultivariateStats
 using StatsBase
 using Random
 using Statistics
@@ -27,6 +27,7 @@ export RawData, ZScore
 
 include("transformers/multivariate.jl")
 export MultivariateTransform
+export PCA, PPCA, KernelPCA, Whitening
 
 # Naive Bayes
 include("classifiers/naivebayes.jl")
@@ -54,7 +55,10 @@ export crossvalidate
 include("crossvalidation/null.jl")
 export noskill, coinflip, constantnegative, constantpositive
 include("crossvalidation/validation.jl")
-export tpr, tnr, fpr, fnr, ppv, npv, fdir, fomr, plr, nlr, accuracy, balancedaccuracy
+export tpr, tnr, fpr, fnr
+export ppv, npv, fdir, fomr, plr, nlr
+export accuracy, balancedaccuracy, f1, fscore
+export trueskill, markedness, dor, κ, mcc
 export ci
 
 # Variable selection

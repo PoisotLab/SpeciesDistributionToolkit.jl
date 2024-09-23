@@ -52,12 +52,6 @@ while length(presences) < count(presences)
     occurrences!(presences)
 end
 
-# We can plot the layer and all occurrences:
-
-heatmap(first(layers); colormap = :navia, axis = (; aspect = DataAspect()))
-scatter!(presences; color = :orange, markersize = 4)
-current_figure() #hide
-
 # -
 
 presencelayer = zeros(first(layers), Bool)
@@ -72,11 +66,11 @@ bgpoints = backgroundpoints(background, sum(presencelayer))
 
 #-
 
-f, ax, plt = heatmap(
+f = Figure(; size=(800,400))
+ax = Axis(f[1,1]; aspect=DataAspect())
+heatmap!(ax,
     first(layers);
-    colormap = :navia,
-    axis = (; aspect = DataAspect()),
-    figure = (; size = (800, 500)),
+    colormap = :navia
 )
 scatter!(ax, presencelayer; color = :black)
 scatter!(ax, bgpoints; color = :red, markersize = 4)
@@ -123,17 +117,6 @@ prd = predict(sdm, layers; threshold = false)
 
 #-
 
-f = Figure()
-ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction")
-heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256)
-contour!(ax, predict(sdm, layers), color=:black, linewidth=0.5) #hide
-lines!(ax, CHE.geometry[1], color=:black) #hide
-hidedecorations!(ax) #hide
-hidespines!(ax) #hide
-current_figure() #hide
-
-#-
-
 bag = Bagging(sdm, 20)
 train!(bag)
 unc = predict(bag, layers; consensus = iqr, threshold = false)
@@ -144,6 +127,13 @@ outofbag(bag) |> dor
 
 #-
 
+f = Figure(; size=(800,800))
+ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction")
+heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256)
+contour!(ax, predict(sdm, layers), color=:black, linewidth=0.5) #hide
+lines!(ax, CHE.geometry[1], color=:black) #hide
+hidedecorations!(ax) #hide
+hidespines!(ax) #hide
 ax2 = Axis(f[2, 1]; aspect = DataAspect(), title = "Uncertainty")
 heatmap!(ax2, quantize(unc); colormap = :linear_gow_60_85_c27_n256)
 contour!(ax2, predict(sdm, layers), color=:black, linewidth=0.5) #hide
@@ -162,9 +152,9 @@ shap_v1 = explain(sdm, layers, 1; threshold = false, samples = 50)
 
 #-
 
-f = Figure()
+f = Figure(; size=(800,800))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Shapley values")
-hm = heatmap!(ax, shap_v1; colormap = :diverging_gwv_55_95_c39_n256, colorrange=(-0.2, 0.2))
+hm = heatmap!(ax, shap_v1; colormap = :diverging_gwv_55_95_c39_n256, colorrange=(-0.3, 0.3))
 contour!(ax, predict(sdm, layers), color=:black, linewidth=0.5) #hide
 lines!(ax, CHE.geometry[1], color=:black) #hide
 hidedecorations!(ax) #hide
@@ -185,7 +175,7 @@ S = [explain(sdm, layers, v; threshold = false, samples = 50) for v in variables
 
 #-
 
-f = Figure()
+f = Figure(; size=(800,400))
 ax = Axis(f[1,1]; aspect=DataAspect())
 heatmap!(ax, mosaic(argmax, S), colormap=cgrad(:glasbey_category10_n256, length(variables(sdm)), categorical=true))
 contour!(ax, predict(sdm, layers), color=:black, linewidth=0.5) #hide

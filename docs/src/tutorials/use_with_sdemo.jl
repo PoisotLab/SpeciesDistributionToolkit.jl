@@ -1,5 +1,8 @@
 # # Use with the SDeMo package
 
+# using Pkg
+# Pkg.add(Pkg.PackageSpec(url="https://github.com/PoisotLab/SpeciesDistributionToolkit.jl", subdir="SDeMo"))
+
 using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
@@ -66,7 +69,7 @@ bgpoints = backgroundpoints(background, sum(presencelayer))
 
 #-
 
-f = Figure(; size=(800,400))
+f = Figure(; size=(600,300))
 ax = Axis(f[1,1]; aspect=DataAspect())
 heatmap!(ax,
     first(layers);
@@ -117,9 +120,9 @@ prd = predict(sdm, layers; threshold = false)
 
 #-
 
-bag = Bagging(sdm, 20)
-train!(bag)
-unc = predict(bag, layers; consensus = iqr, threshold = false)
+ensemble = Bagging(sdm, 20)
+train!(ensembe)
+unc = predict(ensemble, layers; consensus = iqr, threshold = false)
 
 #-
 
@@ -127,7 +130,7 @@ outofbag(bag) |> dor
 
 #-
 
-f = Figure(; size=(800,800))
+f = Figure(; size=(600,600))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction")
 heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256)
 contour!(ax, predict(sdm, layers), color=:black, linewidth=0.5) #hide
@@ -152,7 +155,7 @@ shap_v1 = explain(sdm, layers, 1; threshold = false, samples = 50)
 
 #-
 
-f = Figure(; size=(800,800))
+f = Figure(; size=(600,600))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Shapley values")
 hm = heatmap!(ax, shap_v1; colormap = :diverging_gwv_55_95_c39_n256, colorrange=(-0.3, 0.3))
 contour!(ax, predict(sdm, layers), color=:black, linewidth=0.5) #hide
@@ -175,7 +178,7 @@ S = [explain(sdm, layers, v; threshold = false, samples = 50) for v in variables
 
 #-
 
-f = Figure(; size=(800,400))
+f = Figure(; size=(600,300))
 ax = Axis(f[1,1]; aspect=DataAspect())
 heatmap!(ax, mosaic(argmax, S), colormap=cgrad(:glasbey_category10_n256, length(variables(sdm)), categorical=true))
 contour!(ax, predict(sdm, layers), color=:black, linewidth=0.5) #hide

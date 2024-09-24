@@ -31,18 +31,20 @@ function save(file::String, layer::SDMLayer{T}; kwargs...) where {T <: Number}
 end
 
 @testitem "We can save a layer to a file and it does not fuck it up" begin
-    t = SimpleSDMLayers.__demodata()
+    t = SimpleSDMLayers.__demodata(; reduced=true)
     f = tempname()*".tiff"
-    f = "test.tiff"
     SimpleSDMLayers.save(f, t)
     k = SDMLayer(f)
-    @test SimpleSDMLayers._layers_are_compatible(t, k)
+    @test extrema(k) == extrema(t)
+    @test t.crs == k.crs
+    for ky in keys(k)[1:50]
+        @test k[ky] == t[ky]
+    end
 end
 
 @testitem "We can save a layer and read with the correct bbox" begin
     t = SimpleSDMLayers.__demodata(; reduced=true)
     f = tempname()*".tiff"
-    f = "test.tiff"
     SimpleSDMLayers.save(f, t)
     # WGS84 smaller bounding box
     bbox = (left=-79., right=-75., bottom=47., top=49.)
@@ -53,4 +55,9 @@ end
     @test k.x[2] < t.x[2]
     @test k.y[1] > t.y[1]
     @test k.y[2] < t.y[2]
+    valpos = SimpleSDMLayers._centers(k)[:,1:10]
+    for i in axes(valpos, 2)
+        @test k[valpos[:,i]...] == t[valpos[:,i]...]
+    end
+    
 end

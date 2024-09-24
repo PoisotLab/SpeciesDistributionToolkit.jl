@@ -190,6 +190,12 @@ function _write_geotiff(
         ArchGDAL.setnodatavalue!(band, nodata)
         ArchGDAL.setgeotransform!(dataset, gt)
         ArchGDAL.setproj!(dataset, layer.crs)
+        ArchGDAL.write(
+            dataset,
+            file;
+            driver = ArchGDAL.getdriver(driver),
+            options = ["COMPRESS=$compress"],
+        )
     end
     isfile(prefix) && rm(prefix)
     return file
@@ -251,9 +257,7 @@ function _write_geotiff(
         end
         ArchGDAL.setgeotransform!(dataset, gt)
         ArchGDAL.setproj!(dataset, layers[1].crs)
-
-        # Write !
-        return ArchGDAL.write(
+        ArchGDAL.write(
             dataset,
             file;
             driver = ArchGDAL.getdriver(driver),

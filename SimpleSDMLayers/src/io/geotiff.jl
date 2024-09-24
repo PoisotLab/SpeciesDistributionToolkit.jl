@@ -148,59 +148,6 @@ function _read_geotiff(
     return layer
 end
 
-"""
-    geotiff(file::AbstractString, layer::SDMLayer; kwargs...)
-
-Write a single `layer` to a `file`.
-"""
-function _write_geotiff(
-    file::AbstractString,
-    layer::SDMLayer;
-    driver::String = "GTiff",
-    compress = "LZW",
-)
-    @assert driver ∈ keys(ArchGDAL.listdrivers()) ||
-            throw(ArgumentError("Not a valid driver."))
-
-    array_t = _prepare_layer_for_burnin(layer, nodata)
-    width, height = size(array_t)
-
-    # Geotransform
-    gt = zeros(Float64, 6)
-    gt[1] = layer.left
-    gt[2] = 2stride(layer, 1)
-    gt[3] = 0.0
-    gt[4] = layer.top
-    gt[5] = 0.0
-    gt[6] = -2stride(layer, 2)
-
-    # Write
-    prefix = first(split(last(splitpath(file)), '.'))
-    ArchGDAL.create(prefix;
-        driver = ArchGDAL.getdriver(driver),
-        width = width, height = height,
-        nbands = 1, dtype = T,
-        options = ["COMPRESS=$compress"]) do dataset
-        band = ArchGDAL.getband(dataset, 1)
-
-        # Write data to band
-        ArchGDAL.write!(band, array_t)
-
-        # Write nodata and projection info
-        ArchGDAL.setnodatavalue!(band, nodata)
-        ArchGDAL.setgeotransform!(dataset, gt)
-        ArchGDAL.setproj!(dataset, layer.crs)
-        ArchGDAL.write(
-            dataset,
-            file;
-            driver = ArchGDAL.getdriver(driver),
-            options = ["COMPRESS=$compress"],
-        )
-    end
-    isfile(prefix) && rm(prefix)
-    return file
-end
-
 function _prepare_layer_for_burnin(layer::SDMLayer{T}, nodata::T) where {T <: Number}
     array = copy(layer.grid)
     array[findall(.!layer.indices)] .= nodata
@@ -240,31 +187,19 @@ function _write_geotiff(
     gt[6] = -2stride(layers[1], 2)
 
     # Write
-    prefix = first(split(last(splitpath(file)), '.'))
-    ArchGDAL.create(prefix;
+    ArchGDAL.create(file;
         driver = ArchGDAL.getdriver(driver),
         width = width, height = height,
         nbands = length(layers), dtype = T,
         options = ["COMPRESS=$compress"]) do dataset
         for i in 1:length(bands)
             band = ArchGDAL.getband(dataset, i)
-
-            # Write data to band
             ArchGDAL.write!(band, _prepare_layer_for_burnin(layers[i], nodata))
-
-            # Write nodata and projection info
             ArchGDAL.setnodatavalue!(band, nodata)
         end
         ArchGDAL.setgeotransform!(dataset, gt)
         ArchGDAL.setproj!(dataset, layers[1].crs)
-        ArchGDAL.write(
-            dataset,
-            file;
-            driver = ArchGDAL.getdriver(driver),
-            options = ["COMPRESS=$compress"],
-        )
     end
-    isfile(prefix) && rm(prefix)
     return file
 end
 

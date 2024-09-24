@@ -4,7 +4,13 @@
 Returns a SDM based on an array of predictors, a boolean layer of presences, and
 a boolean layer of absences.
 """
-function SDeMo.SDM(::Type{TF}, ::Type{CF}, predictors::Vector{SDMLayer{T}}, presences::SDMLayer{Bool}, absences::SDMLayer{Bool}) where {TF <: Transformer, CF <: Classifier, T <: Number}
+function SDeMo.SDM(
+    ::Type{TF},
+    ::Type{CF},
+    predictors::Vector{SDMLayer{T}},
+    presences::SDMLayer{Bool},
+    absences::SDMLayer{Bool},
+) where {TF <: Transformer, CF <: Classifier, T <: Number}
     pr = nodata(presences, false)
     ab = nodata(absences, false)
     ks = [keys(pr)..., keys(ab)...]
@@ -22,7 +28,12 @@ end
 
 # TODO SDM, Bagging, and Ensemble should be AbstractSDM
 
-function SDeMo.predict(sdm::SDM, layers::Vector{T}, args...; kwargs...) where {T <: SDMLayer}
+function SDeMo.predict(
+    sdm::SDM,
+    layers::Vector{T},
+    args...;
+    kwargs...,
+) where {T <: SDMLayer}
     X = _X_from_layers(layers)
     prediction = predict(sdm, X, args...; kwargs...)
     pr = zeros(layers[1], eltype(prediction))
@@ -30,7 +41,12 @@ function SDeMo.predict(sdm::SDM, layers::Vector{T}, args...; kwargs...) where {T
     return pr
 end
 
-function SDeMo.predict(sdm::Bagging, layers::Vector{T}, args...; kwargs...) where {T <: SDMLayer}
+function SDeMo.predict(
+    sdm::Bagging,
+    layers::Vector{T},
+    args...;
+    kwargs...,
+) where {T <: SDMLayer}
     X = _X_from_layers(layers)
     prediction = predict(sdm, X, args...; kwargs...)
     pr = zeros(layers[1], eltype(prediction))
@@ -38,16 +54,26 @@ function SDeMo.predict(sdm::Bagging, layers::Vector{T}, args...; kwargs...) wher
     return pr
 end
 
-function SDeMo.partialresponse(sdm::SDM, layers::Vector{T}, idx::Integer; kwargs...) where {T <: SDMLayer}
-    partrep = partialresponse(sdm, idx, values(layers[idx]); kwargs...)[end]
+function SDeMo.partialresponse(
+    sdm::SDM,
+    layers::Vector{T},
+    idx::Integer;
+    kwargs...,
+) where {T <: SDMLayer}
+    partrep = last(partialresponse(sdm, idx, values(layers[idx]); kwargs...))
     pr = zeros(layers[1], eltype(partrep))
     pr.grid[findall(pr.indices)] .= partrep
     return pr
 end
 
-function SDeMo.explain(sdm::SDM, layers::Vector{T}, idx::Integer; kwargs...) where {T <: SDMLayer}
+function SDeMo.explain(
+    sdm::SDM,
+    layers::Vector{T},
+    idx::Integer;
+    kwargs...,
+) where {T <: SDMLayer}
     X = _X_from_layers(layers)
-    expln = explain(sdm, idx; instances=X, kwargs...)
+    expln = explain(sdm, idx; instances = X, kwargs...)
     pr = zeros(layers[1], eltype(expln))
     pr.grid[findall(pr.indices)] .= expln
     return pr

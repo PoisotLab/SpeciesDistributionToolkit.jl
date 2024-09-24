@@ -120,7 +120,7 @@ prd = predict(sdm, layers; threshold = false)
 
 #-
 
-ensemble = Bagging(sdm, 20)
+ensemble = Bagging(sdm, 50)
 train!(ensemble)
 unc = predict(ensemble, layers; consensus = iqr, threshold = false)
 
@@ -176,13 +176,13 @@ current_figure() #hide
 
 #-
 
-S = [explain(sdm, layers, v; threshold = false, samples = 50) for v in variables(sdm)]
+S = [explain(sdm, layers, v; threshold = false, samples = 100) for v in variables(sdm)]
 
 #-
 
 f = Figure(; size=(600,300))
 ax = Axis(f[1,1]; aspect=DataAspect())
-heatmap!(ax, mosaic(argmax, S), colormap=cgrad(:glasbey_category10_n256, length(variables(sdm)), categorical=true))
+heatmap!(ax, mosaic(argmax, S), colormap=cgrad(:isoluminant_cgo_80_c38_n256, length(variables(sdm)), categorical=true))
 contour!(ax, predict(sdm, layers), color=:black, linewidth=0.5) #hide
 lines!(ax, CHE.geometry[1], color=:black) #hide
 hidedecorations!(ax) #hide

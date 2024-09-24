@@ -6,6 +6,7 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
+using Dates
 CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
 # In this tutorial, we will clip a layer to a polygon (in GeoJSON format), then
@@ -121,12 +122,12 @@ prd = predict(sdm, layers; threshold = false)
 #-
 
 ensemble = Bagging(sdm, 20)
-train!(ensembe)
+train!(ensemble)
 unc = predict(ensemble, layers; consensus = iqr, threshold = false)
 
 #-
 
-outofbag(bag) |> dor
+outofbag(ensemble) |> dor
 
 #-
 
@@ -185,4 +186,52 @@ contour!(ax, predict(sdm, layers), color=:black, linewidth=0.5) #hide
 lines!(ax, CHE.geometry[1], color=:black) #hide
 hidedecorations!(ax) #hide
 hidespines!(ax) #hide
+current_figure() #hide
+
+#- 
+
+projection = Projection(SSP370, GFDL_ESM4)
+futurelayers = [
+    SDMLayer(
+        provider, projection;
+        timespan = Year(2071) => Year(2100),
+        layer = x,
+        left = 0.0,
+        right = 20.0,
+        bottom = 35.0,
+        top = 55.0,
+    ) for x in [1, 5, 2, 8, 3, 14, 12, 19]
+]
+futurelayers = [trim(mask!(layer, CHE)) for layer in futurelayers]
+futurelayers = map(l -> convert(SDMLayer{Float32}, l), futurelayers)
+
+#-
+
+fprd = predict(sdm, futurelayers; threshold = false)
+
+#-
+
+contemporary_range = convert(SDMLayer{Bool}, predict(sdm, layers))
+future_range = convert(SDMLayer{Bool}, predict(sdm, futurelayers))
+
+#-
+
+rangemask = nodata((contemporary_range)|(future_range), false)
+rangediff = mask(Int8.(contemporary_range) - Int8.(future_range), rangemask)
+
+#-
+
+f = Figure(; size=(600,600))
+ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Future range")
+heatmap!(ax, prd; colormap = :linear_wcmr_100_45_c42_n256)
+contour!(ax, future_range, color=:black, linewidth=0.5) #hide
+lines!(ax, CHE.geometry[1], color=:black) #hide
+hidedecorations!(ax) #hide
+hidespines!(ax) #hide
+ax2 = Axis(f[2, 1]; aspect = DataAspect(), title = "Range gain/loss")
+heatmap!(ax2, rangediff; colormap = :diverging_isoluminant_cjo_70_c25_n256)
+contour!(ax2, future_range, color=:black, linewidth=0.5) #hide
+lines!(ax2, CHE.geometry[1], color=:black) #hide
+hidedecorations!(ax2) #hide
+hidespines!(ax2) #hide
 current_figure() #hide

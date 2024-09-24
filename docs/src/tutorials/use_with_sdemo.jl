@@ -22,6 +22,10 @@ CHE = SpeciesDistributionToolkit.gadm("CHE")
 
 #-
 
+bio_vars = [1, 7, 10]
+
+#- 
+
 provider = RasterData(CHELSA2, BioClim)
 layers = [
     SDMLayer(
@@ -31,7 +35,7 @@ layers = [
         right = 20.0,
         bottom = 35.0,
         top = 55.0,
-    ) for x in [1, 5, 2, 8, 3, 14, 12, 19]
+    ) for x in bio_vars
 ]
 
 #-
@@ -74,7 +78,7 @@ f = Figure(; size=(600,300))
 ax = Axis(f[1,1]; aspect=DataAspect())
 heatmap!(ax,
     first(layers);
-    colormap = :navia
+    colormap = :linear_bgyw_20_98_c66_n256
 )
 scatter!(ax, presencelayer; color = :black)
 scatter!(ax, bgpoints; color = :red, markersize = 4)
@@ -94,12 +98,7 @@ cv = crossvalidate(sdm, folds; threshold = true);
 
 #-
 
-mcc.(cv.validation)
-fscore.(cv.validation)
-
-#-
-
-forwardselection!(sdm, folds, [1]; verbose=true)
+mean(mcc.(cv.validation))
 
 #-
 
@@ -127,19 +126,21 @@ unc = predict(ensemble, layers; consensus = iqr, threshold = false)
 
 #-
 
-outofbag(ensemble) |> dor
+outofbag(ensemble) |> mcc
 
 #-
 
 f = Figure(; size=(600,600))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction")
-heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256)
+hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange=(0,1))
+Colorbar(f[1,2], hm)
 contour!(ax, predict(sdm, layers), color=:black, linewidth=0.5) #hide
 lines!(ax, CHE.geometry[1], color=:black) #hide
 hidedecorations!(ax) #hide
 hidespines!(ax) #hide
 ax2 = Axis(f[2, 1]; aspect = DataAspect(), title = "Uncertainty")
-heatmap!(ax2, quantize(unc); colormap = :linear_gow_60_85_c27_n256)
+hm = heatmap!(ax2, quantize(unc); colormap = :linear_gow_60_85_c27_n256, colorrange=(0, 1))
+Colorbar(f[2,2], hm)
 contour!(ax2, predict(sdm, layers), color=:black, linewidth=0.5) #hide
 lines!(ax2, CHE.geometry[1], color=:black) #hide
 hidedecorations!(ax2) #hide
@@ -200,7 +201,7 @@ futurelayers = [
         right = 20.0,
         bottom = 35.0,
         top = 55.0,
-    ) for x in [1, 5, 2, 8, 3, 14, 12, 19]
+    ) for x in bio_vars
 ]
 futurelayers = [trim(mask!(layer, CHE)) for layer in futurelayers]
 futurelayers = map(l -> convert(SDMLayer{Float32}, l), futurelayers)
@@ -211,8 +212,8 @@ fprd = predict(sdm, futurelayers; threshold = false)
 
 #-
 
-contemporary_range = convert(SDMLayer{Bool}, predict(sdm, layers))
-future_range = convert(SDMLayer{Bool}, predict(sdm, futurelayers))
+contemporary_range = predict(sdm, layers)
+future_range = predict(sdm, futurelayers)
 
 #-
 
@@ -223,7 +224,8 @@ rangediff = mask(Int8.(contemporary_range) - Int8.(future_range), rangemask)
 
 f = Figure(; size=(600,600))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Future range")
-heatmap!(ax, prd; colormap = :linear_wcmr_100_45_c42_n256)
+hm = heatmap!(ax, prd; colormap = :linear_wcmr_100_45_c42_n256, colorrange=(0,1))
+Colorbar(f[1,2], hm)
 contour!(ax, future_range, color=:black, linewidth=0.5) #hide
 lines!(ax, CHE.geometry[1], color=:black) #hide
 hidedecorations!(ax) #hide

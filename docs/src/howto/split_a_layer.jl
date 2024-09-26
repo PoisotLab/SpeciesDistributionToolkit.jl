@@ -24,7 +24,7 @@ trees = sum([
 # argument. The second argument (the size of the matrix) can be omitted, and will
 # default to `(5, 5)`.
 
-tree = tiles(trees, (2, 2))
+tree = tiles(trees, (2, 2));
 
 # This can now be plotted:
 

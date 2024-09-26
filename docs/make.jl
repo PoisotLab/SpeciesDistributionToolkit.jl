@@ -29,7 +29,7 @@ end
 makedocs(;
     sitename = "Species Distribution Toolkit",
     format = MarkdownVitepress(;
-        repo = "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl",
+        repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl",
     ),
     warnonly = true,
     pages = [

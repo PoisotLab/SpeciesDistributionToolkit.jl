@@ -36,7 +36,7 @@ SimpleSDMDatasets.url(dataprovider)
 stack = [
     SDMLayer(dataprovider; layer = layer, full = true, spatial_extent...) for
     layer in landcover_types
-]
+];
 
 # We know that the last layer (`"Open Water"`) is a little less interesting, so we
 # can create a mask for the pixels that are less than 100% open water.

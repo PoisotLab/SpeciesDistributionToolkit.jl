@@ -37,7 +37,7 @@ layers_code = findall(
 # The first step is quite simply to grab the reference state for the
 # annual precipitation, by specifying the layer and the spatial extent:
 
-historical = [SDMLayer(dataprovider; layer=l, spatial_extent...) for l in layers_code]
+historical = [SDMLayer(dataprovider; layer=l, spatial_extent...) for l in layers_code];
 
 # We can have a little look at this dataset by checking the density of the values
 # for the first layer (we can pass a layer to a Makie function directly):
@@ -74,7 +74,7 @@ projected = [SDMLayer(
     layer=l,
     spatial_extent...,
     timespan = last(available_timeperiods),
-) for l in layers_code]
+) for l in layers_code];
 
 # ## Re-scaling the variables
 
@@ -88,8 +88,11 @@ projected = [SDMLayer(
 
 #-
 
-cr_historical = (historical .- μ) ./ σ
-cr_projected = (projected .- μ) ./ σ
+cr_historical = (historical .- μ) ./ σ;
+
+#-
+
+cr_projected = (projected .- μ) ./ σ;
 
 # ## Measuring climate novelty
 

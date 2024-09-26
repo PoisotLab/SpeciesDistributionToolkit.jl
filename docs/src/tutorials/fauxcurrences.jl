@@ -30,7 +30,7 @@ observations = [
 # The last step is to turn these occurrences into a matrix of latitudes and
 # longitudes:
 
-obs = [Fauxcurrences.get_valid_coordinates(o, layer) for o in observations]
+obs = [Fauxcurrences.get_valid_coordinates(o, layer) for o in observations];
 
 #-
 

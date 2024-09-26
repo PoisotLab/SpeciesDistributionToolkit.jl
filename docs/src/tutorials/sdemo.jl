@@ -34,12 +34,12 @@ layers = [
         bottom = 35.0,
         top = 55.0,
     ) for x in bio_vars
-]
+];
 
 # And we then clip and trim to the polygon describing Switzerland:
 
-layers = [trim(mask!(layer, CHE)) for layer in layers]
-layers = map(l -> convert(SDMLayer{Float32}, l), layers)
+layers = [trim(mask!(layer, CHE)) for layer in layers];
+layers = map(l -> convert(SDMLayer{Float32}, l), layers);
 
 # The next step is to get the data, using the *eBird* dataset:
 

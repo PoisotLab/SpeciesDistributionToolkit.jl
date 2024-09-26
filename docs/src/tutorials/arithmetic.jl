@@ -41,7 +41,7 @@ classes_resistance = classes_resistance ./ sum(classes_resistance)
 landuse = [
     SDMLayer(dataprovider; layer = class, full = true, spatial_extent...) for
     class in landcover_classes
-]
+];
 
 # The aggregation of the layers is simply ∑wᵢLᵢ, where wᵢ is the resistance of the
 # *i*-th layer Lᵢ. In order to have the resistance layer expressed between 0 and

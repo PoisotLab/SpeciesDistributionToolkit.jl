@@ -3,7 +3,7 @@
 
 An heterogeneous ensemble model is defined as a vector of `SDM`s.
 """
-mutable struct Ensemble
+mutable struct Ensemble <: AbstractEnsembleSDM
     models::Vector{<:SDM}
 end
 

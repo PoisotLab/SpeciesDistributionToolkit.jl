@@ -17,6 +17,7 @@ include("utilities/demodata.jl")
 
 # Types
 include("models.jl")
+export AbstractSDM, AbstractEnsembleSDM
 export Transformer, Classifier
 export SDM
 export threshold, features, labels, variables, instance

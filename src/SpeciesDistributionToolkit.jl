@@ -57,4 +57,8 @@ include("polygons/gadm.jl")
 export trim
 export zone, byzone
 
+# Extra functions
+include("utilities.jl")
+export gainloss
+
 end # module SpeciesDistributionToolkit

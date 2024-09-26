@@ -26,29 +26,14 @@ function _X_from_layers(layers::Vector{T}) where {T <: SDMLayer}
     return X
 end
 
-# TODO SDM, Bagging, and Ensemble should be AbstractSDM
-
 function SDeMo.predict(
-    sdm::SDM,
+    model::S,
     layers::Vector{T},
     args...;
     kwargs...,
-) where {T <: SDMLayer}
+) where {S <: AbstractSDM, T <: SDMLayer}
     X = _X_from_layers(layers)
-    prediction = predict(sdm, X, args...; kwargs...)
-    pr = zeros(layers[1], eltype(prediction))
-    pr.grid[findall(pr.indices)] .= prediction
-    return pr
-end
-
-function SDeMo.predict(
-    sdm::Bagging,
-    layers::Vector{T},
-    args...;
-    kwargs...,
-) where {T <: SDMLayer}
-    X = _X_from_layers(layers)
-    prediction = predict(sdm, X, args...; kwargs...)
+    prediction = predict(model, X, args...; kwargs...)
     pr = zeros(layers[1], eltype(prediction))
     pr.grid[findall(pr.indices)] .= prediction
     return pr
@@ -77,4 +62,12 @@ function SDeMo.explain(
     pr = zeros(layers[1], eltype(expln))
     pr.grid[findall(pr.indices)] .= expln
     return pr
+end
+
+function SDeMo.explain(
+    sdm::SDM,
+    layers::Vector{T};
+    kwargs...,
+) where {T <: SDMLayer}
+    return [explain(sdm, layers, v; kwargs...) for v in variables(sdm)]
 end

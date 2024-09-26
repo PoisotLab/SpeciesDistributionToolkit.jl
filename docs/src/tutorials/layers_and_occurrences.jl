@@ -44,7 +44,7 @@ end
 # indexing method to extract the values from the layers at the location of each
 # occurrence.
 
-figure = Figure(; resolution = (800, 400))
+figure = Figure(; size = (800, 400))
 
 envirovars =
     Axis(figure[1, 1]; xlabel = "Temperature (°C)", ylabel = "Precipitation (kg×m⁻²)")

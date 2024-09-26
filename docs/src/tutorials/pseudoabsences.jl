@@ -70,7 +70,7 @@ heatmap(
     temperature;
     colormap = :deep,
     axis = (; aspect = DataAspect()),
-    figure = (; resolution = (800, 500)),
+    figure = (; size = (800, 500)),
 )
 heatmap!(bgmask; colormap = cgrad([:transparent, :white]; alpha = 0.3))
 scatter!(presences; color = :black)
@@ -87,7 +87,7 @@ heatmap(
     temperature;
     colormap = :deep,
     axis = (; aspect = DataAspect()),
-    figure = (; resolution = (800, 500)),
+    figure = (; size = (800, 500)),
 )
 heatmap!(sre; colormap = cgrad([:transparent, :white]; alpha = 0.3))
 scatter!(presences; color = :black)
@@ -108,7 +108,7 @@ heatmap(
     temperature;
     colormap = :deep,
     axis = (; aspect = DataAspect()),
-    figure = (; resolution = (800, 500)),
+    figure = (; size = (800, 500)),
 )
 heatmap!(bgmask; colormap = cgrad([:transparent, :white]; alpha = 0.3))
 scatter!(presences; color = :black)

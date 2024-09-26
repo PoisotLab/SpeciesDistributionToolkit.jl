@@ -13,7 +13,6 @@ export default defineConfig({
     outDir: 'REPLACE_ME_DOCUMENTER_VITEPRESS', // This is required for MarkdownVitepress to work correctly...
     head: [['link', { rel: 'icon', href: 'REPLACE_ME_DOCUMENTER_VITEPRESS_FAVICON' }]],
     ignoreDeadLinks: true,
-
     markdown: {
         math: true,
         config(md) {

@@ -1,17 +1,14 @@
 # # Use with the SDeMo package
 
-# using Pkg
-# Pkg.add(Pkg.PackageSpec(url="https://github.com/PoisotLab/SpeciesDistributionToolkit.jl", subdir="SDeMo"))
+# In this tutorial, we will reproduce [the excellent tutorial on SDMs by Damaris
+# Zurell](https://damariszurell.github.io/SDM-Intro/), using the same species
+# and location, a similar dataset, but a different algorithm.
 
 using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
 using Dates
 CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
-
-# In this tutorial, we will reproduce [the excellent tutorial on SDMs by Damaris
-# Zurell](https://damariszurell.github.io/SDM-Intro/), using the same species
-# and location, a similar dataset, but a different algorithm.
 
 # Note that this tutorial is not showing all the capacities of the `SDeMo`
 # package!

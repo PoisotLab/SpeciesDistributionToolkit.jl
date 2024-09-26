@@ -13,6 +13,14 @@ function leaveoneout(y, X)
     return [(setdiff(positions, i), i) for i in positions]
 end
 
+@testitem "We can do LOO validation" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    folds = leaveoneout(model)
+    cv = crossvalidate(model, folds)
+    @test eltype(cv.validation) <: ConfusionMatrix
+end
+
 """
     holdout(y, X; proportion = 0.2, permute = true)
 
@@ -22,7 +30,8 @@ argument `permute` (defaults to `true`) can be used to shuffle the order of
 observations before they are split.
 
 This method returns a single tuple with the training data first and the
-validation data second.
+validation data second. To use this with `crossvalidate`, it must be put in
+`[]`.
 """
 function holdout(y, X; proportion = 0.2, permute = true)
     @assert size(y, 1) == size(X, 2)
@@ -35,6 +44,14 @@ function holdout(y, X; proportion = 0.2, permute = true)
     data_pos = positions[1:(sample_size - n_holdout - 1)]
     hold_pos = positions[(sample_size - n_holdout):sample_size]
     return (data_pos, hold_pos)
+end
+
+@testitem "We can do holdout validation" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    folds = holdout(model)
+    cv = crossvalidate(model, [folds])
+    @test eltype(cv.validation) <: ConfusionMatrix
 end
 
 """
@@ -50,6 +67,17 @@ function montecarlo(y, X; n = 100, kwargs...)
     @assert size(y, 1) == size(X, 2)
     return [holdout(y, X; kwargs...) for _ in 1:n]
 end
+
+
+@testitem "We can do montecarlo validation" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    folds = montecarlo(model; n=10)
+    cv = crossvalidate(model, folds)
+    @test eltype(cv.validation) <: ConfusionMatrix
+    @test length(cv.training) == 10
+end
+
 
 """
     kfold(y, X; k = 10, permute = true)
@@ -84,6 +112,17 @@ function kfold(y, X; k = 10, permute = true)
     end
     return folds
 end
+
+
+@testitem "We can do kfold validation" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    folds = kfold(model; k=12)
+    cv = crossvalidate(model, folds)
+    @test eltype(cv.validation) <: ConfusionMatrix
+    @test length(cv.training) == 12
+end
+
 
 for op in (:leaveoneout, :holdout, :montecarlo, :kfold)
     eval(quote

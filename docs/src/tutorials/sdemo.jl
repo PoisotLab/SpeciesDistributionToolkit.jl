@@ -39,7 +39,7 @@ layers = [
     ) for x in bio_vars
 ]
 
-# And we then clip and trim to the polygon descriibing Switzerland:
+# And we then clip and trim to the polygon describing Switzerland:
 
 layers = [trim(mask!(layer, CHE)) for layer in layers]
 layers = map(l -> convert(SDMLayer{Float32}, l), layers)

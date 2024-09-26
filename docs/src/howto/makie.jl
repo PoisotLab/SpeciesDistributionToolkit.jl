@@ -11,7 +11,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
 spatial_extent = (; left = -4.87, right=9.63, bottom=41.31, top=51.14)
 data_prov = RasterData(CHELSA1, BioClim)
-temperature = SDMLayer(data_prov; layer="BIO1", spatial_extent...)
+temperature = 0.1SDMLayer(data_prov; layer="BIO1", spatial_extent...)
 precipitation = SDMLayer(data_prov; layer="BIO8", spatial_extent...)
 
 # ::: info Additional arguments

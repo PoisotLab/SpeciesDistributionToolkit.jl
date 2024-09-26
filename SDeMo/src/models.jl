@@ -10,7 +10,7 @@ abstract type AbstractSDM end
 
 TODO
 """
-abstract type AbstractEnsembleSDM end
+abstract type AbstractEnsembleSDM <: AbstractSDM end
 
 
 """

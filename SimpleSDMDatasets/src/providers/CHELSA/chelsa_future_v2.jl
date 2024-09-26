@@ -44,9 +44,10 @@ function source(
     month_code = lpad(string(month.value), 2, '0')
     year_sep = string(timespan.first.value) * "-" * string(timespan.second.value)
     model_code = replace(uppercase(string(M)), "_" => "-")
+    model_sep = replace(uppercase(string(M)) * "/" * lowercase(string(S)), "_" => "-")
     scenario_code = replace(lowercase(string(S)), "_" => "-")
     scenario_sep = lowercase(string(S))
-    root = "https://os.zhdk.cloud.switch.ch/chelsav2/GLOBAL/climatologies/$(year_sep)/$(model_sep)/$(scenario_sep)/$(var_code)/"
+    root = "https://os.zhdk.cloud.switch.ch/chelsav2/GLOBAL/climatologies/$(year_sep)/$(model_sep)/$(var_code)/"
     stem = "CHELSA_$(lowercase(model_code))_r1i1p1f1_w5e5_$(scenario_code)_$(var_code)_$(month_code)_$(replace(year_sep, "-"=>"_"))_norm.tif"
     return (
         url = root * stem,

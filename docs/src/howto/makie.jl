@@ -10,10 +10,9 @@ CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 # Let's grab two layers:
 
 spatial_extent = (; left = -4.87, right=9.63, bottom=41.31, top=51.14)
-temp_prov = RasterData(WorldClim2, BioClim)
-elev_prov = RasterData(WorldClim2, Elevation)
-temperature = SDMLayer(temp_prov; layer="BIO1", resolution=2.5, spatial_extent...)
-elevation = SDMLayer(elev_prov; resolution=2.5, spatial_extent...)
+data_prov = RasterData(CHELSA1, BioClim)
+temperature = SDMLayer(data_prov; layer="BIO1", spatial_extent...)
+precipitation = SDMLayer(data_prov; layer="BIO8", spatial_extent...)
 
 # ::: info Additional arguments
 # 
@@ -56,12 +55,12 @@ ecdfplot(temperature)
 
 # ### Scatterplot
 
-scatter(elevation, temperature)
+scatter(precipitation, temperature)
 
 # ### Density
 
-hexbin(elevation, temperature)
+hexbin(precipitation, temperature)
 
 # ## Recipes that you probably should not use
 
-surface(0.0005elevation)
+surface(0.0005precipitation)

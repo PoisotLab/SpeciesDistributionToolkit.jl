@@ -23,7 +23,7 @@ used to aggregate the outputs from different models is `consensus` (defaults to
 To get a direct estimate of the variability, the `consensus` function can be
 changed to `iqr` (inter-quantile range), or any measure of variance.
 """
-function StatsAPI.predict(ensemble::Bagging, X; consensus = median, kwargs...)
+function StatsAPI.predict(ensemble::Bagging, X::Matrix{T}; consensus = median, kwargs...) where {T <: Number}
     ŷ = [predict(component, X; kwargs...) for component in ensemble.models]
     ỹ = vec(mapslices(consensus, hcat(ŷ...); dims = 2))
     return isone(length(ỹ)) ? only(ỹ) : ỹ
@@ -65,7 +65,7 @@ The function used to aggregate the outputs from different models is `consensus`
 To get a direct estimate of the variability, the `consensus` function can be
 changed to `iqr` (inter-quantile range), or any measure of variance.
 """
-function StatsAPI.predict(ensemble::Ensemble, X; consensus = median, kwargs...)
+function StatsAPI.predict(ensemble::Ensemble, X::Matrix{T}; consensus = median, kwargs...) where {T <: Number}
     ŷ = [predict(component, X; kwargs...) for component in ensemble.models]
     ỹ = vec(mapslices(consensus, hcat(ŷ...); dims = 2))
     return isone(length(ỹ)) ? only(ỹ) : ỹ

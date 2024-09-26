@@ -22,7 +22,7 @@ end
 """
     Bagging
 """
-mutable struct Bagging
+mutable struct Bagging <: AbstractEnsembleSDM
     model::SDM
     bags::Vector{Tuple{Vector{Int64},Vector{Int64}}}
     models::Vector{SDM}

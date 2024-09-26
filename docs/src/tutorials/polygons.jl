@@ -41,7 +41,7 @@ SpeciesDistributionToolkit.gadmlist("FRA", 3)[1:3]
 # The next step is to get a layer, and so we will download the data about
 # deciduous broadleaf trees from [EarthEnv](/datasets/EarthEnv#landcover):
 
-provider = RasterData(EartheEnv, LandCover)
+provider = RasterData(EarthEnv, LandCover)
 layer = SDMLayer(
     provider;
     layer = "Deciduous Broadleaf Trees",

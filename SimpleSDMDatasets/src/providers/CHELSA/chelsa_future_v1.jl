@@ -65,7 +65,7 @@ function source(
 ) where {T <: BioClim, S <: CHELSA1Scenario, M <: CHELSA1Model}
     var_code = (layer isa Integer) ? layer : findfirst(isequal(layer), layers(data))
     year_sep = string(timespan.first.value) * "-" * string(timespan.second.value)
-    root = "https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/$(year_sep)/bio/"
+    root = "https://os.zhdk.cloud.switch.ch/chelsav1/cmip5/$(year_sep)/bio/"
     stem = "CHELSA_bio_mon_$(replace(string(M), "_" => "-"))_$(lowercase(string(S)))_r1i1p1_g025.nc_$(var_code)_$(year_sep)_V1.2.tif"
     return (
         url = root * stem,
@@ -88,7 +88,7 @@ function source(
         Dict(["pr" => "prec", "tasmin" => "tmin", "tas" => "temp", "tasmax" => "tmax"])
     month_code = string(month.value)
     year_sep = string(timespan.first.value) * "-" * string(timespan.second.value)
-    root = "https://os.zhdk.cloud.switch.ch/envicloud/chelsa/chelsa_V1/cmip5/$(year_sep)/$(var_url[var_code])/"
+    root = "https://os.zhdk.cloud.switch.ch/chelsav1/cmip5/$(year_sep)/$(var_url[var_code])/"
     stem = "CHELSA_$(var_code)_mon_$(replace(string(M), "_" => "-"))_$(lowercase(string(S)))_r1i1p1_g025.nc_$(month_code)_$(year_sep)_V1.2.tif"
     return (
         url = root * stem,

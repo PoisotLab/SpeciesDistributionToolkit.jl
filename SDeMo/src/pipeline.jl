@@ -38,7 +38,7 @@ This is the main prediction function, and it takes as input an SDM and a matrix
 of features. The only keyword argument is `threshold`, which determines whether
 the prediction is returned raw or as a binary value (default is `true`).
 """
-function StatsAPI.predict(sdm::SDM, X; threshold = true)
+function StatsAPI.predict(sdm::SDM, X::Matrix{T}; threshold = true) where {T <: Number}
     X₁ = predict(sdm.transformer, X[sdm.v, :])
     ŷ = predict(sdm.classifier, X₁)
     ŷ = isone(length(ŷ)) ? ŷ[1] : ŷ
@@ -52,6 +52,16 @@ function StatsAPI.predict(sdm::SDM, X; threshold = true)
     else
         return ŷ
     end
+end
+
+function StatsAPI.predict(
+    sdm::S,
+    v::Vector{T},
+    args...;
+    kwargs...,
+) where {S <: AbstractSDM, T <: Number}
+    X = reshape(v, length(v), 1)
+    return predict(sdm, X, args...; kwargs...)
 end
 
 """
@@ -75,19 +85,3 @@ function reset!(sdm::SDM, thr = 0.5)
     sdm.τ = thr
     return sdm
 end
-
-#=
-function StatsAPI.predict(sdm::SDM, layers::Vector{T}; kwargs...) where {T <: SimpleSDMLayer}
-    pr = convert(Float64, similar(first(layers)))
-    F = permutedims(hcat(values.(layers)...))
-    pr.grid[findall(!isnothing, layers[1].grid)] .= predict(sdm, F; kwargs...)
-    return pr
-end
-
-function StatsAPI.predict(ensemble::Bagging, layers::Vector{T}; kwargs...) where {T <: SimpleSDMLayer}
-    pr = convert(Float64, similar(first(layers)))
-    F = permutedims(hcat(values.(layers)...))
-    pr.grid[findall(!isnothing, layers[1].grid)] .= predict(ensemble, F; kwargs...)
-    return pr
-end
-=#

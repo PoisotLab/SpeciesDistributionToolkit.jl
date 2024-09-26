@@ -74,8 +74,6 @@ _var_slug(::RasterData{CHELSA1, MaximumTemperature}) = "tmax"
 _var_slug(::RasterData{CHELSA1, AverageTemperature}) = "tmean"
 _var_slug(::RasterData{CHELSA1, Precipitation}) = "prec"
 
-climatologies/tmean/CHELSA_readme_V1_2_Dryad.docx
-
 function source(data::RasterData{CHELSA1, Precipitation}; month = Month(1))
     var_code = _var_slug(data)
     month_code = lpad(string(month.value), 2, '0')

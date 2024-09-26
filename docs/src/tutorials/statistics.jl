@@ -47,7 +47,7 @@ fig, ax, hm = heatmap(
     z_temperature;
     colormap = :broc,
     colorrange = (-2, 2),
-    figure = (; resolution = (800, 400)),
+    figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
 Colorbar(fig[:, end + 1], hm)
@@ -62,7 +62,7 @@ current_figure() #hide
 fig, ax, hm = heatmap(
     rescale(precipitation, (0.0, 1.0));
     colormap = :bamako,
-    figure = (; resolution = (800, 400)),
+    figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
 Colorbar(fig[:, end + 1], hm)
@@ -74,7 +74,7 @@ current_figure() #hide
 fig, ax, hm = heatmap(
     quantize(precipitation, 5);
     colormap = :bamako,
-    figure = (; resolution = (800, 400)),
+    figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
 Colorbar(fig[:, end + 1], hm)

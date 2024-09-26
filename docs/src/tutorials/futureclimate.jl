@@ -116,7 +116,7 @@ end
 fig, ax, hm = heatmap(
     Δclim;
     colormap = :lipari,
-    figure = (; resolution = (800, 400)),
+    figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
 Colorbar(fig[:, end + 1], hm)

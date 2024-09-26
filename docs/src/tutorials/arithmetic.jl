@@ -57,7 +57,7 @@ rescale!(resistance_layer)
 resistance_map = heatmap(
     resistance_layer;
     colormap = Reverse(:linear_protanopic_deuteranopic_kbjyw_5_95_c25_n256),
-    figure = (; resolution = (400, 350)),
+    figure = (; size = (400, 350)),
     axis = (;
         aspect = DataAspect(),
         xlabel = "Latitude",

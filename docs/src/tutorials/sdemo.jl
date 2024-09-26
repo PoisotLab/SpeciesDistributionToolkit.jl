@@ -18,7 +18,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
 
 # ## Getting the data
 
-CHE = SpeciesDistributionToolkit.gadm("CHE")
+CHE = SpeciesDistributionToolkit.gadm("CHE");
 
 # In order to simplify the code, we will start from a list of bioclim variables
 # that have been picked to optimize the model:
@@ -54,9 +54,6 @@ presences = occurrences(
     "limit" => 300,
     "datasetKey" => "4fa7b334-ce0d-4e88-aaae-2e0c138d049e",
 )
-
-# We complete the retrieval of occurrences from GBIF:
-
 while length(presences) < count(presences)
     occurrences!(presences)
 end
@@ -154,8 +151,8 @@ current_figure() #hide
 # vector of layers will return the output as layers, with the value calculated
 # for each pixel:
 
-part_v1 = partialresponse(sdm, layers, 1; threshold = false)
-shap_v1 = explain(sdm, layers, 1; threshold = false, samples = 50)
+part_v1 = partialresponse(sdm, layers, 1; threshold = false);
+shap_v1 = explain(sdm, layers, 1; threshold = false, samples = 50);
 
 # We can confirm that these two approaches broadly agree about where the effect
 # of the first variable (temperature) is leading the model to predict presences:
@@ -185,7 +182,7 @@ current_figure() #hide
 # We can also get the Shapley values for *all* layers, which will return a
 # vector of layers, one for each included variable:
 
-S = explain(sdm, layers; threshold = false, samples = 100)
+S = explain(sdm, layers; threshold = false, samples = 100);
 
 # We can then put this object into the `mosaic` function to get the index of
 # which variable is the most important for each pixel:
@@ -224,8 +221,8 @@ futurelayers = [
         top = 55.0,
     ) for x in bio_vars
 ]
-futurelayers = [trim(mask!(layer, CHE)) for layer in futurelayers]
-futurelayers = map(l -> convert(SDMLayer{Float32}, l), futurelayers)
+futurelayers = [trim(mask!(layer, CHE)) for layer in futurelayers];
+futurelayers = map(l -> convert(SDMLayer{Float32}, l), futurelayers);
 
 # This gives the predicted presences under SSP370:
 

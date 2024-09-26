@@ -3,6 +3,11 @@
 ## The prediction pipeline
 
 ```@docs
+AbstractSDM
+AbstractEnsembleSDM
+```
+
+```@docs
 SDM
 Transformer
 Classifier

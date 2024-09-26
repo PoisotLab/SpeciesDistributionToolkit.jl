@@ -57,6 +57,8 @@ end
     @test C.fn == 1
 end
 
+ConfusionMatrix(p::T, t::Bool, args...) where {T <: Number} = ConfusionMatrix([p], [t], args...)
+
 """
     ConfusionMatrix(pred::Vector{T}, truth::Vector{Bool}) where {T <: Number}
 

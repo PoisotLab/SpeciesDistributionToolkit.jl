@@ -130,3 +130,11 @@ function counterfactual(
     end
     return xn[last(findmin(L))]
 end
+
+@testitem "We can generate a counterfactual" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    train!(model)
+    c = counterfactual(model, instance(model, 3; strict=false), 0.5, 200.)
+    @test length(c) == size(X, 1)
+end

@@ -104,7 +104,7 @@ balancedaccuracy(M::ConfusionMatrix) = (tpr(M) + tnr(M)) * 0.5
 
 """
     f1(M::ConfusionMatrix)
-    
+
 F₁ score, defined as the harmonic mean between precision and recall:
 
 ``2\\times\\frac{PPV\\times TPR}{PPV + TPR}``
@@ -113,17 +113,16 @@ This uses the more general `fscore` internally.
 """
 f1(M::ConfusionMatrix) = fscore(M, 1.0)
 
-
 """
     fscore(M::ConfusionMatrix, β=1.0)
-    
+
 Fᵦ score, defined as the harmonic mean between precision and recall, using a
 positive factor β indicating the relative importance of recall over precision:
 
 ``(1 + \\beta^2)\\times\\frac{PPV\\times TPR}{(\\beta^2 \\times PPV) + TPR}``
 """
-fscore(M::ConfusionMatrix, β=1.0) = 2 * (ppv(M) * tpr(M)) / (ppv(M) + tpr(M))
-
+fscore(M::ConfusionMatrix, β = 1.0) =
+    (1 + β^2.0) * (ppv(M) * tpr(M)) / (β^2.0 * ppv(M) + tpr(M))
 
 """
     trueskill(M::ConfusionMatrix)
@@ -140,7 +139,7 @@ trueskill(M::ConfusionMatrix) = tpr(M) + tnr(M) - 1.0
 Markedness, a measure similar to informedness (TSS) that emphasizes negative
 predictions
 
-``PPV + NPV -1 ``
+``PPV + NPV -1``
 """
 markedness(M::ConfusionMatrix) = ppv(M) + npv(M) - 1.0
 
@@ -177,10 +176,10 @@ function mcc(M::ConfusionMatrix)
     return isnan(ret) ? 0.0 : ret
 end
 
-function auc(x::Array{T}, y::Array{T}) where {T<:Number}
+function auc(x::Array{T}, y::Array{T}) where {T <: Number}
     S = zero(Float64)
     for i in 2:length(x)
-        S += (x[i] - x[i-1]) * (y[i] + y[i-1]) * 0.5
+        S += (x[i] - x[i - 1]) * (y[i] + y[i - 1]) * 0.5
     end
     return .-S
 end

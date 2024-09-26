@@ -1,3 +1,17 @@
+"""
+    AbstractSDM
+
+TODO
+"""
+abstract type AbstractSDM end
+
+"""
+    AbstractEnsembleSDM
+
+TODO
+"""
+abstract type AbstractEnsembleSDM <: AbstractSDM end
+
 
 """
     Transformer
@@ -25,7 +39,7 @@ In addition, the SDM carries with it the training features and labels, as well
 as a vector of indices indicating which variables are actually used by the
 model.
 """
-mutable struct SDM{F, L}
+mutable struct SDM{F, L} <: AbstractSDM
     transformer::Transformer
     classifier::Classifier
     τ::Number # Threshold

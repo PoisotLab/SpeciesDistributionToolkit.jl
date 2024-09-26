@@ -77,3 +77,11 @@ function partialresponse(sdm::SDM, i::Integer, j::Integer, s::Tuple=(50, 50); kw
 
     return (irange, jrange, reshape(predict(sdm, nx; kwargs...), s))
 end
+
+@testitem "We can get partial responses for a model" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    train!(model)
+    pr = partialresponse(model, 1)
+    @test eltype(pr[2]) <: Bool
+end

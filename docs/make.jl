@@ -16,7 +16,7 @@ include("dataset_report.jl")
 
 function replace_current_figure(content)
     fig_hash = string(hash(content)) * "-" * string(hash(rand(100)))
-    matcher = r"#\s+(\w+)\n((?:.*\S.*\n)+)current_figure\(\)\s+#hide\n"
+    matcher = r"#\s+(\S*)\n((?:^[^#]\s{0,4}.*$\n)+)current_figure\(\)\s+#hide\n"
     replacement_template = """
     # ![](HASH-\\1.png)
 
@@ -35,13 +35,14 @@ end
 for folder in ["howto", "tutorials"]
     fpath = joinpath(@__DIR__, "src", folder)
     for docfile in filter(endswith(".jl"), readdir(fpath; join=true))
-        current_file = replace(basename(docfile), ".jl" => "", "_" => "-")
-        Literate.markdown(
-            docfile, fpath;
-            flavor = Literate.DocumenterFlavor(),
-            config = Dict("credit" => false, "execute" => true),
-            preprocess = replace_current_figure
-        )
+        if ~isfile(replace(docfile, r".jl$" => ".md"))
+            Literate.markdown(
+                docfile, fpath;
+                flavor = Literate.DocumenterFlavor(),
+                config = Dict("credit" => false, "execute" => true),
+                preprocess = replace_current_figure
+            )
+        end
     end
 end
 

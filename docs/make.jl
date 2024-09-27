@@ -20,13 +20,13 @@ function replace_current_figure(content)
     matcher = r"""^# (?<title>\w+)$
     (?<code>(?>^[^#].*$\n){1,})^current_figure\(\) #hide$"""m
 
-    replacement_template = s"""
+    replacement_template = """
     # ![](HASH-\\g<title>.png)
 
 
     # ::: details Code for the figure
 
-    \g<code>save("HASH-\\g<title>.png", current_figure()); #hide
+    \\g<code>save("HASH-\\g<title>.png", current_figure()); #hide
 
     # :::
     """

@@ -92,7 +92,10 @@ current_figure() #hide
 # difference here is that rather than passing a matrix of features and a vector
 # of labels, we give a vector of layers (features), and the two layers for presences and absences:
 
-sdm = SDM(MultivariateTransform{PCA}, NaiveBayes, layers, presencelayer, bgpoints)
+sdm = SDM(MultivariateTransform{PCA}, DecisionTree, layers, presencelayer, bgpoints)
+
+# We use a decision tree classifier, which `SDeMo` provides (admittedly in a
+# rough version) out of the box.
 
 # Out of curiosity, we can check the expected performance of the model:
 
@@ -100,7 +103,7 @@ folds = kfold(sdm);
 cv = crossvalidate(sdm, folds; threshold = true);
 mean(mcc.(cv.validation))
 
-# We will now train the model on all the training data:
+# We will now train the model on all the training data.
 
 train!(sdm)
 
@@ -112,10 +115,15 @@ train!(sdm)
 prd = predict(sdm, layers; threshold = false)
 
 # To get a sense of the variability in the outcome, we will do a quick bootstrap
-# aggregating with 64 different bags:
+# aggregating with 30 different bags:
 
-ensemble = Bagging(sdm, 64)
+ensemble = Bagging(sdm, 30)
 train!(ensemble)
+
+# When the model is trained, we can make a prediction asking to report the
+# inter-quartile range of the predictions of all models, as a measure of
+# uncertainty:
+
 unc = predict(ensemble, layers; consensus = iqr, threshold = false)
 
 # Let's have a look at the out-of-bag performance using MCC, to make sure that
@@ -178,6 +186,9 @@ Colorbar(f[2, 2], hm)
 hidedecorations!(ax2) #hide
 hidespines!(ax2) #hide
 current_figure() #hide
+
+# Note that the `partialresponse` and `explain` method can also take an ensemble
+# model.
 
 # We can also get the Shapley values for *all* layers, which will return a
 # vector of layers, one for each included variable:

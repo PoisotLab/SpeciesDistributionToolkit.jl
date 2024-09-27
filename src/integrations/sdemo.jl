@@ -40,11 +40,11 @@ function SDeMo.predict(
 end
 
 function SDeMo.partialresponse(
-    sdm::SDM,
+    sdm::ST,
     layers::Vector{T},
     idx::Integer;
     kwargs...,
-) where {T <: SDMLayer}
+) where {ST <: AbstractSDM, T <: SDMLayer}
     partrep = last(partialresponse(sdm, idx, values(layers[idx]); kwargs...))
     pr = zeros(layers[1], eltype(partrep))
     pr.grid[findall(pr.indices)] .= partrep
@@ -52,11 +52,11 @@ function SDeMo.partialresponse(
 end
 
 function SDeMo.explain(
-    sdm::SDM,
+    sdm::ST,
     layers::Vector{T},
     idx::Integer;
     kwargs...,
-) where {T <: SDMLayer}
+) where {ST <: AbstractSDM, T <: SDMLayer}
     X = _X_from_layers(layers)
     expln = explain(sdm, idx; instances = X, kwargs...)
     pr = zeros(layers[1], eltype(expln))
@@ -65,9 +65,9 @@ function SDeMo.explain(
 end
 
 function SDeMo.explain(
-    sdm::SDM,
+    sdm::ST,
     layers::Vector{T};
     kwargs...,
-) where {T <: SDMLayer}
+) where {ST <: AbstractSDM, T <: SDMLayer}
     return [explain(sdm, layers, v; kwargs...) for v in variables(sdm)]
 end

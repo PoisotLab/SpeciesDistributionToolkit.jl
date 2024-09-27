@@ -16,7 +16,7 @@ include("dataset_report.jl")
 
 function replace_current_figure(content)
     fig_hash = string(hash(content)) * "-" * string(hash(rand(100)))
-    matcher = r"#\s+(\w+)\n((.*\S.*\n)+)current_figure\(\)\s+#hide\n"
+    matcher = r"#\s+(\w+)\n((.+\S.+\n)+)current_figure\(\)\s+#hide\n"
     replacement_template = """
     # ![](HASH-\\1.png)
 

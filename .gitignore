@@ -1,4 +1,5 @@
 Manifest.toml
-docs/src/vignettes/*.md
+docs/src/tutorials/*.md
+docs/src/howto/*.md
 docs/src/SimpleSDMDatasets/catalogue/*.md
 .vscode

@@ -3,7 +3,7 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 import GeoJSON
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # In this tutorial, we will clip a layer to a polygon (in GeoJSON format), then
 # use the same polygon to filter GBIF records.
@@ -53,16 +53,25 @@ layer = SDMLayer(
 
 # We can check that this polygon is larger than the area we want:
 
+# fig-whole-region
 heatmap(layer; colormap = :navia, axis = (; aspect = DataAspect()))
+current_figure() #hide
 
-# We can now mask this layer according to the polygon:
+# We can now mask this layer according to the polygon. This uses the same
+# `mask!` method we use when masking with another layer:
 
 mask!(layer, CHE)
+
+# fig-region-masked
 heatmap(layer; colormap = :navia, axis = (; aspect = DataAspect()))
+current_figure() #hide
 
-# This is a much larger layer than we need! For this reason, we will trim it so that the empty areas are removed:
+# This is a much larger layer than we need! For this reason, we will trim it so
+# that the empty areas are removed:
 
+# fig-region-trimmed
 heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
+current_figure() #hide
 
 # Let's now get some occurrences in the area defined by the layer boundingbox,
 # while specifying the dataset key for the [eBird Observation
@@ -92,6 +101,7 @@ end
 
 # We can plot the layer and all occurrences:
 
+# fig-all-occurrences
 heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
 scatter!(presences; color = :orange, markersize = 4)
 current_figure() #hide
@@ -99,6 +109,7 @@ current_figure() #hide
 # Some of these occurrences are outside of the masked region in the layer. For
 # this reason, we will use the *non-mutating* `mask` method on the GBIF records:
 
+# fig-trimmed-occurrences
 heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
 scatter!(mask(presences, CHE); color = :orange, markersize = 4)
 current_figure() #hide

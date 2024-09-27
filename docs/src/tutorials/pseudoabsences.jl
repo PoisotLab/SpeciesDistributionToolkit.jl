@@ -5,7 +5,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # In order to work on a region that is not too big, we will define our spatial
 # extent:
@@ -66,6 +66,7 @@ bgmask = (! buffer) & background
 # Finally, we can plot the area in which we can put pseudo-absences as a shaded region over
 # the layer, and plot all known occurrences as well:
 
+# fig-known-occurrences
 heatmap(
     temperature;
     colormap = :deep,
@@ -83,6 +84,7 @@ sre = pseudoabsencemask(SurfaceRangeEnvelope, presencelayer)
 
 #-
 
+# fig-background-mask
 heatmap(
     temperature;
     colormap = :deep,
@@ -104,6 +106,7 @@ bgpoints = backgroundpoints(bgmask, sum(presencelayer))
 
 # And finally, we can make a plot:
 
+# fig-pseudoabsences
 heatmap(
     temperature;
     colormap = :deep,

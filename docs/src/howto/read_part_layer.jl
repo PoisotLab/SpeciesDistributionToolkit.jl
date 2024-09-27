@@ -2,7 +2,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # To illustrate the process, we will load the demo dataset:
 
@@ -12,7 +12,9 @@ SimpleSDMLayers.save(f, t)
 
 # We can check the look of this layer as a reference:
 
+# fig-demo-data
 heatmap(t; colormap = :navia)
+current_figure() #hide
 
 # We now define a bounding box:
 
@@ -32,7 +34,9 @@ k = SDMLayer(f; bandnumber = 1, bbox...)
 
 # Note that this layer is indeed cropped, but has retained its CRS:
 
+# fig-cropped
 heatmap(k; colormap = :navia)
+current_figure() #hide
 
 # We can also plot this layer projected under WGS84, and overlay the
 # boundingbox:
@@ -44,6 +48,8 @@ poly = [
     (bbox.left, bbox.top),
     (bbox.left, bbox.bottom),
 ]
+
+# fig-with-box
 heatmap(
     interpolate(k; dest = "+proj=longlat +datum=WGS84 +no_defs +type=crs", newsize=(500, 500));
     colormap = :navia,

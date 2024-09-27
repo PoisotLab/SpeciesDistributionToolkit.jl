@@ -2,7 +2,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # The `interpolate` method can be used to project data into another coordinate
 # system. For example, we can get temperature data about metropolitan France and
@@ -20,6 +20,7 @@ ws = interpolate(layer; dest = proj_string)
 # By default, this produces a layer with the same dimension as the input, and
 # uses bilinear interpolation:
 
+# fig-interpolated
 fig, ax, hm = heatmap(
     ws;
     colormap = :navia,

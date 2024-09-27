@@ -93,4 +93,4 @@ extrema(filter(!ismissing, [place.date for place in places]))
 # write:
 
 fields_to_keep = [:key, :publishingCountry, :country, :latitude, :longitude, :date]
-select(DataFrame(places), fields_to_keep)[1:20,:]
+select(DataFrame(places), fields_to_keep)[1:10,:]

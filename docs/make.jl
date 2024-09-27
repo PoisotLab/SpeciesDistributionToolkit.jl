@@ -17,7 +17,7 @@ include("dataset_report.jl")
 function replace_current_figure(content)
     fig_hash = string(hash(content)) * "-" * string(hash(rand(100)))
 
-    matcher = r"""^# (?<title>\w+)$
+    matcher = r"""^# fig-(?<title>[\w-]+)$
     (?<code>(?>^[^#].*$\n){1,})^current_figure\(\) #hide$"""m
 
     replacement_template = """

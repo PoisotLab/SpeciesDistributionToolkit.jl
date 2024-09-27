@@ -44,7 +44,7 @@ end
 # indexing method to extract the values from the layers at the location of each
 # occurrence.
 
-# plot-enviro
+# fig-environment
 figure = Figure(; size = (800, 400))
 envirovars =
     Axis(figure[1, 1]; xlabel = "Temperature (°C)", ylabel = "Precipitation (kg×m⁻²)")
@@ -54,7 +54,7 @@ current_figure() #hide
 # In order to also show these on the map, we will add a simple heatmap to the left of the
 # figure, and overlay the points using `longitudes` and `latitudes` for the observations:
 
-# plot-spmap
+# fig-species-map
 spmap = Axis(figure[1, 2]; aspect = DataAspect())
 hidedecorations!(spmap)
 hidespines!(spmap)
@@ -97,6 +97,6 @@ sp_size = Vec2f(reverse(size(sp_image) ./ 3))
 # Finally, we can plot everything (note that the Phylopic images have a transparent
 # background, so we are not hiding any information!):
 
-# plot-finish
+# fig-final-plot
 scatter!(envirovars, [3.0], [700.0]; marker = sp_image, markersize = sp_size)
 current_figure() #hide

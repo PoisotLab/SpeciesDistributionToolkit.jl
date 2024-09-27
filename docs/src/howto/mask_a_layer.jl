@@ -27,7 +27,7 @@ temp2 =
 
 #-
 
-# heatmap1
+# fig-origin
 heatmap(temp2, colormap=:navia, axis=(;aspect=DataAspect())) # hide
 current_figure() #hide
 
@@ -42,7 +42,7 @@ nodata(temp2, v -> !(m <= v <= M))
 
 #-
 
-# heatmap2
+# fig-mask-interval
 heatmap(nodata(temp2, v -> !(m <= v <= M)), colormap=:navia, axis=(;aspect=DataAspect())) # hide
 current_figure() #hide
 
@@ -70,7 +70,7 @@ mask(temp2, temp1)
 
 #-
 
-# heatmap3
+# fig-mask-layer
 heatmap(mask(temp2, temp1), colormap=:navia, axis=(;aspect=DataAspect())) # hide
 current_figure() #hide
 

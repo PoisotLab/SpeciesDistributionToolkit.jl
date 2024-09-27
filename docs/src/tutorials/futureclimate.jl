@@ -42,7 +42,7 @@ historical = [SDMLayer(dataprovider; layer=l, spatial_extent...) for l in layers
 # We can have a little look at this dataset by checking the density of the values
 # for the first layer (we can pass a layer to a Makie function directly):
 
-# hist-hist
+# fig-histogram
 hist(
     historical[1]; color = (:grey, 0.5),
     figure = (; size = (800, 300)),
@@ -117,7 +117,7 @@ end
 # Because we have stored this information directly inside the raster, we can
 # plot it:
 
-# plot-novelty
+# fig-novelty
 fig, ax, hm = heatmap(
     Δclim;
     colormap = :lipari,

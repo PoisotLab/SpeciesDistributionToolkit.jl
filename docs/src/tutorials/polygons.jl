@@ -53,7 +53,7 @@ layer = SDMLayer(
 
 # We can check that this polygon is larger than the area we want:
 
-# plot-inspect
+# fig-whole-region
 heatmap(layer; colormap = :navia, axis = (; aspect = DataAspect()))
 current_figure() #hide
 
@@ -61,13 +61,13 @@ current_figure() #hide
 
 mask!(layer, CHE)
 
-# plot-mask
+# fig-region-masked
 heatmap(layer; colormap = :navia, axis = (; aspect = DataAspect()))
 current_figure() #hide
 
 # This is a much larger layer than we need! For this reason, we will trim it so that the empty areas are removed:
 
-# plot-trim
+# fig-region-trimmed
 heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
 current_figure() #hide
 
@@ -99,7 +99,7 @@ end
 
 # We can plot the layer and all occurrences:
 
-# plot-occ
+# fig-all-occurrences
 heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
 scatter!(presences; color = :orange, markersize = 4)
 current_figure() #hide
@@ -107,7 +107,7 @@ current_figure() #hide
 # Some of these occurrences are outside of the masked region in the layer. For
 # this reason, we will use the *non-mutating* `mask` method on the GBIF records:
 
-# plot-occ-trim
+# fig-trimmed-occurrences
 heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
 scatter!(mask(presences, CHE); color = :orange, markersize = 4)
 current_figure() #hide

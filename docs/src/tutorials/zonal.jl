@@ -26,7 +26,7 @@ layer = trim(layer)
 
 #-
 
-# plot-trimmed
+# fig-trimmed-layer
 heatmap(layer; axis=(; aspect=DataAspect()))
 current_figure() #hide
 
@@ -36,7 +36,7 @@ districts = SpeciesDistributionToolkit.gadm("NZL", 2);
 
 # We can start looking at how these map onto the landscape:
 
-# plot-district
+# fig-districts
 heatmap(zone(layer, districts); colormap=:hokusai, axis=(; aspect=DataAspect()))
 current_figure() #hide
 
@@ -49,7 +49,7 @@ nodata!(z, 0.0)
 
 #-
 
-# plot-z
+# fig-zone-index
 heatmap(z; axis=(; aspect=DataAspect()))
 current_figure() #hide
 
@@ -64,7 +64,7 @@ top5 = first.(sort(byzone(median, layer, districts, districtnames); by=(x) -> x.
 
 #-
 
-# plot-areas
+# fig-highlight-areas
 f, ax, plt = heatmap(layer; axis=(; aspect=DataAspect()), colormap=[:lightgrey, :black])
 [lines!(ax, districts[i], label=districtnames[i], linewidth=3) for i in indexin(top5, districtnames)]
 axislegend(position=(0, 0.7), nbanks=1)

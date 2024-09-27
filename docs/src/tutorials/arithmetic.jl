@@ -54,7 +54,7 @@ rescale!(resistance_layer)
 # The remaining step is to visualize this resistance map, and add a little
 # colorbar to show which areas will be more difficult to cross:
 
-# resmap
+# fig-resistance-map
 resistance_map = heatmap(
     resistance_layer;
     colormap = Reverse(:linear_protanopic_deuteranopic_kbjyw_5_95_c25_n256),

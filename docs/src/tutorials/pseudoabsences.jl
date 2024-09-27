@@ -66,7 +66,7 @@ bgmask = (! buffer) & background
 # Finally, we can plot the area in which we can put pseudo-absences as a shaded region over
 # the layer, and plot all known occurrences as well:
 
-# plot-known-occ
+# fig-known-occurrences
 heatmap(
     temperature;
     colormap = :deep,
@@ -84,7 +84,7 @@ sre = pseudoabsencemask(SurfaceRangeEnvelope, presencelayer)
 
 #-
 
-# plot-bg-mask
+# fig-background-mask
 heatmap(
     temperature;
     colormap = :deep,
@@ -106,7 +106,7 @@ bgpoints = backgroundpoints(bgmask, sum(presencelayer))
 
 # And finally, we can make a plot:
 
-# plot-occ-mask
+# fig-pseudoabsences
 heatmap(
     temperature;
     colormap = :deep,

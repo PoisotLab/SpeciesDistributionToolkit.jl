@@ -72,7 +72,7 @@ bgpoints = backgroundpoints(background, sum(presencelayer))
 # We can take a minute to visualize the dataset, as well as the location of
 # presences and pseudo-absences:
 
-# pashow
+# fig-pseudoabsences
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax,
@@ -125,7 +125,7 @@ outofbag(ensemble) |> mcc
 
 # Because the predictions are returned as layers, we can plot them directly:
 
-# mapshow
+# fig-sdm-prediction
 f = Figure(; size = (600, 600))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction")
 hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange = (0, 1))
@@ -156,7 +156,7 @@ shap_v1 = explain(sdm, layers, 1; threshold = false, samples = 50);
 # We can confirm that these two approaches broadly agree about where the effect
 # of the first variable (temperature) is leading the model to predict presences:
 
-# explanations
+# fig-sdm-explanations
 f = Figure(; size = (600, 600))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Shapley values")
 hm = heatmap!(
@@ -187,7 +187,7 @@ S = explain(sdm, layers; threshold = false, samples = 100);
 # We can then put this object into the `mosaic` function to get the index of
 # which variable is the most important for each pixel:
 
-# mosaicplot
+# fig-sdm-mosaicplot
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(
@@ -199,8 +199,8 @@ heatmap!(
         categorical = true,
     ),
 )
-contour!(ax, predict(sdm, layers); color = :black, linewidth = 0.5) #hide
-lines!(ax, CHE.geometry[1]; color = :black) #hide
-hidedecorations!(ax) #hide
-hidespines!(ax) #hide
+contour!(ax, predict(sdm, layers); color = :black, linewidth = 0.5)
+lines!(ax, CHE.geometry[1]; color = :black)
+hidedecorations!(ax)
+hidespines!(ax)
 current_figure() #hide

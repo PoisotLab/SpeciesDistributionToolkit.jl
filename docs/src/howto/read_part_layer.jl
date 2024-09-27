@@ -12,7 +12,7 @@ SimpleSDMLayers.save(f, t)
 
 # We can check the look of this layer as a reference:
 
-# plot-demo-data
+# fig-demo-data
 heatmap(t; colormap = :navia)
 current_figure() #hide
 
@@ -34,7 +34,7 @@ k = SDMLayer(f; bandnumber = 1, bbox...)
 
 # Note that this layer is indeed cropped, but has retained its CRS:
 
-# plot-cropped
+# fig-cropped
 heatmap(k; colormap = :navia)
 current_figure() #hide
 
@@ -49,7 +49,7 @@ poly = [
     (bbox.left, bbox.bottom),
 ]
 
-# plot-withbox
+# fig-with-box
 heatmap(
     interpolate(k; dest = "+proj=longlat +datum=WGS84 +no_defs +type=crs", newsize=(500, 500));
     colormap = :navia,

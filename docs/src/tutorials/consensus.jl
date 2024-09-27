@@ -76,7 +76,7 @@ landcover_colors = [
 
 # We can now create our plot:
 
-# initplot
+# fig-consensus-heatmap
 fig = Figure(; size = (900, 1000))
 panel = Axis(
     fig[1, 1];

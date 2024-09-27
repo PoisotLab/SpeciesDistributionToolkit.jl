@@ -149,7 +149,7 @@ function train!(
     root.prediction = mean(y)
     dt.root = root
     train!(dt.root, X, y)
-    for _ in 1:15
+    for _ in 1:6
         for tip in SDeMo.tips(dt)
             p = SDeMo._pool(tip, X)
             train!(tip, X[:, findall(p)], y[findall(p)])

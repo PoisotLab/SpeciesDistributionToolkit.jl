@@ -117,10 +117,10 @@ function twigs(dt::DecisionTree)
     return twig_nodes
 end
 
-function _ig(dn::SDeMo.DecisionNode, X, y)
-    p = SDeMo._pool(dn, X)
+function _information_gain(dn::SDeMo.DecisionNode, X, y)
     pl = SDeMo._pool(dn.left, X)
     pr = SDeMo._pool(dn.right, X)
+    p = pl .| pr
     yl = y[findall(pl)]
     yr = y[findall(pr)]
     yt = y[findall(p)]
@@ -132,9 +132,16 @@ end
 
 function prune!(tree, X, y)
     tw = twigs(tree)
-    eg = [_ig(t, X, y) for t in tw]
-    mgain, pos = findmin(eg)
-    SDeMo.merge!(tw[pos])
+    wrst = Inf
+    widx = 0
+    for i in eachindex(tw)
+        ef = _information_gain(tw[i], X, y)
+        if ef < wrst
+            wrst = ef
+            widx = i
+        end
+    end
+    SDeMo.merge!(tw[widx])
     return tree
 end
 

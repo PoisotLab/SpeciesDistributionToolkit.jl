@@ -5,6 +5,7 @@ Base.@kwdef mutable struct DecisionNode
     variable::Integer = 0
     value::Float64 = 0.0
     prediction::Float64 = 0.5
+    visited::Bool = false
 end
 
 function _is_in_node_parent(::Nothing, X)
@@ -31,6 +32,10 @@ end
 
 function train!(dn::DecisionNode, X, y)
     v = collect(axes(X, 1))
+    if dn.visited
+        return dn
+    end
+    dn.visited = true
     current_entropy = SDeMo._entropy(y)
     dn.prediction = mean(y)
     if current_entropy > 0.0
@@ -58,8 +63,10 @@ function train!(dn::DecisionNode, X, y)
         if found
             dn.variable, dn.value = best_split
             # New node
-            dn.left = SDeMo.DecisionNode(; parent = dn, prediction = pl)
-            dn.right = SDeMo.DecisionNode(; parent = dn, prediction = pr)
+            vl = isone(pl) .| iszero(pl)
+            vr = isone(pr) .| iszero(pr)
+            dn.left = SDeMo.DecisionNode(; parent = dn, prediction = pl, visited = vl)
+            dn.right = SDeMo.DecisionNode(; parent = dn, prediction = pr, visited = vr)
         end
     end
     return dn
@@ -72,7 +79,7 @@ TODO
 """
 Base.@kwdef mutable struct DecisionTree <: Classifier
     root::DecisionNode = DecisionNode()
-    maxnodes::Integer = 6
+    maxnodes::Integer = 12
 end
 
 tips(::Nothing) = nothing
@@ -136,12 +143,11 @@ Base.zero(::Type{DecisionTree}) = 0.5
 function train!(
     dt::DecisionTree,
     y::Vector{Bool},
-    X::Matrix{T}; maxnodes::Integer = 10,
+    X::Matrix{T},
 ) where {T <: Number}
     root = SDeMo.DecisionNode()
     root.prediction = mean(y)
     dt.root = root
-    dt.maxnodes = maxnodes
     train!(dt.root, X, y)
     for _ in 1:15
         for tip in SDeMo.tips(dt)

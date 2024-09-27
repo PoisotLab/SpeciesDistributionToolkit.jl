@@ -21,7 +21,7 @@ CHE = SpeciesDistributionToolkit.gadm("CHE");
 # In order to simplify the code, we will start from a list of bioclim variables
 # that have been picked to optimize the model:
 
-bio_vars = [11, 5, 8, 6]
+bio_vars = [1, 11, 5, 8, 6]
 
 # We get the data on these variables from CHELSA2:
 
@@ -65,10 +65,12 @@ for occ in mask(presences, CHE)
     presencelayer[occ.longitude, occ.latitude] = true
 end
 
-# The next step is to generate a pseudo-absence mask:
+# The next step is to generate a pseudo-absence mask. We will sample based on
+# the distance to an observation, by also preventing pseudo-absences to be less
+# than 4km from an observation:
 
 background = pseudoabsencemask(DistanceToEvent, presencelayer)
-bgpoints = backgroundpoints(background, 2sum(presencelayer))
+bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
 
 # We can take a minute to visualize the dataset, as well as the location of
 # presences and pseudo-absences:
@@ -92,7 +94,8 @@ current_figure() #hide
 
 # These steps are documented as part of the `SDeMo` documentation. The only
 # difference here is that rather than passing a matrix of features and a vector
-# of labels, we give a vector of layers (features), and the two layers for presences and absences:
+# of labels, we give a vector of layers (features), and the two layers for
+# presences and absences:
 
 sdm = SDM(MultivariateTransform{PCA}, DecisionTree, layers, presencelayer, bgpoints)
 
@@ -117,9 +120,9 @@ train!(sdm)
 prd = predict(sdm, layers; threshold = false)
 
 # Decision trees, in oredr to avoid overfitting, are pretty small -- indeed, the
-# default version in `SDeMo` is capped at 12 nodes. This is because there is no
-# limit to how much decision trees can overfit. But as a result, the map
-# representing these predictions can look a little coase:
+# default version in `SDeMo` is capped at 12 nodes, with a maximal depth of 7.
+# This is because there is no limit to how much decision trees can overfit. But
+# as a result, the map representing these predictions can look a little coase:
 
 # fig-initial-map
 f = Figure(; size = (600, 300))
@@ -227,9 +230,6 @@ hidedecorations!(ax2)
 hidespines!(ax2)
 current_figure() #hide
 
-# Note that the `partialresponse` and `explain` method can also take an ensemble
-# model.
-
 # We can also get the Shapley values for *all* layers, which will return a
 # vector of layers, one for each included variable:
 
@@ -245,7 +245,7 @@ heatmap!(
     ax,
     mosaic(argmax, S);
     colormap = cgrad(
-        :isoluminant_cgo_80_c38_n256,
+        :glasbey_bw_n256,
         length(variables(sdm));
         categorical = true,
     ),

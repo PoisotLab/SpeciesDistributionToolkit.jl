@@ -8,7 +8,7 @@ using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
 using Dates
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # Note that this tutorial is not showing all the capacities of the `SDeMo`
 # package!

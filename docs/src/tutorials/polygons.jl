@@ -3,7 +3,7 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 import GeoJSON
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # In this tutorial, we will clip a layer to a polygon (in GeoJSON format), then
 # use the same polygon to filter GBIF records.

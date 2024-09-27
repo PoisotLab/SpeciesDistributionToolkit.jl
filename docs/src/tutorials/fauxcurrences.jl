@@ -4,7 +4,7 @@ using SpeciesDistributionToolkit
 import Random
 using CairoMakie
 Random.seed!(616525434012345) #hide
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # Get the observation data in the correct format, which is an array of matrices
 # with two rows (longitude, latitude) and one column for observed occurrence.

@@ -5,7 +5,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # In order to work on a region that is not too big, we will define our spatial
 # extent:

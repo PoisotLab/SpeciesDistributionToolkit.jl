@@ -16,31 +16,36 @@ include("dataset_report.jl")
 
 function replace_current_figure(content)
     fig_hash = string(hash(content)) * "-" * string(hash(rand(100)))
-    matcher = r"#\s+(\S*)\n((?:^[^#]\s{0,4}.*$\n)+)current_figure\(\)\s+#hide\n"
-    replacement_template = """
-    # ![](HASH-\\1.png)
+
+    matcher = r"""^# (?<title>\w+)$
+    (?<code>(?>^[^#].*$\n){1,})^current_figure\(\) #hide$"""m
+
+    replacement_template = s"""
+    # ![](HASH-\\g<title>.png)
+
 
     # ::: details Code for the figure
-    #
-    \\2save("HASH-\\1.png", current_figure()); #hide
-    #
+
+    \g<code>save("HASH-\\g<title>.png", current_figure()); #hide
+
     # :::
     """
-    replacement = SubstitutionString(replace(replacement_template, "HASH" => fig_hash))
-    content = replace(content, matcher => replacement)
+    replacer = SubstitutionString(replace(replacement_template, "HASH" => fig_hash))
+    content = replace(content, matcher => replacer)
     return content
 end
 
 # Render the tutorials and how-to using Literate
 for folder in ["howto", "tutorials"]
     fpath = joinpath(@__DIR__, "src", folder)
-    for docfile in filter(endswith(".jl"), readdir(fpath; join=true))
+    for docfile in filter(endswith(".jl"), readdir(fpath; join = true))
         if ~isfile(replace(docfile, r".jl$" => ".md"))
+            @info docfile
             Literate.markdown(
                 docfile, fpath;
                 flavor = Literate.DocumenterFlavor(),
                 config = Dict("credit" => false, "execute" => true),
-                preprocess = replace_current_figure
+                preprocess = replace_current_figure,
             )
         end
     end
@@ -65,7 +70,7 @@ makedocs(;
             "tutorials/fauxcurrences.md",
             "tutorials/futureclimate.md",
             "tutorials/zonal.md",
-            "tutorials/sdemo.md"
+            "tutorials/sdemo.md",
         ],
         "How-to..." => [
             "howto/get_gbif_data.md",
@@ -82,7 +87,7 @@ makedocs(;
             "manual/pseudoabsences.md",
             "manual/polygons.md",
             "manual/gadm.md",
-        ]
+        ],
     ],
 )
 

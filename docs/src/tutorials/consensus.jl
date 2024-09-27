@@ -6,7 +6,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 #-
 

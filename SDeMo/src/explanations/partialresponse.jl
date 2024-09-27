@@ -21,8 +21,8 @@ end
 function _fill_partialresponse_data!(nx, model::T, variable, inflated) where {T <: AbstractSDM}
     for i in axes(nx, 1)
         if i != variable
-            reducer = inflated ? rand([mean, median, maximum, minimum, rand]) : mean
-            nx[i, :] .= reducer(features(model, i))
+            filler = inflated ? mean(features(model, v)) : rand(LinRange(extrema(features(model, v))..., 200))
+            nx[i, :] .= filler
         end
     end
     return nx
@@ -33,9 +33,8 @@ end
 
 This method returns the partial response of applying the trained model to a
 simulated dataset where all variables *except* `i` are set to their mean value.
-The `inflated` keywork, when set to `true`, will randomize the function used to
-aggregate the other variables, in which case this method needs to be ran
-multiple times.
+The `inflated` keywork, when set to `true`, will instead pick a random value
+within the range of the observations.
 
 The different arguments that can follow the variable position are
 
@@ -76,8 +75,8 @@ function partialresponse(model::T, i::Integer, j::Integer, s::Tuple=(50, 50); in
 
     for v in axes(nx, 1)
         if (v != i)&(v != j)
-            reducer = inflated ? rand([mean, median, maximum, minimum, rand]) : mean
-            nx[v,:] .= reducer(features(model, v))
+            filler = inflated ? mean(features(model, v)) : rand(LinRange(extrema(features(model, v))..., 200))
+            nx[v,:] .= filler
         end
     end
 

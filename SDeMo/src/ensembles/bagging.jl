@@ -57,7 +57,7 @@ is a simple majority rule.
 
 The additional keywords arguments are passed to `predict`.
 """
-function outofbag(ensemble::Bagging; kwargs...)
+function outofbag(ensemble::Bagging; thr::Float64=0.5, kwargs...)
     done_instances = Int64[]
     outcomes = Bool[]
 
@@ -74,5 +74,5 @@ function outofbag(ensemble::Bagging; kwargs...)
         end
     end
 
-    return ConfusionMatrix(outcomes, ensemble.model.y[done_instances])
+    return ConfusionMatrix(outcomes, ensemble.model.y[done_instances], thr)
 end

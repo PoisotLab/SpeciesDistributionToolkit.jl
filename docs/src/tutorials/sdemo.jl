@@ -243,7 +243,7 @@ f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(
     ax,
-    mosaic(argmax, S);
+    mosaic(v -> argmax(abs.(v)), S);
     colormap = cgrad(
         :glasbey_bw_n256,
         length(variables(sdm));

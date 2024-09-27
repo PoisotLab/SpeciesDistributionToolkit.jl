@@ -101,7 +101,7 @@ function SimpleSDMLayers.mask(records::GBIFRecords, multipolygon::GeoJSON.MultiP
                     for i in 2:length(element)
                         if PolygonOps.inpolygon(
                             (records[i].longitude, records[i].latitude),
-                            elements[i],
+                            element[i],
                         ) != 0
                             inclusion[i] = false
                         end

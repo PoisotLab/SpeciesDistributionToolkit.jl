@@ -39,6 +39,10 @@ export NaiveBayes
 include("classifiers/bioclim.jl")
 export BIOCLIM
 
+# BIOCLIM
+include("classifiers/decisiontree.jl")
+export DecisionTree
+
 # Bagging and ensembles
 include("ensembles/bagging.jl")
 export Bagging, outofbag, bootstrap

@@ -76,7 +76,8 @@ ci(cv.validation, mcc)
 
 forwardselection!(sdm, folds, [1])
 
-# This operation *will retrain* the model. We can now look at the list of selected variables:
+# This operation *will retrain* the model. We can now look at the list of
+# selected variables:
 
 variables(sdm)
 

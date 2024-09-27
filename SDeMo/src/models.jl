@@ -131,3 +131,10 @@ variables(sdm::SDM) = sdm.v
 Sets the list of variables.
 """
 variables!(sdm::SDM, v) = sdm.v = copy(v)
+
+features(bagging::Bagging) = features(bagging.model)
+features(ensemble::Ensemble) = features(first(ensemble.models))
+features(bagging::Bagging, n) = features(bagging.model, n)
+features(ensemble::Ensemble, n) = features(first(ensemble.models), n)
+labels(bagging::Bagging) = labels(bagging.model)
+labels(ensemble::Ensemble) = labels(first(ensemble.models))

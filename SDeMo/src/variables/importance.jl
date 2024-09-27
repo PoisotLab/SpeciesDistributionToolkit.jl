@@ -2,17 +2,17 @@
 """
     variableimportance(model, folds, variable; reps=10, optimality=mcc, kwargs...)
 
-Returns the importance of one variable in the model. The `reps` keyword fixes
+Returns the importance of one variable in the model. The `samples` keyword fixes
 the number of bootstraps to run (defaults to `10`, which is not enough!).
 
 The keywords are passed to `ConfusionMatrix`.
 """
-function variableimportance(model, folds, variable; reps=10, optimality=mcc, kwargs...)
-    O = zeros(length(folds), reps)
+function variableimportance(model::T, folds, variable; samples=10, optimality=mcc, kwargs...) where {T <: AbstractSDM}
+    O = zeros(length(folds), samples)
     for (i, fold) in enumerate(folds)
         cm = deepcopy(model)
         train!(cm; training=fold[2])
-        for rep in 1:reps
+        for rep in 1:samples
             o, p = varimp_shuffle(cm, fold, variable; kwargs...)
             O[i,rep] = abs(optimality(o) - optimality(p))
         end
@@ -21,10 +21,10 @@ function variableimportance(model, folds, variable; reps=10, optimality=mcc, kwa
 end
 
 function varimp_shuffle(model, fold, var; kwargs...)
-    X = copy(model.X[:, fold[1]])
-    orig = ConfusionMatrix(predict(model, X; kwargs...), model.y[fold[1]])
+    X = copy(features(model)[:, fold[1]])
+    orig = ConfusionMatrix(predict(model, X; kwargs...), labels(model)[fold[1]])
     X[var,:] =  shuffle(X[var,:])
-    perm = ConfusionMatrix(predict(model, X; kwargs...), model.y[fold[1]])
+    perm = ConfusionMatrix(predict(model, X; kwargs...), labels(model)[fold[1]])
     return (orig, perm)
 end
 

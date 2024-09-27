@@ -170,6 +170,22 @@ cm = heatmap!(prx, pry, prz, colormap=:Oranges)
 Colorbar(f[1,2], cm)
 current_figure() #hide
 
+# ## Inflated partial responses
+
+# Inflated partial responses replace the average value by other summary
+# statistics, here defined as (randomly) the mean, median, maximum, minimum, and
+# a random observed value:
+
+f = Figure()
+ax = Axis(f[1,1])
+prx, pry = partialresponse(sdm, 1; inflated=false, threshold=false)
+for i in 1:200
+    ix, iy = partialresponse(sdm, 1; inflated=true, threshold=false)
+    lines!(ax, ix, iy, color=(:grey, 0.5))
+end
+lines!(ax, prx, pry, color=:black, linewidth=4)
+current_figure() #hide
+
 # ## Measuring uncertainty with bagging
 
 # We can wrap our model into an homogeneous ensemble:

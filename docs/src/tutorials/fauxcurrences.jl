@@ -242,7 +242,8 @@ scatter!(ax3, bin_s_intra[3], color=:transparent, strokewidth=2, strokecolor=:or
 [hidedecorations!(ax) for ax in [ax1, ax2, ax3]]
 current_figure() #hide
 
-# For the components of the inter-specific distance matrix, this looks like:
+# For the components of the inter-specific distance matrix, this gives the
+# following plot:
 
 # fig-distances-inter
 f = Figure(; size=(700, 250))

@@ -57,7 +57,8 @@ layer = SDMLayer(
 heatmap(layer; colormap = :navia, axis = (; aspect = DataAspect()))
 current_figure() #hide
 
-# We can now mask this layer according to the polygon:
+# We can now mask this layer according to the polygon. This uses the same
+# `mask!` method we use when masking with another layer:
 
 mask!(layer, CHE)
 
@@ -65,7 +66,8 @@ mask!(layer, CHE)
 heatmap(layer; colormap = :navia, axis = (; aspect = DataAspect()))
 current_figure() #hide
 
-# This is a much larger layer than we need! For this reason, we will trim it so that the empty areas are removed:
+# This is a much larger layer than we need! For this reason, we will trim it so
+# that the empty areas are removed:
 
 # fig-region-trimmed
 heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))

@@ -29,7 +29,8 @@ hidespines!(ax)
 hidedecorations!(ax)
 current_figure() #hide
 
-# We can now get the lower level sub-division:
+# We can now get the lower level sub-division. Note that not all territories
+# covered by GADM have the same number of sub-divisions!
 
 districts = SpeciesDistributionToolkit.gadm("NZL", 2);
 

@@ -26,7 +26,6 @@ function replace_current_figure(content)
     #
     # :::
     """
-    @info replacement_template
     replacement = SubstitutionString(replace(replacement_template, "HASH" => fig_hash))
     content = replace(content, matcher => replacement)
     return content

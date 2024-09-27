@@ -1,7 +1,7 @@
 name = "SDeMo"
 uuid = "3e5feb82-bcca-434d-9cd5-c11731a21467"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "0.1.0"
+version = "0.0.3"
 
 [deps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"

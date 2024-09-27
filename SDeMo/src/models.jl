@@ -138,3 +138,5 @@ features(bagging::Bagging, n) = features(bagging.model, n)
 features(ensemble::Ensemble, n) = features(first(ensemble.models), n)
 labels(bagging::Bagging) = labels(bagging.model)
 labels(ensemble::Ensemble) = labels(first(ensemble.models))
+threshold(bagging::Bagging) = 0.5
+threshold(bagging::Ensemble) = 0.5

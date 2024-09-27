@@ -20,6 +20,7 @@ ws = interpolate(layer; dest = proj_string)
 # By default, this produces a layer with the same dimension as the input, and
 # uses bilinear interpolation:
 
+# interpolated
 fig, ax, hm = heatmap(
     ws;
     colormap = :navia,

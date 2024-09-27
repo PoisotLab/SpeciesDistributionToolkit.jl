@@ -14,14 +14,34 @@ using Dates
 # Generate a report card for each known dataset
 include("dataset_report.jl")
 
+function replace_current_figure(content)
+    fig_hash = string(hash(content)) * "-" * string(hash(rand(100)))
+    matcher = r"#\s+(\w+)\n((.*\S.*\n)+)current_figure\(\)\s+#hide\n"
+    replacement_template = """
+    # ![](HASH-\\1.png)
+
+    # ::: details Code for the figure
+    #
+    \\2save("HASH-\\1.png", current_figure()); #hide
+    #
+    # :::
+    """
+    @info replacement_template
+    replacement = SubstitutionString(replace(replacement_template, "HASH" => fig_hash))
+    content = replace(content, matcher => replacement)
+    return content
+end
+
 # Render the tutorials and how-to using Literate
 for folder in ["howto", "tutorials"]
     fpath = joinpath(@__DIR__, "src", folder)
     for docfile in filter(endswith(".jl"), readdir(fpath; join=true))
+        current_file = replace(basename(docfile), ".jl" => "", "_" => "-")
         Literate.markdown(
             docfile, fpath;
             flavor = Literate.DocumenterFlavor(),
             config = Dict("credit" => false, "execute" => true),
+            preprocess = replace_current_figure
         )
     end
 end

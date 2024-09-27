@@ -34,6 +34,7 @@ obs = [Fauxcurrences.get_valid_coordinates(o, layer) for o in observations];
 
 #-
 
+# plot-obs
 heatmap(layer, colormap=[:white, :gray])
 for i in eachindex(taxa)
     scatter!(obs[i], label=taxa[i].name)
@@ -120,6 +121,7 @@ sum(D)
 
 #-
 
+# plot-sim
 heatmap(layer, colormap=[:white, :gray])
 for i in eachindex(taxa)
     scatter!(sim[i], label=taxa[i].name)
@@ -197,7 +199,9 @@ println(
 
 #-
 
-lines(progress[1:findlast(x -> x>0, progress)]; axis=(; yscale=sqrt, xlabel="Iteration", ylabel="JS divergence"), color=:black) #hide
+# plot-lines
+lines(progress[1:findlast(x -> x>0, progress)]; axis=(; yscale=sqrt, xlabel="Iteration", ylabel="JS divergence"), color=:black)
+current_figure() #hide
 
 # Note that for a small number of iterations (like we used here), this
 # improvement is unlikely to be very large; note also that the returns (in terms
@@ -208,6 +212,7 @@ lines(progress[1:findlast(x -> x>0, progress)]; axis=(; yscale=sqrt, xlabel="Ite
 
 # The final disposition of the fauxcurrences is:
 
+# plot-final
 heatmap(layer, colormap=[:white, :gray])
 for i in eachindex(taxa)
     scatter!(sim[i], label=taxa[i].name)
@@ -222,38 +227,40 @@ current_figure() #hide
 # For the intra-specific distances, with observations in black and the
 # simulation in orange, this looks like:
 
+# plot-dist-intra
 f = Figure(; size=(700, 250))
 ax1 = Axis(f[1,1])
 scatterlines!(ax1, bin_intra[1]; color=:black)
 scatter!(ax1, bin_s_intra[1], color=:transparent, strokewidth=2, strokecolor=:orange, markersize=10, marker=:rect)
-
+#
 ax2 = Axis(f[1,2])
 scatterlines!(ax2, bin_intra[2]; color=:black)
 scatter!(ax2, bin_s_intra[2], color=:transparent, strokewidth=2, strokecolor=:orange, markersize=10, marker=:rect)
-
+#
 ax3 = Axis(f[1,3])
 scatterlines!(ax3, bin_intra[3]; color=:black)
 scatter!(ax3, bin_s_intra[3], color=:transparent, strokewidth=2, strokecolor=:orange, markersize=10, marker=:rect)
-
+#
 [hidespines!(ax) for ax in [ax1, ax2, ax3]] #hide
 [hidedecorations!(ax) for ax in [ax1, ax2, ax3]] #hide
 current_figure() #hide
 
 # For the components of the inter-specific distance matrix, this looks like:
 
+# plot-dist-inter
 f = Figure(; size=(700, 250))
 ax1 = Axis(f[1,1])
 scatterlines!(ax1, bin_inter[1]; color=:black)
 scatter!(ax1, bin_s_inter[1], color=:transparent, strokewidth=2, strokecolor=:purple, markersize=10, marker=:rect)
-
+#
 ax2 = Axis(f[1,2])
 scatterlines!(ax2, bin_inter[2]; color=:black)
 scatter!(ax2, bin_s_inter[2], color=:transparent, strokewidth=2, strokecolor=:purple, markersize=10, marker=:rect)
-
+#
 ax3 = Axis(f[1,3])
 scatterlines!(ax3, bin_inter[3]; color=:black)
 scatter!(ax3, bin_s_inter[3], color=:transparent, strokewidth=2, strokecolor=:purple, markersize=10, marker=:rect)
-
+#
 [hidespines!(ax) for ax in [ax1, ax2, ax3]] #hide
 [hidedecorations!(ax) for ax in [ax1, ax2, ax3]] #hide
 current_figure() #hide

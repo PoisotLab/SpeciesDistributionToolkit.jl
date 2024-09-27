@@ -27,6 +27,7 @@ temp2 =
 
 #-
 
+# heatmap1
 heatmap(temp2, colormap=:navia, axis=(;aspect=DataAspect())) # hide
 current_figure() #hide
 
@@ -41,6 +42,7 @@ nodata(temp2, v -> !(m <= v <= M))
 
 #-
 
+# heatmap2
 heatmap(nodata(temp2, v -> !(m <= v <= M)), colormap=:navia, axis=(;aspect=DataAspect())) # hide
 current_figure() #hide
 
@@ -68,6 +70,7 @@ mask(temp2, temp1)
 
 #-
 
+# heatmap3
 heatmap(mask(temp2, temp1), colormap=:navia, axis=(;aspect=DataAspect())) # hide
 current_figure() #hide
 

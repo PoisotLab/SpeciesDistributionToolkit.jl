@@ -67,6 +67,7 @@ Qp = quantize(prec, presences)
 
 # We can plot the map of quantiles for precipitation:
 
+# map-quantiles
 fig, ax, hm = heatmap(
     Qp;
     colormap = :navia,
@@ -104,6 +105,7 @@ bc = BIOCLIM([temp, prec], presences)
 # environmental condition found at this specific place. We can map this, and
 # also superimpose the presence data:
 
+# map-bioclim
 fig, ax, hm = heatmap(
     bc;
     colormap = :navia,

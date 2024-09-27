@@ -43,6 +43,7 @@ z_temperature = (temperature - mean(temperature)) / std(temperature)
 # very useful when we start using `GeoMakie` axes to incorporate projections into
 # our figures (which we will not do here...).
 
+# plot-z
 fig, ax, hm = heatmap(
     z_temperature;
     colormap = :broc,
@@ -59,6 +60,7 @@ current_figure() #hide
 # before, note that we can directly pass the GBIF object to `scatter` to show it
 # on a map:
 
+# plot-rescale
 fig, ax, hm = heatmap(
     rescale(precipitation, (0.0, 1.0));
     colormap = :bamako,
@@ -71,6 +73,7 @@ current_figure() #hide
 # To get a little more insights about the distribution of precipitation, we can
 # look at the quantiles, given by the `quantize` function:
 
+# plot-quantize
 fig, ax, hm = heatmap(
     quantize(precipitation, 5);
     colormap = :bamako,

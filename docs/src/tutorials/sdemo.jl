@@ -72,6 +72,7 @@ bgpoints = backgroundpoints(background, sum(presencelayer))
 # We can take a minute to visualize the dataset, as well as the location of
 # presences and pseudo-absences:
 
+# pashow
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax,
@@ -124,6 +125,7 @@ outofbag(ensemble) |> mcc
 
 # Because the predictions are returned as layers, we can plot them directly:
 
+# mapshow
 f = Figure(; size = (600, 600))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction")
 hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange = (0, 1))
@@ -154,6 +156,7 @@ shap_v1 = explain(sdm, layers, 1; threshold = false, samples = 50);
 # We can confirm that these two approaches broadly agree about where the effect
 # of the first variable (temperature) is leading the model to predict presences:
 
+# explanations
 f = Figure(; size = (600, 600))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Shapley values")
 hm = heatmap!(
@@ -184,6 +187,7 @@ S = explain(sdm, layers; threshold = false, samples = 100);
 # We can then put this object into the `mosaic` function to get the index of
 # which variable is the most important for each pixel:
 
+# mosaicplot
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(

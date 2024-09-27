@@ -23,7 +23,12 @@ layer = SDMLayer(dataprovider; layer = "BIO19", spatial_extent...)
 
 mask!(layer, SpeciesDistributionToolkit.gadm("NZL"))
 layer = trim(layer)
+
+#-
+
+# plot-trimmed
 heatmap(layer; axis=(; aspect=DataAspect()))
+current_figure() #hide
 
 #-
 
@@ -31,7 +36,9 @@ districts = SpeciesDistributionToolkit.gadm("NZL", 2);
 
 # We can start looking at how these map onto the landscape:
 
+# plot-district
 heatmap(zone(layer, districts); colormap=:hokusai, axis=(; aspect=DataAspect()))
+current_figure() #hide
 
 # The layer resulting from the `zone` operation has integer values, and the
 # values correspond to the polygon to which each pixel belongs. Note that the
@@ -42,7 +49,9 @@ nodata!(z, 0.0)
 
 #-
 
+# plot-z
 heatmap(z; axis=(; aspect=DataAspect()))
+current_figure() #hide
 
 #-
 
@@ -55,6 +64,7 @@ top5 = first.(sort(byzone(median, layer, districts, districtnames); by=(x) -> x.
 
 #-
 
+# plot-areas
 f, ax, plt = heatmap(layer; axis=(; aspect=DataAspect()), colormap=[:lightgrey, :black])
 [lines!(ax, districts[i], label=districtnames[i], linewidth=3) for i in indexin(top5, districtnames)]
 axislegend(position=(0, 0.7), nbanks=1)

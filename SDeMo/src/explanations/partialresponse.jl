@@ -21,7 +21,7 @@ end
 function _fill_partialresponse_data!(nx, model::T, variable, inflated) where {T <: AbstractSDM}
     for i in axes(nx, 1)
         if i != variable
-            filler = inflated ? mean(features(model, v)) : rand(LinRange(extrema(features(model, v))..., 200))
+            filler = inflated ? rand(LinRange(extrema(features(model, i))..., 200)) : mean(features(model, i))
             nx[i, :] .= filler
         end
     end
@@ -75,7 +75,7 @@ function partialresponse(model::T, i::Integer, j::Integer, s::Tuple=(50, 50); in
 
     for v in axes(nx, 1)
         if (v != i)&(v != j)
-            filler = inflated ? mean(features(model, v)) : rand(LinRange(extrema(features(model, v))..., 200))
+            filler = inflated ? rand(LinRange(extrema(features(model, v))..., 200)) : mean(features(model, v))
             nx[v,:] .= filler
         end
     end

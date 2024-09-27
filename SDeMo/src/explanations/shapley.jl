@@ -49,7 +49,7 @@ function shap_all_points(f, X, Z, j, n)
 end
 
 """
-    explain(model::SDM, j; observation = nothing, instances = nothing, samples = 100, kwargs..., )
+    explain(model::AbstractSDM, j; observation = nothing, instances = nothing, samples = 100, kwargs..., )
 
 Uses the MCMC approximation of Shapley values to provide explanations to
 specific predictions. The second argument `j` is the variable for which the
@@ -62,18 +62,18 @@ will be given on the training data.
 All other keyword arguments are passed to `predict`.
 """
 function explain(
-    model::SDM,
+    model::T,
     j;
     observation = nothing,
     instances = nothing,
     samples = 200,
     kwargs...,
-)
+) where {T <: AbstractSDM}
     predictor = (x) -> predict(model, x; kwargs...)
-    instances = isnothing(instances) ? model.X : instances
+    instances = isnothing(instances) ? features(model) : instances
     if isnothing(observation)
-        return shap_all_points(predictor, instances, model.X, j, samples)
+        return shap_all_points(predictor, instances, features(model), j, samples)
     else
-        return shap_one_point(predictor, instances, model.X, observation, j, samples)
+        return shap_one_point(predictor, instances, features(model), observation, j, samples)
     end
 end

@@ -16,7 +16,7 @@ function _is_in_node_parent(dn::DecisionNode, X)
     if isnothing(dn.parent)
         return [true for _ in axes(X, 2)]
     end
-    to_the_left = [X[dn.parent.variable, i] < dn.parent.value for i in axes(X, 2)]
+    to_the_left = X[dn.parent.variable, :] .< dn.parent.value
     if dn == dn.parent.left
         return to_the_left
     else
@@ -46,7 +46,8 @@ function train!(dn::DecisionNode, X, y)
         for i in eachindex(v)
             x = unique(X[v[i], :])
             for j in eachindex(x)
-                left, right = findall(X[v[i], :] .< x[j]), findall(X[v[i], :] .>= x[j])
+                left = findall(X[v[i], :] .< x[j])
+                right = findall(X[v[i], :] .>= x[j])
                 left_p = length(left) / length(y)
                 right_p = 1.0 - left_p
                 left_e = SDeMo._entropy(y[left])
@@ -118,12 +119,12 @@ function twigs(dt::DecisionTree)
 end
 
 function _information_gain(dn::SDeMo.DecisionNode, X, y)
-    pl = SDeMo._pool(dn.left, X)
-    pr = SDeMo._pool(dn.right, X)
-    p = pl .| pr
-    yl = y[findall(pl)]
-    yr = y[findall(pr)]
-    yt = y[findall(p)]
+    p = findall(SDeMo._pool(dn, X))
+    pl = [i for i in p if X[dn.variable,i] < dn.value]
+    pr = setdiff(p, pl)
+    yl = y[pl]
+    yr = y[pr]
+    yt = y[p]
     e = SDeMo._entropy(yt)
     el = SDeMo._entropy(yl)
     er = SDeMo._entropy(yr)
@@ -159,7 +160,9 @@ function train!(
     for _ in 1:6
         for tip in SDeMo.tips(dt)
             p = SDeMo._pool(tip, X)
-            train!(tip, X[:, findall(p)], y[findall(p)])
+            if !(tip.visited)
+                train!(tip, X[:, findall(p)], y[findall(p)])
+            end
         end
     end
 

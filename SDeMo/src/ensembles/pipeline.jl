@@ -2,6 +2,7 @@ features(model::Bagging) = features(model.model)
 features(model::Ensemble) = features(first(model.models))
 features(model::Bagging, n) = features(model.model, n)
 features(model::Ensemble, n) = features(first(model.models), n)
+variables(model::Bagging) = variables(model.model)
 labels(model::Bagging) = labels(model.model)
 labels(model::Ensemble) = labels(first(model.models))
 threshold(model::Bagging) = 0.5

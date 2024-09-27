@@ -128,6 +128,7 @@ prd = predict(sdm, layers; threshold = false)
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction (tree)")
 hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange = (0, 1))
+contour!(ax, predict(sdm, layers); color = :black, linewidth = 0.5)
 Colorbar(f[1, 2], hm)
 lines!(ax, CHE.geometry[1]; color = :black)
 hidedecorations!(ax)
@@ -150,8 +151,8 @@ end
 # ::: info About this ensemble model
 # 
 # The model we have constructed here is essentially a random forest. Because we
-# are training a PCA before applying the classification, it is probably halfway
-# to a rotation forest.
+# are training a PCA before applying the classification, on subsets of both
+# features and instances, it is probably halfway to a rotation forest.
 # 
 # :::
 
@@ -181,7 +182,7 @@ f = Figure(; size = (600, 600))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction")
 hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange = (0, 1))
 Colorbar(f[1, 2], hm)
-contour!(ax, predict(ensemble, layers); color = :black, linewidth = 0.5)
+contour!(ax, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
 lines!(ax, CHE.geometry[1]; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
@@ -189,7 +190,7 @@ ax2 = Axis(f[2, 1]; aspect = DataAspect(), title = "Uncertainty")
 hm =
     heatmap!(ax2, quantize(unc); colormap = :linear_gow_60_85_c27_n256, colorrange = (0, 1))
 Colorbar(f[2, 2], hm)
-contour!(ax2, predict(ensemble, layers); color = :black, linewidth = 0.5)
+contour!(ax2, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
 lines!(ax2, CHE.geometry[1]; color = :black)
 hidedecorations!(ax2)
 hidespines!(ax2)
@@ -201,11 +202,11 @@ current_figure() #hide
 # vector of layers will return the output as layers, with the value calculated
 # for each pixel:
 
-part_v1 = partialresponse(ensemble, layers, last(variables(sdm)); threshold = false);
-shap_v1 = explain(ensemble, layers, last(variables(sdm)); threshold = false, samples = 50);
+part_v1 = partialresponse(ensemble, layers, first(variables(sdm)); threshold = false);
+shap_v1 = explain(ensemble, layers, first(variables(sdm)); threshold = false, samples = 50);
 
 # We can confirm that these two approaches broadly agree about where the effect
-# of the first variable (temperature) is leading the model to predict presences:
+# of the first variable (temperature) is leading the model to predict presences.
 
 # fig-sdm-explanations
 f = Figure(; size = (600, 600))
@@ -216,14 +217,14 @@ hm = heatmap!(
     colormap = :diverging_gwv_55_95_c39_n256,
     colorrange = (-0.3, 0.3),
 )
-contour!(ax, predict(ensemble, layers); color = :black, linewidth = 0.5)
+contour!(ax, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
 lines!(ax, CHE.geometry[1]; color = :black) #hide
 hidedecorations!(ax)
 hidespines!(ax)
 Colorbar(f[1, 2], hm)
 ax2 = Axis(f[2, 1]; aspect = DataAspect(), title = "Partial response")
 hm = heatmap!(ax2, part_v1; colormap = :linear_gow_65_90_c35_n256, colorrange = (0, 1))
-contour!(ax2, predict(ensemble, layers); color = :black, linewidth = 0.5)
+contour!(ax2, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
 lines!(ax2, CHE.geometry[1]; color = :black)
 Colorbar(f[2, 2], hm)
 hidedecorations!(ax2)
@@ -250,7 +251,7 @@ heatmap!(
         categorical = true,
     ),
 )
-contour!(ax, predict(ensemble, layers); color = :black, linewidth = 0.5)
+contour!(ax, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
 lines!(ax, CHE.geometry[1]; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)

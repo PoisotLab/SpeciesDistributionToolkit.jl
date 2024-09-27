@@ -112,14 +112,14 @@ train!(sdm)
 prd = predict(sdm, layers; threshold = false)
 
 # To get a sense of the variability in the outcome, we will do a quick bootstrap
-# aggregating with 50 different bags:
+# aggregating with 64 different bags:
 
-ensemble = Bagging(sdm, 50)
+ensemble = Bagging(sdm, 64)
 train!(ensemble)
 unc = predict(ensemble, layers; consensus = iqr, threshold = false)
 
-# Let's have a look at the out of bag MCC, to make sure that there is no
-# grievous loss of performance:
+# Let's have a look at the out-of-bag performance using MCC, to make sure that
+# there is no grievous loss of performance:
 
 outofbag(ensemble) |> mcc
 

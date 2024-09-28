@@ -1,5 +1,5 @@
 # Other utility functions
 
 ```@docs
-rangediff
+gainloss
 ```

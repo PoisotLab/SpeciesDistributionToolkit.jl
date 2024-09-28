@@ -8,7 +8,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # We will work on the twelve classes of landcover provided by the *EarthEnv* data:
 
@@ -41,7 +41,7 @@ classes_resistance = classes_resistance ./ sum(classes_resistance)
 landuse = [
     SDMLayer(dataprovider; layer = class, full = true, spatial_extent...) for
     class in landcover_classes
-]
+];
 
 # The aggregation of the layers is simply ∑wᵢLᵢ, where wᵢ is the resistance of the
 # *i*-th layer Lᵢ. In order to have the resistance layer expressed between 0 and
@@ -54,10 +54,11 @@ rescale!(resistance_layer)
 # The remaining step is to visualize this resistance map, and add a little
 # colorbar to show which areas will be more difficult to cross:
 
+# fig-resistance-map
 resistance_map = heatmap(
     resistance_layer;
     colormap = Reverse(:linear_protanopic_deuteranopic_kbjyw_5_95_c25_n256),
-    figure = (; resolution = (400, 350)),
+    figure = (; size = (400, 350)),
     axis = (;
         aspect = DataAspect(),
         xlabel = "Latitude",

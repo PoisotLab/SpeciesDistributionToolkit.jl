@@ -7,7 +7,7 @@ using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
 import StatsBase
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # In this tutorial, we will have a look at the ways to transform layers and apply
 # some functions from `Statistics`. As an illustration, we will produce a map of
@@ -43,11 +43,12 @@ z_temperature = (temperature - mean(temperature)) / std(temperature)
 # very useful when we start using `GeoMakie` axes to incorporate projections into
 # our figures (which we will not do here...).
 
+# fig-zscore
 fig, ax, hm = heatmap(
     z_temperature;
     colormap = :broc,
     colorrange = (-2, 2),
-    figure = (; resolution = (800, 400)),
+    figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
 Colorbar(fig[:, end + 1], hm)
@@ -59,10 +60,11 @@ current_figure() #hide
 # before, note that we can directly pass the GBIF object to `scatter` to show it
 # on a map:
 
+# fig-rescale
 fig, ax, hm = heatmap(
     rescale(precipitation, (0.0, 1.0));
     colormap = :bamako,
-    figure = (; resolution = (800, 400)),
+    figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
 Colorbar(fig[:, end + 1], hm)
@@ -71,10 +73,11 @@ current_figure() #hide
 # To get a little more insights about the distribution of precipitation, we can
 # look at the quantiles, given by the `quantize` function:
 
+# fig-quantize
 fig, ax, hm = heatmap(
     quantize(precipitation, 5);
     colormap = :bamako,
-    figure = (; resolution = (800, 400)),
+    figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
 Colorbar(fig[:, end + 1], hm)

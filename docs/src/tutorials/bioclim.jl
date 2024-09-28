@@ -5,7 +5,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # We will get the same occurrence and spatial data as in other examples in this
 # documentation (*Sitta whiteheadi* in Corsica):
@@ -67,6 +67,7 @@ Qp = quantize(prec, presences)
 
 # We can plot the map of quantiles for precipitation:
 
+# fig-quantiles
 fig, ax, hm = heatmap(
     Qp;
     colormap = :navia,
@@ -104,6 +105,7 @@ bc = BIOCLIM([temp, prec], presences)
 # environmental condition found at this specific place. We can map this, and
 # also superimpose the presence data:
 
+# fig-bioclim
 fig, ax, hm = heatmap(
     bc;
     colormap = :navia,

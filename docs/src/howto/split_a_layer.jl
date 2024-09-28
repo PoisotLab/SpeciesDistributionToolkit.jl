@@ -6,7 +6,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # To illustrate the tiling, we will grab the tree cover as given in the *EarthEnv*
 # dataset, for a small spatial extent.
@@ -24,10 +24,11 @@ trees = sum([
 # argument. The second argument (the size of the matrix) can be omitted, and will
 # default to `(5, 5)`.
 
-tree = tiles(trees, (2, 2))
+tree = tiles(trees, (2, 2));
 
 # This can now be plotted:
 
+# fig-tiled-map
 tile_plot = heatmap(
     rand(tree);
     colormap = :Greens,

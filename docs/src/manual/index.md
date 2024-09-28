@@ -60,3 +60,14 @@ A wrapper around the Phylopic API.
 ![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=Phylopic-*&style=flat-square&label=Phylopic.jl) ![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
 
 :::
+
+
+::: details `SDeMo.jl`
+
+Utility functions to design training modules on species distribution modeling
+
+[Read the documentation](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SDeMo/)
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=SDeMo-*&style=flat-square&label=SDeMo.jl) ![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6?style=flat-square)
+
+:::

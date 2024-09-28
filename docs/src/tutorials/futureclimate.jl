@@ -8,7 +8,7 @@ using SpeciesDistributionToolkit
 import Dates
 using Statistics
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3.0) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # ## Accessing historical climate data
 
@@ -37,11 +37,12 @@ layers_code = findall(
 # The first step is quite simply to grab the reference state for the
 # annual precipitation, by specifying the layer and the spatial extent:
 
-historical = [SDMLayer(dataprovider; layer=l, spatial_extent...) for l in layers_code]
+historical = [SDMLayer(dataprovider; layer=l, spatial_extent...) for l in layers_code];
 
 # We can have a little look at this dataset by checking the density of the values
 # for the first layer (we can pass a layer to a Makie function directly):
 
+# fig-histogram
 hist(
     historical[1]; color = (:grey, 0.5),
     figure = (; size = (800, 300)),
@@ -74,7 +75,7 @@ projected = [SDMLayer(
     layer=l,
     spatial_extent...,
     timespan = last(available_timeperiods),
-) for l in layers_code]
+) for l in layers_code];
 
 # ## Re-scaling the variables
 
@@ -88,8 +89,11 @@ projected = [SDMLayer(
 
 #-
 
-cr_historical = (historical .- μ) ./ σ
-cr_projected = (projected .- μ) ./ σ
+cr_historical = (historical .- μ) ./ σ;
+
+#-
+
+cr_projected = (projected .- μ) ./ σ;
 
 # ## Measuring climate novelty
 
@@ -113,10 +117,11 @@ end
 # Because we have stored this information directly inside the raster, we can
 # plot it:
 
+# fig-novelty
 fig, ax, hm = heatmap(
     Δclim;
     colormap = :lipari,
-    figure = (; resolution = (800, 400)),
+    figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
 Colorbar(fig[:, end + 1], hm)

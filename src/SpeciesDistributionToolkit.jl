@@ -23,6 +23,9 @@ import GeoJSON
 import PolygonOps
 import ZipFile
 import Downloads
+# For the bivariate/value suppressing palettes
+using Colors
+using ColorSchemes
 
 # Functions to get latitudes/longitudes
 include("latlon.jl")
@@ -39,7 +42,8 @@ include("integrations/gbif_layers.jl")
 include("integrations/gbif_phylopic.jl")
 
 # Plotting
-include("integrations/makie.jl")
+include("integrations/makie/type_recipes.jl")
+include("integrations/makie/vsup.jl")
 
 # SDeMo
 include("integrations/sdemo.jl")

@@ -4,6 +4,7 @@ using CairoMakie
 using Statistics
 using Dates
 using ColorSchemes
+using Colors
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 CHE = SpeciesDistributionToolkit.gadm("CHE");
@@ -63,39 +64,27 @@ train!(ensemble)
 unc = predict(ensemble, layers; consensus = iqr, threshold = false)
 prd = predict(ensemble, layers; consensus = median, threshold = false)
 
-# Rescale
-function binner(layer, n)
-    categories = rescale(layer, 0.0, 1.0)
-    n = n - 2
-    map!(x -> round(x * (n + 1); digits = 0) / (n + 1), categories.grid, categories.grid)
-    return categories
-end
-
-# Test
-ubins = 6
-vbins = 2^(ubins - 1)
-vbin = binner(prd, vbins) * vbins
+# VSUP test
+ubins = 50
+vbins = 50
+shrinkage = 0.5
+expo = 1.0
+vbin = discretize(prd, vbins)
 ubin = quantize(unc, ubins) * ubins
 
 vpal = cgrad(:isoluminant_cgo_70_c39_n256, vbins, categorical=true)
-upal = colorant"#efefef"
-
+upal = colorant"#dcdcdc"
 pal = fill(upal, (vbins, ubins))
-pal[:, 1] .= vpal
 
-for i in 2:ubins
-    gap = 2^(i - 1)
-    vpal2 = [LinRange(pal[j, 1], pal[j + (gap - 1), 1], 3)[2] for j in 1:gap:vbins]
-    @info ubins - i + 1
-    vupal2 = [LinRange(v, upal, ubins)[i] for v in vpal2]
-    @info i, length(vupal2)
-    @info length(repeat(vupal2; inner = 2^(i - 1)))
-    pal[:, i] .= repeat(vupal2; inner = 2^(i - 1))
+for i in 1:ubins
+    shrkfac = ((i-1)/(ubins-1))^expo
+    subst = 0.5 - shrkfac*shrinkage/2
+    pal[:,i] .= cgrad(vpal)[LinRange(0.5-subst, 0.5+subst, vbins)]
+    # Apply the mix to the uncertain color
+    for j in 1:vbins
+        pal[j,i] = weighted_color_mean(1-shrkfac, pal[j,i], upal)
+    end
 end
-
-pal
-
-vcat(pal...)
 
 f = Figure(; size=(800,400))
 ax = Axis(f[1, 1]; aspect = DataAspect())
@@ -123,3 +112,5 @@ surface!(
 thetalims!(p, 0, pi / 3.5)
 colsize!(f.layout, 1, Relative(0.7))
 current_figure()
+
+# Bivariate palette test

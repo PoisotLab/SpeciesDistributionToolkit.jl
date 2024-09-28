@@ -76,7 +76,8 @@ ci(cv.validation, mcc)
 
 forwardselection!(sdm, folds, [1])
 
-# This operation *will retrain* the model. We can now look at the list of selected variables:
+# This operation *will retrain* the model. We can now look at the list of
+# selected variables:
 
 variables(sdm)
 
@@ -168,6 +169,22 @@ f = Figure()
 ax = Axis(f[1, 1], xlabel="BIO$(variables(sdm)[1])", ylabel="BIO$(variables(sdm)[2])")
 cm = heatmap!(prx, pry, prz, colormap=:Oranges)
 Colorbar(f[1,2], cm)
+current_figure() #hide
+
+# ## Inflated partial responses
+
+# Inflated partial responses replace the average value by other summary
+# statistics, here defined as (randomly) the mean, median, maximum, minimum, and
+# a random observed value:
+
+f = Figure()
+ax = Axis(f[1,1])
+prx, pry = partialresponse(sdm, 1; inflated=false, threshold=false)
+for i in 1:200
+    ix, iy = partialresponse(sdm, 1; inflated=true, threshold=false)
+    lines!(ax, ix, iy, color=(:grey, 0.5))
+end
+lines!(ax, prx, pry, color=:black, linewidth=4)
 current_figure() #hide
 
 # ## Measuring uncertainty with bagging

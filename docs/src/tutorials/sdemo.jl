@@ -1,8 +1,9 @@
 # # Use with the SDeMo package
 
-# In this tutorial, we will reproduce [the excellent tutorial on SDMs by Damaris
-# Zurell](https://damariszurell.github.io/SDM-Intro/), using the same species
-# and location, a similar dataset, but a different algorithm.
+# In this tutorial, we will reproduce (the spirit of) [the excellent tutorial on
+# SDMs by Damaris Zurell](https://damariszurell.github.io/SDM-Intro/), using the
+# same species and location, a similar dataset, but a slightly different
+# algorithm.
 
 using SpeciesDistributionToolkit
 using CairoMakie
@@ -20,7 +21,7 @@ CHE = SpeciesDistributionToolkit.gadm("CHE");
 # In order to simplify the code, we will start from a list of bioclim variables
 # that have been picked to optimize the model:
 
-bio_vars = [1, 7, 10]
+bio_vars = [1, 11, 5, 8, 6]
 
 # We get the data on these variables from CHELSA2:
 
@@ -64,10 +65,12 @@ for occ in mask(presences, CHE)
     presencelayer[occ.longitude, occ.latitude] = true
 end
 
-# The next step is to generate a pseudo-absence mask:
+# The next step is to generate a pseudo-absence mask. We will sample based on
+# the distance to an observation, by also preventing pseudo-absences to be less
+# than 4km from an observation:
 
 background = pseudoabsencemask(DistanceToEvent, presencelayer)
-bgpoints = backgroundpoints(background, sum(presencelayer))
+bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
 
 # We can take a minute to visualize the dataset, as well as the location of
 # presences and pseudo-absences:
@@ -75,24 +78,29 @@ bgpoints = backgroundpoints(background, sum(presencelayer))
 # fig-pseudoabsences
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-heatmap!(ax,
+hm = heatmap!(ax,
     first(layers);
     colormap = :linear_bgyw_20_98_c66_n256,
 )
 scatter!(ax, presencelayer; color = :black)
 scatter!(ax, bgpoints; color = :red, markersize = 4)
-lines!(ax, CHE.geometry[1]; color = :black) #hide
-hidedecorations!(ax) #hide
-hidespines!(ax) #hide
+lines!(ax, CHE.geometry[1]; color = :black)
+Colorbar(f[1,2], hm)
+hidedecorations!(ax)
+hidespines!(ax)
 current_figure() #hide
 
 # ## Setting up the model
 
 # These steps are documented as part of the `SDeMo` documentation. The only
 # difference here is that rather than passing a matrix of features and a vector
-# of labels, we give a vector of layers (features), and the two layers for presences and absences:
+# of labels, we give a vector of layers (features), and the two layers for
+# presences and absences:
 
-sdm = SDM(MultivariateTransform{PCA}, NaiveBayes, layers, presencelayer, bgpoints)
+sdm = SDM(MultivariateTransform{PCA}, DecisionTree, layers, presencelayer, bgpoints)
+
+# We use a decision tree classifier, which `SDeMo` provides (admittedly in a
+# rough version) out of the box.
 
 # Out of curiosity, we can check the expected performance of the model:
 
@@ -100,7 +108,7 @@ folds = kfold(sdm);
 cv = crossvalidate(sdm, folds; threshold = true);
 mean(mcc.(cv.validation))
 
-# We will now train the model on all the training data:
+# We will now train the model on all the training data.
 
 train!(sdm)
 
@@ -111,37 +119,81 @@ train!(sdm)
 
 prd = predict(sdm, layers; threshold = false)
 
-# To get a sense of the variability in the outcome, we will do a quick bootstrap
-# aggregating with 50 different bags:
+# Decision trees, in oredr to avoid overfitting, are pretty small -- indeed, the
+# default version in `SDeMo` is capped at 12 nodes, with a maximal depth of 7.
+# This is because there is no limit to how much decision trees can overfit. But
+# as a result, the map representing these predictions can look a little coase:
 
-ensemble = Bagging(sdm, 50)
+# fig-initial-map
+f = Figure(; size = (600, 300))
+ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction (tree)")
+hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange = (0, 1))
+contour!(ax, predict(sdm, layers); color = :black, linewidth = 0.5)
+Colorbar(f[1, 2], hm)
+lines!(ax, CHE.geometry[1]; color = :black)
+hidedecorations!(ax)
+hidespines!(ax)
+current_figure() #hide
+
+# In order to maintain a good predictive power with less overfitting risk, but
+# with a finer outcome, we will rely on bagging.
+
+ensemble = Bagging(sdm, 30)
+
+# In order to further ensure that the models are learning from different parts
+# of the dataset, we can also bootstrap which variables are accessible to each
+# model:
+
+for model in ensemble.models
+    variables!(model, unique(rand(variables(model), length(variables(model)))))
+end
+
+# ::: info About this ensemble model
+# 
+# The model we have constructed here is essentially a random forest. Because we
+# are training a PCA before applying the classification, on subsets of both
+# features and instances, it is probably halfway to a rotation forest.
+# 
+# :::
+
+# We can now train our ensemble model -- for an ensemble, this will go through
+# each model, and retrain them with the correct input data/features.
+
 train!(ensemble)
-unc = predict(ensemble, layers; consensus = iqr, threshold = false)
 
-# Let's have a look at the out of bag MCC, to make sure that there is no
-# grievous loss of performance:
+# Let's have a look at the out-of-bag performance using MCC, to make sure that
+# there is no grievous loss of performance:
 
 outofbag(ensemble) |> mcc
 
-# Because the predictions are returned as layers, we can plot them directly:
+# Because this ensemble is a collection of model, we set the method to summarize
+# all the scores as the median:
+
+prd = predict(ensemble, layers; consensus = median, threshold = false)
+
+# When the model is trained, we can make a prediction asking to report the
+# inter-quartile range of the predictions of all models, as a measure of
+# uncertainty:
+
+unc = predict(ensemble, layers; consensus = iqr, threshold = false)
 
 # fig-sdm-prediction
 f = Figure(; size = (600, 600))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction")
 hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange = (0, 1))
 Colorbar(f[1, 2], hm)
-contour!(ax, predict(sdm, layers); color = :black, linewidth = 0.5) #hide
-lines!(ax, CHE.geometry[1]; color = :black) #hide
-hidedecorations!(ax) #hide
-hidespines!(ax) #hide
+contour!(ax, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
+lines!(ax, CHE.geometry[1]; color = :black)
+hidedecorations!(ax)
+hidespines!(ax)
 ax2 = Axis(f[2, 1]; aspect = DataAspect(), title = "Uncertainty")
 hm =
     heatmap!(ax2, quantize(unc); colormap = :linear_gow_60_85_c27_n256, colorrange = (0, 1))
 Colorbar(f[2, 2], hm)
-contour!(ax2, predict(sdm, layers); color = :black, linewidth = 0.5) #hide
-lines!(ax2, CHE.geometry[1]; color = :black) #hide
-hidedecorations!(ax2) #hide
-hidespines!(ax2) #hide
+contour!(ax2, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
+lines!(ax2, CHE.geometry[1]; color = :black)
+hidedecorations!(ax2)
+hidespines!(ax2)
 current_figure() #hide
 
 # ## Partial responses and explanations
@@ -150,11 +202,11 @@ current_figure() #hide
 # vector of layers will return the output as layers, with the value calculated
 # for each pixel:
 
-part_v1 = partialresponse(sdm, layers, 1; threshold = false);
-shap_v1 = explain(sdm, layers, 1; threshold = false, samples = 50);
+part_v1 = partialresponse(ensemble, layers, first(variables(sdm)); threshold = false);
+shap_v1 = explain(ensemble, layers, first(variables(sdm)); threshold = false, samples = 50);
 
 # We can confirm that these two approaches broadly agree about where the effect
-# of the first variable (temperature) is leading the model to predict presences:
+# of the first variable (temperature) is leading the model to predict presences.
 
 # fig-sdm-explanations
 f = Figure(; size = (600, 600))
@@ -165,18 +217,18 @@ hm = heatmap!(
     colormap = :diverging_gwv_55_95_c39_n256,
     colorrange = (-0.3, 0.3),
 )
-contour!(ax, predict(sdm, layers); color = :black, linewidth = 0.5) #hide
+contour!(ax, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
 lines!(ax, CHE.geometry[1]; color = :black) #hide
-hidedecorations!(ax) #hide
-hidespines!(ax) #hide
+hidedecorations!(ax)
+hidespines!(ax)
 Colorbar(f[1, 2], hm)
 ax2 = Axis(f[2, 1]; aspect = DataAspect(), title = "Partial response")
 hm = heatmap!(ax2, part_v1; colormap = :linear_gow_65_90_c35_n256, colorrange = (0, 1))
-contour!(ax2, predict(sdm, layers); color = :black, linewidth = 0.5) #hide
-lines!(ax2, CHE.geometry[1]; color = :black) #hide
+contour!(ax2, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
+lines!(ax2, CHE.geometry[1]; color = :black)
 Colorbar(f[2, 2], hm)
-hidedecorations!(ax2) #hide
-hidespines!(ax2) #hide
+hidedecorations!(ax2)
+hidespines!(ax2)
 current_figure() #hide
 
 # We can also get the Shapley values for *all* layers, which will return a
@@ -192,14 +244,14 @@ f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(
     ax,
-    mosaic(argmax, S);
+    mosaic(v -> argmax(abs.(v)), S);
     colormap = cgrad(
-        :isoluminant_cgo_80_c38_n256,
+        :glasbey_bw_n256,
         length(variables(sdm));
         categorical = true,
     ),
 )
-contour!(ax, predict(sdm, layers); color = :black, linewidth = 0.5)
+contour!(ax, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
 lines!(ax, CHE.geometry[1]; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)

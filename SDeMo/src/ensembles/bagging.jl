@@ -70,9 +70,14 @@ function outofbag(ensemble::Bagging; kwargs...)
                 for
                 i in valid_models
             ]
-            push!(outcomes, count(pred) > count(pred) // 2)
+            push!(outcomes, majority(pred))
         end
     end
 
     return ConfusionMatrix(outcomes, ensemble.model.y[done_instances])
 end
+
+
+majority(pred::Vector{Bool}) = sum(pred) > length(pred) // 2
+majority(pred::BitVector) = sum(pred) > length(pred) // 2
+export majority

@@ -87,6 +87,7 @@ makedocs(;
             "manual/pseudoabsences.md",
             "manual/polygons.md",
             "manual/gadm.md",
+            "manual/utilities.md"
         ],
     ],
 )

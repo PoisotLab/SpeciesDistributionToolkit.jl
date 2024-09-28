@@ -122,7 +122,7 @@ prd = predict(sdm, layers; threshold = false)
 # Decision trees, in oredr to avoid overfitting, are pretty small -- indeed, the
 # default version in `SDeMo` is capped at 12 nodes, with a maximal depth of 7.
 # This is because there is no limit to how much decision trees can overfit. But
-# as a result, the map representing these predictions can look a little coase:
+# as a result, the map representing these predictions can look a little coarse:
 
 # fig-initial-map
 f = Figure(; size = (600, 300))

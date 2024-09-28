@@ -18,11 +18,9 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # We provide a very lightweight wrapper around the
 # [GADM](https://gadm.org/index.html) database, which will return data as
-# ready-to-use GeoJSON files. For example, we can get the borders of
-# Switzerland, as featured in [the excellent tutorial on SDMs by Damaris
-# Zurell](https://damariszurell.github.io/SDM-Intro/).
+# ready-to-use GeoJSON files.
 
-CHE = SpeciesDistributionToolkit.gadm("CHE")
+DEU = SpeciesDistributionToolkit.gadm("DEU")
 
 # ::: details More about GADM
 # 
@@ -45,46 +43,46 @@ provider = RasterData(EarthEnv, LandCover)
 layer = SDMLayer(
     provider;
     layer = "Deciduous Broadleaf Trees",
-    left = 0.0,
+    left = 2.0,
     right = 20.0,
-    bottom = 35.0,
-    top = 55.0,
+    bottom = 45.0,
+    top = 57.0,
 )
 
 # We can check that this polygon is larger than the area we want:
 
 # fig-whole-region
-heatmap(layer; colormap = :navia, axis = (; aspect = DataAspect()))
+heatmap(layer; colormap = :linear_kbgyw_5_98_c62_n256, axis = (; aspect = DataAspect()))
 current_figure() #hide
 
 # We can now mask this layer according to the polygon. This uses the same
 # `mask!` method we use when masking with another layer:
 
-mask!(layer, CHE)
+mask!(layer, DEU)
 
 # fig-region-masked
-heatmap(layer; colormap = :navia, axis = (; aspect = DataAspect()))
+heatmap(layer; colormap = :linear_kbgyw_5_98_c62_n256, axis = (; aspect = DataAspect()))
 current_figure() #hide
 
 # This is a much larger layer than we need! For this reason, we will trim it so
 # that the empty areas are removed:
 
 # fig-region-trimmed
-heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
+heatmap(trim(layer); colormap = :linear_kbgyw_5_98_c62_n256, axis = (; aspect = DataAspect()))
 current_figure() #hide
 
-# Let's now get some occurrences in the area defined by the layer boundingbox,
-# while specifying the dataset key for the [eBird Observation
-# Dataset](https://www.gbif.org/dataset/4fa7b334-ce0d-4e88-aaae-2e0c138d049e):
+# Let's now get some occurrences in the area defined by the layer boundingbox:
 
-ouzel = taxon("Turdus torquatus")
+sp = taxon("Eliomys quercinus")
 presences = occurrences(
-    ouzel,
+    sp,
     trim(layer),
     "occurrenceStatus" => "PRESENT",
     "limit" => 300,
-    "datasetKey" => "4fa7b334-ce0d-4e88-aaae-2e0c138d049e",
 )
+while length(presences) < count(presences)
+    occurrences!(presences)
+end
 
 # ::: details Occurrences from a layer
 # 
@@ -95,14 +93,10 @@ presences = occurrences(
 # 
 # :::
 
-while length(presences) < count(presences)
-    occurrences!(presences)
-end
-
-# We can plot the layer and all occurrences:
+# We can plot the layer and the occurrences we have retrieved so far:
 
 # fig-all-occurrences
-heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
+heatmap(trim(layer); colormap = :linear_kbgyw_5_98_c62_n256, axis = (; aspect = DataAspect()))
 scatter!(presences; color = :orange, markersize = 4)
 current_figure() #hide
 
@@ -110,8 +104,10 @@ current_figure() #hide
 # this reason, we will use the *non-mutating* `mask` method on the GBIF records:
 
 # fig-trimmed-occurrences
-heatmap(trim(layer); colormap = :navia, axis = (; aspect = DataAspect()))
-scatter!(mask(presences, CHE); color = :orange, markersize = 4)
+f, ax, plt = heatmap(trim(layer); colormap = :linear_kbgyw_5_98_c62_n256, axis = (; aspect = DataAspect()))
+scatter!(mask(presences, DEU); color = :orange, markersize = 4)
+hidespines!(ax)
+hidedecorations!(ax)
 current_figure() #hide
 
 # ::: details A note about vectors of occurrences

@@ -2,6 +2,7 @@ function __tosymbol(cl::Type{T}) where T <: Classifier
     str = string(cl)
     contains(str, "NaiveBayes") && return :NaiveBayes
     contains(str, "BioClim") && return :BioClim
+    contains(str, "DecisionTree") && return :DecisionTree
     return :NaiveBayes
 end
 
@@ -19,6 +20,7 @@ function __fromsymbol(s)
     s == Symbol("MultivariateTransform{PCA}") && return MultivariateTransform{PCA}
     s == Symbol("MultivariateTransform{Whitening}") && return MultivariateTransform{Whitening}
     s == :NaiveBayes && return NaiveBayes
+    s == :DecisionTree && return DecisionTree
     s == :BioClim && return BioClim
 end
 

@@ -18,4 +18,5 @@ MultivariateTransform
 ```@docs
 NaiveBayes
 BIOCLIM
+DecisionTree
 ```

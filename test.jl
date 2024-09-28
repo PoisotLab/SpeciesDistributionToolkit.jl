@@ -1,54 +1,125 @@
 using Revise
-using CairoMakie
 using SpeciesDistributionToolkit
+using CairoMakie
+using Statistics
+using Dates
+using ColorSchemes
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
-# Layers for test
-spatial_extent = (; left = -4.87, right=9.63, bottom=41.31, top=51.14)
-temp_prov = RasterData(WorldClim2, BioClim)
-elev_prov = RasterData(WorldClim2, Elevation)
-temperature = SDMLayer(temp_prov; layer="BIO1", resolution=2.5, spatial_extent...)
-elevation = 1.0SDMLayer(elev_prov; resolution=2.5, spatial_extent...)
+CHE = SpeciesDistributionToolkit.gadm("CHE");
+bio_vars = [1, 7, 10]
+provider = RasterData(CHELSA2, BioClim)
+layers = [
+    SDMLayer(
+        provider;
+        layer = x,
+        left = 3.0,
+        right = 15.0,
+        bottom = 42.0,
+        top = 50.0,
+    ) for x in bio_vars
+];
+layers = [trim(mask!(layer, CHE)) for layer in layers];
+layers = map(l -> convert(SDMLayer{Float32}, l), layers);
+
+ouzel = taxon("Turdus torquatus")
+presences = occurrences(
+    ouzel,
+    first(layers),
+    "occurrenceStatus" => "PRESENT",
+    "limit" => 300,
+    "datasetKey" => "4fa7b334-ce0d-4e88-aaae-2e0c138d049e",
+)
+while length(presences) < count(presences)
+    occurrences!(presences)
+end
+
+presencelayer = zeros(first(layers), Bool)
+for occ in mask(presences, CHE)
+    presencelayer[occ.longitude, occ.latitude] = true
+end
+
+background = pseudoabsencemask(DistanceToEvent, presencelayer)
+bgpoints = backgroundpoints(background, sum(presencelayer))
+
+f = Figure(; size = (600, 300))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+heatmap!(ax,
+    first(layers);
+    colormap = :linear_bgyw_20_98_c66_n256,
+)
+scatter!(ax, presencelayer; color = :black)
+scatter!(ax, bgpoints; color = :red, markersize = 4)
+lines!(ax, CHE.geometry[1]; color = :black) #hide
+hidedecorations!(ax) #hide
+hidespines!(ax) #hide
+current_figure() #hide
+
+sdm = SDM(MultivariateTransform{PCA}, NaiveBayes, layers, presencelayer, bgpoints)
+
+# Uncertainty and value layer
+ensemble = Bagging(sdm, 50)
+train!(ensemble)
+unc = predict(ensemble, layers; consensus = iqr, threshold = false)
+prd = predict(ensemble, layers; consensus = median, threshold = false)
 
 # Rescale
 function binner(layer, n)
-    categories = rescale(layer, 0., 1.)
+    categories = rescale(layer, 0.0, 1.0)
     n = n - 2
     map!(x -> round(x * (n + 1); digits = 0) / (n + 1), categories.grid, categories.grid)
     return categories
 end
 
 # Test
-ubins = 4
-vbins = 2^(ubins-1)
-vbin = quantize(temperature, vbins)*vbins
-ubin = quantize(elevation, ubins)*ubins
+ubins = 6
+vbins = 2^(ubins - 1)
+vbin = binner(prd, vbins) * vbins
+ubin = quantize(unc, ubins) * ubins
 
-
-vpal = [colorant"#d53e4f", colorant"#f46d43", colorant"#fdae61", colorant"#ffffbf", colorant"#e6f598", colorant"#abdda4", colorant"#66c2a5", colorant"#3288bd"]
+vpal = cgrad(:isoluminant_cgo_70_c39_n256, vbins, categorical=true)
 upal = colorant"#efefef"
 
 pal = fill(upal, (vbins, ubins))
-pal[:,1] .= vpal
+pal[:, 1] .= vpal
 
 for i in 2:ubins
-    gap = 2^(i-1)
-    vpal2 = [LinRange(pal[j,1], pal[j+(gap-1),1], 3)[2] for j in 1:gap:vbins]
+    gap = 2^(i - 1)
+    vpal2 = [LinRange(pal[j, 1], pal[j + (gap - 1), 1], 3)[2] for j in 1:gap:vbins]
     @info ubins - i + 1
     vupal2 = [LinRange(v, upal, ubins)[i] for v in vpal2]
     @info i, length(vupal2)
-    @info length(repeat(vupal2, inner=2^(i-1)))
-    pal[:,i] .= repeat(vupal2, inner=2^(i-1))
+    @info length(repeat(vupal2; inner = 2^(i - 1)))
+    pal[:, i] .= repeat(vupal2; inner = 2^(i - 1))
 end
 
 pal
 
 vcat(pal...)
 
-f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-heatmap!(ax, vbin + (ubin - 1)*maximum(vbin), colormap=vcat(pal...))
+f = Figure(; size=(800,400))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+heatmap!(ax, vbin + (ubin - 1) * maximum(vbin); colormap = vcat(pal...))
+lines!(ax, CHE[1].geometry, color=:black)
+hidespines!(ax)
+hidedecorations!(ax)
+current_figure()
 
-p = PolarAxis(f[1,2]; theta_0=-pi/6, direction=-1, tellheight=false, tellwidth=false)
-surface!(p, 0..π/3, 0..10, zeros(size(pal)), color=reverse(pal), shading=NoShading)
-thetalims!(p, 0, pi/3)
+p = PolarAxis(
+    f[1, 2];
+    theta_0 = -pi / (3.5*2),
+    direction = -1,
+    tellheight = false,
+    tellwidth = false,
+)
+surface!(
+    p,
+    0 .. π / 3.5,
+    0 .. 1,
+    zeros(size(pal));
+    color = reverse(pal),
+    shading = NoShading,
+)
+thetalims!(p, 0, pi / 3.5)
+colsize!(f.layout, 1, Relative(0.7))
 current_figure()

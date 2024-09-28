@@ -4,6 +4,7 @@ authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 version = "0.1.2"
 
 [deps]
+ColorSchemes = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 Fauxcurrences = "a2d61402-033a-4ca9-aef4-652d70cf7c9c"

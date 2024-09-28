@@ -59,6 +59,6 @@ export zone, byzone
 
 # Extra functions
 include("utilities.jl")
-export gainloss
+export gainloss, discretize
 
 end # module SpeciesDistributionToolkit

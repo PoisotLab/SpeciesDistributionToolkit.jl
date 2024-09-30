@@ -76,7 +76,7 @@ end
 """
     DecisionTree
 
-TODO
+The depth and number of nodes can be adjusted with `maxnodes!` and `maxdepth!`.
 """
 Base.@kwdef mutable struct DecisionTree <: Classifier
     root::DecisionNode = DecisionNode()

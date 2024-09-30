@@ -42,6 +42,7 @@ export BIOCLIM
 # BIOCLIM
 include("classifiers/decisiontree.jl")
 export DecisionTree
+export maxnodes!, maxdepth!
 
 # Bagging and ensembles
 include("ensembles/bagging.jl")

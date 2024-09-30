@@ -182,7 +182,7 @@ function train!(
     root.prediction = mean(y)
     dt.root = root
     train!(dt.root, X, y)
-    for _ in 1:dt.maxdepth
+    for _ in 1:(dt.maxdepth-2)
         for tip in SDeMo.tips(dt)
             p = SDeMo._pool(tip, X)
             if !(tip.visited)
@@ -222,6 +222,8 @@ end
     X, y = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, DecisionTree, X, y)
     maxdepth!(model, 3)
+    @test model.classifier.maxdepth == 3
     train!(model)
     @test SDeMo.depth(model.classifier) <= 3
+    @test length(SDeMo.tips(model.classifier)) <= model.classifier.maxnodes
 end

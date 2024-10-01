@@ -76,18 +76,43 @@ end
 """
     DecisionTree
 
-TODO
+The depth and number of nodes can be adjusted with `maxnodes!` and `maxdepth!`.
 """
 Base.@kwdef mutable struct DecisionTree <: Classifier
     root::DecisionNode = DecisionNode()
     maxnodes::Integer = 12
+    maxdepth::Integer = 7
+end
+
+function maxnodes!(dt::DecisionTree, n::Integer)
+    dt.maxnodes = n
+    return dt
+end
+function maxdepth!(dt::DecisionTree, n::Integer)
+    dt.maxdepth = n
+    return dt
+end
+
+function maxnodes!(sdm::SDM, n)
+    if sdm.classifier isa DecisionTree
+        maxnodes!(sdm.classifier, n)
+        return sdm
+    end
+    return sdm
+end
+function maxdepth!(sdm::SDM, n)
+    if sdm.classifier isa DecisionTree
+        maxdepth!(sdm.classifier, n)
+        return sdm
+    end
+    return sdm
 end
 
 tips(::Nothing) = nothing
 tips(dt::DecisionTree) = tips(dt.root)
 function tips(dn::SDeMo.DecisionNode)
     if iszero(dn.variable)
-        return dn
+        return [dn]
     else
         return vcat(tips(dn.left), tips(dn.right))
     end
@@ -157,7 +182,7 @@ function train!(
     root.prediction = mean(y)
     dt.root = root
     train!(dt.root, X, y)
-    for _ in 1:6
+    for _ in 1:(dt.maxdepth-2)
         for tip in SDeMo.tips(dt)
             p = SDeMo._pool(tip, X)
             if !(tip.visited)
@@ -191,4 +216,14 @@ end
 
 function StatsAPI.predict(dt::DecisionTree, X::Matrix{T}) where {T <: Number}
     return vec(mapslices(x -> predict(dt, x), X; dims = 1))
+end
+
+@testitem "We can train a decison tree" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, DecisionTree, X, y)
+    maxdepth!(model, 3)
+    @test model.classifier.maxdepth == 3
+    train!(model)
+    @test SDeMo.depth(model.classifier) <= 3
+    @test length(SDeMo.tips(model.classifier)) <= model.classifier.maxnodes
 end

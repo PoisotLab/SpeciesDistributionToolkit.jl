@@ -85,7 +85,7 @@ hm = heatmap!(ax,
 scatter!(ax, presencelayer; color = :black)
 scatter!(ax, bgpoints; color = :red, markersize = 4)
 lines!(ax, CHE.geometry[1]; color = :black)
-Colorbar(f[1,2], hm)
+Colorbar(f[1, 2], hm)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
@@ -144,9 +144,11 @@ ensemble = Bagging(sdm, 30)
 # of the dataset, we can also bootstrap which variables are accessible to each
 # model:
 
-for model in ensemble.models
-    variables!(model, unique(rand(variables(model), length(variables(model)))))
-end
+bagfeatures!(ensemble)
+
+# By default, the `bagfeatures!` function called on an ensemble will sample the variables
+# forom the model, so that each model in the ensemble has the square root (rounded _up_) of
+# the number of original variables.
 
 # ::: info About this ensemble model
 # 
@@ -182,7 +184,12 @@ f = Figure(; size = (600, 600))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction")
 hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange = (0, 1))
 Colorbar(f[1, 2], hm)
-contour!(ax, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
+contour!(
+    ax,
+    predict(ensemble, layers; consensus = majority);
+    color = :black,
+    linewidth = 0.5,
+)
 lines!(ax, CHE.geometry[1]; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
@@ -190,7 +197,12 @@ ax2 = Axis(f[2, 1]; aspect = DataAspect(), title = "Uncertainty")
 hm =
     heatmap!(ax2, quantize(unc); colormap = :linear_gow_60_85_c27_n256, colorrange = (0, 1))
 Colorbar(f[2, 2], hm)
-contour!(ax2, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
+contour!(
+    ax2,
+    predict(ensemble, layers; consensus = majority);
+    color = :black,
+    linewidth = 0.5,
+)
 lines!(ax2, CHE.geometry[1]; color = :black)
 hidedecorations!(ax2)
 hidespines!(ax2)
@@ -217,14 +229,24 @@ hm = heatmap!(
     colormap = :diverging_gwv_55_95_c39_n256,
     colorrange = (-0.3, 0.3),
 )
-contour!(ax, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
+contour!(
+    ax,
+    predict(ensemble, layers; consensus = majority);
+    color = :black,
+    linewidth = 0.5,
+)
 lines!(ax, CHE.geometry[1]; color = :black) #hide
 hidedecorations!(ax)
 hidespines!(ax)
 Colorbar(f[1, 2], hm)
 ax2 = Axis(f[2, 1]; aspect = DataAspect(), title = "Partial response")
 hm = heatmap!(ax2, part_v1; colormap = :linear_gow_65_90_c35_n256, colorrange = (0, 1))
-contour!(ax2, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
+contour!(
+    ax2,
+    predict(ensemble, layers; consensus = majority);
+    color = :black,
+    linewidth = 0.5,
+)
 lines!(ax2, CHE.geometry[1]; color = :black)
 Colorbar(f[2, 2], hm)
 hidedecorations!(ax2)
@@ -251,7 +273,12 @@ heatmap!(
         categorical = true,
     ),
 )
-contour!(ax, predict(ensemble, layers; consensus=majority); color = :black, linewidth = 0.5)
+contour!(
+    ax,
+    predict(ensemble, layers; consensus = majority);
+    color = :black,
+    linewidth = 0.5,
+)
 lines!(ax, CHE.geometry[1]; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)

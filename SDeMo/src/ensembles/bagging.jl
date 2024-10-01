@@ -94,7 +94,7 @@ end
     ensemble = Bagging(model, 10)
     bagfeatures!(ensemble)
     for model in ensemble.models
-        @test length(variables(model)) == 4
+        @test length(variables(model)) == ceil(Int64, sqrt(size(X, 1)))
     end
 end
 

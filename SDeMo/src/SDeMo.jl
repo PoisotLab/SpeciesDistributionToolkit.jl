@@ -46,7 +46,7 @@ export maxnodes!, maxdepth!
 
 # Bagging and ensembles
 include("ensembles/bagging.jl")
-export Bagging, outofbag, bootstrap
+export Bagging, outofbag, bootstrap, bagfeatures!
 
 include("ensembles/ensemble.jl")
 export Ensemble

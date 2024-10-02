@@ -136,14 +136,28 @@ end
     X, y = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     train!(model)
-    c = counterfactual(model, instance(model, 3; strict = false), 0.5, 200.0; threshold=false)
+    c = counterfactual(
+        model,
+        instance(model, 3; strict = false),
+        0.5,
+        200.0;
+        threshold = false,
+    )
     @test length(c) == size(X, 1)
 end
 
 @testitem "We can generate a counterfactual from a bagged model" begin
+    using Statistics
     X, y = SDeMo.__demodata()
     model = Bagging(SDM(MultivariateTransform{PCA}, DecisionTree, X, y), 10)
     train!(model)
-    c = counterfactual(model, instance(model, 3; strict = false), 0.5, 200.0; threshold=false, consensus=median)
+    c = counterfactual(
+        model,
+        instance(model, 3; strict = false),
+        0.5,
+        200.0;
+        threshold = false,
+        consensus = median,
+    )
     @test length(c) == size(X, 1)
 end

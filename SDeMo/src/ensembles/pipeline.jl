@@ -7,7 +7,7 @@ labels(model::Bagging) = labels(model.model)
 labels(model::Ensemble) = labels(first(model.models))
 threshold(model::Bagging) = 0.5
 threshold(model::Ensemble) = 0.5
-instances(model::Bagging, args...; kwargs...) = instances(model.model, args...; kwargs...)
+instance(model::Bagging, args...; kwargs...) = instance(model.model, args...; kwargs...)
 
 """
     train!(ensemble::Bagging; kwargs...)

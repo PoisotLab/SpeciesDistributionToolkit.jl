@@ -148,7 +148,7 @@ pretty_table(
 # curves. For example, we can look at the predictions of the model between 5 and
 # 15 degrees:
 
-prx, pry = partialresponse(sdm, 1, LinRange(5., 15., 100); threshold=false)
+prx, pry = partialresponse(sdm, 1, LinRange(5.0, 15.0, 100); threshold=false)
 
 # Note that we use `threshold=false` to make sure that we look at the score that
 # is returned by the classifier, and not the thresholded version.
@@ -168,7 +168,7 @@ prx, pry, prz = partialresponse(sdm, variables(sdm)[1:2]..., (100, 100); thresho
 f = Figure()
 ax = Axis(f[1, 1], xlabel="BIO$(variables(sdm)[1])", ylabel="BIO$(variables(sdm)[2])")
 cm = heatmap!(prx, pry, prz, colormap=:Oranges)
-Colorbar(f[1,2], cm)
+Colorbar(f[1, 2], cm)
 current_figure() #hide
 
 # ## Inflated partial responses
@@ -178,7 +178,7 @@ current_figure() #hide
 # a random observed value:
 
 f = Figure()
-ax = Axis(f[1,1])
+ax = Axis(f[1, 1])
 prx, pry = partialresponse(sdm, 1; inflated=false, threshold=false)
 for i in 1:200
     ix, iy = partialresponse(sdm, 1; inflated=true, threshold=false)
@@ -222,8 +222,8 @@ train!(hm)
 
 predict(hm; consensus=median, threshold=false)[1:10]
 
-# Note taht *for now*, `Ensemble` and `Bagging` models are not supported by
-# methods like `variableimportance`, `partialresponse`, etc.
+# Note that the ensemble models (`Bagging` and `Ensemble`) are supported by the `explain`,
+# `partialresponse`, and `counterfactual` functions.
 
 # ## Explaining predictions
 
@@ -277,7 +277,7 @@ pretty_table(
     alignment=[:l, :c, :c],
     backend=Val(:markdown),
     header=["Variable", "Obs.", "Counterf."],
-    formatters=(ft_printf("%4.1f", [2,3]), ft_printf("%d", 1))
+    formatters=(ft_printf("%4.1f", [2, 3]), ft_printf("%d", 1))
 )
 
 # We can check the prediction that would be made on the counterfactual:

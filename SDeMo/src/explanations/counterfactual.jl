@@ -1,8 +1,8 @@
 function dmad(model, x, xprime)
-    Xbar = vec(median(model.X; dims = 2))
-    MAD = vec(median(abs.(model.X .- Xbar); dims = 2))
+    Xbar = vec(median(features(model); dims = 2))
+    MAD = vec(median(abs.(features(model) .- Xbar); dims = 2))
     dfs = abs.(x .- xprime) ./ MAD
-    return sum(dfs[model.v])
+    return sum(dfs[variables(model)])
 end
 
 function nmloss(model, x, xprime, yhat, λ; kwargs...)
@@ -89,9 +89,10 @@ function neldermead!(
 end
 
 function initialprop(model, x)
-    xn = [copy(x) for _ in 1:(length(model.v) + 1)]
-    for i in eachindex(model.v)
-        xn[i + 1][model.v[i]] = rand(model.X[model.v[i], :]) + randn()
+    xn = [copy(x) for _ in 1:(length(variables(model)) + 1)]
+    for i in eachindex(variables(model))
+        xn[i + 1][variables(model)[i]] =
+            rand(features(model)[variables(model)[i], :]) + randn()
     end
     return xn
 end
@@ -101,7 +102,7 @@ function xncenter(xn)
 end
 
 """
-    counterfactual(model::SDM, x::Vector{T}, yhat, λ; maxiter=100, minvar=5e-5, kwargs...) where {T <: Number}
+    counterfactual(model::AbstractSDM, x::Vector{T}, yhat, λ; maxiter=100, minvar=5e-5, kwargs...) where {T <: Number}
 
 Generates one counterfactual explanation given an input vector `x`, and a target
 rule to reach `yhat`. The learning rate is `λ`. The maximum number of iterations
@@ -110,7 +111,7 @@ under which the model will stop is `minvar`. Other keywords are passed to
 `predict`.
 """
 function counterfactual(
-    model::SDM,
+    model::AbstractSDM,
     x::Vector{T},
     yhat,
     λ;
@@ -135,6 +136,14 @@ end
     X, y = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     train!(model)
-    c = counterfactual(model, instance(model, 3; strict=false), 0.5, 200.)
+    c = counterfactual(model, instance(model, 3; strict = false), 0.5, 200.0; threshold=false)
+    @test length(c) == size(X, 1)
+end
+
+@testitem "We can generate a counterfactual from a bagged model" begin
+    X, y = SDeMo.__demodata()
+    model = Bagging(SDM(MultivariateTransform{PCA}, DecisionTree, X, y), 10)
+    train!(model)
+    c = counterfactual(model, instance(model, 3; strict = false), 0.5, 200.0; threshold=false, consensus=median)
     @test length(c) == size(X, 1)
 end

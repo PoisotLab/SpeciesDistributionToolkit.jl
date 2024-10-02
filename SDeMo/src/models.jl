@@ -39,7 +39,7 @@ In addition, the SDM carries with it the training features and labels, as well
 as a vector of indices indicating which variables are actually used by the
 model.
 """
-mutable struct SDM{F, L} <: AbstractSDM
+mutable struct SDM{F,L} <: AbstractSDM
     transformer::Transformer
     classifier::Classifier
     τ::Number # Threshold
@@ -53,7 +53,7 @@ function SDM(
     ::Type{CF},
     X::Matrix{T},
     y::Vector{Bool},
-) where {TF <: Transformer, CF <: Classifier, T <: Number}
+) where {TF<:Transformer,CF<:Classifier,T<:Number}
     return SDM(
         TF(),
         CF(),
@@ -96,11 +96,11 @@ Returns the *n*-th feature stored in the field `X` of the SDM.
 features(sdm::SDM, n) = sdm.X[n, :]
 
 """
-    instance(sdm::SDM, n)
+    instance(sdm::SDM, n; strict=true)
 
-Returns the *n*-th instance stored in the field `X` of the SDM.
+Returns the *n*-th instance stored in the field `X` of the SDM. If the keyword argument `strict` is `true`, only the variables used for prediction are returned.
 """
-function instance(sdm::SDM, n; strict = true)
+function instance(sdm::SDM, n; strict=true)
     if strict
         return features(sdm)[variables(sdm), n]
     else

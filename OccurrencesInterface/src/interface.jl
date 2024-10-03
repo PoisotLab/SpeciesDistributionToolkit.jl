@@ -35,5 +35,5 @@ for op in [:entity, :position, :date, :presence]
     end)
 end
 
-presences(c::T) where {T<:AbstractOccurrenceCollection} = c[findall(presence(c))]
-absences(c::T) where {T<:AbstractOccurrenceCollection} = c[findall(!, presence(c))]
+presences(c::T) where {T<:AbstractOccurrenceCollection} = Occurrences(c[findall(presence(c))])
+absences(c::T) where {T<:AbstractOccurrenceCollection} = Occurrences(c[findall(!, presence(c))])

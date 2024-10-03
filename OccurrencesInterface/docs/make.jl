@@ -1,17 +1,6 @@
 using Documenter
 using OccurrencesInterface
-using Literate
 using CairoMakie
-
-# Render the tutorials and how-to using Literate
-for vignette in ["demo.jl"]
-    fpath = joinpath(@__DIR__, "src")
-    Literate.markdown(
-        joinpath(fpath, vignette), fpath;
-        flavor=Literate.DocumenterFlavor(),
-        config=Dict("credit" => false, "execute" => true),
-    )
-end
 
 makedocs(
     sitename="OccurrencesInterface",

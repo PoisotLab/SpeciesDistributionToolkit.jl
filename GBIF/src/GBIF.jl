@@ -4,6 +4,7 @@ using HTTP
 using JSON
 using Dates
 using Tables
+import OccurrencesInterface
 
 function safeget(endpoint)
     body = UInt8[]
@@ -83,5 +84,7 @@ include("occurrence.jl")
 include("paging.jl")
 export occurrence, occurrences
 export occurrences!
+
+include("occurrencesinterface.jl")
 
 end # module

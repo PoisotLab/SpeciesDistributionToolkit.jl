@@ -9,7 +9,7 @@ export Occurrence, Occurrences
 
 include("interface.jl")
 export elements
-export position, date, presence
+export entity, place, date, presence
 export presences, absences
 
 end # module OccurrencesInterface

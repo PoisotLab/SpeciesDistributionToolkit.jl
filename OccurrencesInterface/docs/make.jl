@@ -1,6 +1,5 @@
 using Documenter
 using OccurrencesInterface
-using CairoMakie
 
 makedocs(
     sitename="OccurrencesInterface",

@@ -27,3 +27,18 @@ Occurrences(occ::Occurrence...) = Occurrences([occ...])
     @test occs isa Occurrences
 end
 
+"""
+    Occurrence(t::T) where {T<:AbstractOccurrence}
+
+Given a type that is a subtype of `AbstractOccurrence`, constructs an `Occurrence` object *using the methods in the interface*. This should not be overloaded in other packages.
+"""
+function Occurrence(t::T) where {T<:AbstractOccurrence}
+    return Occurrence(
+        entity(t),
+        presence(t),
+        place(t),
+        date(t)
+    )
+end
+
+Base.convert(::Type{Occurrence}, o::T) where {T<:AbstractOccurrence} = Occurrence(o)

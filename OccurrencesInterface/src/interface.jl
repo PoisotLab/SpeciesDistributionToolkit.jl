@@ -68,11 +68,11 @@ end
 
 Returns an `Occurrences` where only the occurrences in the initial collection for which `presence` evaluates to `true` are kept.
 """
-presences(c::T) where {T<:AbstractOccurrenceCollection} = Occurrences(c[findall(presence(c))])
+presences(c::T) where {T<:AbstractOccurrenceCollection} = Occurrences([e for e in c if presence(e)])
 
 """
     absences(c::T) where {T<:AbstractOccurrenceCollection}
 
 Returns an `Occurrences` where only the occurrences in the initial collection for which `presence` evaluates to `false` are kept.
 """
-absences(c::T) where {T<:AbstractOccurrenceCollection} = Occurrences(c[findall(!, presence(c))])
+absences(c::T) where {T<:AbstractOccurrenceCollection} = Occurrences([e for e in c if !presence(e)])

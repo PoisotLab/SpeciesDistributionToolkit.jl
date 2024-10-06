@@ -1,3 +1,8 @@
+"""
+    elements(::T) where {T<:AbstractOccurrenceCollection} 
+
+Returns the elements contained in an abstract collection of occurrences -- this must be something that can be iterated.
+"""
 elements(::T) where {T<:AbstractOccurrenceCollection} = nothing
 elements(c::Occurrences) = c.records
 
@@ -14,7 +19,7 @@ entity(o::Occurrence) = o.what
 end
 
 """
-    place(o::Occurrence) = o.where
+    place(o::Occurrence)
 
 Returns the place of the occurrence event, either as a tuple of float in the longitude, latitude format, or as `missing`. The CRS is assumed to the WGS84.
 """

@@ -1,7 +1,20 @@
+"""
+    AbstractOccurrence
+
+Other types describing a single observation can be sub-types.
+"""
 abstract type AbstractOccurrence end
 
+"""
+    AbstractOccurrenceCollection
+
+Other types describing multiple observations can be sub-types.
+"""
 abstract type AbstractOccurrenceCollection end
 
+"""
+    Occurence
+"""
 mutable struct Occurrence <: AbstractOccurrence
     what::String
     presence::Bool
@@ -15,6 +28,9 @@ end
     @test occ.what == "species_sp"
 end
 
+"""
+    Occurrences
+"""
 mutable struct Occurrences <: AbstractOccurrenceCollection
     records::Vector{Occurrence}
 end

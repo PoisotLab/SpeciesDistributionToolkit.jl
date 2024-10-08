@@ -45,6 +45,9 @@ include("integrations/makie.jl")
 # SDeMo
 include("integrations/sdemo.jl")
 
+# OccurrencesInterface
+include("integrations/occurrence_interface.jl")
+
 # Functions for pseudo-absence generation
 include("pseudoabsences.jl")
 export WithinRadius, SurfaceRangeEnvelope, RandomSelection, DistanceToEvent

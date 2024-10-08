@@ -1,29 +1,18 @@
 """
-    longitudes(record::GBIF.GBIFRecord)
+    longitudes(o::AbstractOccurrence)
 
-Returns the longitude associated to a GBIF record
+Returns the longitude for a single occurrence
 """
-longitudes(record::GBIF.GBIFRecord) = record.longitude
-
-"""
-    latitudes(record::GBIF.GBIFRecord)
-
-Returns the latitude associated to a GBIF record
-"""
-latitudes(record::GBIF.GBIFRecord) = record.latitude
+longitudes(o::T) where {T <: AbstractOccurrence} =
+    ismissing(place(o)) ? missing : first(place(o))
 
 """
-    latitudes(records::GBIF.GBIFRecords)
+    latitudes(o::AbstractOccurrence)
 
-Returns the non-missing latitudes from a series of records
+Returns the latitude for a single occurrence
 """
-latitudes(records::GBIF.GBIFRecords) =
-    filter(!ismissing, [latitudes(record) for record in records])
+latitudes(o::T) where {T <: AbstractOccurrence} =
+    ismissing(place(o)) ? missing : last(place(o))
 
-"""
-    latitudes(records::GBIF.GBIFRecords)
-
-Returns the non-missing latitudes from a series of records
-"""
-longitudes(records::GBIF.GBIFRecords) =
-    filter(!ismissing, [longitudes(record) for record in records])
+longitudes(o::T) where {T <: AbstractOccurrenceCollection} = longitudes.(elements(o))
+latitudes(o::T) where {T <: AbstractOccurrenceCollection} = latitudes.(elements(o))

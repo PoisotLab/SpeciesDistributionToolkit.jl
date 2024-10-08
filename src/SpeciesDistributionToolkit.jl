@@ -9,6 +9,7 @@ import StatsBase
 using Reexport
 
 # Expose the components
+@reexport using OccurrencesInterface
 @reexport using SimpleSDMDatasets
 @reexport using GBIF
 @reexport using SimpleSDMLayers

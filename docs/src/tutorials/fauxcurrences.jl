@@ -8,7 +8,8 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # Get the observation data in the correct format, which is an array of matrices
 # with two rows (longitude, latitude) and one column for observed occurrence.
-# This is usually an array of GBIF observations, but all that matters is that
+# This is usually an array of observations that are a subtype of
+# `AbstractOccurenceCollection` (data returned from the GBIF package work), but all that matters is that
 # this is a matrix with longitudes in the first row, and latitudes in the second
 # row. The matrix *has* to be column-major, with observations as columns. To
 # make sure that we cover a reasonable spatial extent, we will look at the
@@ -35,9 +36,9 @@ obs = [Fauxcurrences.get_valid_coordinates(o, layer) for o in observations];
 #-
 
 # fig-observations
-heatmap(layer, colormap=[:white, :gray])
+heatmap(layer; colormap = [:white, :gray])
 for i in eachindex(taxa)
-    scatter!(obs[i], label=taxa[i].name)
+    scatter!(obs[i]; label = taxa[i].name)
 end
 current_figure() #hide
 
@@ -122,9 +123,9 @@ sum(D)
 #-
 
 # fig-bootstrap
-heatmap(layer, colormap=[:white, :gray])
+heatmap(layer; colormap = [:white, :gray])
 for i in eachindex(taxa)
-    scatter!(sim[i], label=taxa[i].name)
+    scatter!(sim[i]; label = taxa[i].name)
 end
 current_figure() #hide
 
@@ -153,7 +154,7 @@ progress[1] = sum(D)
 # created progress report. Note that we stop the process when we have done at
 # least 1×10⁵ steps, with no improvement over the last 2×10³.
 
-for i in axes(progress, 1)[2:end] 
+for i in axes(progress, 1)[2:end]
     progress[i] = Fauxcurrences.step!(
         sim,
         layer,
@@ -193,14 +194,20 @@ end
 # When the run is done, it would makes sense to look at the total improvement
 # (or to plot the timeseries of the improvement):
 
+final_progress =
+    round(progress[begin] / progress[findlast(x -> x > 0, progress)]; digits = 3)
 println(
-    "Improvement: $(round(progress[begin]/progress[findlast(x -> x>0, progress)]; digits=2)) ×",
+    "Improvement: $(final_progress) ×",
 )
 
 #-
 
 # fig-progress-lines
-lines(progress[1:findlast(x -> x>0, progress)]; axis=(; yscale=sqrt, xlabel="Iteration", ylabel="JS divergence"), color=:black)
+lines(
+    progress[1:findlast(x -> x > 0, progress)];
+    axis = (; yscale = sqrt, xlabel = "Iteration", ylabel = "JS divergence"),
+    color = :black,
+)
 current_figure() #hide
 
 # Note that for a small number of iterations (like we used here), this
@@ -213,9 +220,9 @@ current_figure() #hide
 # The final disposition of the fauxcurrences is:
 
 # fig-final-fauxcurrences
-heatmap(layer, colormap=[:white, :gray])
+heatmap(layer; colormap = [:white, :gray])
 for i in eachindex(taxa)
-    scatter!(sim[i], label=taxa[i].name)
+    scatter!(sim[i]; label = taxa[i].name)
 end
 current_figure() #hide
 
@@ -228,16 +235,40 @@ current_figure() #hide
 # simulation in orange, this looks like:
 
 # fig-distances-intra
-f = Figure(; size=(700, 250))
-ax1 = Axis(f[1,1])
-scatterlines!(ax1, bin_intra[1]; color=:black)
-scatter!(ax1, bin_s_intra[1], color=:transparent, strokewidth=2, strokecolor=:orange, markersize=10, marker=:rect)
-ax2 = Axis(f[1,2])
-scatterlines!(ax2, bin_intra[2]; color=:black)
-scatter!(ax2, bin_s_intra[2], color=:transparent, strokewidth=2, strokecolor=:orange, markersize=10, marker=:rect)
-ax3 = Axis(f[1,3])
-scatterlines!(ax3, bin_intra[3]; color=:black)
-scatter!(ax3, bin_s_intra[3], color=:transparent, strokewidth=2, strokecolor=:orange, markersize=10, marker=:rect)
+f = Figure(; size = (700, 250))
+ax1 = Axis(f[1, 1])
+scatterlines!(ax1, bin_intra[1]; color = :black)
+scatter!(
+    ax1,
+    bin_s_intra[1];
+    color = :transparent,
+    strokewidth = 2,
+    strokecolor = :orange,
+    markersize = 10,
+    marker = :rect,
+)
+ax2 = Axis(f[1, 2])
+scatterlines!(ax2, bin_intra[2]; color = :black)
+scatter!(
+    ax2,
+    bin_s_intra[2];
+    color = :transparent,
+    strokewidth = 2,
+    strokecolor = :orange,
+    markersize = 10,
+    marker = :rect,
+)
+ax3 = Axis(f[1, 3])
+scatterlines!(ax3, bin_intra[3]; color = :black)
+scatter!(
+    ax3,
+    bin_s_intra[3];
+    color = :transparent,
+    strokewidth = 2,
+    strokecolor = :orange,
+    markersize = 10,
+    marker = :rect,
+)
 [hidespines!(ax) for ax in [ax1, ax2, ax3]]
 [hidedecorations!(ax) for ax in [ax1, ax2, ax3]]
 current_figure() #hide
@@ -246,16 +277,40 @@ current_figure() #hide
 # following plot:
 
 # fig-distances-inter
-f = Figure(; size=(700, 250))
-ax1 = Axis(f[1,1])
-scatterlines!(ax1, bin_inter[1]; color=:black)
-scatter!(ax1, bin_s_inter[1], color=:transparent, strokewidth=2, strokecolor=:purple, markersize=10, marker=:rect)
-ax2 = Axis(f[1,2])
-scatterlines!(ax2, bin_inter[2]; color=:black)
-scatter!(ax2, bin_s_inter[2], color=:transparent, strokewidth=2, strokecolor=:purple, markersize=10, marker=:rect)
-ax3 = Axis(f[1,3])
-scatterlines!(ax3, bin_inter[3]; color=:black)
-scatter!(ax3, bin_s_inter[3], color=:transparent, strokewidth=2, strokecolor=:purple, markersize=10, marker=:rect)
+f = Figure(; size = (700, 250))
+ax1 = Axis(f[1, 1])
+scatterlines!(ax1, bin_inter[1]; color = :black)
+scatter!(
+    ax1,
+    bin_s_inter[1];
+    color = :transparent,
+    strokewidth = 2,
+    strokecolor = :purple,
+    markersize = 10,
+    marker = :rect,
+)
+ax2 = Axis(f[1, 2])
+scatterlines!(ax2, bin_inter[2]; color = :black)
+scatter!(
+    ax2,
+    bin_s_inter[2];
+    color = :transparent,
+    strokewidth = 2,
+    strokecolor = :purple,
+    markersize = 10,
+    marker = :rect,
+)
+ax3 = Axis(f[1, 3])
+scatterlines!(ax3, bin_inter[3]; color = :black)
+scatter!(
+    ax3,
+    bin_s_inter[3];
+    color = :transparent,
+    strokewidth = 2,
+    strokecolor = :purple,
+    markersize = 10,
+    marker = :rect,
+)
 [hidespines!(ax) for ax in [ax1, ax2, ax3]]
 [hidedecorations!(ax) for ax in [ax1, ax2, ax3]]
 current_figure() #hide

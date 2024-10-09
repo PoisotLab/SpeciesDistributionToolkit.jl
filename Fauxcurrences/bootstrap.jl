@@ -1,6 +1,6 @@
 import Pkg
 
-components = ["SimpleSDMLayers", "GBIF"]
+components = ["SimpleSDMLayers", "OccurrencesInterface"]
 
 # Cleanup local install and develop
 for package in components

@@ -1,7 +1,7 @@
 module Fauxcurrences
 
 import Distances
-using GBIF
+using OccurrencesInterface
 using SimpleSDMLayers
 using LinearAlgebra
 using Statistics

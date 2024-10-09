@@ -8,15 +8,9 @@ function sprinkle(layer::SDMLayer)
     )
 end
 
-function sprinkle(records::GBIFRecords)
-    lon = Float32.(replace(longitudes(records), missing => NaN))
-    lat = Float32.(replace(latitudes(records), missing => NaN))
-    return (lon, lat)
-end
-
-function sprinkle(records::Vector{GBIFRecord})
-    lon = Float32.(replace(longitudes.(records), missing => NaN))
-    lat = Float32.(replace(latitudes.(records), missing => NaN))
+function sprinkle(coll::T) where {T <: AbstractOccurrenceCollection}
+    lon = Float32.(replace(longitudes(coll), missing => NaN))
+    lat = Float32.(replace(latitudes(coll), missing => NaN))
     return (lon, lat)
 end
 
@@ -26,9 +20,9 @@ end
 
 MakieCore.convert_arguments(P::MakieCore.NoConversion, layer::SDMLayer) =
     MakieCore.convert_arguments(P, values(layer))
-MakieCore.convert_arguments(P::MakieCore.PointBased, records::GBIFRecords) =
+MakieCore.convert_arguments(P::MakieCore.PointBased, occ::T) where {T <: AbstractOccurrenceCollection} =
     MakieCore.convert_arguments(P, sprinkle(records)...)
-MakieCore.convert_arguments(P::MakieCore.PointBased, records::Vector{GBIFRecord}) =
+MakieCore.convert_arguments(P::MakieCore.PointBased, occ::Vector{T}) where {T <: AbstractOccurrence} =
     MakieCore.convert_arguments(P, sprinkle(records)...)
 
 function MakieCore.convert_arguments(
@@ -42,7 +36,7 @@ end
 
 function MakieCore.convert_arguments(
     P::MakieCore.PointBased,
-    layer::T
+    layer::T,
 ) where {T <: SDMLayer{Bool}}
     return MakieCore.convert_arguments(P, sprinkle(ones(nodata(layer, false), Float32))...)
 end

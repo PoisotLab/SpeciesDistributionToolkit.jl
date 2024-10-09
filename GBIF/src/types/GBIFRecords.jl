@@ -8,7 +8,7 @@ by the user.
 The `taxon` field is a `GBIFTaxon` object, and can therefore be manipulated as
 any other `GBIFTaxon`.
 """
-struct GBIFRecord
+struct GBIFRecord <: OccurrencesInterface.AbstractOccurrence
     key::Int64
     datasetKey::AbstractString
     dataset::Union{Missing, AbstractString}
@@ -143,7 +143,7 @@ elements up to the total number of hits on GBIF. When iterating, this is taken
 care of automatically, but this needs to be accounted for if writing code that
 accesses this field directly.
 """
-mutable struct GBIFRecords
+mutable struct GBIFRecords <: OccurrencesInterface.AbstractOccurrenceCollection
     query::Union{Vector{Pair}, Nothing}
     occurrences::Vector{GBIFRecord}
 end

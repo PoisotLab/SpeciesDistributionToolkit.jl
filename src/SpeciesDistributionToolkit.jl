@@ -9,6 +9,7 @@ import StatsBase
 using Reexport
 
 # Expose the components
+@reexport using OccurrencesInterface
 @reexport using SimpleSDMDatasets
 @reexport using GBIF
 @reexport using SimpleSDMLayers
@@ -43,6 +44,9 @@ include("integrations/makie.jl")
 
 # SDeMo
 include("integrations/sdemo.jl")
+
+# OccurrencesInterface
+include("integrations/occurrence_interface.jl")
 
 # Functions for pseudo-absence generation
 include("pseudoabsences.jl")

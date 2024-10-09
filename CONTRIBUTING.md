@@ -110,34 +110,33 @@ prefix:
 [semver]: https://semver.org/
 [pkg]: https://pkgdocs.julialang.org/v1/compatibility/
 
-As much as possible, we try to qualify the action by specifying which component
-package is targeted by the commit (this might be apparent from the branch name,
-but especially when doing work in branches that start with `doc` or `sdt`, there
-may be changes in more than one package. For example, a commit that modifies the
-internals of `SimpleSDMLayers` would start with `refactor(layers): `.
+As much as possible, we try to qualify the action by specifying which component package is
+targeted by the commit (this might be apparent from the branch name, but especially when
+doing work in branches that start with `doc` or `sdt`, there may be changes in more than one
+package. For example, a commit that modifies the internals of `SimpleSDMLayers` would start
+with `refactor(layers): `.
 
-Note that the name of component packages are lowercase, and that abbreviations
-are OK. Specifically, `Phylopic.jl` is `phylopic`,
-`SpeciesDistributionToolkit.jl` is `sdt`, `GBIF.jl` is `gbif`,
-`SimpleSDMLayers.jl` is `layers`, `Fauxcurrences.jl` is `faux`, `SDeMo.jl` is
-`demo`, and `SimpleSDMDatasets.jl` is `datasets`.
+Note that the name of component packages are lowercase, and that abbreviations are OK.
+Specifically, `Phylopic.jl` is `phylopic`, `SpeciesDistributionToolkit.jl` is `sdt`,
+`GBIF.jl` is `gbif`, `SimpleSDMLayers.jl` is `layers`, `OccurrencesInterface.jl` is `occ`,
+`Fauxcurrences.jl` is `faux`, `SDeMo.jl` is `demo`, and `SimpleSDMDatasets.jl` is
+`datasets`.
 
-In case of breaking changes, the commit prefix **must** be followed by `!`. This
-is **not** limited to commits with the `semver` prefix, but is meant to be used
-in the specific commit that introduces breaking changes. For example, a new
-feature in GBIF that would require to re-write all code would have the prefix
-`feat(gbif)!: ` (and be followed by a `semver` commit to reflect the new
-version).
+In case of breaking changes, the commit prefix **must** be followed by `!`. This is **not**
+limited to commits with the `semver` prefix, but is meant to be used in the specific commit
+that introduces breaking changes. For example, a new feature in GBIF that would require to
+re-write all code would have the prefix `feat(gbif)!: ` (and be followed by a `semver`
+commit to reflect the new version).
 
-In case of an *incomplete commit* (*e.g.* the code is only partly finished), the
-commit prefix **must** be followed by `?`. This is useful when leaving work
-unfinished at the end of a session. For example, a commit with an incomplete
-`SimpleSDMDatasets.jl` vignette can start with `doc(datasets)?: `.
+In case of an *incomplete commit* (*e.g.* the code is only partly finished), the commit
+prefix **must** be followed by `?`. This is useful when leaving work unfinished at the end
+of a session. For example, a commit with an incomplete `SimpleSDMDatasets.jl` vignette can
+start with `doc(datasets)?: `.
 
-The commit message is on the same line as the commit prefix, and is (ideally) a
-short sentence in the imperative. The next line in the body of the message, if
-required, can be used to mention linked issues or close them. Additional
-information about the commit is given *after* the links to issues.
+The commit message is on the same line as the commit prefix, and is (ideally) a short
+sentence in the imperative. The next line in the body of the message, if required, can be
+used to mention linked issues or close them. Additional information about the commit is
+given *after* the links to issues.
 
 ### Pull requests and merging
 

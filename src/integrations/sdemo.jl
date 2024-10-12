@@ -26,7 +26,7 @@ Same as above but with a collection
 """
 function SDeMo.SDM(
     ::Type{TF}, ::Type{CF},
-    predictors::vector{SDMLayer{T}},
+    predictors::Vector{SDMLayer{T}},
     occurrences::OT,
 ) where {
     TF <: Transformer,

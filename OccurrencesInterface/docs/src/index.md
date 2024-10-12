@@ -26,3 +26,6 @@ presences
 absences
 ```
 
+## The `Tables.jl` interface
+
+The `Occurrences` type is a data source for the `Tables.jl` interface.

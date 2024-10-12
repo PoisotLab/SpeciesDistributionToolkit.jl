@@ -43,7 +43,7 @@ end
 
 function SimpleSDMLayers.quantize(
     layer::SDMLayer,
-    occ:T,
+    occ::T,
 ) where {T <: AbstractOccurrenceCollection}
     ef = StatsBase.ecdf(layer[occ])
     return ef.(layer)

@@ -82,7 +82,7 @@ current_figure() #hide
 # then the transformation of the score, and finally the selection of the minimum
 # value across all layers:
 
-function BIOCLIM(layers::Vector{<:SDMLayer}, presences::GBIFRecords)
+function BIOCLIM(layers::Vector{<:SDMLayer}, presences::T) where {T <: AbstractOccurrenceCollection}
     score = (Q) -> 2.0 .* (0.5 .- abs.(Q .- 0.5))
     Q = [quantize(layer, presences) for layer in layers]
     S = score.(Q)

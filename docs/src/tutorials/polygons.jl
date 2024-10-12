@@ -68,7 +68,11 @@ current_figure() #hide
 # that the empty areas are removed:
 
 # fig-region-trimmed
-heatmap(trim(layer); colormap = :linear_kbgyw_5_98_c62_n256, axis = (; aspect = DataAspect()))
+heatmap(
+    trim(layer);
+    colormap = :linear_kbgyw_5_98_c62_n256,
+    axis = (; aspect = DataAspect()),
+)
 current_figure() #hide
 
 # Let's now get some occurrences in the area defined by the layer boundingbox:
@@ -96,7 +100,11 @@ end
 # We can plot the layer and the occurrences we have retrieved so far:
 
 # fig-all-occurrences
-heatmap(trim(layer); colormap = :linear_kbgyw_5_98_c62_n256, axis = (; aspect = DataAspect()))
+heatmap(
+    trim(layer);
+    colormap = :linear_kbgyw_5_98_c62_n256,
+    axis = (; aspect = DataAspect()),
+)
 scatter!(presences; color = :orange, markersize = 4)
 current_figure() #hide
 
@@ -104,7 +112,11 @@ current_figure() #hide
 # this reason, we will use the *non-mutating* `mask` method on the GBIF records:
 
 # fig-trimmed-occurrences
-f, ax, plt = heatmap(trim(layer); colormap = :linear_kbgyw_5_98_c62_n256, axis = (; aspect = DataAspect()))
+f, ax, plt = heatmap(
+    trim(layer);
+    colormap = :linear_kbgyw_5_98_c62_n256,
+    axis = (; aspect = DataAspect()),
+)
 scatter!(mask(presences, DEU); color = :orange, markersize = 4)
 hidespines!(ax)
 hidedecorations!(ax)
@@ -116,7 +128,8 @@ current_figure() #hide
 # that GBIF results also store the query that was used. For this reason, it
 # makes little sense to modify this object. The non-mutating `mask` returns a
 # vector of GBIF records, which for most purposes can be used in-place of the
-# result.
+# result - this is because GBIF records are `AbstractOccurrence`, and vectors of these are
+# handled correctly by the package.
 # 
 # :::
 

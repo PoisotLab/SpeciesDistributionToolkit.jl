@@ -8,7 +8,7 @@ import SimpleSDMLayers: mask!, mask
 Extracts the value of a layer at a given position for a `AbstractOccurrence`. If the
 `AbstractOccurrence` has no latitude or longitude, this will return `nothing`.
 """
-function Base.getindex(layer::SDMLayer, occ:T) where {T <: AbstractOccurrence}
+function Base.getindex(layer::SDMLayer, occ::T) where {T <: AbstractOccurrence}
     ismissing(place(occ)) && return nothing
     return layer[place(occ)...]
 end

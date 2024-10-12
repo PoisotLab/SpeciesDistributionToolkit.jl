@@ -36,6 +36,7 @@ jobs:
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
         run: julia --project=OccurrencesInterface/docs/ OccurrencesInterface/docs/make.jl
   GBIF:
+    needs: [OccurrencesInterface]
     permissions:
       actions: write
       contents: write

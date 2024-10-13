@@ -152,9 +152,8 @@ bagfeatures!(ensemble)
 
 # ::: info About this ensemble model
 # 
-# The model we have constructed here is essentially a random forest. Because we
-# are training a PCA before applying the classification, on subsets of both
-# features and instances, it is probably halfway to a rotation forest.
+# The model we have constructed here is essentially a random forest. Note that the PCA is
+# applied *to each tree*, so it is accounting for the selection of features.
 # 
 # :::
 

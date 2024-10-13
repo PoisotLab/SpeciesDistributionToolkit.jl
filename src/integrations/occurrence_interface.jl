@@ -55,9 +55,21 @@ function SimpleSDMLayers.mask(
 ) where {T <: AbstractOccurrenceCollection}
     out = zeros(layer, Bool)
     for record in elements(occ)
-        out[record] = presence(occ)
+        out[record] = presence(record)
     end
     return out
+end
+
+function Base.getindex(layer::SDMLayer, occ::T) where {T <: AbstractOccurrence}
+    if missing(place(occ))
+        return nothing
+    else
+        return layer[longitude(occ), latitude(occ)]
+    end
+end
+
+function Base.setindex!(layer::SDMLayer, i, occ::T) where {T <: AbstractOccurrence}
+    return setindex!(layer, i, place(occ)...)
 end
 
 function SimpleSDMLayers.mask(

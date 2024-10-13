@@ -61,7 +61,7 @@ buffer = pseudoabsencemask(WithinRadius, presencelayer; distance = 5.0)
 
 # We can now exclude the data that are in the buffer:
 
-bgmask = (! buffer) & background
+bgmask = (!buffer) & background
 
 # Finally, we can plot the area in which we can put pseudo-absences as a shaded region over
 # the layer, and plot all known occurrences as well:

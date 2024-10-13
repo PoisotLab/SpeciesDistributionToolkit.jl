@@ -19,11 +19,7 @@ end
 Changes the values of the cell including the point at the requested latitude and
 longitude.
 """
-function Base.setindex!(
-    layer::SDMLayer{T},
-    v::T,
-    occ::O,
-) where {T, O <: AbstractOccurrence}
+function Base.setindex!(layer::SDMLayer{T}, v, occ::O) where {T, O <: AbstractOccurrence}
     ismissing(place(occ)) && return nothing
     return setindex!(layer, v, place(occ)...)
 end
@@ -58,18 +54,6 @@ function SimpleSDMLayers.mask(
         out[record] = presence(record)
     end
     return out
-end
-
-function Base.getindex(layer::SDMLayer, occ::T) where {T <: AbstractOccurrence}
-    if missing(place(occ))
-        return nothing
-    else
-        return layer[longitude(occ), latitude(occ)]
-    end
-end
-
-function Base.setindex!(layer::SDMLayer, i, occ::T) where {T <: AbstractOccurrence}
-    return setindex!(layer, i, place(occ)...)
 end
 
 function SimpleSDMLayers.mask(

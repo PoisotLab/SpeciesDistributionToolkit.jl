@@ -14,6 +14,12 @@ function sprinkle(coll::T) where {T <: AbstractOccurrenceCollection}
     return (lon, lat)
 end
 
+function sprinkle(coll::Vector{T}) where {T <: AbstractOccurrence}
+    lon = Float32.(replace(longitudes.(coll), missing => NaN))
+    lat = Float32.(replace(latitudes.(coll), missing => NaN))
+    return (lon, lat)
+end
+
 function MakieCore.convert_arguments(::MakieCore.GridBased, layer::SDMLayer)
     return sprinkle(convert(SDMLayer{Float32}, layer))
 end

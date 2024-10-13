@@ -20,10 +20,16 @@ end
 
 MakieCore.convert_arguments(P::MakieCore.NoConversion, layer::SDMLayer) =
     MakieCore.convert_arguments(P, values(layer))
-MakieCore.convert_arguments(P::MakieCore.PointBased, occ::T) where {T <: AbstractOccurrenceCollection} =
-    MakieCore.convert_arguments(P, sprinkle(records)...)
-MakieCore.convert_arguments(P::MakieCore.PointBased, occ::Vector{T}) where {T <: AbstractOccurrence} =
-    MakieCore.convert_arguments(P, sprinkle(records)...)
+MakieCore.convert_arguments(
+    P::MakieCore.PointBased,
+    occ::T,
+) where {T <: AbstractOccurrenceCollection} =
+    MakieCore.convert_arguments(P, sprinkle(occ)...)
+MakieCore.convert_arguments(
+    P::MakieCore.PointBased,
+    occ::Vector{T},
+) where {T <: AbstractOccurrence} =
+    MakieCore.convert_arguments(P, sprinkle(occ)...)
 
 function MakieCore.convert_arguments(
     P::MakieCore.PointBased,

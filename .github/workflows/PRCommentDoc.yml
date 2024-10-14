@@ -6,12 +6,21 @@ on:
 jobs:
   example_comment_pr:
     runs-on: ubuntu-latest
-    name: Comment on PR with documentation link
+    name: Add documentation link to the pull requests
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Comment PR
-        uses: thollander/actions-comment-pull-request@v2
+        uses: thollander/actions-comment-pull-request@v3
         with:
-          message: "Documentation for this pull request: https://poisotlab.github.io/SpeciesDistributionToolkit.jl/previews/PR${{ github.event.number }}/"
+          message: |
+            **Documentation websites for this pull request**
+            📦 [SpeciesDistributionToolkit](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/previews/PR${{ github.event.number }}/)   
+            🌿 [GBIF](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/previews/PR${{ github.event.number }}/)   
+            📊 [Fauxcurrences](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Fauxcurrences/previews/PR${{ github.event.number }}/)   
+            🐾 [OccurrencesInterface](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/OccurrencesInterface/previews/PR${{ github.event.number }}/)   
+            🗺 [SimpleSDMLayers](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/previews/PR${{ github.event.number }}/)   
+            💾 [SimpleSDMDatasets](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/previews/PR${{ github.event.number }}/)   
+            ✏️ [Phylopic](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/previews/PR${{ github.event.number }}/)   
+            🧠 [SDeMo](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SDeMo/previews/PR${{ github.event.number }}/)   

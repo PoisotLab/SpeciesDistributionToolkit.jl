@@ -1,7 +1,29 @@
 using Documenter
+using DocumenterVitepress
 using SDeMo
 using Literate
 using CairoMakie
+
+function replace_current_figure(content)
+    fig_hash = string(hash(content)) * "-" * string(hash(rand(100)))
+
+    matcher = r"""^# fig-(?<title>[\w-]+)$
+    (?<code>(?>^[^#].*$\n){1,})^current_figure\(\) #hide$"""m
+
+    replacement_template = """
+    # ![](HASH-\\g<title>.png)
+
+
+    # ::: details Code for the figure
+
+    \\g<code>save("HASH-\\g<title>.png", current_figure()); #hide
+
+    # :::
+    """
+    replacer = SubstitutionString(replace(replacement_template, "HASH" => fig_hash))
+    content = replace(content, matcher => replacer)
+    return content
+end
 
 # Render the tutorials and how-to using Literate
 for vignette in ["demo.jl"]
@@ -10,12 +32,18 @@ for vignette in ["demo.jl"]
         joinpath(fpath, vignette), fpath;
         flavor=Literate.DocumenterFlavor(),
         config=Dict("credit" => false, "execute" => true),
+        preprocess=replace_current_figure,
     )
 end
 
 makedocs(
     sitename="SDeMo",
-    format=Documenter.HTML(size_threshold_ignore=["demo.md"]),
+    format=DocumenterVitepress.MarkdownVitepress(
+        repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
+        devbranch="main",
+        devurl="dev",
+        deploy_url="SpeciesDistributionToolkit.jl/SDeMo"
+    ),
     modules=[SDeMo],
     pages=[
         "index.md",

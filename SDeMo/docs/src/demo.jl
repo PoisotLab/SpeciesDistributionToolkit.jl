@@ -109,6 +109,7 @@ cv3 = [crossvalidate(sdm, folds; thr=t) for t in thresholds];
 # We can plot the simplified version of this analysis (averaged across all folds
 # for each value of the threshold):
 
+# fig-sdemo-tuning
 f = Figure()
 ax = Axis(f[1, 1]; aspect=1, xlabel="Threshold", ylabel="MCC")
 scatter!(ax, thresholds, [mean(mcc.(s.validation)) for s in cv3])
@@ -153,6 +154,7 @@ prx, pry = partialresponse(sdm, 1, LinRange(5.0, 15.0, 100); threshold=false)
 # Note that we use `threshold=false` to make sure that we look at the score that
 # is returned by the classifier, and not the thresholded version.
 
+# fig-partialrespo-bio1
 f = Figure()
 ax = Axis(f[1, 1], xlabel="BIO1", ylabel="Partial response")
 lines!(ax, prx, pry, color=:black)
@@ -165,6 +167,7 @@ prx, pry, prz = partialresponse(sdm, variables(sdm)[1:2]..., (100, 100); thresho
 
 #-
 
+# fig-partialresp-surface
 f = Figure()
 ax = Axis(f[1, 1], xlabel="BIO$(variables(sdm)[1])", ylabel="BIO$(variables(sdm)[2])")
 cm = heatmap!(prx, pry, prz, colormap=:Oranges)
@@ -173,10 +176,10 @@ current_figure() #hide
 
 # ## Inflated partial responses
 
-# Inflated partial responses replace the average value by other summary
-# statistics, here defined as (randomly) the mean, median, maximum, minimum, and
-# a random observed value:
+# Inflated partial responses replace the average value by other values drawn from different
+# quantiles of the variables:
 
+# fig-inflated-curve
 f = Figure()
 ax = Axis(f[1, 1])
 prx, pry = partialresponse(sdm, 1; inflated=false, threshold=false)
@@ -201,6 +204,8 @@ train!(ensemble)
 # the distribution of the score, not the boolean output:
 
 uncert = predict(ensemble; consensus=iqr, threshold=false)
+
+# fig-uncert-hist
 hist(uncert, color=:grey; axis=(; xlabel="Uncertainty (IQR)"))
 
 # ## Heterogeneous ensembles
@@ -238,6 +243,7 @@ predict(hm; consensus=median, threshold=false)[1:10]
 # We can also produce a figure that looks like the partial response curve, by
 # showing the effect on a variable on each training instance:
 
+# fig-bio1-effect-map
 f = Figure()
 ax = Axis(f[1, 1], xlabel="BIO1", ylabel="Effect on the average prediction")
 scatter!(ax, features(sdm, 1), explain(sdm, 1; threshold=true), color=:purple)

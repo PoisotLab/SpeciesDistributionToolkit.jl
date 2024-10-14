@@ -8,7 +8,7 @@ makedocs(
         repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
         devbranch="main",
         devurl="dev",
-        deploy_url="https://poisotlab.github.io/SpeciesDistributionToolkit.jl/OccurrencesInterface/"
+        deploy_url="OccurrencesInterface/"
     ),
     modules=[OccurrencesInterface],
     pages=[

@@ -13,6 +13,7 @@ tests = [
     "query support" => "query.jl",
     "tables interface" => "tables.jl",
     "edge cases" => "edgecases.jl",
+    "occurrences interface" => "occurrencesinterface.jl",
 ]
 
 for test in tests

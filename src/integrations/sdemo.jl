@@ -19,6 +19,26 @@ function SDeMo.SDM(
     return SDM(TF, CF, X, y)
 end
 
+"""
+    TODO
+
+Same as above but with a collection
+"""
+function SDeMo.SDM(
+    ::Type{TF}, ::Type{CF},
+    predictors::Vector{SDMLayer{T}},
+    occurrences::OT,
+) where {
+    TF <: Transformer,
+    CF <: Classifier,
+    T <: Number,
+    OT <: AbstractOccurrenceCollection,
+}
+    pr = nodata(mask(first(predictors), presences(occurrences)), false)
+    ab = nodata(mask(first(predictors), absences(occurrences)), false)
+    return SDM(TF, CF, predictpors, pr, ab)
+end
+
 function _X_from_layers(layers::Vector{T}) where {T <: SDMLayer}
     # Get the common grid positions
     ks = findall(reduce(.&, [layer.indices for layer in layers]))

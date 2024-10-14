@@ -82,6 +82,7 @@ makedocs(;
             "howto/makie.md",
         ],
         "Documentation" => [
+            "manual/contributing.md",
             "manual/index.md",
             "manual/gbif.jl.md",
             "manual/pseudoabsences.md",

@@ -53,41 +53,87 @@ In particular, when installing `SpeciesDistributionToolkit`, you get access to
 all the functions and types exported by the component packages. This is the
 *recommended* way to interact with the packages.
 
-### Getting occurrence data: `GBIF.jl`
 
-A wrapper around the GBIF API, to retrieve taxa and occurrence datasets, and
+::: details Access to GBIF data
+
+`GBIF.jl` is a wrapper around the GBIF API, to retrieve taxa and occurrence datasets, and
 perform filtering on these occurrence data based on flags.
 
-![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=GBIF-*&style=flat-square&label=GBIF.jl) ![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=GBIF-*&style=flat-square&label=GBIF.jl)
 
-### Getting environmental data: `SimpleSDMDatasets.jl`
+![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
 
-An efficient way to download and store environmental raster data for consumption
+:::
+
+
+::: details Handling occurrence data
+
+`OccurrencesInterface.jl` is a *lightweight*, *general purpose* interface that allows other types to be used with the Species Distribution Toolkit package.
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=OccurrencesInterface-*&style=flat-square&label=OccurrencesInterface.jl)
+
+![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
+
+:::
+
+
+
+::: details Downloading and managing environmental data
+
+`SimpleSDMDatasets.jl` is an efficient and transparent, interface-based way to download and store environmental raster data for consumption
 by other packages.
 
-![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=SimpleSDMDatasets-*&style=flat-square&label=SimpleSDMDatasets.jl) ![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=SimpleSDMDatasets-*&style=flat-square&label=SimpleSDMDatasets.jl)
 
-### Using environmental data: `SimpleSDMLayers.jl`
+![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
 
-A series of types and common operations on raster data.
+:::
 
-![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=SimpleSDMLayers-*&style=flat-square&label=SimpleSDMLayers.jl) ![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6?style=flat-square)
 
-### Simulating occurrence data: `Fauxcurrences.jl`
+::: details Manipulating raster
 
-A package to simulate realistic species occurrence data from a know series of
+`SimpleSDMLayers.jl` offers a series of types and common operations on raster data.
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=SimpleSDMLayers-*&style=flat-square&label=SimpleSDMLayers.jl)
+
+![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6?style=flat-square)
+
+:::
+
+
+::: details Simulating occurrence data
+
+`Fauxcurrences.jl` is a package to simulate realistic species occurrence data from a known series of
 occurrences, with additional statistical constraints.
 
-![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=Fauxcurrences-*&style=flat-square&label=Fauxcurrences.jl) ![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6?style=flat-square)
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=Fauxcurrences-*&style=flat-square&label=Fauxcurrences.jl)
 
-### Getting organisms silhouettes: `Phylopic.jl`
+![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6?style=flat-square)
 
-A wrapper around the Phylopic API.
+:::
 
-![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=Phylopic-*&style=flat-square&label=Phylopic.jl) ![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
 
-### Teaching and workshops: `SDeMo.jl`
 
-A series of very simple SDMs and utility functions for education.
+::: details Access to the Phylopic library
 
-![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=SDeMo-*&style=flat-square&label=SDeMo.jl) ![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6?style=flat-square)
+`Phylopic.jl` is a wrapper around the Phylopic API.
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=Phylopic-*&style=flat-square&label=Phylopic.jl)
+
+![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00?style=flat-square)
+
+:::
+
+
+
+::: details Tools for workshops and education
+
+`SDeMo.jl` is a series of very simple SDMs and utility functions for education, with some tools for interpretable machine learning.
+
+![GitHub Release](https://img.shields.io/github/v/release/poisotlab/speciesdistributiontoolkit.jl?filter=SDeMo-*&style=flat-square&label=SDeMo.jl)
+
+![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6?style=flat-square)
+
+:::
+
+

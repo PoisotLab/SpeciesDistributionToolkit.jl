@@ -203,7 +203,7 @@ train!(ensemble)
 # a great choice. Note that we use `threshold=false` because we want to look at
 # the distribution of the score, not the boolean output:
 
-uncert = predict(ensemble; consensus=iqr, threshold=false)
+uncert = predict(ensemble; consensus=iqr, threshold=false);
 
 # fig-uncert-hist
 hist(uncert, color=:grey; axis=(; xlabel="Uncertainty (IQR)"))

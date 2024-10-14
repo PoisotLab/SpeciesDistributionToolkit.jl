@@ -7,7 +7,8 @@ makedocs(
     format=DocumenterVitepress.MarkdownVitepress(
         repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
         devbranch="main",
-        devurl="dev"
+        devurl="dev",
+        deploy_url="https://poisotlab.github.io/SpeciesDistributionToolkit.jl/OccurrencesInterface/"
     ),
     modules=[OccurrencesInterface],
     pages=[

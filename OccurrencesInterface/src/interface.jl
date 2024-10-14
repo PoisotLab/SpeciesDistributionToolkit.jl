@@ -1,7 +1,7 @@
 """
     elements(::T) where {T<:AbstractOccurrenceCollection} 
 
-Returns the elements contained in an abstract collection of occurrences -- this must be something that can be iterated.
+Returns the elements contained in an abstract collection of occurrences -- this must be something that can be iterated. The default value, when unimplemented, is `nothing`.
 """
 elements(::T) where {T<:AbstractOccurrenceCollection} = nothing
 elements(c::Occurrences) = c.records
@@ -21,7 +21,7 @@ end
 """
     place(o::Occurrence)
 
-Returns the place of the occurrence event, either as a tuple of float in the longitude, latitude format, or as `missing`. The CRS is assumed to the WGS84.
+Returns the place of the occurrence event, either as a tuple of float in the longitude, latitude format, or as `missing`. The CRS is assumed to be WGS84 with no option to change it. This follows the GeoJSON specification.
 """
 place(o::Occurrence) = o.where
 

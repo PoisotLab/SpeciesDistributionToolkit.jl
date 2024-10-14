@@ -1,25 +1,34 @@
 """
     AbstractOccurrence
 
-Other types describing a single observation can be sub-types.
+Other types describing a single observation should be sub-types of this. Occurrences are always defined as a single observation of a single species.
 """
 abstract type AbstractOccurrence end
 
 """
     AbstractOccurrenceCollection
 
-Other types describing multiple observations can be sub-types.
+Other types describing multiple observations can be sub-types of this. Occurrences collections are a way to collect multiple observations of arbitrarily many species.
 """
 abstract type AbstractOccurrenceCollection end
 
 """
-    Occurence
+    Occurrence
+
+This is a sub-type of `AbstractOccurrence`, with the following types:
+
+- `what` - species name, defaults to `""`
+- `presence` - a boolean to mark the presence of the species, defaults to `true`
+- `where` - a tuple giving the location as longitude,latitude in WGS84, or `missing`, defaults to `missing`
+- `when` - a `DateTime` giving the date of observation, or `missing`, defaults to `missing`
+
+When the interface is properly implemented for any type that is a sub-type of `AbstractOccurrence`, there is an `Occurrence` object can be created directly with *e.g.* `Occurrence(observation)`. There is, similarly, an automatically implemented `convert` method.
 """
-mutable struct Occurrence <: AbstractOccurrence
-    what::String
-    presence::Bool
-    where::Union{Missing,Tuple{<:AbstractFloat,<:AbstractFloat}}
-    when::Union{Missing,DateTime}
+Base.@kwdef mutable struct Occurrence <: AbstractOccurrence
+    what::String = ""
+    presence::Bool = true
+    where::Union{Missing,Tuple{<:AbstractFloat,<:AbstractFloat}} = missing
+    when::Union{Missing,DateTime} = missing
 end
 
 @testitem "We can construct an occurrence" begin
@@ -30,6 +39,8 @@ end
 
 """
     Occurrences
+
+This is a sub-type of `AbstractOccurrenceCollection`. No default value.
 """
 mutable struct Occurrences <: AbstractOccurrenceCollection
     records::Vector{Occurrence}

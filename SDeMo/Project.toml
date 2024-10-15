@@ -1,11 +1,10 @@
 name = "SDeMo"
 uuid = "3e5feb82-bcca-434d-9cd5-c11731a21467"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "0.0.6"
+version = "0.0.7"
 
 [deps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
-GLM = "38e38edf-8417-5370-95a0-9cbb8c7f171a"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MultivariateStats = "6f286f6a-111f-5878-ab1e-185364afe411"
@@ -17,11 +16,12 @@ TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
 [compat]
 Distributions = "0.25"
-GLM = "1.9"
 JSON = "0.21"
+LinearAlgebra = "1"
 MultivariateStats = "0.10"
+Random = "1"
+Statistics = "1"
 StatsAPI = "1.7"
 StatsBase = "0.34"
 TestItems = "1.0"
-Statistics = "1.10"
 julia = "1.8"

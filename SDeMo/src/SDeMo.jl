@@ -2,15 +2,14 @@ module SDeMo
 
 using TestItems
 
-import GLM
+import JSON
 import StatsAPI
 using Distributions
+using LinearAlgebra
 using MultivariateStats
-using StatsBase
 using Random
 using Statistics
-import JSON
-using LinearAlgebra
+using StatsBase
 
 # Demo data
 include("utilities/demodata.jl")
@@ -75,6 +74,9 @@ export ci
 # Variable selection
 include("variables/selection.jl")
 export noselection!, forwardselection!, backwardselection!
+
+include("variables/vif.jl")
+export stepwisevif!, vif
 
 include("variables/importance.jl")
 export variableimportance

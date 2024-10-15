@@ -26,7 +26,7 @@ size(X)
 
 # ## Setting up the model
 
-## We will start with an initial model that uses a PCA to transform the data, and
+# We will start with an initial model that uses a PCA to transform the data, and
 # then a Naive Bayes Classifier for the classification. Note that this is the
 # partial syntax where we use the default threshold, and all the variables:
 
@@ -53,11 +53,11 @@ cv = crossvalidate(sdm, folds);
 measures = [mcc, balancedaccuracy, ppv, npv, trueskill, markedness]
 cvresult = [mean(measure.(set)) for measure in measures, set in cv]
 pretty_table(
-    hcat(string.(measures), cvresult);
-    alignment=[:l, :c, :c],
-    backend=Val(:markdown),
-    header=["Measure", "Validation", "Training"],
-    formatters=ft_printf("%5.3f", [2, 3])
+        hcat(string.(measures), cvresult);
+        alignment=[:l, :c, :c],
+        backend=Val(:markdown),
+        header=["Measure", "Validation", "Training"],
+        formatters=ft_printf("%5.3f", [2, 3])
 )
 
 # Assuming we want to get a simple idea of what the MCC is for the validation
@@ -68,6 +68,14 @@ mcc.(cv.validation)
 # The associated confidence interval is
 
 ci(cv.validation, mcc)
+
+# We can also get the same output by calling a function on a vector of `ConfusionMatrix`, *e.g.*
+
+mcc(cv.validation)
+
+# Adding the `true` argument returns a tuple with the 95% CI:
+
+mcc(cv.validation, true)
 
 # ## Variable selection
 
@@ -87,11 +95,11 @@ cv2 = crossvalidate(sdm, folds)
 measures = [mcc, balancedaccuracy, ppv, npv, trueskill, markedness]
 cvresult = [mean(measure.(set)) for measure in measures, set in cv2]
 pretty_table(
-    hcat(string.(measures), cvresult);
-    alignment=[:l, :c, :c],
-    backend=Val(:markdown),
-    header=["Measure", "Validation", "Training"],
-    formatters=ft_printf("%5.3f", [2, 3])
+        hcat(string.(measures), cvresult);
+        alignment=[:l, :c, :c],
+        backend=Val(:markdown),
+        header=["Measure", "Validation", "Training"],
+        formatters=ft_printf("%5.3f", [2, 3])
 )
 
 # Quite clearly! Before thinking about the relative importance of variables, we
@@ -136,11 +144,11 @@ varimp = variableimportance(sdm, folds)
 # In relative terms, this is:
 
 pretty_table(
-    hcat(variables(sdm), varimp ./ sum(varimp));
-    alignment=[:l, :c],
-    backend=Val(:markdown),
-    header=["Variable", "Importance"],
-    formatters=(ft_printf("%5.3f", 2), ft_printf("%d", 1))
+        hcat(variables(sdm), varimp ./ sum(varimp));
+        alignment=[:l, :c],
+        backend=Val(:markdown),
+        header=["Variable", "Importance"],
+        formatters=(ft_printf("%5.3f", 2), ft_printf("%d", 1))
 )
 
 # ## Partial response curve
@@ -184,8 +192,8 @@ f = Figure()
 ax = Axis(f[1, 1])
 prx, pry = partialresponse(sdm, 1; inflated=false, threshold=false)
 for i in 1:200
-    ix, iy = partialresponse(sdm, 1; inflated=true, threshold=false)
-    lines!(ax, ix, iy, color=(:grey, 0.5))
+        ix, iy = partialresponse(sdm, 1; inflated=true, threshold=false)
+        lines!(ax, ix, iy, color=(:grey, 0.5))
 end
 lines!(ax, prx, pry, color=:black, linewidth=4)
 current_figure() #hide
@@ -279,11 +287,11 @@ cf = counterfactual(sdm, instance(sdm, inst; strict=false), target, 200.0; thres
 # is:
 
 pretty_table(
-    hcat(variables(sdm), instance(sdm, inst), cf[variables(sdm)]);
-    alignment=[:l, :c, :c],
-    backend=Val(:markdown),
-    header=["Variable", "Obs.", "Counterf."],
-    formatters=(ft_printf("%4.1f", [2, 3]), ft_printf("%d", 1))
+        hcat(variables(sdm), instance(sdm, inst), cf[variables(sdm)]);
+        alignment=[:l, :c, :c],
+        backend=Val(:markdown),
+        header=["Variable", "Obs.", "Counterf."],
+        formatters=(ft_printf("%4.1f", [2, 3]), ft_printf("%d", 1))
 )
 
 # We can check the prediction that would be made on the counterfactual:

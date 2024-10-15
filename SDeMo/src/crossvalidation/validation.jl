@@ -230,3 +230,52 @@ specificity(M::ConfusionMatrix) = tnr(M)
 Alias for `ppv`, the positive predictive value
 """
 precision(M::ConfusionMatrix) = ppv(M)
+
+for op in (
+    :tpr,
+    :tnr,
+    :fpr,
+    :fnr,
+    :ppv,
+    :npv,
+    :fdir,
+    :fomr,
+    :plr,
+    :nlr,
+    :accuracy,
+    :balancedaccuracy,
+    :f1,
+    :fscore,
+    :trueskill,
+    :markedness,
+    :dor,
+    :κ,
+    :mcc,
+    :specificity,
+    :sensitivity,
+    :recall,
+    :precision,
+)
+    eval(
+        quote
+            """
+                $($op)(C::Vector{ConfusionMatrix}, full::Bool=false)
+
+            Version of `$($op)` using a vector of confusion matrices. Returns the mean, and when the second argument is `true`, returns a tuple where the second argument is the CI.
+            """
+            function $op(
+                C::Vector{ConfusionMatrix},
+                full::Bool = false,
+                args...;
+                kwargs...,
+            )
+                m = $op.(C, args...; kwargs...)
+                if full
+                    return (mean(m), ci(C, $op))
+                else
+                    return mean(m)
+                end
+            end
+        end,
+    )
+end

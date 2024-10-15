@@ -131,9 +131,9 @@ for op in (:leaveoneout, :holdout, :montecarlo, :kfold)
             $op(sdm::SDM, args...; kwargs...) =
                 $op(labels(sdm), features(sdm), args...; kwargs...)
             """
-            $($op)(sdm::Bagging)
+                $($op)(sdm::Bagging)
 
-            Version of `$($op)` using the instances and labels of a bagged SDM.
+            Version of `$($op)` using the instances and labels of a bagged SDM. In this case, the instances of the model used as a reference to build the bagged model are used.
             """
             $op(sdm::Bagging, args...; kwargs...) = $op(sdm.model, args...; kwargs...)
         end,

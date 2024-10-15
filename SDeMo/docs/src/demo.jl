@@ -97,6 +97,14 @@ pretty_table(
 # Quite clearly! Before thinking about the relative importance of variables, we
 # will take a look at the thresold.
 
+# As a side-note, we can get the average of many performance measures using *e.g.*
+
+f1(cv2.validation)
+
+# And the mean and 95% confidence interval with
+
+balancedaccuracy(cv2.validation, true)
+
 # ## Moving threshold classification
 
 # The `crossvalidate` function comes with an optional argument to specify the

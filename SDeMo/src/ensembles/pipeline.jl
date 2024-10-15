@@ -17,8 +17,11 @@ Trains all the model in an ensemble model - the keyword arguments are passed to
 includes the transformers.
 """
 function train!(ensemble::Bagging; kwargs...)
+    # The ensemble model can be given a consensus argument, in which can we drop it for
+    # training as it's relevant for prediction only
+    trainargs = filter(kw -> kw.first != :consensus, kwargs)
     Threads.@threads for m in eachindex(ensemble.models)
-        train!(ensemble.models[m]; training = ensemble.bags[m][1], kwargs...)
+        train!(ensemble.models[m]; training = ensemble.bags[m][1], trainargs...)
     end
     train!(ensemble.model; kwargs...)
     return ensemble

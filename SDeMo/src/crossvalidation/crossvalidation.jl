@@ -68,16 +68,14 @@ function montecarlo(y, X; n = 100, kwargs...)
     return [holdout(y, X; kwargs...) for _ in 1:n]
 end
 
-
 @testitem "We can do montecarlo validation" begin
     X, y = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
-    folds = montecarlo(model; n=10)
+    folds = montecarlo(model; n = 10)
     cv = crossvalidate(model, folds)
     @test eltype(cv.validation) <: ConfusionMatrix
     @test length(cv.training) == 10
 end
-
 
 """
     kfold(y, X; k = 10, permute = true)
@@ -113,32 +111,33 @@ function kfold(y, X; k = 10, permute = true)
     return folds
 end
 
-
 @testitem "We can do kfold validation" begin
     X, y = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
-    folds = kfold(model; k=12)
+    folds = kfold(model; k = 12)
     cv = crossvalidate(model, folds)
     @test eltype(cv.validation) <: ConfusionMatrix
     @test length(cv.training) == 12
 end
 
-
 for op in (:leaveoneout, :holdout, :montecarlo, :kfold)
-    eval(quote
-        """
-            $($op)(sdm::SDM)
+    eval(
+        quote
+            """
+                $($op)(sdm::SDM)
 
-        Version of `$($op)` using the instances and labels of an SDM.
-        """
-        $op(sdm::SDM, args...; kwargs...) = $op(labels(sdm), features(sdm), args...; kwargs...)
-    end)
+            Version of `$($op)` using the instances and labels of an SDM.
+            """
+            $op(sdm::SDM, args...; kwargs...) =
+                $op(labels(sdm), features(sdm), args...; kwargs...)
+        end,
+    )
 end
 
 @testitem "We can split data in an SDM" begin
     X, y = SDeMo.__demodata()
     sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.01, X, y, 1:size(X, 1))
-    folds = montecarlo(sdm; n=10)
+    folds = montecarlo(sdm; n = 10)
     @test length(folds) == 10
 end
 
@@ -153,7 +152,7 @@ This method returns two vectors of `ConfusionMatrix`, with the confusion matrix
 for each set of validation data first, and the confusion matrix for the training
 data second.
 """
-function crossvalidate(sdm, folds; thr = nothing, kwargs...)
+function crossvalidate(sdm::T, folds; thr = nothing, kwargs...) where {T <: AbstractSDM}
     Cv = zeros(ConfusionMatrix, length(folds))
     Ct = zeros(ConfusionMatrix, length(folds))
     models = [deepcopy(sdm) for _ in Base.OneTo(Threads.nthreads())]
@@ -161,7 +160,8 @@ function crossvalidate(sdm, folds; thr = nothing, kwargs...)
         trn, val = folds[i]
         train!(models[Threads.threadid()]; training = trn, kwargs...)
         pred = predict(models[Threads.threadid()], features(sdm)[:, val]; threshold = false)
-        ontrn = predict(models[Threads.threadid()], features(sdm)[:, trn]; threshold = false)
+        ontrn =
+            predict(models[Threads.threadid()], features(sdm)[:, trn]; threshold = false)
         thr = isnothing(thr) ? threshold(sdm) : thr
         Cv[i] = ConfusionMatrix(pred, labels(sdm)[val], thr)
         Ct[i] = ConfusionMatrix(ontrn, labels(sdm)[trn], thr)
@@ -169,11 +169,22 @@ function crossvalidate(sdm, folds; thr = nothing, kwargs...)
     return (validation = Cv, training = Ct)
 end
 
-@testitem "We can crossvalidate an SDM" begin
+@testitem "We can cross-validate an SDM" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.5, X, y, [1,2,12])
+    sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.5, X, y, [1, 2, 12])
     train!(sdm)
-    cv = crossvalidate(sdm, kfold(sdm; k=15))
+    cv = crossvalidate(sdm, kfold(sdm; k = 15))
+    @test eltype(cv.validation) <: ConfusionMatrix
+    @test eltype(cv.training) <: ConfusionMatrix
+end
+
+@testitem "We can cross-validate an ensemble model using the consensus keyword" begin
+    using Statistics
+    X, y = SDeMo.__demodata()
+    sdm = SDM(MultivariateTransform{PCA}(), NaiveBayes(), 0.5, X, y, [1, 2, 12])
+    ens = Bagging(sdm, 10)
+    train!(ens)
+    cv = crossvalidate(ens, kfold(ens; k = 15); consensus = median)
     @test eltype(cv.validation) <: ConfusionMatrix
     @test eltype(cv.training) <: ConfusionMatrix
 end

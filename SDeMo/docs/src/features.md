@@ -13,3 +13,10 @@ forwardselection!
 ```@docs
 variableimportance
 ```
+
+## Variance Inflation Factor
+
+```@docs
+stepwisevif!
+vif
+``

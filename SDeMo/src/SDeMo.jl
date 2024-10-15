@@ -2,8 +2,8 @@ module SDeMo
 
 using TestItems
 
-import GLM
 import StatsAPI
+import StatsModels
 using Distributions
 using MultivariateStats
 using StatsBase

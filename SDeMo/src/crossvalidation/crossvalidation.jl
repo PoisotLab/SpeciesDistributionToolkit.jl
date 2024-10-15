@@ -130,6 +130,12 @@ for op in (:leaveoneout, :holdout, :montecarlo, :kfold)
             """
             $op(sdm::SDM, args...; kwargs...) =
                 $op(labels(sdm), features(sdm), args...; kwargs...)
+            """
+            $($op)(sdm::Bagging)
+
+            Version of `$($op)` using the instances and labels of a bagged SDM.
+            """
+            $op(sdm::Bagging, args...; kwargs...) = $op(sdm.model, args...; kwargs...)
         end,
     )
 end

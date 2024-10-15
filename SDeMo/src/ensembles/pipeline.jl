@@ -23,7 +23,7 @@ function train!(ensemble::Bagging; kwargs...)
     Threads.@threads for m in eachindex(ensemble.models)
         train!(ensemble.models[m]; training = ensemble.bags[m][1], trainargs...)
     end
-    train!(ensemble.model; kwargs...)
+    train!(ensemble.model; trainargs...)
     return ensemble
 end
 

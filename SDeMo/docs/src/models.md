@@ -19,6 +19,7 @@ ZScore
 ## Transformers (multivariate)
 
 ```@docs
+PCATransform
 MultivariateTransform
 ```
 

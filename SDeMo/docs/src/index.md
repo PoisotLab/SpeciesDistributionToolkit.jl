@@ -5,9 +5,11 @@ modeling education and training. It helps to think of it as a barebones ML packa
 pretty good at simple classification tasks (but designed to be extendable).
 
 ::: tip Uspe `SpeciesDistributionToolkit`
+
 This website gives you access to the documentation of the functions that `SDeMo` implements.
 For actual use, it is best to install and load `SpeciesDistributionToolkit`, which gives you
 access to advanced data collection, manipulation, and visualization capacities.
+
 :::
 
 This package is not meant to be used for actual applications, but is intended to allow to

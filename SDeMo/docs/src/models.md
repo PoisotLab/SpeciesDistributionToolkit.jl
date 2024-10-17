@@ -7,10 +7,12 @@ All three of these components are trained when training a model (plus or minus t
 arguments to `train!`).
 
 ::: warning Training of transformers
+
 The transformers, by default, are only trained on the *presences*. This is because, in most
 cases, the pseudo-absences are sampled from the background. When the model uses actual
 absences, passing `absences=true` to functions that train the model will instead use the
 absence data as well.
+
 :::
 
 ## Transformers (univariate)
@@ -39,7 +41,9 @@ DecisionTree
 ```
 
 ::: tip Adding new models
+
 Adding a new transformer or classifier is relatively straightforward (refer to the
 implementation of `ZScore` and `BIOCLIM` for easily digestible examples). The only methods
 to implement are `train!` and `StatsAPI.predict`.
+
 :::

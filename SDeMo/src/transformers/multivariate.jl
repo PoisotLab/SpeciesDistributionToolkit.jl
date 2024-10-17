@@ -7,7 +7,7 @@ types_with_transform = [:Whitening]
 
 `T` is a multivariate transformation, likely offered through the
 `MultivariateStats` package. The transformations currently supported are `PCA`,
-`PPCA`, `KernelPCA`, and `Whitening`.
+`PPCA`, `KernelPCA`, and `Whitening`, and they are documented through their type aliases (*e.g.* `PCATransform`).
 """
 Base.@kwdef mutable struct MultivariateTransform{T} <: Transformer
     trf::T = StatsAPI.fit(T, Matrix(LinearAlgebra.I(2) .* 1.0))
@@ -41,6 +41,16 @@ This is an alias for `MultivariateTransform{PCA}`.
 """
 const PCATransform = MultivariateTransform{PCA}
 const PPCATransform = MultivariateTransform{PPCA}
+
+"""
+    WhiteningTransform
+
+The whitening transformation is a linear transformation of the input variables, after which the new variables have unit variance and no correlation. The input is transformed into white noise.
+
+Because this transform will usually keep the first variable "as is", and then apply increasingly important perturbations on the subsequent variables, it is sensitive to the order in which variables are presented, and is less useful when applying tools for interpretation.
+
+This is an alias for `MultivariateTransform{Whitening}`.
+"""
 const WhiteningTransform = MultivariateTransform{Whitening}
 const kPCATransform = MultivariateTransform{KernelPCA}
 export PCATransform, PPCATransform, kPCATransform, WhiteningTransform

@@ -12,12 +12,12 @@ function safeget(endpoint)
         while !eof(http)
             append!(body, readavailable(http))
         end
-        close(HTTP.Connections.getrawstream(http))
+        return close(HTTP.Connections.getrawstream(http))
     end
     return rsp.status, String(body)
 end
 
-const gbifurl = "http://api.gbif.org/v1/"
+const gbifurl = "https://api.gbif.org/v1/"
 
 """
     enumerablevalues()
@@ -84,6 +84,8 @@ include("occurrence.jl")
 include("paging.jl")
 export occurrence, occurrences
 export occurrences!
+
+include("download.jl")
 
 include("occurrencesinterface.jl")
 

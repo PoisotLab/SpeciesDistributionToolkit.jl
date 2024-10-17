@@ -1,29 +1,28 @@
 """
     AbstractSDM
 
-TODO
+This abstract type covers both the regular and the ensemble models.
 """
 abstract type AbstractSDM end
 
 """
     AbstractEnsembleSDM
 
-TODO
+This abstract types covers model that combine different SDMs to make a prediction, which currently covers `Bagging` and `Ensemble`.
 """
 abstract type AbstractEnsembleSDM <: AbstractSDM end
-
 
 """
     Transformer
 
-TODO
+This abstract type covers all transformations that are applied to the data before fitting the classifier.
 """
 abstract type Transformer end
 
 """
     Classifier
 
-TODO
+This abstract type covers all algorithms to convert transformed data into prediction.
 """
 abstract type Classifier end
 
@@ -39,7 +38,7 @@ In addition, the SDM carries with it the training features and labels, as well
 as a vector of indices indicating which variables are actually used by the
 model.
 """
-mutable struct SDM{F,L} <: AbstractSDM
+mutable struct SDM{F, L} <: AbstractSDM
     transformer::Transformer
     classifier::Classifier
     τ::Number # Threshold
@@ -53,7 +52,7 @@ function SDM(
     ::Type{CF},
     X::Matrix{T},
     y::Vector{Bool},
-) where {TF<:Transformer,CF<:Classifier,T<:Number}
+) where {TF <: Transformer, CF <: Classifier, T <: Number}
     return SDM(
         TF(),
         CF(),
@@ -100,7 +99,7 @@ features(sdm::SDM, n) = sdm.X[n, :]
 
 Returns the *n*-th instance stored in the field `X` of the SDM. If the keyword argument `strict` is `true`, only the variables used for prediction are returned.
 """
-function instance(sdm::SDM, n; strict=true)
+function instance(sdm::SDM, n; strict = true)
     if strict
         return features(sdm)[variables(sdm), n]
     else

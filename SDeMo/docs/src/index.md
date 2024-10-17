@@ -25,6 +25,13 @@ variables!
 instance
 ```
 
+### Access to components of the model
+
+```@docs
+classifier
+transformer
+```
+
 ### Training and predicting
 
 ```@docs

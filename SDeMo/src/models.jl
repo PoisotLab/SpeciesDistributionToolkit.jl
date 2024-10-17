@@ -130,3 +130,17 @@ variables(sdm::SDM) = sdm.v
 Sets the list of variables.
 """
 variables!(sdm::SDM, v) = sdm.v = copy(v)
+
+"""
+    transformer(model::SDM)
+
+Returns the transformer used by the model
+"""
+transformer(model::SDM) = model.transformer
+
+"""
+    classifier(model::SDM)
+
+Returns the classifier used by the model
+"""
+classifier(model::SDM) = model.classifier

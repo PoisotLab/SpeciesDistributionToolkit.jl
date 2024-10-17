@@ -12,13 +12,22 @@ The three keyword arguments are:
     returning the one that is optimal
   - `optimality`: defaults to `mcc`, and is the function applied to the
     confusion matrix to evaluate which value of the threshold is the best
+  - `absences`: defaults to `false`, and indicates whether the (pseudo) absences are used to train the transformer; when using actual absences, this should be set to `true`
 
 Internally, this function trains the transformer, then projects the data, then
 trains the classifier. If `threshold` is ` true`, the threshold is then
 optimized.
 """
-function train!(sdm::SDM; threshold = true, training = :, optimality = mcc)
-    train!(sdm.transformer, sdm.X[sdm.v, training])
+function train!(
+    sdm::SDM;
+    threshold = true,
+    training = :,
+    optimality = mcc,
+    absences = false,
+)
+    tr_training =
+        absences ? axes(features(sdm), 2)[training] : findall(labels(sdm)[training])
+    train!(sdm.transformer, sdm.X[sdm.v, tr_training])
     X₁ = predict(sdm.transformer, sdm.X[sdm.v, training])
     train!(sdm.classifier, sdm.y[training], X₁)
     ŷ = predict(sdm.classifier, X₁)
@@ -84,4 +93,30 @@ function reset!(sdm::SDM, thr = 0.5)
     sdm.v = collect(axes(sdm.X, 1))
     sdm.τ = thr
     return sdm
+end
+
+@testitem "We can train a model without the absences" begin
+    using Statistics
+    X, y = SDeMo.__demodata()
+    model = SDM(ZScore, NaiveBayes, X, y)
+    train!(model)
+    tf = transformer(model)
+    pr_mean = vec(mean(features(model)[:, findall(labels(model))]; dims = 2))
+    for i in eachindex(pr_mean)
+        @test pr_mean[i] ≈ tf.μ[i]
+    end
+    cv = crossvalidate(model, kfold(model); absences = false)
+end
+
+@testitem "We can train a model with the absences" begin
+    using Statistics
+    X, y = SDeMo.__demodata()
+    model = SDM(ZScore, NaiveBayes, X, y)
+    train!(model; absences = true)
+    tf = transformer(model)
+    pr_mean = vec(mean(features(model)[:, findall(labels(model))]; dims = 2))
+    for i in eachindex(pr_mean)
+        @test pr_mean[i] != tf.μ[i]
+    end
+    cv = crossvalidate(model, kfold(model); absences = true)
 end

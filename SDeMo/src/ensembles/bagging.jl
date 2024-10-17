@@ -101,3 +101,17 @@ end
 majority(pred::Vector{Bool}) = sum(pred) > length(pred) // 2
 majority(pred::BitVector) = sum(pred) > length(pred) // 2
 export majority
+
+"""
+    classifier(model::Bagging)
+
+Returns the classifier used by the model that is used as a template for the bagged model
+"""
+classifier(model::Bagging) = classifier(model.model)
+
+"""
+    transformer(model::Bagging)
+
+Returns the transformer used by the model that is used as a template for the bagged model
+"""
+transformer(model::Bagging) = transformer(model.model)

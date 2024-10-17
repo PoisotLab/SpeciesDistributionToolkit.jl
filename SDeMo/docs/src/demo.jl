@@ -6,6 +6,14 @@
 # uncertainty, show partial response curves, calculate varialble importances
 # through bootstraping and Shapley values, and generate counterfactual inputs.
 
+# ::: tip Mapping the outputs
+#
+# The functions to interact with raster data, and present the outputs of models as maps, are
+# implemented as part of `SpeciesDistributionToolkit` (`SDT`). There is a more complete example of
+# use of `SDeMo` in the `SDT` documentation.
+#
+# :::
+
 # This vignette is *very terse* and is not an introduction to using or
 # interpreting these models!
 
@@ -53,11 +61,11 @@ cv = crossvalidate(sdm, folds);
 measures = [mcc, balancedaccuracy, ppv, npv, trueskill, markedness]
 cvresult = [mean(measure.(set)) for measure in measures, set in cv]
 pretty_table(
-        hcat(string.(measures), cvresult);
-        alignment=[:l, :c, :c],
-        backend=Val(:markdown),
-        header=["Measure", "Validation", "Training"],
-        formatters=ft_printf("%5.3f", [2, 3])
+    hcat(string.(measures), cvresult);
+    alignment=[:l, :c, :c],
+    backend=Val(:markdown),
+    header=["Measure", "Validation", "Training"],
+    formatters=ft_printf("%5.3f", [2, 3])
 )
 
 # Assuming we want to get a simple idea of what the MCC is for the validation
@@ -95,11 +103,11 @@ cv2 = crossvalidate(sdm, folds)
 measures = [mcc, balancedaccuracy, ppv, npv, trueskill, markedness]
 cvresult = [mean(measure.(set)) for measure in measures, set in cv2]
 pretty_table(
-        hcat(string.(measures), cvresult);
-        alignment=[:l, :c, :c],
-        backend=Val(:markdown),
-        header=["Measure", "Validation", "Training"],
-        formatters=ft_printf("%5.3f", [2, 3])
+    hcat(string.(measures), cvresult);
+    alignment=[:l, :c, :c],
+    backend=Val(:markdown),
+    header=["Measure", "Validation", "Training"],
+    formatters=ft_printf("%5.3f", [2, 3])
 )
 
 # Quite clearly! Before thinking about the relative importance of variables, we
@@ -144,11 +152,11 @@ varimp = variableimportance(sdm, folds)
 # In relative terms, this is:
 
 pretty_table(
-        hcat(variables(sdm), varimp ./ sum(varimp));
-        alignment=[:l, :c],
-        backend=Val(:markdown),
-        header=["Variable", "Importance"],
-        formatters=(ft_printf("%5.3f", 2), ft_printf("%d", 1))
+    hcat(variables(sdm), varimp ./ sum(varimp));
+    alignment=[:l, :c],
+    backend=Val(:markdown),
+    header=["Variable", "Importance"],
+    formatters=(ft_printf("%5.3f", 2), ft_printf("%d", 1))
 )
 
 # ## Partial response curve
@@ -192,8 +200,8 @@ f = Figure()
 ax = Axis(f[1, 1])
 prx, pry = partialresponse(sdm, 1; inflated=false, threshold=false)
 for i in 1:200
-        ix, iy = partialresponse(sdm, 1; inflated=true, threshold=false)
-        lines!(ax, ix, iy, color=(:grey, 0.5))
+    ix, iy = partialresponse(sdm, 1; inflated=true, threshold=false)
+    lines!(ax, ix, iy, color=(:grey, 0.5))
 end
 lines!(ax, prx, pry, color=:black, linewidth=4)
 current_figure() #hide
@@ -287,11 +295,11 @@ cf = counterfactual(sdm, instance(sdm, inst; strict=false), target, 200.0; thres
 # is:
 
 pretty_table(
-        hcat(variables(sdm), instance(sdm, inst), cf[variables(sdm)]);
-        alignment=[:l, :c, :c],
-        backend=Val(:markdown),
-        header=["Variable", "Obs.", "Counterf."],
-        formatters=(ft_printf("%4.1f", [2, 3]), ft_printf("%d", 1))
+    hcat(variables(sdm), instance(sdm, inst), cf[variables(sdm)]);
+    alignment=[:l, :c, :c],
+    backend=Val(:markdown),
+    header=["Variable", "Obs.", "Counterf."],
+    formatters=(ft_printf("%4.1f", [2, 3]), ft_printf("%d", 1))
 )
 
 # We can check the prediction that would be made on the counterfactual:

@@ -1,5 +1,4 @@
 using Documenter
-using DocumenterVitepress
 using SDeMo
 using Literate
 using CairoMakie
@@ -14,11 +13,9 @@ function replace_current_figure(content)
     # ![](HASH-\\g<title>.png)
 
 
-    # ::: details Code for the figure
+    # !!! details "Code for the figure""
+        \\g<code>save("HASH-\\g<title>.png", current_figure()); #hide
 
-    \\g<code>save("HASH-\\g<title>.png", current_figure()); #hide
-
-    # :::
     """
     replacer = SubstitutionString(replace(replacement_template, "HASH" => fig_hash))
     content = replace(content, matcher => replacer)
@@ -42,7 +39,6 @@ makedocs(
         repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
         devbranch="main",
         devurl="dev",
-        deploy_url="SpeciesDistributionToolkit.jl/SDeMo"
     ),
     modules=[SDeMo],
     pages=[

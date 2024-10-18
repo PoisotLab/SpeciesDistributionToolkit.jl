@@ -1,15 +1,13 @@
 using Documenter
-using DocumenterVitepress
 using Statistics
 using SimpleSDMLayers
 
 makedocs(;
     sitename="SimpleSDMLayers",
-    format=DocumenterVitepress.MarkdownVitepress(
+    format=Documenter.HTML(
         repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
         devbranch="main",
         devurl="dev",
-        deploy_url="SpeciesDistributionToolkit.jl/SimpleSDMLayers"
     ),
     warnonly=true,
     modules=[SimpleSDMLayers],

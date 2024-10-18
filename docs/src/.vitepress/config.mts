@@ -89,6 +89,14 @@ export default defineConfig({
                         {text: "... plot using Makie?", link: "howto/makie/"},
                     ]
                 }
+            ],
+            "/reference/": [
+                {
+                    text: "GBIF",
+                    items: [
+                        {text: "Data", link="/reference/gbif/data/"},
+                    ]
+                }
             ]
         },
         editLink: 'REPLACE_ME_DOCUMENTER_VITEPRESS',

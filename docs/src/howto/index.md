@@ -1,0 +1,3 @@
+# How-to
+
+this section of the manual ...

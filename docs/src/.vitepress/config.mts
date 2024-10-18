@@ -30,7 +30,7 @@ export default defineConfig({
         docFooter: {
             next: false,
             prev: false
-        }
+        },
         logo: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
         search: {
             provider: 'local',

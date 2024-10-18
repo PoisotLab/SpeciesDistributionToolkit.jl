@@ -36,7 +36,14 @@ export default defineConfig({
         },
         nav: [
             { text: 'Index', link: '/index' },
-            { text: 'Manual', link: '/manual' },
+            {
+                text: 'Manual',
+                items: [
+                    {text: "Tutorial", link: "/tutorials"},
+                    {text: "How-to", link: "/howto"},
+                    {text: "Reference", link: "/reference"}
+                ]
+            },
             {
                 text: 'Datasets',
                 items: [
@@ -75,7 +82,30 @@ export default defineConfig({
                 ]
             }
         ],
-        sidebar: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
+        sidebar: {
+            "/howto/": [
+                {
+                    text: "How-to...",
+                    items: [
+                        {text: "... get GBIF data?", link: "howto/get-gbif-data/"},
+                        {text: "... interpolate data?", link: "howto/interpolate/"},
+                        {text: "... list provided layers?", link: "howto/list-provided-layers/"},
+                        {text: "... mask a layer?", link: "howto/mask-layer/"},
+                        {text: "... read part of a layer?", link: "howto/read-part-layer/"},
+                        {text: "... split a layer in tiles?", link: "howto/split-layer/"},
+                        {text: "... plot using Makie?", link: "howto/makie/"},
+                    ]
+                }
+            ],
+            "/reference/": [
+                {
+                    text: "GBIF",
+                    items: [
+                        {text: "Data", link="/reference/gbif/data/"},
+                    ]
+                }
+            ]
+        },
         editLink: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
         socialLinks: [
             { icon: 'github', link: 'REPLACE_ME_DOCUMENTER_VITEPRESS' }

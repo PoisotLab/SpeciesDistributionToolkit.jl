@@ -94,3 +94,11 @@ extrema(filter(!ismissing, [place.date for place in places]))
 
 fields_to_keep = [:key, :publishingCountry, :country, :latitude, :longitude, :date]
 select(DataFrame(places), fields_to_keep)[1:10,:]
+
+# ## Related documentations
+
+# ```@docs; canonical=false
+# GBIF.taxon
+# GBIF.occurrences
+# GBIF.occurrences!
+# ```

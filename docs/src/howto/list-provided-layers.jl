@@ -37,6 +37,10 @@ SimpleSDMDatasets.layerdescriptions(RasterData(CHELSA2, BioClim))
 
 # ## Related documentation
 
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
 # ```@docs; canonical=false
 # RasterDataset
 # RasterProvider

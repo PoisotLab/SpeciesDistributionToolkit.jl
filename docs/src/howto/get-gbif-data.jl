@@ -97,6 +97,10 @@ select(DataFrame(places), fields_to_keep)[1:10,:]
 
 # ## Related documentations
 
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
 # ```@docs; canonical=false
 # GBIF.taxon
 # GBIF.occurrences

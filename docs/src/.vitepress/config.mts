@@ -101,7 +101,7 @@ export default defineConfig({
                 {
                     text: "GBIF",
                     items: [
-                        {text: "Data", link="/reference/gbif/data/"},
+                        {text: "Data", link: "/reference/gbif/data/"},
                     ]
                 }
             ]

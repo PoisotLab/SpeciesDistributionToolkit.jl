@@ -96,7 +96,9 @@ export default defineConfig({
                         {text: "... interpolate data?", link: "/howto/interpolate/"},
                         {text: "... list provided layers?", link: "/howto/list-provided-layers/"},
                         {text: "... mask a layer?", link: "/howto/mask-layer/"},
+                        {text: "... mask with polygons", link: "/howto/mask-polygons/"},
                         {text: "... read part of a layer?", link: "/howto/read-part-layer/"},
+                        {text: "... calculate zonal statistics?", link: "/howto/zonal-statistics/"},
                         {text: "... split a layer in tiles?", link: "/howto/split-layer/"},
                         {text: "... plot using Makie?", link: "/howto/makie/"},
                     ]
@@ -111,8 +113,6 @@ export default defineConfig({
                         {text: "Climate novelty", link: "/tutorials/climatenovelty/"},
                         {text: "Landcover consensus", link: "/tutorials/consensus/"},
                         {text: "Fauxcurrences generation", link: "/tutorials/fauxcurrences/"},
-                        {text: "polygon", link: "/tutorials/polygons/"},
-                        {text: "zonal", link: "/tutorials/zonal/"},
                         {text: "arithmetic", link: "/tutorials/arithmetic/"},
                         {text: "stats", link: "/tutorials/statistics/"},
                         {text: "PA", link: "/tutorials/pseudoabsences/"},

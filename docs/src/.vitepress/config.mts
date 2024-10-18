@@ -27,6 +27,10 @@ export default defineConfig({
     },
     themeConfig: {
         outline: 'deep',
+        docFooter: {
+            next: false,
+            prev: false
+        }
         logo: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
         search: {
             provider: 'local',
@@ -87,6 +91,7 @@ export default defineConfig({
                 {
                     text: "How-to...",
                     items: [
+                        {text: "Index", link: "/howto/"},
                         {text: "... get GBIF data?", link: "/howto/get-gbif-data/"},
                         {text: "... interpolate data?", link: "/howto/interpolate/"},
                         {text: "... list provided layers?", link: "/howto/list-provided-layers/"},
@@ -94,6 +99,25 @@ export default defineConfig({
                         {text: "... read part of a layer?", link: "/howto/read-part-layer/"},
                         {text: "... split a layer in tiles?", link: "/howto/split-layer/"},
                         {text: "... plot using Makie?", link: "/howto/makie/"},
+                    ]
+                }
+            ],
+            "/tutorials/": [
+                {
+                    text: "Tutorials",
+                    items: [
+                        {text: "Index", link: "/tutorials/"},
+                        {text: "Use with SDeMo", link: "/tutorials/sdemo/"},
+                        {text: "Climate novelty", link: "/tutorials/climatenovelty/"},
+                        {text: "Landcover consensus", link: "/tutorials/consensus/"},
+                        {text: "Fauxcurrences generation", link: "/tutorials/fauxcurrences/"},
+                        {text: "polygon", link: "/tutorials/polygons/"},
+                        {text: "zonal", link: "/tutorials/zonal/"},
+                        {text: "arithmetic", link: "/tutorials/arithmetic/"},
+                        {text: "stats", link: "/tutorials/statistics/"},
+                        {text: "PA", link: "/tutorials/pseudoabsences/"},
+                        {text: "bioclim", link: "/tutorials/bioclim/"},
+                        {text: "layers", link: "/tutorials/layers-occ/"},
                     ]
                 }
             ],

@@ -6,8 +6,7 @@ makedocs(
     format=Documenter.HTML(),
     modules=[Phylopic],
     pages=[
-        "Phylopic.jl" => "index.md",
-        "Internals" => "internals.md",
+        "index.md",
     ],
 )
 

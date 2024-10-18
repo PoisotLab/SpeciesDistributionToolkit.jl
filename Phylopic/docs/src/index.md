@@ -1,34 +1,17 @@
-# Integration with the Phylopic API
+# Phylopic
 
-The `Phylopic.jl` package offers a simple wrapper on the [Phylopic](https://www.phylopic.org/) API, to collect silhouettes of species for plots. At the moment, it is a minimal viable product that allows to search for the UUID of images by taxonomic names, then to retrieve the vector file or the thumbnail associated to each image. It also provides the ability to store the credit information for all of the images used in a project.
+## Exported methods
 
-## Finding images by names
-
-```@docs
-Phylopic.autocomplete
-Phylopic.imagesof
+```@autodocs
+Modules = [Phylopic]
+Public = true
+Order = [:function]
 ```
 
-## Retrieving images
+## Non-exported methods
 
-```@docs
-Phylopic.thumbnail
-Phylopic.vector
-Phylopic.twitterimage
-Phylopic.source
-Phylopic.raster
-```
-
-## Additional functions
-
-```@docs
-Phylopic.attribution
-Phylopic.available_resolutions
-```
-
-## API interaction functions
-
-```@docs
-Phylopic.ping
-Phylopic.build
+```@autodocs
+Modules = [Phylopic]
+Private = true
+Order = [:function]
 ```

@@ -1,14 +1,12 @@
 using Documenter
-using DocumenterVitepress
 using OccurrencesInterface
 
 makedocs(
     sitename="OccurrencesInterface",
-    format=DocumenterVitepress.MarkdownVitepress(
+    format=Documenter.HTML(
         repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
         devbranch="main",
         devurl="dev",
-        deploy_url="SpeciesDistributionToolkit.jl/OccurrencesInterface"
     ),
     modules=[OccurrencesInterface],
     pages=[

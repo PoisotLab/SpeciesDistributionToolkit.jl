@@ -35,11 +35,7 @@ end
 
 makedocs(
     sitename="SDeMo",
-    format=DocumenterVitepress.MarkdownVitepress(
-        repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
-        devbranch="main",
-        devurl="dev",
-    ),
+    format=Documenter.HTML(),
     modules=[SDeMo],
     pages=[
         "index.md",

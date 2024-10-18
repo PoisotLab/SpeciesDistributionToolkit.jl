@@ -3,11 +3,7 @@ using Fauxcurrences
 
 makedocs(
     sitename="Fauxcurrences",
-    format=Documenter.HTML(
-        repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
-        devbranch="main",
-        devurl="dev",
-    ),
+    format=Documenter.HTML(),
     modules=[Fauxcurrences],
     pages=[
         "Fauxcurrences.jl" => "index.md",

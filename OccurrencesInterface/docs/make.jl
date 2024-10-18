@@ -3,11 +3,7 @@ using OccurrencesInterface
 
 makedocs(
     sitename="OccurrencesInterface",
-    format=Documenter.HTML(
-        repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
-        devbranch="main",
-        devurl="dev",
-    ),
+    format=Documenter.HTML(),
     modules=[OccurrencesInterface],
     pages=[
         "index.md",

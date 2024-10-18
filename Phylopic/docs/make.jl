@@ -3,11 +3,7 @@ using Phylopic
 
 makedocs(
     sitename="Phylopic",
-    format=Documenter.HTML(
-        repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
-        devbranch="main",
-        devurl="dev",
-    ),
+    format=Documenter.HTML(),
     modules=[Phylopic],
     pages=[
         "Phylopic.jl" => "index.md",

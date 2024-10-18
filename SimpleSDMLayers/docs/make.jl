@@ -4,11 +4,7 @@ using SimpleSDMLayers
 
 makedocs(;
     sitename="SimpleSDMLayers",
-    format=Documenter.HTML(
-        repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
-        devbranch="main",
-        devurl="dev",
-    ),
+    format=Documenter.HTML(),
     warnonly=true,
     modules=[SimpleSDMLayers],
     pages=[

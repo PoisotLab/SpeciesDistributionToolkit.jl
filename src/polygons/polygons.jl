@@ -88,7 +88,7 @@ function SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolyg
 end
 
 """
-    SimpleSDMLayers.mask(records::T, multipolygon::GeoJSON.MultiPolygon) where {T <: AsbtractOccurrence}
+    SimpleSDMLayers.mask(occ::T, multipolygon::GeoJSON.MultiPolygon) where {T <: AsbtractOccurrenceCollection}
 
 Returns a copy of the occurrences that are within the polygon.
 """
@@ -117,7 +117,7 @@ function SimpleSDMLayers.mask(
             end
         end
     end
-    return records.occurrences[findall(inclusion)]
+    return elements(occ)[findall(inclusion)]
 end
 
 SimpleSDMLayers.mask!(layer::SDMLayer, features::GeoJSON.FeatureCollection, feature = 1) =

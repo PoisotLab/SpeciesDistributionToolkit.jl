@@ -131,20 +131,20 @@ export default defineConfig({
                 {
                     text: "Contribute",
                     items: [
-                        {text: "Contribution guidelines", link: "/references/contributing/"},
+                        {text: "Contribution guidelines", link: "/reference/contributing/"},
                         {text: "Discussions", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions"},
                         {text: "Good first issues", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22"},
                         {
                             text: "Changelogs",
                             items: [
-                                {text: "SDT", link: "/references/CHANGELOG/"},
-                                {text: "GBIF", link: "/references/gbif/CHANGELOG/"},
-                                {text: "OccurrencesInterface", link: "/references/occint/CHANGELOG/"},
-                                {text: "Phylopic", link: "/references/phylopic/CHANGELOG/"},
-                                {text: "Fauxcurrences", link: "/references/fauxcurrences/CHANGELOG/"},
-                                {text: "SDeMo", link: "/references/SDeMo/CHANGELOG/"},
-                                {text: "SimpleSDMDatasets", link: "/references/datasets/CHANGELOG/"},
-                                {text: "SimpleSDMLayers", link: "/references/layers/CHANGELOG/"},
+                                {text: "SpeciesDistributionToolkit", link: "/reference/CHANGELOG/"},
+                                {text: "GBIF", link: "/reference/gbif/CHANGELOG/"},
+                                {text: "OccurrencesInterface", link: "/reference/occint/CHANGELOG/"},
+                                {text: "Phylopic", link: "/reference/phylopic/CHANGELOG/"},
+                                {text: "Fauxcurrences", link: "/reference/fauxcurrences/CHANGELOG/"},
+                                {text: "SDeMo", link: "/reference/SDeMo/CHANGELOG/"},
+                                {text: "SimpleSDMDatasets", link: "/reference/datasets/CHANGELOG/"},
+                                {text: "SimpleSDMLayers", link: "/reference/layers/CHANGELOG/"},
                             ]
                         }
                     ]

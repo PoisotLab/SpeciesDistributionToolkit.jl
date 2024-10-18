@@ -127,6 +127,27 @@ export default defineConfig({
                     items: [
                         {text: "Data", link: "/reference/gbif/data/"},
                     ]
+                },
+                {
+                    text: "Contribute",
+                    items: [
+                        {text: "Contribution guidelines", link: "/references/contributing/"},
+                        {text: "Discussions", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions"},
+                        {text: "Good first issues", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22"},
+                        {
+                            text: "Changelogs",
+                            items: [
+                                {text: "SDT", link: "/references/CHANGELOG/"},
+                                {text: "GBIF", link: "/references/gbif/CHANGELOG/"},
+                                {text: "OccurrencesInterface", link: "/references/occint/CHANGELOG/"},
+                                {text: "Phylopic", link: "/references/phylopic/CHANGELOG/"},
+                                {text: "Fauxcurrences", link: "/references/fauxcurrences/CHANGELOG/"},
+                                {text: "SDeMo", link: "/references/SDeMo/CHANGELOG/"},
+                                {text: "SimpleSDMDatasets", link: "/references/datasets/CHANGELOG/"},
+                                {text: "SimpleSDMLayers", link: "/references/layers/CHANGELOG/"},
+                            ]
+                        }
+                    ]
                 }
             ]
         },

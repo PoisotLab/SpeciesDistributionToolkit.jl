@@ -3,7 +3,7 @@ using GBIF
 
 makedocs(;
     sitename="GBIF",
-    format=Document.HTML(
+    format=Documenter.HTML(
         repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
         devbranch="main",
         devurl="dev",

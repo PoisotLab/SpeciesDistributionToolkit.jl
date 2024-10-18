@@ -75,7 +75,9 @@ export default defineConfig({
                 ]
             }
         ],
-        sidebar: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
+        sidebar: {
+            text: "Test"
+        },
         editLink: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
         socialLinks: [
             { icon: 'github', link: 'REPLACE_ME_DOCUMENTER_VITEPRESS' }

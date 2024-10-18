@@ -27,6 +27,10 @@ export default defineConfig({
     },
     themeConfig: {
         outline: 'deep',
+        docFooter: {
+            next: false,
+            prev: false
+        },
         logo: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
         search: {
             provider: 'local',
@@ -36,7 +40,14 @@ export default defineConfig({
         },
         nav: [
             { text: 'Index', link: '/index' },
-            { text: 'Manual', link: '/manual' },
+            {
+                text: 'Manual',
+                items: [
+                    {text: "Tutorial", link: "/tutorials"},
+                    {text: "How-to", link: "/howto"},
+                    {text: "Reference", link: "/reference"}
+                ]
+            },
             {
                 text: 'Datasets',
                 items: [
@@ -75,7 +86,71 @@ export default defineConfig({
                 ]
             }
         ],
-        sidebar: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
+        sidebar: {
+            "/howto/": [
+                {
+                    text: "How-to...",
+                    items: [
+                        {text: "Index", link: "/howto/"},
+                        {text: "... get GBIF data?", link: "/howto/get-gbif-data/"},
+                        {text: "... interpolate data?", link: "/howto/interpolate/"},
+                        {text: "... list provided layers?", link: "/howto/list-provided-layers/"},
+                        {text: "... mask a layer?", link: "/howto/mask-layer/"},
+                        {text: "... mask with polygons", link: "/howto/mask-polygons/"},
+                        {text: "... read part of a layer?", link: "/howto/read-part-layer/"},
+                        {text: "... calculate zonal statistics?", link: "/howto/zonal-statistics/"},
+                        {text: "... split a layer in tiles?", link: "/howto/split-layer/"},
+                        {text: "... plot using Makie?", link: "/howto/makie/"},
+                    ]
+                }
+            ],
+            "/tutorials/": [
+                {
+                    text: "Tutorials",
+                    items: [
+                        {text: "Index", link: "/tutorials/"},
+                        {text: "Use with SDeMo", link: "/tutorials/sdemo/"},
+                        {text: "Climate novelty", link: "/tutorials/climatenovelty/"},
+                        {text: "Landcover consensus", link: "/tutorials/consensus/"},
+                        {text: "Fauxcurrences generation", link: "/tutorials/fauxcurrences/"},
+                        {text: "arithmetic", link: "/tutorials/arithmetic/"},
+                        {text: "stats", link: "/tutorials/statistics/"},
+                        {text: "PA", link: "/tutorials/pseudoabsences/"},
+                        {text: "bioclim", link: "/tutorials/bioclim/"},
+                        {text: "layers", link: "/tutorials/layers-occ/"},
+                    ]
+                }
+            ],
+            "/reference/": [
+                {
+                    text: "GBIF",
+                    items: [
+                        {text: "Data", link: "/reference/gbif/data/"},
+                    ]
+                },
+                {
+                    text: "Contribute",
+                    items: [
+                        {text: "Contribution guidelines", link: "/reference/contributing/"},
+                        {text: "Discussions", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions"},
+                        {text: "Good first issues", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22"},
+                        {
+                            text: "Changelogs",
+                            items: [
+                                {text: "SpeciesDistributionToolkit", link: "/reference/CHANGELOG/"},
+                                {text: "GBIF", link: "/reference/gbif/CHANGELOG/"},
+                                {text: "OccurrencesInterface", link: "/reference/occint/CHANGELOG/"},
+                                {text: "Phylopic", link: "/reference/phylopic/CHANGELOG/"},
+                                {text: "Fauxcurrences", link: "/reference/fauxcurrences/CHANGELOG/"},
+                                {text: "SDeMo", link: "/reference/SDeMo/CHANGELOG/"},
+                                {text: "SimpleSDMDatasets", link: "/reference/datasets/CHANGELOG/"},
+                                {text: "SimpleSDMLayers", link: "/reference/layers/CHANGELOG/"},
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
         editLink: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
         socialLinks: [
             { icon: 'github', link: 'REPLACE_ME_DOCUMENTER_VITEPRESS' }

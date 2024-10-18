@@ -6,6 +6,7 @@ using SpeciesDistributionToolkit
 # Load the rest of the build environment
 using Documenter
 using DocumenterVitepress
+using GeoJSON
 using Literate
 using Markdown
 using InteractiveUtils
@@ -56,41 +57,7 @@ makedocs(;
     format = MarkdownVitepress(;
         repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl",
     ),
-    warnonly = true,
-    pages = [
-        "Manual" => "manual.md",
-        "Tutorials" => [
-            "tutorials/arithmetic.md",
-            "tutorials/statistics.md",
-            "tutorials/consensus.md",
-            "tutorials/layers_and_occurrences.md",
-            "tutorials/bioclim.md",
-            "tutorials/polygons.md",
-            "tutorials/pseudoabsences.md",
-            "tutorials/fauxcurrences.md",
-            "tutorials/futureclimate.md",
-            "tutorials/zonal.md",
-            "tutorials/sdemo.md",
-        ],
-        "How-to..." => [
-            "howto/get_gbif_data.md",
-            "howto/know_layers_provided.md",
-            "howto/read_part_layer.md",
-            "howto/mask_a_layer.md",
-            "howto/split_a_layer.md",
-            "howto/interpolate.md",
-            "howto/makie.md",
-        ],
-        "Documentation" => [
-            "manual/contributing.md",
-            "manual/index.md",
-            "manual/gbif.jl.md",
-            "manual/pseudoabsences.md",
-            "manual/polygons.md",
-            "manual/gadm.md",
-            "manual/utilities.md"
-        ],
-    ],
+    warnonly = true
 )
 
 deploydocs(;

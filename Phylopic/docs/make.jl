@@ -1,19 +1,12 @@
 using Documenter
-using DocumenterVitepress
 using Phylopic
 
 makedocs(
     sitename="Phylopic",
-    format=DocumenterVitepress.MarkdownVitepress(
-        repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
-        devbranch="main",
-        devurl="dev",
-        deploy_url="SpeciesDistributionToolkit.jl/Phylopic"
-    ),
+    format=Documenter.HTML(),
     modules=[Phylopic],
     pages=[
-        "Phylopic.jl" => "index.md",
-        "Internals" => "internals.md",
+        "index.md",
     ],
 )
 

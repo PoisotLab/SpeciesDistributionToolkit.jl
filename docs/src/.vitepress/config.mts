@@ -76,7 +76,20 @@ export default defineConfig({
             }
         ],
         sidebar: {
-            text: "Test"
+            "/howto/": [
+                {
+                    text: "How-to...",
+                    items: [
+                        {text: "... get GBIF data?", link: "howto/get-gbif-data/"},
+                        {text: "... interpolate data?", link: "howto/interpolate/"},
+                        {text: "... list provided layers?", link: "howto/list-provided-layers/"},
+                        {text: "... mask a layer?", link: "howto/mask-layer/"},
+                        {text: "... read part of a layer?", link: "howto/read-part-layer/"},
+                        {text: "... split a layer in tiles?", link: "howto/split-layer/"},
+                        {text: "... plot using Makie?", link: "howto/makie/"},
+                    ]
+                }
+            ]
         },
         editLink: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
         socialLinks: [

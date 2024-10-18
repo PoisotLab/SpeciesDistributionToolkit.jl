@@ -1,14 +1,12 @@
 using Documenter
-using DocumenterVitepress
 using GBIF
 
 makedocs(;
     sitename="GBIF",
-    format=DocumenterVitepress.MarkdownVitepress(
+    format=Document.HTML(
         repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
         devbranch="main",
         devurl="dev",
-        deploy_url="SpeciesDistributionToolkit.jl/GBIF"
     ),
     modules=[GBIF],
     pages=[

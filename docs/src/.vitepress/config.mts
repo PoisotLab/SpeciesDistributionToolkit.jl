@@ -203,7 +203,7 @@ export default defineConfig({
                         {text: "Operations", link: "/reference/layers/operations/"},
                         {text: "Changelog", link: "/reference/layers/CHANGELOG/"},
                     ]
-                }
+                },
                 {
                     text: "Contribute",
                     items: [

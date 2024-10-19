@@ -115,13 +115,27 @@ export default defineConfig({
                         {text: "Building the BIOCLIM model", link: "/tutorials/bioclim/"},
                         {text: "Generating a landcover consensus", link: "/tutorials/consensus/"},
                         {text: "Generating fauxcurrences", link: "/tutorials/fauxcurrences/"},
-                        {text: "Using wit the SDeMo package", link: "/tutorials/sdemo/"},
+                        {text: "Training SDMs with SDeMo", link: "/tutorials/sdemo-introduction/"},
+                        {text: "Mapping SDMs with SDeMo", link: "/tutorials/sdemo-vignette/"},
                     ]
                 }
             ],
             "/reference/": [
                 {
+                    text: "SpeciesDistributionToolkit",
+                    collapsed: true,
+                    items: [
+                        {text: "Documentation", link: "/reference/"},
+                        {text: "GADM", link: "/reference/sdt/gadm/"},
+                        {text: "Polygons", link: "/reference/sdt/gadm/"},
+                        {text: "Pseudoabsences", link: "/reference/sdt/pseudoabsences/"},
+                        {text: "GBIF", link: "/reference/sdt/gbif/"},
+                        {text: "Changelog", link: "/reference/CHANGELOG/"},
+                    ]
+                },
+                {
                     text: "GBIF",
+                    collapsed: true,
                     items: [
                         {text: "Documentation", link: "/reference/gbif/"},
                         {text: "Types", link: "/reference/gbif/types/"},
@@ -133,18 +147,23 @@ export default defineConfig({
                 },
                 {
                     text: "OccurrencesInterface",
+                    collapsed: true,
                     items: [
+                        {text: "Documentation", link: "/reference/occint/"},
                         {text: "Changelog", link: "/reference/occint/CHANGELOG/"},
                     ]
                 },
                 {
                     text: "Phylopic",
+                    collapsed: true,
                     items: [
+                        {text: "Documentation", link: "/reference/phylopic/"},
                         {text: "Changelog", link: "/reference/phylopic/CHANGELOG/"},
                     ]
                 },
                 {
                     text: "Fauxcurrences",
+                    collapsed: true,
                     items: [
                         {text: "Documentation", link: "/reference/fauxcurrences/"},
                         {text: "Changelog", link: "/reference/fauxcurrences/CHANGELOG/"},
@@ -152,24 +171,46 @@ export default defineConfig({
                 },
                 {
                     text: "SDeMo",
+                    collapsed: true,
                     items: [
+                        {text: "Documentation", link: "/reference/sdemo/"},
+                        {text: "Models", link: "/reference/sdemo/models/"},
+                        {text: "Ensembles", link: "/reference/sdemo/ensembles/"},
+                        {text: "Saving", link: "/reference/sdemo/saving/"},
+                        {text: "Cross-validation", link: "/reference/sdemo/crossvalidation/"},
+                        {text: "Feature selection", link: "/reference/sdemo/features/"},
+                        {text: "Explanations", link: "/reference/sdemo/explanations/"},
                         {text: "Changelog", link: "/reference/sdemo/CHANGELOG/"},
                     ]
                 },
                 {
+                    text: "SimpleSDMDatasets",
+                    collapsed: true,
+                    items: [
+                        {text: "Documentation", link: "/reference/datasets/"},
+                        {text: "Interface", link: "/reference/datasets/interface/"},
+                        {text: "Types", link: "/reference/datasets/types/"},
+                        {text: "Internal", link: "/reference/datasets/internals/"},
+                        {text: "Changelog", link: "/reference/datasets/CHANGELOG/"},
+                    ]
+                },
+                {
+                    text: "SimpleSDMLayers",
+                    collapsed: true,
+                    items: [
+                        {text: "Documentation", link: "/reference/layers/"},
+                        {text: "Types", link: "/reference/layers/types/"},
+                        {text: "Operations", link: "/reference/layers/operations/"},
+                        {text: "Changelog", link: "/reference/layers/CHANGELOG/"},
+                    ]
+                }
+                {
                     text: "Contribute",
                     items: [
+                        {text: "Code of Conduct", link: "/reference/code-of-conduct/"},
                         {text: "Contribution guidelines", link: "/reference/contributing/"},
                         {text: "Discussions", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions"},
                         {text: "Good first issues", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22"},
-                        {
-                            text: "Changelogs",
-                            items: [
-                                {text: "SpeciesDistributionToolkit", link: "/reference/CHANGELOG/"},
-                                {text: "SimpleSDMDatasets", link: "/reference/datasets/CHANGELOG/"},
-                                {text: "SimpleSDMLayers", link: "/reference/layers/CHANGELOG/"},
-                            ]
-                        }
                     ]
                 }
             ]

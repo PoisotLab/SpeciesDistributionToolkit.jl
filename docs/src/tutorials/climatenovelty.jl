@@ -22,7 +22,7 @@ import Dates
 # In order to only load a reasonable amount of data, we will specify a bounding box for the
 # area we are interested in:
 
-spatial_extent = (left = -24.62, bottom = 63.13, right = -13.39, top = 66.80)
+spatial_extent = (left = 23.42, bottom = 34.75, right = 26.41, top = 35.74)
 
 # Note that the bounding box is given in WGS84. Although layers can use any projection, we
 # follow the GeoJSON specification and use WGS84 for point data. This includes species

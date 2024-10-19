@@ -128,12 +128,32 @@ export default defineConfig({
                         {text: "Data", link: "/reference/gbif/data/"},
                         {text: "Enumerated values", link: "/reference/gbif/enumerated/"},
                         {text: "Internals", link: "/reference/gbif/internals/"},
+                        {text: "Changelog", link: "/reference/gbif/CHANGELOG/"},
+                    ]
+                },
+                {
+                    text: "OccurrencesInterface",
+                    items: [
+                        {text: "Changelog", link: "/reference/occint/CHANGELOG/"},
+                    ]
+                },
+                {
+                    text: "Phylopic",
+                    items: [
+                        {text: "Changelog", link: "/reference/phylopic/CHANGELOG/"},
                     ]
                 },
                 {
                     text: "Fauxcurrences",
                     items: [
                         {text: "Documentation", link: "/reference/fauxcurrences/"},
+                        {text: "Changelog", link: "/reference/fauxcurrences/CHANGELOG/"},
+                    ]
+                },
+                {
+                    text: "SDeMo",
+                    items: [
+                        {text: "Changelog", link: "/reference/sdemo/CHANGELOG/"},
                     ]
                 },
                 {
@@ -146,11 +166,6 @@ export default defineConfig({
                             text: "Changelogs",
                             items: [
                                 {text: "SpeciesDistributionToolkit", link: "/reference/CHANGELOG/"},
-                                {text: "GBIF", link: "/reference/gbif/CHANGELOG/"},
-                                {text: "OccurrencesInterface", link: "/reference/occint/CHANGELOG/"},
-                                {text: "Phylopic", link: "/reference/phylopic/CHANGELOG/"},
-                                {text: "Fauxcurrences", link: "/reference/fauxcurrences/CHANGELOG/"},
-                                {text: "SDeMo", link: "/reference/SDeMo/CHANGELOG/"},
                                 {text: "SimpleSDMDatasets", link: "/reference/datasets/CHANGELOG/"},
                                 {text: "SimpleSDMLayers", link: "/reference/layers/CHANGELOG/"},
                             ]

@@ -91,16 +91,19 @@ export default defineConfig({
                 {
                     text: "How-to...",
                     items: [
-                        {text: "Index", link: "/howto/"},
                         {text: "... get GBIF data?", link: "/howto/get-gbif-data/"},
                         {text: "... interpolate data?", link: "/howto/interpolate/"},
                         {text: "... list provided layers?", link: "/howto/list-provided-layers/"},
+                        {text: "... do arithmetic on layers?", link: "/howto/layer-arithmetic/"},
                         {text: "... mask a layer?", link: "/howto/mask-layer/"},
                         {text: "... mask with polygons", link: "/howto/mask-polygons/"},
                         {text: "... read part of a layer?", link: "/howto/read-part-layer/"},
+                        {text: "... calculate statistics on layers?", link: "/howto/layer-statistics/"},
                         {text: "... calculate zonal statistics?", link: "/howto/zonal-statistics/"},
+                        {text: "... generate pseudo-absences?", link: "/howto/pseudoabsences/"},
                         {text: "... split a layer in tiles?", link: "/howto/split-layer/"},
                         {text: "... plot using Makie?", link: "/howto/makie/"},
+                        {text: "... index layers by occurrences?", link: "/howto/layer-occurrences/"},
                     ]
                 }
             ],
@@ -108,16 +111,11 @@ export default defineConfig({
                 {
                     text: "Tutorials",
                     items: [
-                        {text: "Index", link: "/tutorials/"},
-                        {text: "Use with SDeMo", link: "/tutorials/sdemo/"},
-                        {text: "Climate novelty", link: "/tutorials/climatenovelty/"},
-                        {text: "Landcover consensus", link: "/tutorials/consensus/"},
-                        {text: "Fauxcurrences generation", link: "/tutorials/fauxcurrences/"},
-                        {text: "arithmetic", link: "/tutorials/arithmetic/"},
-                        {text: "stats", link: "/tutorials/statistics/"},
-                        {text: "PA", link: "/tutorials/pseudoabsences/"},
-                        {text: "bioclim", link: "/tutorials/bioclim/"},
-                        {text: "layers", link: "/tutorials/layers-occ/"},
+                        {text: "Calculating climate novelty", link: "/tutorials/climatenovelty/"},
+                        {text: "Building the BIOCLIM model", link: "/tutorials/bioclim/"},
+                        {text: "Generating a landcover consensus", link: "/tutorials/consensus/"},
+                        {text: "Generating fauxcurrences", link: "/tutorials/fauxcurrences/"},
+                        {text: "Using wit the SDeMo package", link: "/tutorials/sdemo/"},
                     ]
                 }
             ],
@@ -125,7 +123,17 @@ export default defineConfig({
                 {
                     text: "GBIF",
                     items: [
+                        {text: "Documentation", link: "/reference/gbif/"},
+                        {text: "Types", link: "/reference/gbif/types/"},
                         {text: "Data", link: "/reference/gbif/data/"},
+                        {text: "Enumerated values", link: "/reference/gbif/enumerated/"},
+                        {text: "Internals", link: "/reference/gbif/internals/"},
+                    ]
+                },
+                {
+                    text: "Fauxcurrences",
+                    items: [
+                        {text: "Documentation", link: "/reference/fauxcurrences/"},
                     ]
                 },
                 {

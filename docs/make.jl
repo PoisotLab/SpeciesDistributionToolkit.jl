@@ -11,6 +11,7 @@ using Literate
 using Markdown
 using InteractiveUtils
 using Dates
+using PrettyTables
 
 # Generate a report card for each known dataset
 include("dataset_report.jl")
@@ -57,7 +58,7 @@ makedocs(;
     format = MarkdownVitepress(;
         repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl",
     ),
-    warnonly = true
+    warnonly = true,
 )
 
 deploydocs(;

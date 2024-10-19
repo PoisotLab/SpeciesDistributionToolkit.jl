@@ -11,7 +11,7 @@
 
 # ## Setting up the environment
 
-using SDeMo
+using SpeciesDistributionToolkit
 using Statistics
 using CairoMakie
 using PrettyTables

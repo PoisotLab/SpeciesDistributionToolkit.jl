@@ -1,7 +1,7 @@
 name = "Fauxcurrences"
 uuid = "a2d61402-033a-4ca9-aef4-652d70cf7c9c"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "0.2.0"
+version = "1.0.0"
 
 [deps]
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
@@ -13,6 +13,7 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
 Distances = "0.10"
+OccurrencesInterface = "1.0.0"
 SimpleSDMLayers = "1"
 Statistics = "1"
 StatsBase = "0.34"

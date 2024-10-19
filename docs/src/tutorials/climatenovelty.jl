@@ -143,15 +143,18 @@ cr_projected = (projected .- μ) ./ σ;
 
 Δclim = similar(cr_historical[1])
 
-# And then, we can loop over the positions to find the minimum distance:
+# And then, we can loop over the positions to find the minimum distance. To speed up the
+# calculation, we will store the values of the projected layers in their own objects first:
+
+vals = values.(cr_projected)
 
 for position in keys(cr_historical[1])
-    dtemp = (cr_historical[1][position] .- values(cr_projected[1])) .^ 2.0
-    dprec = (cr_historical[2][position] .- values(cr_projected[2])) .^ 2.0
+    dtemp = (cr_historical[1][position] .- vals[1]) .^ 2.0
+    dprec = (cr_historical[2][position] .- vals[2]) .^ 2.0
     Δclim[position] = minimum(sqrt.(dtemp .+ dprec))
 end
 
-# Because we have stored this information directly inside the raster, we can
+# Because we have stored the information about the smallest possible distance directly inside the raster, we can
 # plot it. Large values on this map indicate that this area will experience more novel
 # climatic conditions under the scenario/model we have specified.
 

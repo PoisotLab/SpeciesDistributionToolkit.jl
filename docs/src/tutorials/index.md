@@ -12,3 +12,8 @@ presented on the pages. Pay attention to the output of each step, and do not hes
 turn to the "Reference" section of the manual.
 
 :::
+
+It is a good idea to read the tutorials first; they are designed to give a sense of what
+using the package is like, and most of them involve functions from all the component
+packages. If you have a good use case that you wonder how to achieve with the package, feel
+free to [share it](https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions/categories/ideas) on the Discussion page, so we can turn it into a tutorial!

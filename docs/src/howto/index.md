@@ -12,3 +12,9 @@ find some inspiration in the "Tutorials" section of the manual. For more informa
 all arguments, refer to the "Reference" section.
 
 :::
+
+Several "How-to" pages end with a list of documentation of the most important functions
+used. This is not intended to replace the "Reference" section of the manual, but instead to
+give you a quick reference for core operations.
+
+If you have a question about how to achieve a specific task, feel free to [share it](https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions/categories/ideas) in the Discussion page, so we can turn it into a How to!

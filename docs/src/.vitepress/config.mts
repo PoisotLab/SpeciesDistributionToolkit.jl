@@ -43,7 +43,7 @@ export default defineConfig({
             {
                 text: 'Manual',
                 items: [
-                    {text: "Tutorial", link: "/tutorials"},
+                    {text: "Tutorials", link: "/tutorials"},
                     {text: "How-to", link: "/howto"},
                     {text: "Reference", link: "/reference"}
                 ]

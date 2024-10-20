@@ -88,3 +88,7 @@ current_figure() #hide
 # The `SDMLayer` type stores a `BitMatrix` (in the `indices` field) that tracks
 # which cells in the raster are visible. This costs a little more memory, but
 # allows to rapidly turn pixels on and off.
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```

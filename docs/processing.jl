@@ -28,7 +28,6 @@ function pre_collapse_figure(content)
 end
 
 function post_extract_table(content)
-    @info "LOLOLOLOL"
     matcher = r"^`+$\n(?<table>(^\|.+\|$\n)+)\n`+$"m
     replacer = """
     \\g<table>

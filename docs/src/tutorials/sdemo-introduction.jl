@@ -173,7 +173,7 @@ pretty_table(
 # curves. For example, we can look at the predictions of the model between 5 and
 # 15 degrees:
 
-prx, pry = partialresponse(sdm, 1, LinRange(5.0, 15.0, 100); threshold = false)
+prx, pry = partialresponse(sdm, 1, LinRange(5.0, 15.0, 100); threshold = false);
 
 # Note that we use `threshold=false` to make sure that we look at the score that
 # is returned by the classifier, and not the thresholded version.
@@ -189,7 +189,9 @@ current_figure() #hide
 
 prx, pry, prz = partialresponse(sdm, variables(sdm)[1:2]..., (100, 100); threshold = false);
 
-#-
+# Note that the last element returned in this case is a two-dimensional array, as it makes
+# sense to visualize the result as a heatmap. Although the idea of a the partial response
+# curves generalizes to more than two dimensions, it is not supported by the package.
 
 # fig-partialresp-surface
 f = Figure()
@@ -231,6 +233,7 @@ uncert = predict(ensemble; consensus = iqr, threshold = false);
 
 # fig-uncert-hist
 hist(uncert; color = :grey, axis = (; xlabel = "Uncertainty (IQR)"))
+current_figure() #hide
 
 # ## Heterogeneous ensembles
 

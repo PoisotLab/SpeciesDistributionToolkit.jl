@@ -6,10 +6,7 @@ makedocs(;
     format=Documenter.HTML(),
     modules=[SimpleSDMDatasets],
     pages=[
-        "Index" => "index.md",
-        "Interface" => "interface.md",
-        "Types" => "types.md",
-        "Internals" => "internals.md",
+        "index.md"
     ],
 )
 

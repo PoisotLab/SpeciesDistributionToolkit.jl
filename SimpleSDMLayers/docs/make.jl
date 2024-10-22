@@ -1,5 +1,4 @@
 using Documenter
-using Statistics
 using SimpleSDMLayers
 
 makedocs(;
@@ -9,8 +8,6 @@ makedocs(;
     modules=[SimpleSDMLayers],
     pages=[
         "index.md",
-        "types.md",
-        "operations.md",
     ],
 )
 

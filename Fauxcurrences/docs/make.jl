@@ -6,7 +6,7 @@ makedocs(
     format=Documenter.HTML(),
     modules=[Fauxcurrences],
     pages=[
-        "Fauxcurrences.jl" => "index.md",
+        "index.md"
     ],
 )
 

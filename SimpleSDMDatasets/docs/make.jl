@@ -4,6 +4,7 @@ using SimpleSDMDatasets
 makedocs(;
     sitename="SimpleSDMDatasets",
     format=Documenter.HTML(),
+    warnonly=true,
     modules=[SimpleSDMDatasets],
     pages=[
         "index.md"

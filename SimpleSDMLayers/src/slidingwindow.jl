@@ -79,10 +79,3 @@ function slidingwindow!(destination::SDMLayer, f::Function, layer::SDMLayer; rad
     return destination
 end
 
-#=
-layer = SDMLayer(RasterData(BiodiversityMapping, BirdRichness); top=0, bottom=-1_000_000, right=-5_000_000, left=-6_000_000)
-using Statistics
-stdric = slidingwindow(std, layer; radius=100.0)
-avgric = slidingwindow(mean, layer; radius=100.0)
-zric = (layer .- avgric)./stdric
-=#

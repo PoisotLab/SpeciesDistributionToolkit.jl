@@ -1,8 +1,8 @@
 """
     trim(layer::SDMLayer)
 
-Returns a layer in which there are no empty rows/columns around the valued cell.
-This returns a *new* object.
+Returns a layer in which there are no empty rows/columns around the valued cells.
+This returns a *new* object. This will only remove the *terminal* empty rows/columns, so that gaps *inside* the layer are not affected.
 """
 function trim(layer::SDMLayer)
     nx = vec(sum(layer.indices; dims = 1))
@@ -27,7 +27,7 @@ end
     trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT}
 
 Return a trimmed version of a layer, according to the feature defined a
-`GeoJSON` object.
+`GeoJSON` object. The object is first masked according to the `feature`, and then trimmed.
 """
 trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT} =
     trim(mask!(copy(layer), feature))
@@ -70,6 +70,8 @@ end
 
 """
     SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolygon)
+
+Turns of fall the cells outside the polygon (or within holes in the polygon). This modifies the object.
 """
 function SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolygon)
     inclusion = zeros(eltype(layer.indices), size(layer))
@@ -86,21 +88,26 @@ function SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolyg
 end
 
 """
-    SimpleSDMLayers.mask(records::GBIFRecords, multipolygon::GeoJSON.MultiPolygon)
+    SimpleSDMLayers.mask(occ::T, multipolygon::GeoJSON.MultiPolygon) where {T <: AsbtractOccurrenceCollection}
+
+Returns a copy of the occurrences that are within the polygon.
 """
-function SimpleSDMLayers.mask(records::GBIFRecords, multipolygon::GeoJSON.MultiPolygon)
-    inclusion = zeros(Bool, length(records))
+function SimpleSDMLayers.mask(
+    occ::T,
+    multipolygon::GeoJSON.MultiPolygon,
+) where {T <: AbstractOccurrenceCollection}
+    inclusion = zeros(Bool, length(elements(occ)))
     for element in multipolygon
-        for i in eachindex(inclusion)
+        for i in eachindex(elements(occ))
             if PolygonOps.inpolygon(
-                (records[i].longitude, records[i].latitude),
+                place(occ)[i],
                 element[1],
             ) != 0
                 inclusion[i] = true
                 if length(element) > 2
                     for i in 2:length(element)
                         if PolygonOps.inpolygon(
-                            (records[i].longitude, records[i].latitude),
+                            place(occ)[i],
                             element[i],
                         ) != 0
                             inclusion[i] = false
@@ -110,10 +117,21 @@ function SimpleSDMLayers.mask(records::GBIFRecords, multipolygon::GeoJSON.MultiP
             end
         end
     end
-    return records.occurrences[findall(inclusion)]
+    return elements(occ)[findall(inclusion)]
 end
 
-SimpleSDMLayers.mask!(layer::SDMLayer, features::GeoJSON.FeatureCollection, feature=1) = mask!(layer, features[feature])
-SimpleSDMLayers.mask(gbif::GBIFRecords, features::GeoJSON.FeatureCollection, feature=1) = mask(gbif, features[feature])
-SimpleSDMLayers.mask!(layer::SDMLayer, feature::GeoJSON.Feature) = mask!(layer, feature.geometry)
-SimpleSDMLayers.mask(gbif::GBIFRecords, feature::GeoJSON.Feature) = mask(gbif, feature.geometry)
+SimpleSDMLayers.mask!(layer::SDMLayer, features::GeoJSON.FeatureCollection, feature = 1) =
+    mask!(layer, features[feature])
+SimpleSDMLayers.mask(
+    occ::T,
+    features::GeoJSON.FeatureCollection,
+    feature = 1,
+) where {T <: AbstractOccurrenceCollection} =
+    mask(occ, features[feature])
+SimpleSDMLayers.mask!(layer::SDMLayer, feature::GeoJSON.Feature) =
+    mask!(layer, feature.geometry)
+SimpleSDMLayers.mask(
+    occ::T,
+    feature::GeoJSON.Feature,
+) where {T <: AbstractOccurrenceCollection} =
+    mask(occ, feature.geometry)

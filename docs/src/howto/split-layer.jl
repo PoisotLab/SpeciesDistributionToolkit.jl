@@ -45,3 +45,8 @@ current_figure() #hide
 
 # This construct is very useful when your problem lends itself to naive
 # parallelism.
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+

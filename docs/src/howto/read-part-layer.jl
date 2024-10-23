@@ -60,3 +60,8 @@ current_figure() #hide
 # Note that the definition of the bounding box is that *all of the content in
 # the bounding box* is included in the final layer, even if it results in some
 # values *outside* the bounding box being included as well.
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+

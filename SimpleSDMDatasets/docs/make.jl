@@ -1,21 +1,13 @@
 using Documenter
-using DocumenterVitepress
 using SimpleSDMDatasets
 
 makedocs(;
     sitename="SimpleSDMDatasets",
-    format=DocumenterVitepress.MarkdownVitepress(
-        repo="github.com/PoisotLab/SpeciesDistributionToolkit.jl",
-        devbranch="main",
-        devurl="dev",
-        deploy_url="SpeciesDistributionToolkit.jl/SimpleSDMDatasets"
-    ),
+    format=Documenter.HTML(),
+    warnonly=true,
     modules=[SimpleSDMDatasets],
     pages=[
-        "Index" => "index.md",
-        "Interface" => "interface.md",
-        "Types" => "types.md",
-        "Internals" => "internals.md",
+        "index.md"
     ],
 )
 

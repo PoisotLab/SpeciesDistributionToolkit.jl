@@ -1,7 +1,15 @@
 """
     SimpleSDMLayers.mosaic(f, layer, polygons)
+
+Overload of the mosaic function where the layer is split according to the polygons given as the last argument, and then the function `f` is applied to all the zones defined this way. The `f` function can take both positional and keyword arguments.
 """
-function SimpleSDMLayers.mosaic(f, layer::SDMLayer, polygons::Vector{T}, args...; kwargs...) where {T <: GeoJSON.GeoJSONT}
+function SimpleSDMLayers.mosaic(
+    f,
+    layer::SDMLayer,
+    polygons::Vector{T},
+    args...;
+    kwargs...,
+) where {T <: GeoJSON.GeoJSONT}
     rtype = eltype(f(layer, args...; kwargs...))
     out = zeros(layer, rtype)
     zones = [mask!(copy(layer), poly) for poly in polygons]

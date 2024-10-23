@@ -74,17 +74,10 @@ measures = [mcc, balancedaccuracy, ppv, npv, trueskill, markedness]
 cvresult = [measure(set) for measure in measures, set in cv]
 pretty_table(
     hcat(string.(measures), cvresult);
-<<<<<<< HEAD:SDeMo/docs/src/demo.jl
-    alignment=[:l, :c, :c],
-    backend=Val(:markdown),
-    header=["Measure", "Validation", "Training"],
-    formatters=ft_printf("%5.3f", [2, 3])
-=======
     alignment = [:l, :c, :c],
     backend = Val(:markdown),
     header = ["Measure", "Validation", "Training"],
     formatters = ft_printf("%5.3f", [2, 3]),
->>>>>>> 1614b5cad4fbc0eed0475959d4cd93bddfa312bd:docs/src/tutorials/sdemo-introduction.jl
 )
 
 # By default, calling a function to measure model performance (the full list is in the
@@ -126,17 +119,10 @@ measures = [mcc, balancedaccuracy, ppv, npv, trueskill, markedness]
 cvresult = [measure(set) for measure in measures, set in cv2]
 pretty_table(
     hcat(string.(measures), cvresult);
-<<<<<<< HEAD:SDeMo/docs/src/demo.jl
-    alignment=[:l, :c, :c],
-    backend=Val(:markdown),
-    header=["Measure", "Validation", "Training"],
-    formatters=ft_printf("%5.3f", [2, 3])
-=======
     alignment = [:l, :c, :c],
     backend = Val(:markdown),
     header = ["Measure", "Validation", "Training"],
     formatters = ft_printf("%5.3f", [2, 3]),
->>>>>>> 1614b5cad4fbc0eed0475959d4cd93bddfa312bd:docs/src/tutorials/sdemo-introduction.jl
 )
 
 # Quite clearly! Before thinking about the relative importance of variables, we
@@ -186,17 +172,10 @@ varimp = variableimportance(sdm, folds)
 
 pretty_table(
     hcat(variables(sdm), varimp ./ sum(varimp));
-<<<<<<< HEAD:SDeMo/docs/src/demo.jl
-    alignment=[:l, :c],
-    backend=Val(:markdown),
-    header=["Variable", "Importance"],
-    formatters=(ft_printf("%5.3f", 2), ft_printf("%d", 1))
-=======
     alignment = [:l, :c],
     backend = Val(:markdown),
     header = ["Variable", "Importance"],
     formatters = (ft_printf("%5.3f", 2), ft_printf("%d", 1)),
->>>>>>> 1614b5cad4fbc0eed0475959d4cd93bddfa312bd:docs/src/tutorials/sdemo-introduction.jl
 )
 
 # ## Partial response curve
@@ -242,13 +221,8 @@ f = Figure()
 ax = Axis(f[1, 1])
 prx, pry = partialresponse(sdm, 1; inflated = false, threshold = false)
 for i in 1:200
-<<<<<<< HEAD:SDeMo/docs/src/demo.jl
-    ix, iy = partialresponse(sdm, 1; inflated=true, threshold=false)
-    lines!(ax, ix, iy, color=(:grey, 0.5))
-=======
     ix, iy = partialresponse(sdm, 1; inflated = true, threshold = false)
     lines!(ax, ix, iy; color = (:grey, 0.5))
->>>>>>> 1614b5cad4fbc0eed0475959d4cd93bddfa312bd:docs/src/tutorials/sdemo-introduction.jl
 end
 lines!(ax, prx, pry; color = :black, linewidth = 4)
 current_figure() #hide
@@ -350,17 +324,10 @@ cf = counterfactual(
 
 pretty_table(
     hcat(variables(sdm), instance(sdm, inst), cf[variables(sdm)]);
-<<<<<<< HEAD:SDeMo/docs/src/demo.jl
-    alignment=[:l, :c, :c],
-    backend=Val(:markdown),
-    header=["Variable", "Obs.", "Counterf."],
-    formatters=(ft_printf("%4.1f", [2, 3]), ft_printf("%d", 1))
-=======
     alignment = [:l, :c, :c],
     backend = Val(:markdown),
     header = ["Variable", "Obs.", "Counterf."],
     formatters = (ft_printf("%4.1f", [2, 3]), ft_printf("%d", 1)),
->>>>>>> 1614b5cad4fbc0eed0475959d4cd93bddfa312bd:docs/src/tutorials/sdemo-introduction.jl
 )
 
 # We can check the prediction that would be made on the counterfactual:

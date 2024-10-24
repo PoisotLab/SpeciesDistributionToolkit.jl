@@ -21,6 +21,7 @@ export Transformer, Classifier
 export SDM
 export threshold, features, labels, variables, instance
 export threshold!, variables!
+export classifier, transformer
 
 # Univariate transforms
 include("transformers/univariate.jl")

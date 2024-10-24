@@ -7,5 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- Added, Changed, Deprecated, Removed, Fixed -->
 
-## [Unreleased]
+## `v0.0.8`
+
+### Added
+
+- The transformers are trained on presence data only by default
+- The `transformer` and `classifier` methods give direct access to the transformer and
+classifier of `SDM` and `Bagging`
 

@@ -1,34 +1,7 @@
-# Tools for SDM demos and education
+# SDeMo
 
-## The prediction pipeline
-
-```@docs
-AbstractSDM
-AbstractEnsembleSDM
+```@autodocs
+Modules = [SDeMo]
+Order   = [:function, :type]
 ```
 
-```@docs
-SDM
-Transformer
-Classifier
-```
-
-### Utility functions
-
-```@docs
-features
-labels
-threshold
-threshold!
-variables
-variables!
-instance
-```
-
-### Training and predicting
-
-```@docs
-train!
-predict
-reset!
-```

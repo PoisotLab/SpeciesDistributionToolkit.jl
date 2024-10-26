@@ -37,3 +37,7 @@ current_figure() #hide
 # a layer to something compatible with another layer.
 #
 # :::
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```

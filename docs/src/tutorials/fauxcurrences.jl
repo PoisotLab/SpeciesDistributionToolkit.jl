@@ -4,7 +4,9 @@ using SpeciesDistributionToolkit
 import Random
 using CairoMakie
 Random.seed!(616525434012345) #hide
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
+CairoMakie.activate!(; px_per_unit = 3) #hide
+
+# ## Getting observed occurrence data
 
 # Get the observation data in the correct format, which is an array of matrices
 # with two rows (longitude, latitude) and one column for observed occurrence.
@@ -33,7 +35,7 @@ observations = [
 
 obs = [Fauxcurrences.get_valid_coordinates(o, layer) for o in observations];
 
-#-
+# The observed data are distributed this way:
 
 # fig-observations
 heatmap(layer; colormap = [:white, :gray])
@@ -41,6 +43,8 @@ for i in eachindex(taxa)
     scatter!(obs[i]; label = taxa[i].name)
 end
 current_figure() #hide
+
+# ## Preparing the run
 
 # We need to decide on the number of points (pseudo-occurrences) to generate,
 # and the weight matrix. The number of points to generate is, by default, the
@@ -78,6 +82,8 @@ obs_intra, obs_inter, sim_intra, sim_inter =
 
 Fauxcurrences.measure_intraspecific_distances!(obs_intra, obs);
 Fauxcurrences.measure_interspecific_distances!(obs_inter, obs);
+
+# ## Bootstrapping an initial proposal
 
 # When the intra/inter specific distances are known, we can pre-allocate the
 # objects to store the simulated coordinates, and then bootstrap a set of
@@ -128,6 +134,8 @@ for i in eachindex(taxa)
     scatter!(sim[i]; label = taxa[i].name)
 end
 current_figure() #hide
+
+# ## Generating the fauxcurrences
 
 # We can now setup the actual run. This step has infinitely many variations, as
 # `Fauxcurrences` only offers a method to perform *a single step forward*. In
@@ -190,6 +198,8 @@ end
 # this step will be taking a little while. This is because, assuming we want *n*
 # points for *r* species, each step has a complexity on the order of *rn²*,
 # which isn't terribly good.
+
+# ## Analyzing the fauxcurrences
 
 # When the run is done, it would makes sense to look at the total improvement
 # (or to plot the timeseries of the improvement):

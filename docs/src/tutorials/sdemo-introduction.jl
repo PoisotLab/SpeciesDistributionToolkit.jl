@@ -6,6 +6,17 @@
 # uncertainty, show partial response curves, calculate varialble importances
 # through bootstraping and Shapley values, and generate counterfactual inputs.
 
+# ::: tip Mapping the outputs
+#
+# The functions to interact with raster data, and present the outputs of models as maps, are
+# implemented as part of `SpeciesDistributionToolkit` (`SDT`). There is a follow-up tutorial
+# that focuses on visualisation of SDM outputs.
+#
+# :::
+
+# This vignette is *very terse* and is not an introduction to using or
+# interpreting these models!
+
 # ## Setting up the environment
 
 using SpeciesDistributionToolkit

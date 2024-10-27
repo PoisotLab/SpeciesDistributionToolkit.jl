@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.0.0`
 
-- **changed** the default training option for transformers to be presence-only, with the
-`absences=true` keyword to use absences as well
+- **changed** the default training option for transformers to be presence-only, with the `absences=true` keyword to use absences as well
 - **added** the `transformer` and `classifier` methods, that return the transformer and classifier of `SDM` and `Bagging` models
 

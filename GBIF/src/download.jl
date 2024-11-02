@@ -24,7 +24,7 @@ end
 function _predicate(query::Pair...)
     querystring = pairs_to_querystring(query...) 
     predicate_url = GBIF.gbifurl * "occurrence/download/request/predicate/"
-    pre_s_req = HTTP.get(predicate_url; query=querystring
+    pre_s_req = HTTP.get(predicate_url; query=querystring)
     if pre_s_req.status == 200
         return JSON.parse(String(pre_s_req.body))
     end

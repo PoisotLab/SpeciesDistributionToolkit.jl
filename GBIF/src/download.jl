@@ -22,13 +22,13 @@ Returns a dict to be used as part of the headers for HTTP functions to do
 authentication against the download API
 """
 function apiauth()
+    # TODO: errors if username or password are not set
     uname = GBIF.username()
     passwd = GBIF.password()
     temp = "Basic " * base64encode("$(uname):$(passwd)")
     auth = Dict("Authorization" => temp)
     return auth
 end
-
 
 """
     download
@@ -38,7 +38,8 @@ Prepares a request for a download through the GBIF API
 function download(query::Pair...)
     # Get the predicates
     pred = GBIF.predicate(query...)
-    # 
+    #
+    return nothing 
 end
 
 """
@@ -51,7 +52,7 @@ function _predicate(query::Pair...)
     query = (query..., "format" => "simpleCsv")
     querystring = pairs_to_querystring(query...)
     predicate_url = GBIF.gbifurl * "occurrence/download/request/predicate"
-    pre_s_req = HTTP.get(predicate_url; query=querystring)
+    pre_s_req = HTTP.get(predicate_url; query = querystring)
     if pre_s_req.status == 200
         return JSON.parse(String(pre_s_req.body))
     end

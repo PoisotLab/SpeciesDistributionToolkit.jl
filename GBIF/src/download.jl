@@ -18,15 +18,17 @@ function password!(pw::String)
 end
 
 """
-    mydownloads()
-
-Returns the downloads associated to the currently authenticated user.
+Returns a dict to be used as part of the headers for HTTP functions to do
+authentication against the download API
 """
-function mydownloads()
-    ismissing(GBIF.username()) && throw(ErrorException("Use GBIF.username! to login"))
-    ismissing(GBIF.email()) && throw(ErrorException("Use GBIF.email! to login"))
-
+function apiauth()
+    uname = GBIF.username()
+    passwd = GBIF.password()
+    temp = "Basic " * base64encode("$(uname):$(passwd)")
+    auth = Dict("Authorization" => temp)
+    return auth
 end
+
 
 """
     download
@@ -34,8 +36,6 @@ end
 Prepares a request for a download through the GBIF API
 """
 function download(query::Pair...)
-    ismissing(GBIF.username()) && throw(ErrorException("Use GBIF.username! to login"))
-    ismissing(GBIF.email()) && throw(ErrorException("Use GBIF.email! to login"))
     # Get the predicates
     pred = GBIF.predicate(query...)
     # 

@@ -25,6 +25,12 @@ function apiauth()
     # TODO: errors if username or password are not set
     uname = GBIF.username()
     passwd = GBIF.password()
+    if ismissing(uname)
+        throw(ErrorException("The GBIF username is missing - see the documentation for GBIF.username!"))
+    end
+    if ismissing(passwd)
+        throw(ErrorException("The GBIF password is missing - see the documentation for GBIF.password!"))
+    end
     temp = "Basic " * base64encode("$(uname):$(passwd)")
     auth = Dict("Authorization" => temp)
     return auth

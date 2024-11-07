@@ -94,6 +94,7 @@ function download(key)
         open("$(key).zip", "w") do f
             write(f, dl_req.body)
         end
+        return "$(key).zip"
     end
 end
 

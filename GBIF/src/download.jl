@@ -41,9 +41,13 @@ end
 
 Prepares a request for a download through the GBIF API
 """
-function download(query::Pair...)
+function download(query::Pair...; notification::Bool=false)
     # Get the predicates
-    pred = GBIF.predicate(query...)
+    predicates = GBIF._predicate(query...)
+    if notification
+        predicates["sendNotification"] = true
+        push!(predicates["notificationAddresses"], GBIF.email())
+    end
     #
     return nothing 
 end
@@ -58,7 +62,7 @@ function _predicate(query::Pair...)
     query = (query..., "format" => "simpleCsv")
     querystring = pairs_to_querystring(query...)
     predicate_url = GBIF.gbifurl * "occurrence/download/request/predicate"
-    pre_s_req = HTTP.get(predicate_url; query = querystring)
+    pre_s_req = HTTP.get(predicate_url; query = querystring, headers = GBIF.apiauth())
     if pre_s_req.status == 200
         return JSON.parse(String(pre_s_req.body))
     end

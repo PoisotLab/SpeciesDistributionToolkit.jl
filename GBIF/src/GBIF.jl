@@ -4,6 +4,7 @@ using HTTP
 using JSON
 using Dates
 using Tables
+import Base64
 import OccurrencesInterface
 
 function safeget(endpoint)

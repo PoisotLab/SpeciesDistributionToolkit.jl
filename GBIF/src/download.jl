@@ -19,10 +19,10 @@ end
 
 """
 Returns a dict to be used as part of the headers for HTTP functions to do
-authentication against the download API
+authentication against the download API. This returns a dictionary that is used
+internally by calls to endpoints for the download API.
 """
 function apiauth()
-    # TODO: errors if username or password are not set
     uname = GBIF.username()
     passwd = GBIF.password()
     if ismissing(uname)
@@ -31,7 +31,7 @@ function apiauth()
     if ismissing(passwd)
         throw(ErrorException("The GBIF password is missing - see the documentation for GBIF.password!"))
     end
-    temp = "Basic " * base64encode("$(uname):$(passwd)")
+    temp = "Basic " * Base64.base64encode("$(uname):$(passwd)")
     auth = Dict("Authorization" => temp)
     return auth
 end

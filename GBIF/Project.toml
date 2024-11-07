@@ -4,6 +4,7 @@ authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 version = "1.1.0"
 
 [deps]
+Base64 = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
@@ -11,6 +12,7 @@ OccurrencesInterface = "ee6415c8-122a-4855-89a1-90f4bac06ba6"
 Tables = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
 
 [compat]
+Base64 = "1"
 HTTP = "1"
 JSON = "0.21"
 OccurrencesInterface = "1"

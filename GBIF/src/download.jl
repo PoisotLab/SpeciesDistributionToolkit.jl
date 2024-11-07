@@ -65,7 +65,7 @@ end
 
 Prepares a request for a download through the GBIF API
 """
-function download(query::Pair...; notification::Bool = false)
+function request(query::Pair...; notification::Bool = false)
     # Get the predicates
     predicates = GBIF._predicate(query...)
     if notification
@@ -78,6 +78,23 @@ function download(query::Pair...; notification::Bool = false)
     request_resp = HTTP.post(request_url; body = predicates, headers = GBIF.apiauth())
     @info request_resp
     return nothing
+end
+
+"""
+    download(key)
+
+Downloads the zip file associated to a specific query (identified by its key) as
+a zip file.
+"""
+function download(key)
+    request_url = GBIF.gbifurl * "occurrence/download/request/$(key)"
+    dl_req = HTTP.get(request_url; headers=GBIF.apiauth())
+    if dl_req.status == 200
+        # Get that bag
+        open("$(key).zip", "w") do f
+            write(f, dl_req.body)
+        end
+    end
 end
 
 function mydownloads(; preparing=true, running=true, succeeded=true, cancelled=true, killed=true, failed=true, suspended=true, erased=true)

@@ -26,30 +26,22 @@ function apiauth()
     uname = GBIF.username()
     passwd = GBIF.password()
     if ismissing(uname)
-        throw(ErrorException("The GBIF username is missing - see the documentation for GBIF.username!"))
+        throw(
+            ErrorException(
+                "The GBIF username is missing - see the documentation for GBIF.username!",
+            ),
+        )
     end
     if ismissing(passwd)
-        throw(ErrorException("The GBIF password is missing - see the documentation for GBIF.password!"))
+        throw(
+            ErrorException(
+                "The GBIF password is missing - see the documentation for GBIF.password!",
+            ),
+        )
     end
     temp = "Basic " * Base64.base64encode("$(uname):$(passwd)")
     auth = Dict("Authorization" => temp)
     return auth
-end
-
-"""
-    download
-
-Prepares a request for a download through the GBIF API
-"""
-function download(query::Pair...; notification::Bool=false)
-    # Get the predicates
-    predicates = GBIF._predicate(query...)
-    if notification
-        predicates["sendNotification"] = true
-        push!(predicates["notificationAddresses"], GBIF.email())
-    end
-    #
-    return nothing 
 end
 
 """
@@ -65,5 +57,43 @@ function _predicate(query::Pair...)
     pre_s_req = HTTP.get(predicate_url; query = querystring, headers = GBIF.apiauth())
     if pre_s_req.status == 200
         return JSON.parse(String(pre_s_req.body))
+    end
+end
+
+"""
+    download
+
+Prepares a request for a download through the GBIF API
+"""
+function download(query::Pair...; notification::Bool = false)
+    # Get the predicates
+    predicates = GBIF._predicate(query...)
+    if notification
+        predicates["sendNotification"] = true
+        push!(predicates["notificationAddresses"], GBIF.email())
+    end
+    # Make the request
+    request_url = GBIF.gbifurl * "occurrence/download/request"
+    @info request_url
+    request_resp = HTTP.post(request_url; body = predicates, headers = GBIF.apiauth())
+    @info request_resp
+    return nothing
+end
+
+function mydownloads(; preparing=true, running=true, succeeded=true, cancelled=true, killed=true, failed=true, suspended=true, erased=true)
+    statuses = String[]
+    preparing && push!(statuses, "PREPARING")
+    running && push!(statuses, "RUNNING")
+    succeeded && push!(statuses, "SUCCEEDED")
+    cancelled && push!(statuses, "CANCELLED")
+    killed && push!(statuses, "KILLED")
+    failed && push!(statuses, "FAILED")
+    suspended && push!(statuses, "SUSPENDED")
+    erased && push!(statuses, "FILE_ERASED")
+    # Get the predicates
+    request_url = GBIF.gbifurl * "occurrence/download/user/$(GBIF.username())"
+    request_resp = HTTP.get(request_url; query="status=$(join(statuses, ','))", headers = GBIF.apiauth())
+    if request_resp.status == 200
+        return JSON.parse(String(request_resp.body))
     end
 end

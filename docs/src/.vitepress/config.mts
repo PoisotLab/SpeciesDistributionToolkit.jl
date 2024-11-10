@@ -98,6 +98,7 @@ export default defineConfig({
                         {text: "... mask a layer?", link: "/howto/mask-layer/"},
                         {text: "... mask with polygons", link: "/howto/mask-polygons/"},
                         {text: "... read part of a layer?", link: "/howto/read-part-layer/"},
+                        {text: "... get the bounding box for an object?", link: "/howto/get-boundingbox/"},
                         {text: "... calculate statistics on layers?", link: "/howto/layer-statistics/"},
                         {text: "... calculate zonal statistics?", link: "/howto/zonal-statistics/"},
                         {text: "... generate pseudo-absences?", link: "/howto/pseudoabsences/"},

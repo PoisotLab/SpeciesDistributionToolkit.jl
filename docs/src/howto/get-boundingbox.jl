@@ -37,6 +37,20 @@ heatmap(L; colormap = :Greys)
 scatter!(occ)
 current_figure() #hide
 
+# This can also be applied to polygons:
+
+CHE = SpeciesDistributionToolkit.gadm("CHE");
+L = SDMLayer(
+    RasterData(EarthEnv, LandCover);
+    layer = 2,
+    SpeciesDistributionToolkit.boundingbox(CHE; padding = 0.5)...,
+)
+
+# fig-ployclip
+heatmap(L)
+lines!(ax, CHE.geometry[1]; color = :black)
+current_figure() #hide
+
 # ```@meta
 # CollapsedDocStrings = true
 # ```

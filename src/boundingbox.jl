@@ -7,6 +7,7 @@ used to decide which part of a raster should be loaded.
 boundingbox() = nothing
 
 _padbbox(l, r, b, t, p) = (left=l-p, right=r+p, bottom=b-p, top=t+p)
+_padbbox(l, r, b, t; padding=0.0) = _padbbox(l, r, b, t, padding)
 
 """
     boundingbox(occ::AbstractOccurrenceCollection; padding=0.0)
@@ -40,4 +41,31 @@ function boundingbox(layer::SDMLayer; padding=0.0)
     bottom, top = extrema(last.(bands)) .+ (padding, -padding)
 
     return _padbbox(left, right, bottom, top, padding)
+end
+
+function _reconcile(boxes)
+    return (
+        left = minimum([b.left for b in boxes]),
+        right = maximum([b.right for b in boxes]),
+        bottom = minimum([b.bottom for b in boxes]),
+        top = maximum([b.top for b in boxes]),
+    )
+end
+
+function boundingbox(fc::GeoJSON.FeatureCollection; kwargs...)
+    return _reconcile([boundingbox(ft; kwargs...) for ft in fc.geometry])
+end
+
+function boundingbox(fc::GeoJSON.Feature; kwargs...)
+    return _reconcile([boundingbox(ft; kwargs...) for ft in fc.geometry])
+end
+
+function boundingbox(fc::GeoJSON.MultiPolygon{2, F}; kwargs...) where {F <: AbstractFloat}
+    return _reconcile([boundingbox(vcat(ft...); kwargs...) for ft in fc])
+end
+
+function boundingbox(fc::Vector{Tuple{F,F}}; kwargs...) where {F <: AbstractFloat}
+    lons = [c[1] for c in fc]
+    lats = [c[2] for c in fc]
+    return _padbbox(extrema(lons)..., extrema(lats)..., kwargs...)
 end

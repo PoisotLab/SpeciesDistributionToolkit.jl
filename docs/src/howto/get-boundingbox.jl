@@ -29,7 +29,7 @@ SpeciesDistributionToolkit.boundingbox(occ; padding=1.0)
 L = SDMLayer(RasterData(EarthEnv, LandCover), layer=2; SpeciesDistributionToolkit.boundingbox(occ; padding=0.5)...)
 
 # fig-partialload
-heatmap(L)
+heatmap(L, colormap=:Greys)
 scatter!(occ)
 current_figure() #hide
 

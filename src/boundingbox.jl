@@ -6,6 +6,8 @@ used to decide which part of a raster should be loaded.
 """
 boundingbox() = nothing
 
+_padbbox(l, r, b, t, p) = (left=l-p, right=r+p, bottom=b-p, top=t+p)
+
 """
     boundingbox(occ::AbstractOccurrenceCollection; padding=0.0)
 
@@ -15,7 +17,7 @@ padding.
 function boundingbox(occ::AbstractOccurrenceCollection; padding=0.0)
     left, right = extrema(longitudes(occ)) .+ (padding, -padding)
     bottom, top = extrema(latitudes(occ)) .+ (padding, -padding)
-    return (; left, right, bottom, top)
+    return _padbbox(left, right, bottom, top, padding)
 end
 
 """
@@ -37,5 +39,5 @@ function boundingbox(layer::SDMLayer; padding=0.0)
     left, right = extrema(first.(bands)) .+ (padding, -padding)
     bottom, top = extrema(last.(bands)) .+ (padding, -padding)
 
-    return (; left, right, bottom, top)
+    return _padbbox(left, right, bottom, top, padding)
 end

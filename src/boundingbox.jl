@@ -67,5 +67,5 @@ end
 function boundingbox(fc::Vector{Tuple{F,F}}; kwargs...) where {F <: AbstractFloat}
     lons = [c[1] for c in fc]
     lats = [c[2] for c in fc]
-    return _padbbox(extrema(lons)..., extrema(lats)..., kwargs...)
+    return _padbbox(extrema(lons)..., extrema(lats)...; kwargs...)
 end

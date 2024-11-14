@@ -12,7 +12,7 @@ SpeciesDistributionToolkit.boundingbox(occ)
 
 # We can also specify a padding (in degrees) that is added to the bounding box:
 
-SpeciesDistributionToolkit.boundingbox(occ; padding=1.0)
+SpeciesDistributionToolkit.boundingbox(occ; padding = 1.0)
 
 # ::: info Why specify the module?
 # 
@@ -26,10 +26,14 @@ SpeciesDistributionToolkit.boundingbox(occ; padding=1.0)
 
 # This is useful to restrict the part of a layer that is loaded:
 
-L = SDMLayer(RasterData(EarthEnv, LandCover), layer=2; SpeciesDistributionToolkit.boundingbox(occ; padding=0.5)...)
+L = SDMLayer(
+    RasterData(EarthEnv, LandCover);
+    layer = 2,
+    SpeciesDistributionToolkit.boundingbox(occ; padding = 0.5)...,
+)
 
 # fig-partialload
-heatmap(L, colormap=:Greys)
+heatmap(L; colormap = :Greys)
 scatter!(occ)
 current_figure() #hide
 

@@ -47,7 +47,7 @@ L = SDMLayer(
 )
 
 # fig-ployclip
-heatmap(L)
+heatmap(L; colormap = :Greys)
 lines!(CHE.geometry[1]; color = :black)
 current_figure() #hide
 

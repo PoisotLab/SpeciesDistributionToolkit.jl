@@ -28,9 +28,11 @@ SpeciesDistributionToolkit.boundingbox(occ; padding = 1.0)
 
 L = SDMLayer(
     RasterData(EarthEnv, LandCover);
-    layer = 2,
+    layer = 1,
     SpeciesDistributionToolkit.boundingbox(occ; padding = 0.5)...,
 )
+
+#-
 
 # fig-partialload
 heatmap(L; colormap = :Greys)
@@ -42,11 +44,13 @@ current_figure() #hide
 CHE = SpeciesDistributionToolkit.gadm("CHE");
 L = SDMLayer(
     RasterData(EarthEnv, LandCover);
-    layer = 2,
+    layer = 1,
     SpeciesDistributionToolkit.boundingbox(CHE; padding = 0.5)...,
 )
 
-# fig-ployclip
+#-
+
+# fig-polyclip
 heatmap(L; colormap = :Greys)
 lines!(CHE.geometry[1]; color = :black)
 current_figure() #hide

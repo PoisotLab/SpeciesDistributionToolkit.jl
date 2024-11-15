@@ -48,7 +48,7 @@ L = SDMLayer(
 
 # fig-ployclip
 heatmap(L)
-lines!(ax, CHE.geometry[1]; color = :black)
+lines!(CHE.geometry[1]; color = :black)
 current_figure() #hide
 
 # ```@meta

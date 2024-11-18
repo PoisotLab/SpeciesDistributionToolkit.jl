@@ -65,4 +65,8 @@ export zone, byzone
 include("utilities.jl")
 export gainloss
 
+# Get the boundingbox tuple
+include("boundingbox.jl")
+export boundingbox
+
 end # module SpeciesDistributionToolkit

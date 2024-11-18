@@ -4,7 +4,7 @@
 # (from GBIF) and layer data can interact. In order to illustrate this, we will
 # get information about the occurrences of *Sitta whiteheadi*, a species of bird
 # endemic to Corsica. Finally, we will rely on the `Phylopic` package to
-# download a silhouette of a bat to illustrate the figure.
+# download a silhouette of the species to illustrate the figure.
 
 using SpeciesDistributionToolkit
 using CairoMakie

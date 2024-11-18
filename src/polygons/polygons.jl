@@ -122,16 +122,17 @@ end
 
 SimpleSDMLayers.mask!(layer::SDMLayer, features::GeoJSON.FeatureCollection, feature = 1) =
     mask!(layer, features[feature])
+
 SimpleSDMLayers.mask(
     occ::T,
     features::GeoJSON.FeatureCollection,
     feature = 1,
-) where {T <: AbstractOccurrenceCollection} =
-    mask(occ, features[feature])
+) where {T <: AbstractOccurrenceCollection} = mask(occ, features[feature])
+
 SimpleSDMLayers.mask!(layer::SDMLayer, feature::GeoJSON.Feature) =
     mask!(layer, feature.geometry)
+
 SimpleSDMLayers.mask(
     occ::T,
     feature::GeoJSON.Feature,
-) where {T <: AbstractOccurrenceCollection} =
-    mask(occ, feature.geometry)
+) where {T <: AbstractOccurrenceCollection} = mask(occ, feature.geometry)

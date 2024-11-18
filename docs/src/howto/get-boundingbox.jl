@@ -27,7 +27,7 @@ SpeciesDistributionToolkit.boundingbox(occ; padding = 1.0)
 # This is useful to restrict the part of a layer that is loaded:
 
 L = SDMLayer(
-    RasterData(EarthEnv, LandCover);
+    RasterData(CHELSA1, BioClim);
     layer = 1,
     SpeciesDistributionToolkit.boundingbox(occ; padding = 0.5)...,
 )

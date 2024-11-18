@@ -32,28 +32,18 @@ L = SDMLayer(
     SpeciesDistributionToolkit.boundingbox(occ; padding = 0.5)...,
 )
 
-#-
+# Note that the bounding box is returned in WGS84, but the function to load any
+# part of a layer will handle the conversion.
 
 # fig-partialload
 heatmap(L; colormap = :Greys)
 scatter!(occ)
 current_figure() #hide
 
-# This can also be applied to polygons:
+# The same method also applies to polygons:
 
 CHE = SpeciesDistributionToolkit.gadm("CHE");
-L = SDMLayer(
-    RasterData(EarthEnv, LandCover);
-    layer = 1,
-    SpeciesDistributionToolkit.boundingbox(CHE; padding = 0.5)...,
-)
-
-#-
-
-# fig-polyclip
-heatmap(L; colormap = :Greys)
-lines!(CHE.geometry[1]; color = :black)
-current_figure() #hide
+SpeciesDistributionToolkit.boundingbox(CHE; padding = 0.5)
 
 # ```@meta
 # CollapsedDocStrings = true

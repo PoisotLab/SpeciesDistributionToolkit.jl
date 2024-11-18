@@ -7,7 +7,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 # The `boundingbox` method accepts most types that `SpeciesDistributionToolkit`
 # knows about, and returns a tuple:
 
-occ = occurrences("hasCoordinate" => true, "country" => "BR")
+occ = occurrences("hasCoordinate" => true, "country" => "BR", "limit" => 300)
 SpeciesDistributionToolkit.boundingbox(occ)
 
 # We can also specify a padding (in degrees) that is added to the bounding box:

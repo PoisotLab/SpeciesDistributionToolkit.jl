@@ -16,8 +16,8 @@ Returns the bounding box for a collection of occurrences, with an additional
 padding.
 """
 function boundingbox(occ::AbstractOccurrenceCollection; padding=0.0)
-    left, right = extrema(longitudes(occ)) .+ (padding, -padding)
-    bottom, top = extrema(latitudes(occ)) .+ (padding, -padding)
+    left, right = extrema(longitudes(occ))
+    bottom, top = extrema(latitudes(occ))
     return _padbbox(left, right, bottom, top, padding)
 end
 
@@ -37,8 +37,8 @@ function boundingbox(layer::SDMLayer; padding=0.0)
     b4 = [prj(e, NL[end]) for e in EL]
     bands = vcat(b1, b2, b3, b4)
 
-    left, right = extrema(first.(bands)) .+ (padding, -padding)
-    bottom, top = extrema(last.(bands)) .+ (padding, -padding)
+    left, right = extrema(first.(bands))
+    bottom, top = extrema(last.(bands))
 
     return _padbbox(left, right, bottom, top, padding)
 end

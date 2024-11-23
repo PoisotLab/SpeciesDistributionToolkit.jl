@@ -7,16 +7,15 @@ using Statistics
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 CHE = SpeciesDistributionToolkit.gadm("CHE");
+spatialextent = SpeciesDistributionToolkit.boundingbox(CHE; padding=1.0)
+
 bio_vars = [1, 7, 10]
 provider = RasterData(CHELSA2, BioClim)
 layers = [
     SDMLayer(
         provider;
         layer = x,
-        left = 3.0,
-        right = 15.0,
-        bottom = 42.0,
-        top = 50.0,
+        spatialextent...
     ) for x in bio_vars
 ];
 layers = [trim(mask!(layer, CHE)) for layer in layers];
@@ -55,10 +54,11 @@ hidedecorations!(ax) #hide
 hidespines!(ax) #hide
 current_figure() #hide
 
-sdm = SDM(MultivariateTransform{PCA}, NaiveBayes, layers, presencelayer, bgpoints)
+sdm = SDM(ZScore, DecisionTree, layers, presencelayer, bgpoints)
 
 # Uncertainty and value layer
 ensemble = Bagging(sdm, 50)
+bagfeatures!(ensemble)
 train!(ensemble)
 unc = predict(ensemble, layers; consensus = iqr, threshold = false)
 prd = predict(ensemble, layers; consensus = median, threshold = false)
@@ -71,13 +71,14 @@ ubin = quantize(unc, ubins) * ubins
 
 pal = SpeciesDistributionToolkit._vsup_grid(ubins, vbins, :isoluminant_cgo_70_c39_n256)
 
+# fig-vsup-colorpalette
 f = Figure(; size=(800,400))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, vbin + (ubin - 1) * maximum(vbin); colormap = vcat(pal...))
 lines!(ax, CHE[1].geometry, color=:black)
 hidespines!(ax)
 hidedecorations!(ax)
-current_figure()
+current_figure() #hide
 
 p = PolarAxis(
     f[1, 2];

@@ -75,7 +75,7 @@ pal = SpeciesDistributionToolkit._vsup_grid(ubins, vbins, :isoluminant_cgo_70_c3
 f = Figure(; size=(800,400))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, vbin + (ubin - 1) * maximum(vbin); colormap = vcat(pal...))
-lines!(ax, CHE[1].geometry, color=:black)
+lines!(ax, CHE, color=:black)
 hidespines!(ax)
 hidedecorations!(ax)
 current_figure() #hide
@@ -100,3 +100,16 @@ colsize!(f.layout, 1, Relative(0.7))
 current_figure()
 
 # Bivariate palette test
+
+function _vsup_grid(vbins, ubins, vpal, upal=colorant"#e3e3e3", shrinkage=0.5, exponent=1.0)
+    pal = fill(upal, (vbins, ubins))
+    for i in 1:ubins
+        shrkfac = ((i - 1) / (ubins - 1))^exponent
+        subst = 0.5 - shrkfac * shrinkage / 2
+        pal[:, i] .= ColorSchemes.cgrad(vpal)[LinRange(0.5 - subst, 0.5 + subst, vbins)]
+        # Apply the mix to the uncertain color
+        for j in 1:vbins
+            pal[j, i] = weighted_color_mean(1 - shrkfac, pal[j, i], upal)
+        end
+    end
+end

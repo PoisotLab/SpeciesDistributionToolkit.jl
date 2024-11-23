@@ -118,6 +118,7 @@ export default defineConfig({
                         {text: "Generating fauxcurrences", link: "/tutorials/fauxcurrences/"},
                         {text: "Training SDMs with SDeMo", link: "/tutorials/sdemo-introduction/"},
                         {text: "Mapping SDMs with SDeMo", link: "/tutorials/sdemo-vignette/"},
+                        {text: "VSUP and bivariate maps", link: "/tutorials/bivariate-vsup/"},
                     ]
                 }
             ],

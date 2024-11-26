@@ -2,6 +2,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
+using ColorSchemes
 using Statistics
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
@@ -18,11 +19,22 @@ val = SDMLayer(
         layer = 1,
         spatialextent...
     )
+val = convert(SDMLayer{Float16}, val)
 val = trim(mask!(val, POL))
 
-# fake uncertainty with randomness
+# fig-hm
+heatmap(val; axis=(aspect=DataAspect(), ))
+current_figure() #hide
 
-unc = (val - rand(values(val))).^2.0
+# fake uncertainty with randomness
+# TODO: add randomness
+
+unc = (val - median(values(val))).^2.0
+
+# fig-hm-unc
+heatmap(unc; axis=(aspect=DataAspect(), ))
+current_figure() #hide
+
 
 # function for VSUP
 
@@ -31,18 +43,27 @@ function _vsup_grid(vbins, ubins, vpal, upal=colorant"#e3e3e3", shrinkage=0.5, e
     for i in 1:ubins
         shrkfac = ((i - 1) / (ubins - 1))^exponent
         subst = 0.5 - shrkfac * shrinkage / 2
-        pal[:, i] .= ColorSchemes.cgrad(vpal)[LinRange(0.5 - subst, 0.5 + subst, vbins)]
+        pal[:, i] .= CairoMakie.cgrad(vpal)[LinRange(0.5 - subst, 0.5 + subst, vbins)]
         # Apply the mix to the uncertain color
         for j in 1:vbins
-            pal[j, i] = weighted_color_mean(1 - shrkfac, pal[j, i], upal)
+            pal[j, i] = ColorSchemes.weighted_color_mean(1 - shrkfac, pal[j, i], upal)
         end
     end
 end
 
+# make discrete values
+
+function discretize(layer, n::Integer)
+    categories = rescale(layer, 0.0, 1.0)
+    n = n - 2
+    map!(x -> round(x * (n + 1); digits=0) / (n + 1), categories.grid, categories.grid)
+    return n * categories
+end
+
 # VSUP test - what are the parameters
 
-ubins = 50
-vbins = 50
+ubins = 10
+vbins = 10
 vbin = discretize(val, vbins)
 ubin = quantize(unc, ubins) * ubins
 

@@ -8,7 +8,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # get some data
 
-POL = SpeciesDistributionToolkit.gadm("IDN");
+POL = SpeciesDistributionToolkit.gadm("BEL");
 spatialextent = SpeciesDistributionToolkit.boundingbox(POL; padding=1.0)
 
 # some layers
@@ -29,12 +29,11 @@ current_figure() #hide
 # fake uncertainty with randomness
 # TODO: add randomness
 
-unc = (val - median(values(val))).^2.0
+unc = (val - rand(values(val))).^2.0
 
 # fig-hm-unc
 heatmap(unc; axis=(aspect=DataAspect(), ))
 current_figure() #hide
-
 
 # function for VSUP
 
@@ -49,6 +48,7 @@ function _vsup_grid(vbins, ubins, vpal, upal=colorant"#e3e3e3", shrinkage=0.5, e
             pal[j, i] = ColorSchemes.weighted_color_mean(1 - shrkfac, pal[j, i], upal)
         end
     end
+    return pal
 end
 
 # make discrete values
@@ -62,10 +62,10 @@ end
 
 # VSUP test - what are the parameters
 
-ubins = 10
-vbins = 10
-vbin = discretize(val, vbins)
-ubin = quantize(unc, ubins) * ubins
+ubins = 50
+vbins = 50
+vbin = quantize(val, vbins)
+ubin = quantize(unc, ubins)
 
 pal = _vsup_grid(ubins, vbins, :isoluminant_cgo_70_c39_n256)
 
@@ -73,7 +73,6 @@ pal = _vsup_grid(ubins, vbins, :isoluminant_cgo_70_c39_n256)
 f = Figure(; size=(800,400))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, vbin + (ubin - 1) * maximum(vbin); colormap = vcat(pal...))
-lines!(ax, POL, color=:black)
 hidespines!(ax)
 hidedecorations!(ax)
 current_figure() #hide

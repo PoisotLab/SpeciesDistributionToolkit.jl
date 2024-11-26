@@ -1,81 +1,58 @@
 # # Value-suppressing and bivariate maps
 
-using Revise
 using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
-CHE = SpeciesDistributionToolkit.gadm("CHE");
-spatialextent = SpeciesDistributionToolkit.boundingbox(CHE; padding=1.0)
+# get some data
 
-bio_vars = [1, 7, 10]
+POL = SpeciesDistributionToolkit.gadm("IDN");
+spatialextent = SpeciesDistributionToolkit.boundingbox(POL; padding=1.0)
+
+# some layers
+
 provider = RasterData(CHELSA2, BioClim)
-layers = [
-    SDMLayer(
+val = SDMLayer(
         provider;
-        layer = x,
+        layer = 1,
         spatialextent...
-    ) for x in bio_vars
-];
-layers = [trim(mask!(layer, CHE)) for layer in layers];
-layers = map(l -> convert(SDMLayer{Float32}, l), layers);
+    )
+val = trim(mask!(val, POL))
 
-ouzel = taxon("Turdus torquatus")
-presences = occurrences(
-    ouzel,
-    first(layers),
-    "occurrenceStatus" => "PRESENT",
-    "limit" => 300,
-    "datasetKey" => "4fa7b334-ce0d-4e88-aaae-2e0c138d049e",
-)
-while length(presences) < count(presences)
-    occurrences!(presences)
+# fake uncertainty with randomness
+
+unc = (val - rand(values(val))).^2.0
+
+# function for VSUP
+
+function _vsup_grid(vbins, ubins, vpal, upal=colorant"#e3e3e3", shrinkage=0.5, exponent=1.0)
+    pal = fill(upal, (vbins, ubins))
+    for i in 1:ubins
+        shrkfac = ((i - 1) / (ubins - 1))^exponent
+        subst = 0.5 - shrkfac * shrinkage / 2
+        pal[:, i] .= ColorSchemes.cgrad(vpal)[LinRange(0.5 - subst, 0.5 + subst, vbins)]
+        # Apply the mix to the uncertain color
+        for j in 1:vbins
+            pal[j, i] = weighted_color_mean(1 - shrkfac, pal[j, i], upal)
+        end
+    end
 end
 
-presencelayer = zeros(first(layers), Bool)
-for occ in mask(presences, CHE)
-    presencelayer[occ.longitude, occ.latitude] = true
-end
+# VSUP test - what are the parameters
 
-background = pseudoabsencemask(DistanceToEvent, presencelayer)
-bgpoints = backgroundpoints(background, sum(presencelayer))
-
-f = Figure(; size = (600, 300))
-ax = Axis(f[1, 1]; aspect = DataAspect())
-heatmap!(ax,
-    first(layers);
-    colormap = :linear_bgyw_20_98_c66_n256,
-)
-scatter!(ax, presencelayer; color = :black)
-scatter!(ax, bgpoints; color = :red, markersize = 4)
-lines!(ax, CHE.geometry[1]; color = :black) #hide
-hidedecorations!(ax) #hide
-hidespines!(ax) #hide
-current_figure() #hide
-
-sdm = SDM(ZScore, DecisionTree, layers, presencelayer, bgpoints)
-
-# Uncertainty and value layer
-ensemble = Bagging(sdm, 50)
-bagfeatures!(ensemble)
-train!(ensemble)
-unc = predict(ensemble, layers; consensus = iqr, threshold = false)
-prd = predict(ensemble, layers; consensus = median, threshold = false)
-
-# VSUP test
 ubins = 50
 vbins = 50
-vbin = discretize(prd, vbins)
+vbin = discretize(val, vbins)
 ubin = quantize(unc, ubins) * ubins
 
-pal = SpeciesDistributionToolkit._vsup_grid(ubins, vbins, :isoluminant_cgo_70_c39_n256)
+pal = _vsup_grid(ubins, vbins, :isoluminant_cgo_70_c39_n256)
 
 # fig-vsup-colorpalette
 f = Figure(; size=(800,400))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, vbin + (ubin - 1) * maximum(vbin); colormap = vcat(pal...))
-lines!(ax, CHE, color=:black)
+lines!(ax, POL, color=:black)
 hidespines!(ax)
 hidedecorations!(ax)
 current_figure() #hide
@@ -100,16 +77,3 @@ colsize!(f.layout, 1, Relative(0.7))
 current_figure()
 
 # Bivariate palette test
-
-function _vsup_grid(vbins, ubins, vpal, upal=colorant"#e3e3e3", shrinkage=0.5, exponent=1.0)
-    pal = fill(upal, (vbins, ubins))
-    for i in 1:ubins
-        shrkfac = ((i - 1) / (ubins - 1))^exponent
-        subst = 0.5 - shrkfac * shrinkage / 2
-        pal[:, i] .= ColorSchemes.cgrad(vpal)[LinRange(0.5 - subst, 0.5 + subst, vbins)]
-        # Apply the mix to the uncertain color
-        for j in 1:vbins
-            pal[j, i] = weighted_color_mean(1 - shrkfac, pal[j, i], upal)
-        end
-    end
-end

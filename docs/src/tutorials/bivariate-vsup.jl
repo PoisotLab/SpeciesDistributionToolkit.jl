@@ -81,7 +81,7 @@ vbins = 31
 vbin = discretize(quantize(val, vbins), vbins)
 ubin = discretize(quantize(unc, ubins), ubins)
 
-pal = _vsup_grid(vbins, ubins, :diverging_isoluminant_cjm_75_c23_n256)
+pal = _vsup_grid(vbins, ubins, :isoluminant_cgo_70_c39_n256)
 
 # fig-vsup-colorpalette
 f = Figure(; size = (800, 400))

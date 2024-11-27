@@ -30,14 +30,14 @@ val, unc = layers
 
 # fig-hm
 heatmap(val; axis = (aspect = DataAspect(),))
-lines!(POL[1].geometry, color=:black)
+lines!(POL[1].geometry; color = :black)
 current_figure() #hide
 
 # now see the seasonality layer
 
 # fig-hm-unc
 heatmap(unc; axis = (aspect = DataAspect(),))
-lines!(POL[1].geometry, color=:black)
+lines!(POL[1].geometry; color = :black)
 current_figure() #hide
 
 # ## Value-suppressing uncertainty palette
@@ -70,7 +70,7 @@ end
 function discretize(layer, n::Integer)
     categories = rescale(layer, 0.0, 1.0)
     n = n - 2
-    map!(x -> round(x * (n + 1); digits=0) / (n + 1), categories.grid, categories.grid)
+    map!(x -> round(x * (n + 1); digits = 0) / (n + 1), categories.grid, categories.grid)
     return n * categories
 end
 
@@ -89,7 +89,7 @@ ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, vbin + (ubin - 1) * maximum(vbin); colormap = vcat(pal...))
 hidespines!(ax)
 hidedecorations!(ax)
-lines!(POL[1].geometry, color=:black)
+lines!(POL[1].geometry; color = :black)
 current_figure() #hide
 
 # fig-vsup-legend

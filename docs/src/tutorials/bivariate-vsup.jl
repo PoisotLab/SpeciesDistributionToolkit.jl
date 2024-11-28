@@ -44,14 +44,7 @@ current_figure() #hide
 
 # function for VSUP
 
-function _vsup_grid(
-    vbins,
-    ubins,
-    vpal;
-    upal = colorant"#efefef55",
-    s = 0.5,
-    k = 1.0,
-)
+function _vsup_grid(vbins, ubins, vpal; upal = colorant"#efefef55", s = 0.5, k = 1.0)
     pal = fill(upal, (vbins, ubins))
     for i in 1:ubins
         shrkfac = ((i - 1) / (ubins - 1))^k

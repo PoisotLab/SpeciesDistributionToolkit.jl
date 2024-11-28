@@ -48,7 +48,7 @@ function _vsup_grid(
     vbins,
     ubins,
     vpal;
-    upal = colorant"#f3f3f344",
+    upal = colorant"#efefef55",
     s = 0.5,
     k = 1.0,
 )
@@ -76,12 +76,12 @@ end
 
 # VSUP test - what are the parameters
 
-ubins = 31
-vbins = 31
+ubins = 11
+vbins = 11
 vbin = discretize(quantize(val, vbins), vbins)
 ubin = discretize(quantize(unc, ubins), ubins)
 
-pal = _vsup_grid(vbins, ubins, :isoluminant_cgo_70_c39_n256)
+pal = _vsup_grid(vbins, ubins, :twelvebitrainbow)
 
 # fig-vsup-colorpalette
 f = Figure(; size = (800, 400))

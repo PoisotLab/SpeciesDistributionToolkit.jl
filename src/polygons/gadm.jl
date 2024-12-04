@@ -1,3 +1,26 @@
+"""
+    _GADM_getzip(root, url, fname)
+
+ROOT = GADM files location
+URL = full url to the zip file
+FNAME = name of the zip file locally
+"""
+function _GADM_getzip(root, url, fname)
+    if ~isfile(joinpath(root, fname))
+        Downloads.download(url, joinpath(root, fname))
+    end
+    zipfile = joinpath(root, fname)
+    zip = ZipFile.Reader(zipfile)
+    for file in zip.files
+        if file.name == replace(fname, ".zip" => "")
+            out = open(joinpath(root, file.name), "w")
+            write(out, read(file, String))
+            close(out)
+        end
+    end
+    return nothing
+end
+
 function _get_gadm_file(code, level)
     # Prepare to store the data
     gadm_root = joinpath(SimpleSDMDatasets._LAYER_PATH, "GADM", code)
@@ -6,32 +29,19 @@ function _get_gadm_file(code, level)
     end
     # Get the URL for the file
     fname = "gadm41_$(code)_$(level).json"
-    if level > 0
-        fname *= ".zip"
-    end
     url = "https://geodata.ucdavis.edu/gadm/gadm4.1/json/$(fname)"
-    # Download the file
-    if ~isfile(joinpath(gadm_root, fname))
-        try
-            Downloads.download(url, joinpath(gadm_root, fname))
-        catch
-            return nothing
-        end
-    end
-    # Read the file in GeoJSON
+    # Polygon file
     gadm_file = joinpath(gadm_root, fname)
-    if level > 0
-        gadm_zip = ZipFile.Reader(gadm_file)
-        for f in gadm_zip.files
-            if f.name == replace(fname, ".zip" => "")
-                out = open(joinpath(gadm_root, f.name), "w")
-                write(out, read(f, String))
-                close(out)
-            end
+    # Get the file if required
+    if ~isfile(gadm_file)
+        if level > 0
+            _GADM_getzip(gadm_root, url*".zip", fname*".zip")
+        else
+            Downloads.download(url, joinpath(gadm_root, fname))
         end
     end
     # Return
-    return GeoJSON.read(replace(gadm_file, ".zip" => ""))
+    return GeoJSON.read(gadm_file)
 end
 
 """

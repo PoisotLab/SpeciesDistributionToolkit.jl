@@ -24,7 +24,7 @@ end
 __classsplit(y) = findall(y), findall(!, y)
 
 function __validation_idx(idx, p::T) where {T <: AbstractFloat}
-    return idx[1:round(Int, p*length(idx))]
+    return idx[1:round(Int, p * length(idx))]
 end
 
 function __validation_idx(idx, k::Int)
@@ -64,7 +64,8 @@ function holdout(y, X; proportion = 0.2, permute = true)
     end
     positions = collect(axes(X, 2))
     # Create the dataset
-    holdout_instances = vcat(__validation_idx(pos, proportion), __validation_idx(neg, proportion))
+    holdout_instances =
+        vcat(__validation_idx(pos, proportion), __validation_idx(neg, proportion))
     data_instances = setdiff(positions, holdout_instances)
     return (data_instances, holdout_instances)
 end
@@ -104,8 +105,7 @@ end
     kfold(y, X; k = 10, permute = true)
 
 Returns splits of the data in which 1 group is used for validation, and `k`-1
-groups are used for training. All `k`` groups have the (approximate) same size,
-and each instance is only used once for validation (and `k`-1 times for
+groups are used for training. All `k`` groups have the (approximate) same size, and each instance is only used once for validation (and `k`-1 times for
 training). The groups are stratified (so that they have the same prevalence).
 
 This method returns a vector of tuples, with each entry have the training data

@@ -12,43 +12,45 @@ function noselection!(model, folds; verbose::Bool = false, kwargs...)
 end
 
 """
-    backwardselection!(model, folds; verbose::Bool = false, optimality=mcc, kwargs...)
+    backwardselection!(model, folds, pool; verbose::Bool = false, optimality=mcc, kwargs...)
 
 Removes variables one at a time until the `optimality` measure stops increasing.
+Variables included in `pool` are not removed.
 
-All keyword arguments are passed to `crossvalidate!`.
+All keyword arguments are passed to `crossvalidate` and `train!`.
 """
-function backwardselection!(model, folds; verbose::Bool = false, optimality=mcc, kwargs...)
-    pool = collect(axes(model.X, 1))
-    best_perf = -Inf
-    while ~isempty(pool)
+function backwardselection!(
+    model,
+    folds,
+    pool;
+    verbose::Bool = false,
+    optimality = mcc,
+    kwargs...,
+)
+    candidates = filter(p -> !(p in pool), collect(axes(features(model), 1)))
+    best_perf = mcc(noskill(model))
+    while ~isempty(candidates)
         if verbose
-            @info "N = $(length(pool))"
+            @info "Current performance: $(best_perf) - working over $(length(candidates)) variables"
         end
-        scores = zeros(length(pool))
-        for i in eachindex(pool)
-            this_pool = deleteat!(copy(pool), i)
-            model.v = this_pool
-            scores[i] = mean(
-                optimality.(
-                    first(
-                        crossvalidate(model, folds; kwargs...),
-                    )
-                ),
-            )
+        scores = zeros(length(candidates))
+        for i in eachindex(candidates)
+            proposal = deleteat!(copy(candidates), i)
+            variables!(model, vcat(pool, proposal))
+            scores[i] = optimality(crossvalidate(model, folds).validation)
         end
         best, i = findmax(scores)
         if best > best_perf
             best_perf = best
-            deleteat!(pool, i)
+            deleteat!(candidates, i)
         else
             if verbose
-                @info "Returning with $(pool) -- $(best_perf)"
+                @info "Returning with $(vcat(pool, candidates)) -- $(best_perf)"
             end
             break
         end
     end
-    model.v = pool
+    variables!(model, vcat(pool, candidates))
     train!(model; kwargs...)
     return model
 end
@@ -57,28 +59,29 @@ end
     forwardselection!(model, folds, pool; verbose::Bool = false, optimality=mcc, kwargs...)
 
 Adds variables one at a time until the `optimality` measure stops increasing.
-The variables in `pool` are added at the start. 
+The variables in `pool` are added at the start.
 
-All keyword arguments are passed to `crossvalidate!`.
+All keyword arguments are passed to `crossvalidate` and `train!`.
 """
-function forwardselection!(model, folds, pool; verbose::Bool = false, optimality=mcc, kwargs...)
+function forwardselection!(
+    model,
+    folds,
+    pool;
+    verbose::Bool = false,
+    optimality = mcc,
+    kwargs...,
+)
     on_top = filter(p -> !(p in pool), collect(axes(model.X, 1)))
-    best_perf = -Inf
+    best_perf = mcc(noskill(model))
     while ~isempty(on_top)
         if verbose
-            @info "N = $(length(pool)+1)"
+            @info "Current performance: $(best_perf) - working over $(length(pool)+1) variables"
         end
         scores = zeros(length(on_top))
         for i in eachindex(on_top)
             this_pool = push!(copy(pool), on_top[i])
-            model.v = this_pool
-            scores[i] = mean(
-                optimality.(
-                    first(
-                        crossvalidate(model, folds; kwargs...),
-                    )
-                ),
-            )
+            variables!(model, this_pool)
+            scores[i] = optimality(crossvalidate(model, folds; kwargs...).validation)
         end
         best, i = findmax(scores)
         if best > best_perf
@@ -102,9 +105,58 @@ end
 
 Adds variables one at a time until the `optimality` measure stops increasing.
 
-All keyword arguments are passed to `crossvalidate!`.
+All keyword arguments are passed to `crossvalidate` and `train!`.
 """
 function forwardselection!(model, folds; kwargs...)
     pool = Int64[]
     return forwardselection!(model, folds, pool; kwargs...)
+end
+
+"""
+    backwardselection!(model, folds; verbose::Bool = false, optimality=mcc, kwargs...)
+
+Removes variables one at a time until the `optimality` measure stops increasing.
+
+All keyword arguments are passed to `crossvalidate` and `train!`.
+"""
+function backwardselection!(model, folds; kwargs...)
+    pool = Int64[]
+    return backwardselection!(model, folds, pool; kwargs...)
+end
+
+
+@testitem "We can do forward selection with no included features" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    folds = [holdout(model)]
+    forwardselection!(model, folds)
+    @test length(variables(model)) < size(X, 1)
+end
+
+@testitem "We can do forward selection with included features" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    folds = [holdout(model)]
+    forwardselection!(model, folds, [1,12]; verbose=true)
+    @test length(variables(model)) < size(X, 1)
+    @test 1 in variables(model)
+    @test 12 in variables(model)
+end
+
+@testitem "We can do backward selection with no included features" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    folds = [holdout(model)]
+    backwardselection!(model, folds)
+    @test length(variables(model)) < size(X, 1)
+end
+
+@testitem "We can do backward selection with included features" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    folds = [holdout(model)]
+    backwardselection!(model, folds, [1,12])
+    @test length(variables(model)) < size(X, 1)
+    @test 1 in variables(model)
+    @test 12 in variables(model)
 end

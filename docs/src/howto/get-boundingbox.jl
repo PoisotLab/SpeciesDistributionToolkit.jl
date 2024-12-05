@@ -24,11 +24,12 @@ SpeciesDistributionToolkit.boundingbox(occ; padding = 1.0)
 # 
 # :::
 
-# This is useful to restrict the part of a layer that is loaded:
+# This is useful to restrict the part of a layer that is loaded, here one of the
+# fractional layers from the copernicus dataset:s
 
 L = SDMLayer(
     RasterData(Copernicus, LandCover);
-    layer = "Snow",
+    layer = "Crops",
     SpeciesDistributionToolkit.boundingbox(occ; padding = 0.5)...,
 )
 

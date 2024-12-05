@@ -21,6 +21,8 @@ end
     @test eltype(cv.validation) <: ConfusionMatrix
 end
 
+__classsplit(y) = findall(y), findall(!, y)
+
 """
     holdout(y, X; proportion = 0.2, permute = true)
 
@@ -35,15 +37,18 @@ validation data second. To use this with `crossvalidate`, it must be put in
 """
 function holdout(y, X; proportion = 0.2, permute = true)
     @assert size(y, 1) == size(X, 2)
-    sample_size = size(X, 2)
-    n_holdout = round(Int, proportion * sample_size)
-    positions = collect(axes(X, 2))
+    # Split in positive/negative cases
+    pos, neg = __classsplit(y)
     if permute
-        Random.shuffle!(positions)
+        Random.shuffle!(pos)
+        Random.shuffle!(neg)
     end
-    data_pos = positions[1:(sample_size - n_holdout - 1)]
-    hold_pos = positions[(sample_size - n_holdout):sample_size]
-    return (data_pos, hold_pos)
+    pos_holdout = round(Int, proportion * length(pos))
+    neg_holdout = round(Int, proportion * length(neg))
+    positions = collect(axes(X, 2))
+    holdout_instances = vcat(pos[1:pos_holdout], neg[1:neg_holdout])
+    data_instances = setdiff(positions, holdout_instances)
+    return (data_instances, holdout_instances)
 end
 
 @testitem "We can do holdout validation" begin

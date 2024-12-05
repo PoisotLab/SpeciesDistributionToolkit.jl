@@ -23,6 +23,25 @@ end
 
 __classsplit(y) = findall(y), findall(!, y)
 
+function __validation_idx(idx, p::T) where {T <: AbstractFloat}
+    return idx[1:round(Int, p*length(idx))]
+end
+
+function __validation_idx(idx, k::Int)
+    start_stop = unique(round.(Int, LinRange(1, length(idx), k + 1)))
+    folds = Vector{eltype(idx)}[]
+    for (i, stop) in enumerate(start_stop)
+        if stop > 1
+            start = start_stop[i - 1]
+            if start > 1
+                start += 1
+            end
+            push!(folds, idx[start:stop])
+        end
+    end
+    return folds
+end
+
 """
     holdout(y, X; proportion = 0.2, permute = true)
 
@@ -43,10 +62,9 @@ function holdout(y, X; proportion = 0.2, permute = true)
         Random.shuffle!(pos)
         Random.shuffle!(neg)
     end
-    pos_holdout = round(Int, proportion * length(pos))
-    neg_holdout = round(Int, proportion * length(neg))
     positions = collect(axes(X, 2))
-    holdout_instances = vcat(pos[1:pos_holdout], neg[1:neg_holdout])
+    # Create the dataset
+    holdout_instances = vcat(__validation_idx(pos, proportion), __validation_idx(neg, proportion))
     data_instances = setdiff(positions, holdout_instances)
     return (data_instances, holdout_instances)
 end
@@ -86,34 +104,27 @@ end
     kfold(y, X; k = 10, permute = true)
 
 Returns splits of the data in which 1 group is used for validation, and `k`-1
-groups are used for training. All `k`` groups have the (approximate) same size, and each instance is only used once for validation (and `k`-1 times for
-training).
+groups are used for training. All `k`` groups have the (approximate) same size,
+and each instance is only used once for validation (and `k`-1 times for
+training). The groups are stratified (so that they have the same prevalence).
 
 This method returns a vector of tuples, with each entry have the training data
 first, and the validation data second.
 """
 function kfold(y, X; k = 10, permute = true)
     @assert size(y, 1) == size(X, 2)
-    sample_size = size(X, 2)
-    @assert k <= sample_size
-    positions = collect(axes(X, 2))
+    # Split in positive/negative cases
+    pos, neg = __classsplit(y)
     if permute
-        Random.shuffle!(positions)
+        Random.shuffle!(pos)
+        Random.shuffle!(neg)
     end
-    folds = []
-    fold_ends = unique(round.(Int, LinRange(1, sample_size, k + 1)))
-    for (i, stop) in enumerate(fold_ends)
-        if stop > 1
-            start = fold_ends[i - 1]
-            if start > 1
-                start += 1
-            end
-            hold_pos = positions[start:stop]
-            data_pos = filter(p -> !(p in hold_pos), positions)
-            push!(folds, (data_pos, hold_pos))
-        end
-    end
-    return folds
+    # List of instances positions
+    positions = collect(axes(X, 2))
+    # Validation data for pos/neg
+    val = __validation_idx(pos, k) .∪ __validation_idx(neg, k)
+    trn = [setdiff(positions, v) for v in val]
+    return collect(zip(trn, val))
 end
 
 @testitem "We can do kfold validation" begin

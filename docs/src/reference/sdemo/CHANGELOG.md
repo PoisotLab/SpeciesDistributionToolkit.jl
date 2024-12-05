@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.1.0`
 
+- **added** backward selection with protected variables (to mirror forced variables in forward selection)
 - **added** stratification of presence/absence for cross-validation (prevalence is maintained across folds)
 
 ## `v1.0.0`

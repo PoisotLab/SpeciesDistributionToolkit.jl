@@ -7,7 +7,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 # The `boundingbox` method accepts most types that `SpeciesDistributionToolkit`
 # knows about, and returns a tuple:
 
-occ = occurrences("hasCoordinate" => true, "country" => "BR", "limit" => 300)
+occ = occurrences("hasCoordinate" => true, "country" => "CH", "limit" => 300)
 SpeciesDistributionToolkit.boundingbox(occ)
 
 # We can also specify a padding (in degrees) that is added to the bounding box:
@@ -24,11 +24,12 @@ SpeciesDistributionToolkit.boundingbox(occ; padding = 1.0)
 # 
 # :::
 
-# This is useful to restrict the part of a layer that is loaded:
+# This is useful to restrict the part of a layer that is loaded, here one of the
+# fractional layers from the copernicus landcover dataset:
 
 L = SDMLayer(
-    RasterData(CHELSA1, BioClim);
-    layer = 1,
+    RasterData(Copernicus, LandCover);
+    layer = "Crops",
     SpeciesDistributionToolkit.boundingbox(occ; padding = 0.5)...,
 )
 

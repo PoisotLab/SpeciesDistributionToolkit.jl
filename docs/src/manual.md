@@ -9,7 +9,7 @@ distribution modeling and biodiversity research, for the
 This package is now used in pipelines in [BON in a
 Box](https://boninabox.geobon.org/index), [GEOBON](https://geobon.org/)'s
 project to automate the calculation and representation of the post-2020 [GBF
-indicators](https://www.cbd.int/gbf).
+indicators](https://www.cbd.int/gbf). See the [BON in a Box tool page](https://boninabox.geobon.org/tool-detail?id=236).
 
 :::
 

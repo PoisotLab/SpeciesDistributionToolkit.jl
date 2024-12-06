@@ -51,12 +51,13 @@ export default defineConfig({
             {
                 text: 'Datasets',
                 items: [
+                    { text: "BiodiversityMapping", link: "/datasets/BiodiversityMapping" },
                     { text: "CHELSA 1", link: "/datasets/CHELSA1" },
                     { text: "CHELSA 2", link: "/datasets/CHELSA2" },
-                    { text: "WorldClim 2", link: "/datasets/WorldClim2" },
-                    { text: "PaleoClim", link: "/datasets/PaleoClim" },
+                    { text: "Copernicus", link: "/datasets/Copernicus" },
                     { text: "EarthEnv", link: "/datasets/EarthEnv" },
-                    { text: "BiodiversityMapping", link: "/datasets/BiodiversityMapping" },
+                    { text: "PaleoClim", link: "/datasets/PaleoClim" },
+                    { text: "WorldClim 2", link: "/datasets/WorldClim2" },
                 ]
             },
             {
@@ -96,7 +97,7 @@ export default defineConfig({
                         {text: "... list provided layers?", link: "/howto/list-provided-layers/"},
                         {text: "... do arithmetic on layers?", link: "/howto/layer-arithmetic/"},
                         {text: "... mask a layer?", link: "/howto/mask-layer/"},
-                        {text: "... mask with polygons", link: "/howto/mask-polygons/"},
+                        {text: "... mask with polygons?", link: "/howto/mask-polygons/"},
                         {text: "... read part of a layer?", link: "/howto/read-part-layer/"},
                         {text: "... get the bounding box for an object?", link: "/howto/get-boundingbox/"},
                         {text: "... calculate statistics on layers?", link: "/howto/layer-statistics/"},

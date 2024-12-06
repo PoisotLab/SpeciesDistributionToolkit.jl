@@ -31,6 +31,7 @@ layers(::RasterData{Copernicus, LandCover}) = [
     "Snow",
     "Trees",
     "Classification",
+    "Forest type"
 ]
 
 function __copernify(str)
@@ -46,6 +47,7 @@ function __copernify(str)
         "Snow" => "Snow-CoverFraction-layer",
         "Trees" => "Tree-CoverFraction-layer",
         "Classification" => "Discrete-Classification-map",
+        "Forest type" => "Forest-Type-layer",
     )
     
     return varnames[str]

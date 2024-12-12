@@ -44,15 +44,27 @@ function train!(dn::DecisionNode, X, y)
         best_split = (0, 0.0)
         found = false
         pl, pr = (0.0, 0.0)
+        # Pre-allocate left/right arrays
+        left = zeros(Int, length(f))
+        right = zeros(Int, length(f))
         for i in eachindex(v)
             x = unique(X[v[i], :])
             for j in eachindex(x)
-                left = [k for k in f if X[v[i], k] < x[j]]
-                right = setdiff(v, left)
-                left_p = length(left) / length(y)
+                added_left = 0
+                added_right = 0
+                for k in eachindex(f)
+                    if X[v[i], k] < x[j]
+                        added_left += 1
+                        left[added_left] = k
+                    else
+                        added_right += 1
+                        right[added_right] = k
+                    end
+                end
+                left_p = length(view(left, 1:added_left)) / length(y)
                 right_p = 1.0 - left_p
-                left_e = SDeMo._entropy(y[left])
-                right_e = SDeMo._entropy(y[right])
+                left_e = SDeMo._entropy(y[view(left, 1:added_left)])
+                right_e = SDeMo._entropy(y[view(right, 1:added_right)])
                 IG = current_entropy - left_p * left_e - right_p * right_e
                 if (IG > best_gain) & (IG > 0)
                     best_gain = IG

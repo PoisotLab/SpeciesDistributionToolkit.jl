@@ -32,6 +32,7 @@ end
 
 function train!(dn::DecisionNode, X, y)
     v = collect(axes(X, 1))
+    f = collect(axes(X, 2))
     if dn.visited
         return dn
     end
@@ -46,7 +47,7 @@ function train!(dn::DecisionNode, X, y)
         for i in eachindex(v)
             x = unique(X[v[i], :])
             for j in eachindex(x)
-                left = findall(X[v[i], :] .< x[j])
+                left = [k for k in f if X[v[i], k] < x[j]]
                 right = setdiff(v, left)
                 left_p = length(left) / length(y)
                 right_p = 1.0 - left_p

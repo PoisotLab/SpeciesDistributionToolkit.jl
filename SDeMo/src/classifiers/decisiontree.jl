@@ -47,7 +47,7 @@ function train!(dn::DecisionNode, X, y)
             x = unique(X[v[i], :])
             for j in eachindex(x)
                 left = findall(X[v[i], :] .< x[j])
-                right = findall(X[v[i], :] .>= x[j])
+                right = setdiff(v, left)
                 left_p = length(left) / length(y)
                 right_p = 1.0 - left_p
                 left_e = SDeMo._entropy(y[left])
@@ -226,4 +226,15 @@ end
     train!(model)
     @test SDeMo.depth(model.classifier) <= 3
     @test length(SDeMo.tips(model.classifier)) <= model.classifier.maxnodes
+end
+
+@testitem "We can train a decison tree and make a prediction with it" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, DecisionTree, X, y)
+    maxdepth!(model, 5)
+    @test model.classifier.maxdepth == 5
+    train!(model)
+    pr = predict(model,X)
+    @test eltype(pr) == Bool
+    @test length(pr) == length(y)
 end

@@ -131,7 +131,8 @@ function merge!(dn::DecisionNode)
 end
 
 function _entropy(x::Vector{Bool})
-    pᵢ = [sum(x), length(x) - sum(x)] ./ length(x)
+    μ = mean(x)
+    pᵢ = [μ, 1.0 - μ]
     return -sum(pᵢ .* log2.(pᵢ))
 end
 
@@ -145,7 +146,7 @@ end
 
 function _information_gain(dn::SDeMo.DecisionNode, X, y)
     p = findall(SDeMo._pool(dn, X))
-    pl = [i for i in p if X[dn.variable,i] < dn.value]
+    pl = [i for i in p if X[dn.variable, i] < dn.value]
     pr = setdiff(p, pl)
     yl = y[pl]
     yr = y[pr]
@@ -182,7 +183,7 @@ function train!(
     root.prediction = mean(y)
     dt.root = root
     train!(dt.root, X, y)
-    for _ in 1:(dt.maxdepth-2)
+    for _ in 1:(dt.maxdepth - 2)
         for tip in SDeMo.tips(dt)
             p = SDeMo._pool(tip, X)
             if !(tip.visited)
@@ -234,7 +235,7 @@ end
     maxdepth!(model, 5)
     @test model.classifier.maxdepth == 5
     train!(model)
-    pr = predict(model,X)
+    pr = predict(model, X)
     @test eltype(pr) == Bool
     @test length(pr) == length(y)
 end

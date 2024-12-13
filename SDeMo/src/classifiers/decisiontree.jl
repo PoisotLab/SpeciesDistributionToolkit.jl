@@ -31,8 +31,6 @@ function _pool(dn::DecisionNode, X)
 end
 
 function train!(dn::DecisionNode, X, y)
-    v = collect(axes(X, 1))
-    f = collect(axes(X, 2))
     if dn.visited
         return dn
     end
@@ -45,15 +43,15 @@ function train!(dn::DecisionNode, X, y)
         found = false
         pl, pr = (0.0, 0.0)
         # Pre-allocate left/right arrays
-        left = zeros(Int, length(f))
-        right = zeros(Int, length(f))
-        for i in eachindex(v)
-            x = unique(X[v[i], :])
-            for j in eachindex(x)
+        left = zeros(Int, size(X, 2))
+        right = zeros(Int, size(X, 2))
+        for vᵢ in axes(X, 1)
+            x = unique(X[vᵢ, :])
+            for xᵢ in x
                 added_left = 0
                 added_right = 0
-                for k in eachindex(f)
-                    if X[v[i], k] < x[j]
+                for k in axes(X, 2)
+                    if X[vᵢ, k] < xᵢ
                         added_left += 1
                         left[added_left] = k
                     else
@@ -61,15 +59,14 @@ function train!(dn::DecisionNode, X, y)
                         right[added_right] = k
                     end
                 end
-                left_p = length(view(left, 1:added_left)) / length(y)
-                right_p = 1.0 - left_p
+                left_p = added_left / length(y)
                 left_e = SDeMo._entropy(y[view(left, 1:added_left)])
                 right_e = SDeMo._entropy(y[view(right, 1:added_right)])
-                IG = current_entropy - left_p * left_e - right_p * right_e
-                if (IG > best_gain) & (IG > 0)
+                IG = current_entropy - left_p * left_e - (1.0 - left_p) * right_e
+                if (IG > best_gain) & (IG > 0.0)
                     best_gain = IG
-                    best_split = (v[i], x[j])
-                    pl, pr = left_p, right_p
+                    best_split = (vᵢ, xᵢ)
+                    pl, pr = left_p, (1.0 - left_p)
                     found = true
                 end
             end
@@ -145,8 +142,7 @@ end
 
 function _entropy(x::Vector{Bool})
     μ = mean(x)
-    pᵢ = [μ, 1.0 - μ]
-    return -sum(pᵢ .* log2.(pᵢ))
+    return -(μ * log2(μ) + (1.0 - μ) * log2(1.0 - μ))
 end
 
 function twigs(dt::DecisionTree)
@@ -200,7 +196,8 @@ function train!(
         for tip in SDeMo.tips(dt)
             p = SDeMo._pool(tip, X)
             if !(tip.visited)
-                train!(tip, X[:, findall(p)], y[findall(p)])
+                inpool = findall(p)
+                train!(tip, X[:, inpool], y[inpool])
             end
         end
     end

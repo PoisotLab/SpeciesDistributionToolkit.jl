@@ -31,7 +31,6 @@ function _pool(dn::DecisionNode, X)
 end
 
 function train!(dn::DecisionNode, X, y)
-    v = collect(axes(X, 1))
     if dn.visited
         return dn
     end
@@ -43,20 +42,28 @@ function train!(dn::DecisionNode, X, y)
         best_split = (0, 0.0)
         found = false
         pl, pr = (0.0, 0.0)
-        for i in eachindex(v)
-            x = unique(X[v[i], :])
-            for j in eachindex(x)
-                left = findall(X[v[i], :] .< x[j])
-                right = findall(X[v[i], :] .>= x[j])
-                left_p = length(left) / length(y)
-                right_p = 1.0 - left_p
-                left_e = SDeMo._entropy(y[left])
-                right_e = SDeMo._entropy(y[right])
-                IG = current_entropy - left_p * left_e - right_p * right_e
-                if (IG > best_gain) & (IG > 0)
+        for vᵢ in axes(X, 1)
+            x = unique(X[vᵢ, :])
+            for xᵢ in x
+                n_left = 0
+                s_left = 0
+                for k in axes(X, 2)
+                    if X[vᵢ, k] < xᵢ
+                        n_left += 1
+                        s_left += y[k]
+                    end
+                end
+                n_right = length(y) - n_left
+                p_left = n_left / length(y)
+                p_right = 1.0 - p_left
+                s_right = sum(y) - s_left
+                e_left = SDeMo._entropy(s_left/n_left)
+                e_right = SDeMo._entropy(s_right/n_right)
+                IG = current_entropy - p_left * e_left - p_right * e_right
+                if (IG > best_gain) & (IG > 0.0)
                     best_gain = IG
-                    best_split = (v[i], x[j])
-                    pl, pr = left_p, right_p
+                    best_split = (vᵢ, xᵢ)
+                    pl, pr = p_left, p_right
                     found = true
                 end
             end
@@ -130,10 +137,8 @@ function merge!(dn::DecisionNode)
     return dn
 end
 
-function _entropy(x::Vector{Bool})
-    pᵢ = [sum(x), length(x) - sum(x)] ./ length(x)
-    return -sum(pᵢ .* log2.(pᵢ))
-end
+_entropy(x::T) where {T <: AbstractFloat} = -(x * log2(x) + (1.0 - x) * log2(1.0 - x))
+_entropy(x::Vector{Bool}) = _entropy(mean(x))
 
 function twigs(dt::DecisionTree)
     leaves = SDeMo.tips(dt)
@@ -145,7 +150,7 @@ end
 
 function _information_gain(dn::SDeMo.DecisionNode, X, y)
     p = findall(SDeMo._pool(dn, X))
-    pl = [i for i in p if X[dn.variable,i] < dn.value]
+    pl = [i for i in p if X[dn.variable, i] < dn.value]
     pr = setdiff(p, pl)
     yl = y[pl]
     yr = y[pr]
@@ -182,11 +187,12 @@ function train!(
     root.prediction = mean(y)
     dt.root = root
     train!(dt.root, X, y)
-    for _ in 1:(dt.maxdepth-2)
+    for _ in 1:(dt.maxdepth - 2)
         for tip in SDeMo.tips(dt)
             p = SDeMo._pool(tip, X)
             if !(tip.visited)
-                train!(tip, X[:, findall(p)], y[findall(p)])
+                inpool = findall(p)
+                train!(tip, X[:, inpool], y[inpool])
             end
         end
     end
@@ -226,4 +232,15 @@ end
     train!(model)
     @test SDeMo.depth(model.classifier) <= 3
     @test length(SDeMo.tips(model.classifier)) <= model.classifier.maxnodes
+end
+
+@testitem "We can train a decison tree and make a prediction with it" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, DecisionTree, X, y)
+    maxdepth!(model, 5)
+    @test model.classifier.maxdepth == 5
+    train!(model)
+    pr = predict(model, X)
+    @test eltype(pr) == Bool
+    @test length(pr) == length(y)
 end

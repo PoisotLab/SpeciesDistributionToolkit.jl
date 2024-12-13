@@ -48,25 +48,25 @@ function train!(dn::DecisionNode, X, y)
         for vᵢ in axes(X, 1)
             x = unique(X[vᵢ, :])
             for xᵢ in x
-                added_left = 0
-                added_right = 0
+                n_left = 0
+                s_left = 0
                 for k in axes(X, 2)
                     if X[vᵢ, k] < xᵢ
-                        added_left += 1
-                        left[added_left] = k
-                    else
-                        added_right += 1
-                        right[added_right] = k
+                        n_left += 1
+                        s_left += y[k]
                     end
                 end
-                left_p = added_left / length(y)
-                left_e = SDeMo._entropy(y[view(left, 1:added_left)])
-                right_e = SDeMo._entropy(y[view(right, 1:added_right)])
-                IG = current_entropy - left_p * left_e - (1.0 - left_p) * right_e
+                n_right = length(y) - n_left
+                p_left = n_left / length(y)
+                p_right = 1.0 - p_left
+                s_right = sum(y) - s_left
+                e_left = SDeMo._entropy(s_left/n_left)
+                e_right = SDeMo._entropy(s_right/n_right)
+                IG = current_entropy - p_left * e_left - p_right * e_right
                 if (IG > best_gain) & (IG > 0.0)
                     best_gain = IG
                     best_split = (vᵢ, xᵢ)
-                    pl, pr = left_p, (1.0 - left_p)
+                    pl, pr = p_left, p_right
                     found = true
                 end
             end
@@ -140,10 +140,8 @@ function merge!(dn::DecisionNode)
     return dn
 end
 
-function _entropy(x::Vector{Bool})
-    μ = mean(x)
-    return -(μ * log2(μ) + (1.0 - μ) * log2(1.0 - μ))
-end
+_entropy(x::T) where {T <: AbstractFloat} = -(x * log2(x) + (1.0 - x) * log2(1.0 - x))
+_entropy(x::Vector{Bool}) = _entropy(mean(x))
 
 function twigs(dt::DecisionTree)
     leaves = SDeMo.tips(dt)

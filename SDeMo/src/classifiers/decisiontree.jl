@@ -42,9 +42,6 @@ function train!(dn::DecisionNode, X, y)
         best_split = (0, 0.0)
         found = false
         pl, pr = (0.0, 0.0)
-        # Pre-allocate left/right arrays
-        left = zeros(Int, size(X, 2))
-        right = zeros(Int, size(X, 2))
         for vᵢ in axes(X, 1)
             x = unique(X[vᵢ, :])
             for xᵢ in x

@@ -78,7 +78,7 @@ function _get_inclusion_from_polygon!(inclusion, layer, multipolygon::GeoJSON.Mu
 end 
 
 function SimpleSDMLayers.mask!(layers::Vector{SDMLayer}, multipolygon::GeoJSON.MultiPolygon) 
-    inclusion = zeros(eltype(first(layers).indices), size(first(layers)))
+    inclusion = .!reduce(.|, [l.indices for l in layers])
     _get_inclusion_from_polygon!(inclusion, first(layers), multipolygon)
     for layer in layers
         layer.indices .&= inclusion

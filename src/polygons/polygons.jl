@@ -32,6 +32,7 @@ Return a trimmed version of a layer, according to the feature defined a
 trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT} =
     trim(mask!(copy(layer), feature))
 
+
 function change_inclusion!(inclusion, layer, polygon, op)
     xytrans = SimpleSDMLayers.Proj.Transformation(
         "+proj=longlat +datum=WGS84 +no_defs",
@@ -68,24 +69,46 @@ function change_inclusion!(inclusion, layer, polygon, op)
     return inclusion
 end
 
+function _get_inclusion_from_polygon!(inclusion, layer, multipolygon::GeoJSON.MultiPolygon)
+    for element in multipolygon
+        for i in eachindex(element)
+            change_inclusion!(inclusion, layer, element[i], true)
+        end
+    end 
+end 
+
+function SimpleSDMLayers.mask!(layers::Vector{SDMLayer}, multipolygon::GeoJSON.MultiPolygon) 
+    inclusion = .!reduce(.|, [l.indices for l in layers])
+    _get_inclusion_from_polygon!(inclusion, first(layers), multipolygon)
+    for layer in layers
+        layer.indices .&= inclusion
+    end
+    return layers
+end
+
 """
     SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolygon)
 
-Turns of fall the cells outside the polygon (or within holes in the polygon). This modifies the object.
+Turns off all the cells outside the polygon (or within holes in the polygon). This modifies the object.
 """
 function SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolygon)
     inclusion = zeros(eltype(layer.indices), size(layer))
-    for element in multipolygon
-        change_inclusion!(inclusion, layer, element[1], true)
-        if length(element) > 2
-            for i in 2:length(element)
-                change_inclusion!(inclusion, layer, element[i], false)
-            end
-        end
-    end
+    _get_inclusion_from_polygon!(inclusion, layer, multipolygon)
     layer.indices .&= inclusion
     return layer
 end
+
+SimpleSDMLayers.mask!(layer::SDMLayer, features::GeoJSON.FeatureCollection, feature = 1) =
+    mask!(layer, features[feature])
+
+SimpleSDMLayers.mask!(layers::Vector{SDMLayer}, features::GeoJSON.FeatureCollection, feature = 1) =
+    mask!(layers, features[feature])
+    
+SimpleSDMLayers.mask!(layer::SDMLayer, feature::GeoJSON.Feature) =
+    mask!(layer, feature.geometry)
+
+SimpleSDMLayers.mask!(layers::Vector{SDMLayer}, feature::GeoJSON.Feature) =
+    mask!(layers, feature.geometry)
 
 """
     SimpleSDMLayers.mask(occ::T, multipolygon::GeoJSON.MultiPolygon) where {T <: AsbtractOccurrenceCollection}
@@ -120,17 +143,11 @@ function SimpleSDMLayers.mask(
     return elements(occ)[findall(inclusion)]
 end
 
-SimpleSDMLayers.mask!(layer::SDMLayer, features::GeoJSON.FeatureCollection, feature = 1) =
-    mask!(layer, features[feature])
-
 SimpleSDMLayers.mask(
     occ::T,
     features::GeoJSON.FeatureCollection,
     feature = 1,
 ) where {T <: AbstractOccurrenceCollection} = mask(occ, features[feature])
-
-SimpleSDMLayers.mask!(layer::SDMLayer, feature::GeoJSON.Feature) =
-    mask!(layer, feature.geometry)
 
 SimpleSDMLayers.mask(
     occ::T,

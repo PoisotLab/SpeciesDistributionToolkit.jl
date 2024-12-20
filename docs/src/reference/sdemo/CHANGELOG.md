@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## `v1.1.2`
 
 - **improved** the performance (speed and memory requirement) of prediction with Naive Bayes
-- **improved** the performance of Shapley explanations
+- **improved** the performance (speed) of training BIOCLIM
+- **improved** the performance (GC) of Shapley explanations
+- **improved** the performance (speed) of variable importance
 
 ## `v1.1.1`
 

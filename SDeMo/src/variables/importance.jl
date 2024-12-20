@@ -12,20 +12,20 @@ function variableimportance(model::T, folds, variable; samples=10, optimality=mc
     for (i, fold) in enumerate(folds)
         cm = deepcopy(model)
         train!(cm; training=fold[2])
-        for rep in 1:samples
-            o, p = varimp_shuffle(cm, fold, variable; kwargs...)
-            O[i,rep] = abs(optimality(o) - optimality(p))
+        X = copy(features(model)[:, fold[1]])
+        orig = ConfusionMatrix(predict(cm, X; kwargs...), labels(model)[fold[1]])
+        for rep in Base.OneTo(samples)
+            perm = ConfusionMatrix(predict(cm, _permute_at(X, variable); kwargs...), labels(model)[fold[1]])
+            O[i,rep] = abs(optimality(orig) - optimality(perm))
         end
     end
     return mean(O)
 end
 
-function varimp_shuffle(model, fold, var; kwargs...)
-    X = copy(features(model)[:, fold[1]])
-    orig = ConfusionMatrix(predict(model, X; kwargs...), labels(model)[fold[1]])
-    X[var,:] =  shuffle(X[var,:])
-    perm = ConfusionMatrix(predict(model, X; kwargs...), labels(model)[fold[1]])
-    return (orig, perm)
+function _permute_at(X, i)
+    Xp = copy(X)
+    Xp[i,:] = shuffle(X[i,:])
+    return Xp
 end
 
 """

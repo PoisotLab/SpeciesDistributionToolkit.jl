@@ -69,7 +69,9 @@ function explain(
     samples = 200,
     kwargs...,
 ) where {T <: AbstractSDM}
-    predictor = (x) -> predict(model, x; kwargs...)
+    function predictor(x)
+        return predict(model, x; kwargs...)
+    end
     instances = isnothing(instances) ? features(model) : instances
     if isnothing(observation)
         return shap_all_points(predictor, instances, features(model), j, samples)

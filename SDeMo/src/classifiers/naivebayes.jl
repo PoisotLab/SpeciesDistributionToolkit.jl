@@ -21,7 +21,7 @@ function train!(
     X::Matrix{T};
     prior = nothing,
 ) where {T <: Number}
-    nbc.prior = isnothing(prior) ? mean(y) : 0.5 # We set the P(+) as the prevalence if it is not specified
+    nbc.prior = isnothing(prior) ? mean(y) : prior # We set the P(+) as the prevalence if it is not specified
     X₊ = X[:, findall(y)]
     X₋ = X[:, findall(.!y)]
     nbc.presences = vec(mapslices(x -> Normal(mean(x), std(x)), X₊; dims = 2))
@@ -30,8 +30,14 @@ function train!(
 end
 
 function StatsAPI.predict(nbc::NaiveBayes, x::Vector{T}) where {T <: Number}
-    p₊ = prod(pdf.(nbc.presences, x))
-    p₋ = prod(pdf.(nbc.absences, x))
+    pᵢ₊ = zeros(length(x))
+    pᵢ₋ = zeros(length(x))
+    for i in eachindex(x)
+        pᵢ₊[i] = pdf(nbc.presences[i], x[i])
+        pᵢ₋[i] = pdf(nbc.absences[i], x[i])
+    end
+    p₊ = prod(pᵢ₊)
+    p₋ = prod(pᵢ₋)
     pₓ = nbc.prior * p₊ + (1.0 - nbc.prior) * p₋
     return (p₊ * nbc.prior) / pₓ
 end

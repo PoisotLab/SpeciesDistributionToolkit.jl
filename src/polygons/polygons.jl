@@ -32,7 +32,6 @@ Return a trimmed version of a layer, according to the feature defined a
 trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT} =
     trim(mask!(copy(layer), feature))
 
-
 function change_inclusion!(inclusion, layer, polygon, op)
     xytrans = SimpleSDMLayers.Proj.Transformation(
         "+proj=longlat +datum=WGS84 +no_defs",

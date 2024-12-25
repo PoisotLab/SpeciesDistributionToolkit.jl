@@ -68,6 +68,7 @@ function change_inclusion!(inclusion, layer, polygon, op)
     return inclusion
 end
 
+
 function _get_inclusion_from_polygon!(inclusion, layer, multipolygon::GeoJSON.MultiPolygon)
     for element in multipolygon
         for i in eachindex(element)

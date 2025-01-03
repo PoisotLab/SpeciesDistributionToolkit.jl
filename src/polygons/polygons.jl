@@ -23,6 +23,7 @@ function trim(layer::SDMLayer)
     )
 end
 
+
 """
     trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT}
 

@@ -69,4 +69,7 @@ export gainloss
 include("boundingbox.jl")
 export boundingbox
 
+# Additional functions
+include("integrations/clustering.jl")
+
 end # module SpeciesDistributionToolkit

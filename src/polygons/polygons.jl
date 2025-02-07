@@ -23,6 +23,7 @@ function trim(layer::SDMLayer)
     )
 end
 
+
 """
     trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT}
 
@@ -31,7 +32,6 @@ Return a trimmed version of a layer, according to the feature defined a
 """
 trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT} =
     trim(mask!(copy(layer), feature))
-
 
 function change_inclusion!(inclusion, layer, polygon, op)
     xytrans = SimpleSDMLayers.Proj.Transformation(
@@ -77,7 +77,7 @@ function _get_inclusion_from_polygon!(inclusion, layer, multipolygon::GeoJSON.Mu
     end 
 end 
 
-function SimpleSDMLayers.mask!(layers::Vector{SDMLayer}, multipolygon::GeoJSON.MultiPolygon) 
+function SimpleSDMLayers.mask!(layers::Vector{<:SDMLayer}, multipolygon::GeoJSON.MultiPolygon) 
     inclusion = .!reduce(.|, [l.indices for l in layers])
     _get_inclusion_from_polygon!(inclusion, first(layers), multipolygon)
     for layer in layers
@@ -101,13 +101,13 @@ end
 SimpleSDMLayers.mask!(layer::SDMLayer, features::GeoJSON.FeatureCollection, feature = 1) =
     mask!(layer, features[feature])
 
-SimpleSDMLayers.mask!(layers::Vector{SDMLayer}, features::GeoJSON.FeatureCollection, feature = 1) =
+SimpleSDMLayers.mask!(layers::Vector{<:SDMLayer}, features::GeoJSON.FeatureCollection, feature = 1) =
     mask!(layers, features[feature])
     
 SimpleSDMLayers.mask!(layer::SDMLayer, feature::GeoJSON.Feature) =
     mask!(layer, feature.geometry)
 
-SimpleSDMLayers.mask!(layers::Vector{SDMLayer}, feature::GeoJSON.Feature) =
+SimpleSDMLayers.mask!(layers::Vector{<:SDMLayer}, feature::GeoJSON.Feature) =
     mask!(layers, feature.geometry)
 
 """

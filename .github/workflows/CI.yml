@@ -31,7 +31,7 @@ jobs:
       - run: mv lcov.info OccurrencesInterface-lcov.info
       - uses: actions/upload-artifact@v4
         with:
-          name: coverage
+          name: occ-coverage
           path: OccurrencesInterface-lcov.info
   GBIF:
     name: "GBIF"
@@ -56,7 +56,7 @@ jobs:
       - run: mv lcov.info GBIF-lcov.info
       - uses: actions/upload-artifact@v4
         with:
-          name: coverage
+          name: gbif-coverage
           path: GBIF-lcov.info
   Phylopic:
     name: "Phylopic"
@@ -80,7 +80,7 @@ jobs:
       - run: mv lcov.info Phylopic-lcov.info
       - uses: actions/upload-artifact@v4
         with:
-          name: coverage
+          name: phylopic-coverage
           path: Phylopic-lcov.info
   SimpleSDMLayers:
     name: "SimpleSDMLayers"
@@ -104,7 +104,7 @@ jobs:
       - run: mv lcov.info SimpleSDMLayers-lcov.info
       - uses: actions/upload-artifact@v4
         with:
-          name: coverage
+          name: layers-coverage
           path: SimpleSDMLayers-lcov.info
   SimpleSDMDatasets:
     name: "SimpleSDMDatasets"
@@ -128,7 +128,7 @@ jobs:
       - run: mv lcov.info SimpleSDMDatasets-lcov.info
       - uses: actions/upload-artifact@v4
         with:
-          name: coverage
+          name: datasets-coverage
           path: SimpleSDMDatasets-lcov.info
   Fauxcurrences:
     name: "Fauxcurrences"
@@ -153,7 +153,7 @@ jobs:
       - run: mv lcov.info Fauxcurrences-lcov.info
       - uses: actions/upload-artifact@v4
         with:
-          name: coverage
+          name: faux-coverage
           path: Fauxcurrences-lcov.info
   SDeMo:
     name: "SDeMo"
@@ -199,7 +199,7 @@ jobs:
       - run: mv lcov.info SpeciesDistributionToolkit-lcov.info
       - uses: actions/upload-artifact@v4
         with:
-          name: coverage
+          name: sdt-coverage
           path: SpeciesDistributionToolkit-lcov.info
   Codecoverage:
     name: "Upload coverage"
@@ -210,7 +210,31 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/download-artifact@v4
         with:
-          name: coverage
+          name: sdt-coverage
+          path: ./codecov
+      - uses: actions/download-artifact@v4
+        with:
+          name: faux-coverage
+          path: ./codecov
+      - uses: actions/download-artifact@v4
+        with:
+          name: datasets-coverage
+          path: ./codecov
+      - uses: actions/download-artifact@v4
+        with:
+          name: layers-coverage
+          path: ./codecov
+      - uses: actions/download-artifact@v4
+        with:
+          name: phylopic-coverage
+          path: ./codecov
+      - uses: actions/download-artifact@v4
+        with:
+          name: gbif-coverage
+          path: ./codecov
+      - uses: actions/download-artifact@v4
+        with:
+          name: occ-coverage
           path: ./codecov
       - name: Check the coverage content
         run: ls -lah ./codecov

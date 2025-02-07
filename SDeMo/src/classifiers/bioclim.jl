@@ -17,12 +17,20 @@ function train!(bc::BIOCLIM, y::Vector{Bool}, X::Matrix{T}) where {T <: Number}
 end
 
 function StatsAPI.predict(bc::BIOCLIM, x::Vector{T}) where {T <: Number}
-    s = [_bioclim_score(bc.ecdf[i](x[i])) for i in eachindex(x)]
-    return 2minimum(s)
+    s = zeros(length(x))
+    for i in eachindex(s)
+        s[i] = _bioclim_score(bc.ecdf[i](x[i]))
+    end
+    return 2.0 * minimum(s)
 end
 
 function StatsAPI.predict(bc::BIOCLIM, X::Matrix{T}) where {T <: Number}
     return vec(mapslices(x -> predict(bc, x), X; dims = 1))
 end
 
-_bioclim_score(x) = x > 0.5 ? 1.0 - x : x
+function _bioclim_score(x::T) where {T <: AbstractFloat}
+    if x >= 0.5
+        return one(T) - x
+    end
+    return x
+end

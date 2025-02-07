@@ -29,7 +29,7 @@ function StatsAPI.predict(bc::BIOCLIM, X::Matrix{T}) where {T <: Number}
 end
 
 function _bioclim_score(x::T) where {T <: AbstractFloat}
-    if x > 0.5
+    if x >= 0.5
         return one(T) - x
     end
     return x

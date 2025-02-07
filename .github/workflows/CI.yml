@@ -29,7 +29,7 @@ jobs:
         with:
           directories: OccurrencesInterface/src
       - run: mv lcov.info OccurrencesInterface-lcov.info
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: OccurrencesInterface-lcov.info
@@ -54,7 +54,7 @@ jobs:
         with:
           directories: GBIF/src
       - run: mv lcov.info GBIF-lcov.info
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: GBIF-lcov.info
@@ -78,7 +78,7 @@ jobs:
         with:
           directories: Phylopic/src
       - run: mv lcov.info Phylopic-lcov.info
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: Phylopic-lcov.info
@@ -102,7 +102,7 @@ jobs:
         with:
           directories: SimpleSDMLayers/src
       - run: mv lcov.info SimpleSDMLayers-lcov.info
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: SimpleSDMLayers-lcov.info
@@ -126,7 +126,7 @@ jobs:
         with:
           directories: SimpleSDMDatasets/src
       - run: mv lcov.info SimpleSDMDatasets-lcov.info
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: SimpleSDMDatasets-lcov.info
@@ -151,7 +151,7 @@ jobs:
         with:
           directories: Fauxcurrences/src
       - run: mv lcov.info Fauxcurrences-lcov.info
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: Fauxcurrences-lcov.info
@@ -175,7 +175,7 @@ jobs:
         with:
           directories: SDeMo/src
       - run: mv lcov.info SpeciesDistributionToolkit-lcov.info
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: SpeciesDistributionToolkit-lcov.info
@@ -197,7 +197,7 @@ jobs:
         with:
           directories: src
       - run: mv lcov.info SpeciesDistributionToolkit-lcov.info
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: SpeciesDistributionToolkit-lcov.info
@@ -208,7 +208,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: coverage
           path: ./codecov

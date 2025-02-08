@@ -7,5 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- Added, Changed, Deprecated, Removed, Fixed -->
 
-## [Unreleased]
 
+## `v1.0.6`
+
+- **fixed**: the `interpolate!` method is now exported

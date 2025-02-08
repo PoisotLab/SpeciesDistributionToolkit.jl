@@ -68,6 +68,6 @@ export mosaic
 
 # Interpolation
 include("interpolation.jl")
-export interpolate
+export interpolate, interpolate!
 
 end # module

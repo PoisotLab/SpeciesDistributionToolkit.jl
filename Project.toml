@@ -1,7 +1,7 @@
 name = "SpeciesDistributionToolkit"
 uuid = "72b53823-5c0b-4575-ad0e-8e97227ad13b"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "1.2.2"
+version = "1.2.3"
 
 [deps]
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
@@ -27,7 +27,7 @@ Downloads = "1"
 Fauxcurrences = "1"
 GBIF = "1"
 GeoJSON = "0.8"
-MakieCore = "0.8"
+MakieCore = "0.8, 0.9"
 OccurrencesInterface = "1"
 Phylopic = "0.0.5"
 PolygonOps = "0.1"

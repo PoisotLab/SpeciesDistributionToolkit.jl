@@ -21,6 +21,11 @@ end
     @test eltype(cv.validation) <: ConfusionMatrix
 end
 
+"""
+    __classsplit(y)
+
+Returns a tuple with the presences indices, and the absences indices - this is used to maintain class balance in cross-validation and bagging
+"""
 __classsplit(y) = findall(y), findall(!, y)
 
 function __validation_idx(idx, p::T) where {T <: AbstractFloat}

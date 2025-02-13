@@ -40,6 +40,10 @@ include("classifiers/bioclim.jl")
 export BIOCLIM
 
 # BIOCLIM
+include("classifiers/logistic.jl")
+export Logistic
+
+# BIOCLIM
 include("classifiers/decisiontree.jl")
 export DecisionTree
 export maxnodes!, maxdepth!

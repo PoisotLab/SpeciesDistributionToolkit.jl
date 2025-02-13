@@ -253,7 +253,7 @@ current_figure() #hide
 
 m1 = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
 m2 = SDM(RawData, BIOCLIM, X, y)
-m3 = SDM(MultivariateTransform{PCA}, BIOCLIM, X, y)
+m3 = SDM(ZScore, Logistic, X, y)
 variables!(m2, [1, 12])
 hm = Ensemble(m1, m2, m3)
 

@@ -4,9 +4,12 @@
 function bootstrap(y, X; n = 50)
     @assert size(y, 1) == size(X, 2)
     bags = []
+    pos, neg = __classsplit(y)
     for _ in 1:n
-        inbag = sample(1:size(X, 2), size(X, 2); replace = true)
-        outbag = setdiff(axes(X, 2), inbag)
+        inbag_pos = unique(sample(pos, length(pos); replace=true))
+        inbag_neg = unique(sample(neg, length(neg); replace=true))
+        inbag = Random.shuffle!(vcat(inbag_pos, inbag_neg))
+        outbag = setdiff(axes(y, 1), inbag)
         push!(bags, (inbag, outbag))
     end
     return bags

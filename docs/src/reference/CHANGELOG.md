@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **added** support for `Clustering`
 
+
+## `v1.2.3`
+
+- **changed** the compat entry of `MakieCore` from `0.8` to `0.8, 0.9`
+
 ## `v1.2.2`
 
 - **fixed** dispatch of masking a vector of layers using polygons to work on any

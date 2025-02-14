@@ -47,7 +47,7 @@ function _layer_works_for_pseudoabsence(layer::SDMLayer{T}) where {T <: Bool}
 end
 
 """
-    pseudoabsencemask(::Type{RandomSelection}, presence::T) where {T <: SDMLayer}
+    pseudoabsencemask(::Type{RandomSelection}, presences::T) where {T <: SDMLayer}
 
 Generates a mask for pseudo-absences using the random selection method. Candidate
 cells for the pseudo-absence mask are (i) within the bounding box of the _layer_
@@ -105,10 +105,15 @@ function pseudoabsencemask(
 
     d = SpeciesDistributionToolkit.Fauxcurrences._distancefunction
 
-    prj = SimpleSDMLayers.Proj.Transformation(presences.crs, "+proj=longlat +datum=WGS84 +no_defs"; always_xy = true)
+    prj = SimpleSDMLayers.Proj.Transformation(
+        presences.crs,
+        "+proj=longlat +datum=WGS84 +no_defs";
+        always_xy = true,
+    )
     E, N = eastings(presences), northings(presences)
 
     points = [prj(E[i.I[2]], N[i.I[1]]) for i in keys(presence_only)]
+    D = zeros(length(points))
 
     for k in keys(background)
         pk = prj(E[k.I[2]], N[k.I[1]])
@@ -145,7 +150,7 @@ to `StatsBase.sample`, which is used internally.
 function backgroundpoints(
     layer::T,
     n::Int;
-    kwargs...
+    kwargs...,
 ) where {T <: SDMLayer}
     background = zeros(layer, Bool)
     selected_points = StatsBase.sample(

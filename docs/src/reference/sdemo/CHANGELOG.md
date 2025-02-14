@@ -7,8 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.2.2`
 
+- **added** the `verbose` field to `Logistic` to determine whether to print an output for gradient descent
 - **added** the `interactions` field to `Logistic` to determine which interactions to include
-
+- **changed** the creation of parameters for `Logistic` to allow only some interaction terms
 
 ## `v1.2.1`
 

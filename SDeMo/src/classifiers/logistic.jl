@@ -1,5 +1,10 @@
 __sigmoid(z::Number) = 1.0 / (1.0 + exp(-z))
-__sigmoid(z::AbstractVector{<:Number}) = __sigmoid.(z)
+function __sigmoid!(store::Vector{<:AbstractFloat}, z::Vector{<:AbstractFloat})
+    for i in eachindex(z)
+        store[i] = __sigmoid(z[i])
+    end
+    return store
+end    
 
 function __interactions(X)
     XiXi = X .^ 2
@@ -78,13 +83,13 @@ function SDeMo.train!(lreg::Logistic, y::Vector{Bool}, X::Matrix{T}) where {T <:
 
     for epoch in 1:(lreg.epochs)
         z = 𝐗t * lreg.θ
-        h = __sigmoid(z)
-        gradient = (1 / length(lreg.θ)) * 𝐗 * (h - y) + (lreg.λ / length(lreg.θ)) * lreg.θ
+        __sigmoid!(z, z)
+        gradient = (1 / length(lreg.θ)) * 𝐗 * (z - y) + (lreg.λ / length(lreg.θ)) * lreg.θ
         lreg.θ -= lreg.η * gradient
         if lreg.verbose & iszero(epoch % 100)
-            h = clamp.(h, eps(), 1 - eps())
+            z = clamp.(z, eps(), 1 - eps())
             loss =
-                -mean(y .* log.(h) .+ (1 .- y) .* log.(1 .- h)) +
+                -mean(y .* log.(z) .+ (1 .- y) .* log.(1 .- z)) +
                 (lreg.λ / (2 * length(lreg.θ))) * sum(lreg.θ[2:end] .^ 2)
             println("Epoch $epoch: Loss = $loss")
         end
@@ -100,7 +105,7 @@ end
 function StatsAPI.predict(lreg::Logistic, X::Matrix{T}) where {T <: Number}
     𝐗 = __makex(X, lreg.interactions)
     z = transpose(𝐗) * lreg.θ
-    return __sigmoid(z)
+    return __sigmoid!(z, z)
 end
 
 function __extract_coefficients(sdm::SDM)

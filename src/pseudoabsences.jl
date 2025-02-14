@@ -41,34 +41,6 @@ Generates a weight for the pseudo-absences based on the distance to cells with a
 struct DistanceToEvent <: PseudoAbsenceGenerator
 end
 
-"""
-    _random_point(ref, d; R = 6371.0)
-
-This function is used _internally_ to create a random point located within a distance `d` of point `ref`, assuming that the radius of the Earth is `R`. All it does is to generate a random angle in degrees, and the using the `_known_point` method to generate the new point.
-"""
-function _random_point(ref, d; R = 6371.0)
-    α = deg2rad(rand() * 360.0)
-    return _known_point(ref, d, α; R = R)
-end
-
-"""
-    _known_point(ref, d, α; R = 6371.0)
-
-This function will generate a new point set at a distance `d` and angle `α` from the `ref` point, assuming the radius of the Earth is `R`.
-"""
-function _known_point(ref, d, α; R = 6371.0)
-    # Convert the coordinates from degrees to radians
-    λ, φ = deg2rad.(ref)
-    # Get the angular distance
-    δ = d / R
-    # Get the new latitude
-    φ2 = asin(sin(φ) * cos(δ) + cos(φ) * sin(δ) * cos(α))
-    # Get the new longitude
-    λ2 = λ + atan(sin(α) * sin(δ) * cos(φ), cos(δ) - sin(φ) * sin(φ2))
-    # Return the coordinates in degree
-    return rad2deg.((λ2, φ2))
-end
-
 function _layer_works_for_pseudoabsence(layer::SDMLayer{T}) where {T <: Bool}
     iszero(sum(layer)) && throw(ArgumentError("The presences layer is empty"))
     return nothing

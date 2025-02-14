@@ -103,6 +103,7 @@ export default defineConfig({
                         {text: "... calculate statistics on layers?", link: "/howto/layer-statistics/"},
                         {text: "... calculate zonal statistics?", link: "/howto/zonal-statistics/"},
                         {text: "... generate pseudo-absences?", link: "/howto/pseudoabsences/"},
+                        {text: "... tweak logistic regression?", link: "/howto/logistic-regression/"},
                         {text: "... split a layer in tiles?", link: "/howto/split-layer/"},
                         {text: "... plot using Makie?", link: "/howto/makie/"},
                         {text: "... index layers by occurrences?", link: "/howto/layer-occurrences/"},

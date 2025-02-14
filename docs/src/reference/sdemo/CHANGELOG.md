@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.2.2`
+
+- **added** the `verbose` field to `Logistic` to determine whether to print an output for gradient descent
+- **added** the `interactions` field to `Logistic` to determine which interactions to include
+- **changed** the creation of parameters for `Logistic` to allow only some interaction terms
+- **improved** the performance (speed and memory consumption) of training logistic regressions
+
 ## `v1.2.1`
 
 - **added** `Logistic` as a new classifier using logistic regression with gradient descent

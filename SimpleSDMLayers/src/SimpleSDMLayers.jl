@@ -14,6 +14,7 @@ using TestItems
 import ArchGDAL
 import Proj
 import Tables
+import GeoInterface
 import Distances
 import StatsBase
 
@@ -44,6 +45,9 @@ include("tables.jl")
 
 # Broadcasting interface
 include("broadcasting.jl")
+
+# GeoInterface
+include("geointerface.jl")
 
 # Mask layers
 include("mask.jl")

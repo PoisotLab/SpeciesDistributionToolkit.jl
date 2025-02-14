@@ -96,7 +96,7 @@ export default defineConfig({
                         {text: "... interpolate data?", link: "/howto/interpolate/"},
                         {text: "... list provided layers?", link: "/howto/list-provided-layers/"},
                         {text: "... do arithmetic on layers?", link: "/howto/layer-arithmetic/"},
-                        {text: "... mask a layer?", link: "/howto/mask-layer/"},c
+                        {text: "... mask a layer?", link: "/howto/mask-layer/"},
                         {text: "... mask with polygons?", link: "/howto/mask-polygons/"},
                         {text: "... read part of a layer?", link: "/howto/read-part-layer/"},
                         {text: "... get the bounding box for an object?", link: "/howto/get-boundingbox/"},

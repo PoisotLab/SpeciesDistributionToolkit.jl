@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- Added, Changed, Deprecated, Removed, Fixed -->
 
+## `v1.0.7`
+
+- **added** support for the `⊻ ` operator
+- **fixed** the `show` method for layers (especially when returning many) 
 
 ## `v1.0.6`
 
-- **fixed**: the `interpolate!` method is now exported
+- **fixed** the export of the `interpolate!` method

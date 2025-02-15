@@ -71,11 +71,14 @@ end
 
 function Base.show(io::IO, ::MIME"text/plain", layer::SDMLayer)
     info_str = [
-        "SDM Layer with $(count(layer)) $(eltype(layer)) cells",
-        "\tProj string: $(layer.crs)",
-        "\tGrid size: $(size(layer))",
+        "🗺️  A $(size(layer, 1)) × $(size(layer, 2)) layer with $(count(layer)) $(eltype(layer)) cells",
+        "   Projection: $(layer.crs)",
     ]
     return print(io, join(info_str, "\n"))
+end
+
+function Base.show(io::IO, layer::SDMLayer)
+    return print(io, "🗺️  A $(size(layer, 1)) × $(size(layer, 2)) layer ($(count(layer)) $(eltype(layer)) cells)")
 end
 
 function Base.copy(layer::SDMLayer)
@@ -210,4 +213,5 @@ end
 
 Base.:&(l1::SDMLayer{Bool}, l2::SDMLayer{Bool}) = l1 .& l2
 Base.:|(l1::SDMLayer{Bool}, l2::SDMLayer{Bool}) = l1 .| l2
+Base.:⊻(l1::SDMLayer{Bool}, l2::SDMLayer{Bool}) = l1 .⊻ l2
 Base.:!(l1::SDMLayer{Bool}) = .!l1

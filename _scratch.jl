@@ -50,21 +50,32 @@ function _distances_on_layer(presences::SDMLayer{Bool}, f::Function)
     return background
 end
 
-origin = presencelayer
-destination = SDMLayer(zeros(eltype(origin), 100, 100), BitArray(ones(100, 100)), origin.x, origin.y, origin.crs)
+function fastdistance(origin, f, s)
 
-prj = SimpleSDMLayers.Proj.Transformation(
-        origin.crs,
-        "+proj=longlat +datum=WGS84 +no_defs";
-        always_xy = true,
-    )
+    destination = SDMLayer(zeros(eltype(origin), s...), BitArray(ones(s...)), origin.x, origin.y, origin.crs)
 
-E, N = eastings(origin), northings(origin)
-pres = keys(nodata(origin, false))
-points = [prj(E[i.I[2]], N[i.I[1]]) for i in pres]
-for p in points
-    destination[p...] = true
+    prj = SimpleSDMLayers.Proj.Transformation(
+            origin.crs,
+            "+proj=longlat +datum=WGS84 +no_defs";
+            always_xy = true,
+        )
+
+    E, N = eastings(origin), northings(origin)
+    pres = keys(nodata(origin, false))
+    points = [prj(E[i.I[2]], N[i.I[1]]) for i in pres]
+    for p in points
+        destination[p...] = true
+    end
+
+    newbg = _distances_on_layer(destination, f)
+    return mask(SimpleSDMLayers.interpolate!(convert(SDMLayer{eltype(newbg)}, copy(origin)), newbg), origin)
 end
 
-newbg = _distances_on_layer(destination, minimum)
-SimpleSDMLayers.interpolate!(copy(background), newbg)
+bgsample = fastdistance(presencelayer, minimum, (200, 200))
+background
+
+@benchmark fastdistance(presencelayer, minimum, (100, 100))
+
+extrema(bgsample - background)
+extrema(bgsample)
+extrema(background)

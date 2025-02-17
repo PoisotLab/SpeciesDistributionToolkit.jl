@@ -12,10 +12,15 @@ jobs:
   OccurrencesInterface:
     name: "OccurrencesInterface"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./OccurrencesInterface OccurrencesInterface/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -36,11 +41,16 @@ jobs:
   GBIF:
     name: "GBIF"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     needs: [OccurrencesInterface]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./GBIF GBIF/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -61,10 +71,15 @@ jobs:
   Phylopic:
     name: "Phylopic"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./Phylopic Phylopic/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -85,10 +100,15 @@ jobs:
   SimpleSDMLayers:
     name: "SimpleSDMLayers"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./SimpleSDMLayers SimpleSDMLayers/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -109,10 +129,15 @@ jobs:
   SimpleSDMDatasets:
     name: "SimpleSDMDatasets"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./SimpleSDMDatasets SimpleSDMDatasets/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -133,11 +158,16 @@ jobs:
   Fauxcurrences:
     name: "Fauxcurrences"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     needs: [OccurrencesInterface, SimpleSDMLayers]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./Fauxcurrences Fauxcurrences/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -158,10 +188,15 @@ jobs:
   SDeMo:
     name: "SDeMo"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./SDeMo SDeMo/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -183,10 +218,15 @@ jobs:
     needs: [GBIF, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, Phylopic, SDeMo, OccurrencesInterface]
     name: "SpeciesDistributionToolkit"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=. bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest

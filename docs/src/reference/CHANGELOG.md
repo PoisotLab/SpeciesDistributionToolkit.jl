@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **changed** the github actions to work on LTS and latest release
 - **added** support for `SpatialBoundaries` wombling through an extension
 - **added** `SpatialBoundaries` version 0.2 *(WEAKDEP)*
+- **added** tutorials for spatial boundaries and virtual species
 - **improved** the CI time by preventing a run of the full test suite when testing SDT
 
 ## `v1.2.3`

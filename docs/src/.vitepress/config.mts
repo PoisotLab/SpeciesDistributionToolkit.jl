@@ -106,6 +106,7 @@ export default defineConfig({
                         {text: "... tweak logistic regression?", link: "/howto/logistic-regression/"},
                         {text: "... split a layer in tiles?", link: "/howto/split-layer/"},
                         {text: "... plot using Makie?", link: "/howto/makie/"},
+                        {text: "... cluster layers?", link: "/howto/cluster-layers/"},
                         {text: "... index layers by occurrences?", link: "/howto/layer-occurrences/"},
                     ]
                 }

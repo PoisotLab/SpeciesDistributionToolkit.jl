@@ -1,7 +1,7 @@
 name = "SpeciesDistributionToolkit"
 uuid = "72b53823-5c0b-4575-ad0e-8e97227ad13b"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "1.2.3"
+version = "1.3.0"
 
 [deps]
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
@@ -21,6 +21,12 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
 
+[weakdeps]
+SpatialBoundaries = "8d2ba62a-3d23-4a2b-b692-6b63e9267be2"
+
+[extensions]
+SpatialBoundariesExt = "SpatialBoundaries"
+
 [compat]
 Distances = "0.10"
 Downloads = "1"
@@ -35,7 +41,8 @@ Reexport = "1.2"
 SDeMo = "1"
 SimpleSDMDatasets = "1"
 SimpleSDMLayers = "1"
+SpatialBoundaries = "0.2"
 StatsBase = "0.34"
 TestItems = "1"
 ZipFile = "0.10"
-julia = "1.8"
+julia = "1.10"

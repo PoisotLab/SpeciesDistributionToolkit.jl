@@ -70,4 +70,18 @@ export mosaic
 include("interpolation.jl")
 export interpolate, interpolate!
 
+# Load the extensions
+if !isdefined(Base, :get_extension)
+    using Requires 
+end
+
+function __init__()
+    # The @static is important
+    @static if !isdefined(Base, :get_extension)
+        @require Clustering="aaaa29a8-35af-508c-8bc3-b662a17a0fe5" begin
+            include("../ext/ClusteringExtension.jl")
+        end
+    end
+end
+
 end # module

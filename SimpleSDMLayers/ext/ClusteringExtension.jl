@@ -42,9 +42,7 @@ using Statistics
 using CairoMakie
 spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
 dataprovider = RasterData(CHELSA1, BioClim)
-temperature = 0.1SDMLayer(dataprovider; layer = "BIO1", spatial_extent...)
-precipitation = 1.0SDMLayer(dataprovider; layer = "BIO12", spatial_extent...)
-L = [temperature, precipitation]
+L = [SDMLayer(dataprovider; layer = i, spatial_extent...) for i in 1:19]
 M = (L .- mean.(L)) ./ std.(L)
 cl = kmeans(M, 10)
 K = SDMLayer(cl, temperature)

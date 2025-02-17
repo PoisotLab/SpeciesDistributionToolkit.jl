@@ -29,3 +29,20 @@ end
     @test isa(W.rate, SDMLayer)
     @test isa(W.direction, SDMLayer)
 end
+
+
+
+@testitem "We can womble with a vector of layers" begin
+    using SpatialBoundaries
+    L = [SDMLayer(
+        RasterData(CHELSA1, BioClim);
+        layer = i,
+        left = -66.0,
+        right = -62.0,
+        bottom = 45.0,
+        top = 46.5,
+    ) for i in [1, 12]]
+    W = wombling(L)
+    @test isa(W.rate, SDMLayer)
+    @test isa(W.direction, SDMLayer)
+end

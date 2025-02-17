@@ -70,6 +70,10 @@ export mosaic
 include("interpolation.jl")
 export interpolate, interpolate!
 
+# Burn values in layers
+include("burnin.jl")
+export burnin, burnin!
+
 # Load the extensions
 if !isdefined(Base, :get_extension)
     using Requires 

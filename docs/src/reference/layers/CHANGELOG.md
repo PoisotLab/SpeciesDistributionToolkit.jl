@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## `v1.1.0`
 
 - **added** an extension for `Clustering` to support `kmeans` and `fuzzy_cmeans`
+- **added** `burnin` and `burnin!` methods to write vectors into layers
 
 ## `v1.0.7`
 

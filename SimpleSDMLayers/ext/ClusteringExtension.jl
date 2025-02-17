@@ -1,6 +1,6 @@
 module ClusteringExtension
 
-    using SpeciesDistributionToolkit
+    using SimpleSDMLayers
     using Clustering
     
     function Clustering.kmeans(L::Vector{<:SDMLayer}, args...; kwargs...)
@@ -10,11 +10,9 @@ module ClusteringExtension
     end
 
     function SDMLayer(result::Clustering.KmeansResult, template::SDMLayer)
-        output = similar(template, Int64)
         C = assignments(result)
         @assert length(C) == count(template)
-        output.grid[output.indices] .= C
-        return output
+        return burnin(template, C)
     end
 
     function Clustering.fuzzy_cmeans(L::Vector{<:SDMLayer}, args...; kwargs...)
@@ -24,30 +22,8 @@ module ClusteringExtension
     end
 
     function SDMLayer(result::Clustering.FuzzyCMeansResult, template::SDMLayer)
-        n_centers = size(result.centers, 2)
-        output = [similar(template, Float64) for _ in 1:n_centers]
-        memberships = result.weights
-        @assert size(memberships, 1) == count(template)
-        for i in 1:n_centers
-            output[i].grid[output[i].indices] .= memberships[:,i]
-        end
-        return output
+        @assert size(result.weights, 1) == count(template)
+        return [burnin(template, result.weights[:,i]) for i in 1:size(result.centers, 2)]
     end
-
-#=
-using Revise
-using SpeciesDistributionToolkit
-using Clustering
-using Statistics
-using CairoMakie
-spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
-dataprovider = RasterData(CHELSA1, BioClim)
-L = [SDMLayer(dataprovider; layer = i, spatial_extent...) for i in 1:19]
-M = (L .- mean.(L)) ./ std.(L)
-cl = kmeans(M, 10)
-K = SDMLayer(cl, temperature)
-fcl = fuzzy_cmeans(M, 3, 2)
-F = SDMLayer(fcl, temperature)
-=#
 
 end

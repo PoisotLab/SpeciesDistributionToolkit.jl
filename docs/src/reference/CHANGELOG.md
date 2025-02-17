@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.3.0`
 
-- **added** support for `Clustering`
+- **added** support for `Clustering` (clustering of layers, writing of clustering output to layer(s))
 
 ## `v1.2.3`
 

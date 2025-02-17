@@ -57,9 +57,9 @@ fig, ax, hm = heatmap(
 )
 current_figure() #hide
 
-# Fuzzy C-means is also supported. We can get three fuzzy clusters with
+# Fuzzy C-means is also supported. We can get three fuzzy clusters (under a fuzzyness parameter of 2) with
 
-F = fuzzy_cmeans(L, 3)
+F = fuzzy_cmeans(L, 3, 2)
 
 # This can be converted into a vector of layers with the following syntax:
 

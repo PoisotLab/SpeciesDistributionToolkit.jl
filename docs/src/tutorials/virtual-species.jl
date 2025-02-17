@@ -51,27 +51,18 @@ logistic(α, β) = (x) -> logistic(x, α, β)
 
 function virtualspecies(L::Vector{<:SDMLayer}; prevalence::Float64 = 0.25)
     prevalence = clamp(prevalence, eps(), 1.0)
-    # The center of the response is a random value in the layer
     invalid = true
     while invalid
         centers = [rand(values(l)) for l in L]
         shapes = randn(length(L))
-        # The shape is a random Normal
-        predictors = [logistic(centers[i], shapes[i]) for i in eachindex(L)]
-        # We can generate a prediction for each layer
+        predictors = [logistic(centers[i], shapes[i]) for i in eachindex(L)]        
         predictions = [predictors[i].(L[i]) for i in eachindex(L)]
-        # We rescale the response of all layers so that it is is 0-1
         rescale!.(predictions)
-        # We predict the response by multiplying the values
-        global prediction = prod(predictions)
-        # We normalize the prediction so it is in 0-1
+        global prediction = prod(predictions)        
         rescale!(prediction)
-        # Check that there are no NaN values
         invalid = any(isnan, prediction)
     end
-    # We identify the cutoff based on the prevalence
     cutoff = quantile(prediction, 1-prevalence)
-    # Then we return the prediction, the cutoff, and the range
     return prediction, cutoff, prediction .>= cutoff
 end
 
@@ -154,7 +145,6 @@ function LCBD(ranges::Vector{SDMLayer{Bool}}; transformation::Function=identity)
     SCBDj = SSj ./ SStotal
     SSi = sum(S; dims=2)
     LCBDi = SSi ./ SStotal
-    # LCBD raster
     betadiv = similar(first(ranges), Float32)
     betadiv.grid[findall(betadiv.indices)] .= vec(LCBDi)
     return betadiv, vec(SCBDj), BDtotal
@@ -164,7 +154,7 @@ end
 # transformation:
 
 function hellinger(Y::AbstractMatrix{T}) where {T <: Number}
-    yi = sum(Y; dims=2) .+ 1 # This is important to ensure that empty locations are included
+    yi = sum(Y; dims=2) .+ 1
     return sqrt.(Y ./ yi)
 end
 

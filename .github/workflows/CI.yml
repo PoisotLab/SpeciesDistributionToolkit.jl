@@ -277,10 +277,6 @@ jobs:
           path: ./codecov
       - uses: actions/download-artifact@v4
         with:
-          name: sdemo-${{ matrix.julia-version }}-coverage
-          path: ./codecov
-      - uses: actions/download-artifact@v4
-        with:
           name: occ-${{ matrix.julia-version }}-coverage
           path: ./codecov
       - name: Check the coverage content

@@ -21,42 +21,39 @@ dataprovider = RasterData(CHELSA1, BioClim)
 temperature = SDMLayer(dataprovider; layer = "BIO1", spatial_extent...)
 precipitation = SDMLayer(dataprovider; layer = "BIO12", spatial_extent...)
 
-# We can get the 
+# normalize
 
-# Likewise, we can get the standard deviation:
+L = [temperature, precipitation]
+L = (L .- mean.(L)) ./ std.(L)
 
-std(temperature)
+# k-means
 
-# Because of the way layers support arithmetic operations, we can esasily get the
-# z-score of temperature as a layer:
+K = kmeans(L, 3)
 
-z_temperature = (temperature - mean(temperature)) / std(temperature)
+# move to layer uses the last argument to give a template
 
-# This can be plotted. Note that we do not need to do anything on the layer
-# itself, since the package comes pre-loaded with `Makie` recipes. This will be
-# very useful when we start using `GeoMakie` axes to incorporate projections into
-# our figures (which we will not do here...).
+k = SDMLayer(K, first(L))
 
-# fig-zscore
+# fig-kmeans
 fig, ax, hm = heatmap(
-    z_temperature;
-    colormap = :broc,
-    colorrange = (-2, 2),
+    k,
+    colormap = :Spectral,
     figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
-Colorbar(fig[:, end + 1], hm)
 current_figure() #hide
 
-# Another option to modify the layers is to use the `rescale` method. When given
-# two values, it will rescale the layer to be between these two values. This is
-# useful if you want to bring a series of arbitrary values to some interval. As
-# before, note that we can directly pass the GBIF object to `scatter` to show it
-# on a map:
+# can also do fuzzy c-means
 
-# fig-rescale
+F = fuzzy_cmeans(L, 2)
+
+# return to layer
+
+f = SDMLayer(F, first(L))
+
+# fig-fuzzycmeans
 fig, ax, hm = heatmap(
-    rescale(precipitation, (0.0, 1.0));
+    F[1],
     colormap = :bamako,
     figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
@@ -64,20 +61,4 @@ fig, ax, hm = heatmap(
 Colorbar(fig[:, end + 1], hm)
 current_figure() #hide
 
-# To get a little more insights about the distribution of precipitation, we can
-# look at the quantiles, given by the `quantize` function:
-
-# fig-quantize
-fig, ax, hm = heatmap(
-    quantize(precipitation, 5);
-    colormap = :bamako,
-    figure = (; size = (800, 400)),
-    axis = (; aspect = DataAspect()),
-)
-Colorbar(fig[:, end + 1], hm)
-current_figure() #hide
-
-# The `quantile` function also has an overload, and so we can get the 5th and 95th
-# percentiles of the distribution in the layer:
-
-quantile(temperature, [0.05, 0.95])
+# can do validation too

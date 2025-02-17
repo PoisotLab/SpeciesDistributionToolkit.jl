@@ -1,6 +1,7 @@
 using TestItemRunner
 
-@run_package_tests filter=ti->!(:skipci in ti.tags)
+# We do NOT run the tests from the component packages, this is already done with CI
+@run_package_tests filter=ti->!(:skipci in ti.tags)&(contains(ti.filename, "SpeciesDistributionToolkit.jl/src")|contains(ti.filename, "SpeciesDistributionToolkit.jl/test")) verbose=true
 
 @testitem "We can get the gradient right" begin
     using SpatialBoundaries

@@ -6,7 +6,8 @@ using SpatialBoundaries
 """
     wombling(layer::SDMLayer; convert_to::Type=Float64)
 
-Performs a lattice wombling on a `SimpleSDMLayer`.
+Performs a lattice wombling on a `SimpleSDMLayer`. The returns are (i) the rate
+of change, (ii) the direction of change, and (iii) the wombling object itself.
 """
 function wombling(layer::SDMLayer)
 
@@ -24,7 +25,7 @@ function wombling(layer::SDMLayer)
     # Prepare to return
     rate = SDMLayer(W.m, (!isnan).(W.m), extrema(W.y), extrema(W.x), layer.crs)
     direction = SDMLayer(W.θ, (!isnan).(W.m), extrema(W.y), extrema(W.x), layer.crs)
-    return (; rate, direction)
+    return (; rate, direction, wombling = W)
 end
 
 @testitem "We can get the gradient right" begin

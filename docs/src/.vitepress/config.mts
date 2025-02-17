@@ -119,6 +119,7 @@ export default defineConfig({
                         {text: "Building the BIOCLIM model", link: "/tutorials/bioclim/"},
                         {text: "Generating a landcover consensus", link: "/tutorials/consensus/"},
                         {text: "Generating fauxcurrences", link: "/tutorials/fauxcurrences/"},
+                        {text: "Generating virtual species", link: "/tutorials/virtual-species/"},
                         {text: "Identifying spatial boundaries", link: "/tutorials/spatial-boundaries/"},
                         {text: "Training SDMs with SDeMo", link: "/tutorials/sdemo-introduction/"},
                         {text: "Mapping SDMs with SDeMo", link: "/tutorials/sdemo-vignette/"},

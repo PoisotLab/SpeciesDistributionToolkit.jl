@@ -3,7 +3,6 @@ uuid = "2c645270-77db-11e9-22c3-0f302a89c64c"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>", "Gabriel Dansereau <gabriel.dansereau@umontreal.ca>"]
 version = "1.1.0"
 
-
 [deps]
 ArchGDAL = "c9ce4bd3-c3d5-55b8-8973-c0e20141b8c3"
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
@@ -16,6 +15,9 @@ TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
 [extensions]
 ClusteringExtension = "Clustering"
+
+[weakdeps]
+Clustering="aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
 
 [compat]
 ArchGDAL = "0.10"

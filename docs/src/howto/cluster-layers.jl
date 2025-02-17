@@ -71,7 +71,7 @@ f = SDMLayer(F, first(L))
 
 # fig-fuzzycmeans
 fig, ax, hm = heatmap(
-    F[1],
+    f[1],
     colormap = :bamako,
     figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),

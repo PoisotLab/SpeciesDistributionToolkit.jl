@@ -4,12 +4,12 @@ using SpeciesDistributionToolkit
 using SpatialBoundaries
 
 """
-    wombling(layer::SDMLayer; convert_to::Type=Float64)
+    wombling(layer::SDMLayer)
 
-Performs a lattice wombling on a `SimpleSDMLayer`. The returns are (i) the rate
+Performs a lattice wombling on a `SDMLayer`. The returns are (i) the rate
 of change, (ii) the direction of change, and (iii) the wombling object itself.
 """
-function wombling(layer::SDMLayer)
+function SpatialBoundaries.wombling(layer::T) where {T <: SDMLayer}
 
     # Get the values for x and y
     y = collect(eastings(layer))

@@ -11,6 +11,7 @@ using SpeciesDistributionToolkit
 using SpatialBoundaries # [!code highlight]
 using CairoMakie
 using StatsBase
+using Statistics
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # Because there are four different layers in the EarthEnv database that
@@ -45,21 +46,35 @@ nodata!(not_water, false)
 
 classes_with_trees = findall(contains.(landcover_classes, "Trees"))
 tree_lc = convert(SDMLayer{Float64}, reduce(+, landcover[classes_with_trees]))
-heatmap(tree_lc; colormap=:linear_kbgyw_5_98_c62_n256)
+
+# Let's check that the layer looks correct:
+
+# fig-boundariestree
+heatmap(tree_lc; colormap=:Greens)
+current_figure() #hide
 
 # Because there are several layers, we can pass them to the wombling function
 # directly, to return the mean rate and mean angular direction:
 
 W = wombling(landcover[classes_with_trees]);
 
-# We can get a sense of which cells are candidate boundaries:
+# We can get a sense of which cells are candidate boundaries, by picking the top
+# 15%:
 
-(quantize(W.rate).>=0.2) |> heatmap
+cutoff = quantile(W.rate, 0.85)
+candidates = (W.rate.>=cutoff)
 
-# We can also look at the rate of change:
+# We can plot these candidate points
 
-heatmap(W.rate, colormap=[:grey95, :grey5])
-current_figure()
+# fig-boundariescandidates
+heatmap(candidates, colormap=[:grey85, :black])
+current_figure() #hide
+
+# We can also look at the (log of the) rate of change:
+
+# fig-boundariesrate
+heatmap(log1p.(W.rate))
+current_figure() #hide
 
 # For this example we will plot the direction of change as radial plots to get
 # an idea of the prominent direction of change. Here we will plot *all* the
@@ -72,8 +87,9 @@ direction = mask(W.direction, nodata(W.rate, 0.0))
 # collect the cells and convert them from degrees to radians. Then we can start
 # by plotting the direction of change of *all* cells.
 
+# fig-boundariespolar
 f = Figure()
-ax = PolarAxis(f[1, 1])
-h = fit(Histogram, values(direction); nbins = 100)
-stairs!(ax, h.edges[1], h.weights[[axes(h.weights, 1)..., 1]]; color = :teal, linewidth = 2)
-current_figure()
+ax = PolarAxis(f[1, 1], theta_0 = -pi/2, direction = -1)
+h = fit(Histogram, deg2rad.(values(direction)); nbins = 100)
+stairs!(ax, h.edges[1], h.weights[[axes(h.weights, 1)..., 1]]; color = :purple, linewidth = 2)
+current_figure() #hide

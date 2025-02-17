@@ -5,7 +5,7 @@ module ClusteringExtension
     
     function Clustering.kmeans(L::Vector{<:SDMLayer}, args...; kwargs...)
         @assert SimpleSDMLayers._layers_are_compatible(L)
-        X = transpose(hcat(values.(L)...))
+        X = permutedims(hcat(values.(L)...))
         return kmeans(X, args...; kwargs...)
     end
 
@@ -17,7 +17,7 @@ module ClusteringExtension
 
     function Clustering.fuzzy_cmeans(L::Vector{<:SDMLayer}, args...; kwargs...)
         @assert SimpleSDMLayers._layers_are_compatible(L)
-        X = transpose(hcat(values.(L)...))
+        X = permutedims(hcat(values.(L)...))
         return fuzzy_cmeans(X, args...; kwargs...)
     end
 

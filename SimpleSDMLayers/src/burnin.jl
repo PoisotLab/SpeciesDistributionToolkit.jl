@@ -4,7 +4,7 @@
 Replaces the values of `L` by the values in the vector `v`.
 """
 function burnin!(L::SDMLayer{T}, v::Vector{T}) where {T}
-    @assert length(C) == count(L)
+    @assert length(v) == count(L)
     L.grid[L.indices] .= v
     return L
 end

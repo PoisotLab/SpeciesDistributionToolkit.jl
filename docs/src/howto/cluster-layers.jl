@@ -5,7 +5,8 @@
 
 # This functionality is supported through an extension, which is only active
 # when the `Clustering` package is loaded. For versions of Julia that do not
-# support extensions, this is handled through the `Require` package.
+# support extensions (this means any 1.8 version), this is handled through the
+# `Require` package.
 
 using SpeciesDistributionToolkit
 using CairoMakie
@@ -14,25 +15,38 @@ import StatsBase
 using Clustering # [!code highlight]
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
-# We will get two layers to work with:
+# The support is currently limited to clustering methods that take a matrix of
+# features, as distance matrices for large layers risk getting extremely large.
+# To illustrate how the integration with `Clustering` works, we will get data
+# from CHELSA1:
 
 spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
 dataprovider = RasterData(CHELSA1, BioClim)
-temperature = SDMLayer(dataprovider; layer = "BIO1", spatial_extent...)
-precipitation = SDMLayer(dataprovider; layer = "BIO12", spatial_extent...)
+L = [SDMLayer(dataprovider; layer = i, spatial_extent...) for i in [1, 3, 8, 12]]
 
-# normalize
+# It makes more sense to normalize these layers, so they all have unit variance
+# and a mean of zero:
 
-L = [temperature, precipitation]
 L = (L .- mean.(L)) ./ std.(L)
 
-# k-means
+# The syntax is the exact same as the `Clustering` package, with the feature
+# matrix replaced by the vector of layers. For example, k-means with k=3 on
+# these input data is done with:
 
 K = kmeans(L, 3)
 
-# move to layer uses the last argument to give a template
+# Note that this will return a `Clustering` result object, which can therefore
+# be validated using any measure of clustering performance.
+
+# To bring this result back to a layer, we can use the following syntax:
 
 k = SDMLayer(K, first(L))
+
+# The last argument *must* be a layer, which will be used as a template to store
+# the output values in. In the case of `kmeans`, this is the cluster to which
+# each pixel is assigned.
+
+# We can visualize the result of this clustering:
 
 # fig-kmeans
 fig, ax, hm = heatmap(
@@ -43,13 +57,17 @@ fig, ax, hm = heatmap(
 )
 current_figure() #hide
 
-# can also do fuzzy c-means
+# Fuzzy C-means is also supported. We can get three fuzzy clusters with
 
-F = fuzzy_cmeans(L, 2)
+F = fuzzy_cmeans(L, 3)
 
-# return to layer
+# This can be converted into a vector of layers with the following syntax:
 
 f = SDMLayer(F, first(L))
+
+# Each layer represents the membership of a pixel to each of the fuzzy clusters.
+# If required, these can be passed through `mosaic` with `argmax` to get the
+# most likely cluster.
 
 # fig-fuzzycmeans
 fig, ax, hm = heatmap(
@@ -60,5 +78,3 @@ fig, ax, hm = heatmap(
 )
 Colorbar(fig[:, end + 1], hm)
 current_figure() #hide
-
-# can do validation too

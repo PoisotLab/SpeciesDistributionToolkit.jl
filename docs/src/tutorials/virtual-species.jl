@@ -118,6 +118,7 @@ current_figure() #hide
 # interval.
 
 ranges = [virtualspecies(L; prevalence=rand())[3] for _ in 1:100]
+first(ranges)
 
 # We can sum these layers to obtain a measurement of the simulated species
 # richness:

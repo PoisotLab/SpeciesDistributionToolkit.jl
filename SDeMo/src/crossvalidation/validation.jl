@@ -185,21 +185,21 @@ function auc(x::Array{T}, y::Array{T}) where {T <: Number}
 end
 
 """
-    ci(C::Vector{ConfusionMatrix}, f)
+    ci(C::Vector{<:ConfusionMatrix}, f)
 
 Applies `f` to all confusion matrices in the vector, and returns the 95% CI.
 """
-function ci(C::Vector{ConfusionMatrix}, f)
+function ci(C::Vector{<:ConfusionMatrix}, f)
     v = f.(C)
     return 1.96 * std(v) / sqrt(length(C))
 end
 
 """
-    ci(C::Vector{ConfusionMatrix})
+    ci(C::Vector{<:ConfusionMatrix})
 
 Applies the MCC (`mcc`) to all confusion matrices in the vector, and returns the 95% CI.
 """
-ci(C::Vector{ConfusionMatrix}) = ci(C, mcc)
+ci(C::Vector{<:ConfusionMatrix}) = ci(C, mcc)
 
 crossentropyloss(y, p) = mean(.-(y .* log.(p) .+ (1.0 .- y) .* log.(1.0 .- p)))
 
@@ -259,12 +259,12 @@ for op in (
     eval(
         quote
             """
-                $($op)(C::Vector{ConfusionMatrix}, full::Bool=false)
+                $($op)(C::Vector{<:ConfusionMatrix}, full::Bool=false)
 
             Version of `$($op)` using a vector of confusion matrices. Returns the mean, and when the second argument is `true`, returns a tuple where the second argument is the CI.
             """
             function $op(
-                C::Vector{ConfusionMatrix},
+                C::Vector{<:ConfusionMatrix},
                 full::Bool = false,
                 args...;
                 kwargs...,

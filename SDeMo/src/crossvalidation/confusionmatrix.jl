@@ -48,7 +48,7 @@ function ConfusionMatrix(pred::Vector{T}, truth::Vector{Bool}, τ::T) where {T <
 end
 
 @testitem "We can predict a confusion matrix from Float Bool" begin
-    pred = [1., 0., 0.8, 0.2, 0.6]
+    pred = [1.0, 0.0, 0.8, 0.2, 0.6]
     truth = [true, true, false, false, false]
     C = ConfusionMatrix(pred, truth, 0.55)
     @test C.tp == 1
@@ -57,7 +57,8 @@ end
     @test C.fn == 1
 end
 
-ConfusionMatrix(p::T, t::Bool, args...) where {T <: Number} = ConfusionMatrix([p], [t], args...)
+ConfusionMatrix(p::T, t::Bool, args...) where {T <: Number} =
+    ConfusionMatrix([p], [t], args...)
 
 """
     ConfusionMatrix(pred::Vector{T}, truth::Vector{Bool}) where {T <: Number}
@@ -71,7 +72,7 @@ function ConfusionMatrix(pred::Vector{T}, truth::Vector{Bool}) where {T <: Numbe
 end
 
 @testitem "We can predict a confusion matrix from Float Bool - default threshold" begin
-    pred = [1., 0., 0.8, 0.2, 0.6]
+    pred = [1.0, 0.0, 0.8, 0.2, 0.6]
     truth = [true, true, false, false, false]
     C = ConfusionMatrix(pred, truth)
     @test C.tp == 1
@@ -115,3 +116,8 @@ end
 
 Base.Matrix(c::ConfusionMatrix) = [c.tp c.fp; c.fn c.tn]
 Base.zero(ConfusionMatrix) = ConfusionMatrix(0, 0, 0, 0)
+
+Base.:+(c1::ConfusionMatrix, c2::ConfusionMatrix) =
+    ConfusionMatrix(c1.tp + c2.tp, c1.tn + c2.tn, c1.fp + c2.fp, c1.fn + c2.fn)
+Base.:-(c1::ConfusionMatrix, c2::ConfusionMatrix) =
+    ConfusionMatrix(c1.tp - c2.tp, c1.tn - c2.tn, c1.fp - c2.fp, c1.fn - c2.fn)

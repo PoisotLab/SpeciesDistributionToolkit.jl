@@ -7,14 +7,7 @@ using TestItemRunner
 
 @testitem "We can cluster a series of layers" begin
     using Clustering
-    L = [SDMLayer(
-        RasterData(CHELSA1, BioClim);
-        layer = i,
-        left = -66.0,
-        right = -62.0,
-        bottom = 45.0,
-        top = 46.5,
-    ) for i in [1, 12]]
+    L = [SimpleSDMLayers.__demodata(reduced=true) for _ in 1:3]
     K = kmeans(L, 3)
     C = SDMLayer(K, L)
     q = clustering_quality(L, K; quality_index = :davies_bouldin)

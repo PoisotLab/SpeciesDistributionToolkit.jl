@@ -27,6 +27,7 @@ module ClusteringExtension
     end
 
     SDMLayer(result::Clustering.ClusteringResult, template::Vector{<:SDMLayer}) = SDMLayer(result, first(template))
+    SDMLayer(result::Clustering.FuzzyCMeansResult, template::Vector{<:SDMLayer}) = SDMLayer(result, first(template))
 
     function Clustering.clustering_quality(L::Vector{<:SDMLayer}, K::Clustering.ClusteringResult, args...; kwargs...)
         @assert SimpleSDMLayers._layers_are_compatible(L)

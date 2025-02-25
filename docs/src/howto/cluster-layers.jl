@@ -40,11 +40,15 @@ K = kmeans(L, 3)
 
 # To bring this result back to a layer, we can use the following syntax:
 
-k = SDMLayer(K, first(L))
+k = SDMLayer(K, L)
 
-# The last argument *must* be a layer, which will be used as a template to store
-# the output values in. In the case of `kmeans`, this is the cluster to which
-# each pixel is assigned.
+# The last argument *must* be a layer (or a vector of layers), which will be
+# used as a template to store the output values in. In the case of `kmeans`,
+# this is the cluster to which each pixel is assigned.
+
+# We can get the quality of this clustering with
+
+clustering_quality(L, K; quality_index = :davies_bouldin)
 
 # We can visualize the result of this clustering:
 
@@ -63,7 +67,7 @@ F = fuzzy_cmeans(L, 3, 2)
 
 # This can be converted into a vector of layers with the following syntax:
 
-f = SDMLayer(F, first(L))
+f = SDMLayer(F, L)
 
 # Each layer represents the membership of a pixel to each of the fuzzy clusters.
 # If required, these can be passed through `mosaic` with `argmax` to get the

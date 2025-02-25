@@ -113,12 +113,22 @@ function pseudoabsencemask(
     E, N = eastings(presences), northings(presences)
 
     points = [prj(E[i.I[2]], N[i.I[1]]) for i in keys(presence_only)]
-    D = zeros(length(points))
 
-    for k in keys(background)
-        pk = prj(E[k.I[2]], N[k.I[1]])
-        background[k] = f([d(pk, ko) for ko in points])
+    # Prepare for thread-safe parallelism
+    bg = keys(background)
+    chunk_size = max(1, length(bg) ÷ (50 * Threads.nthreads() ))
+    data_chunks = Base.Iterators.partition(bg, chunk_size)
+    tasks = map(data_chunks) do chunk
+        Threads.@spawn begin
+            for k in chunk
+                pk = prj(E[k.I[2]], N[k.I[1]])
+                background[k] = f([d(pk, ko) for ko in points])
+            end
+        end
     end
+
+    # Fetch the tasks
+    fetch.(tasks)
 
     return background
 end

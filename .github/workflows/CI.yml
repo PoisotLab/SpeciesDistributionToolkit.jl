@@ -14,7 +14,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
         matrix:
-            julia-version: ["1", "lts"]
+            julia-version: ["1", "lts", "nightly", "pre"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
@@ -43,7 +43,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
         matrix:
-            julia-version: ["1", "lts"]
+            julia-version: ["1", "lts", "nightly", "pre"]
     needs: [OccurrencesInterface]
     continue-on-error: true
     steps:
@@ -73,7 +73,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
         matrix:
-            julia-version: ["1", "lts"]
+            julia-version: ["1", "lts", "nightly", "pre"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
@@ -102,7 +102,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
         matrix:
-            julia-version: ["1", "lts"]
+            julia-version: ["1", "lts", "nightly", "pre"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
@@ -131,7 +131,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
         matrix:
-            julia-version: ["1", "lts"]
+            julia-version: ["1", "lts", "nightly", "pre"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
@@ -160,7 +160,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
         matrix:
-            julia-version: ["1", "lts"]
+            julia-version: ["1", "lts", "nightly", "pre"]
     needs: [OccurrencesInterface, SimpleSDMLayers]
     continue-on-error: true
     steps:
@@ -190,7 +190,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
         matrix:
-            julia-version: ["1", "lts"]
+            julia-version: ["1", "lts", "nightly", "pre"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
@@ -220,7 +220,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
         matrix:
-            julia-version: ["1", "lts"]
+            julia-version: ["1", "lts", "nightly", "pre"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
@@ -248,7 +248,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
         matrix:
-            julia-version: ["1", "lts"]
+            julia-version: ["1", "lts", "nightly", "pre"]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/download-artifact@v4

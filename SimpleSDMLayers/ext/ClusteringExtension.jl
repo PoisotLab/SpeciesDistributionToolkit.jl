@@ -26,4 +26,13 @@ module ClusteringExtension
         return [burnin(template, result.weights[:,i]) for i in 1:size(result.centers, 2)]
     end
 
+    SDMLayer(result::Clustering.ClusteringResult, template::Vector{<:SDMLayer}) = SDMLayer(result, first(template))
+    SDMLayer(result::Clustering.FuzzyCMeansResult, template::Vector{<:SDMLayer}) = SDMLayer(result, first(template))
+
+    function Clustering.clustering_quality(L::Vector{<:SDMLayer}, K::Clustering.ClusteringResult, args...; kwargs...)
+        @assert SimpleSDMLayers._layers_are_compatible(L)
+        X = permutedims(hcat(values.(L)...))
+        return Clustering.clustering_quality(X, K, args...; kwargs...)
+    end
+
 end

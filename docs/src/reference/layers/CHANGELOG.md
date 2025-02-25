@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- Added, Changed, Deprecated, Removed, Fixed -->
 
+## `v1.1.1`
+
+- **added** an overload for clustering quality
+- **added** an overload to transform a clustering result based on the vector of layers used to generate it
+
 ## `v1.1.0`
 
 - **added** an extension for `Clustering` to support `kmeans` and `fuzzy_cmeans`

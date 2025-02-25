@@ -180,27 +180,49 @@ for each set of validation data first, and the confusion matrix for the training
 data second.
 """
 function crossvalidate(sdm::T, folds; thr = nothing, kwargs...) where {T <: AbstractSDM}
-    Cv = zeros(ConfusionMatrix, length(folds))
-    Ct = zeros(ConfusionMatrix, length(folds))
-    models = [deepcopy(sdm) for _ in Base.OneTo(Threads.nthreads())]
-    Threads.@threads for i in eachindex(folds)
-        trn, val = folds[i]
-        train!(models[Threads.threadid()]; training = trn, kwargs...)
-        pred = predict(models[Threads.threadid()], features(sdm)[:, val]; threshold = false)
-        ontrn =
-            predict(models[Threads.threadid()], features(sdm)[:, trn]; threshold = false)
-        thr = isnothing(thr) ? threshold(sdm) : thr
-        Cv[i] = ConfusionMatrix(pred, labels(sdm)[val], thr)
-        Ct[i] = ConfusionMatrix(ontrn, labels(sdm)[trn], thr)
+    # We get the threshold to use for classification only once
+    τ = isnothing(thr) ? threshold(sdm) : thr
+
+    # Thread-safe structure
+    chunk_size = max(1, length(folds) ÷ (5 * Threads.nthreads() ))
+    data_chunks = Base.Iterators.partition(folds, chunk_size)
+
+    tasks = map(data_chunks) do chunk
+        Threads.@spawn begin
+            model = deepcopy(sdm)
+            X = [SDeMo._validate_one_model!(model, fold, τ, kwargs...) for fold in chunk]
+            return X
+        end
     end
-    return (validation = Cv, training = Ct)
+
+    confmats_batched = fetch.(tasks)
+    confmats = vcat(confmats_batched...)
+
+    return (validation = first.(confmats), training = last.(confmats))
+end
+
+"""
+    _validate_one_model!(model::AbstractSDM, fold, τ, kwargs...)
+
+Trains the model and returns the Cv and Ct conf matr. Used internally by
+cross-validation.
+"""
+function _validate_one_model!(model::T, fold, τ, kwargs...) where {T <: AbstractSDM}
+    trn, val = fold
+    train!(model; training = trn, kwargs...)
+    pred = predict(model, features(model)[:, val]; threshold = false)
+    ontrn = predict(model, features(model)[:, trn]; threshold = false)
+    Cv = ConfusionMatrix(pred, labels(model)[val], τ)
+    Ct = ConfusionMatrix(ontrn, labels(model)[trn], τ)
+    return Cv, Ct
 end
 
 @testitem "We can cross-validate an SDM" begin
     X, y = SDeMo.__demodata()
     sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.5, X, y, [1, 2, 12])
     train!(sdm)
-    cv = crossvalidate(sdm, kfold(sdm; k = 15))
+    folds = kfold(sdm; k = 15)
+    cv = crossvalidate(sdm, folds)
     @test eltype(cv.validation) <: ConfusionMatrix
     @test eltype(cv.training) <: ConfusionMatrix
 end
@@ -211,7 +233,8 @@ end
     sdm = SDM(MultivariateTransform{PCA}(), NaiveBayes(), 0.5, X, y, [1, 2, 12])
     ens = Bagging(sdm, 10)
     train!(ens)
-    cv = crossvalidate(ens, kfold(ens; k = 15); consensus = median)
+    folds = kfold(sdm; k=15)
+    cv = crossvalidate(ens, folds; consensus = median)
     @test eltype(cv.validation) <: ConfusionMatrix
     @test eltype(cv.training) <: ConfusionMatrix
 end

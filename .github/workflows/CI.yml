@@ -12,10 +12,15 @@ jobs:
   OccurrencesInterface:
     name: "OccurrencesInterface"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./OccurrencesInterface OccurrencesInterface/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -28,19 +33,24 @@ jobs:
       - uses: julia-actions/julia-processcoverage@v1
         with:
           directories: OccurrencesInterface/src
-      - run: mv lcov.info OccurrencesInterface-lcov.info
+      - run: mv lcov.info OccurrencesInterface-lcov-${{ matrix.julia-version }}.info
       - uses: actions/upload-artifact@v4
         with:
-          name: occ-coverage
-          path: OccurrencesInterface-lcov.info
+          name: occ-${{ matrix.julia-version }}-coverage
+          path: OccurrencesInterface-lcov-${{ matrix.julia-version }}.info
   GBIF:
     name: "GBIF"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     needs: [OccurrencesInterface]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./GBIF GBIF/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -53,18 +63,23 @@ jobs:
       - uses: julia-actions/julia-processcoverage@v1
         with:
           directories: GBIF/src
-      - run: mv lcov.info GBIF-lcov.info
+      - run: mv lcov.info GBIF-lcov-${{ matrix.julia-version }}.info
       - uses: actions/upload-artifact@v4
         with:
-          name: gbif-coverage
-          path: GBIF-lcov.info
+          name: gbif-${{ matrix.julia-version }}-coverage
+          path: GBIF-lcov-${{ matrix.julia-version }}.info
   Phylopic:
     name: "Phylopic"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./Phylopic Phylopic/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -77,18 +92,23 @@ jobs:
       - uses: julia-actions/julia-processcoverage@v1
         with:
           directories: Phylopic/src
-      - run: mv lcov.info Phylopic-lcov.info
+      - run: mv lcov.info Phylopic-lcov-${{ matrix.julia-version }}.info
       - uses: actions/upload-artifact@v4
         with:
-          name: phylopic-coverage
-          path: Phylopic-lcov.info
+          name: phylopic-${{ matrix.julia-version }}-coverage
+          path: Phylopic-lcov-${{ matrix.julia-version }}.info
   SimpleSDMLayers:
     name: "SimpleSDMLayers"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./SimpleSDMLayers SimpleSDMLayers/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -101,18 +121,23 @@ jobs:
       - uses: julia-actions/julia-processcoverage@v1
         with:
           directories: SimpleSDMLayers/src
-      - run: mv lcov.info SimpleSDMLayers-lcov.info
+      - run: mv lcov.info SimpleSDMLayers-lcov-${{ matrix.julia-version }}.info
       - uses: actions/upload-artifact@v4
         with:
-          name: layers-coverage
-          path: SimpleSDMLayers-lcov.info
+          name: layers-${{ matrix.julia-version }}-coverage
+          path: SimpleSDMLayers-lcov-${{ matrix.julia-version }}.info
   SimpleSDMDatasets:
     name: "SimpleSDMDatasets"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./SimpleSDMDatasets SimpleSDMDatasets/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -125,19 +150,24 @@ jobs:
       - uses: julia-actions/julia-processcoverage@v1
         with:
           directories: SimpleSDMDatasets/src
-      - run: mv lcov.info SimpleSDMDatasets-lcov.info
+      - run: mv lcov.info SimpleSDMDatasets-lcov-${{ matrix.julia-version }}.info
       - uses: actions/upload-artifact@v4
         with:
-          name: datasets-coverage
-          path: SimpleSDMDatasets-lcov.info
+          name: datasets-${{ matrix.julia-version }}-coverage
+          path: SimpleSDMDatasets-lcov-${{ matrix.julia-version }}.info
   Fauxcurrences:
     name: "Fauxcurrences"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     needs: [OccurrencesInterface, SimpleSDMLayers]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./Fauxcurrences Fauxcurrences/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -150,18 +180,23 @@ jobs:
       - uses: julia-actions/julia-processcoverage@v1
         with:
           directories: Fauxcurrences/src
-      - run: mv lcov.info Fauxcurrences-lcov.info
+      - run: mv lcov.info Fauxcurrences-lcov-${{ matrix.julia-version }}.info
       - uses: actions/upload-artifact@v4
         with:
-          name: faux-coverage
-          path: Fauxcurrences-lcov.info
+          name: faux-${{ matrix.julia-version }}-coverage
+          path: Fauxcurrences-lcov-${{ matrix.julia-version }}.info
   SDeMo:
     name: "SDeMo"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=./SDeMo SDeMo/bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -174,19 +209,24 @@ jobs:
       - uses: julia-actions/julia-processcoverage@v1
         with:
           directories: SDeMo/src
-      - run: mv lcov.info SpeciesDistributionToolkit-lcov.info
+      - run: mv lcov.info sdemo-lcov-${{ matrix.julia-version }}.info
       - uses: actions/upload-artifact@v4
         with:
-          name: coverage
-          path: SpeciesDistributionToolkit-lcov.info
+          name: sdemo-${{ matrix.julia-version }}-coverage
+          path: SDeMo-lcov-${{ matrix.julia-version }}.info
   SpeciesDistributionToolkit:
     needs: [GBIF, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, Phylopic, SDeMo, OccurrencesInterface]
     name: "SpeciesDistributionToolkit"
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
       - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
       - name: "Bootstrap the package"
         run: julia --project=. bootstrap.jl
       - uses: julia-actions/julia-buildpkg@latest
@@ -196,45 +236,48 @@ jobs:
       - uses: julia-actions/julia-processcoverage@v1
         with:
           directories: src
-      - run: mv lcov.info SpeciesDistributionToolkit-lcov.info
+      - run: mv lcov.info SpeciesDistributionToolkit-lcov-${{ matrix.julia-version }}.info
       - uses: actions/upload-artifact@v4
         with:
-          name: sdt-coverage
-          path: SpeciesDistributionToolkit-lcov.info
+          name: sdt-${{ matrix.julia-version }}-coverage
+          path: SpeciesDistributionToolkit-lcov-${{ matrix.julia-version }}.info
   Codecoverage:
     name: "Upload coverage"
     needs: [SpeciesDistributionToolkit]
     if: ${{ always() }}
     runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts"]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/download-artifact@v4
         with:
-          name: sdt-coverage
+          name: sdt-${{ matrix.julia-version }}-coverage
           path: ./codecov
       - uses: actions/download-artifact@v4
         with:
-          name: faux-coverage
+          name: faux-${{ matrix.julia-version }}-coverage
           path: ./codecov
       - uses: actions/download-artifact@v4
         with:
-          name: datasets-coverage
+          name: datasets-${{ matrix.julia-version }}-coverage
           path: ./codecov
       - uses: actions/download-artifact@v4
         with:
-          name: layers-coverage
+          name: layers-${{ matrix.julia-version }}-coverage
           path: ./codecov
       - uses: actions/download-artifact@v4
         with:
-          name: phylopic-coverage
+          name: phylopic-${{ matrix.julia-version }}-coverage
           path: ./codecov
       - uses: actions/download-artifact@v4
         with:
-          name: gbif-coverage
+          name: gbif-${{ matrix.julia-version }}-coverage
           path: ./codecov
       - uses: actions/download-artifact@v4
         with:
-          name: occ-coverage
+          name: occ-${{ matrix.julia-version }}-coverage
           path: ./codecov
       - name: Check the coverage content
         run: ls -lah ./codecov

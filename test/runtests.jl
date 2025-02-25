@@ -1,31 +1,48 @@
-using SpeciesDistributionToolkit
-using Test
+using TestItemRunner
 
-global anyerrors = false
+# We do NOT run the tests from the component packages, this is already done with CI
+@run_package_tests filter=ti->!(:skipci in ti.tags)&(contains(ti.filename, "SpeciesDistributionToolkit.jl/src")|contains(ti.filename, "SpeciesDistributionToolkit.jl/test")) verbose=true
 
-tests = [
-    "read/write layers" => "01_integration_read.jl",
-    "EDGE: stitch bounding box" => "edgecases/01_stitch_wrong_bb.jl",
-    "EDGE: clip & GDAL" => "edgecases/02_clip_gdalwarp.jl",
-    "EDGE: keychecker" => "edgecases/03_layers_keycheck.jl",
-]
-
-#=
-for test in tests
-    try
-        include(test.second)
-        println("\033[1m\033[32m✓\033[0m\t$(test.first)")
-    catch e
-        global anyerrors = true
-        println("\033[1m\033[31m×\033[0m\t$(test.first)")
-        println("\033[1m\033[38m→\033[0m\ttest/$(test.second)")
-        showerror(stdout, e, backtrace())
-        println()
-        break
+@testitem "We can get the gradient right" begin
+    using SpatialBoundaries
+    X = zeros(Float64, 200, 200)
+    for i in axes(X, 1)
+        X[i, :] .= i
     end
+    grad = SDMLayer(X)
+    Z = wombling(grad)
+    @test all(unique(values(Z.rate)) .== 1.0)
+    @test all(unique(values(Z.direction)) .== 180.0)
 end
 
-if anyerrors
-    throw("Tests failed")
+@testitem "We can womble with a layer" begin
+    using SpatialBoundaries
+    precipitation = SDMLayer(
+        RasterData(CHELSA1, BioClim);
+        layer = 12,
+        left = -66.0,
+        right = -62.0,
+        bottom = 45.0,
+        top = 46.5,
+    )
+    W = wombling(precipitation)
+    @test isa(W.rate, SDMLayer)
+    @test isa(W.direction, SDMLayer)
 end
-=#
+
+
+
+@testitem "We can womble with a vector of layers" begin
+    using SpatialBoundaries
+    L = [SDMLayer(
+        RasterData(CHELSA1, BioClim);
+        layer = i,
+        left = -66.0,
+        right = -62.0,
+        bottom = 45.0,
+        top = 46.5,
+    ) for i in [1, 12]]
+    W = wombling(L)
+    @test isa(W.rate, SDMLayer)
+    @test isa(W.direction, SDMLayer)
+end

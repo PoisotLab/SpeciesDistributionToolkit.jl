@@ -133,6 +133,12 @@ function pseudoabsencemask(
     return background
 end
 
+"""
+    pseudoabsencemask(::Type{DistanceToEvent}, presence::T; distance::Number=100.0) where {T <: SimpleSDMLayer}
+
+Generates a mask for pseudo-absences where pseudo-absences can be within a
+`distance` (in kilometers) of the original observation.
+"""
 function pseudoabsencemask(
     ::Type{WithinRadius},
     presences::T;

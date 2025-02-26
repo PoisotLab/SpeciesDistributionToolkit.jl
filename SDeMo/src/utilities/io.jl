@@ -78,3 +78,5 @@ end
     @test labels(sdm) == labels(nsdm)
     @test features(sdm) == features(nsdm)
 end
+
+# TODO #363 Add a method to save a model with logistic classifier

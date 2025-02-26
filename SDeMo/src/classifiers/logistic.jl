@@ -74,7 +74,11 @@ Base.@kwdef mutable struct Logistic <: Classifier
     verbose::Bool = false
 end
 
+# TODO #364 Improve output for logistic models
+
 Base.zero(::Type{Logistic}) = 0.5
+
+# TODO #365 Use the data not part of training to measure valid. loss on Logistic
 
 function SDeMo.train!(lreg::Logistic, y::Vector{Bool}, X::Matrix{T}) where {T <: Number}
     𝐗 = SDeMo.__makex(X, lreg.interactions)

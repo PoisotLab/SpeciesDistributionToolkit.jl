@@ -16,3 +16,6 @@ latitudes(o::T) where {T <: AbstractOccurrence} =
 
 longitudes(o::T) where {T <: AbstractOccurrenceCollection} = longitudes.(elements(o))
 latitudes(o::T) where {T <: AbstractOccurrenceCollection} = latitudes.(elements(o))
+
+longitudes(o::Vector{<:T}) where {T <: AbstractOccurrence} = longitudes.(o)
+latitudes(o::Vector{<:T}) where {T <: AbstractOccurrence} = latitudes.(o)

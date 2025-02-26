@@ -22,6 +22,18 @@ function boundingbox(occ::AbstractOccurrenceCollection; padding=0.0)
 end
 
 """
+    boundingbox(occ::Vector{<:AbstractOccurrence}; padding=0.0)
+
+Returns the bounding box for a vector of abstract occurrences, with an
+additional padding.
+"""
+function boundingbox(occ::Vector{<:AbstractOccurrence}; padding=0.0)
+    left, right = extrema(longitudes(occ))
+    bottom, top = extrema(latitudes(occ))
+    return _padbbox(left, right, bottom, top, padding)
+end
+
+"""
     boundingbox(layer::SDMLayer; padding=0.0)
 
 Returns the bounding box for a layer, with an additional padding.

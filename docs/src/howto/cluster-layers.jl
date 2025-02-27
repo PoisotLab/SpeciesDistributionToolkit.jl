@@ -4,9 +4,7 @@
 # package to apply k-means or fuzzy C-means on layers.
 
 # This functionality is supported through an extension, which is only active
-# when the `Clustering` package is loaded. For versions of Julia that do not
-# support extensions (this means any 1.8 version), this is handled through the
-# `Require` package.
+# when the `Clustering` package is loaded.
 
 using SpeciesDistributionToolkit
 using CairoMakie

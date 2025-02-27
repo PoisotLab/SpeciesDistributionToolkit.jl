@@ -9,7 +9,7 @@ end
 
 Base.zero(::Type{BIOCLIM}) = 0.01
 
-function train!(bc::BIOCLIM, y::Vector{Bool}, X::Matrix{T}) where {T <: Number}
+function train!(bc::BIOCLIM, y::Vector{Bool}, X::Matrix{T}; kwargs...) where {T <: Number}
     presences = findall(y)
     obs = X[:, presences]
     bc.ecdf = vec(mapslices(ecdf, obs; dims = 2))

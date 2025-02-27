@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.3.0`
 
+- **added** the option to report on validation loss when training a logistic
+- **added** the option to pass arbitrary keywords to the training of the classifier
+- **improved** the verbose output of logistic regression
+- **improved** the internals of `train!` to use a simpler syntax
 - **improved** the verbose output of variable selection
 
 ## `v1.2.3`

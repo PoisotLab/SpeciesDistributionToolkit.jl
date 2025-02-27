@@ -20,6 +20,7 @@ function train!(
     y::Vector{Bool},
     X::Matrix{T};
     prior = nothing,
+    kwargs...
 ) where {T <: Number}
     nbc.prior = isnothing(prior) ? mean(y) : prior # We set the P(+) as the prevalence if it is not specified
     X₊ = X[:, findall(y)]

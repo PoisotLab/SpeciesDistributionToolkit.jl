@@ -30,7 +30,7 @@ function _pool(dn::DecisionNode, X)
     return _is_in_node_parent(dn, X) .& _pool(dn.parent, X)
 end
 
-function train!(dn::DecisionNode, X, y)
+function train!(dn::DecisionNode, X, y; kwargs...)
     if dn.visited
         return dn
     end
@@ -181,7 +181,8 @@ Base.zero(::Type{DecisionTree}) = 0.5
 function train!(
     dt::DecisionTree,
     y::Vector{Bool},
-    X::Matrix{T},
+    X::Matrix{T};
+    kwargs...
 ) where {T <: Number}
     root = SDeMo.DecisionNode()
     root.prediction = mean(y)

@@ -6,10 +6,6 @@ using TestItemRunner
 
 @testitem "We can generate neutral landscapes" begin
     using NeutralLandscapes
-    ds = DiamondSquare()
-    @info ds
-    @info typeof(ds)
-    @info typeof(ds) <: NeutralLandscapes.NeutralLandscapeMaker
     @test SDMLayer(DiamondSquare(), (10, 20)) isa SDMLayer
 end
 
@@ -17,8 +13,9 @@ end
     using NeutralLandscapes
     X = SimpleSDMLayers.__demodata(reduced=true)
     Y = SDMLayer(RectangularCluster(), X)
-    @info X
-    @info Y
+    @test X.x == Y.x
+    @test X.y == Y.y
+    @test X.crs == Y.crs
 end
 
 @testitem "We can cluster a series of layers" begin

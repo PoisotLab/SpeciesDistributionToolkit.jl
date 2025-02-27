@@ -4,13 +4,24 @@ using TestItemRunner
 
 # write tests here
 
+@testitem "We can generate neutral landscapes" begin
+    using NeutralLandscapes
+    @test SDMLayer(DiamondSquare(), (10, 20)) isa SDMLayer
+end
+
+@testitem "We can generate neutral landscapes with a template" begin
+    using NeutralLandscapes
+    X = SimpleSDMLayers.__demodata(reduced=true)
+    Y = SDMLayer(RectangularCluster(), X)
+    @test X.x == Y.x
+    @test X.y == Y.y
+    @test X.crs == Y.crs
+end
 
 @testitem "We can cluster a series of layers" begin
     using Clustering
-    L = SDMLayer{Float32}[SimpleSDMLayers.__demodata(reduced=true) for _ in 1:3]
-    for l in L
-        l.grid .+= randn(size(l.grid))
-    end
+    using NeutralLandscapes
+    L = [SDMLayer(DiamondSquare(), (30, 50)) for _ in 1:8]
     K = kmeans(L, 3)
     C = SDMLayer(K, L)
     q = clustering_quality(L, K; quality_index = :davies_bouldin)
@@ -18,18 +29,3 @@ using TestItemRunner
     @test maximum(C) == 3
     @test K isa ClusteringResult
 end
-
-
-## NOTE add JET to the test environment, then uncomment
-# using JET
-# @testset "static analysis with JET.jl" begin
-#     @test isempty(JET.get_reports(report_package(SDMLayers, target_modules=(SDMLayers,))))
-# end
-
-## NOTE add Aqua to the test environment, then uncomment
-# @testset "QA with Aqua" begin
-#     import Aqua
-#     Aqua.test_all(SDMLayers; ambiguities = false)
-#     # testing separately, cf https://github.com/JuliaTesting/Aqua.jl/issues/77
-#     Aqua.test_ambiguities(SDMLayers)
-# end

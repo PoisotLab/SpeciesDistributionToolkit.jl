@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- Added, Changed, Deprecated, Removed, Fixed -->
 
+## `v1.2.0`
+
+- **added** support for the NeutralLandcapes package (not currently supporting updaters)
+- **removed** `Requires` as a dependency
+- **changed** the Julia version to LTS (1.10)
+
 ## `v1.1.1`
 
 - **added** an overload for clustering quality

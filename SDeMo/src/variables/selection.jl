@@ -32,7 +32,7 @@ function backwardselection!(
     while ~isempty(candidates)
         if verbose
             nvar = lpad(length(candidates), 2, " ")
-            @info "[$(nvar) vars.] MCC val. ≈ $(round(best_perf, 3))"
+            @info "[$(nvar) vars.] MCC val. ≈ $(round(best_perf; digits=3))"
         end
         scores = zeros(length(candidates))
         for i in eachindex(candidates)
@@ -77,7 +77,7 @@ function forwardselection!(
     while ~isempty(on_top)
         if verbose
             nvar = lpad(length(on_top), 2, " ")
-            @info "[$(nvar) vars.] MCC val. ≈ $(round(best_perf, 3))"
+            @info "[$(nvar) vars.] MCC val. ≈ $(round(best_perf; digits=3))"
         end
         scores = zeros(length(on_top))
         for i in eachindex(on_top)

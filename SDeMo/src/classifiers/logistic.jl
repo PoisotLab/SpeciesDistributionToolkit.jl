@@ -6,6 +6,12 @@ function __sigmoid!(store::Vector{<:AbstractFloat}, z::Vector{<:AbstractFloat})
     return store
 end    
 
+@testitem "We get the correct response for a sigmoid" begin
+    @test SDeMo.__sigmoid(0.0) == 0.5
+    @test SDeMo.__sigmoid(-1e5) ≈ 0.0
+    @test SDeMo.__sigmoid(1e5) ≈ 1.0
+end
+
 function __interactions(X)
     XiXi = X .^ 2
     nfeat = size(X, 1)
@@ -63,7 +69,9 @@ through the use of the `interactions` field. Possible values are `:all`
 (default), `:self` (only squared terms), and `:none` (no interactions).
 
 The `verbose` field (defaults to `false`) can be used to show the progress of
-gradient descent, by showing the loss every 100 epochs.
+gradient descent, by showing the loss every 100 epochs, or to the value of the
+`verbosity` field. Note that when doing cross-validation, the loss on the
+validation data will be automatically reported.
 """
 Base.@kwdef mutable struct Logistic <: Classifier
     λ::Float64 = 0.1 # Regularization
@@ -72,11 +80,20 @@ Base.@kwdef mutable struct Logistic <: Classifier
     θ::Vector{Float64} = zeros(Float64, 2)
     interactions::Symbol = :all
     verbose::Bool = false
+    verbosity::Int64 = 100
 end
 
 Base.zero(::Type{Logistic}) = 0.5
 
-function SDeMo.train!(lreg::Logistic, y::Vector{Bool}, X::Matrix{T}) where {T <: Number}
+function SDeMo.train!(lreg::Logistic, y::Vector{Bool}, X::Matrix{T}; kwargs...) where {T <: Number}
+    # Get the validation data if relevant
+    Xt = get(kwargs, :Xt, nothing)
+    yt = get(kwargs, :yt, nothing)
+    validation_data = !isempty(yt)
+    # Prepare interaction terms for validation data
+    Xv = validation_data ? SDeMo.__makex(Xt, lreg.interactions) : nothing
+    Xvt = validation_data ? permutedims(Xv) : nothing
+    #
     𝐗 = SDeMo.__makex(X, lreg.interactions)
     𝐗t = transpose(𝐗)
     lreg.θ = SDeMo.__maketheta(X, lreg.interactions)
@@ -86,12 +103,26 @@ function SDeMo.train!(lreg::Logistic, y::Vector{Bool}, X::Matrix{T}) where {T <:
         __sigmoid!(z, z)
         gradient = (1 / length(lreg.θ)) * 𝐗 * (z - y) + (lreg.λ / length(lreg.θ)) * lreg.θ
         lreg.θ -= lreg.η * gradient
-        if lreg.verbose & iszero(epoch % 100)
+        if lreg.verbose & iszero(epoch % lreg.verbosity)
+            validation_loss = nothing
+            if validation_data
+                zv = Xvt * lreg.θ
+                __sigmoid!(zv, zv)
+                validation_loss = -mean(yt .* log.(zv) .+ (1 .- yt) .* log.(1 .- zv)) + (lreg.λ / (2 * length(lreg.θ))) * sum(lreg.θ[2:end] .^ 2)
+            end
             z = clamp.(z, eps(), 1 - eps())
             loss =
                 -mean(y .* log.(z) .+ (1 .- y) .* log.(1 .- z)) +
                 (lreg.λ / (2 * length(lreg.θ))) * sum(lreg.θ[2:end] .^ 2)
-            println("Epoch $epoch: Loss = $loss")
+            # Percent done
+            prct = lpad(round(Int64, (epoch / lreg.epochs) * 100), 3, " ")
+            infostr = "[$(prct)%] LOSS: training ≈ $(rpad(round(loss; digits=4), 6, " "))"
+            if validation_data
+                infostr *= " validation ≈ $(rpad(round(validation_loss; digits=4), 6, " "))"
+                loss_prct = lpad(round(Int64, (validation_loss / loss) * 100), 3, " ")
+                infostr *= " ($(loss_prct)%)"
+            end
+            @info infostr
         end
     end
 
@@ -170,4 +201,23 @@ function __equation(sdm::SDM; digits = 2)
         end
     end
     return replace(join(terms, " + "), "+ -" => "- ", "×  " => "")
+end
+
+@testitem "We can run a Logistic model" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(ZScore(), Logistic(), 0.5, X, y, [1,2,12])
+    folds = holdout(sdm)
+    classifier(sdm).verbose = true
+    classifier(sdm).η = 1e-3
+    classifier(sdm).verbosity = 10
+    train!(sdm; training=folds[1])
+end
+
+@testitem "We can run a verbose Logistic model with no training data" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(ZScore(), Logistic(), 0.5, X, y, [1,2,12])
+    classifier(sdm).verbose = true
+    classifier(sdm).η = 1e-3
+    classifier(sdm).verbosity = 10
+    train!(sdm)
 end

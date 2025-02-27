@@ -27,10 +27,13 @@ function train!(
 )
     tr_training =
         absences ? axes(features(sdm), 2)[training] : findall(labels(sdm)[training])
-    train!(sdm.transformer, sdm.X[sdm.v, tr_training])
-    X₁ = predict(sdm.transformer, sdm.X[sdm.v, training])
-    train!(sdm.classifier, sdm.y[training], X₁)
-    ŷ = predict(sdm.classifier, X₁)
+    train!(transformer(sdm), features(sdm)[variables(sdm), tr_training])
+    X₁ = predict(transformer(sdm), features(sdm)[variables(sdm), training])
+    validation = setdiff(collect(axes(features(sdm), 2)), collect(axes(features(sdm), 2))[training])
+    Xₜ = predict(transformer(sdm), features(sdm)[variables(sdm), validation])
+    yₜ = labels(sdm)[validation]
+    train!(classifier(sdm), labels(sdm)[training], X₁; Xt = Xₜ, yt = yₜ)
+    ŷ = predict(classifier(sdm), X₁)
     ŷ[findall(isnan.(ŷ))] .= 0.0
     if threshold
         thr_range = LinRange(extrema(ŷ)..., 200)

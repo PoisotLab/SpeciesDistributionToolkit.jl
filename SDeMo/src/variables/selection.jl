@@ -76,7 +76,7 @@ function forwardselection!(
     best_perf = mcc(noskill(model))
     while ~isempty(on_top)
         if verbose
-            nvar = lpad(length(candidates), 2, " ")
+            nvar = lpad(length(on_top), 2, " ")
             @info "[$(nvar) vars.] MCC val. ≈ $(round(best_perf, 3))"
         end
         scores = zeros(length(on_top))

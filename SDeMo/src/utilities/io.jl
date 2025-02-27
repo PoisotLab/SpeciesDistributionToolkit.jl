@@ -83,7 +83,7 @@ end
 
 @testitem "We can write a Logistic model and load it back" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore, Logistic, 0.5, X, y, [1,2,12])
+    sdm = SDM(ZScore(), Logistic(), 0.5, X, y, [1,2,12])
     train!(sdm)
     tf = tempname()
     writesdm(tf, sdm)

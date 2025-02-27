@@ -69,7 +69,9 @@ through the use of the `interactions` field. Possible values are `:all`
 (default), `:self` (only squared terms), and `:none` (no interactions).
 
 The `verbose` field (defaults to `false`) can be used to show the progress of
-gradient descent, by showing the loss every 100 epochs.
+gradient descent, by showing the loss every 100 epochs, or to the value of the
+`verbosity` field. Note that when doing cross-validation, the loss on the
+validation data will be automatically reported.
 """
 Base.@kwdef mutable struct Logistic <: Classifier
     λ::Float64 = 0.1 # Regularization
@@ -81,11 +83,7 @@ Base.@kwdef mutable struct Logistic <: Classifier
     verbosity::Int64 = 100
 end
 
-# TODO #364 Improve output for logistic models
-
 Base.zero(::Type{Logistic}) = 0.5
-
-# TODO #365 Use the data not part of training to measure valid. loss on Logistic
 
 function SDeMo.train!(lreg::Logistic, y::Vector{Bool}, X::Matrix{T}; kwargs...) where {T <: Number}
     # Get the validation data if relevant

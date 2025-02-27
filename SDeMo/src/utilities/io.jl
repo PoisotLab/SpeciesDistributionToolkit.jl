@@ -3,6 +3,7 @@ function __tosymbol(cl::Type{T}) where T <: Classifier
     contains(str, "NaiveBayes") && return :NaiveBayes
     contains(str, "BioClim") && return :BioClim
     contains(str, "DecisionTree") && return :DecisionTree
+    contains(str, "Logistic") && return :Logistic
     return :NaiveBayes
 end
 
@@ -22,6 +23,7 @@ function __fromsymbol(s)
     s == :NaiveBayes && return NaiveBayes
     s == :DecisionTree && return DecisionTree
     s == :BioClim && return BioClim
+    s == :Logistic && return Logistic
 end
 
 function _sdm_to_dict(sdm::SDM)
@@ -79,4 +81,15 @@ end
     @test features(sdm) == features(nsdm)
 end
 
-# TODO #363 Add a method to save a model with logistic classifier
+@testitem "We can write a Logistic model and load it back" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(ZScore, Logistic, 0.5, X, y, [1,2,12])
+    train!(sdm)
+    tf = tempname()
+    writesdm(tf, sdm)
+    nsdm = loadsdm(tf; threshold=false)
+    @test threshold(sdm) == threshold(nsdm)
+    @test variables(sdm) == variables(nsdm)
+    @test labels(sdm) == labels(nsdm)
+    @test features(sdm) == features(nsdm)
+end

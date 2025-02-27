@@ -1,5 +1,3 @@
-# TODO #366 Improve the verbose output of variable selection
-
 """
     noselection!(model, folds; verbose::Bool = false, kwargs...)
 

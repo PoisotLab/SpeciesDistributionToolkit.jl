@@ -89,7 +89,7 @@ function SDeMo.train!(lreg::Logistic, y::Vector{Bool}, X::Matrix{T}; kwargs...) 
     # Get the validation data if relevant
     Xt = get(kwargs, :Xt, nothing)
     yt = get(kwargs, :yt, nothing)
-    validation_data = !(isnothing(Xt)|isnothing(yt))
+    validation_data = !isempty(yt)
     # Prepare interaction terms for validation data
     Xv = validation_data ? SDeMo.__makex(Xt, lreg.interactions) : nothing
     Xvt = validation_data ? permutedims(Xv) : nothing
@@ -211,4 +211,13 @@ end
     classifier(sdm).η = 1e-3
     classifier(sdm).verbosity = 10
     train!(sdm; training=folds[1])
+end
+
+@testitem "We can run a verbose Logistic model with no training data" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(ZScore(), Logistic(), 0.5, X, y, [1,2,12])
+    classifier(sdm).verbose = true
+    classifier(sdm).η = 1e-3
+    classifier(sdm).verbosity = 10
+    train!(sdm)
 end

@@ -45,13 +45,13 @@ function backwardselection!(
             best_perf = best
             deleteat!(candidates, i)
         else
-            if verbose
-                @info "Optimal var. pool: $(vcat(pool, candidates))"
-            end
             break
         end
     end
     variables!(model, vcat(pool, candidates))
+    if verbose
+        @info "Optimal var. pool: $(variables(model))"
+    end
     train!(model; kwargs...)
     return model
 end
@@ -76,7 +76,7 @@ function forwardselection!(
     best_perf = mcc(noskill(model))
     while ~isempty(on_top)
         if verbose
-            nvar = lpad(length(on_top), 2, " ")
+            nvar = lpad(length(pool), 2, " ")
             @info "[$(nvar) vars.] MCC val. ≈ $(round(best_perf; digits=3))"
         end
         scores = zeros(length(on_top))
@@ -91,13 +91,13 @@ function forwardselection!(
             push!(pool, on_top[i])
             deleteat!(on_top, i)
         else
-            if verbose
-                @info "Optimal var. pool: $(vcat(pool, candidates))"
-            end
             break
         end
     end
-    model.v = pool
+    variables!(model, pool)
+    if verbose
+        @info "Optimal var. pool: $(variables(model))"
+    end
     train!(model; kwargs...)
     return model
 end
@@ -161,4 +161,20 @@ end
     @test length(variables(model)) < size(X, 1)
     @test 1 in variables(model)
     @test 12 in variables(model)
+end
+
+@testitem "We can do verbose forward selection" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    folds = [holdout(model)]
+    forwardselection!(model, folds; verbose=true)
+    @test length(variables(model)) < size(X, 1)
+end
+
+@testitem "We can do verbose backward selection" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    folds = [holdout(model)]
+    backwardselection!(model, folds; verbose=true)
+    @test length(variables(model)) < size(X, 1)
 end

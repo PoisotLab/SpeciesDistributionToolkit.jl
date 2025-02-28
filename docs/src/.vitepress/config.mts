@@ -80,6 +80,7 @@ export default defineConfig({
                         text: "Packages we support",
                         items: [
                             { text: "BON.jl", link: "https://poisotlab.github.io/BiodiversityObservationNetworks.jl/dev/" },
+                            { text: "STAC.jl", link: "https://juliaclimate.github.io/STAC.jl/dev/" },
                             { text: "SpatialBoundaries.jl", link: "https://poisotlab.github.io/SpatialBoundaries.jl/dev/" }
                         ]
                     }

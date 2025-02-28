@@ -151,9 +151,9 @@ a pull request is merged. The commits that result from
 pulling/rebasing/conflicts operations *do not need* to follow the commit naming
 convention.
 
-**When the changes in a pull request** affect more than one package, the best
-solution is to *not* squash the merge commit, because it will make tagging
-different versions more difficult. This can be decided at PR merging time.
+Changes in a single pull request should never affect more than a single package.
+Semantic versioning allows rapid releases, and the changes must always be
+limited to a single package.
 
 ## Releases
 

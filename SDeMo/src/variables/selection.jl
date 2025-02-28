@@ -31,7 +31,8 @@ function backwardselection!(
     best_perf = mcc(noskill(model))
     while ~isempty(candidates)
         if verbose
-            @info "Current performance: $(best_perf) - working over $(length(candidates)) variables"
+            nvar = lpad(length(candidates), 2, " ")
+            @info "[$(nvar) vars.] MCC val. ≈ $(round(best_perf; digits=3))"
         end
         scores = zeros(length(candidates))
         for i in eachindex(candidates)
@@ -45,7 +46,7 @@ function backwardselection!(
             deleteat!(candidates, i)
         else
             if verbose
-                @info "Returning with $(vcat(pool, candidates)) -- $(best_perf)"
+                @info "Optimal var. pool: $(vcat(pool, candidates))"
             end
             break
         end
@@ -75,7 +76,8 @@ function forwardselection!(
     best_perf = mcc(noskill(model))
     while ~isempty(on_top)
         if verbose
-            @info "Current performance: $(best_perf) - working over $(length(pool)+1) variables"
+            nvar = lpad(length(on_top), 2, " ")
+            @info "[$(nvar) vars.] MCC val. ≈ $(round(best_perf; digits=3))"
         end
         scores = zeros(length(on_top))
         for i in eachindex(on_top)
@@ -90,7 +92,7 @@ function forwardselection!(
             deleteat!(on_top, i)
         else
             if verbose
-                @info "Returning with $(pool) -- $(best_perf)"
+                @info "Optimal var. pool: $(vcat(pool, candidates))"
             end
             break
         end

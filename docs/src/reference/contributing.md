@@ -96,7 +96,7 @@ prefix:
 | `fix`          | Solves a bug / closes a PR                                                                    |
 | `feat`         | Adds a new feature                                                                            |
 | `semver`       | Commit that will be tagged in a new release -- this should contain a change in `Project.toml` |
-| `dependencies` | Changes in `Project.toml` to add or drop a dependency                                         |
+| `dep`          | Changes in `Project.toml` to add or drop a dependency                                         |
 | `compat`       | Changes in `Project.toml` to change the compatibility entry                                   |
 | `ci`           | Acts on github actions / workflows                                                            |
 | `doc`          | Changes or adds documentation, including docstrings, and possibly comments                    |
@@ -105,6 +105,7 @@ prefix:
 | `style`        | Applies the formatter without modifying the content                                           |
 | `refactor`     | Changes the internals of a function, or changes to methods that are not exported              |
 | `chore`        | General housekeeping                                                                          |
+| `ext`          | Dealing with packages extensions                                                                      |
 
 [convcom]: https://www.conventionalcommits.org/en/v1.0.0/#summary
 [semver]: https://semver.org/
@@ -122,11 +123,14 @@ Specifically, `Phylopic.jl` is `phylopic`, `SpeciesDistributionToolkit.jl` is `s
 `Fauxcurrences.jl` is `faux`, `SDeMo.jl` is `demo`, and `SimpleSDMDatasets.jl` is
 `datasets`.
 
-In case of breaking changes, the commit prefix **must** be followed by `!`. This is **not**
-limited to commits with the `semver` prefix, but is meant to be used in the specific commit
-that introduces breaking changes. For example, a new feature in GBIF that would require to
-re-write all code would have the prefix `feat(gbif)!: ` (and be followed by a `semver`
-commit to reflect the new version).
+In case of breaking changes, the commit prefix **must** be followed by `!`. This
+is **not** limited to commits with the `semver` prefix, but is meant to be used
+in the specific commit that introduces breaking changes. For example, a new
+feature in GBIF that would require to re-write all code would have the prefix
+`feat(gbif)!: ` (and be followed by a `semver` commit to reflect the new
+version). There should never be a case outside of next major release where
+breaking changes are required. A rare example of a "breaking" change that is
+allowed is when changing the `julia` compat entry when a new LTS is released.
 
 In case of an *incomplete commit* (*e.g.* the code is only partly finished), the commit
 prefix **must** be followed by `?`. This is useful when leaving work unfinished at the end

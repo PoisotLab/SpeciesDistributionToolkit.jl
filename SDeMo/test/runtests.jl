@@ -2,6 +2,15 @@ using TestItemRunner
 
 @run_package_tests filter=ti->!(:skipci in ti.tags)
 
+@testitem "We can get data from a STAC catalogue" begin
+    using STAC
+    biab = STAC.Catalog("https://stac.geobon.org/")
+    ghmts = biab["ghmts"].items["GHMTS"].assets["GHMTS"]
+    L = SDMLayer(ghmts; left=12.5, right=23.75, bottom=45.5, top=51.0)
+#SDMLayer(f)
+
+end
+
 # write tests here
 
 ## NOTE add JET to the test environment, then uncomment

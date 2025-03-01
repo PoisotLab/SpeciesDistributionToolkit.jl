@@ -64,15 +64,17 @@ W = wombling(landcover[classes_with_trees]);
 cutoff = quantile(W.rate, 0.85)
 candidates = (W.rate.>=cutoff)
 
-# We can plot these candidate points
+# We can plot these candidate points identified this way - these correspond to
+# potential boundaries between low and high value area:
 
-# fig-boundariescandidates
+# fig-spbndcandidate
 heatmap(candidates, colormap=[:grey85, :black])
 current_figure() #hide
 
-# We can also look at the (log of the) rate of change:
+# We can also look at the (log of the) rate of change - this is useful to
+# pinpoint which area are likely to be identified as zones of transition:
 
-# fig-boundariesrate
+# fig-spbndrate
 heatmap(log1p.(W.rate))
 current_figure() #hide
 

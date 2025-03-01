@@ -9,7 +9,7 @@ using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
-import Random; Random.seed!(616525434012345) #hide
+import Random; Random.seed!(12345) #hide
 
 # We start by defining the extent in which we want to create the virtual
 # species. For the purpose of this example, we will use the country of Paraguay,

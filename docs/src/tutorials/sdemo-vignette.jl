@@ -10,7 +10,7 @@ using CairoMakie
 using Statistics
 using Dates
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
-import Random; Random.seed!(616525434012345) #hide
+import Random; Random.seed!(12345) #hide
 
 # Note that this tutorial is not showing all the capacities of the `SDeMo`
 # package!

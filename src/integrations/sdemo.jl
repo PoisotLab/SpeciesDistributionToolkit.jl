@@ -92,6 +92,25 @@ function SDeMo.explain(
     return [explain(sdm, layers, v; kwargs...) for v in variables(sdm)]
 end
 
-@testitem "We can do Shapley values on a different layer than was used for training" begin
-    using NeutralLandscapes
-end
+# @testitem "We can get Shapley values on a different layer than was used for training" begin
+#     provider = RasterData(CHELSA2, BioClim)
+#     orig_layers = [
+#         SDMLayer(provider; layer = x, left = 10.0, right = 12.0, bottom = 35.0, top = 37.0) for x in [1, 12]
+#     ]
+#     transfer_layers = [
+#         SDMLayer(provider; layer = x, left = 11.8, right = 12.0, bottom = 55.8, top = 56.0) for x in [1, 12]
+#     ]
+#     prs = unique(rand(keys(orig_layers[1]), 800))
+#     abc = unique(rand(keys(orig_layers[1]), 800))
+#     P = zeros(orig_layers[1], Bool)
+#     A = zeros(orig_layers[1], Bool)
+#     for p in prs
+#         P[p] = true
+#     end
+#     for a in abc
+#         A[a] = true
+#     end
+#     sdm = SDM(ZScore, NaiveBayes, orig_layers, P, A)
+#     train!(sdm)
+#     @test explain(sdm, transfer_layers, 1) isa SDMLayer
+# end

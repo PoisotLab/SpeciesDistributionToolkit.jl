@@ -1,7 +1,7 @@
 name = "SpeciesDistributionToolkit"
 uuid = "72b53823-5c0b-4575-ad0e-8e97227ad13b"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "1.4.0"
+version = "1.4.1"
 
 [deps]
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
@@ -19,15 +19,15 @@ SimpleSDMDatasets = "2c7d61d0-5c73-410d-85b2-d2e7fbbdcefa"
 SimpleSDMLayers = "2c645270-77db-11e9-22c3-0f302a89c64c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
-ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
+ZipArchives = "49080126-0e18-4c2a-b176-c102e4b3760c"
 
 [weakdeps]
-SpatialBoundaries = "8d2ba62a-3d23-4a2b-b692-6b63e9267be2"
 STAC = "08e62803-e111-4f53-be9b-274ff296e9da"
+SpatialBoundaries = "8d2ba62a-3d23-4a2b-b692-6b63e9267be2"
 
 [extensions]
-SpatialBoundariesExt = "SpatialBoundaries"
 STACExt = "STAC"
+SpatialBoundariesExt = "SpatialBoundaries"
 
 [compat]
 Distances = "0.10"
@@ -47,5 +47,5 @@ SimpleSDMLayers = "1"
 SpatialBoundaries = "0.2"
 StatsBase = "0.34"
 TestItems = "1"
-ZipFile = "0.10"
+ZipArchives = "2.4"
 julia = "1.10"

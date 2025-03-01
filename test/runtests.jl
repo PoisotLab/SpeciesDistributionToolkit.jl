@@ -30,8 +30,6 @@ end
     @test isa(W.direction, SDMLayer)
 end
 
-
-
 @testitem "We can womble with a vector of layers" begin
     using SpatialBoundaries
     L = [SDMLayer(
@@ -45,4 +43,20 @@ end
     W = wombling(L)
     @test isa(W.rate, SDMLayer)
     @test isa(W.direction, SDMLayer)
+end
+
+@testitem "We can get data from a STAC catalogue" begin
+    using STAC
+    biab = STAC.Catalog("https://stac.geobon.org/")
+    ghmts = biab["ghmts"].items["GHMTS"].assets["GHMTS"]
+    L = SDMLayer(ghmts; left=12.5, right=23.75, bottom=45.5, top=51.0)
+    @test L isa SDMLayer
+end
+
+@testitem "We can get data from a STAC catalogue (no local storage)" begin
+    using STAC
+    biab = STAC.Catalog("https://stac.geobon.org/")
+    ghmts = biab["ghmts"].items["GHMTS"].assets["GHMTS"]
+    L = SDMLayer(ghmts; store=false, left=12.5, right=23.75, bottom=45.5, top=51.0)
+    @test L isa SDMLayer
 end

@@ -80,9 +80,10 @@ export default defineConfig({
                         text: "Packages we support",
                         items: [
                             { text: "BON.jl", link: "https://poisotlab.github.io/BiodiversityObservationNetworks.jl/dev/" },
+                            { text: "STAC.jl", link: "https://juliaclimate.github.io/STAC.jl/dev/" },
                             { text: "SpatialBoundaries.jl", link: "https://poisotlab.github.io/SpatialBoundaries.jl/dev/" },
                             { text: "NeutralLandscapes.jl", link: "https://docs.ecojulia.org/NeutralLandscapes.jl/dev/" },
-                            { text: "Clustering.jl", link: "https://juliastats.org/Clustering.jl/stable/" },
+                            { text: "Clustering.jl", link: "https://juliastats.org/Clustering.jl/stable/" }
                         ]
                     }
 
@@ -108,6 +109,7 @@ export default defineConfig({
                         {text: "... tweak logistic regression?", link: "/howto/logistic-regression/"},
                         {text: "... split a layer in tiles?", link: "/howto/split-layer/"},
                         {text: "... plot using Makie?", link: "/howto/makie/"},
+                        {text: "... get data from STAC?", link: "/howto/stac/"},
                         {text: "... cluster layers?", link: "/howto/cluster-layers/"},
                         {text: "... create neutral landscapes?", link: "/howto/neutral-landscapes/"},
                         {text: "... index layers by occurrences?", link: "/howto/layer-occurrences/"},

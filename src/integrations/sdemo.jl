@@ -91,3 +91,7 @@ function SDeMo.explain(
 ) where {ST <: AbstractSDM, T <: SDMLayer}
     return [explain(sdm, layers, v; kwargs...) for v in variables(sdm)]
 end
+
+@testitem "We can do Shapley values on a different layer than was used for training" begin
+    using NeutralLandscapes
+end

@@ -139,7 +139,7 @@ current_figure() #hide
 # In order to maintain a good predictive power with less overfitting risk, but
 # with a finer outcome, we will rely on bagging.
 
-ensemble = Bagging(sdm, 30)
+ensemble = Bagging(sdm, 35)
 
 # In order to further ensure that the models are learning from different parts
 # of the dataset, we can also bootstrap which variables are accessible to each
@@ -163,10 +163,10 @@ bagfeatures!(ensemble)
 
 train!(ensemble)
 
-# Let's have a look at the out-of-bag performance using MCC, to make sure that
+# Let's have a look at the out-of-bag error, to make sure that
 # there is no grievous loss of performance:
 
-outofbag(ensemble) |> mcc
+ensemble |> outofbag |> (M) -> 1 - accuracy(M)
 
 # Because this ensemble is a collection of model, we set the method to summarize
 # all the scores as the median:
@@ -263,23 +263,20 @@ S = explain(sdm, layers; threshold = false, samples = 100);
 
 # fig-sdm-mosaicplot
 f = Figure(; size = (600, 300))
+colmap  = cgrad( :glasbey_bw_n256, length(variables(sdm)); categorical = true, )
 ax = Axis(f[1, 1]; aspect = DataAspect())
-heatmap!(
-    ax,
-    mosaic(v -> argmax(abs.(v)), S);
-    colormap = cgrad(
-        :glasbey_bw_n256,
-        length(variables(sdm));
-        categorical = true,
-    ),
-)
-contour!(
-    ax,
-    predict(ensemble, layers; consensus = majority);
-    color = :black,
-    linewidth = 0.5,
-)
+heatmap!( ax, mosaic(v -> argmax(abs.(v)), S); colormap = colmap, )
+contour!( ax, predict(ensemble, layers; consensus = majority); color = :black, linewidth = 0.5, )
 lines!(ax, CHE.geometry[1]; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
+Legend(
+    f[1, 1],
+    [PolyElement(; color=colmap[i]) for i in 1:length(bio_vars)],
+    ["BIO$(b)" for b in bio_vars];
+    orientation=:horizontal,
+    nbanks=5,
+    framevisible=false,
+    vertical=false
+)
 current_figure() #hide

@@ -22,7 +22,7 @@ const _distance_function = Fauxcurrences._distancefunction
 
 import GeoJSON
 import PolygonOps
-import ZipFile
+import ZipArchives
 import Downloads
 
 # Functions to get latitudes/longitudes

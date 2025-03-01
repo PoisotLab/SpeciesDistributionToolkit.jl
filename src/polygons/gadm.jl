@@ -10,15 +10,49 @@ function _GADM_getzip(root, url, fname)
         Downloads.download(url, joinpath(root, fname))
     end
     zipfile = joinpath(root, fname)
-    zip = ZipFile.Reader(zipfile)
-    for file in zip.files
-        if file.name == replace(fname, ".zip" => "")
-            out = open(joinpath(root, file.name), "w")
-            write(out, read(file, String))
+    # Read the zip file we just downloaded
+    zip_archive = ZipArchives.ZipReader(read(zipfile))
+    for jsonfile in ZipArchives.zip_names(zip_archive)
+        @info jsonfile
+        if jsonfile == replace(fname, ".zip" => "")
+            out = open(joinpath(root, jsonfile), "w")
+            write(out, ZipArchives.zip_readentry(zip_archive, jsonfile, String))
             close(out)
         end
     end
     return nothing
+end
+
+@testitem "We can get the GADM polygon for Maine" begin
+    @test SpeciesDistributionToolkit.gadm("USA", "Maine") !== nothing
+end
+
+@testitem "We can get GADM level 1 sub-geometries for Canada" begin
+    @test SpeciesDistributionToolkit.gadm("CAN", 1) !== nothing
+end
+
+@testitem "We can get GADM level 1 sub-geometries for France" begin
+    @test SpeciesDistributionToolkit.gadm("FRA", 1) !== nothing
+end
+
+@testitem "We can get a named GADM level 1 sub-geometry for France" begin
+    @test SpeciesDistributionToolkit.gadm("FRA", "Corse") !== nothing
+end
+
+@testitem "We can get GADM level 1 sub-geometries for Colombia" begin
+    @test SpeciesDistributionToolkit.gadm("COL", 1) !== nothing
+end
+
+@testitem "We can get GBR from GADM" begin
+    @test SpeciesDistributionToolkit.gadm("GBR") !== nothing
+end
+
+@testitem "We can get GBR level 1 from GADM" begin
+    @test SpeciesDistributionToolkit.gadm("GBR", 1) !== nothing
+end
+
+@testitem "We can get GBR level 2 from GADM" begin
+    @test SpeciesDistributionToolkit.gadm("GBR", 2) !== nothing
 end
 
 function _get_gadm_file(code, level)

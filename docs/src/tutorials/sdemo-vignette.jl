@@ -271,7 +271,7 @@ lines!(ax, CHE.geometry[1]; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
 Legend(
-    f[1, 1],
+    f[2, 1],
     [PolyElement(; color=colmap[i]) for i in 1:length(bio_vars)],
     ["BIO$(b)" for b in bio_vars];
     orientation=:horizontal,

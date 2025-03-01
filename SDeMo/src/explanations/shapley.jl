@@ -1,18 +1,32 @@
-function mcsample(X, Z, i, j, n)
+"""
+    _mcsample(x::Vector{T}, X::Matrix{T}, j::Int64, n::Int64) where {T <:Number}
+
+This generates a Monte-Carlo sample for Shapley values. The arguments are, in
+order
+
+x: a single instance (as a vector) to explain
+
+X: a matrix of training data providing the samples for explanation
+
+j: the index of the variable to explain
+
+n: the number of samples to generate for evaluation
+"""
+function _mcsample(x::Vector{T}, X::Matrix{T}, j::Int64, n::Int64) where {T <: Number}
     # Initial sample matrix
-    ξ = zeros(eltype(X), size(X, 1), n)
+    ξ = zeros(T, length(x), n)
     for instance in axes(ξ, 2)
-        ξ[:, instance] = X[:, i]
+        ξ[:, instance] = x
     end
     # Observations for boostrap
-    p = rand(axes(Z, 2), n)
+    p = rand(axes(X, 2), n)
     # And now we shuffle
     shuffling = rand(Bool, size(ξ))
     for ob in axes(shuffling, 2)
         for va in axes(shuffling, 1)
             if va != j
                 if shuffling[va, ob]
-                    ξ[va, ob] = Z[va, p[ob]]
+                    ξ[va, ob] = X[va, p[ob]]
                 end
             end
         end
@@ -22,30 +36,37 @@ function mcsample(X, Z, i, j, n)
     return ξ, ζ
 end
 
-mcsample(X, i, j, n) = mcsample(X, X, i, j, n)
+"""
+    _explain_one_instance(f, instance, X, j, n)
 
-function shap_one_point(f, X, Z, i, j, n)
-    ξ, ζ = mcsample(X, Z, i, j, n)
+This method returns the explanation for the instance at variable j, based on
+training data X. This is the most granular version of the Shapley values
+algorithm.
+"""
+function _explain_one_instance(f, instance, X, j, n)
+    ξ, ζ = _mcsample(instance, X, j, n)
     ϕ = f(ξ) - f(ζ)
     return sum(ϕ) / length(ϕ)
 end
 
-function shap_list_points(f, X, Z, i, j, n)
-    p0 = shap_one_point(f, X, Z, first(i), j, n)
-    vals = Vector{typeof(p0)}(undef, length(i))
-    vals[begin] = p0
-    chunks = ceil.(Int, LinRange(1, length(i), Threads.nthreads() + 1))
-    Threads.@threads for thr in 1:Threads.nthreads()
-        bg, nd = chunks[thr] + 1, chunks[thr + 1]
-        for smpl in bg:nd
-            vals[smpl] = shap_one_point(f, X, Z, i[smpl], j, n)
+"""
+    _explain_many_instances(f, Z, X, j, n)
+
+Applies _explain_one_instance on the matrix Z
+"""
+function _explain_many_instances(f, Z, X, j, n)
+    output = zeros(Float64, size(Z, 2))
+    chunk_size = max(1, length(output) ÷ (5 * Threads.nthreads()))
+    data_chunks = Base.Iterators.partition(eachindex(output), chunk_size)
+    tasks = map(data_chunks) do chunk
+        Threads.@spawn begin
+            for i in chunk
+                output[i] = _explain_one_instance(f, Z[:, i], X, j, n)
+            end
         end
     end
-    return vals
-end
-
-function shap_all_points(f, X, Z, j, n)
-    return shap_list_points(f, X, Z, axes(X, 2), j, n)
+    fetch.(tasks)
+    return output
 end
 
 """
@@ -69,13 +90,30 @@ function explain(
     samples = 200,
     kwargs...,
 ) where {T <: AbstractSDM}
-    function predictor(x)
-        return predict(model, x; kwargs...)
-    end
+    # This is our function f
+    predictor(x) = predict(model, x; kwargs...)
+    # 
     instances = isnothing(instances) ? features(model) : instances
     if isnothing(observation)
-        return shap_all_points(predictor, instances, features(model), j, samples)
+        return _explain_many_instances(predictor, instances, features(model), j, samples)
     else
-        return shap_one_point(predictor, instances, features(model), observation, j, samples)
+        return _explain_one_instance(
+            predictor,
+            instance[:, observation],
+            features(model),
+            j,
+            samples,
+        )
     end
+end
+
+@testitem "We can calculate Shapley values on non-training data" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, [1, 2])
+    train!(sdm)
+    @test explain(sdm, 1) isa Vector{Float64}
+    expl_indices = sort(unique(rand(axes(X, 2), 100)))
+    eX = X[:, expl_indices]
+    @test explain(sdm, 1; instances = eX) isa Vector{Float64}
+    @test length(explain(sdm, 1; instances = eX)) == length(expl_indices)
 end

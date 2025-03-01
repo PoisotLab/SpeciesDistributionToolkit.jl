@@ -13,7 +13,6 @@ function _GADM_getzip(root, url, fname)
     # Read the zip file we just downloaded
     zip_archive = ZipArchives.ZipReader(read(zipfile))
     for jsonfile in ZipArchives.zip_names(zip_archive)
-        @info jsonfile
         if jsonfile == replace(fname, ".zip" => "")
             out = open(joinpath(root, jsonfile), "w")
             write(out, ZipArchives.zip_readentry(zip_archive, jsonfile, String))

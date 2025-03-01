@@ -99,7 +99,7 @@ function explain(
     else
         return _explain_one_instance(
             predictor,
-            instance[:, observation],
+            instances[:, observation],
             features(model),
             j,
             samples,
@@ -107,13 +107,34 @@ function explain(
     end
 end
 
+@testitem "We can calculate Shapley values" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, [1, 2])
+    train!(sdm)
+    expl = explain(sdm, 1)
+    @test expl isa Vector{Float64}
+    @test length(expl) == length(labels(sdm))
+    expl_null = explain(sdm, 10)
+    @test all(expl_null .≈ 0.0)
+end
+
 @testitem "We can calculate Shapley values on non-training data" begin
     X, y = SDeMo.__demodata()
     sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, [1, 2])
     train!(sdm)
-    @test explain(sdm, 1) isa Vector{Float64}
     expl_indices = sort(unique(rand(axes(X, 2), 100)))
     eX = X[:, expl_indices]
     @test explain(sdm, 1; instances = eX) isa Vector{Float64}
     @test length(explain(sdm, 1; instances = eX)) == length(expl_indices)
+    @test all(explain(sdm, 10; instances = eX) .≈ 0.0)
+end
+
+@testitem "We can calculate Shapley values for a single observation" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, [1, 3, 4, 17, 11, 2])
+    train!(sdm)
+    expl_1 = explain(sdm, 1; observation=1)
+    @test expl_1 != 0.0
+    expl_10 = explain(sdm, 10; observation=1)
+    @test expl_10 ≈ 0.0
 end

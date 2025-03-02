@@ -49,7 +49,7 @@ tree_lc = convert(SDMLayer{Float64}, reduce(+, landcover[classes_with_trees]))
 
 # Let's check that the layer looks correct:
 
-# fig-boundariestree
+# fig-boundaries-tree
 heatmap(tree_lc; colormap=:Greens)
 current_figure() #hide
 
@@ -64,15 +64,17 @@ W = wombling(landcover[classes_with_trees]);
 cutoff = quantile(W.rate, 0.85)
 candidates = (W.rate.>=cutoff)
 
-# We can plot these candidate points
+# We can plot these candidate points identified this way - these correspond to
+# potential boundaries between low and high value area:
 
-# fig-boundariescandidates
+# fig-spbnd-candidate
 heatmap(candidates, colormap=[:grey85, :black])
 current_figure() #hide
 
-# We can also look at the (log of the) rate of change:
+# We can also look at the (log of the) rate of change - this is useful to
+# pinpoint which area are likely to be identified as zones of transition:
 
-# fig-boundariesrate
+# fig-spbnd-rate
 heatmap(log1p.(W.rate))
 current_figure() #hide
 
@@ -87,7 +89,7 @@ direction = mask(W.direction, nodata(W.rate, 0.0))
 # collect the cells and convert them from degrees to radians. Then we can start
 # by plotting the direction of change of *all* cells.
 
-# fig-boundariespolar
+# fig-boundaries-polar
 f = Figure()
 ax = PolarAxis(f[1, 1], theta_0 = -pi/2, direction = -1)
 h = fit(Histogram, deg2rad.(values(direction)); nbins = 100)

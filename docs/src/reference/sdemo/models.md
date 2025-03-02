@@ -38,6 +38,7 @@ MultivariateTransform
 NaiveBayes
 BIOCLIM
 DecisionTree
+Logistic
 ```
 
 ::: tip Adding new models

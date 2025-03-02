@@ -10,6 +10,8 @@ using CairoMakie
 using Statistics
 using Dates
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
+import Random #hide
+Random.seed!(12345678); #hide
 
 # Note that this tutorial is not showing all the capacities of the `SDeMo`
 # package!
@@ -56,14 +58,9 @@ while length(presences) < count(presences)
     occurrences!(presences)
 end
 
-# And after this, we prepare a layer with absences. Note that this code is not
-# particularly beautiful but will be fixed when we release the occurrences
-# interface package as part of a next version.
+# And after this, we prepare a layer with presence data:
 
-presencelayer = zeros(first(layers), Bool)
-for occ in mask(presences, CHE)
-    presencelayer[occ.longitude, occ.latitude] = true
-end
+presencelayer = mask(first(layers), Occurrences(mask(presences, CHE)))
 
 # The next step is to generate a pseudo-absence mask. We will sample based on
 # the distance to an observation, by also preventing pseudo-absences to be less
@@ -78,14 +75,9 @@ bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
 # fig-pseudoabsences
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-hm = heatmap!(ax,
-    first(layers);
-    colormap = :linear_bgyw_20_98_c66_n256,
-)
+poly!(ax, CHE.geometry[1]; color = :grey90, strokecolor = :black, strokewidth = 1)
 scatter!(ax, presencelayer; color = :black)
 scatter!(ax, bgpoints; color = :red, markersize = 4)
-lines!(ax, CHE.geometry[1]; color = :black)
-Colorbar(f[1, 2], hm)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
@@ -106,7 +98,7 @@ sdm = SDM(MultivariateTransform{PCA}, DecisionTree, layers, presencelayer, bgpoi
 
 folds = kfold(sdm);
 cv = crossvalidate(sdm, folds; threshold = true);
-mean(mcc.(cv.validation))
+mcc(cv.validation)
 
 # We will now train the model on all the training data.
 
@@ -138,7 +130,7 @@ current_figure() #hide
 # In order to maintain a good predictive power with less overfitting risk, but
 # with a finer outcome, we will rely on bagging.
 
-ensemble = Bagging(sdm, 30)
+ensemble = Bagging(sdm, 35)
 
 # In order to further ensure that the models are learning from different parts
 # of the dataset, we can also bootstrap which variables are accessible to each
@@ -162,10 +154,10 @@ bagfeatures!(ensemble)
 
 train!(ensemble)
 
-# Let's have a look at the out-of-bag performance using MCC, to make sure that
+# Let's have a look at the out-of-bag error, to make sure that
 # there is no grievous loss of performance:
 
-outofbag(ensemble) |> mcc
+ensemble |> outofbag |> (M) -> 1 - accuracy(M)
 
 # Because this ensemble is a collection of model, we set the method to summarize
 # all the scores as the median:
@@ -239,7 +231,7 @@ hidedecorations!(ax)
 hidespines!(ax)
 Colorbar(f[1, 2], hm)
 ax2 = Axis(f[2, 1]; aspect = DataAspect(), title = "Partial response")
-hm = heatmap!(ax2, part_v1; colormap = :linear_gow_65_90_c35_n256, colorrange = (0, 1))
+hm = heatmap!(ax2, part_v1; colormap = :tempo, colorrange = (0, 1))
 contour!(
     ax2,
     predict(ensemble, layers; consensus = majority);
@@ -262,16 +254,10 @@ S = explain(sdm, layers; threshold = false, samples = 100);
 
 # fig-sdm-mosaicplot
 f = Figure(; size = (600, 300))
+mostimp = mosaic(argmax, map(x -> abs.(x), S))
+colmap = [colorant"#E69F00", colorant"#56B4E9", colorant"#009E73", colorant"#D55E00", colorant"#CC79A7"]
 ax = Axis(f[1, 1]; aspect = DataAspect())
-heatmap!(
-    ax,
-    mosaic(v -> argmax(abs.(v)), S);
-    colormap = cgrad(
-        :glasbey_bw_n256,
-        length(variables(sdm));
-        categorical = true,
-    ),
-)
+heatmap!(ax, mostimp; colormap = colmap)
 contour!(
     ax,
     predict(ensemble, layers; consensus = majority);
@@ -281,4 +267,13 @@ contour!(
 lines!(ax, CHE.geometry[1]; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
+Legend(
+    f[2, 1],
+    [PolyElement(; color = colmap[i]) for i in 1:length(bio_vars)],
+    ["BIO$(b)" for b in bio_vars];
+    orientation = :horizontal,
+    nbanks = 1,
+    framevisible = false,
+    vertical = false,
+)
 current_figure() #hide

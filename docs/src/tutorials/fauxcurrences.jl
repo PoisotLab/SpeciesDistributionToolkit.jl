@@ -3,7 +3,7 @@
 using SpeciesDistributionToolkit
 import Random
 using CairoMakie
-Random.seed!(616525434012345) #hide
+Random.seed!(1234567890); #hide
 CairoMakie.activate!(; px_per_unit = 3) #hide
 
 # ## Getting observed occurrence data
@@ -38,7 +38,7 @@ obs = [Fauxcurrences.get_valid_coordinates(o, layer) for o in observations];
 # The observed data are distributed this way:
 
 # fig-observations
-heatmap(layer; colormap = [:white, :gray])
+heatmap(layer; colormap = [:grey80, :grey80])
 for i in eachindex(taxa)
     scatter!(obs[i]; label = taxa[i].name)
 end
@@ -129,7 +129,7 @@ sum(D)
 #-
 
 # fig-bootstrap
-heatmap(layer; colormap = [:white, :gray])
+heatmap(layer; colormap = [:grey80, :grey80])
 for i in eachindex(taxa)
     scatter!(sim[i]; label = taxa[i].name)
 end
@@ -178,13 +178,16 @@ for i in axes(progress, 1)[2:end]
         progress[i - 1],
     )
     if i > 100_000
-        if abs(progress[i] - progress[i - 2000]) <= 1e-5
+        if abs(progress[i] - progress[i - 2000]) <= 1e-3
             break
         end
     end
     if iszero(i % 10_000)
+        prct = lpad(round(Int64, 100*(i/length(progress))), 3)
+        jsdiv = lpad(round(progress[i]; digits = 3), 5)
+        impr = lpad(round(progress[begin] / progress[i]; digits = 3), 6)
         println(
-            "[$(lpad(round(Int64, 100*(i/length(progress))), 3))%]\tJS-divergence: $(round(progress[i]; digits=3))",
+            "[$(prct)%]\tJS-divergence: $(jsdiv)\tImprovement: $(impr)×",
         )
     end
 end
@@ -230,7 +233,7 @@ current_figure() #hide
 # The final disposition of the fauxcurrences is:
 
 # fig-final-fauxcurrences
-heatmap(layer; colormap = [:white, :gray])
+heatmap(layer; colormap = [:grey80, :grey80])
 for i in eachindex(taxa)
     scatter!(sim[i]; label = taxa[i].name)
 end
@@ -247,40 +250,23 @@ current_figure() #hide
 # fig-distances-intra
 f = Figure(; size = (700, 250))
 ax1 = Axis(f[1, 1])
-scatterlines!(ax1, bin_intra[1]; color = :black)
-scatter!(
-    ax1,
-    bin_s_intra[1];
-    color = :transparent,
-    strokewidth = 2,
-    strokecolor = :orange,
-    markersize = 10,
-    marker = :rect,
-)
 ax2 = Axis(f[1, 2])
-scatterlines!(ax2, bin_intra[2]; color = :black)
-scatter!(
-    ax2,
-    bin_s_intra[2];
-    color = :transparent,
-    strokewidth = 2,
-    strokecolor = :orange,
-    markersize = 10,
-    marker = :rect,
-)
 ax3 = Axis(f[1, 3])
-scatterlines!(ax3, bin_intra[3]; color = :black)
-scatter!(
-    ax3,
-    bin_s_intra[3];
-    color = :transparent,
-    strokewidth = 2,
-    strokecolor = :orange,
-    markersize = 10,
-    marker = :rect,
-)
-[hidespines!(ax) for ax in [ax1, ax2, ax3]]
-[hidedecorations!(ax) for ax in [ax1, ax2, ax3]]
+ax = [ax1, ax2, ax3]
+for i in eachindex(ax)
+    scatterlines!(ax[i], bin_intra[i]; color = :black)
+    scatterlines!(
+        ax[i],
+        bin_s_intra[i];
+        color = :orange,
+        strokewidth = 2,
+        strokecolor = :orange,
+        markersize = 10,
+        marker = :rect,
+    )
+end
+hidespines!.(ax)
+hidedecorations!.(ax)
 current_figure() #hide
 
 # For the components of the inter-specific distance matrix, this gives the
@@ -289,40 +275,23 @@ current_figure() #hide
 # fig-distances-inter
 f = Figure(; size = (700, 250))
 ax1 = Axis(f[1, 1])
-scatterlines!(ax1, bin_inter[1]; color = :black)
-scatter!(
-    ax1,
-    bin_s_inter[1];
-    color = :transparent,
-    strokewidth = 2,
-    strokecolor = :purple,
-    markersize = 10,
-    marker = :rect,
-)
 ax2 = Axis(f[1, 2])
-scatterlines!(ax2, bin_inter[2]; color = :black)
-scatter!(
-    ax2,
-    bin_s_inter[2];
-    color = :transparent,
-    strokewidth = 2,
-    strokecolor = :purple,
-    markersize = 10,
-    marker = :rect,
-)
 ax3 = Axis(f[1, 3])
-scatterlines!(ax3, bin_inter[3]; color = :black)
-scatter!(
-    ax3,
-    bin_s_inter[3];
-    color = :transparent,
-    strokewidth = 2,
-    strokecolor = :purple,
-    markersize = 10,
-    marker = :rect,
-)
-[hidespines!(ax) for ax in [ax1, ax2, ax3]]
-[hidedecorations!(ax) for ax in [ax1, ax2, ax3]]
+ax = [ax1, ax2, ax3]
+for i in eachindex(ax)
+    scatterlines!(ax[i], bin_inter[i]; color = :black)
+    scatterlines!(
+        ax[i],
+        bin_s_inter[i];
+        color = :purple,
+        strokewidth = 2,
+        strokecolor = :purple,
+        markersize = 10,
+        marker = :rect,
+    )
+end
+hidespines!.(ax)
+hidedecorations!.(ax)
 current_figure() #hide
 
 # Note that the inter-specific distances are not fully respected, but this is

@@ -7,9 +7,11 @@ version = "1.0.1"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
+TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 ZipArchives = "49080126-0e18-4c2a-b176-c102e4b3760c"
 
 [compat]
 Downloads = "1"
+TestItems = "1.0.0"
 ZipArchives = "2.4"
 julia = "1.8"

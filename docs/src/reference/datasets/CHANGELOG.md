@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.0.1`
 
+- **added** `@testitem` tests (with tags to skip some on CI)
 - **fixed** issues with zip files by using `ZipArchives` instead of `ZipFile`
 
 ## `v1.0.0`

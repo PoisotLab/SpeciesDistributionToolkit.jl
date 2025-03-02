@@ -2,7 +2,7 @@ module SimpleSDMDatasets
 
 import Downloads
 using Dates
-using ZipFile
+import ZipArchives
 using Markdown
 
 # Set the potential paths for downloads

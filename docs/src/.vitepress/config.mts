@@ -21,8 +21,8 @@ export default defineConfig({
                 md.use(footnote)
         },
         theme: {
-            light: "everforest-light",
-            dark: "everforest-dark"
+            light: "min-light",
+            dark: "min-dark"
         }
     },
     themeConfig: {

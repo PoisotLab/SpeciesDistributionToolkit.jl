@@ -33,19 +33,25 @@ function downloader(
         Downloads.download(url, joinpath(dir, fnm))
     end
 
+    # Get the layer path
+    layer_file = SimpleSDMDatasets.layername(data; kwargs...)
+
     # Check for the fileinfo
     if isequal(_zip)(SimpleSDMDatasets.downloadtype(data))
         # Extract only the layername
-        r = ZipFile.Reader(joinpath(dir, fnm))
-        for f in r.files
-            if isequal(SimpleSDMDatasets.layername(data; kwargs...))(f.name)
-                fnm = SimpleSDMDatasets.layername(data; kwargs...)
+        zip_archive = ZipArchives.ZipReader(read(joinpath(dir, fnm)))
+        for file_in_zip in ZipArchives.zip_names(zip_archive)
+            if layer_file == file_in_zip
+
                 # If the zip file had nested folders, we need to make sure the paths exist
-                ispath(dirname(joinpath(dir, f.name))) || mkpath(dirname(joinpath(dir, f.name)))
-                write(joinpath(dir, f.name), read(f, String))
+                ispath(dirname(joinpath(dir, file_in_zip))) || mkpath(dirname(joinpath(dir, file_in_zip)))
+                
+                # Write
+                out = open(joinpath(dir, layer_file), "w")
+                write(out, ZipArchives.zip_readentry(zip_archive, file_in_zip, String))
+                close(out)
             end
         end
-        close(r)
     end
 
     # Return everything as a tuple

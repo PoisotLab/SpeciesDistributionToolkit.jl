@@ -25,7 +25,7 @@ using CairoMakie
 using PrettyTables
 CairoMakie.activate!(; px_per_unit = 3) #hide
 import Random #hide
-Random.seed!(1234567890) #hide
+Random.seed!(12345678) #hide
 
 # The package comes with a series of demonstration data, that represent the
 # presences and absences of *Sitta whiteheadi* at about 1500 locations in

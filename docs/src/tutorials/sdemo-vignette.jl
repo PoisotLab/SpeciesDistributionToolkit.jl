@@ -11,7 +11,7 @@ using Statistics
 using Dates
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 import Random #hide
-Random.seed!(1234567890) #hide
+Random.seed!(12345678) #hide
 
 # Note that this tutorial is not showing all the capacities of the `SDeMo`
 # package!
@@ -255,7 +255,7 @@ S = explain(sdm, layers; threshold = false, samples = 100);
 # fig-sdm-mosaicplot
 f = Figure(; size = (600, 300))
 mostimp = mosaic(argmax, map(x -> abs.(x), S))
-colmap = cgrad(:glasbey_bw_n256, length(variables(sdm)); categorical = true)
+colmap = [colorant"#E69F00", colorant"#56B4E9", colorant"#009E73", colorant"#D55E00", colorant"#CC79A7"]
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, mostimp; colormap = colmap)
 contour!(

@@ -3,7 +3,7 @@
 using SpeciesDistributionToolkit
 import Random
 using CairoMakie
-Random.seed!(1234567890) #hide
+Random.seed!(1234) #hide
 CairoMakie.activate!(; px_per_unit = 3) #hide
 
 # ## Getting observed occurrence data

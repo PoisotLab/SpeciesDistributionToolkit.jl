@@ -18,7 +18,7 @@ Random.seed!(12345678); #hide
 
 # ## Getting the data
 
-CHE = SpeciesDistributionToolkit.gadm("CHE");
+CHE = SpeciesDistributionToolkit.naturalearth("CHE");
 
 # In order to simplify the code, we will start from a list of bioclim variables
 # that have been picked to optimize the model:

@@ -17,7 +17,7 @@ Random.seed!(1234567); #hide
 # a polygon of which is available in the GADM database. Note that the
 # boundingbox function returns the coordinates in WGS84.
 
-place = SpeciesDistributionToolkit.gadm("PRY")
+place = SpeciesDistributionToolkit.naturalearth("PRY")
 extent = SpeciesDistributionToolkit.boundingbox(place)
 
 # We then download some environmental data. In this example, we use the BioClim

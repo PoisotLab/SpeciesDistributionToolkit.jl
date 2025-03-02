@@ -314,13 +314,15 @@ target = outcome ? 0.9threshold(sdm) : 1.1threshold(sdm)
 
 # The actual counterfactual is generated as (we only print the relevant variables):
 
-cf = [counterfactual(
-    sdm,
-    instance(sdm, inst; strict = false),
-    target,
-    200.0;
-    threshold = false,
-) for _ in 1:5]
+cf = [
+    counterfactual(
+        sdm,
+        instance(sdm, inst; strict = false),
+        target,
+        200.0;
+        threshold = false,
+    ) for _ in 1:5
+]
 cf = hcat(cf...)
 
 # The last value (set to `200.0` here) is the learning rate, which usually needs

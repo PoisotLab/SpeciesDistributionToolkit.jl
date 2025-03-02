@@ -10,7 +10,8 @@ using CairoMakie
 using Statistics
 using Dates
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
-import Random; Random.seed!(1234567890) #hide
+import Random #hide
+Random.seed!(1234567890) #hide
 
 # Note that this tutorial is not showing all the capacities of the `SDeMo`
 # package!
@@ -74,7 +75,7 @@ bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
 # fig-pseudoabsences
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-poly!(ax, CHE.geometry[1]; color = :grey90, strokecolor=:black, strokewidth=1)
+poly!(ax, CHE.geometry[1]; color = :grey90, strokecolor = :black, strokewidth = 1)
 scatter!(ax, presencelayer; color = :black)
 scatter!(ax, bgpoints; color = :red, markersize = 4)
 hidedecorations!(ax)
@@ -254,20 +255,25 @@ S = explain(sdm, layers; threshold = false, samples = 100);
 # fig-sdm-mosaicplot
 f = Figure(; size = (600, 300))
 mostimp = mosaic(argmax, map(x -> abs.(x), S))
-colmap  = cgrad( :glasbey_bw_n256, length(variables(sdm)); categorical = true, )
+colmap = cgrad(:glasbey_bw_n256, length(variables(sdm)); categorical = true)
 ax = Axis(f[1, 1]; aspect = DataAspect())
-heatmap!( ax, mostimp; colormap = colmap, )
-contour!( ax, predict(ensemble, layers; consensus = majority); color = :black, linewidth = 0.5, )
+heatmap!(ax, mostimp; colormap = colmap)
+contour!(
+    ax,
+    predict(ensemble, layers; consensus = majority);
+    color = :black,
+    linewidth = 0.5,
+)
 lines!(ax, CHE.geometry[1]; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
 Legend(
     f[2, 1],
-    [PolyElement(; color=colmap[i]) for i in 1:length(bio_vars)],
+    [PolyElement(; color = colmap[i]) for i in 1:length(bio_vars)],
     ["BIO$(b)" for b in bio_vars];
-    orientation=:horizontal,
-    nbanks=1,
-    framevisible=false,
-    vertical=false
+    orientation = :horizontal,
+    nbanks = 1,
+    framevisible = false,
+    vertical = false,
 )
 current_figure() #hide

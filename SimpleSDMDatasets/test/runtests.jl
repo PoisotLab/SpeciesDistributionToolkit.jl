@@ -4,7 +4,7 @@ using TestItemRunner
 
 @run_package_tests filter=ti->!(:skipci in ti.tags)
 
-@tesitem "We have implemented the types correctly" begin
+@testitem "We have implemented the types correctly" begin
     @test_throws "does not allow for month" downloader(
         RasterData(EarthEnv, LandCover);
         month = true,

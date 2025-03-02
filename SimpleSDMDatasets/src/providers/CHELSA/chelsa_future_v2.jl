@@ -1,6 +1,12 @@
 CHELSA2Scenario = Union{SSP126, SSP370, SSP585}
 CHELSA2Model = Union{GFDL_ESM4, IPSL_CM6A_LR, MPI_ESM1_2_HR, MRI_ESM2_0, UKESM1_0_LL}
-CHELSA2ProjectedDataset = Union{BioClim, Precipitation, AverageTemperature, MinimumTemperature, MaximumTemperature}
+CHELSA2ProjectedDataset = Union{
+    BioClim,
+    Precipitation,
+    AverageTemperature,
+    MinimumTemperature,
+    MaximumTemperature,
+}
 
 provides(
     ::RasterData{CHELSA2, T},
@@ -54,4 +60,51 @@ function source(
         filename = lowercase(stem),
         outdir = destination(data, future),
     )
+end
+
+@testitem "We have implemented CHELSA v2 future properly" begin
+    using Dates
+
+    @test CHELSA2 <: RasterProvider
+
+    # Test the interface
+    for D in Base.uniontypes(SimpleSDMDatasets.CHELSA2ProjectedDataset)
+        data = RasterData(CHELSA2, D)
+        for M in Base.uniontypes(SimpleSDMDatasets.CHELSA2Model)
+            for S in Base.uniontypes(SimpleSDMDatasets.CHELSA2Scenario)
+                future = Projection(S, M)
+                @test SimpleSDMDatasets.provides(data, future)
+                @test SimpleSDMDatasets.resolutions(data, future) |> isnothing
+                @test SimpleSDMDatasets.extrakeys(data, future) |> isnothing
+                @test SimpleSDMDatasets.timespans(data, future) |> !isnothing
+                if D <: BioClim
+                    @test SimpleSDMDatasets.months(data, future) |> isnothing
+                    @test SimpleSDMDatasets.layers(data, future) |> !isnothing
+                else
+                    @test SimpleSDMDatasets.months(data, future) |> !isnothing
+                    @test SimpleSDMDatasets.layers(data, future) |> isnothing
+                end
+            end
+        end
+    end
+
+    begin
+        data, future = RasterData(CHELSA2, BioClim), Projection(SSP585, GFDL_ESM4)
+        out = downloader(data, future; layer = "BIO12")
+        @test isfile(first(out))
+        @test out[2] == SimpleSDMDatasets.filetype(data, future)
+    end
+
+    begin
+        data, future =
+            RasterData(CHELSA2, AverageTemperature), Projection(SSP126, IPSL_CM6A_LR)
+        out = downloader(
+            data,
+            future;
+            month = Month(4),
+            timespan = first(SimpleSDMDatasets.timespans(data, future)),
+        )
+        @test isfile(first(out))
+        @test out[2] == SimpleSDMDatasets.filetype(data, future)
+    end
 end

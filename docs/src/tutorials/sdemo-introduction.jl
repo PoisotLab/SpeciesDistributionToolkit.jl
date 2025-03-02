@@ -24,7 +24,8 @@ using Statistics
 using CairoMakie
 using PrettyTables
 CairoMakie.activate!(; px_per_unit = 3) #hide
-import Random; Random.seed!(1234567890) #hide
+import Random #hide
+Random.seed!(1234567890) #hide
 
 # The package comes with a series of demonstration data, that represent the
 # presences and absences of *Sitta whiteheadi* at about 1500 locations in
@@ -81,8 +82,9 @@ pretty_table(
     formatters = ft_printf("%5.3f", [2, 3]),
 )
 
-# By default, calling a function to measure model performance (the full list is in the
-# manual) on a series of confusion matrices will return the average. Adding the `true` argument returns a tuple with the 95% CI:
+# By default, calling a function to measure model performance (the full list is
+# in the manual) on a series of confusion matrices will return the average.
+# Adding the `true` argument returns a tuple with the 95% CI:
 
 mcc(cv.validation, true)
 

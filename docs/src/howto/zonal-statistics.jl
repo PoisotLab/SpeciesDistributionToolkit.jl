@@ -8,7 +8,7 @@ using Statistics
 using CairoMakie
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
-# TODO
+# We can get polygon data from Open Street Map:
 
 BZH = SpeciesDistributionToolkit.openstreetmap("Bretagne")
 departements = ["Ille-et-Vilaine", "Morbihan", "Côtes-d'Armor", "Finistère"]

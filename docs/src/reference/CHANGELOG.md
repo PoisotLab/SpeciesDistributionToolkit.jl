@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.4.2`
 
-- **added** a `naturalearth` method (not exported) to get various GeoJSON limits
+- **added** an `openstreetmap` method (not exported) to get various GeoJSON limits from plan-text queries
+- **fixed** the vignettes so they don't use GADM
 
 ## `v1.4.1`
 

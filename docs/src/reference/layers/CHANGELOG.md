@@ -9,11 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.2.1`
 
+- **added** (fixed) support for the `MultivariateStats` package through an extension (currently supporting PCA and variants, and whitening)
 - **added** (back) `coarsen`
 
 ## `v1.2.0`
 
-- **added** support for the NeutralLandcapes package (not currently supporting updaters)
+- **added** support for the `NeutralLandcapes` package through an extension (not currently supporting updaters)
 - **removed** `Requires` as a dependency
 - **changed** the Julia version to LTS (1.10)
 

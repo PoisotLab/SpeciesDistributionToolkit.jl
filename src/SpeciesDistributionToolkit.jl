@@ -24,6 +24,7 @@ import GeoJSON
 import PolygonOps
 import ZipArchives
 import Downloads
+import HTTP
 
 # Functions to get latitudes/longitudes
 include("latlon.jl")

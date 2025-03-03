@@ -14,11 +14,14 @@ end
 
 Returns a GeoJSON polygon from a plain text query. This uses the nominatim API
 hosted by Open Street Maps to identify the OSM ID, and then calls the polygon
-generation service to return the GeoJSON file. Note that this method may return
-big polygons.
+generation service to return the GeoJSON file.
 
 In order to minimze the calls to the nominatim service, the results for a query
 are stored locally.
+
+Note that this method may return big polygons. The `simplify!` (or the
+non-mutating version) method (not exported) can be used to reduce the polygon
+complexity.
 """
 function openstreetmap(place::String)
     cache_location = joinpath(SimpleSDMDatasets._LAYER_PATH, "OSM")

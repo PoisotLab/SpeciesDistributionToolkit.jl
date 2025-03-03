@@ -58,6 +58,7 @@ export pseudoabsencemask, backgroundpoints
 include("polygons/polygons.jl")
 include("polygons/zonal.jl")
 include("polygons/mosaic.jl")
+include("polygons/simplify.jl")
 export trim
 export zone, byzone
 

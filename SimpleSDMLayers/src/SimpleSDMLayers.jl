@@ -66,6 +66,10 @@ export quantize!, quantize
 include("mosaic.jl")
 export mosaic
 
+# Caorsen
+include("coarsen.jl")
+export coarsen
+
 # Interpolation
 include("interpolation.jl")
 export interpolate, interpolate!

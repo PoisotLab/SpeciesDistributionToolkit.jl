@@ -25,6 +25,35 @@ function _drop_package_name_from_path(path)
     return path
 end
 
+function _generic_downloader(url, fnm, dir, layer_file, zip, ft, bn, cr)
+    # Remove the package name from the path strings if present
+    url = _drop_package_name_from_path(url)
+    fnm = _drop_package_name_from_path(fnm)
+    dir = _drop_package_name_from_path(dir)
+
+    # Check for path existence
+    isdir(dir) || mkpath(dir)
+
+    # Check for file existence, download if not
+    if ~isfile(joinpath(dir, fnm))
+        Downloads.download(url, joinpath(dir, fnm))
+    end
+
+    # Check for the fileinfo
+    if zip
+        _get_file_from_zip(layer_file, fnm, dir)
+        fnm = layer_file
+    end
+
+    # Return everything as a tuple
+    return (
+        joinpath(dir, fnm),
+        ft,
+        bn,
+        cr
+    )
+end
+
 """
     SimpleSDMDatasets.downloader
 
@@ -35,38 +64,13 @@ function downloader(
     kwargs...,
 ) where {P <: RasterProvider, D <: RasterDataset}
     keychecker(data; kwargs...)
-
     url, fnm, dir = SimpleSDMDatasets.source(data; kwargs...)
-
-    # Remove the package name from the path strings if present
-    url = _drop_package_name_from_path(url)
-    fnm = _drop_package_name_from_path(fnm)
-    dir = _drop_package_name_from_path(dir)
-
-    # Check for path existence
-    isdir(dir) || mkpath(dir)
-
-    # Check for file existence, download if not
-    if ~isfile(joinpath(dir, fnm))
-        Downloads.download(url, joinpath(dir, fnm))
-    end
-
-    # Get the layer path
     layer_file = SimpleSDMDatasets.layername(data; kwargs...)
-
-    # Check for the fileinfo
-    if isequal(_zip)(SimpleSDMDatasets.downloadtype(data))
-        _get_file_from_zip(layer_file, fnm, dir)
-        fnm = layer_file
-    end
-
-    # Return everything as a tuple
-    return (
-        joinpath(dir, fnm),
-        SimpleSDMDatasets.filetype(data),
-        SimpleSDMDatasets.bandnumber(data; kwargs...),
-        SimpleSDMDatasets.crs(data),
-    )
+    zip = isequal(_zip)(SimpleSDMDatasets.downloadtype(data))
+    ft = SimpleSDMDatasets.filetype(data)
+    bn = SimpleSDMDatasets.bandnumber(data; kwargs...)
+    cr = SimpleSDMDatasets.crs(data)
+    return _generic_downloader(url, fnm, dir, layer_file, zip, ft, bn, cr)
 end
 
 function downloader(
@@ -75,37 +79,11 @@ function downloader(
     kwargs...,
 ) where {P <: RasterProvider, D <: RasterDataset, S <: FutureScenario, M <: FutureModel}
     keychecker(data, future; kwargs...)
-
     url, fnm, dir = SimpleSDMDatasets.source(data, future; kwargs...)
-
-    # Remove the package name from the path strings if present
-    url = _drop_package_name_from_path(url)
-    fnm = _drop_package_name_from_path(fnm)
-    dir = _drop_package_name_from_path(dir)
-
-    # Check for path existence
-    isdir(dir) || mkpath(dir)
-
-    # Check for file existence, download if not
-    if ~isfile(joinpath(dir, fnm))
-        Downloads.download(url, joinpath(dir, fnm))
-    end
-
-    # Check for the fileinfo
-    # Get the layer path
     layer_file = SimpleSDMDatasets.layername(data, future; kwargs...)
-
-    # Check for the fileinfo
-    if isequal(_zip)(SimpleSDMDatasets.downloadtype(data))
-        _get_file_from_zip(layer_file, fnm, dir)
-        fnm = layer_file
-    end
-
-    # Return everything as a tuple
-    return (
-        joinpath(dir, fnm),
-        SimpleSDMDatasets.filetype(data, future),
-        SimpleSDMDatasets.bandnumber(data, future; kwargs...),
-        SimpleSDMDatasets.crs(data, future),
-    )
+    zip = isequal(_zip)(SimpleSDMDatasets.downloadtype(data))
+    ft = SimpleSDMDatasets.filetype(data, future)
+    bn = SimpleSDMDatasets.bandnumber(data, future; kwargs...)
+    cr = SimpleSDMDatasets.crs(data, future)
+    return _generic_downloader(url, fnm, dir, layer_file, zip, ft, bn, cr)
 end

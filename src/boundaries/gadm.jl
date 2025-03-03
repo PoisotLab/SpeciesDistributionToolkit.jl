@@ -22,35 +22,35 @@ function _GADM_getzip(root, url, fname)
     return nothing
 end
 
-@testitem "We can get the GADM polygon for Maine" begin
+@testitem "We can get the GADM polygon for Maine" tags=[:skipci] begin
     @test SpeciesDistributionToolkit.gadm("USA", "Maine") !== nothing
 end
 
-@testitem "We can get GADM level 1 sub-geometries for Canada" begin
+@testitem "We can get GADM level 1 sub-geometries for Canada" tags=[:skipci] begin
     @test SpeciesDistributionToolkit.gadm("CAN", 1) !== nothing
 end
 
-@testitem "We can get GADM level 1 sub-geometries for France" begin
+@testitem "We can get GADM level 1 sub-geometries for France" tags=[:skipci] begin
     @test SpeciesDistributionToolkit.gadm("FRA", 1) !== nothing
 end
 
-@testitem "We can get a named GADM level 1 sub-geometry for France" begin
+@testitem "We can get a named GADM level 1 sub-geometry for France" tags=[:skipci] begin
     @test SpeciesDistributionToolkit.gadm("FRA", "Corse") !== nothing
 end
 
-@testitem "We can get GADM level 1 sub-geometries for Colombia" begin
+@testitem "We can get GADM level 1 sub-geometries for Colombia" tags=[:skipci] begin
     @test SpeciesDistributionToolkit.gadm("COL", 1) !== nothing
 end
 
-@testitem "We can get GBR from GADM" begin
+@testitem "We can get GBR from GADM" tags=[:skipci] begin
     @test SpeciesDistributionToolkit.gadm("GBR") !== nothing
 end
 
-@testitem "We can get GBR level 1 from GADM" begin
+@testitem "We can get GBR level 1 from GADM" tags=[:skipci] begin
     @test SpeciesDistributionToolkit.gadm("GBR", 1) !== nothing
 end
 
-@testitem "We can get GBR level 2 from GADM" begin
+@testitem "We can get GBR level 2 from GADM" tags=[:skipci] begin
     @test SpeciesDistributionToolkit.gadm("GBR", 2) !== nothing
 end
 

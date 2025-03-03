@@ -13,11 +13,10 @@ import Random #hide
 Random.seed!(1234567); #hide
 
 # We start by defining the extent in which we want to create the virtual
-# species. For the purpose of this example, we will use the country of Paraguay,
-# a polygon of which is available in the GADM database. Note that the
-# boundingbox function returns the coordinates in WGS84.
+# species. For the purpose of this example, we will use the country of Paraguay.
+# Note that the boundingbox function returns the coordinates in WGS84.
 
-place = SpeciesDistributionToolkit.gadm("PRY")
+place = SpeciesDistributionToolkit.openstreetmap("Paraguay")
 extent = SpeciesDistributionToolkit.boundingbox(place)
 
 # We then download some environmental data. In this example, we use the BioClim
@@ -75,7 +74,7 @@ vsp, τ, vrng = virtualspecies(L; prevalence = 0.33)
 # We can plot the output of this function to inspect what the generated range looks like:
 
 # fig-virtualspeciescomparison
-f = Figure(; size = (700, 700))
+f = Figure(; size = (700, 300))
 ax1 = Axis(f[1, 1]; aspect = DataAspect(), title = "Score")
 ax2 = Axis(f[1, 2]; aspect = DataAspect(), title = "Range")
 heatmap!(ax1, vsp; colormap = :navia)
@@ -84,7 +83,7 @@ for ax in [ax1, ax2]
     tightlimits!(ax)
     hidedecorations!(ax)
     hidespines!(ax)
-    lines!(ax, place[1].geometry; color = :black)
+    lines!(ax, place; color = :black)
 end
 current_figure() #hide
 
@@ -103,7 +102,7 @@ presencelayer = backgroundpoints(mask(vsp, nodata(vrng, false)), 100)
 f = Figure(; size = (700, 700))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, vrng; colormap = :Greens)
-lines!(ax, place[1].geometry; color = :black)
+lines!(ax, place; color = :black)
 scatter!(
     ax,
     presencelayer;
@@ -133,7 +132,7 @@ first(ranges)
 # richness:
 
 # fig-virtualspeciesrichness
-f = Figure()
+f = Figure(; size = (700, 700))
 richness = mosaic(sum, ranges)
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, richness; colorrange = (0, length(ranges)), colormap = :navia)
@@ -150,7 +149,7 @@ Colorbar(
     vertical = false,
 )
 hidedecorations!(ax)
-lines!(ax, place[1].geometry; color = :black)
+lines!(ax, place; color = :black)
 hidespines!(ax)
 current_figure() #hide
 
@@ -198,7 +197,7 @@ hm = heatmap!(
     colormap = Reverse(:RdYlBu),
     colorrange = (-2, 2),
 )
-lines!(ax, place[1].geometry; color = :black)
+lines!(ax, place; color = :black)
 Colorbar(
     f[1, 1],
     hm;

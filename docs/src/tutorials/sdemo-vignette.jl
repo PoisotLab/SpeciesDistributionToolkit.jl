@@ -11,14 +11,14 @@ using Statistics
 using Dates
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 import Random #hide
-Random.seed!(12345678); #hide
+Random.seed!(759847594750340912); #hide
 
 # Note that this tutorial is not showing all the capacities of the `SDeMo`
 # package!
 
 # ## Getting the data
 
-CHE = SpeciesDistributionToolkit.gadm("CHE");
+CHE = SpeciesDistributionToolkit.openstreetmap("Switzerland");
 
 # In order to simplify the code, we will start from a list of bioclim variables
 # that have been picked to optimize the model:
@@ -75,7 +75,7 @@ bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
 # fig-pseudoabsences
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-poly!(ax, CHE.geometry[1]; color = :grey90, strokecolor = :black, strokewidth = 1)
+poly!(ax, CHE; color = :grey90, strokecolor = :black, strokewidth = 1)
 scatter!(ax, presencelayer; color = :black)
 scatter!(ax, bgpoints; color = :red, markersize = 4)
 hidedecorations!(ax)
@@ -122,7 +122,7 @@ ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction (tree)")
 hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange = (0, 1))
 contour!(ax, predict(sdm, layers); color = :black, linewidth = 0.5)
 Colorbar(f[1, 2], hm)
-lines!(ax, CHE.geometry[1]; color = :black)
+lines!(ax, CHE; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
@@ -181,7 +181,7 @@ contour!(
     color = :black,
     linewidth = 0.5,
 )
-lines!(ax, CHE.geometry[1]; color = :black)
+lines!(ax, CHE; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
 ax2 = Axis(f[2, 1]; aspect = DataAspect(), title = "Uncertainty")
@@ -194,7 +194,7 @@ contour!(
     color = :black,
     linewidth = 0.5,
 )
-lines!(ax2, CHE.geometry[1]; color = :black)
+lines!(ax2, CHE; color = :black)
 hidedecorations!(ax2)
 hidespines!(ax2)
 current_figure() #hide
@@ -226,7 +226,7 @@ contour!(
     color = :black,
     linewidth = 0.5,
 )
-lines!(ax, CHE.geometry[1]; color = :black) #hide
+lines!(ax, CHE; color = :black) #hide
 hidedecorations!(ax)
 hidespines!(ax)
 Colorbar(f[1, 2], hm)
@@ -238,7 +238,7 @@ contour!(
     color = :black,
     linewidth = 0.5,
 )
-lines!(ax2, CHE.geometry[1]; color = :black)
+lines!(ax2, CHE; color = :black)
 Colorbar(f[2, 2], hm)
 hidedecorations!(ax2)
 hidespines!(ax2)
@@ -264,7 +264,7 @@ contour!(
     color = :black,
     linewidth = 0.5,
 )
-lines!(ax, CHE.geometry[1]; color = :black)
+lines!(ax, CHE; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
 Legend(

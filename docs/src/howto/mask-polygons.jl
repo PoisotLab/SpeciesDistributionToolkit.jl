@@ -16,25 +16,13 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 # 
 # :::
 
-# We provide a very lightweight wrapper around the
-# [GADM](https://gadm.org/index.html) database, which will return data as
-# ready-to-use GeoJSON files.
+# We provide a very lightweight tool that uses open street map to turn plain
+# text queries into GeoJSON polygons:
 
-DEU = SpeciesDistributionToolkit.gadm("DEU")
+POL = SpeciesDistributionToolkit.openstreetmap("Yosemite National Park")
 
-# ::: details More about GADM
-# 
-# The only other function to interact with GADM is `gadmlist`, which takes either
-# a series of places, as in
-#
-SpeciesDistributionToolkit.gadmlist("FRA", "Bretagne")
-# 
-# or a level, to provide a list of places within a three-letter coded area at a
-# specific depth:
-# 
-SpeciesDistributionToolkit.gadmlist("FRA", 3)[1:3]
-# 
-# :::
+# Note that if these polygons are too big, the `simplify` and `simplify!`
+# methods (which are not exported) can be used to reduce their complexity.
 
 # The next step is to get a layer, and so we will download the data about
 # deciduous broadleaf trees from [EarthEnv](/datasets/EarthEnv#landcover):
@@ -42,26 +30,25 @@ SpeciesDistributionToolkit.gadmlist("FRA", 3)[1:3]
 provider = RasterData(EarthEnv, LandCover)
 layer = SDMLayer(
     provider;
-    layer = "Deciduous Broadleaf Trees",
-    left = 2.0,
-    right = 20.0,
-    bottom = 45.0,
-    top = 57.0,
+    layer = "Shrubs",
+    SpeciesDistributionToolkit.boundingbox(POL; padding=1.0)...
 )
 
 # We can check that this polygon is larger than the area we want:
 
 # fig-whole-region
-heatmap(layer; colormap = :linear_kbgyw_5_98_c62_n256, axis = (; aspect = DataAspect()))
+heatmap(layer; colormap = :Greens, axis = (; aspect = DataAspect()))
+lines!(POL, color=:red)
 current_figure() #hide
 
 # We can now mask this layer according to the polygon. This uses the same
 # `mask!` method we use when masking with another layer:
 
-mask!(layer, DEU)
+mask!(layer, POL)
 
 # fig-region-masked
-heatmap(layer; colormap = :linear_kbgyw_5_98_c62_n256, axis = (; aspect = DataAspect()))
+heatmap(layer; colormap = :Greens, axis = (; aspect = DataAspect()))
+lines!(POL, color=:black)
 current_figure() #hide
 
 # This is a much larger layer than we need! For this reason, we will trim it so
@@ -70,14 +57,15 @@ current_figure() #hide
 # fig-region-trimmed
 heatmap(
     trim(layer);
-    colormap = :linear_kbgyw_5_98_c62_n256,
+    colormap = :Greens,
     axis = (; aspect = DataAspect()),
 )
+lines!(POL, color=:black)
 current_figure() #hide
 
 # Let's now get some occurrences in the area defined by the layer boundingbox:
 
-sp = taxon("Eliomys quercinus")
+sp = taxon("Ursus americanus")
 presences = occurrences(
     sp,
     trim(layer),
@@ -102,10 +90,11 @@ end
 # fig-all-occurrences
 heatmap(
     trim(layer);
-    colormap = :linear_kbgyw_5_98_c62_n256,
+    colormap = :Greens,
     axis = (; aspect = DataAspect()),
 )
 scatter!(presences; color = :orange, markersize = 4)
+lines!(POL, color=:black)
 current_figure() #hide
 
 # Some of these occurrences are outside of the masked region in the layer. For
@@ -114,10 +103,11 @@ current_figure() #hide
 # fig-trimmed-occurrences
 f, ax, plt = heatmap(
     trim(layer);
-    colormap = :linear_kbgyw_5_98_c62_n256,
+    colormap = :Greens,
     axis = (; aspect = DataAspect()),
 )
-scatter!(mask(presences, DEU); color = :orange, markersize = 4)
+scatter!(mask(presences, POL); color = :orange, markersize = 4)
+lines!(POL, color=:black)
 hidespines!(ax)
 hidedecorations!(ax)
 current_figure() #hide

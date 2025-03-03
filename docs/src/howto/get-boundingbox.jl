@@ -43,7 +43,7 @@ current_figure() #hide
 
 # The same method also applies to polygons:
 
-CHE = SpeciesDistributionToolkit.gadm("CHE");
+CHE = SpeciesDistributionToolkit.openstreetmap("Switzerland");
 SpeciesDistributionToolkit.boundingbox(CHE; padding = 0.5)
 
 # ```@meta

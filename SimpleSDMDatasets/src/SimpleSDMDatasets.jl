@@ -2,8 +2,9 @@ module SimpleSDMDatasets
 
 import Downloads
 using Dates
-using ZipFile
+import ZipArchives
 using Markdown
+using TestItems
 
 # Set the potential paths for downloads
 const _data_storage_folders = first([

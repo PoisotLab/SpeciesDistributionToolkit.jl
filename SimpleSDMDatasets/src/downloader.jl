@@ -1,3 +1,22 @@
+function _get_file_from_zip(layer_file, fnm, dir)
+    # Extract only the layername
+    zip_archive = ZipArchives.ZipReader(read(joinpath(dir, fnm)))
+    for file_in_zip in ZipArchives.zip_names(zip_archive)
+        if layer_file == file_in_zip
+
+            # If the zip file had nested folders, we need to make sure the paths exist
+            ispath(dirname(joinpath(dir, file_in_zip))) || mkpath(dirname(joinpath(dir, file_in_zip)))
+            
+            # Write
+            out = open(joinpath(dir, layer_file), "w")
+            write(out, ZipArchives.zip_readentry(zip_archive, file_in_zip, String))
+            close(out)
+            return layer_file
+        end
+    end
+    return nothing
+end
+
 function _drop_package_name_from_path(path)
     # Module name with a dot
     _target = "$(@__MODULE__)."
@@ -33,19 +52,12 @@ function downloader(
         Downloads.download(url, joinpath(dir, fnm))
     end
 
+    # Get the layer path
+    layer_file = SimpleSDMDatasets.layername(data; kwargs...)
+
     # Check for the fileinfo
     if isequal(_zip)(SimpleSDMDatasets.downloadtype(data))
-        # Extract only the layername
-        r = ZipFile.Reader(joinpath(dir, fnm))
-        for f in r.files
-            if isequal(SimpleSDMDatasets.layername(data; kwargs...))(f.name)
-                fnm = SimpleSDMDatasets.layername(data; kwargs...)
-                # If the zip file had nested folders, we need to make sure the paths exist
-                ispath(dirname(joinpath(dir, f.name))) || mkpath(dirname(joinpath(dir, f.name)))
-                write(joinpath(dir, f.name), read(f, String))
-            end
-        end
-        close(r)
+        _get_file_from_zip(layer_file, fnm, dir)
     end
 
     # Return everything as a tuple
@@ -80,16 +92,12 @@ function downloader(
     end
 
     # Check for the fileinfo
-    if isequal(_zip)(SimpleSDMDatasets.downloadtype(data, future))
-        # Extract only the layername
-        r = ZipFile.Reader(joinpath(dir, fnm))
-        for f in r.files
-            if isequal(SimpleSDMDatasets.layername(data, future; kwargs...))(f.name)
-                fnm = SimpleSDMDatasets.layername(data, future; kwargs...)
-                write(joinpath(dir, f.name), read(f, String))
-            end
-        end
-        close(r)
+    # Get the layer path
+    layer_file = SimpleSDMDatasets.layername(data, future; kwargs...)
+
+    # Check for the fileinfo
+    if isequal(_zip)(SimpleSDMDatasets.downloadtype(data))
+        _get_file_from_zip(layer_file, fnm, dir)
     end
 
     # Return everything as a tuple

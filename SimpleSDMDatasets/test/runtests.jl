@@ -1,33 +1,49 @@
 using SimpleSDMDatasets
-using Test
 
-global anyerrors = false
+using TestItemRunner
 
-tests = [
-    "Type basics                 " => "type_construction.jl",
-    "Import from within module   " => "moduleimport.jl",
-    "WorldClim2 provider         " => "worldclim_v2.jl",
-    "EarthEnv provider           " => "earthenv.jl",
-    "CHELSA1 provider            " => "chelsa_v1.jl",
-    "CHELSA1 provider   (future) " => "chelsa_future_v1.jl",
-    "CHELSA2 provider            " => "chelsa_v2.jl",
-    "CHELSA2 provider   (future) " => "chelsa_future_v2.jl",
-]
+@run_package_tests filter=ti->!(:skipci in ti.tags)
 
-for test in tests
-    try
-        include(test.second)
-        println("\033[1m\033[32m✓\033[0m\t$(test.first)")
-    catch e
-        global anyerrors = true
-        println("\033[1m\033[31m×\033[0m\t$(test.first)")
-        println("\033[1m\033[38m→\033[0m\ttest/$(test.second)")
-        showerror(stdout, e, backtrace())
-        println()
-        break
-    end
-end
+@testitem "We have implemented the types correctly" begin
+    @test_throws "does not allow for month" downloader(
+        RasterData(EarthEnv, LandCover);
+        month = true,
+    )
 
-if anyerrors
-    throw("Tests failed")
+    @test_throws "no thank you is not supported for the keyword argument full" downloader(
+        RasterData(EarthEnv, LandCover);
+        full = "no thank you",
+    )
+
+    @test_throws "does not support multiple resolutions" downloader(
+        RasterData(EarthEnv, LandCover);
+        resolution = π,
+    )
+
+    @test_throws ["The resolution", "is not supported by the"] downloader(
+        RasterData(WorldClim2, BioClim);
+        resolution = π,
+    )
+
+    @test_throws ["The layer", "not supported by the"] downloader(
+        RasterData(EarthEnv, LandCover);
+        layer = "LMFAO",
+    )
+
+    @test_throws ["The month", "not supported by the"] downloader(
+        RasterData(WorldClim2, AverageTemperature);
+        month = "Marchtober",
+    )
+
+    @test_throws ["dataset only has"] downloader(
+        RasterData(WorldClim2, BioClim);
+        layer = 420,
+    )
+
+    @test_throws "does not allow for layer" downloader(
+        RasterData(WorldClim2, AverageTemperature);
+        layer = "Some stuff I guess",
+    )
+
+    @test_throws "dataset is not provided by" RasterData(WorldClim2, HabitatHeterogeneity)
 end

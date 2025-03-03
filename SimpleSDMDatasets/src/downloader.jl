@@ -1,6 +1,6 @@
-function _get_file_from_zip(layer_file, fnm, dir)
+function _get_file_from_zip(layer_file, zip_file, dir)
     # Extract only the layername
-    zip_archive = ZipArchives.ZipReader(read(joinpath(dir, fnm)))
+    zip_archive = ZipArchives.ZipReader(read(joinpath(dir, zip_file)))
     for file_in_zip in ZipArchives.zip_names(zip_archive)
         if layer_file == file_in_zip
 
@@ -11,10 +11,9 @@ function _get_file_from_zip(layer_file, fnm, dir)
             out = open(joinpath(dir, layer_file), "w")
             write(out, ZipArchives.zip_readentry(zip_archive, file_in_zip, String))
             close(out)
-            return layer_file
         end
     end
-    return nothing
+    return layer_file
 end
 
 function _drop_package_name_from_path(path)
@@ -62,7 +61,7 @@ function downloader(
 
     # Return everything as a tuple
     return (
-        joinpath(dir, fnm),
+        joinpath(dir, layer_file),
         SimpleSDMDatasets.filetype(data),
         SimpleSDMDatasets.bandnumber(data; kwargs...),
         SimpleSDMDatasets.crs(data),
@@ -102,7 +101,7 @@ function downloader(
 
     # Return everything as a tuple
     return (
-        joinpath(dir, fnm),
+        joinpath(dir, layer_file),
         SimpleSDMDatasets.filetype(data, future),
         SimpleSDMDatasets.bandnumber(data, future; kwargs...),
         SimpleSDMDatasets.crs(data, future),

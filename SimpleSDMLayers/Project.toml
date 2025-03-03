@@ -1,7 +1,7 @@
 name = "SimpleSDMLayers"
 uuid = "2c645270-77db-11e9-22c3-0f302a89c64c"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>", "Gabriel Dansereau <gabriel.dansereau@umontreal.ca>"]
-version = "1.2.0"
+version = "1.2.1"
 
 [deps]
 ArchGDAL = "c9ce4bd3-c3d5-55b8-8973-c0e20141b8c3"
@@ -14,16 +14,19 @@ TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
 [weakdeps]
 Clustering = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
+MultivariateStats = "6f286f6a-111f-5878-ab1e-185364afe411"
 NeutralLandscapes = "71847384-8354-4223-ac08-659a5128069f"
 
 [extensions]
 ClusteringExtension = "Clustering"
+MultivariateStatsExtension = "MultivariateStats"
 NeutralLandscapesExtension = "NeutralLandscapes"
 
 [compat]
 ArchGDAL = "0.10"
 Clustering = "0.15"
 Distances = "0.10"
+MultivariateStats = "0.10"
 NeutralLandscapes = "0.1"
 Proj = "1"
 Statistics = "1"

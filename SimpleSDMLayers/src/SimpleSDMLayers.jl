@@ -66,6 +66,10 @@ export quantize!, quantize
 include("mosaic.jl")
 export mosaic
 
+# Caorsen
+include("coarsen.jl")
+export coarsen
+
 # Interpolation
 include("interpolation.jl")
 export interpolate, interpolate!
@@ -73,22 +77,5 @@ export interpolate, interpolate!
 # Burn values in layers
 include("burnin.jl")
 export burnin, burnin!
-
-# Load the extensions
-if !isdefined(Base, :get_extension)
-    using Requires 
-end
-
-function __init__()
-    # The @static is important
-    @static if !isdefined(Base, :get_extension)
-        @require Clustering="aaaa29a8-35af-508c-8bc3-b662a17a0fe5" begin
-            include("../ext/ClusteringExtension.jl")
-        end
-        @require NeutralLandscapes="71847384-8354-4223-ac08-659a5128069f" begin
-            include("../ext/NeutralLandscapesExtension.jl")
-        end
-    end
-end
 
 end # module

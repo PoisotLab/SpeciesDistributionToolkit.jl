@@ -66,24 +66,24 @@ export default defineConfig({
                     {
                         text: "Core packages",
                         items: [
-                            { text: "OccurrencesInterface.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/OccurrencesInterface/" },
-                            { text: "GBIF.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/" },
-                            { text: "Phylopic.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/" },
                             { text: "Fauxcurrences.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Fauxcurrences/" },
-                            { text: "SimpleSDMLayers.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/" },
-                            { text: "SimpleSDMDatasets.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/" },
+                            { text: "GBIF.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/" },
+                            { text: "OccurrencesInterface.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/OccurrencesInterface/" },
+                            { text: "Phylopic.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/" },
                             { text: "SDeMo.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SDeMo/" },
-
+                            { text: "SimpleSDMDatasets.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/" },
+                            { text: "SimpleSDMLayers.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/" },
                         ]
                     },
                     {
                         text: "Packages we support",
                         items: [
                             { text: "BON.jl", link: "https://poisotlab.github.io/BiodiversityObservationNetworks.jl/dev/" },
-                            { text: "STAC.jl", link: "https://juliaclimate.github.io/STAC.jl/dev/" },
-                            { text: "SpatialBoundaries.jl", link: "https://poisotlab.github.io/SpatialBoundaries.jl/dev/" },
+                            { text: "Clustering.jl", link: "https://juliastats.org/Clustering.jl/stable/" },
+                            { text: "MultivariateStats.jl", link: "https://juliastats.org/MultivariateStats.jl/stable/" },
                             { text: "NeutralLandscapes.jl", link: "https://docs.ecojulia.org/NeutralLandscapes.jl/dev/" },
-                            { text: "Clustering.jl", link: "https://juliastats.org/Clustering.jl/stable/" }
+                            { text: "SpatialBoundaries.jl", link: "https://poisotlab.github.io/SpatialBoundaries.jl/dev/" },
+                            { text: "STAC.jl", link: "https://juliaclimate.github.io/STAC.jl/dev/" },
                         ]
                     }
 
@@ -93,26 +93,27 @@ export default defineConfig({
         sidebar: {
             "/howto/": [
                 {
-                    text: "How-to...",
+                    text: "How-to …",
                     items: [
-                        {text: "... get GBIF data?", link: "/howto/get-gbif-data/"},
-                        {text: "... interpolate data?", link: "/howto/interpolate/"},
-                        {text: "... list provided layers?", link: "/howto/list-provided-layers/"},
-                        {text: "... do arithmetic on layers?", link: "/howto/layer-arithmetic/"},
-                        {text: "... mask a layer?", link: "/howto/mask-layer/"},
-                        {text: "... mask with polygons?", link: "/howto/mask-polygons/"},
-                        {text: "... read part of a layer?", link: "/howto/read-part-layer/"},
-                        {text: "... get the bounding box for an object?", link: "/howto/get-boundingbox/"},
-                        {text: "... calculate statistics on layers?", link: "/howto/layer-statistics/"},
-                        {text: "... calculate zonal statistics?", link: "/howto/zonal-statistics/"},
-                        {text: "... generate pseudo-absences?", link: "/howto/pseudoabsences/"},
-                        {text: "... tweak logistic regression?", link: "/howto/logistic-regression/"},
-                        {text: "... split a layer in tiles?", link: "/howto/split-layer/"},
-                        {text: "... plot using Makie?", link: "/howto/makie/"},
-                        {text: "... get data from STAC?", link: "/howto/stac/"},
-                        {text: "... cluster layers?", link: "/howto/cluster-layers/"},
-                        {text: "... create neutral landscapes?", link: "/howto/neutral-landscapes/"},
-                        {text: "... index layers by occurrences?", link: "/howto/layer-occurrences/"},
+                        {text: "… calculate statistics on layers?", link: "/howto/layer-statistics/"},
+                        {text: "… calculate zonal statistics?", link: "/howto/zonal-statistics/"},
+                        {text: "… cluster layers?", link: "/howto/cluster-layers/"},
+                        {text: "… create neutral landscapes?", link: "/howto/neutral-landscapes/"},
+                        {text: "… do arithmetic on layers?", link: "/howto/layer-arithmetic/"},
+                        {text: "… generate pseudo-absences?", link: "/howto/pseudoabsences/"},
+                        {text: "… get data from STAC?", link: "/howto/stac/"},
+                        {text: "… get GBIF data?", link: "/howto/get-gbif-data/"},
+                        {text: "… get the bounding box for an object?", link: "/howto/get-boundingbox/"},
+                        {text: "… index layers by occurrences?", link: "/howto/layer-occurrences/"},
+                        {text: "… interpolate data?", link: "/howto/interpolate/"},
+                        {text: "… list provided layers?", link: "/howto/list-provided-layers/"},
+                        {text: "… mask a layer?", link: "/howto/mask-layer/"},
+                        {text: "… mask with polygons?", link: "/howto/mask-polygons/"},
+                        {text: "… perform PCA on layers?", link: "/howto/multivariate-stats/"},
+                        {text: "… plot using Makie?", link: "/howto/makie/"},
+                        {text: "… read part of a layer?", link: "/howto/read-part-layer/"},
+                        {text: "… split a layer in tiles?", link: "/howto/split-layer/"},
+                        {text: "… tweak logistic regression?", link: "/howto/logistic-regression/"},
                     ]
                 }
             ],
@@ -126,8 +127,8 @@ export default defineConfig({
                         {text: "Generating fauxcurrences", link: "/tutorials/fauxcurrences/"},
                         {text: "Generating virtual species", link: "/tutorials/virtual-species/"},
                         {text: "Identifying spatial boundaries", link: "/tutorials/spatial-boundaries/"},
-                        {text: "Training SDMs with SDeMo", link: "/tutorials/sdemo-introduction/"},
-                        {text: "Mapping SDMs with SDeMo", link: "/tutorials/sdemo-vignette/"},
+                        {text: "SDMs 1 - training", link: "/tutorials/sdemo-introduction/"},
+                        {text: "SDMs 2 - mapping", link: "/tutorials/sdemo-vignette/"},
                     ]
                 }
             ],

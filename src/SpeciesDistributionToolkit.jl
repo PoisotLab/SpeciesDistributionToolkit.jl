@@ -62,7 +62,7 @@ export zone, byzone
 
 # Boundaries
 include("boundaries/gadm.jl")
-include("boundaries/naturalearth.jl")
+include("boundaries/osm.jl")
 
 # Extra functions
 include("utilities.jl")

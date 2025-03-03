@@ -21,6 +21,9 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 POL = SpeciesDistributionToolkit.openstreetmap("Yosemite National Park")
 
+# Note that if these polygons are too big, the `simplify` and `simplify!`
+# methods (which are not exported) can be used to reduce their complexity.
+
 # The next step is to get a layer, and so we will download the data about
 # deciduous broadleaf trees from [EarthEnv](/datasets/EarthEnv#landcover):
 

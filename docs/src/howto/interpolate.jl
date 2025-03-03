@@ -5,12 +5,24 @@ using CairoMakie
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # The `interpolate` method can be used to project data into another coordinate
-# system. For example, we can get temperature data about metropolitan France and
-# Corsica, in ESPG:4326:
+# system. For example, we can get bird richness data for metropolitan France and
+# Corsica, in the Eckert IV projection:
 
 spatial_extent = (; left = -4.87, right = 9.63, bottom = 41.31, top = 51.14)
-dataprovider = RasterData(CHELSA1, BioClim)
-layer = SDMLayer(dataprovider; layer = 1, spatial_extent...)
+dataprovider = RasterData(BiodiversityMapping, BirdRichness)
+layer = SDMLayer(dataprovider; layer = "Birds", spatial_extent...)
+
+# We can check out the original data:
+
+# fig-initial
+fig, ax, hm = heatmap(
+    layer;
+    colormap = :navia,
+    figure = (; size = (800, 400)),
+    axis = (; aspect = DataAspect()),
+)
+Colorbar(fig[:, end + 1], hm)
+current_figure() #hide
 
 # And project them to the more locally appropriate [EPSG:27574](https://epsg.io/27574):
 

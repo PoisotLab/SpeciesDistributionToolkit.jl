@@ -57,11 +57,12 @@ function downloader(
     # Check for the fileinfo
     if isequal(_zip)(SimpleSDMDatasets.downloadtype(data))
         _get_file_from_zip(layer_file, fnm, dir)
+        fnm = layer_file
     end
 
     # Return everything as a tuple
     return (
-        joinpath(dir, layer_file),
+        joinpath(dir, fnm),
         SimpleSDMDatasets.filetype(data),
         SimpleSDMDatasets.bandnumber(data; kwargs...),
         SimpleSDMDatasets.crs(data),
@@ -97,11 +98,12 @@ function downloader(
     # Check for the fileinfo
     if isequal(_zip)(SimpleSDMDatasets.downloadtype(data))
         _get_file_from_zip(layer_file, fnm, dir)
+        fnm = layer_file
     end
 
     # Return everything as a tuple
     return (
-        joinpath(dir, layer_file),
+        joinpath(dir, fnm),
         SimpleSDMDatasets.filetype(data, future),
         SimpleSDMDatasets.bandnumber(data, future; kwargs...),
         SimpleSDMDatasets.crs(data, future),

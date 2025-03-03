@@ -58,8 +58,8 @@ function __get_grid_coordinate_by_crs(layer::SDMLayer, easting, northing)
     (northing > maximum(northings)) && return nothing
 
     # Return the coordinate
-    ei = Base.Sort.searchsortedfirst(eastings, easting)
-    ni = Base.Sort.searchsortedfirst(northings, northing)
+    ei = Base.Sort.searchsortedfirst(eastings, easting) - 1
+    ni = Base.Sort.searchsortedfirst(northings, northing) - 1
     return (ni, ei)
 end
 

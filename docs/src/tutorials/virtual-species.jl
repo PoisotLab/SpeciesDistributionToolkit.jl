@@ -132,7 +132,7 @@ first(ranges)
 # richness:
 
 # fig-virtualspeciesrichness
-f = Figure()
+f = Figure(; size = (700, 700))
 richness = mosaic(sum, ranges)
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, richness; colorrange = (0, length(ranges)), colormap = :navia)

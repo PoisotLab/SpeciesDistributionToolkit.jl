@@ -23,6 +23,10 @@ export threshold, features, labels, variables, instance
 export threshold!, variables!
 export classifier, transformer
 
+# Hyper-parameters
+include("hyperparameters.jl")
+export hyperparmeters
+
 # Univariate transforms
 include("transformers/univariate.jl")
 export RawData, ZScore

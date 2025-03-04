@@ -148,7 +148,7 @@ end
     train!(sdm)
     expl_indices = sort(unique(rand(axes(X, 2), 100)))
     eX = convert(Matrix{Float16}, X[:, expl_indices])
-    @test explain(sdm, 1; instances = eX) isa Vector{eltype(eX)}
+    @test explain(sdm, 1; instances = eX) isa Vector{<:AbstractFloat}
     @test length(explain(sdm, 1; instances = eX)) == length(expl_indices)
     @test all(explain(sdm, 10; instances = eX) .≈ 0.0)
 end

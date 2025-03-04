@@ -56,7 +56,8 @@ end
 Applies _explain_one_instance on the matrix Z
 """
 function _explain_many_instances(f, Z, X, j, n)
-    T = eltype(f(Z))
+    # We run a single instance to make sure we get the correct return type
+    T = typeof(_explain_one_instance(f, Z[:,1], X, 1, 2))
     output = zeros(T, size(Z, 2))
     chunk_size = max(1, length(output) ÷ (5 * Threads.nthreads()))
     data_chunks = Base.Iterators.partition(eachindex(output), chunk_size)
@@ -147,7 +148,7 @@ end
     train!(sdm)
     expl_indices = sort(unique(rand(axes(X, 2), 100)))
     eX = convert(Matrix{Float16}, X[:, expl_indices])
-    @test explain(sdm, 1; instances = eX) isa Vector{Float64}
+    @test explain(sdm, 1; instances = eX) isa Vector{eltype(eX)}
     @test length(explain(sdm, 1; instances = eX)) == length(expl_indices)
     @test all(explain(sdm, 10; instances = eX) .≈ 0.0)
 end

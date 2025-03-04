@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.3.2`
 
+- ** fixed** the problem with hyper-parameters not being restored
 - ** fixed** the typing issue in Shapley values
 
 ## `v1.3.2`

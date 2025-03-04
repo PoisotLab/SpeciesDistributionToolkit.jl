@@ -19,11 +19,23 @@ A. 110, E2602-10.
 
 downloadtype(::RasterData{BiodiversityMapping, T}) where {T <: BiodivMap} = _zip
 
-destination(::RasterData{BiodiversityMapping, T}; kwargs...) where {T <: BiodivMap} = joinpath(SimpleSDMDatasets._LAYER_PATH, string(BiodiversityMapping))
+destination(::RasterData{BiodiversityMapping, T}; kwargs...) where {T <: BiodivMap} =
+    joinpath(SimpleSDMDatasets._LAYER_PATH, string(BiodiversityMapping))
 
-layers(::RasterData{BiodiversityMapping, MammalRichness}) = ["Mammals", "Carnivora", "Cetartiodactyla", "Chiroptera", "Eulipotyphla", "Marsupialia", "Primates", "Rodentia"]
-layers(::RasterData{BiodiversityMapping, AmphibianRichness}) = ["Amphibians", "Anura", "Caudata", "Gymnophiona"]
-layers(::RasterData{BiodiversityMapping, BirdRichness}) = ["Birds", "Passeriformes", "Psittaciformes", "Trochilidae"]
+layers(::RasterData{BiodiversityMapping, MammalRichness}) = [
+    "Mammals",
+    "Carnivora",
+    "Cetartiodactyla",
+    "Chiroptera",
+    "Eulipotyphla",
+    "Marsupialia",
+    "Primates",
+    "Rodentia",
+]
+layers(::RasterData{BiodiversityMapping, AmphibianRichness}) =
+    ["Amphibians", "Anura", "Caudata", "Gymnophiona"]
+layers(::RasterData{BiodiversityMapping, BirdRichness}) =
+    ["Birds", "Passeriformes", "Psittaciformes", "Trochilidae"]
 
 function layerdescriptions(::RasterData{BiodiversityMapping, T}) where {T <: BiodivMap}
     layername = layers(RasterData(BiodiversityMapping, T))
@@ -37,23 +49,34 @@ function source(data::RasterData{BiodiversityMapping, T}; kwargs...) where {T <:
     return (; url, filename, outdir)
 end
 
-function layername(::RasterData{BiodiversityMapping, BirdRichness}; layer="Birds")
+function layername(::RasterData{BiodiversityMapping, BirdRichness}; layer = "Birds")
     layer = layer == "Birds" ? "breeding_no_seabirds" : layer
     root = "BiodiversityMapping_TIFFs_2019_03d14/Birds"
     fname = "Richness_10km_Birds_v7_EckertIV_$(layer).tif"
     return joinpath(root, fname)
 end
 
-function layername(::RasterData{BiodiversityMapping, MammalRichness}; layer="Mammals")
+function layername(::RasterData{BiodiversityMapping, MammalRichness}; layer = "Mammals")
     layer = layer == "Mammals" ? "" : "_$(layer)"
     root = "BiodiversityMapping_TIFFs_2019_03d14/Mammals"
     fname = "Richness_10km_MAMMALS_mar2018_EckertIV$(layer).tif"
     return joinpath(root, fname)
 end
 
-function layername(::RasterData{BiodiversityMapping, AmphibianRichness}; layer="Amphibians")
+function layername(
+    ::RasterData{BiodiversityMapping, AmphibianRichness};
+    layer = "Amphibians",
+)
     layer = layer == "Amphibians" ? "" : "_$(layer)"
     root = "BiodiversityMapping_TIFFs_2019_03d14/Amphibians"
     fname = "Richness_10km_AMPHIBIANS_dec2017_EckertIV$(layer).tif"
     return joinpath(root, fname)
+end
+
+@testitem "We can get BiodiversityMapping data" begin
+    out = downloader(RasterData(BiodiversityMapping, AmphibianRichness))
+    @test isfile(first(out))
+    @test out[2] ==
+          SimpleSDMDatasets.filetype(RasterData(BiodiversityMapping, AmphibianRichness))
+    @test contains(out[1], ".tif")
 end

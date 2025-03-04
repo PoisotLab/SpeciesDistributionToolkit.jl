@@ -25,7 +25,7 @@ export classifier, transformer
 
 # Hyper-parameters
 include("hyperparameters.jl")
-export hyperparmeters
+export hyperparameters, hyperparameters!
 
 # Univariate transforms
 include("transformers/univariate.jl")

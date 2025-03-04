@@ -83,6 +83,17 @@ Base.@kwdef mutable struct Logistic <: Classifier
     verbosity::Int64 = 100
 end
 
+hyperparameters(::Type{Logistic}) = (:η, :λ, :interactions, :verbose, :verbosity, :epochs)
+
+@testitem "A Logistic has hyper-parameters" begin
+    @test hyperparameters(Logistic) == (:η, :λ, :interactions, :verbose, :verbosity, :epochs)
+    @test hyperparameters(Logistic(), :verbose) == false
+    L = Logistic()
+    hyperparameters!(L, :verbose, true)
+    hyperparameters!(L, :epochs, 10_000)
+    @test hyperparameters(L, :epochs) == 10_000
+end
+
 Base.zero(::Type{Logistic}) = 0.5
 
 function SDeMo.train!(

@@ -13,6 +13,16 @@ Base.@kwdef mutable struct NaiveBayes <: Classifier
 end
 export NaiveBayes
 
+hyperparameters(::Type{NaiveBayes}) = (:prior, )
+
+@testitem "A NaiveBayes has hyper-parameters" begin
+    @test hyperparameters(NaiveBayes) == (:prior, )
+    @test hyperparameters(NaiveBayes(), :prior) == 0.5
+    N = NaiveBayes()
+    hyperparameters!(N, :prior, 0.8)
+    @test hyperparameters(N, :prior) == 0.8
+end
+
 Base.zero(::Type{NaiveBayes}) = 0.5
 
 function train!(

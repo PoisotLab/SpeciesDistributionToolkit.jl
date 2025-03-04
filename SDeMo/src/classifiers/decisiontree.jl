@@ -91,16 +91,32 @@ Base.@kwdef mutable struct DecisionTree <: Classifier
     maxdepth::Integer = 7
 end
 
+hyperparameters(::Type{DecisionTree}) = (:maxnodes, :maxdepth)
+
+@testitem "A DecisionTree has hyper-parameters" begin
+    @test :maxnodes in hyperparameters(DecisionTree)
+    @test :maxdepth in hyperparameters(DecisionTree)
+end
+
+@testitem "We can operate on the hyper-parameters of a DecisionTree" begin
+    D = DecisionTree()
+    hyperparameters!(D, :maxnodes, 8)
+    @test hyperparameters(D, :maxnodes) == 8
+end
+
 function maxnodes!(dt::DecisionTree, n::Integer)
+    @warn "DEPRECATED - use hyperparameters!(tree, :maxnodes, $(n))"
     dt.maxnodes = n
     return dt
 end
 function maxdepth!(dt::DecisionTree, n::Integer)
+    @warn "DEPRECATED - use hyperparameters!(tree, :maxdepth, $(n))"
     dt.maxdepth = n
     return dt
 end
 
 function maxnodes!(sdm::SDM, n)
+    @warn "DEPRECATED - use hyperparameters!(classifier(sdm), :maxnodes, $(n))"
     if sdm.classifier isa DecisionTree
         maxnodes!(sdm.classifier, n)
         return sdm
@@ -108,6 +124,7 @@ function maxnodes!(sdm::SDM, n)
     return sdm
 end
 function maxdepth!(sdm::SDM, n)
+    @warn "DEPRECATED - use hyperparameters!(classifier(tree), :maxdepth, $(n))"
     if sdm.classifier isa DecisionTree
         maxdepth!(sdm.classifier, n)
         return sdm
@@ -228,9 +245,9 @@ end
 @testitem "We can train a decison tree" begin
     X, y = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, DecisionTree, X, y)
-    maxdepth!(model, 3)
-    @test model.classifier.maxdepth == 3
+    hyperparameters!(classifier(model), :maxdepth, 3)
     train!(model)
+    @test model.classifier.maxdepth == 3
     @test SDeMo.depth(model.classifier) <= 3
     @test length(SDeMo.tips(model.classifier)) <= model.classifier.maxnodes
 end
@@ -238,9 +255,9 @@ end
 @testitem "We can train a decison tree and make a prediction with it" begin
     X, y = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, DecisionTree, X, y)
-    maxdepth!(model, 5)
-    @test model.classifier.maxdepth == 5
+    hyperparameters!(classifier(model), :maxdepth, 5)
     train!(model)
+    @test model.classifier.maxdepth == 5
     pr = predict(model, X)
     @test eltype(pr) == Bool
     @test length(pr) == length(y)

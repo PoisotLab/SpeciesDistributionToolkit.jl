@@ -10,7 +10,6 @@ function VisvalingamWhyatt!(points, tolerance, minpoints)
     if length(points) <= minpoints
         return points
     end
-    _heal_polygon!(points)
     p = copy(points)
     A = zeros(length(p))
     # Make sure that we pad the array with the correct first and last values
@@ -29,9 +28,9 @@ function VisvalingamWhyatt!(points, tolerance, minpoints)
             return points
         end
         deleteat!(points, to_delete)
+        _heal_polygon!(points)
         return VisvalingamWhyatt!(points, tolerance, minpoints)
     end
-    _heal_polygon!(points)
     return points
 end
 

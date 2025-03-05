@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.4.3`
+
+- **improved** the performance of polygon masking with threading
+- **added** a `mask` method for layers and polygons (in addition to `mask!` and similar to `trim`)
+- **fixed** the `simplify`/`simplify!` functions to ensure that the first and last points are the same
+
 ## `v1.4.2`
 
 - **added** an `openstreetmap` method (not exported) to get various GeoJSON limits from plan-text queries

@@ -23,7 +23,6 @@ function trim(layer::SDMLayer)
     )
 end
 
-
 """
     trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT}
 
@@ -61,11 +60,24 @@ function change_inclusion!(inclusion, layer, polygon, op)
         valid_eastings[1]:valid_eastings[end],
     ))
 
-    for position in grid
-        if PolygonOps.inpolygon((E[position[2]], N[position[1]]), transformed_polygon) != 0
-            inclusion[position] = op
+    # Thread-safe structure
+    chunk_size = max(1, length(grid) ÷ (5 * Threads.nthreads()))
+    data_chunks = Base.Iterators.partition(grid, chunk_size)
+
+    tasks = map(data_chunks) do chunk
+        Threads.@spawn begin
+            for position in chunk
+                if PolygonOps.inpolygon(
+                    (E[position[2]], N[position[1]]),
+                    transformed_polygon,
+                ) != 0
+                    inclusion[position] = op
+                end
+            end
         end
     end
+
+    inclusions_batched = fetch.(tasks)
     return inclusion
 end
 
@@ -74,10 +86,13 @@ function _get_inclusion_from_polygon!(inclusion, layer, multipolygon::GeoJSON.Mu
         for i in eachindex(element)
             change_inclusion!(inclusion, layer, element[i], true)
         end
-    end 
-end 
+    end
+end
 
-function SimpleSDMLayers.mask!(layers::Vector{<:SDMLayer}, multipolygon::GeoJSON.MultiPolygon) 
+function SimpleSDMLayers.mask!(
+    layers::Vector{<:SDMLayer},
+    multipolygon::GeoJSON.MultiPolygon,
+)
     inclusion = .!reduce(.|, [l.indices for l in layers])
     _get_inclusion_from_polygon!(inclusion, first(layers), multipolygon)
     for layer in layers
@@ -85,6 +100,9 @@ function SimpleSDMLayers.mask!(layers::Vector{<:SDMLayer}, multipolygon::GeoJSON
     end
     return layers
 end
+
+mask(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT} =
+    mask!(copy(layer), feature)
 
 """
     SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolygon)
@@ -101,9 +119,13 @@ end
 SimpleSDMLayers.mask!(layer::SDMLayer, features::GeoJSON.FeatureCollection, feature = 1) =
     mask!(layer, features[feature])
 
-SimpleSDMLayers.mask!(layers::Vector{<:SDMLayer}, features::GeoJSON.FeatureCollection, feature = 1) =
+SimpleSDMLayers.mask!(
+    layers::Vector{<:SDMLayer},
+    features::GeoJSON.FeatureCollection,
+    feature = 1,
+) =
     mask!(layers, features[feature])
-    
+
 SimpleSDMLayers.mask!(layer::SDMLayer, feature::GeoJSON.Feature) =
     mask!(layer, feature.geometry)
 

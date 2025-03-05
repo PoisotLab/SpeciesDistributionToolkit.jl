@@ -11,10 +11,21 @@ Specifically, the goal of these packages put together is to provide a consistent
 occurrence data, put them on a map, and make it interact with environmental
 information. 
 
-The up-to-date documentation for the *stable* version can be found [here](https://poisotlab.github.io/SpeciesDistributionToolkit.jl). It contains tutorials showcasing the package in action, how-to guids to serve as a quick reference, and links to the documentation for all methods in the component packages.
+<p align="center">
+  <img src="https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/blob/main/structure.drawio.png?raw=true" alt="Package overview"/>
+</p>
+
+The up-to-date documentation for the most recent version can be found
+[here](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/dev/). It
+contains tutorials showcasing the package in action, how-to guides to serve as a
+quick reference, and links to the documentation for all methods in the component
+packages.
 
 ## Want to help?
 
-🧑‍💻 To get a sense of the next steps and help with the development, see the  [issues and bugs tracker](https://github.com/orgs/PoisotLab/projects/3).
+🧑‍💻 To get a sense of the next steps and help with the development, see the
+[issues and bugs tracker](https://github.com/orgs/PoisotLab/projects/3).
 
-💬 Reach out using the [Discussions](https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions) tab on this repo!
+💬 Reach out using the
+[Discussions](https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions)
+tab on this repo!

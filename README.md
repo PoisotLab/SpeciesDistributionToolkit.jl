@@ -11,6 +11,10 @@ Specifically, the goal of these packages put together is to provide a consistent
 occurrence data, put them on a map, and make it interact with environmental
 information. 
 
+> [!TIP]
+> There is a manuscript describing this package, currently available as a preprint:  
+> Poisot, T., Bussières-Fournel, A., Dansereau, G., and Catchen, M. D. (2025). A Julia toolkit for species distribution data. EcoEvoRxiv. doi: [10.32942/X2405R](https://ecoevorxiv.org/repository/view/8582/)
+
 <p align="center">
   <img src="https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/blob/main/structure.drawio.png?raw=true" alt="Package overview"/>
 </p>

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.4.3`
 
+- **improved** the performance of polygon masking with threading
+- **added** a `mask` method for layers and polygons (in addition to `mask!` and similar to `trim`)
 - **fixed** the `simplify`/`simplify!` functions to ensure that the first and last points are the same
 
 ## `v1.4.2`

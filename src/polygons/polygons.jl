@@ -61,7 +61,7 @@ function change_inclusion!(inclusion, layer, polygon, op)
     ))
 
     # Thread-safe structure
-    chunk_size = max(1, length(grid) ÷ (5 * Threads.nthreads()))
+    chunk_size = max(1, length(grid) ÷ (10 * Threads.nthreads()))
     data_chunks = Base.Iterators.partition(grid, chunk_size)
 
     tasks = map(data_chunks) do chunk
@@ -79,6 +79,15 @@ function change_inclusion!(inclusion, layer, polygon, op)
 
     inclusions_batched = fetch.(tasks)
     return inclusion
+end
+
+@testitem "We can mask with a polygon (multi-threaded)" begin
+    POL = SpeciesDistributionToolkit.openstreetmap("Austria")
+    L = SDMLayer(RasterData(CHELSA1, MinimumTemperature); SpeciesDistributionToolkit.boundingbox(POL; padding=1.0)...)
+    Lc = count(L)
+    mask!(L, POL)
+    @test typeof(L) <: SDMLayer
+    @test count(L) <= Lc
 end
 
 function _get_inclusion_from_polygon!(inclusion, layer, multipolygon::GeoJSON.MultiPolygon)

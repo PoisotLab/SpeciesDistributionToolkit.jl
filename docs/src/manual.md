@@ -16,7 +16,7 @@ indicators](https://www.cbd.int/gbf). See the [BON in a Box tool page](https://b
 If you use the package, please cite
 
 > Poisot, T., Bussières-Fournel, A., Dansereau, G., and Catchen, M. D. (2025). A
-> Julia toolkit for species distribution data. EcoEvoRxiv. doi:
+> Julia toolkit for species distribution data. EcoEvoRxiv.
 > [10.32942/X2405R](https://ecoevorxiv.org/repository/view/8582/)
 
 ## Getting started

@@ -2,18 +2,13 @@ using TestItemRunner
 
 @run_package_tests filter=ti->!(:skipci in ti.tags)
 
-# write tests here
-
-## NOTE add JET to the test environment, then uncomment
-# using JET
-# @testset "static analysis with JET.jl" begin
-#     @test isempty(JET.get_reports(report_package(SDMLayers, target_modules=(SDMLayers,))))
-# end
-
-## NOTE add Aqua to the test environment, then uncomment
-# @testset "QA with Aqua" begin
-#     import Aqua
-#     Aqua.test_all(SDMLayers; ambiguities = false)
-#     # testing separately, cf https://github.com/JuliaTesting/Aqua.jl/issues/77
-#     Aqua.test_ambiguities(SDMLayers)
-# end
+@testitem "We can set hyper-parameters for a full model" begin
+    X, y = SDeMo.__demodata()
+    X, y = SDeMo.__demodata()
+    sdm = SDM(ZScore(), Logistic(), 0.5, X, y, 1:size(X,1))
+    hyperparameters!(classifier(sdm), :epochs, 10_000)
+    hyperparameters!(classifier(sdm), :λ, 0.15)
+    hyperparameters!(classifier(sdm), :interactions, :none)
+    train!(sdm)
+    @test hyperparameters(classifier(sdm), :λ) == 0.15
+end

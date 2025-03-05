@@ -12,8 +12,9 @@ j: the index of the variable to explain
 
 n: the number of samples to generate for evaluation
 """
-function _mcsample(x::Vector{T}, X::Matrix{T}, j::Int64, n::Int64) where {T <: Number}
+function _mcsample(x::Vector{<:AbstractFloat}, X::Matrix{<:AbstractFloat}, j::Int64, n::Int64)
     # Initial sample matrix
+    T = promote_type(eltype(x), eltype(X))
     ξ = zeros(T, length(x), n)
     for instance in axes(ξ, 2)
         ξ[:, instance] = x
@@ -55,7 +56,9 @@ end
 Applies _explain_one_instance on the matrix Z
 """
 function _explain_many_instances(f, Z, X, j, n)
-    output = zeros(Float64, size(Z, 2))
+    # We run a single instance to make sure we get the correct return type
+    T = typeof(_explain_one_instance(f, Z[:,1], X, 1, 2))
+    output = zeros(T, size(Z, 2))
     chunk_size = max(1, length(output) ÷ (5 * Threads.nthreads()))
     data_chunks = Base.Iterators.partition(eachindex(output), chunk_size)
     tasks = map(data_chunks) do chunk
@@ -137,4 +140,15 @@ end
     @test expl_1 != 0.0
     expl_10 = explain(sdm, 10; observation=1)
     @test expl_10 ≈ 0.0
+end
+
+@testitem "We can calculate Shapley values on differently-typed data" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, [1, 2])
+    train!(sdm)
+    expl_indices = sort(unique(rand(axes(X, 2), 100)))
+    eX = convert(Matrix{Float16}, X[:, expl_indices])
+    @test explain(sdm, 1; instances = eX) isa Vector{<:AbstractFloat}
+    @test length(explain(sdm, 1; instances = eX)) == length(expl_indices)
+    @test all(explain(sdm, 10; instances = eX) .≈ 0.0)
 end

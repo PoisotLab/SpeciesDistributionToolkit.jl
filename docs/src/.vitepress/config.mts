@@ -97,6 +97,7 @@ export default defineConfig({
                     items: [
                         {text: "… calculate statistics on layers?", link: "/howto/layer-statistics/"},
                         {text: "… calculate zonal statistics?", link: "/howto/zonal-statistics/"},
+                        {text: "… change hyper-parameters?", link: "/howto/change-hyperparameters/"},
                         {text: "… cluster layers?", link: "/howto/cluster-layers/"},
                         {text: "… create neutral landscapes?", link: "/howto/neutral-landscapes/"},
                         {text: "… do arithmetic on layers?", link: "/howto/layer-arithmetic/"},
@@ -113,7 +114,6 @@ export default defineConfig({
                         {text: "… plot using Makie?", link: "/howto/makie/"},
                         {text: "… read part of a layer?", link: "/howto/read-part-layer/"},
                         {text: "… split a layer in tiles?", link: "/howto/split-layer/"},
-                        {text: "… tweak logistic regression?", link: "/howto/logistic-regression/"},
                     ]
                 }
             ],

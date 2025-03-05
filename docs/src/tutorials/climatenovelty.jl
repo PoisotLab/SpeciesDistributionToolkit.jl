@@ -19,8 +19,9 @@ import Dates
 
 # ## Accessing historical climate data
 
-# In order to only load a reasonable amount of data, we will specify a bounding box for the
-# area we are interested in:
+# In order to only load a reasonable amount of data, we will specify a bounding
+# box for the area we are interested in (or, in this case, get the boundingbox
+# from the GeoJSON polygon):
 
 POL = SpeciesDistributionToolkit.openstreetmap("Laurentides")
 spatial_extent = SpeciesDistributionToolkit.boundingbox(POL)
@@ -170,7 +171,7 @@ fig, ax, hm = heatmap(
     figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
-lines!(POL, color=:black)
+lines!(ax, POL, color=:black)
 hidespines!(ax)
 hidedecorations!(ax)
 Colorbar(

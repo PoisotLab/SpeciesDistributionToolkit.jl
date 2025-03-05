@@ -5,8 +5,9 @@ function _get_file_from_zip(layer_file, zip_file, dir)
         if layer_file == file_in_zip
 
             # If the zip file had nested folders, we need to make sure the paths exist
-            ispath(dirname(joinpath(dir, file_in_zip))) || mkpath(dirname(joinpath(dir, file_in_zip)))
-            
+            ispath(dirname(joinpath(dir, file_in_zip))) ||
+                mkpath(dirname(joinpath(dir, file_in_zip)))
+
             # Write
             out = open(joinpath(dir, layer_file), "w")
             write(out, ZipArchives.zip_readentry(zip_archive, file_in_zip, String))
@@ -50,7 +51,7 @@ function _generic_downloader(url, fnm, dir, layer_file, zip, ft, bn, cr)
         joinpath(dir, fnm),
         ft,
         bn,
-        cr
+        cr,
     )
 end
 
@@ -81,9 +82,20 @@ function downloader(
     keychecker(data, future; kwargs...)
     url, fnm, dir = SimpleSDMDatasets.source(data, future; kwargs...)
     layer_file = SimpleSDMDatasets.layername(data, future; kwargs...)
-    zip = isequal(_zip)(SimpleSDMDatasets.downloadtype(data))
+    zip = isequal(_zip)(SimpleSDMDatasets.downloadtype(data, future))
     ft = SimpleSDMDatasets.filetype(data, future)
     bn = SimpleSDMDatasets.bandnumber(data, future; kwargs...)
     cr = SimpleSDMDatasets.crs(data, future)
     return _generic_downloader(url, fnm, dir, layer_file, zip, ft, bn, cr)
+end
+
+@testitem "We can get a WC2 BC layer from the future" tags = [:skipci] begin
+    provider = RasterData(WorldClim2, BioClim)
+    future = Projection(SSP126, MIROC6)
+    a, b, c = SimpleSDMDatasets.downloader(provider; layer = 1)
+    @test contains(a, "tif")
+    @test b == SimpleSDMDatasets._tiff
+    a, b, c = SimpleSDMDatasets.downloader(provider, future; layer = 1)
+    @test contains(a, "tif")
+    @test b == SimpleSDMDatasets._tiff
 end

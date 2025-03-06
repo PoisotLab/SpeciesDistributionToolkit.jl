@@ -27,6 +27,7 @@ export default defineConfig({
     },
     themeConfig: {
         outline: 'deep',
+        siteTitle: 'SDT.jl',
         docFooter: {
             next: false,
             prev: false

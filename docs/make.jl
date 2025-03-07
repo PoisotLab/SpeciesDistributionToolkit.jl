@@ -20,7 +20,17 @@ include("dataset_report.jl")
 include("processing.jl")
 
 # Copye the CHANGELOGS to their expected locations
-cp("../SDeMo/CHANGELOG.md", "src/reference/sdemo/CHANGELOG.md")
+cp(
+    joinpath(dirname(dirname(@__FILE__)), "SDeMo", "CHANGELOG.md"),
+    joinpath(
+        dirname(dirname(@__FILE__)),
+        "docs",
+        "src",
+        "reference",
+        "sdemo",
+        "CHANGELOG.md",
+    ),
+)
 
 # Render the tutorials and how-to using Literate
 for folder in ["howto", "tutorials"]

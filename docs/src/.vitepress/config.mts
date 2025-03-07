@@ -98,6 +98,7 @@ export default defineConfig({
                     items: [
                         {
                             text: "Basic layer operations",
+                            collapsed: true,
                             items: [
                                 { text: "Masking layers", link: "/howto/mask-layer/" },
                                 { text: "Masking layers with polygons", link: "/howto/mask-polygons/" },
@@ -112,6 +113,7 @@ export default defineConfig({
                         },
                         {
                             text: "Data preparation",
+                            collapsed: true,
                             items: [
                                 { text: "Getting GBIF data", link: "/howto/get-gbif-data/" },
                                 { text: "Getting STAC data", link: "/howto/stac/" },
@@ -122,12 +124,24 @@ export default defineConfig({
                         },
                         {
                             text: "Working with occurrence data",
+                            collapsed: true,
                             items: [
                                 { text: "Bounding boxes", link: "/howto/get-boundingbox/" },
                                 { text: "Access layers at occurrences positions", link: "/howto/layer-occurrences/" },
                                 { text: "Pseudo-absences", link: "/howto/pseudoabsences/" },
-                                { text: "Hyper-parameters", link: "/howto/change-hyperparameters/" },
                                 { text: "Makie integration", link: "/howto/makie/" },
+                            ]
+                        },
+                        {
+                            text: "Species Distribution Models",
+                            collapsed: true,
+                            items: [
+                                { text: "Cross-validation", link: "/howto/sdm-crossvalidation/" },
+                                { text: "Variable selection", link: "/howto/variable-selection/" },
+                                { text: "Hyper-parameters", link: "/howto/sdm-hyperparameters/" },
+                                { text: "PR and ROC curves", link: "/howto/sdm-pr-roc/" },
+                                { text: "Interpretability", link: "/howto/sdm-interpretability/" },
+                                { text: "Counterfactuals", link: "/howto/sdm-counterfactuals/" },
                             ]
                         }
                     ]
@@ -138,15 +152,12 @@ export default defineConfig({
                     text: "Tutorials",
                     items: [
                         { text: "Calculating climate novelty", link: "/tutorials/climatenovelty/" },
-                        { text: "Building the BIOCLIM model", link: "/tutorials/bioclim/" },
                         { text: "Generating a landcover consensus", link: "/tutorials/consensus/" },
                         { text: "Generating fauxcurrences", link: "/tutorials/fauxcurrences/" },
                         { text: "Generating virtual species", link: "/tutorials/virtual-species/" },
                         { text: "Identifying spatial boundaries", link: "/tutorials/spatial-boundaries/" },
-                        { text: "SDMs - introduction", link: "/tutorials/sdemo-1-introduction/" },
-                        { text: "SDMs - ensembles", link: "/tutorials/sdemo-2-ensembles/" },
-                        { text: "SDMs - visualization", link: "/tutorials/sdemo-3-dataviz/" },
-                        { text: "SDMs - explanation", link: "/tutorials/sdemo-4-explanations/" },
+                        { text: "SDMs - integration", link: "/tutorials/sdemo-integration/" },
+                        { text: "SDMs - ensembles", link: "/tutorials/sdemo-ensembles/" },
                     ]
                 }
             ],

@@ -143,8 +143,10 @@ export default defineConfig({
                         { text: "Generating fauxcurrences", link: "/tutorials/fauxcurrences/" },
                         { text: "Generating virtual species", link: "/tutorials/virtual-species/" },
                         { text: "Identifying spatial boundaries", link: "/tutorials/spatial-boundaries/" },
-                        { text: "SDMs 1 - training", link: "/tutorials/sdemo-introduction/" },
-                        { text: "SDMs 2 - mapping", link: "/tutorials/sdemo-vignette/" },
+                        { text: "SDMs - introduction", link: "/tutorials/sdemo-1-introduction/" },
+                        { text: "SDMs - ensembles", link: "/tutorials/sdemo-2-ensembles/" },
+                        { text: "SDMs - visualization", link: "/tutorials/sdemo-3-dataviz/" },
+                        { text: "SDMs - explanation", link: "/tutorials/sdemo-4-explanations/" },
                     ]
                 }
             ],

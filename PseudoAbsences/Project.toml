@@ -6,7 +6,9 @@ version = "1.0.0"
 [deps]
 OccurrencesInterface = "ee6415c8-122a-4855-89a1-90f4bac06ba6"
 SimpleSDMLayers = "2c645270-77db-11e9-22c3-0f302a89c64c"
+TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
 [compat]
 OccurrencesInterface = "1"
 SimpleSDMLayers = "1"
+TestItems = "1.0.0"

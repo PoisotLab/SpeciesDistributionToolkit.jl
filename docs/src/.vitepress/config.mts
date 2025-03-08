@@ -244,7 +244,7 @@ export default defineConfig({
                         { text: "SpeciesDistributionToolkit", link: "/reference/changelog/SpeciesDistributionToolkit/"},
                         { text: "GBIF", link: "/reference/changelog/GBIF/"}, 
                         { text: "SDeMo", link: "/reference/changelog/SDeMo/"}, 
-                        { text: "OccurrencesInterfaces", link: "/reference/changelog/OccurrencesInterfaces/"}, 
+                        { text: "OccurrencesInterfaces", link: "/reference/changelog/OccurrencesInterface/"}, 
                         { text: "SimpleSDMLayers", link: "/reference/changelog/SimpleSDMLayers/"}, 
                         { text: "SimpleSDMDatasets", link: "/reference/changelog/SimpleSDMDatasets/"}, 
                         { text: "Fauxcurrences", link: "/reference/changelog/Fauxcurrences/"}, 

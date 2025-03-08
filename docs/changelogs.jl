@@ -11,7 +11,7 @@ cp(
     force = true
 )
 
-for pkg in ["GBIF", "SDeMo", "OccurrencesInterface", "SimpleSDMLayers", "SimpleSDMDatasets", "Fauxcurrences", "Phylopic"]
+for pkg in ["GBIF", "SDeMo", "OccurrencesInterface", "SimpleSDMLayers", "SimpleSDMDatasets", "Fauxcurrences", "Phylopic", "PseudoAbsences"]
 cp(
     joinpath(dirname(dirname(@__FILE__)), pkg, "CHANGELOG.md"),
     joinpath(chg_path, "$(pkg).md");

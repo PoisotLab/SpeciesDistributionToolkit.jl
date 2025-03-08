@@ -13,7 +13,7 @@ Random.seed!(123451234123121); #hide
 # We will work on the demo data:
 
 X, y = SDeMo.__demodata()
-sdm = SDM(RawData, DecisionTree, X, y)
+sdm = SDM(RawData, NaiveBayes, X, y)
 variables!(sdm, [1, 12])
 train!(sdm)
 
@@ -24,7 +24,7 @@ train!(sdm)
 
 # We will pick one prediction to flip:
 
-inst = 4
+inst = 6
 
 # And look at its outcome:
 

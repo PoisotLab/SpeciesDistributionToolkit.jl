@@ -137,7 +137,7 @@ export default defineConfig({
                             collapsed: true,
                             items: [
                                 { text: "Cross-validation", link: "/howto/sdm-crossvalidation/" },
-                                { text: "Variable selection", link: "/howto/variable-selection/" },
+                                { text: "Variable selection", link: "/howto/sdm-variableselection/" },
                                 { text: "Hyper-parameters", link: "/howto/sdm-hyperparameters/" },
                                 { text: "PR and ROC curves", link: "/howto/sdm-pr-roc/" },
                                 { text: "Interpretability", link: "/howto/sdm-interpretability/" },
@@ -171,7 +171,6 @@ export default defineConfig({
                         { text: "Polygons", link: "/reference/sdt/gadm/" },
                         { text: "Pseudoabsences", link: "/reference/sdt/pseudoabsences/" },
                         { text: "GBIF", link: "/reference/sdt/gbif/" },
-                        { text: "Changelog", link: "/reference/CHANGELOG/" },
                     ]
                 },
                 {
@@ -183,7 +182,6 @@ export default defineConfig({
                         { text: "Data", link: "/reference/gbif/data/" },
                         { text: "Enumerated values", link: "/reference/gbif/enumerated/" },
                         { text: "Internals", link: "/reference/gbif/internals/" },
-                        { text: "Changelog", link: "/reference/gbif/CHANGELOG/" },
                     ]
                 },
                 {
@@ -191,7 +189,6 @@ export default defineConfig({
                     collapsed: true,
                     items: [
                         { text: "Documentation", link: "/reference/occint/" },
-                        { text: "Changelog", link: "/reference/occint/CHANGELOG/" },
                     ]
                 },
                 {
@@ -199,7 +196,6 @@ export default defineConfig({
                     collapsed: true,
                     items: [
                         { text: "Documentation", link: "/reference/phylopic/" },
-                        { text: "Changelog", link: "/reference/phylopic/CHANGELOG/" },
                     ]
                 },
                 {
@@ -207,7 +203,6 @@ export default defineConfig({
                     collapsed: true,
                     items: [
                         { text: "Documentation", link: "/reference/fauxcurrences/" },
-                        { text: "Changelog", link: "/reference/fauxcurrences/CHANGELOG/" },
                     ]
                 },
                 {
@@ -221,7 +216,6 @@ export default defineConfig({
                         { text: "Cross-validation", link: "/reference/sdemo/crossvalidation/" },
                         { text: "Feature selection", link: "/reference/sdemo/features/" },
                         { text: "Explanations", link: "/reference/sdemo/explanations/" },
-                        { text: "Changelog", link: "/reference/sdemo/CHANGELOG/" },
                     ]
                 },
                 {
@@ -232,7 +226,6 @@ export default defineConfig({
                         { text: "Interface", link: "/reference/datasets/interface/" },
                         { text: "Types", link: "/reference/datasets/types/" },
                         { text: "Internal", link: "/reference/datasets/internals/" },
-                        { text: "Changelog", link: "/reference/datasets/CHANGELOG/" },
                     ]
                 },
                 {
@@ -242,7 +235,20 @@ export default defineConfig({
                         { text: "Documentation", link: "/reference/layers/" },
                         { text: "Types", link: "/reference/layers/types/" },
                         { text: "Operations", link: "/reference/layers/operations/" },
-                        { text: "Changelog", link: "/reference/layers/CHANGELOG/" },
+                    ]
+                },
+                {
+                    text: "Changelogs",
+                    collapsed: true,
+                    items: [
+                        { text: "SpeciesDistributionToolkit", link: "/reference/changelog/SpeciesDistributionToolkit/"},
+                        { text: "GBIF", link: "/reference/changelog/GBIF/"}, 
+                        { text: "SDeMo", link: "/reference/changelog/SDeMo/"}, 
+                        { text: "OccurrencesInterfaces", link: "/reference/changelog/OccurrencesInterfaces/"}, 
+                        { text: "SimpleSDMLayers", link: "/reference/changelog/SimpleSDMLayers/"}, 
+                        { text: "SimpleSDMDatasets", link: "/reference/changelog/SimpleSDMDatasets/"}, 
+                        { text: "Fauxcurrences", link: "/reference/changelog/Fauxcurrences/"}, 
+                        { text: "Phylopic", link: "/reference/changelog/Phylopic/"}
                     ]
                 },
                 {
@@ -250,8 +256,9 @@ export default defineConfig({
                     items: [
                         { text: "Code of Conduct", link: "/reference/code-of-conduct/" },
                         { text: "Contribution guidelines", link: "/reference/contributing/" },
+                        { text: "Roadmap", link: "https://github.com/orgs/PoisotLab/projects/3" },
                         { text: "Discussions", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions" },
-                        { text: "Good first issues", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22" },
+                        { text: "Good first issues", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/issues?q=is%3Aopen%20is%3Aissue%20label%3A%22%F0%9F%A4%97%20good%20first%20PR%22" },
                     ]
                 }
             ]

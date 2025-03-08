@@ -1,6 +1,8 @@
 # # Use with the SDeMo package
 
-# In this tutorial, we will see how to deal with ensemble models.
+# In this tutorial, we will see how to deal with ensemble models. It is assumed
+# that you will have read the previous tutorial, explaining how to use
+# prediction functions more generally.
 
 using SpeciesDistributionToolkit
 using CairoMakie
@@ -43,13 +45,14 @@ while length(presences) < count(presences)
     occurrences!(presences)
 end
 
-# And after this, we prepare a layer with presence data:
+# And after this, we prepare a layer with presence data.
 
 presencelayer = mask(first(L), Occurrences(mask(presences, CHE)))
 
-# The next step is to generate a pseudo-absence mask. We will sample based on
-# the distance to an observation, by also preventing pseudo-absences to be less
-# than 4km from an observation:
+# The next step is to generate a pseudo-absence mask. There is a longer
+# explanation on the ways to generate pseudo-absences in the "How-to" section of
+# the manual. We will sample based on the distance to an observation, by also
+# preventing pseudo-absences to be less than 4km from an observation:
 
 background = pseudoabsencemask(DistanceToEvent, presencelayer)
 bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
@@ -86,7 +89,7 @@ current_figure() #hide
 # We can now create an ensemble model, by boostrapping random instances to train
 # a larger number of trees:
 
-ensemble = Bagging(sdm, 150)
+ensemble = Bagging(sdm, 100)
 
 # In order to further ensure that the models are learning from different parts
 # of the dataset, we can also bootstrap which variables are accessible to each
@@ -155,7 +158,10 @@ hidedecorations!(ax2)
 hidespines!(ax2)
 current_figure() #hide
 
-# We can similarly bring in the model we used in the previous tutorial:
+## Heterogeneous ensembles
+
+# We can also build ensembles of different models. Let's bring in the model we
+# used in the previous tutorial:
 
 sdm2 = SDM(ZScore, Logistic, L, presencelayer, bgpoints)
 variables!(sdm2, [1, 11, 5, 8, 6])
@@ -170,7 +176,7 @@ forwardselection!(sdm3, kfold(sdm3))
 
 # These models can all be merged into an heterogeneous ensemble:
 
-hens = Ensemble(sdm, sdm2, sdm3)
+hens = Ensemble(sdm2, sdm3)
 train!(hens)
 
 # Heterogeneous ensembles can be used in the exact same way as bagged models, so

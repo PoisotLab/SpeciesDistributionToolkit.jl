@@ -19,18 +19,8 @@ include("dataset_report.jl")
 # Additional functions to process the text when handled by Literate
 include("processing.jl")
 
-# Copye the CHANGELOGS to their expected locations
-cp(
-    joinpath(dirname(dirname(@__FILE__)), "SDeMo", "CHANGELOG.md"),
-    joinpath(
-        dirname(dirname(@__FILE__)),
-        "docs",
-        "src",
-        "reference",
-        "sdemo",
-        "CHANGELOG.md",
-    ),
-)
+# Changelogs
+include("changelogs.jl")
 
 # Render the tutorials and how-to using Literate
 for folder in ["howto", "tutorials"]

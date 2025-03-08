@@ -120,6 +120,9 @@ current_figure() #hide
 
 partial1 = partialresponse(sdm, L, 1; threshold=false)
 
+# The output can be visualised as well. Partial responses are given in the same
+# units as the prediction.
+
 # fig-partial-resp
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())

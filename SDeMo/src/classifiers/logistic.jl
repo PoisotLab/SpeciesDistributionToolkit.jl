@@ -113,12 +113,20 @@ function SDeMo.train!(
     𝐗 = SDeMo.__makex(X, lreg.interactions)
     𝐗t = transpose(𝐗)
     lreg.θ = SDeMo.__maketheta(X, lreg.interactions)
+    # Pre-allocate variables for faster gradient descent
+    z = 𝐗t * lreg.θ
+    𝐲 = eltype(z).(y)
+    ∇ = 𝐗 * (z-𝐲)
 
     for epoch in 1:(lreg.epochs)
-        z = 𝐗t * lreg.θ
+        LinearAlgebra.mul!(z, 𝐗t, lreg.θ)
         __sigmoid!(z, z)
-        gradient = (1 / length(lreg.θ)) * 𝐗 * (z - y) + (lreg.λ / length(lreg.θ)) * lreg.θ
-        lreg.θ -= lreg.η * gradient
+        ∇ᵣ = (lreg.λ / length(lreg.θ)) * lreg.θ
+        LinearAlgebra.mul!(∇, 𝐗, z-𝐲)
+        ∇ₗ = (1 / length(lreg.θ)) * ∇
+        gradient = ∇ₗ + ∇ᵣ
+        LinearAlgebra.mul!(gradient, lreg.η, gradient)
+        lreg.θ -= gradient
         if lreg.verbose & iszero(epoch % lreg.verbosity)
             validation_loss = nothing
             if validation_data

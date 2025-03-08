@@ -19,6 +19,9 @@ include("dataset_report.jl")
 # Additional functions to process the text when handled by Literate
 include("processing.jl")
 
+# Changelogs
+include("changelogs.jl")
+
 # Render the tutorials and how-to using Literate
 for folder in ["howto", "tutorials"]
     fpath = joinpath(@__DIR__, "src", folder)

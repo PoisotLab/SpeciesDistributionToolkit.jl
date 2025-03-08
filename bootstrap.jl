@@ -8,7 +8,6 @@ components = [
     "Fauxcurrences",
     "Phylopic",
     "SDeMo",
-    "PseudoAbsences",
 ]
 
 # Cleanup local install and develop

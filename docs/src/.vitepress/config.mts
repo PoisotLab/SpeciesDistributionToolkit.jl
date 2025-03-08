@@ -71,6 +71,7 @@ export default defineConfig({
                             { text: "GBIF.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/" },
                             { text: "OccurrencesInterface.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/OccurrencesInterface/" },
                             { text: "Phylopic.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/" },
+                            { text: "PseudoAbsences.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/PseudoAbsences/" },
                             { text: "SDeMo.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SDeMo/" },
                             { text: "SimpleSDMDatasets.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/" },
                             { text: "SimpleSDMLayers.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/" },
@@ -242,13 +243,14 @@ export default defineConfig({
                     collapsed: true,
                     items: [
                         { text: "SpeciesDistributionToolkit", link: "/reference/changelog/SpeciesDistributionToolkit/"},
-                        { text: "GBIF", link: "/reference/changelog/GBIF/"}, 
-                        { text: "SDeMo", link: "/reference/changelog/SDeMo/"}, 
-                        { text: "OccurrencesInterfaces", link: "/reference/changelog/OccurrencesInterface/"}, 
-                        { text: "SimpleSDMLayers", link: "/reference/changelog/SimpleSDMLayers/"}, 
-                        { text: "SimpleSDMDatasets", link: "/reference/changelog/SimpleSDMDatasets/"}, 
                         { text: "Fauxcurrences", link: "/reference/changelog/Fauxcurrences/"}, 
-                        { text: "Phylopic", link: "/reference/changelog/Phylopic/"}
+                        { text: "GBIF", link: "/reference/changelog/GBIF/"}, 
+                        { text: "OccurrencesInterfaces", link: "/reference/changelog/OccurrencesInterface/"}, 
+                        { text: "Phylopic", link: "/reference/changelog/Phylopic/"},
+                        { text: "PseudoAbsences", link: "/reference/changelog/PseudoAbsences/"},
+                        { text: "SDeMo", link: "/reference/changelog/SDeMo/"}, 
+                        { text: "SimpleSDMDatasets", link: "/reference/changelog/SimpleSDMDatasets/"}, 
+                        { text: "SimpleSDMLayers", link: "/reference/changelog/SimpleSDMLayers/"}, 
                     ]
                 },
                 {

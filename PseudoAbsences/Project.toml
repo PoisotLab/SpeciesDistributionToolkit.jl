@@ -1,0 +1,12 @@
+name = "PseudoAbsences"
+uuid = "68905d83-288d-4570-b05e-f7eb6299ad2c"
+authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
+version = "1.0.0"
+
+[deps]
+OccurrencesInterface = "ee6415c8-122a-4855-89a1-90f4bac06ba6"
+SimpleSDMLayers = "2c645270-77db-11e9-22c3-0f302a89c64c"
+
+[compat]
+OccurrencesInterface = "1"
+SimpleSDMLayers = "1"

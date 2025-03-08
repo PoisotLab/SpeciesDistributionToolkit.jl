@@ -138,6 +138,16 @@ current_figure() #hide
 
 shapley1 = explain(sdm, L, 1; threshold=false)
 
+# Note that the Shapley values are expressed as a deviation from the average
+# prediction, and so positive values correspond to the presence class being more
+# likely.
+
+# Both the `explain` and `partialresponse` functions can accept keywords that
+# are passed to `predict` - in this tutorial, we use `threshold=false` to
+# provide an explanation on the score returned by the model, but we can also
+# request an explanation of the binary response (this is usually less
+# informative).
+
 # fig-shapley-resp
 col_lims = maximum(abs.(quantile(shapley1, [0.1, 0.9]))).*(-1, 1)
 f = Figure(; size = (600, 300))
@@ -154,7 +164,6 @@ current_figure() #hide
 # the explanation for each input variable:
 
 S = explain(sdm, L; threshold=false)
-
 
 # We can then put this object into the `mosaic` function to get the index of
 # which variable is the most important for each pixel:

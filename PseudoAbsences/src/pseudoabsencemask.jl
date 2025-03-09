@@ -49,7 +49,7 @@ Candidate cells are weighted according to their distance to a known observation,
 with far away places being more likely. Depending on the distribution of
 distances, it may be a very good idea to flatten this layer using `log` or an
 exponent. The `f` function is used to determine which distance is reported
-(minimum by default, can also be mean or median).
+(`minimum` by default, but can be any other relevant function).
 """
 function pseudoabsencemask(::Type{DistanceToEvent}, presences::SDMLayer{Bool}; f = minimum)
     _layer_works_for_pseudoabsence(presences)

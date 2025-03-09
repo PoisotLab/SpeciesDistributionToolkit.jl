@@ -193,6 +193,13 @@ export default defineConfig({
                     ]
                 },
                 {
+                    text: "PseudoAbsences",
+                    collapsed: true,
+                    items: [
+                        { text: "Documentation", link: "/reference/pseudo/" },
+                    ]
+                },
+                {
                     text: "Phylopic",
                     collapsed: true,
                     items: [

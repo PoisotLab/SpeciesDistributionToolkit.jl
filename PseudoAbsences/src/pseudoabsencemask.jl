@@ -16,6 +16,15 @@ function pseudoabsencemask(::Type{RandomSelection}, presences::SDMLayer{Bool})
     return !presences
 end
 
+@testitem "We can use RandomSelection" begin
+    using PseudoAbsences.SimpleSDMLayers
+    n = SDMLayer(zeros(Bool, 10, 10))
+    n.grid[1]  = true
+    n.grid[end]  = true
+    p = pseudoabsencemask(RandomSelection, n)
+    @test all(p.grid[2:(end-1)])
+end
+
 """
     pseudoabsencemask(::Type{SurfaceRangeEnvelope}, presences::SDMLayer{Bool})
 
@@ -39,6 +48,25 @@ function pseudoabsencemask(::Type{SurfaceRangeEnvelope}, presences::SDMLayer{Boo
         end
     end
     return background
+end
+
+@testitem "We can use SurfaceRangeEnvelope" begin
+    using PseudoAbsences.SimpleSDMLayers
+    n = SDMLayer(zeros(Bool, 10, 10))
+    n.grid[2,2] = true
+    n.grid[9,9] = true
+    p = pseudoabsencemask(SurfaceRangeEnvelope, n)
+    for i in axes(n.grid, 1)
+        for j in axes(n.grid, 2)
+            if (2 <= i <= 9) & (2 <= j <= 9)
+                # Test the surface range
+                @test p.grid[i,j] == !n.grid[i,j]
+            else
+                # Test the exterior borders (all false)
+                @test p.grid[i,j]  == false
+            end
+        end
+    end
 end
 
 """

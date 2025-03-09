@@ -4,7 +4,7 @@
 
 Generates background points based on a layer that gives the weight of each cell
 in the final sample. Note that the default value is to draw without replacement,
-but this can be changed using `replace=true`. The additional keywors arguments
+but this can be changed using `replace=true`. The additional keywords arguments
 are passed to `StatsBase.sample`, which is used internally.
 """
 function backgroundpoints(layer::T, n::Int; kwargs...) where {T <: SDMLayer}
@@ -21,9 +21,9 @@ end
     backgroundpoints(layer::SDMLayer{Bool}, n::Int; replace::Bool=false, kwargs...)
 
 Generates background points based on a layer that gives the location of possible
-points. Note that the default value is to draw without replacement, but
-this can be changed using `replace=true`. The additional keywors arguments are
-passed to `StatsBase.sample`, which is used internally.
+points. Note that the default value is to draw without replacement, but this can
+be changed using `replace=true`. The additional keywords arguments are passed to
+`StatsBase.sample`, which is used internally.
 """
 function backgroundpoints(layer::SDMLayer{Bool}, n::Int; kwargs...)
     background = zeros(layer, Bool)

@@ -4,26 +4,26 @@ function _layer_works_for_pseudoabsence(layer::SDMLayer{T}) where {T <: Bool}
 end
 
 """
-    pseudoabsencemask(::Type{RandomSelection}, presences::T) where {T <: SDMLayer}
+    pseudoabsencemask(::Type{RandomSelection}, presences::SDMLayer{Bool})
 
 Generates a mask for pseudo-absences using the random selection method. Candidate
 cells for the pseudo-absence mask are (i) within the bounding box of the _layer_
 (use `SurfaceRangeEnvelope` to use the presences bounding box), and (ii) valued in the
 layer.
 """
-function pseudoabsencemask(::Type{RandomSelection}, presences::T) where {T <: SDMLayer}
+function pseudoabsencemask(::Type{RandomSelection}, presences::SDMLayer{Bool})
     _layer_works_for_pseudoabsence(presences)
     return !presences
 end
 
 """
-    pseudoabsencemask( ::Type{SurfaceRangeEnvelope}, presences::T) where {T <: SDMLayer}
+    pseudoabsencemask(::Type{SurfaceRangeEnvelope}, presences::SDMLayer{Bool})
 
 Generates a mask from which pseudo-absences can be drawn, by picking cells that
 are (i) within the bounding box of occurrences, (ii) valued in the layer, and
 (iii) not already occupied by an occurrence
 """
-function pseudoabsencemask(::Type{SurfaceRangeEnvelope}, presences::T) where {T <: SDMLayer}
+function pseudoabsencemask(::Type{SurfaceRangeEnvelope}, presences::SDMLayer{Bool})
     _layer_works_for_pseudoabsence(presences)
     presence_only = nodata(presences, false)
     background = zeros(presences, Bool)
@@ -42,7 +42,7 @@ function pseudoabsencemask(::Type{SurfaceRangeEnvelope}, presences::T) where {T 
 end
 
 """
-    pseudoabsencemask(::Type{DistanceToEvent}, presence::T; f=minimum) where {T <: SimpleSDMLayer}
+    pseudoabsencemask( ::Type{DistanceToEvent}, presences::SDMLayer{Bool}; f = minimum, )
 
 Generates a mask for pseudo-absences using the distance to event method.
 Candidate cells are weighted according to their distance to a known observation,
@@ -51,11 +51,7 @@ distances, it may be a very good idea to flatten this layer using `log` or an
 exponent. The `f` function is used to determine which distance is reported
 (minimum by default, can also be mean or median).
 """
-function pseudoabsencemask(
-    ::Type{DistanceToEvent},
-    presences::T;
-    f = minimum,
-) where {T <: SDMLayer}
+function pseudoabsencemask(::Type{DistanceToEvent}, presences::SDMLayer{Bool}; f = minimum)
     _layer_works_for_pseudoabsence(presences)
     presence_only = nodata(presences, false)
     background = zeros(presences, Float64)
@@ -77,7 +73,8 @@ function pseudoabsencemask(
         Threads.@spawn begin
             for k in chunk
                 pk = prj(E[k.I[2]], N[k.I[1]])
-                background[k] = f([PseudoAbsences._distancefunction(pk, ko) for ko in points])
+                background[k] =
+                    f([PseudoAbsences._distancefunction(pk, ko) for ko in points])
             end
         end
     end

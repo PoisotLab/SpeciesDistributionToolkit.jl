@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.3.1`
 
-- **fixed** a bug where the verbose output of variable selection was wrong [372]
+- **fixed** a bug where the verbose output of variable selection was wrong [#372]
 
 ## `v1.3.0`
 

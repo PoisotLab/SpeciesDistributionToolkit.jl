@@ -117,11 +117,12 @@ doing work in branches that start with `doc` or `sdt`, there may be changes in m
 package. For example, a commit that modifies the internals of `SimpleSDMLayers` would start
 with `refactor(layers): `.
 
-Note that the name of component packages are lowercase, and that abbreviations are OK.
-Specifically, `Phylopic.jl` is `phylopic`, `SpeciesDistributionToolkit.jl` is `sdt`,
-`GBIF.jl` is `gbif`, `SimpleSDMLayers.jl` is `layers`, `OccurrencesInterface.jl` is `occ`,
-`Fauxcurrences.jl` is `faux`, `SDeMo.jl` is `demo`, and `SimpleSDMDatasets.jl` is
-`datasets`.
+Note that the name of component packages are lowercase, and that abbreviations
+are encouraged as they make the commits substantially shorter. Specifically,
+`Phylopic.jl` is `phylopic`, `SpeciesDistributionToolkit.jl` is `sdt`, `GBIF.jl`
+is `gbif`, `PseudoAbsences.jl` is `pseudo`, `SimpleSDMLayers.jl` is `layers`,
+`OccurrencesInterface.jl` is `occ`, `Fauxcurrences.jl` is `faux`, `SDeMo.jl` is
+`demo`, and `SimpleSDMDatasets.jl` is `datasets`.
 
 In case of breaking changes, the commit prefix **must** be followed by `!`. This
 is **not** limited to commits with the `semver` prefix, but is meant to be used

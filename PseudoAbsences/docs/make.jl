@@ -4,7 +4,7 @@ using PseudoAbsences
 makedocs(
     sitename="PseudoAbsences",
     format=Documenter.HTML(),
-    modules=[Fauxcurrences],
+    modules=[PseudoAbsences],
     pages=[
         "index.md"
     ],

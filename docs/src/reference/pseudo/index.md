@@ -3,7 +3,7 @@
 ## Supported algorithms
 
 ```@docs
-SpeciesDistributionToolkit.PseudoAbsenceGenerator
+PseudoAbsenceGenerator
 WithinRadius
 SurfaceRangeEnvelope
 RandomSelection

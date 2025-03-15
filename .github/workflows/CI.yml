@@ -185,6 +185,36 @@ jobs:
         with:
           name: faux-${{ matrix.julia-version }}-coverage
           path: Fauxcurrences-lcov-${{ matrix.julia-version }}.info
+  PseudoAbsences:
+    name: "PseudoAbsences"
+    runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts", "pre"]
+    needs: [OccurrencesInterface, SimpleSDMLayers]
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
+      - name: "Bootstrap the package"
+        run: julia --project=./PseudoAbsences PseudoAbsences/bootstrap.jl
+      - uses: julia-actions/julia-buildpkg@latest
+        with:
+          project: PseudoAbsences
+      - uses: julia-actions/julia-runtest@latest
+        with:
+          project: PseudoAbsences
+          annotate: true
+      - uses: julia-actions/julia-processcoverage@v1
+        with:
+          directories: PseudoAbsences/src
+      - run: mv lcov.info PseudoAbsences-lcov-${{ matrix.julia-version }}.info
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pseudo-${{ matrix.julia-version }}-coverage
+          path: PseudoAbsences-lcov-${{ matrix.julia-version }}.info
   SDeMo:
     name: "SDeMo"
     runs-on: "ubuntu-latest"
@@ -258,6 +288,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: faux-${{ matrix.julia-version }}-coverage
+          path: ./codecov
+      - uses: actions/download-artifact@v4
+        with:
+          name: pseudo-${{ matrix.julia-version }}-coverage
           path: ./codecov
       - uses: actions/download-artifact@v4
         with:

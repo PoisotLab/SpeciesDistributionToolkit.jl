@@ -107,8 +107,32 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
         run: julia --project=Fauxcurrences/docs/ Fauxcurrences/docs/make.jl
-  SimpleSDMLayers:
+  PseudoAbsences:
     needs: [Fauxcurrences]
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: read
+      statuses: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+      - name: "Bootstrap the package"
+        run: julia --project=./PseudoAbsences PseudoAbsences/bootstrap.jl
+      - uses: julia-actions/cache@v2
+      - name: Install dependencies
+        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+        working-directory: PseudoAbsences/
+      - name: Build and deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+        run: julia --project=PseudoAbsences/docs/ PseudoAbsences/docs/make.jl
+  SimpleSDMLayers:
+    needs: [PseudoAbsences]
     permissions:
       actions: write
       contents: write

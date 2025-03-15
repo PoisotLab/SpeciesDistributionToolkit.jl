@@ -34,6 +34,7 @@ for pkg in [
     "SimpleSDMDatasets",
     "Fauxcurrences",
     "Phylopic",
+    "PseudoAbsences",  
 ]
     cp(
         joinpath(dirname(dirname(@__FILE__)), pkg, "CHANGELOG.md"),

@@ -4,8 +4,8 @@
 A transformer that applies, in sequence, several other transformers. This can be
 used to, for example, do a PCA then a z-score on the projected space.
 """
-mutable struct ChainedTransform{T} <: Transformer
-    transformers::T where {T <: Tuple{Vararg{<:Transformer}}}
+mutable struct ChainedTransform{Tuple{Vararg{Transformer}}} <: Transformer
+    transformers::Tuple{Vararg{Transformer}}
 end
 
 function ChainedTransform(steps::Type{<:Transformer}...)

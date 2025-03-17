@@ -213,11 +213,25 @@ end
     variables!(model, pool)
     forwardselection!(model, folds, forced; verbose=true)
     for v in variables(model)
-        if not v in forced
+        if !(v in forced)
             @test v in pool
         end
     end
     for f in forced
         @test f in variables(model)
     end
+end
+
+
+@testitem "Variable selection methods can be chained" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    n0 = length(variables(model))
+    stepwisevif!(model, 50.0)
+    n1 = length(variables(model))
+    @test n1 <= n0
+    folds = [holdout(model)]
+    forwardselection!(model, folds; verbose=true)
+    n2 = length(variables(model))
+    @test n2 <= n1
 end

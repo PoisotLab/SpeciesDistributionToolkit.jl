@@ -35,6 +35,9 @@ include("transformers/multivariate.jl")
 export MultivariateTransform
 export PCA, PPCA, KernelPCA, Whitening
 
+include("transformers/chainedtransform.jl")
+export ChainedTransform
+
 # Naive Bayes
 include("classifiers/naivebayes.jl")
 export NaiveBayes

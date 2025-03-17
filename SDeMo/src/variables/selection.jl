@@ -5,7 +5,19 @@ Returns the model to the state where all variables are used.
 
 All keyword arguments are passed to `train!`.
 """
-function noselection!(model, folds; verbose::Bool = false, kwargs...)
+function noselection!(model, folds; kwargs...)
+    return noselection!(model, kwargs...)
+end
+
+"""
+    noselection!(model; verbose::Bool = false, kwargs...)
+
+Returns the model to the state where all variables are used.
+
+All keyword arguments are passed to `train!`. For convenience, this version does
+not require a `folds` argument, as it would be unused anyway.
+"""
+function noselection!(model; verbose::Bool = false, kwargs...)
     model.v = collect(axes(model.X, 1))
     train!(model; kwargs...)
     return model
@@ -27,7 +39,7 @@ function backwardselection!(
     optimality = mcc,
     kwargs...,
 )
-    candidates = filter(p -> !(p in pool), collect(axes(features(model), 1)))
+    candidates = filter(p -> !(p in pool), variables(model))
     best_perf = mcc(noskill(model))
     while ~isempty(candidates)
         if verbose
@@ -72,7 +84,7 @@ function forwardselection!(
     optimality = mcc,
     kwargs...,
 )
-    on_top = filter(p -> !(p in pool), collect(axes(model.X, 1)))
+    on_top = filter(p -> !(p in pool), variables(model))
     best_perf = mcc(noskill(model))
     while ~isempty(on_top)
         if verbose
@@ -177,4 +189,35 @@ end
     folds = [holdout(model)]
     backwardselection!(model, folds; verbose=true)
     @test length(variables(model)) < size(X, 1)
+end
+
+@testitem "Variable selection does not reset the model" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    folds = [holdout(model)]
+    pool = [1,2,3,4,5,6,7,8,9]
+    variables!(model, pool)
+    backwardselection!(model, folds; verbose=true)
+    for v in variables(model)
+        @test v in pool
+    end
+    @test length(variables(model)) <= length(pool)
+end
+
+@testitem "Variable selection with non-model variables forced works" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    folds = [holdout(model)]
+    pool = [1,2,3,4,5,6,7,8,9]
+    forced = [12,13]
+    variables!(model, pool)
+    forwardselection!(model, folds, forced; verbose=true)
+    for v in variables(model)
+        if not v in forced
+            @test v in pool
+        end
+    end
+    for f in forced
+        @test f in variables(model)
+    end
 end

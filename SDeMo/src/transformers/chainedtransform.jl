@@ -4,27 +4,28 @@
 A transformer that applies, in sequence, a pair of other transformers. This can
 be used to, for example, do a PCA then a z-score on the projected space. This is
 limited to two steps because the value of chaining more transformers is
-doubtful.
+doubtful. We may add support for more complex transformations in future
+versions.
 """
 mutable struct ChainedTransform{T1 <: Transformer, T2 <: Transformer} <: Transformer
     trf1::T1
     trf2::T2
 end
 
-function ChainedTransform(::Type{T1}, ::Type{T2}) where {T1 <: Transformer, T2 <: Transformer}
-    return ChainedTransform{T1, T2}(T1(), T2())
+function ChainedTransform{T1,T2}() where {T1 <: Transformer, T2 <: Transformer}
+    return ChainedTransform(T1(), T2())
 end
 
 function train!(chain::ChainedTransform, X; kwdef...)
     train!(chain.trf1, X; kwdef...)
-    Xₜ = predict(chain.trf1, Xₜ; kwdef...)
+    Xₜ = StatsAPI.predict(chain.trf1, X; kwdef...)
     train!(chain.trf2, Xₜ; kwdef...)
     return chain
 end
 
-function predict(chain::ChainedTransform, X::AbstractArray)
-    Xₜ = predict(chain.trf1, X; kwdef...)
-    Xₜ = predict(chain.trf2, Xₜ; kwdef...)
+function StatsAPI.predict(chain::ChainedTransform, X::AbstractArray; kwdef...)
+    Xₜ = StatsAPI.predict(chain.trf1, X; kwdef...)
+    Xₜ = StatsAPI.predict(chain.trf2, Xₜ; kwdef...)
     return Xₜ
 end
 
@@ -41,4 +42,22 @@ end
     @test all(predict(S1) .== predict(S2))
     @test all(predict(S0) .== predict(S1))
     @test all(predict(S0) .== predict(S2))
+end
+
+@testitem "We can train a Logistic after a PCA using a chained transform" begin
+    X, y = SDeMo.__demodata()
+    chain = ChainedTransform{PCATransform, ZScore}
+    model = SDM(chain, Logistic, X, y)
+    hyperparameters!(classifier(model), :η, 1e-3)
+    hyperparameters!(classifier(model), :epochs, 10_000)
+    train!(model)
+    @test eltype(predict(model)) <: Bool
+end
+
+@testitem "Variable selection works on a chained transformation" begin
+    X, y = SDeMo.__demodata()
+    chain = ChainedTransform{PCATransform, ZScore}
+    model = SDM(chain, NaiveBayes, X, y)
+    forwardselection!(model, kfold(model); verbose=true)
+    @info model
 end

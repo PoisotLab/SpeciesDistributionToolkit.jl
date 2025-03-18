@@ -57,7 +57,7 @@ end
 @testitem "Variable selection works on a chained transformation" begin
     X, y = SDeMo.__demodata()
     chain = ChainedTransform{PCATransform, ZScore}
-    model = SDM(chain, NaiveBayes, X, y)
+    model = SDM(chain, DecisionTree, X, y)
     forwardselection!(model, kfold(model); verbose=true)
-    @info model
+    @test length(variables(model)) <= 19
 end

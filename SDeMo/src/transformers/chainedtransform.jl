@@ -6,11 +6,16 @@ be used to, for example, do a PCA then a z-score on the projected space. This is
 limited to two steps because the value of chaining more transformers is
 doubtful. We may add support for more complex transformations in future
 versions.
+
+The first and second steps are accessible through `first` and `last`.
 """
 mutable struct ChainedTransform{T1 <: Transformer, T2 <: Transformer} <: Transformer
     trf1::T1
     trf2::T2
 end
+
+Base.first(chain::ChainedTransform) = chain.trf1
+Base.last(chain::ChainedTransform) = chain.trf2
 
 function ChainedTransform{T1,T2}() where {T1 <: Transformer, T2 <: Transformer}
     return ChainedTransform(T1(), T2())
@@ -60,4 +65,10 @@ end
     model = SDM(chain, DecisionTree, X, y)
     forwardselection!(model, kfold(model); verbose=true)
     @test length(variables(model)) <= 19
+end
+
+@testitem "We can access the first and last element of a chained transformation" begin
+    chain = ChainedTransform{PCATransform, ZScore}()
+    @test typeof(first(chain)) === PCATransform
+    @test typeof(last(chain)) === ZScore
 end

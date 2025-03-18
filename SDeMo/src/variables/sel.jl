@@ -17,7 +17,15 @@ end
 function variables!(model::SDM, ::Type{T}, pool) where {T <: VariableSelectionStrategy}
     baseline = mcc(noskill(model))
     # TODO current, future, included, forbidden (is this the right typology?)
+    future, included, forbidden = _makepools(T, model)
     # TODO while the baseline increases
+    while true
+        newbest = -Inf
+        if newbest < baseline
+            # TODO reset to past current
+            break
+        end 
+    end
     # TODO while not enpty future
     # TODO train!
     # TODO return

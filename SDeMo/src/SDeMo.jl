@@ -87,6 +87,9 @@ export ci
 include("variables/selection.jl")
 export noselection!, forwardselection!, backwardselection!
 
+include("variables/varsel.jl")
+export VariableSelectionStrategy, ForwardSelection
+
 include("variables/vif.jl")
 export stepwisevif!, vif
 

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.4.0`
 
+- **added** a more general syntax for variable selection (`VariableSelectionStrategy`)
 - **added** a `ChainedTransform` type to chain two data transformation steps, useful for PCA + z-score [#408]
 - **fixed** the issue with variable selection reseting the model variables [#400]
 - **added** a method for `noselection!` where no folds are given

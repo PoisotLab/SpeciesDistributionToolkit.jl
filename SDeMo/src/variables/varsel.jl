@@ -3,48 +3,60 @@ abstract type VariableSelectionStrategy end
 struct ForwardSelection <: VariableSelectionStrategy end
 struct BackwardSelection <: VariableSelectionStrategy end
 struct AllVariables <: VariableSelectionStrategy end
-#struct VarianceInflationFactor <: VariableSelectionStrategy end
+struct VarianceInflationFactor{N} <: VariableSelectionStrategy end
 
-function _next_round(::Type{ForwardSelection}, current, forced, possible)
-    initial_set = current ∪ forced
+_demean = (x) -> (x .- mean(x; dims = 2))
+_vif(X::Matrix{T}) where {T <: Number} = diag(inv(cor(X)))
+_vif(sdm::T) where {T <: AbstractSDM} = _vif(permutedims(_demean(features(sdm))))
+
+_next_round(::Type{AllVariables}, model, forced, possible) = copy(variables(model))
+_next_round(::Type{BackwardSelection}, model, forced, possible) = [setdiff(variables(model), i) for i in setdiff(variables(model), forced)]
+
+function _next_round(::Type{ForwardSelection}, model, forced, possible)
+    initial_set = variables(model) ∪ forced
     includable = setdiff(possible, initial_set)
     combinations = unique([unique([initial_set..., p]) for p in includable])
     return combinations
 end
 
-_next_round(::Type{BackwardSelection}, current, forced, possible) = [setdiff(current, i) for i in setdiff(current, forced)]
-_next_round(::Type{AllVariables}, current, forced, possible) = [current]
+function _next_round(::Type{VarianceInflationFactor{N}}, model, forced, possible) where {N <: Number}
+    vifs = _vif(model)
+    # Return the variable with the highest VIF if above the threshold
+    if maximum(vifs) >= N
+        popat!(variables(model), last(findmax(vifs)))
+    end
+    return variables(model) ∪ forced
+end
 
+_initial_proposal(::Type{<:VariableSelectionStrategy}, model) = copy(variables(model))
 _initial_proposal(::Type{ForwardSelection}, model) = Int[]
-_initial_proposal(::Type{BackwardSelection}, model) = copy(variables(model))
-_initial_proposal(::Type{AllVariables}, model) = copy(variables(model))
 
-function variables!(model::SDM, ::Type{T}, pool::Vector{Int}, folds::Vector{Tuple{Vector{Int}, Vector{Int}}}; verbose::Bool=false, kwargs...) where {T <: VariableSelectionStrategy}
-    baseline = mcc(noskill(model))
-    checkpoint = _initial_proposal(T, model) # This is the initial pool we work with
+function variables!(model::SDM, ::Type{T}, pool::Vector{Int}, folds::Vector{Tuple{Vector{Int}, Vector{Int}}}; optimality=mcc, verbose::Bool=false, kwargs...) where {T <: VariableSelectionStrategy}
+    baseline = optimality(noskill(model))
+    checkpoint = _initial_proposal(T, model)
     possible = copy(variables(model))
     if verbose
-        @info "Baseline MCC: $(baseline)"
+        @info "Baseline $(optimality): $(baseline)"
     end
     while true
-        combination_todo = _next_round(T, checkpoint, pool, possible)
+        combination_todo = _next_round(T, model, pool, possible)
         scores = zeros(length(combination_todo))
         for (i, combination) in enumerate(combination_todo)
             variables!(model, combination)
-            C = crossvalidate(model, folds)
-            scores[i] = mcc(C.validation)
+            C = crossvalidate(model, folds; kwargs...)
+            scores[i] = optimality(C.validation)
         end
         newbest = maximum(scores)
         if newbest <= baseline
             if verbose
-                @info "Returning model with $(length(variables(model))) variables - MCC ≈ $(round(baseline; digits=4))"
+                @info "Returning model with $(length(variables(model))) variables - $(optimality) ≈ $(round(baseline; digits=4))"
             end
             variables!(model, checkpoint)
             break
         else
             variables!(model, combination_todo[last(findmax(scores))])
             if verbose
-                @info "Optimal $(length(variables(model))) variables model - MCC ≈ $(round(newbest; digits=4))"
+                @info "Optimal $(length(variables(model))) variables model - $(optimality) ≈ $(round(newbest; digits=4))"
             end
             checkpoint = copy(variables(model))
             baseline = newbest
@@ -110,6 +122,13 @@ end
     @test length(variables(sdm)) < 19
 end
 
+@testitem "We can do variable selection with a different measure" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(ZScore, DecisionTree, X, y)
+    variables!(sdm, ForwardSelection; optimality=κ, verbose=true)
+    @test length(variables(sdm)) < 19
+end
+
 @testitem "We can reset variables" begin
     X, y = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
@@ -117,4 +136,14 @@ end
     @test length(variables(sdm)) < 19
     variables!(sdm, AllVariables)
     @test length(variables(sdm)) == 19
+end
+
+@testitem "We can do VIF selection" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(ZScore, DecisionTree, X, y)
+    f = kfold(sdm)
+    variables!(sdm, VarianceInflationFactor{10.0}, [1,12], f)
+    @test 1 in variables(sdm)
+    @test 12 in variables(sdm)
+    @test length(variables(sdm)) < 19
 end

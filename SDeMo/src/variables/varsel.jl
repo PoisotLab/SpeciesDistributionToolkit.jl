@@ -9,7 +9,7 @@ _demean = (x) -> (x .- mean(x; dims = 2))
 _vif(X::Matrix{T}) where {T <: Number} = diag(inv(cor(X)))
 _vif(sdm::T) where {T <: AbstractSDM} = _vif(permutedims(_demean(features(sdm))))
 
-_next_round(::Type{AllVariables}, model, forced, possible) = copy(variables(model))
+_next_round(::Type{AllVariables}, model, forced, possible) = [collect(axes(features(model), 1))]
 _next_round(::Type{BackwardSelection}, model, forced, possible) = [setdiff(variables(model), i) for i in setdiff(variables(model), forced)]
 
 function _next_round(::Type{ForwardSelection}, model, forced, possible)
@@ -19,13 +19,20 @@ function _next_round(::Type{ForwardSelection}, model, forced, possible)
     return combinations
 end
 
-function _next_round(::Type{VarianceInflationFactor{N}}, model, forced, possible) where {N <: Number}
+function _next_round(::Type{VarianceInflationFactor{N}}, model, forced, possible) where {N}
     vifs = _vif(model)
-    # Return the variable with the highest VIF if above the threshold
-    if maximum(vifs) >= N
-        popat!(variables(model), last(findmax(vifs)))
+    # Artifically set the VIF of forced variables to 0 so they are always included
+    for (i, v) in enumerate(variables(model))
+        if v in forced
+            vifs[i] = 0.0
+        end
     end
-    return variables(model) ∪ forced
+    # Return the variable with the highest VIF if above the threshold
+    v = variables(model)
+    if maximum(vifs) >= N
+        v = setdiff(v, last(findmax(vifs)))
+    end
+    return [v ∪ forced]
 end
 
 _initial_proposal(::Type{<:VariableSelectionStrategy}, model) = copy(variables(model))
@@ -33,8 +40,9 @@ _initial_proposal(::Type{ForwardSelection}, model) = Int[]
 
 function variables!(model::SDM, ::Type{T}, pool::Vector{Int}, folds::Vector{Tuple{Vector{Int}, Vector{Int}}}; optimality=mcc, verbose::Bool=false, kwargs...) where {T <: VariableSelectionStrategy}
     baseline = optimality(noskill(model))
-    checkpoint = _initial_proposal(T, model)
     possible = copy(variables(model))
+    checkpoint = _initial_proposal(T, model)
+    variables!(model, checkpoint)
     if verbose
         @info "Baseline $(optimality): $(baseline)"
     end

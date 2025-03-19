@@ -84,12 +84,12 @@ export trueskill, markedness, dor, κ, mcc
 export ci
 
 # Variable selection
-include("variables/selection.jl")
-export noselection!, forwardselection!, backwardselection!
-
 include("variables/varsel.jl")
 export VariableSelectionStrategy, ForwardSelection, BackwardSelection, AllVariables, VarianceInflationFactor
 
+# Old variable selection
+include("variables/selection.jl")
+export noselection!, forwardselection!, backwardselection!
 include("variables/vif.jl")
 export stepwisevif!, vif
 

@@ -6,6 +6,7 @@ Returns the model to the state where all variables are used.
 All keyword arguments are passed to `train!`.
 """
 function noselection!(model, folds; kwargs...)
+    @warn "noselection! will be deprecated - use variables! with AllVariables instead"
     return noselection!(model, kwargs...)
 end
 
@@ -18,6 +19,7 @@ All keyword arguments are passed to `train!`. For convenience, this version does
 not require a `folds` argument, as it would be unused anyway.
 """
 function noselection!(model; verbose::Bool = false, kwargs...)
+    @warn "noselection! will be deprecated - use variables! with AllVariables instead"
     model.v = collect(axes(model.X, 1))
     train!(model; kwargs...)
     return model
@@ -39,6 +41,7 @@ function backwardselection!(
     optimality = mcc,
     kwargs...,
 )
+    @warn "backwardselection! will be deprecated - use variables! with BackwardSelection instead"
     candidates = filter(p -> !(p in pool), variables(model))
     best_perf = mcc(noskill(model))
     while ~isempty(candidates)
@@ -84,6 +87,7 @@ function forwardselection!(
     optimality = mcc,
     kwargs...,
 )
+    @warn "forwardselection! will be deprecated - use variables! with ForwardSelection instead"
     on_top = filter(p -> !(p in pool), variables(model))
     best_perf = mcc(noskill(model))
     while ~isempty(on_top)

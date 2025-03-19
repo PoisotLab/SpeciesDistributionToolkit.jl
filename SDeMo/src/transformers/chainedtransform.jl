@@ -63,7 +63,7 @@ end
     X, y = SDeMo.__demodata()
     chain = ChainedTransform{PCATransform, ZScore}
     model = SDM(chain, DecisionTree, X, y)
-    forwardselection!(model, kfold(model); verbose=true)
+    variables!(model, ForwardSelection, kfold(model); verbose=true)
     @test length(variables(model)) <= 19
 end
 

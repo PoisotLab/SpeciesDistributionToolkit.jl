@@ -87,7 +87,7 @@ export ci
 include("variables/varsel.jl")
 export VariableSelectionStrategy, ForwardSelection, BackwardSelection, AllVariables, VarianceInflationFactor
 
-# Old variable selection
+# Old variable selection - these now come with deprecation warnings
 include("variables/selection.jl")
 export noselection!, forwardselection!, backwardselection!
 include("variables/vif.jl")

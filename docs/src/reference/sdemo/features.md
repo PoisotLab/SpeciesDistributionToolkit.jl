@@ -3,9 +3,12 @@
 ## Feature selection
 
 ```@docs
-noselection!
-backwardselection!
-forwardselection!
+VariableSelectionStrategy
+ForwardSelection
+BackwardSelection
+AllVariables
+VarianceInflationFactor
+StrictVarianceInflationFactor
 ```
 
 ## Feature importance

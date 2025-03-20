@@ -22,12 +22,12 @@ SUITE["SDeMo"] = BenchmarkGroup()
 
 X, y = SDeMo.__demodata()
 
-SUITE["SDeMo"]["splits"]["kfold"] = @benchmarkable kfold(sdm) setup=(SDM(RawData, NaiveBayes, X, y))
-SUITE["SDeMo"]["splits"]["LOO"] = @benchmarkable leaveoneout(sdm) setup=(SDM(RawData, NaiveBayes, X, y))
-SUITE["SDeMo"]["splits"]["montecarlo"] = @benchmarkable montecarlo(sdm) setup=(SDM(RawData, NaiveBayes, X, y))
+SUITE["SDeMo"]["splits"]["kfold"] = @benchmarkable kfold(sdm) setup=(sdm=SDM(RawData, NaiveBayes, X, y))
+SUITE["SDeMo"]["splits"]["LOO"] = @benchmarkable leaveoneout(sdm) setup=(sdm=SDM(RawData, NaiveBayes, X, y))
+SUITE["SDeMo"]["splits"]["montecarlo"] = @benchmarkable montecarlo(sdm) setup=(sdm=SDM(RawData, NaiveBayes, X, y))
 
-SUITE["SDeMo"]["crossvalidate"]["rawdata - decisiontree"] = @benchmarkable crossvalidate(sdm, kfold(sdm)) setup=(SDM(RawData, DecisionTree, X, y))
-SUITE["SDeMo"]["crossvalidate"]["pca - decisiontree"] = @benchmarkable crossvalidate(sdm, kfold(sdm)) setup=(SDM(PCATransform, DecisionTree, X, y))
+SUITE["SDeMo"]["crossvalidate"]["rawdata - decisiontree"] = @benchmarkable crossvalidate(sdm, kfold(sdm)) setup=(sdm=SDM(RawData, DecisionTree, X, y))
+SUITE["SDeMo"]["crossvalidate"]["pca - decisiontree"] = @benchmarkable crossvalidate(sdm, kfold(sdm)) setup=(sdm=SDM(PCATransform, DecisionTree, X, y))
 
-SUITE["SDeMo"]["train"]["random forest"] = @benchmarkable train!(sdm) setup=(Bagging(SDM(ZScore, DecisionTree, X, y), 20))
-SUITE["SDeMo"]["train"]["rotation forest"] = @benchmarkable train!(sdm) setup=(Bagging(SDM(PCATransform, DecisionTree, X, y), 20))
+SUITE["SDeMo"]["train"]["random forest"] = @benchmarkable train!(sdm) setup=(sdm=Bagging(SDM(ZScore, DecisionTree, X, y), 20))
+SUITE["SDeMo"]["train"]["rotation forest"] = @benchmarkable train!(sdm) setup=(sdm=Bagging(SDM(PCATransform, DecisionTree, X, y), 20))

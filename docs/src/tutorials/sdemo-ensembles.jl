@@ -89,7 +89,7 @@ current_figure() #hide
 # We can now create an ensemble model, by boostrapping random instances to train
 # a larger number of trees:
 
-ensemble = Bagging(sdm, 20)
+ensemble = Bagging(sdm, 25)
 
 # In order to further ensure that the models are learning from different parts
 # of the dataset, we can also bootstrap which variables are accessible to each

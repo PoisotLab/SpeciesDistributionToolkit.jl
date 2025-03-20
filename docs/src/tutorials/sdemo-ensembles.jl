@@ -182,11 +182,12 @@ hyperparameters!(classifier(sdm2), :epochs, 10_000);
 # As well as a Naive Bayes classifier:
 
 sdm3 = SDM(RawData, NaiveBayes, L, presencelayer, bgpoints)
-forwardselection!(sdm3, kfold(sdm3))
+variables!(sdm3, ForwardSelection)
 
-# These models can all be merged into an heterogeneous ensemble:
+# These models can all be merged into an heterogeneous ensemble. Note that we
+# also re-use the bagged model based on decision trees here!
 
-hens = Ensemble(sdm2, sdm3)
+hens = Ensemble(sdm2, sdm3, ensemble)
 train!(hens)
 
 # Heterogeneous ensembles can be used in the exact same way as bagged models, so

@@ -68,6 +68,13 @@ for op in (:noskill, :coinflip, :constantpositive, :constantnegative)
         Version of `$($op)` using the training labels for an SDM.
         """
         $op(sdm::SDM) = $op(labels(sdm))
+
+        """
+            $($op)(ensemble::Bagging)
+
+        Version of `$($op)` using the training labels for an homogeneous ensemble.
+        """
+        $op(ensemble::Bagging) = $op(labels(ensemble))
     end)
 end
 

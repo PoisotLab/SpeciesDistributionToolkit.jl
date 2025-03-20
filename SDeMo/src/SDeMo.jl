@@ -63,6 +63,7 @@ include("ensembles/ensemble.jl")
 export Ensemble
 
 include("ensembles/pipeline.jl")
+export models
 
 # Main pipeline
 include("pipeline.jl")

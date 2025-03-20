@@ -56,10 +56,13 @@ struct StrictVarianceInflationFactor{N} <: VariableSelectionStrategy end
 
 _demean(x::Matrix{T}) where {T <: Number} = (x .- mean(x; dims = 2))
 _vif(X::Matrix{T}) where {T <: Number} = diag(inv(cor(X)))
-_vif(sdm::T) where {T <: AbstractSDM} = _vif(permutedims(_demean(features(sdm)[variables(sdm),:])))
+_vif(sdm::T) where {T <: AbstractSDM} =
+    _vif(permutedims(_demean(features(sdm)[variables(sdm), :])))
 
-_next_round(::Type{AllVariables}, model, forced, possible) = [collect(axes(features(model), 1))]
-_next_round(::Type{BackwardSelection}, model, forced, possible) = [setdiff(variables(model), i) for i in setdiff(variables(model), forced)]
+_next_round(::Type{AllVariables}, model, forced, possible) =
+    [collect(axes(features(model), 1))]
+_next_round(::Type{BackwardSelection}, model, forced, possible) =
+    [setdiff(variables(model), i) for i in setdiff(variables(model), forced)]
 
 function _next_round(::Type{ForwardSelection}, model, forced, possible)
     initial_set = variables(model) ∪ forced
@@ -97,25 +100,34 @@ The model is retrained on the optimal set of variables after training.
 
 **Keywords**:
 
-- `included` (`Int[]`), a list of variables that must be included in the model
-- `optimality` (`mcc`), the measure to optimise at each round of variable
-  selection
-- `verbose` (`false`), whether the performance should be returned after each
-  round of variable selection
-- `bagfeatures` (`false`), whether `bagfeatures!` should be called on each model
-  in an homogeneous ensemble
-- all other keywords are passed to `train!` and `crossvalidate`
+  - `included` (`Int[]`), a list of variables that must be included in the model
+  - `optimality` (`mcc`), the measure to optimise at each round of variable
+    selection
+  - `verbose` (`false`), whether the performance should be returned after each
+    round of variable selection
+  - `bagfeatures` (`false`), whether `bagfeatures!` should be called on each model
+    in an homogeneous ensemble
+  - all other keywords are passed to `train!` and `crossvalidate`
 
 **Important notes**:
 
-1. When using `bagfeatures` with a pool of included variables, they will always
-   be present in the overall model, but not necessarilly in each model of the
-   ensemble
-2. When using `VarianceInflationFactor`, the variable selection will stop even
-   if the VIF is above the threshold, if it means producing a model with a lower
-   performance -- using `variables!` will *always* lead to a better model
+ 1. When using `bagfeatures` with a pool of included variables, they will always
+    be present in the overall model, but not necessarilly in each model of the
+    ensemble
+ 2. When using `VarianceInflationFactor`, the variable selection will stop even
+    if the VIF is above the threshold, if it means producing a model with a lower
+    performance -- using `variables!` will *always* lead to a better model
 """
-function variables!(model::M, ::Type{T}, folds::Vector{Tuple{Vector{Int}, Vector{Int}}}; included::Vector{Int}=Int[], optimality=mcc, verbose::Bool=false, bagfeatures::Bool=false, kwargs...) where {T <: VariableSelectionStrategy, M <: Union{SDM, Bagging}}
+function variables!(
+    model::M,
+    ::Type{T},
+    folds::Vector{Tuple{Vector{Int}, Vector{Int}}};
+    included::Vector{Int} = Int[],
+    optimality = mcc,
+    verbose::Bool = false,
+    bagfeatures::Bool = false,
+    kwargs...,
+) where {T <: VariableSelectionStrategy, M <: Union{SDM, Bagging}}
     if bagfeatures
         if !(typeof(model) <: Bagging)
             @warn "The bagfeatures keyword is only used for Bagging models"
@@ -128,9 +140,13 @@ function variables!(model::M, ::Type{T}, folds::Vector{Tuple{Vector{Int}, Vector
     if verbose
         @info "Baseline $(optimality): $(baseline)"
     end
-    while true
+    still_looking = true
+    while still_looking
         combination_todo = _next_round(T, model, included, possible)
         scores = zeros(length(combination_todo))
+        if isempty(combination_todo)
+            break
+        end
         for (i, combination) in enumerate(combination_todo)
             variables!(model, combination)
             if (typeof(model) <: Bagging) & bagfeatures
@@ -141,6 +157,7 @@ function variables!(model::M, ::Type{T}, folds::Vector{Tuple{Vector{Int}, Vector
         end
         newbest = maximum(scores)
         if newbest <= baseline
+            still_looking = false
             # We have found a model that is not as good as the previous one, so
             # we can return it
             if verbose
@@ -150,7 +167,6 @@ function variables!(model::M, ::Type{T}, folds::Vector{Tuple{Vector{Int}, Vector
             if (typeof(model) <: Bagging) & bagfeatures
                 bagfeatures!(model)
             end
-            break
         else
             # There is an improvement in the model, so we keep going
             variables!(model, combination_todo[last(findmax(scores))])
@@ -168,7 +184,11 @@ function variables!(model::M, ::Type{T}, folds::Vector{Tuple{Vector{Int}, Vector
     return model
 end
 
-function variables!(model::AbstractSDM, ::Type{T}; kwargs...) where {T <: VariableSelectionStrategy}
+function variables!(
+    model::AbstractSDM,
+    ::Type{T};
+    kwargs...,
+) where {T <: VariableSelectionStrategy}
     return variables!(model, T, kfold(model); kwargs...)
 end
 
@@ -176,7 +196,7 @@ end
     X, y = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     f = kfold(sdm)
-    variables!(sdm, ForwardSelection, f; included=[1, 12])
+    variables!(sdm, ForwardSelection, f; included = [1, 12])
     @test 1 in variables(sdm)
     @test 12 in variables(sdm)
     @test length(variables(sdm)) < 19
@@ -186,7 +206,7 @@ end
     X, y = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     f = kfold(sdm)
-    variables!(sdm, BackwardSelection, f; included=[1, 12])
+    variables!(sdm, BackwardSelection, f; included = [1, 12])
     @test 1 in variables(sdm)
     @test 12 in variables(sdm)
     @test length(variables(sdm)) < 19
@@ -196,7 +216,7 @@ end
     X, y = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     f = kfold(sdm)
-    variables!(sdm, ForwardSelection; included=[1, 12])
+    variables!(sdm, ForwardSelection; included = [1, 12])
     @test 1 in variables(sdm)
     @test 12 in variables(sdm)
     @test length(variables(sdm)) < 19
@@ -219,7 +239,7 @@ end
 @testitem "We can do variable selection with a different measure" begin
     X, y = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
-    variables!(sdm, ForwardSelection; optimality=κ)
+    variables!(sdm, ForwardSelection; optimality = κ)
     @test length(variables(sdm)) < 19
 end
 
@@ -236,7 +256,7 @@ end
     X, y = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     f = kfold(sdm)
-    variables!(sdm, VarianceInflationFactor{10.0}, f; included=[1, 12])
+    variables!(sdm, VarianceInflationFactor{10.0}, f; included = [1, 12])
     @test 1 in variables(sdm)
     @test 12 in variables(sdm)
     @test length(variables(sdm)) < 19
@@ -247,7 +267,7 @@ end
     sdm = SDM(ZScore, DecisionTree, X, y)
     f = kfold(sdm)
     ensemble = Bagging(sdm, 10)
-    variables!(ensemble, ForwardSelection, f; included = [1,12])
+    variables!(ensemble, ForwardSelection, f; included = [1, 12])
     @test 1 in variables(sdm)
     @test 12 in variables(sdm)
     @test length(variables(sdm)) < 19
@@ -263,7 +283,7 @@ end
     sdm = SDM(ZScore, DecisionTree, X, y)
     f = kfold(sdm)
     ensemble = Bagging(sdm, 10)
-    variables!(ensemble, ForwardSelection, f; bagfeatures=true, included=[1, 12])
+    variables!(ensemble, ForwardSelection, f; bagfeatures = true, included = [1, 12])
     @test 1 in variables(sdm)
     @test 12 in variables(sdm)
     @test length(variables(sdm)) < 19
@@ -288,7 +308,16 @@ end
 Version of the variable selection for the strict VIF case. This may result in a
 worse model, and for this reason there is no cross-validation.
 """
-function variables!(model::M, ::Type{StrictVarianceInflationFactor{N}}, args...; included::Vector{Int}=Int[], optimality=mcc, verbose::Bool=false, bagfeatures::Bool=false, kwargs...) where {M <: Union{SDM, Bagging}, N}
+function variables!(
+    model::M,
+    ::Type{StrictVarianceInflationFactor{N}},
+    args...;
+    included::Vector{Int} = Int[],
+    optimality = mcc,
+    verbose::Bool = false,
+    bagfeatures::Bool = false,
+    kwargs...,
+) where {M <: Union{SDM, Bagging}, N}
     V = _get_constrained_vifs(model, included)
     if verbose
         @info "Current max. VIF: $(maximum(V))"
@@ -311,7 +340,7 @@ end
 @testitem "We can do strict VIF selection" begin
     X, y = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
-    variables!(sdm, StrictVarianceInflationFactor{50.0}; included=[1, 12])
+    variables!(sdm, StrictVarianceInflationFactor{50.0}; included = [1, 12])
     @test 1 in variables(sdm)
     @test 12 in variables(sdm)
     @test length(variables(sdm)) < 19

@@ -16,6 +16,7 @@ using Reexport
 @reexport using Fauxcurrences
 @reexport using Phylopic
 @reexport using SDeMo
+@reexport using PseudoAbsences
 
 import Distances
 const _distance_function = Fauxcurrences._distancefunction
@@ -48,11 +49,6 @@ include("integrations/sdemo.jl")
 
 # OccurrencesInterface
 include("integrations/occurrence_interface.jl")
-
-# Functions for pseudo-absence generation
-include("pseudoabsences.jl")
-export WithinRadius, SurfaceRangeEnvelope, RandomSelection, DistanceToEvent
-export pseudoabsencemask, backgroundpoints
 
 # Functions to deal with polygons
 include("polygons/polygons.jl")

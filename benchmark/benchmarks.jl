@@ -1,8 +1,8 @@
 using BenchmarkTools
 using NeutralLandscapes
 using SpeciesDistributionToolkit
-import Random #hide
-Random.seed!(123451234123121); #hide
+import Random
+Random.seed!(123451234123121)
 
 const SUITE = BenchmarkGroup()
 

@@ -1,13 +1,14 @@
 """
     Ensemble
 
-An heterogeneous ensemble model is defined as a vector of `SDM`s.
+An heterogeneous ensemble model is defined as a vector of `SDM`s. `Bagging`
+models can also be used.
 """
 mutable struct Ensemble <: AbstractEnsembleSDM
-    models::Vector{<:SDM}
+    models::Vector{<:AbstractSDM}
 end
 
-Ensemble(m::T...) where {T <: SDM} = Ensemble([m...])
+Ensemble(m::T...) where {T <: AbstractSDM} = Ensemble([m...])
 
 @testitem "We can setup an ensemble" begin
     X, y = SDeMo.__demodata()
@@ -41,4 +42,14 @@ Base.deleteat!(ens::Ensemble, i) = deleteat!(ens.models, i)
     outmod = popat!(ens, 1)
     @test outmod isa SDM
     @test length(ens.models) == 1
+end
+
+@testitem "We can setup an ensemble where one model is a bagged one" begin
+    X, y = SDeMo.__demodata()
+    m1 = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    m2 = SDM(ZScore, BIOCLIM, X, y)
+    m3 = Bagging(m1, 5)
+    ens = Ensemble([m1, m2, m3])
+    @test ens isa Ensemble
+    train!(ens)
 end

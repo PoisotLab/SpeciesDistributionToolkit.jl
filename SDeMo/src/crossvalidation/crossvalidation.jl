@@ -190,15 +190,17 @@ function crossvalidate(sdm::T, folds; thr = nothing, kwargs...) where {T <: Abst
     tasks = map(data_chunks) do chunk
         Threads.@spawn begin
             model = deepcopy(sdm)
-            X = [SDeMo._validate_one_model!(model, fold, τ, kwargs...) for fold in chunk]
-            return X
+            Cv = zeros(ConfusionMatrix, length(chunk))
+            Ct = zeros(ConfusionMatrix, length(chunk))
+            for i in eachindex(chunk)
+                Cv[i], Ct[i] = SDeMo._validate_one_model!(model, chunk[i], τ, kwargs...)
+            end
+            return Cv, Ct
         end
     end
 
     confmats_batched = fetch.(tasks)
-    confmats = vcat(confmats_batched...)
-
-    return (validation = first.(confmats), training = last.(confmats))
+    return (validation = vcat(first.(confmats_batched)...), training = vcat(last.(confmats_batched)...))
 end
 
 """

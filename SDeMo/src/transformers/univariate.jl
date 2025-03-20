@@ -2,7 +2,8 @@
     RawData
 
 A transformer that does *nothing* to the data. This is passing the raw data to
-the classifier, and can be a good first step for models that assume that the features are independent, or are not sensitive to the scale of the features.
+the classifier, and can be a good first step for models that assume that the
+features are independent, or are not sensitive to the scale of the features.
 """
 struct RawData <: Transformer end
 
@@ -25,9 +26,10 @@ end
 A transformer that scales and centers the data, using only the data that are
 avaiable to the model at training time.
 
-For all variables in the SDM features
-(regardless of whether they are used), this transformer will store the observed
-mean and standard deviation. There is no correction on the sample size, because there is no reason to expect that the sample size will be the same for the training and prediction situation.
+For all variables in the SDM features (regardless of whether they are used),
+this transformer will store the observed mean and standard deviation. There is
+no correction on the sample size, because there is no reason to expect that the
+sample size will be the same for the training and prediction situation.
 """
 Base.@kwdef mutable struct ZScore <: Transformer
     μ::AbstractArray = zeros(1)

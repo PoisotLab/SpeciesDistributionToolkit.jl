@@ -1,4 +1,5 @@
 using BenchmarkTools
+using NeutralLandscapes
 using SpeciesDistributionToolkit
 
 const SUITE = BenchmarkGroup()
@@ -7,8 +8,8 @@ const SUITE = BenchmarkGroup()
 
 SUITE["SimpleSDMLayers"] = BenchmarkGroup()
 
-L = SimpleSDMLayers.__demodata()
-M = [copy(L) for _ in 1:10]
+L = SDMLayer(DiamondSquare(), (100, 100))
+M = [SDMLayer(DiamondSquare(), (100, 100)) for _ in 1:10]
 
 SUITE["SimpleSDMLayers"]["nodata"] = @benchmarkable nodata!(L, $(rand(values(L))))
 SUITE["SimpleSDMLayers"]["mosaic"] = @benchmarkable mosaic(sum, $M)

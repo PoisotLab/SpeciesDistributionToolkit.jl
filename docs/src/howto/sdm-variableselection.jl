@@ -41,7 +41,7 @@ variables(sdm)
 # variable selection strategies are of the type `VariableSelectionStrategy`.
 
 variables!(sdm, AllVariables)
-variable!(sdm, ForwardSelection, folds; included = [1, 12])
+variables!(sdm, ForwardSelection, folds; included = [1, 12])
 variables(sdm)
 
 # Note that there is a keyword, `verbose`, which can be used to print the

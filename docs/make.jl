@@ -25,17 +25,27 @@ include("changelogs.jl")
 # Render the tutorials and how-to using Literate
 for folder in ["howto", "tutorials"]
     fpath = joinpath(@__DIR__, "src", folder)
-    for docfile in filter(endswith(".jl"), readdir(fpath; join = true))
-        if ~isfile(replace(docfile, r".jl$" => ".md"))
-            Literate.markdown(
-                docfile, fpath;
-                flavor = Literate.DocumenterFlavor(),
-                config = Dict("credit" => false, "execute" => true),
-                preprocess = pre!,
-                postprocess = post!,
-            )
+    files_to_build = filter(endswith(".jl"), readdir(fpath; join = true))
+    # This uses all threads to gain time when building
+    chunk_size = max(1, length(files_to_build) ÷ (3 * Threads.nthreads()))
+    data_chunks = Base.Iterators.partition(files_to_build, chunk_size)
+    tasks = map(data_chunks) do docfiles
+        Threads.@spawn begin
+            for docfile in docfiles
+                if ~isfile(replace(docfile, r".jl$" => ".md"))
+                    Literate.markdown(
+                        docfile, fpath;
+                        flavor = Literate.DocumenterFlavor(),
+                        config = Dict("credit" => false, "execute" => true),
+                        preprocess = pre!,
+                        postprocess = post!,
+                    )
+                end
+            end
         end
     end
+    # Fetch the tasks
+    fetch.(tasks)
 end
 
 makedocs(;

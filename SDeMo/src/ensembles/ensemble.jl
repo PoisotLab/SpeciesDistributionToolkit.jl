@@ -1,7 +1,8 @@
 """
     Ensemble
 
-An heterogeneous ensemble model is defined as a vector of `SDM`s.
+An heterogeneous ensemble model is defined as a vector of `SDM`s. `Bagging`
+models can also be used.
 """
 mutable struct Ensemble <: AbstractEnsembleSDM
     models::Vector{<:AbstractSDM}

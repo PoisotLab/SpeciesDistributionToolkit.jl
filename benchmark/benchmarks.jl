@@ -1,11 +1,12 @@
 using BenchmarkTools
 using NeutralLandscapes
 using SpeciesDistributionToolkit
+import Random #hide
+Random.seed!(123451234123121); #hide
 
 const SUITE = BenchmarkGroup()
 
-# Construction of name finders
-
+# SimpleSDMLayers benchmark
 SUITE["SimpleSDMLayers"] = BenchmarkGroup()
 
 L = SDMLayer(DiamondSquare(), (100, 100))

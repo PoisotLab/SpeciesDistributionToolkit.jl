@@ -19,9 +19,9 @@ end
 
 @testitem "We can sample from Bool layers" begin
     x = rand(Bool, 10, 10)
-    L = SDMLayer(x)
+    L = PseudoAbsences.SimpleSDMLayers.SDMLayer(x)
     B = backgroundpoints(L, 5)
-    nodata!(B, false)
+    PseudoAbsences.SimpleSDMLayers.nodata!(B, false)
     for k in keys(B)
         @test L[k]
     end

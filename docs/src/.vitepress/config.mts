@@ -170,7 +170,6 @@ export default defineConfig({
                         { text: "Documentation", link: "/reference/" },
                         { text: "GADM", link: "/reference/sdt/gadm/" },
                         { text: "Polygons", link: "/reference/sdt/gadm/" },
-                        { text: "Pseudoabsences", link: "/reference/sdt/pseudoabsences/" },
                         { text: "GBIF", link: "/reference/sdt/gbif/" },
                     ]
                 },

@@ -17,19 +17,12 @@ function backgroundpoints(layer::T, n::Int; kwargs...) where {T <: SDMLayer}
     return background
 end
 
-"""
-    backgroundpoints(layer::SDMLayer{Bool}, n::Int; kwargs...)
-
-Generates background points based on a layer that gives the location of possible
-points. The additional keywords arguments are passed to `StatsBase.sample`,
-which is used internally. This includes the `replace` keyword to determine
-whether sampling should use replacement.
-"""
-function backgroundpoints(layer::SDMLayer{Bool}, n::Int; kwargs...)
-    background = zeros(layer, Bool)
-    selected_points = StatsBase.sample(keys(layer), n; kwargs...)
-    for sp in selected_points
-        background[sp] = true
+@testitem "We can sample from Bool layers" begin
+    x = rand(Bool, 10, 10)
+    L = PseudoAbsences.SimpleSDMLayers.SDMLayer(x)
+    B = backgroundpoints(L, 5)
+    PseudoAbsences.SimpleSDMLayers.nodata!(B, false)
+    for k in keys(B)
+        @test L[k]
     end
-    return background
 end

@@ -129,7 +129,7 @@ variables(sdm::SDM) = sdm.v
 
 Sets the list of variables.
 """
-variables!(sdm::SDM, v) = sdm.v = copy(v)
+variables!(sdm::SDM, v::Vector{Int}) = sdm.v = copy(v)
 
 """
     transformer(model::SDM)

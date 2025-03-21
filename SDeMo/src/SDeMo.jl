@@ -35,6 +35,9 @@ include("transformers/multivariate.jl")
 export MultivariateTransform
 export PCA, PPCA, KernelPCA, Whitening
 
+include("transformers/chainedtransform.jl")
+export ChainedTransform
+
 # Naive Bayes
 include("classifiers/naivebayes.jl")
 export NaiveBayes
@@ -60,6 +63,7 @@ include("ensembles/ensemble.jl")
 export Ensemble
 
 include("ensembles/pipeline.jl")
+export models
 
 # Main pipeline
 include("pipeline.jl")
@@ -81,9 +85,13 @@ export trueskill, markedness, dor, κ, mcc
 export ci
 
 # Variable selection
+include("variables/varsel.jl")
+export VariableSelectionStrategy
+export ForwardSelection, BackwardSelection, AllVariables, VarianceInflationFactor, StrictVarianceInflationFactor
+
+# Old variable selection - these now come with deprecation warnings
 include("variables/selection.jl")
 export noselection!, forwardselection!, backwardselection!
-
 include("variables/vif.jl")
 export stepwisevif!, vif
 

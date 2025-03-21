@@ -33,16 +33,32 @@ folds = montecarlo(sdm; n = 10)
 # We can apply different variable selection steps, the first of which is
 # stepwise variance inflation factor:
 
-stepwisevif!(sdm, 5.0)
+variables!(sdm, StrictVarianceInflationFactor{5.0})
 variables(sdm)
 
 # There are routines for forward/backward selection. All of them accept a final
-# argument that represents variables which _must_ be included in the model.
+# argument that represents variables which _must_ be included in the model. All
+# variable selection strategies are of the type `VariableSelectionStrategy`.
 
-reset!(sdm)
-forwardselection!(sdm, folds, [1, 12])
+variables!(sdm, AllVariables)
+variables!(sdm, ForwardSelection, folds; included = [1, 12])
 variables(sdm)
 
 # Note that there is a keyword, `verbose`, which can be used to print the
 # progress of variable selection. All methods using stepwise selection perform
 # cross-validation and optimize the MCC.
+
+# ## Related documentation
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# SDeMo.VariableSelectionStrategy
+# SDeMo.ForwardSelection
+# SDeMo.BackwardSelection
+# SDeMo.AllVariables
+# SDeMo.VarianceInflationFactor
+# SDeMo.StrictVarianceInflationFactor
+# ```

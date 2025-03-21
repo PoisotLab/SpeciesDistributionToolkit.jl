@@ -48,3 +48,15 @@ SDeMo.__equation(sdm) #hide
 
 # Note that logistic regression has a `:verbose` hyper-parameter to turn output
 # on training epochs on and off.
+
+
+# ## Related documentation
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# SDeMo.hyperparameters
+# SDeMo.hyperparameters!
+# ```

@@ -64,7 +64,7 @@ bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
 # shallow):
 
 sdm = SDM(PCATransform, DecisionTree, L, presencelayer, bgpoints)
-forwardselection!(sdm, kfold(sdm))
+variables!(sdm, ForwardSelection, kfold(sdm))
 
 # ## Making the first prediction
 
@@ -89,7 +89,7 @@ current_figure() #hide
 # We can now create an ensemble model, by boostrapping random instances to train
 # a larger number of trees:
 
-ensemble = Bagging(sdm, 100)
+ensemble = Bagging(sdm, 30)
 
 # In order to further ensure that the models are learning from different parts
 # of the dataset, we can also bootstrap which variables are accessible to each
@@ -100,6 +100,16 @@ bagfeatures!(ensemble)
 # By default, the `bagfeatures!` function called on an ensemble will sample the variables
 # forom the model, so that each model in the ensemble has the square root (rounded _up_) of
 # the number of original variables.
+
+# A probably better alternative is to reset the variables of our model:
+
+variables!(ensemble, AllVariables)
+
+# And then perform variable selection with feature bagging:
+
+variables!(ensemble, ForwardSelection, kfold(sdm); bagfeatures = true)
+
+# This will take longer to run, but will usually provide better results.
 
 # ::: info About this ensemble model
 # 
@@ -172,7 +182,7 @@ hyperparameters!(classifier(sdm2), :epochs, 10_000);
 # As well as a Naive Bayes classifier:
 
 sdm3 = SDM(RawData, NaiveBayes, L, presencelayer, bgpoints)
-forwardselection!(sdm3, kfold(sdm3))
+variables!(sdm3, ForwardSelection)
 
 # These models can all be merged into an heterogeneous ensemble:
 
@@ -182,7 +192,7 @@ train!(hens)
 # Heterogeneous ensembles can be used in the exact same way as bagged models, so
 # we can for example predict the range according to the three models:
 
-p_range = predict(hens, L; threshold=true, consensus=majority)
+p_range = predict(hens, L; threshold = true, consensus = majority)
 
 # fig-range-map
 f = Figure(; size = (600, 300))

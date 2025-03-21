@@ -91,6 +91,20 @@ function bagfeatures!(ensemble::Bagging, n::Integer)
     return ensemble
 end
 
+"""
+    variables!(ensemble::Bagging, v::Vector{Int})
+
+Sets the variable of the top-level model, and then sets the variables of each
+model in the ensemble.
+"""
+function variables!(ensemble::Bagging, v::Vector{Int})
+    variables!(ensemble.model, v)
+    for model in models(ensemble)
+        variables!(model, v)
+    end
+    return ensemble
+end
+
 @testitem "We can bag the features of an ensemble model" begin
     X, y = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, DecisionTree, X, y)

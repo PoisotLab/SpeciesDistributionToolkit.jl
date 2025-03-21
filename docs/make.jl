@@ -25,7 +25,8 @@ include("changelogs.jl")
 # Render the tutorials and how-to using Literate
 for folder in ["howto", "tutorials"]
     fpath = joinpath(@__DIR__, "src", folder)
-    for docfile in filter(endswith(".jl"), readdir(fpath; join = true))
+    files_to_build = filter(endswith(".jl"), readdir(fpath; join = true))
+    for docfile in files_to_build
         if ~isfile(replace(docfile, r".jl$" => ".md"))
             Literate.markdown(
                 docfile, fpath;

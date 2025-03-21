@@ -1,7 +1,8 @@
 # # Generating background points
 
 # In this vignette, we will generate some background points (pseudo-absences)
-# using the different algorithms present in the package.
+# using the different algorithms present in the package. The pseudo-absences are
+# generated through the `PseudoAbsences` component package.
 
 using SpeciesDistributionToolkit
 using CairoMakie
@@ -117,3 +118,18 @@ heatmap!(bgmask; colormap = cgrad([:transparent, :white]; alpha = 0.3))
 scatter!(presences; color = :black)
 scatter!(bgpoints; color = :red, markersize = 4)
 current_figure() #hide
+
+# ## Related documentation
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# PseudoAbsences.PseudoAbsenceGenerator
+# PseudoAbsences.WithinRadius
+# PseudoAbsences.SurfaceRangeEnvelope
+# PseudoAbsences.RandomSelection
+# PseudoAbsences.pseudoabsencemask
+# PseudoAbsences.backgroundpoints
+# ```

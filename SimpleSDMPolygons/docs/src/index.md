@@ -1,6 +1,6 @@
-# SimpleSDMLayers
+# SimpleSDMPolygons
 
 ```@autodocs
-Modules = [SimpleSDMLayers]
+Modules = [SimpleSDMPolygons]
 Order   = [:function, :type]
 ```

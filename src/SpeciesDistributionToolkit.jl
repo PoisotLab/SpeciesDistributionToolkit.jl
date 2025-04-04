@@ -11,7 +11,7 @@ using Reexport
 # Expose the components
 @reexport using OccurrencesInterface
 @reexport using SimpleSDMDatasets
-@reexport using SimpleSDMPolygons 
+# @reexport using SimpleSDMPolygons  TO BE UNCOMMENTED AFTER PKG REGISTRATION
 @reexport using GBIF
 @reexport using SimpleSDMLayers
 @reexport using Fauxcurrences

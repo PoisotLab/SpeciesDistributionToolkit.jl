@@ -182,7 +182,7 @@ jobs:
       - run: mv lcov.info SimpleSDMPolygons-lcov-${{ matrix.julia-version }}.info
       - uses: actions/upload-artifact@v4
         with:
-          name: pseudo-${{ matrix.julia-version }}-coverage
+          name: polygons-${{ matrix.julia-version }}-coverage
           path: SimpleSDMPolygons-lcov-${{ matrix.julia-version }}.info
   Fauxcurrences:
     name: "Fauxcurrences"

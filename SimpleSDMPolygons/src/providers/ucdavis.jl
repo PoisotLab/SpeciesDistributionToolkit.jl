@@ -31,7 +31,8 @@ end
 _slug(code, level) = "gadm41_$(code)_$(level).json"
 
 function postprocess(data::PolygonData{UCDavis,T}, res::R; kw...) where {T,R}
-    fields = _fields_to_extract(data; level=kw[:level])    
+    level = haskey(kw, :level) ? kw[:level] : 0
+    fields = _fields_to_extract(data; level=level)    
     return FeatureCollection(map(feat -> Feature(_polygonize(feat.geometry), Dict([v=>feat.properties[k] for (k,v) in fields])), res.features))    
 end 
 

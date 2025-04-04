@@ -155,6 +155,35 @@ jobs:
         with:
           name: datasets-${{ matrix.julia-version }}-coverage
           path: SimpleSDMDatasets-lcov-${{ matrix.julia-version }}.info
+  SimpleSDMPolygons:
+    name: "SimpleSDMPolygons"
+    runs-on: "ubuntu-latest"
+    strategy:
+        matrix:
+            julia-version: ["1", "lts", "pre"]
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix. julia-version }}
+      - name: "Bootstrap the package"
+        run: julia --project=./SimpleSDMPolygons SimpleSDMPolygons/bootstrap.jl
+      - uses: julia-actions/julia-buildpkg@latest
+        with:
+          project: SimpleSDMPolygons
+      - uses: julia-actions/julia-runtest@latest
+        with:
+          project: SimpleSDMPolygons
+          annotate: true
+      - uses: julia-actions/julia-processcoverage@v1
+        with:
+          directories: SimpleSDMPolygons/src
+      - run: mv lcov.info SimpleSDMPolygons-lcov-${{ matrix.julia-version }}.info
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pseudo-${{ matrix.julia-version }}-coverage
+          path: SimpleSDMPolygons-lcov-${{ matrix.julia-version }}.info
   Fauxcurrences:
     name: "Fauxcurrences"
     runs-on: "ubuntu-latest"

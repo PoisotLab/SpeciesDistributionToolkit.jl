@@ -21,6 +21,7 @@ jobs:
             📊 [Fauxcurrences](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Fauxcurrences/previews/PR${{ github.event.number }}/)   
             🐾 [OccurrencesInterface](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/OccurrencesInterface/previews/PR${{ github.event.number }}/)   
             🗺 [SimpleSDMLayers](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/previews/PR${{ github.event.number }}/)   
+            ❇️ [SimpleSDMPolygons](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMPolygons/previews/PR${{ github.event.number }}/)   
             💾 [SimpleSDMDatasets](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/previews/PR${{ github.event.number }}/)   
             ✏️ [Phylopic](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/previews/PR${{ github.event.number }}/)   
             🕳️ [PseudoAbsences](https://poisotlab.github.io/SpeciesDistributionToolkit.jl/PseudoAbsences/previews/PR${{ github.event.number }}/)   

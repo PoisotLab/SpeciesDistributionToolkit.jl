@@ -21,7 +21,7 @@ ZipArchives = "49080126-0e18-4c2a-b176-c102e4b3760c"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 
 [extensions]
-PIMakieExt = "Makie"
+SDMPolygonsMakieExt = "Makie"
 
 [compat]
 ArchGDAL = "0.10.8"

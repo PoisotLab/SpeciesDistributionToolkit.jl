@@ -32,6 +32,7 @@ for pkg in [
     "OccurrencesInterface",
     "SimpleSDMLayers",
     "SimpleSDMDatasets",
+    "SimpleSDMPolygons",
     "Fauxcurrences",
     "Phylopic",
     "PseudoAbsences",  

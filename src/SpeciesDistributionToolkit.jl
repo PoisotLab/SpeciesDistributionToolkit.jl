@@ -11,6 +11,7 @@ using Reexport
 # Expose the components
 @reexport using OccurrencesInterface
 @reexport using SimpleSDMDatasets
+@reexport using SimpleSDMPolygons 
 @reexport using GBIF
 @reexport using SimpleSDMLayers
 @reexport using Fauxcurrences

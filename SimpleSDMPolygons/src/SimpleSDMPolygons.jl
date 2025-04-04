@@ -20,7 +20,7 @@ import Shapefile as SF
 import GeoInterface as GI 
 import ArchGDAL as AG
 
-_GADM_MAX_LEVELS = Dict([r[Symbol("alpha-3")]=>r.max_level for r in eachrow(CSV.read("assets/GADM.csv", DataFrame))])
+_GADM_MAX_LEVELS = Dict([r[Symbol("alpha-3")]=>r.max_level for r in eachrow(CSV.read(joinpath(@__DIR__, "..", "assets", "GADM.csv"), DataFrame))])
 
 include(joinpath("types", "datasets.jl"))
 export PolygonDataset

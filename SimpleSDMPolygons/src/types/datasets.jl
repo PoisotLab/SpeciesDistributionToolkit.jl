@@ -9,6 +9,11 @@ abstract type PolygonDataset end
 struct Countries <: PolygonDataset end 
 
 """
+    Places
+"""
+struct Places <: PolygonDataset end 
+
+"""
     Land
 """
 struct Land <: PolygonDataset end 

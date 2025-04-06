@@ -1,11 +1,12 @@
 const OpenStreetMapDatasets = Union{
-    Countries
+    Countries,
+    Places
 }
 
 provides(::Type{OpenStreetMap}, ::Type{T}) where {T<:OpenStreetMapDatasets} = true 
 downloadtype(::PolygonData{OpenStreetMap,T}) where T = _File
 filetype(::PolygonData{OpenStreetMap,T}) where T = _GeoJSON
-root(::PolygonData{OpenStreetMap,Countries}) = "https://polygons.openstreetmap.fr/get_geojson.py?id="
+root(::PolygonData{OpenStreetMap,T}) where T = "https://polygons.openstreetmap.fr/get_geojson.py?id="
 
 function _query_osm_id(place)
     url_place = HTTP.URIs.escapeuri(place)
@@ -15,9 +16,11 @@ function _query_osm_id(place)
 end
 
 
-function source(data::PolygonData{OpenStreetMap, Countries}; country = "Canada")    
-    stem = country * ".geojson"
-    id = _query_osm_id(country)
+source(::PolygonData{OpenStreetMap, Countries}; country = "Canada") = source(PolygonData(OpenStreetMap,Places); place = country)
+
+function source(data::PolygonData{OpenStreetMap,Places}; place = "Canada")    
+    stem = place * ".geojson"
+    id = _query_osm_id(place)
     return (
         url = "https://polygons.openstreetmap.fr/get_geojson.py?id=$(id)",
         filename = stem,

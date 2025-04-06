@@ -274,7 +274,7 @@ jobs:
           name: sdemo-${{ matrix.julia-version }}-coverage
           path: SDeMo-lcov-${{ matrix.julia-version }}.info
   SpeciesDistributionToolkit:
-    needs: [GBIF, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, Phylopic, SDeMo, OccurrencesInterface]
+    needs: [GBIF, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, Phylopic, SDeMo, OccurrencesInterface, SimpleSDMPolygons]
     name: "SpeciesDistributionToolkit"
     runs-on: "ubuntu-latest"
     strategy:

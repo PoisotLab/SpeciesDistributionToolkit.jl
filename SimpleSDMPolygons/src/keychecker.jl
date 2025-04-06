@@ -4,7 +4,7 @@
 function keychecker(data::P; kwargs...) where {P<:PolygonData}
     # Check for levels
     if :level in keys(kwargs)
-        isnothing(levels(data)) && error("The $(P) dataset does not allow for month as a keyword argument")
+        isnothing(levels(data)) && error("The $(P) dataset does not allow for level as a keyword argument")
         values(kwargs).level ∉ levels(data) && error("The level $(values(kwargs).level) is not supported by the $(P) dataset")
     end
 

@@ -30,3 +30,9 @@ abstract type NaturalEarth <: PolygonProvider end
 It's specifically openstreetmap.fr, and a python script that does...something...and spits out a GeoJSON. OuvertRueCarte. Is that anything.
 """
 abstract type OpenStreetMap <: PolygonProvider end 
+
+"""
+    Resolv
+
+"""
+abstract type Resolv <: PolygonProvider end 

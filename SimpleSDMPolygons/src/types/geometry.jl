@@ -95,12 +95,4 @@ function _polygonize(poly::GJ.Polygon)
     return Polygon(agdal_poly)
 end
 
-# --------------------------------------------------------------
-# Handle conversion from Shapefile 
-# --------------------------------------------------------------
-function _polygonize(poly::SF.Polygon)
-    agdal_mp = AG.createpolygon(GI.coordinates(poly)[1])
-    target_crs = AG.importEPSG(4326)
-    _add_crs(agdal_mp, target_crs)
-    return MultiPolygon(agdal_mp)
-end
+

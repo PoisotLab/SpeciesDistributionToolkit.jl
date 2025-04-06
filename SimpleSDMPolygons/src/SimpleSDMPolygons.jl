@@ -28,7 +28,7 @@ export Land, Oceans, Lakes, Countries, Places, Ecoregions, ParksAndProtected
 
 include(joinpath("types", "providers.jl"))
 export PolygonProvider
-export EPA, NaturalEarth, OpenStreetMap, GADM
+export EPA, NaturalEarth, OpenStreetMap, GADM, Resolv
 
 include(joinpath("types", "filetypes.jl"))
 export _file, _zip
@@ -54,6 +54,7 @@ include(joinpath("providers", "epa.jl"))
 include(joinpath("providers", "naturalearth.jl"))
 include(joinpath("providers", "openstreetmap.jl"))
 include(joinpath("providers", "gadm.jl"))
+include(joinpath("providers", "resolv.jl"))
 
 
 end # module PolygonInterface

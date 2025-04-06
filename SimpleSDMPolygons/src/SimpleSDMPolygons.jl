@@ -24,7 +24,7 @@ _GADM_MAX_LEVELS = Dict([r[Symbol("alpha-3")]=>r.max_level for r in eachrow(CSV.
 
 include(joinpath("types", "datasets.jl"))
 export PolygonDataset
-export Land, Oceans, Lakes, Countries, Ecoregions, ParksAndProtected
+export Land, Oceans, Lakes, Countries, Places, Ecoregions, ParksAndProtected
 
 include(joinpath("types", "providers.jl"))
 export PolygonProvider

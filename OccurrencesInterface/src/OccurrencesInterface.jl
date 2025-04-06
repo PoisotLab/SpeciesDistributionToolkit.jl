@@ -3,6 +3,7 @@ module OccurrencesInterface
 using Dates
 using TestItems
 using Tables
+import JSON
 
 include("types.jl")
 export AbstractOccurrence, AbstractOccurrenceCollection
@@ -14,5 +15,9 @@ export entity, place, date, presence
 export presences, absences
 
 include("tables.jl")
+
+include("indexing.jl")
+
+include("io.jl")
 
 end # module OccurrencesInterface

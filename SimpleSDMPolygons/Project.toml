@@ -1,0 +1,39 @@
+name = "SimpleSDMPolygons"
+uuid = "dd4c243c-bc7b-45f6-b2b3-6bd128d3a12b"
+authors = ["Michael D. Catchen <mdcatchen@gmail.com>"]
+version = "1.0.0"
+
+[deps]
+ArchGDAL = "c9ce4bd3-c3d5-55b8-8973-c0e20141b8c3"
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+GeoInterface = "cf35fbd7-0cd7-5166-be24-54bfbe79505f"
+GeoJSON = "61d90e0f-e114-555e-ac52-39dfb47a3ef9"
+HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+Proj = "c94c279d-25a6-4763-9509-64d165bea63e"
+Shapefile = "8e980c4a-a4fe-5da2-b3a7-4b4b0353a2f4"
+TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
+ZipArchives = "49080126-0e18-4c2a-b176-c102e4b3760c"
+
+[weakdeps]
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+
+[extensions]
+SDMPolygonsMakieExt = "Makie"
+
+[compat]
+ArchGDAL = "0.10.8"
+CSV = "0.10.15"
+DataFrames = "1.7.0"
+Downloads = "1"
+GeoInterface = "1.4.1"
+GeoJSON = "0.8"
+HTTP = "1.10"
+JSON = "0.21.4"
+Proj = "1.8.1"
+Shapefile = "0.13.2"
+TestItems = "1"
+ZipArchives = "2.4"
+julia = "1.10"

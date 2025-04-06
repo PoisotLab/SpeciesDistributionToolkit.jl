@@ -74,6 +74,7 @@ export default defineConfig({
                             { text: "PseudoAbsences.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/PseudoAbsences/" },
                             { text: "SDeMo.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SDeMo/" },
                             { text: "SimpleSDMDatasets.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/" },
+                            { text: "SimpleSDMPolygons.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMPolygons/" },
                             { text: "SimpleSDMLayers.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/" },
                         ]
                     },
@@ -233,6 +234,16 @@ export default defineConfig({
                         { text: "Interface", link: "/reference/datasets/interface/" },
                         { text: "Types", link: "/reference/datasets/types/" },
                         { text: "Internal", link: "/reference/datasets/internals/" },
+                    ]
+                },
+                {
+                    text: "SimpleSDMPolygons",
+                    collapsed: true,
+                    items: [
+                        { text: "Documentation", link: "/reference/polygons/" },
+                        { text: "Interface", link: "/reference/polygons/interface/" },
+                        { text: "Types", link: "/reference/polygons/types/" },
+                        { text: "Internal", link: "/reference/polygons/internals/" },
                     ]
                 },
                 {

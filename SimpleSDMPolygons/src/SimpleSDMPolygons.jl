@@ -15,7 +15,7 @@ using GeoJSON
 using HTTP
 using DataFrames, CSV 
 
-import GeoJSON as GJ 
+const GJ = GeoJSON
 import Shapefile as SF 
 import GeoInterface as GI 
 import ArchGDAL as AG

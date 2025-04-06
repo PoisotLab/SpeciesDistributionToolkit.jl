@@ -11,11 +11,11 @@ This data is all hosted by the US Environmental Protection Agency (EPA), so ther
 abstract type EPA <: PolygonProvider end 
 
 """
-    UCDavis
+    GADM
 
 Known for their server's reliable uptime!
 """
-abstract type UCDavis <: PolygonProvider end 
+abstract type GADM <: PolygonProvider end 
 
 """
     NaturalEarth

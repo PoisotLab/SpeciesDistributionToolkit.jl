@@ -37,21 +37,21 @@ fc = downloader(pd; resolution=50)
 
 ```
 
-### UCDavis' GADM 
+### GADM 
 
 Note: specification of subgeometries based on list of strings e.g. `("CAN", "Québec", "Drummond")` is not yet supported but should be simple enough to implement
 
 ```julia
-pd = PolygonData(UCDavis, Countries)
+pd = PolygonData(GADM, Countries)
 fc = downloader(pd; country = "CAN", level=0)
 
-pd = PolygonData(UCDavis, Countries)
+pd = PolygonData(GADM, Countries)
 fc = downloader(pd; country = "CAN", level=1)
 
-pd = PolygonData(UCDavis, Countries)
+pd = PolygonData(GADM, Countries)
 fc = downloader(pd; country = "CAN", level=2)
 
-pd = PolygonData(UCDavis, Countries)
+pd = PolygonData(GADM, Countries)
 fc = downloader(pd; country = "CAN", level=3)
 ```
 

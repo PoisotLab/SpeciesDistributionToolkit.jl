@@ -7,5 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- Added, Changed, Deprecated, Removed, Fixed -->
 
-## [Unreleased]
+## `v1.1.0`
+
+- **Added** indexing of `AbstractOccurrenceCollection`
+- **Added** the ability to load occurrences from JSON files
+- **Added** the ability to export occurrences to JSON files
+
+## `v1.0.0`
+
+- Initial release
 

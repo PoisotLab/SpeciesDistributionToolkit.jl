@@ -5,6 +5,7 @@ Returns the elements contained in an abstract collection of occurrences -- this 
 """
 elements(::T) where {T<:AbstractOccurrenceCollection} = nothing
 elements(c::Occurrences) = c.records
+elements(c::Vector{T}) where {T <: AbstractOccurrence} = c
 
 """
     entity(o::Occurrence)
@@ -65,6 +66,13 @@ for op in [:entity, :place, :date, :presence]
         Default method for any abstract occurrence collection type for the `$($op)` operation. Unless overloaded, this returns an array of `$($op)` on all `elements` of the argument.
         """
         $op(c::T) where {T<:AbstractOccurrenceCollection} = [$op(e) for e in elements(c)]
+
+        """
+            $($op)(::Vector{AbstractOccurrence})
+
+        Default method for any vector of occurrence type for the `$($op)` operation. Unless overloaded, this returns an array of `$($op)` on all `elements` of the argument.
+        """
+        $op(c::Vector{T}) where {T<:AbstractOccurrence} = [$op(e) for e in elements(c)]
     end)
 end
 

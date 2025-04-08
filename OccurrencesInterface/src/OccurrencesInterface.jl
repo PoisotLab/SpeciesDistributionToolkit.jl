@@ -20,4 +20,6 @@ include("indexing.jl")
 
 include("io.jl")
 
+include("demodata.jl")
+
 end # module OccurrencesInterface

@@ -1,7 +1,5 @@
 module OccIntMakie
 
-@info "I spy with my little eye the CairoMakie package"
-
 using MakieCore
 using OccurrencesInterface
 

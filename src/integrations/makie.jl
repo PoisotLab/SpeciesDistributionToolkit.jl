@@ -8,34 +8,12 @@ function sprinkle(layer::SDMLayer)
     )
 end
 
-function sprinkle(coll::T) where {T <: AbstractOccurrenceCollection}
-    lon = Float32.(replace(longitudes(coll), missing => NaN))
-    lat = Float32.(replace(latitudes(coll), missing => NaN))
-    return (lon, lat)
-end
-
-function sprinkle(coll::Vector{T}) where {T <: AbstractOccurrence}
-    lon = Float32.(replace(longitudes.(coll), missing => NaN))
-    lat = Float32.(replace(latitudes.(coll), missing => NaN))
-    return (lon, lat)
-end
-
 function MakieCore.convert_arguments(::MakieCore.GridBased, layer::SDMLayer)
     return sprinkle(convert(SDMLayer{Float32}, layer))
 end
 
 MakieCore.convert_arguments(P::MakieCore.NoConversion, layer::SDMLayer) =
     MakieCore.convert_arguments(P, values(layer))
-MakieCore.convert_arguments(
-    P::MakieCore.PointBased,
-    occ::T,
-) where {T <: AbstractOccurrenceCollection} =
-    MakieCore.convert_arguments(P, sprinkle(occ)...)
-MakieCore.convert_arguments(
-    P::MakieCore.PointBased,
-    occ::Vector{T},
-) where {T <: AbstractOccurrence} =
-    MakieCore.convert_arguments(P, sprinkle(occ)...)
 
 function MakieCore.convert_arguments(
     P::MakieCore.PointBased,

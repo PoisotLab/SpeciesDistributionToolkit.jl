@@ -21,5 +21,5 @@ function OccurrencesInterface.presence(record::GBIFRecord)
 end
 
 function OccurrencesInterface.elements(records::GBIFRecords)
-    return view(records)
+    return collect(GBIFRecord, records)
 end

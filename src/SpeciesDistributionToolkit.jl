@@ -13,6 +13,7 @@ using Reexport
 @reexport using SimpleSDMDatasets
 @reexport using GBIF
 @reexport using SimpleSDMLayers
+@reexport using SimpleSDMPolygons
 @reexport using Fauxcurrences
 @reexport using Phylopic
 @reexport using SDeMo

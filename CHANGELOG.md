@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.5.1`
 
+- **removed** the support for `SimpleSDMLayers` plotting (now handled in the package) [#422]
 - **removed** the support for `OccurrencesInterface` plotting (now handled in the package) [#422]
 
 

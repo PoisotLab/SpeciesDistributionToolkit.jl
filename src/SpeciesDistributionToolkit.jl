@@ -2,7 +2,6 @@ module SpeciesDistributionToolkit
 
 using TestItems
 
-using MakieCore
 import StatsBase
 
 # We make ample use of re-export
@@ -41,9 +40,6 @@ include("integrations/gbif_layers.jl")
 
 # GBIF and Phylopic integration
 include("integrations/gbif_phylopic.jl")
-
-# Plotting
-include("integrations/makie.jl")
 
 # SDeMo
 include("integrations/sdemo.jl")

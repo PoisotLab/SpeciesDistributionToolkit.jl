@@ -2,9 +2,9 @@ const EPADatasets = Union{
     Ecoregions
 }
 
-provides(::Type{EPA}, ::Type{T}) where {T<:EPADatasets} = true
-downloadtype(::PolygonData{EPA, Ecoregions}) = _Zip
-filetype(::PolygonData{EPA, Ecoregions}) = _Shapefile
+SimpleSDMDatasets.provides(::Type{EPA}, ::Type{T}) where {T<:EPADatasets} = true
+SimpleSDMDatasets.downloadtype(::PolygonData{EPA, Ecoregions}) = _Zip
+SimpleSDMDatasets.filetype(::PolygonData{EPA, Ecoregions}) = _Shapefile
 root(::PolygonData{EPA, Ecoregions}) = "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/cec_na/"
 levels(::PolygonData{EPA, Ecoregions}) = (1,2,3)
 

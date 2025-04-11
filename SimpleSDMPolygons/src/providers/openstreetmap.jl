@@ -3,9 +3,9 @@ const OpenStreetMapDatasets = Union{
     Places
 }
 
-provides(::Type{OpenStreetMap}, ::Type{T}) where {T<:OpenStreetMapDatasets} = true 
-downloadtype(::PolygonData{OpenStreetMap,T}) where T = _File
-filetype(::PolygonData{OpenStreetMap,T}) where T = _GeoJSON
+SimpleSDMDatasets.provides(::Type{OpenStreetMap}, ::Type{T}) where {T<:OpenStreetMapDatasets} = true 
+SimpleSDMDatasets.downloadtype(::PolygonData{OpenStreetMap,T}) where T = _File
+SimpleSDMDatasets.filetype(::PolygonData{OpenStreetMap,T}) where T = _GeoJSON
 root(::PolygonData{OpenStreetMap,T}) where T = "https://polygons.openstreetmap.fr/get_geojson.py?id="
 
 function _query_osm_id(place)

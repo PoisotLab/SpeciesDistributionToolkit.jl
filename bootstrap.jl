@@ -3,6 +3,7 @@ import Pkg
 components = [
     "OccurrencesInterface",
     "SimpleSDMDatasets",
+    "SimpleSDMPolygons",
     "SimpleSDMLayers",
     "GBIF",
     "Fauxcurrences",

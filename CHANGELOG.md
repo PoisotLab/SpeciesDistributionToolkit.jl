@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **added** the `SimpleSDMPolygons` package [#417]
 
+## `v1.5.1`
+
+- **removed** the support for `SimpleSDMLayers` plotting (now handled in the package) [#422]
+- **removed** the support for `OccurrencesInterface` plotting (now handled in the package) [#422]
+
 ## `v1.5.0`
 
 - **replaced** the pseudo absences data by the `PseudoAbsences` package [#411]

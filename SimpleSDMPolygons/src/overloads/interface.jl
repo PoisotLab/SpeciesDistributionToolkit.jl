@@ -1,7 +1,7 @@
 """
     provides
 """
-provides(::Type{P}, ::Type{D}) where {P<:PolygonProvider,D<:PolygonDataset} = false
+SimpleSDMDatasets.provides(::Type{P}, ::Type{D}) where {P<:PolygonProvider,D<:PolygonDataset} = false
 
 """
     levels
@@ -11,7 +11,7 @@ levels(::PolygonData) = nothing
 """
     resolutions
 """
-resolutions(::PolygonData) = nothing 
+SimpleSDMDatasets.resolutions(::PolygonData) = nothing 
 
 """
     destination

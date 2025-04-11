@@ -2,9 +2,9 @@ const ResolvDatasets = Union{
     Ecoregions
 }
 
-provides(::Type{Resolv}, ::Type{T}) where {T<:ResolvDatasets} = true
-downloadtype(::PolygonData{Resolv, Ecoregions}) = _Zip
-filetype(::PolygonData{Resolv, Ecoregions}) = _Shapefile
+SimpleSDMDatasets.provides(::Type{Resolv}, ::Type{T}) where {T<:ResolvDatasets} = true
+SimpleSDMDatasets.downloadtype(::PolygonData{Resolv, Ecoregions}) = _Zip
+SimpleSDMDatasets.filetype(::PolygonData{Resolv, Ecoregions}) = _Shapefile
 root(::PolygonData{Resolv, Ecoregions}) = "https://storage.googleapis.com/teow2016/"
 
 function source(data::PolygonData{Resolv, Ecoregions})    

@@ -3,8 +3,6 @@ module Phylopic
 import HTTP
 import JSON
 import UUIDs
-import FileIO
-import Downloads
 using Markdown
 
 using TestItems
@@ -27,5 +25,14 @@ include("imagesof.jl")
 
 include("images.jl")
 include("attribution.jl")
+
+# Required for plotting
+
+import FileIO
+import Downloads
+function _get_silhimg(ps)
+    f = Downloads.download(Phylopic.thumbnail(ps))
+    return FileIO.load(f)
+end
 
 end # module Phylopic

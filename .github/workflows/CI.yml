@@ -161,6 +161,7 @@ jobs:
     strategy:
         matrix:
             julia-version: ["1", "lts", "pre"]
+    needs: [SimpleSDMDatasets]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3

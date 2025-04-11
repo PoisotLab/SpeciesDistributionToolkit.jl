@@ -1,7 +1,7 @@
 """
     downloader
 """
-function downloader(
+function SimpleSDMDatasets.downloader(
     data::PolygonData{P,D};
     kw...
 ) where {P,D}

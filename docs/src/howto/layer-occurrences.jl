@@ -8,8 +8,6 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-import FileIO
-import Downloads
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # This sets up a bounding box for the region of interest:
@@ -74,7 +72,6 @@ sp_uuid = Phylopic.imagesof(species; items = 1)
 
 sp_thumbnail_url = Phylopic.thumbnail(sp_uuid)
 sp_thumbnail_tmp = Downloads.download(sp_thumbnail_url)
-sp_image = FileIO.load(sp_thumbnail_tmp)
 
 # ::: tip Credit where credit is due!
 # 
@@ -88,15 +85,8 @@ Phylopic.attribution(sp_uuid)
 #
 # :::
 
-# We can now use this image in a scatter plot -- this uses the thumbnail as a scatter
-# symbol, so we need to plot this like any other point. Because the thumbnail returned by
-# default is rather large, we can rescale it based on the image size:
-
-sp_size = Vec2f(reverse(size(sp_image) ./ 3))
-
-# Finally, we can plot everything (note that the Phylopic images have a transparent
-# background, so we are not hiding any information!):
+# We can now use this image in a scatter plot:
 
 # fig-final-plot
-scatter!(envirovars, [3.0], [700.0]; marker = sp_image, markersize = sp_size)
+silhouetteplot!(envirovars, 3.0, 700.0, sp_uuid; markersize = 70)
 current_figure() #hide

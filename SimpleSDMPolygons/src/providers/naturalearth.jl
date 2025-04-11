@@ -6,9 +6,9 @@ const NaturalEarthDatasets = Union{
     Countries,
 }
 
-provides(::Type{NaturalEarth}, ::Type{T}) where {T<:NaturalEarthDatasets} = true
-downloadtype(::PolygonData{NaturalEarth, T}) where T = _File
-filetype(::PolygonData{NaturalEarth, T}) where T = _GeoJSON
+SimpleSDMDatasets.provides(::Type{NaturalEarth}, ::Type{T}) where {T<:NaturalEarthDatasets} = true
+SimpleSDMDatasets.downloadtype(::PolygonData{NaturalEarth, T}) where T = _File
+SimpleSDMDatasets.filetype(::PolygonData{NaturalEarth, T}) where T = _GeoJSON
 root(::PolygonData{NaturalEarth,T}) where T = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/"
 
 

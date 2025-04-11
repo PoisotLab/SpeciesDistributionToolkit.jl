@@ -1,6 +1,6 @@
 import Pkg
 
-components = []
+components = ["SimpleSDMDatasets"]
 
 # Cleanup local install and develop
 for package in components

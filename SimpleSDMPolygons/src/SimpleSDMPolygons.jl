@@ -10,17 +10,19 @@ isdir(_POLYGON_PATH) || mkpath(_POLYGON_PATH)
 
 using Downloads
 using ZipArchives
-using Proj 
+using Proj
 using GeoJSON
 using HTTP
-using DataFrames, CSV 
+using DataFrames, CSV
 
 const GJ = GeoJSON
-import Shapefile as SF 
-import GeoInterface as GI 
+import Shapefile as SF
+import GeoInterface as GI
 import ArchGDAL as AG
 
-_GADM_MAX_LEVELS = Dict([r[Symbol("alpha-3")]=>r.max_level for r in eachrow(CSV.read(joinpath(@__DIR__, "..", "assets", "GADM.csv"), DataFrame))])
+import SimpleSDMDatasets
+
+_GADM_MAX_LEVELS = Dict([r[Symbol("alpha-3")] => r.max_level for r in eachrow(CSV.read(joinpath(@__DIR__, "..", "assets", "GADM.csv"), DataFrame))])
 
 include(joinpath("types", "datasets.jl"))
 export PolygonDataset
@@ -31,8 +33,6 @@ export PolygonProvider
 export EPA, NaturalEarth, OpenStreetMap, GADM, Resolv
 
 include(joinpath("types", "filetypes.jl"))
-export _file, _zip
-export _geojson, _shapefile
 
 include(joinpath("types", "specifiers.jl"))
 export PolygonData
@@ -40,21 +40,21 @@ export PolygonData
 include(joinpath("types", "geometry.jl"))
 export FeatureCollection, Feature, Polygon, MultiPolygon
 
-include("interface.jl")
-export provides 
+# These are overloaded from SimpleSDMDatasets
+include("overloads/interface.jl")
+include("overloads/downloader.jl")
+include("overloads/keychecker.jl")
 
-include("downloader.jl")
-export downloader
-export downloadtype, filetype
-
-include("keychecker.jl")
-export keychecker
-
+# List of providers
 include(joinpath("providers", "epa.jl"))
 include(joinpath("providers", "naturalearth.jl"))
 include(joinpath("providers", "openstreetmap.jl"))
 include(joinpath("providers", "gadm.jl"))
 include(joinpath("providers", "resolv.jl"))
 
+# Utility function
+
+getpolygon(pd::T, args...; kwargs...) where {T <: PolygonData} = SimpleSDMDatasets.downloader(pd, args...; kwargs...)
+export getpolygon
 
 end # module PolygonInterface

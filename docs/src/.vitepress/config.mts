@@ -107,10 +107,10 @@ export default defineConfig({
                                 { text: "Arithmetic on layers", link: "/howto/layer-arithmetic/" },
                                 { text: "Statistics on layers", link: "/howto/layer-statistics/" },
                                 { text: "Zonal statistics on layers", link: "/howto/zonal-statistics/" },
-                                { text: "Neutral landscapes creation", link: "/howto/neutral-landscapes/" },
+                                { text: "Neutral landscapes", link: "/howto/neutral-landscapes/" },
                                 { text: "Splitting layers in tiles", link: "/howto/split-layer/" },
                                 { text: "Clustering layers", link: "/howto/cluster-layers/" },
-                                { text: "Multivariate layers transofmration", link: "/howto/multivariate-stats/" },
+                                { text: "Multivariate transformations", link: "/howto/multivariate-stats/" },
                             ]
                         },
                         {

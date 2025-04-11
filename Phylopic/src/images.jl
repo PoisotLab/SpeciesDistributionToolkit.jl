@@ -123,3 +123,19 @@ end
 function images_links(uuid::UUIDs.UUID)
     return images_data(uuid)["_links"]
 end
+
+thumbnail(ps::PhylopicSilhouette; kwargs...) = thumbnail(ps.id; kwargs...)
+vector(ps::PhylopicSilhouette; kwargs...) = vector(ps.id; kwargs...)
+twitterimage(ps::PhylopicSilhouette; kwargs...) = twitterimage(ps.id; kwargs...)
+source(ps::PhylopicSilhouette; kwargs...) = source(ps.id; kwargs...)
+available_resolutions(ps::PhylopicSilhouette) = available_resolutions(ps.id)
+raster(ps::PhylopicSilhouette) = raster(ps.id)
+raster(ps::PhylopicSilhouette, resl) = raster(ps.id, resl)
+
+thumbnail(ps::Vector{PhylopicSilhouette}; kwargs...) = thumbnail.(ps; kwargs...)
+vector(ps::Vector{PhylopicSilhouette}; kwargs...) = vector.(ps; kwargs...)
+twitterimage(ps::Vector{PhylopicSilhouette}; kwargs...) = twitterimage.(ps; kwargs...)
+source(ps::Vector{PhylopicSilhouette}; kwargs...) = source.(ps; kwargs...)
+available_resolutions(ps::Vector{PhylopicSilhouette}) = available_resolutions.(ps)
+raster(ps::Vector{PhylopicSilhouette}) = raster.(ps)
+raster(ps::Vector{PhylopicSilhouette}, resl) = raster.(ps, resl)

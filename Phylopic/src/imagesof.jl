@@ -67,3 +67,8 @@ function imagesof(name::AbstractString; items=1, attribution=false, sharealike=f
     end
     return nothing
 end
+
+@testitem "We can get imagesof" begin
+    @test typeof(Phylopic.imagesof("chiroptera")) == Pair{String,Base.UUID}
+    @test typeof(Phylopic.imagesof("chiroptera"; items=2)) == Dict{String,Base.UUID}
+end

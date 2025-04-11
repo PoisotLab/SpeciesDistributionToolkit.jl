@@ -3,7 +3,11 @@ module Phylopic
 import HTTP
 import JSON
 import UUIDs
+import FileIO
+import Downloads
 using Markdown
+
+using TestItems
 
 const api = "https://api.phylopic.org/"
 

@@ -14,3 +14,6 @@ end
 
 attribution(pair::Pair{String,UUIDs.UUID}; kwargs...) = attribution(pair.second; kwargs...)
 attribution(dict::Dict{String,UUIDs.UUID}; kwargs...) = attribution.(collect(dict); kwargs...)
+
+attribution(ps::PhylopicSilhouette; kwargs...) = attribution(ps.id; kwargs...)
+attribution(vps::Vector{PhylopicSilhouette}; kwargs...) = Markdown.parse(join(attribution.(vps; kwargs...), "   \n"))

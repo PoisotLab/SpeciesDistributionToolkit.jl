@@ -20,7 +20,11 @@ include("ping.jl")
 # a stem - this is not necessarilly going to give all of the names, and I am not sure why
 include("autocomplete.jl")
 
+include("Silhouette.jl")
+export PhylopicSilhouette
+
 include("imagesof.jl")
+
 include("images.jl")
 include("attribution.jl")
 

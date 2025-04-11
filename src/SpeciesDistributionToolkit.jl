@@ -55,7 +55,7 @@ include("polygons/simplify.jl")
 export trim
 export zone, byzone
 
-# Boundaries
+# Boundaries - this will be replaced by SimpleSDMPolygons
 include("boundaries/gadm.jl")
 include("boundaries/osm.jl")
 

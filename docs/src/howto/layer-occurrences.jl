@@ -74,7 +74,7 @@ sp_uuid = Phylopic.imagesof(species; items = 1)
 
 sp_thumbnail_url = Phylopic.thumbnail(sp_uuid)
 sp_thumbnail_tmp = Downloads.download(sp_thumbnail_url)
-sp_image = Images.load(sp_thumbnail_tmp)
+sp_image = FileIO.load(sp_thumbnail_tmp)
 
 # ::: tip Credit where credit is due!
 # 

@@ -1,7 +1,7 @@
 """
     keychecker
 """
-function keychecker(data::P; kwargs...) where {P<:PolygonData}
+function SimpleSDMDatasets.keychecker(data::P; kwargs...) where {P<:PolygonData}
     # Check for levels
     if :level in keys(kwargs)
         isnothing(levels(data)) && error("The $(P) dataset does not allow for level as a keyword argument")

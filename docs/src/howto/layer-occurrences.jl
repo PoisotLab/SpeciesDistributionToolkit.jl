@@ -8,7 +8,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-import Images
+import FileIO
 import Downloads
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.0.1`
 
+- **added** a `getpolygon` method which is more explicit than `downloader`
 - **fixed** the overloading of methods from `SimpleSDMDatasets`
 
 ## `v1.0.0`

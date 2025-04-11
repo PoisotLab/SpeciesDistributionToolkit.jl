@@ -33,8 +33,6 @@ export PolygonProvider
 export EPA, NaturalEarth, OpenStreetMap, GADM, Resolv
 
 include(joinpath("types", "filetypes.jl"))
-export _file, _zip
-export _geojson, _shapefile
 
 include(joinpath("types", "specifiers.jl"))
 export PolygonData
@@ -54,5 +52,9 @@ include(joinpath("providers", "openstreetmap.jl"))
 include(joinpath("providers", "gadm.jl"))
 include(joinpath("providers", "resolv.jl"))
 
+# Utility function
+
+getpolygon(pd::T, args...; kwargs...) where {T <: PolygonData} = SimpleSDMDatasets.downloader(pd, args...; kwargs...)
+export getpolygon
 
 end # module PolygonInterface

@@ -5,12 +5,12 @@ function SimpleSDMDatasets.downloader(
     data::PolygonData{P,D};
     kw...
 ) where {P,D}
-    keychecker(data; kw...)
-    dt = downloadtype(data)
+    SimpleSDMDatasets.keychecker(data; kw...)
+    dt = SimpleSDMDatasets.downloadtype(data)
     url, filename, dir = source(data; kw...)
 
     downloaded_path = _download(dt, url, filename, dir)
-    return postprocess(data, _read(filetype(data), downloaded_path); kw...)
+    return postprocess(data, _read(SimpleSDMDatasets.filetype(data), downloaded_path); kw...)
 end
 
 function _download(::Type{_File}, url, filename, dir)

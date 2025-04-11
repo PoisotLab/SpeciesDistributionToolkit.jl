@@ -33,6 +33,11 @@ GI.getgeom(geom.geometry, i)
 GI.crs(::Type{GI.MultiPolygonTrait}, geom::MultiPolygon)= GI.crs(geom.geometry)
 GI.extent(::Type{GI.MultiPolygonTrait}, geom::MultiPolygon)::GI.Extents.Extent = GI.extent(geom.geometry)
 
+function boundingbox(p::Union{Polygon,MultiPolygon}) 
+    (l,r), (b,t) = GI.extent(p)
+    return (left=l, right=r, bottom=b, top=t)
+end
+
 """
     Feature
 """
@@ -52,6 +57,11 @@ Base.show(io::IO, feat::Feature{T}) where T = begin
     print(io, feat_str)
 end 
 
+function boundingbox(f::Feature) 
+    (l,r), (b,t) = GI.extent(f.geometry)
+    return (left=l, right=r, bottom=b, top=t)
+end
+
 """
     FeatureCollection
 """
@@ -67,6 +77,13 @@ Base.getindex(fc::FeatureCollection, i) = getindex(fc.features, i)
 Base.eachindex(fc::FeatureCollection) = eachindex(fc.features)
 Base.iterate(fc::FeatureCollection) = iterate(fc.features)
 Base.iterate(fc::FeatureCollection, i) = iterate(fc.features, i)
+
+function boundingbox(fc::FeatureCollection) 
+    bboxs = map(boundingbox, fc)    
+    l,r = minimum([b.left for b in bboxs]), maximum([b.right for b in bboxs]) 
+    b,t = minimum([b.bottom for b in bboxs]), maximum([b.top for b in bboxs]) 
+    return (left=l, right=r, bottom=b, top=t)
+end
 
 
 

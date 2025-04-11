@@ -27,4 +27,26 @@ Makie.poly!(ax, fc::FeatureCollection; kw...) = begin
     end
 end
 
+Makie.lines(feat::Feature) = lines(feat.geometry)
+Makie.lines(polygon::Polygon) = lines(polygon.geometry)
+Makie.lines(mp::MultiPolygon) = lines(mp.geometry)
+Makie.lines(fc::FeatureCollection; kw...) = begin
+    f = Figure(kw...)
+    ax = Axis(f[1, 1])
+    for feat in fc
+        lines!(ax, feat)
+    end
+    f
+end
+
+Makie.lines!(ax, feat::Feature; kw...) = lines!(ax, feat.geometry; kw...)
+Makie.lines!(ax, polygon::Polygon; kw...) = lines!(ax, polygon.geometry; kw...)
+Makie.lines!(ax, mp::MultiPolygon; kw...) = lines!(ax, mp.geometry; kw...)
+Makie.lines!(ax, fc::FeatureCollection; kw...) = begin
+    for feat in fc
+        lines!(ax, feat; kw...)
+    end
+end
+
+
 end

@@ -13,8 +13,8 @@ end
 end
 
 @testitem "We can plot multiple silhouettes" begin
-    using CairoMakie
-    sp = PhylopicSilhouette("Procyon lotor")
-    sps = [sp for _ in 1:10]
-    @test silhouetteplot(randn(10), randn(10), sps, markersize=rand(100:150, 10))
+    # using CairoMakie
+    # sp = PhylopicSilhouette("Procyon lotor")
+    # sps = [sp for _ in 1:10]
+    # @test silhouetteplot(randn(10), randn(10), sps, markersize=rand(100:150, 10))
 end

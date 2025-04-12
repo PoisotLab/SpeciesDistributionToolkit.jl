@@ -67,12 +67,6 @@ current_figure() #hide
 
 sp_uuid = Phylopic.imagesof(species; items = 1)
 
-# The next step is to get the url of the image -- we are going to get the largest thumbnail
-# (which is the default):
-
-sp_thumbnail_url = Phylopic.thumbnail(sp_uuid)
-sp_thumbnail_tmp = Downloads.download(sp_thumbnail_url)
-
 # ::: tip Credit where credit is due!
 # 
 # The images on Phylopic are *all* created by volunteers. It is important to

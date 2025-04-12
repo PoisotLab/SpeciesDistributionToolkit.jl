@@ -1,4 +1,4 @@
-# # Bounding boxes
+# # ... get the bounding box for an object?
 
 using SpeciesDistributionToolkit
 using CairoMakie
@@ -25,11 +25,11 @@ SpeciesDistributionToolkit.boundingbox(occ; padding = 1.0)
 # :::
 
 # This is useful to restrict the part of a layer that is loaded, here one of the
-# fractional layers from the EarthEnv landcover dataset:
+# fractional layers from the copernicus landcover dataset:
 
 L = SDMLayer(
-    RasterData(EarthEnv, LandCover);
-    layer = "Cultivated and Managed Vegetation",
+    RasterData(Copernicus, LandCover);
+    layer = "Crops",
     SpeciesDistributionToolkit.boundingbox(occ; padding = 0.5)...,
 )
 
@@ -37,14 +37,13 @@ L = SDMLayer(
 # part of a layer will handle the conversion.
 
 # fig-partialload
-heatmap(L; colormap = :tempo)
-scatter!(occ, color=:white, strokecolor=:orange, strokewidth=1.5)
+heatmap(L; colormap = :Greys)
+scatter!(occ)
 current_figure() #hide
 
 # The same method also applies to polygons:
 
-cnt = PolygonData(OpenStreetMap, Countries)
-CHE = getpolygon(cnt, country="Switzerland")
+CHE = SpeciesDistributionToolkit.openstreetmap("Switzerland");
 SpeciesDistributionToolkit.boundingbox(CHE; padding = 0.5)
 
 # ```@meta

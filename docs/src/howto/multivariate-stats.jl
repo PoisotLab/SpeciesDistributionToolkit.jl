@@ -1,4 +1,4 @@
-# # Multivariate transformations
+# # Multivariate statistics
 
 # The purpose of this vignette is to demonstrate how we can use the `MultivariateStats`
 # package on layers.

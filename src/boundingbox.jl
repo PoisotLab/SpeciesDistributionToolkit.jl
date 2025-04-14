@@ -88,10 +88,12 @@ end
 
 # SimpleSDMPolygons
 
-function boundingbox(fc::SimpleSDMPolygons.FeatureCollection; kwargs...)
-    return _reconcile([boundingbox(ft; kwargs...) for ft in fc.features])
+const _SDMPOLY_TYPES = Union{SimpleSDMPolygons.FeatureCollection, SimpleSDMPolygons.Feature, SimpleSDMPolygons.Polygon}
+
+function boundingbox(fc::T; kwargs...) where T<:_SDMPOLY_TYPES
+    return SimpleSDMPolygons.boundingbox(fc.geometry; kwargs...)
 end
 
-function boundingbox(fc::SimpleSDMPolygons.Feature; kwargs...)
-    return boundingbox(fc.geometry; kwargs...)
+function boundingbox(fc::SimpleSDMPolygons.FeatureCollection; kwargs...)
+    return _reconcile([SimpleSDMPolygons.boundingbox(ft; kwargs...) for ft in fc.features])
 end

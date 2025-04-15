@@ -18,7 +18,7 @@ Random.seed!(123451234123121); #hide
 
 # ## Getting the data
 
-CHE = SpeciesDistributionToolkit.openstreetmap("Switzerland");
+CHE = getpolygon(PolygonData(OpenStreetMap, Places), place="Switzerland") 
 
 # In order to simplify the code, we will start from a list of bioclim variables
 # that have been picked to optimize the model - `SDeMo` offers many functions

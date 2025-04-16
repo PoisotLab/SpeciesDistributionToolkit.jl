@@ -9,7 +9,7 @@ function SimpleSDMLayers.mosaic(
     polygons::Vector{T},
     args...;
     kwargs...,
-) where {T <: GeoJSON.GeoJSONT}
+) where {T <: Union{Feature, FeatureCollection, Polygon, MultiPolygon}}
     rtype = eltype(f(layer, args...; kwargs...))
     out = zeros(layer, rtype)
     zones = [mask!(copy(layer), poly) for poly in polygons]

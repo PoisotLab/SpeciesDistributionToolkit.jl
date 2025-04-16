@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.0.3`
 
+- **added** Makie support for `lines!`/`poly!` without axis argument
+
+## `v1.0.3`
+
 - **fixed** a typo in the `GADM` URL
 
 ## `v1.0.2`

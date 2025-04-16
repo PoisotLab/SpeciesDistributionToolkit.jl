@@ -32,5 +32,17 @@ function MakieCore.poly(fc::FeatureCollection; kw...)
     fig
 end
 
+function MakieCore.lines!(ax, fc::FeatureCollection; kw...)
+    for f in fc
+        lines!(ax, f; kw...)
+    end
+end
+
+
+function MakieCore.poly!(ax, fc::FeatureCollection; kw...)
+    for f in fc
+        poly!(ax, f; kw...)
+    end
+end
 
 end

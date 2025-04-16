@@ -19,10 +19,10 @@ TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 ZipArchives = "49080126-0e18-4c2a-b176-c102e4b3760c"
 
 [weakdeps]
-Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+MakieCore = "20f20a25-4f0e-4fdf-b5d1-57303727442b"
 
 [extensions]
-SDMPolygonsMakieExt = "Makie"
+SDMPolygonsMakieExt = "MakieCore"
 
 [compat]
 ArchGDAL = "0.10"

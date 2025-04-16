@@ -5,7 +5,7 @@ const GADMDatasets = Union{
 SimpleSDMDatasets.provides(::Type{GADM}, ::Type{T}) where {T<:GADMDatasets} = true
 SimpleSDMDatasets.downloadtype(::PolygonData{GADM, Countries}) = _File
 SimpleSDMDatasets.filetype(::PolygonData{GADM, Countries}) = _GeoJSON
-root(::PolygonData{GADM, Countries}) = "https://geodata.GADM.edu/gadm/gadm4.1/json/"
+root(::PolygonData{GADM, Countries}) = "https://geodata.ucdavis.edu/gadm/gadm4.1/json/"
 
 levels(::PolygonData{GADM, Countries}) = (0,1,2,3,4)
 

@@ -18,6 +18,16 @@ Makie.poly(fc::FeatureCollection; kw...) = begin
     f
 end
 
+
+Makie.poly!(feat::Feature; kw...) = poly!(feat.geometry; kw...)
+Makie.poly!(polygon::Polygon; kw...) = poly!(polygon.geometry; kw...)
+Makie.poly!(mp::MultiPolygon; kw...) = poly!(mp.geometry; kw...)
+Makie.poly!(fc::FeatureCollection; kw...) = begin
+    for feat in fc
+        poly!(feat; kw...)
+    end
+end
+
 Makie.poly!(ax, feat::Feature; kw...) = poly!(ax, feat.geometry; kw...)
 Makie.poly!(ax, polygon::Polygon; kw...) = poly!(ax, polygon.geometry; kw...)
 Makie.poly!(ax, mp::MultiPolygon; kw...) = poly!(ax, mp.geometry; kw...)
@@ -37,6 +47,15 @@ Makie.lines(fc::FeatureCollection; kw...) = begin
         lines!(ax, feat)
     end
     f
+end
+
+Makie.lines!(feat::Feature; kw...) = lines!(feat.geometry; kw...)
+Makie.lines!(polygon::Polygon; kw...) = lines!(polygon.geometry; kw...)
+Makie.lines!(mp::MultiPolygon; kw...) = lines!(mp.geometry; kw...)
+Makie.lines!(fc::FeatureCollection; kw...) = begin
+    for feat in fc
+        lines!(feat; kw...)
+    end
 end
 
 Makie.lines!(ax, feat::Feature; kw...) = lines!(ax, feat.geometry; kw...)

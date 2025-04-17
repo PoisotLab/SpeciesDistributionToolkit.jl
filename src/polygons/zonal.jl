@@ -7,7 +7,6 @@ function zone(layer::SDMLayer, polygons::Vector{T}) where {T <: Union{Polygon,Mu
     out = similar(layer, Int16) # This should be enough
     fill!(out, zero(eltype(out)))
     zones = [mask!(copy(layer), poly) for poly in polygons]
-    @info zones
     for i in eachindex(zones)
         out.grid[findall(zones[i].indices)] .= i
     end

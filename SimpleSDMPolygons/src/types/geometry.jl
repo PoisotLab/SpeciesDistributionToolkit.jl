@@ -62,6 +62,9 @@ FeatureCollection(f::Feature) = FeatureCollection([f])
 
 Base.show(io::IO, fc::FeatureCollection) = print(io, "FeatureCollection with $(length(fc)) features, each with $(length(first(fc.features).properties)) properties")
 
+Base.firstindex(::FeatureCollection) = 1
+Base.lastindex(fc::FeatureCollection) = length(fc)
+
 Base.length(fc::FeatureCollection) = length(fc.features)
 Base.getindex(fc::FeatureCollection, i) = getindex(fc.features, i)
 Base.eachindex(fc::FeatureCollection) = eachindex(fc.features)

@@ -159,8 +159,16 @@ function SimpleSDMLayers.mask(
     poly::P
 ) where {T <: AbstractOccurrenceCollection, P<:Union{Polygon,MultiPolygon}}
     inclusion = zeros(Bool, length(elements(occ)))
+    coords = SimpleSDMPolygons.GI.coordinates(poly.geometry)
+    places = place(occ)
     for i in eachindex(elements(occ))
-        inclusion[i] = PolygonOps.inpolygon(place(occ)[i], poly) 
+        val = false
+        if poly isa MultiPolygon
+            val = any(isone, vcat([[PolygonOps.inpolygon(places[i], ci) for ci in c] for c in coords]...))
+        else
+            val = any(isone, [PolygonOps.inpolygon(places[i], c) for c in coords]...)
+        end 
+        inclusion[i] = val
     end
     return elements(occ)[findall(inclusion)]
 end
@@ -172,6 +180,7 @@ function SimpleSDMLayers.mask(
     for feat in features 
         occ = mask(occ, feat)
     end 
+    return occ
 end 
 
 SimpleSDMLayers.mask(

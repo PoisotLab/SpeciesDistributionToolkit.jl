@@ -12,9 +12,14 @@ function MakieCore.convert_arguments(P::MakieCore.NoConversion, t::SSP_TYPES)
     return MakieCore.convert_arguments(P, t.geometry)
 end
 
+function MakieCore.convert_arguments(P::MakieCore.NoConversion, fc::FeatureCollection)
+    return MakieCore.convert_arguments(P, fc.features)
+end
+
 function MakieCore.convert_arguments(P::MakieCore.PointBased, t::SSP_TYPES)
     return MakieCore.convert_arguments(P, t.geometry)
 end
+
 
 function MakieCore.lines(fc::FeatureCollection; kw...)
     fig = lines(fc[begin])
@@ -37,8 +42,17 @@ function MakieCore.lines!(ax, fc::FeatureCollection; kw...)
         lines!(ax, f; kw...)
     end
 end
+function MakieCore.lines!(fc::FeatureCollection; kw...)
+    for f in fc
+        lines!(f; kw...)
+    end
+end
 
-
+function MakieCore.poly!(fc::FeatureCollection; kw...)
+    for f in fc
+        poly!(f; kw...)
+    end
+end
 function MakieCore.poly!(ax, fc::FeatureCollection; kw...)
     for f in fc
         poly!(ax, f; kw...)

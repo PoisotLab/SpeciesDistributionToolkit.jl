@@ -3,10 +3,11 @@
 
 Returns a layer in which the value of each pixel is set to the index of the polygon to which it belongs. Initially valued cells that are not part of a polygon are turned off.
 """
-function zone(layer::SDMLayer, polygons::Vector{T}) where {T <: Union{Polygon,MultiPolygon,Feature}}
+function zone(layer::SDMLayer, polygons::Vector{T}) where {T <: Union{Polygon,MultiPolygon,Feature,FeatureCollection}}
     out = similar(layer, Int16) # This should be enough
     fill!(out, zero(eltype(out)))
     zones = [mask!(copy(layer), poly) for poly in polygons]
+    @info zones
     for i in eachindex(zones)
         out.grid[findall(zones[i].indices)] .= i
     end
@@ -28,7 +29,7 @@ function byzone(
     polygonsnames = 1:length(polygons),
     args...;
     kwargs...,
-) where {T <: GeoJSON.GeoJSONT}
+) where {T <: Union{Polygon,MultiPolygon,Feature,FeatureCollection}}
     z = zone(layer, polygons)
     return [
         (polygonsnames[i] => f(layer.grid[findall(z.grid .== i)], args...; kwargs...)) for

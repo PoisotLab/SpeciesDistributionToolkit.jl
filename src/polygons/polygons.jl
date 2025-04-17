@@ -137,6 +137,7 @@ function SimpleSDMLayers.mask!(layer::L, features::FeatureCollection) where{L<:U
     for feat in features
         mask!(layer, feat)
     end 
+    return layer
 end 
 
 """

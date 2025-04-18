@@ -1,3 +1,6 @@
+_is_valid_latlon(lon, lat) = -180 <= lon <= 180 && -90 <= lat <= 90
+_is_valid_latlon(occ::AbstractOccurrence) = _is_valid_latlon(place(occ))
+
 """
     OccurrencesInterface.__demodata()
 
@@ -6,7 +9,8 @@ Organization, a community science project on cryptids.
 """
 function __demodata()
     datapath = joinpath(dirname(dirname(pathof(OccurrencesInterface))), "data")
-    return OccurrencesInterface.load(joinpath(datapath, "demodata.json"))
+    all_occ = OccurrencesInterface.load(joinpath(datapath, "demodata.json"))
+    return Occurrences(filter(_is_valid_latlon, all_occ))
 end
 
 @testitem "We can load the demo data" begin

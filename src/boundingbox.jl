@@ -64,6 +64,8 @@ function _reconcile(boxes)
     )
 end
 
+# GeoJSON
+
 function boundingbox(fc::GeoJSON.FeatureCollection; kwargs...)
     return _reconcile([boundingbox(ft; kwargs...) for ft in fc.geometry])
 end
@@ -76,8 +78,22 @@ function boundingbox(fc::GeoJSON.MultiPolygon{2, F}; kwargs...) where {F <: Abst
     return _reconcile([boundingbox(vcat(ft...); kwargs...) for ft in fc])
 end
 
+# Vector of points
+
 function boundingbox(fc::Vector{Tuple{F,F}}; kwargs...) where {F <: AbstractFloat}
     lons = [c[1] for c in fc]
     lats = [c[2] for c in fc]
     return _padbbox(extrema(lons)..., extrema(lats)...; kwargs...)
+end
+
+# SimpleSDMPolygons
+
+const _SDMPOLY_TYPES = Union{SimpleSDMPolygons.FeatureCollection, SimpleSDMPolygons.Feature, SimpleSDMPolygons.Polygon}
+
+function boundingbox(fc::T; kwargs...) where T<:_SDMPOLY_TYPES
+    return SimpleSDMPolygons.boundingbox(fc.geometry; kwargs...)
+end
+
+function boundingbox(fc::SimpleSDMPolygons.FeatureCollection; kwargs...)
+    return _reconcile([SimpleSDMPolygons.boundingbox(ft; kwargs...) for ft in fc.features])
 end

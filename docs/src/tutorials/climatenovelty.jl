@@ -23,7 +23,7 @@ import Dates
 # box for the area we are interested in (or, in this case, get the boundingbox
 # from the GeoJSON polygon):
 
-POL = SpeciesDistributionToolkit.openstreetmap("Laurentides")
+POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Laurentides")
 spatial_extent = SpeciesDistributionToolkit.boundingbox(POL)
 
 # Note that the bounding box is given in WGS84. Although layers can use any projection, we

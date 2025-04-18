@@ -10,7 +10,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 #-
 
-POL = SpeciesDistributionToolkit.openstreetmap("Alps")
+POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Alps")
 spatial_extent = SpeciesDistributionToolkit.boundingbox(POL)
 
 # Defining a bounding box is important because, although we can clip any layer,

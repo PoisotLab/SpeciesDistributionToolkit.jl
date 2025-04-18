@@ -10,9 +10,9 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # We can get polygon data from Open Street Map:
 
-BZH = SpeciesDistributionToolkit.openstreetmap("Bretagne")
+BZH = getpolygon(PolygonData(OpenStreetMap, Places), place="Bretagne")
 departements = ["Ille-et-Vilaine", "Morbihan", "Côtes-d'Armor", "Finistère"]
-DPTs = SpeciesDistributionToolkit.openstreetmap.(departements)
+DPTs = map(dpt->getpolygon(PolygonData(OpenStreetMap, Places), place = dpt), departements)
 
 # We will get the BIO1 layer from CHELSA2 (average annual temperature):
 

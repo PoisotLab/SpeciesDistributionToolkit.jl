@@ -62,12 +62,39 @@ FeatureCollection(f::Feature) = FeatureCollection([f])
 
 Base.show(io::IO, fc::FeatureCollection) = print(io, "FeatureCollection with $(length(fc)) features, each with $(length(first(fc.features).properties)) properties")
 
+Base.firstindex(::FeatureCollection) = 1
+Base.lastindex(fc::FeatureCollection) = length(fc)
+
 Base.length(fc::FeatureCollection) = length(fc.features)
 Base.getindex(fc::FeatureCollection, i) = getindex(fc.features, i)
 Base.eachindex(fc::FeatureCollection) = eachindex(fc.features)
 Base.iterate(fc::FeatureCollection) = iterate(fc.features)
 Base.iterate(fc::FeatureCollection, i) = iterate(fc.features, i)
 
+
+
+# --------------------------------------------------------------
+# boundingbox
+# --------------------------------------------------------------
+
+_padbbox(l, r, b, t, p) = (left=l-p, right=r+p, bottom=b-p, top=t+p)
+
+function boundingbox(p::Union{Polygon,MultiPolygon}; padding=0.) 
+    (l,r), (b,t) = GI.extent(p)
+    return _padbbox(l, r, b, t, padding)
+end
+
+function boundingbox(f::Feature; padding=0.) 
+    (l,r), (b,t) = GI.extent(f.geometry)
+    return _padbbox(l, r, b, t, padding)
+end
+
+function boundingbox(fc::FeatureCollection; padding=0.) 
+    bboxs = map(boundingbox, fc)    
+    l,r = minimum([b.left for b in bboxs]), maximum([b.right for b in bboxs]) 
+    b,t = minimum([b.bottom for b in bboxs]), maximum([b.top for b in bboxs]) 
+    return _padbbox(l, r, b, t, padding)
+end
 
 
 # This is (somehow) that most straightforward way to take an ArchGDAL geometry without an associated CRS and add one to it. Don't ask. 

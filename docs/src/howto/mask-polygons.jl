@@ -19,7 +19,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 # We provide a very lightweight tool that uses open street map to turn plain
 # text queries into GeoJSON polygons:
 
-POL = SpeciesDistributionToolkit.openstreetmap("Yosemite National Park")
+POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Yosemite National Park")
 
 # Note that if these polygons are too big, the `simplify` and `simplify!`
 # methods (which are not exported) can be used to reduce their complexity.

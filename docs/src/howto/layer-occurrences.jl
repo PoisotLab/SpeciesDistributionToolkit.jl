@@ -67,6 +67,8 @@ current_figure() #hide
 
 sp_uuid = Phylopic.imagesof(species; items = 1)
 
+# We can ask for more images, in which case they would be returned as a vector.
+
 # ::: tip Credit where credit is due!
 # 
 # The images on Phylopic are *all* created by volunteers. It is important to

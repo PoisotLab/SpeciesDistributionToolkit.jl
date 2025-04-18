@@ -55,15 +55,29 @@ function imagesof(name::AbstractString; items=1, attribution=false, sharealike=f
         n_pages = ceil(items / response["itemsPerPage"])
         uuids = vcat([_get_uuids_at_page(query, page) for page in n_pages]...)
         if isone(length(uuids))
-            return only(uuids)
+            return PhylopicSilhouette(only(uuids)...)
         else
             toreturn = min(items, response["totalItems"])
             if isone(toreturn)
-                return first(uuids)
+                return PhylopicSilhouette(first(uuids)...)
             else
-                return Dict(uuids[1:toreturn])
+                return [PhylopicSilhouette(u...) for u in uuids[1:toreturn]]
             end
         end
     end
     return nothing
+end
+
+PhylopicSilhouette(n::String; kwargs...) = Phylopic.imagesof(n; kwargs...)
+
+@testitem "We can get imagesof" begin
+    @test Phylopic.imagesof("chiroptera") isa PhylopicSilhouette
+end
+
+@testitem "We can get multiple images" begin
+    @test Phylopic.imagesof("chiroptera"; items=2) isa Vector{PhylopicSilhouette}
+end
+
+@testitem "We can get a silhouette by name" begin
+    @test PhylopicSilhouette("Ebolavirus") isa PhylopicSilhouette
 end

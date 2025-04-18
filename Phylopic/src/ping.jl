@@ -1,6 +1,3 @@
-import HTTP
-import JSON
-
 """
     Phylopic.ping()
 
@@ -30,4 +27,8 @@ function build()
         throw(ErrorException("The API at $(Phylopic.api) is not responding"))
     end
     return nothing
+end
+
+@testitem "We can ping easy breezy" begin
+    @test isnothing(Phylopic.ping())
 end

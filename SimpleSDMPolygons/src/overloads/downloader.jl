@@ -9,6 +9,11 @@ function SimpleSDMDatasets.downloader(
     dt = SimpleSDMDatasets.downloadtype(data)
     url, filename, dir = source(data; kw...)
     downloaded_path = _download(dt, url, filename, dir)
+    # This bit is important in case the archive is extracted in a folder whose
+    # name is the name of the file we want, which happens with OneEarth notably
+    if isdir(downloaded_path)
+        downloaded_path = joinpath(downloaded_path, basename(downloaded_path))
+    end
     return postprocess(data, _read(SimpleSDMDatasets.filetype(data), downloaded_path); kw...)
 end
 

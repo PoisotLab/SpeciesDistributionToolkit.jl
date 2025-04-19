@@ -78,4 +78,8 @@ export interpolate, interpolate!
 include("burnin.jl")
 export burnin, burnin!
 
+# Cell area
+include("cellarea.jl")
+export cellarea
+
 end # module

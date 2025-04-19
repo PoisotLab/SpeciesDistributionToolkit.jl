@@ -26,11 +26,11 @@ _GADM_MAX_LEVELS = Dict([r[Symbol("alpha-3")] => r.max_level for r in eachrow(CS
 
 include(joinpath("types", "datasets.jl"))
 export PolygonDataset
-export Land, Oceans, Lakes, Countries, Places, Ecoregions, ParksAndProtected
+export Land, Oceans, Lakes, Countries, Places, Ecoregions, Bioregions, ParksAndProtected
 
 include(joinpath("types", "providers.jl"))
 export PolygonProvider
-export EPA, NaturalEarth, OpenStreetMap, GADM, Resolv
+export EPA, NaturalEarth, OpenStreetMap, GADM, Resolv, OneEarth
 
 include(joinpath("types", "filetypes.jl"))
 
@@ -51,6 +51,7 @@ include(joinpath("providers", "naturalearth.jl"))
 include(joinpath("providers", "openstreetmap.jl"))
 include(joinpath("providers", "gadm.jl"))
 include(joinpath("providers", "resolv.jl"))
+include(joinpath("providers", "oneearth.jl"))
 
 # Utility function
 

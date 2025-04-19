@@ -8,7 +8,6 @@ function SimpleSDMDatasets.downloader(
     SimpleSDMDatasets.keychecker(data; kw...)
     dt = SimpleSDMDatasets.downloadtype(data)
     url, filename, dir = source(data; kw...)
-
     downloaded_path = _download(dt, url, filename, dir)
     return postprocess(data, _read(SimpleSDMDatasets.filetype(data), downloaded_path); kw...)
 end
@@ -37,8 +36,10 @@ function _unzip(zip_path, target_dir)
     mkdir(target_dir)
     zip_archive = ZipArchives.ZipReader(read(zip_path))
     for file_in_zip in ZipArchives.zip_names(zip_archive)
-        out = open(joinpath(target_dir, file_in_zip), "w")
-        write(out, ZipArchives.zip_readentry(zip_archive, file_in_zip, String))
-        close(out)
+        if !contains(file_in_zip, "__MACOSX") # BE BETTER FFS
+            out = open(joinpath(target_dir, file_in_zip), "w")
+            write(out, ZipArchives.zip_readentry(zip_archive, file_in_zip, String))
+            close(out)
+        end
     end
 end

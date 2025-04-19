@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.3.0
 
+- **added** the `reclassify` function to change layer values using rules [#407]
 - **added** the `cellarea` function in replacement of `cellsize` [#416]
 
 ## `v1.2.2`

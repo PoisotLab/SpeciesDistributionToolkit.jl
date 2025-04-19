@@ -8,15 +8,13 @@ SimpleSDMDatasets.filetype(::PolygonData{Resolv, Ecoregions}) = _Shapefile
 root(::PolygonData{Resolv, Ecoregions}) = "https://storage.googleapis.com/teow2016/"
 
 function source(data::PolygonData{Resolv, Ecoregions})    
-    stem = _slug() 
+    stem = "Ecoregions2017.zip"
     return (
         url = root(data) * stem,
         filename = stem,
         outdir = destination(data)
     )
 end
-
-_slug() = "Ecoregions2017.zip"
 
 function postprocess(data::PolygonData{Resolv,T}, res::R; kw...) where {T,R}
     feat, prj = res

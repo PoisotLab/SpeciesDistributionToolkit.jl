@@ -10,7 +10,7 @@ root(::PolygonData{GADM, Countries}) = "https://geodata.ucdavis.edu/gadm/gadm4.1
 levels(::PolygonData{GADM, Countries}) = (0,1,2,3,4)
 
 function source(data::PolygonData{GADM, Countries}; country = "CAN", level = 0)    
-    stem = _slug(country, level) 
+    stem = "gadm41_$(country)_$(level).json"
     return (
         url = root(data) * stem,
         filename = stem,
@@ -27,8 +27,6 @@ function _extra_keychecks(::PolygonData{GADM, Countries}; kwargs...)
         end
     end 
 end
-
-_slug(code, level) = "gadm41_$(code)_$(level).json"
 
 function postprocess(data::PolygonData{GADM,T}, res::R; kw...) where {T,R}
     level = haskey(kw, :level) ? kw[:level] : 0

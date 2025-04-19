@@ -82,4 +82,8 @@ export burnin, burnin!
 include("cellarea.jl")
 export cellarea
 
+# Reclassify
+include("reclassify.jl")
+export reclassify
+
 end # module

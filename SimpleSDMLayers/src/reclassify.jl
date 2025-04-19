@@ -27,8 +27,9 @@ function reclassify(L::SDMLayer, rules::Pair...)
 end
 
 @testitem "We can apply the re-classify function" begin
+    using Statistics
     L = SimpleSDMLayers.__demodata(; reduced = true)
-    q1, q2 = sort(rand(unique(values(L)), 2))
+    q1, q2 = quantile(L, [0.3, 0.7])
     out = reclassify(L, (x -> x > q2) => 3, (x -> q1 <= x <= q2) => 2, (x -> x < q1) => 1)
     @test all(sort(unique(values(out))) .== [1,2,3])
 end

@@ -36,8 +36,8 @@ end
     L = [SDMLayer(DiamondSquare(), (30, 50)) for _ in 1:8]
     P = fit(PCA, L; maxoutdim=2)
     @test typeof(P) <: MultivariateStats.PCA
-    @test indim(P) == length(L)
-    @test outdim(P) <= 2
+    @test size(P, 1) == length(L)
+    @test size(P, 2) <= 2
 end
 
 @testitem "We can transform a vector of layers with a PCA" begin

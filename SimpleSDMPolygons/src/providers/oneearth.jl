@@ -13,3 +13,13 @@ function source(data::PolygonData{OneEarth, Bioregions})
         outdir = destination(data)
     )
 end
+
+function postprocess(data::PolygonData{OneEarth, Bioregions}, res::R; kw...) where {R}
+    fields = _fields_to_extract(data)
+    feats = [Feature(_polygonize(res.geometry[i]), Dict([v=>getproperty(res, k)[i] for (k,v) in fields])) for i in eachindex(res.geometry)]
+    return FeatureCollection(feats)
+end 
+
+_fields_to_extract(::PolygonData{OneEarth,Bioregions}) =  Dict(
+    :Bioregions => "Name"
+)

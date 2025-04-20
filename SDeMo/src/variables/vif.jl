@@ -21,6 +21,7 @@ vif(sdm::T, tr = :) where {T <: AbstractSDM} =
 Drops the variables with the largest variance inflation from the model, until all VIFs are under the threshold. The last positional argument (defaults to `:`) is the indices to use for the VIF calculation. All keyword arguments are passed to `train!`.
 """
 function stepwisevif!(model::SDM, limit, tr = :; kwargs...)
+    @warn "stepwisevif! will be deprecated - use variables! with VarianceInflationFactor instead"
     vifs = vif(model, tr)
     if all(vifs .<= limit)
         train!(model; kwargs...)

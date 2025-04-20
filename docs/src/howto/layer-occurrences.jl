@@ -4,12 +4,10 @@
 # (from GBIF) and layer data can interact. In order to illustrate this, we will
 # get information about the occurrences of *Sitta whiteheadi*, a species of bird
 # endemic to Corsica. Finally, we will rely on the `Phylopic` package to
-# download a silhouette of a bat to illustrate the figure.
+# download a silhouette of the species to illustrate the figure.
 
 using SpeciesDistributionToolkit
 using CairoMakie
-import Images
-import Downloads
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # This sets up a bounding box for the region of interest:
@@ -69,12 +67,7 @@ current_figure() #hide
 
 sp_uuid = Phylopic.imagesof(species; items = 1)
 
-# The next step is to get the url of the image -- we are going to get the largest thumbnail
-# (which is the default):
-
-sp_thumbnail_url = Phylopic.thumbnail(sp_uuid)
-sp_thumbnail_tmp = Downloads.download(sp_thumbnail_url)
-sp_image = Images.load(sp_thumbnail_tmp)
+# We can ask for more images, in which case they would be returned as a vector.
 
 # ::: tip Credit where credit is due!
 # 
@@ -88,15 +81,8 @@ Phylopic.attribution(sp_uuid)
 #
 # :::
 
-# We can now use this image in a scatter plot -- this uses the thumbnail as a scatter
-# symbol, so we need to plot this like any other point. Because the thumbnail returned by
-# default is rather large, we can rescale it based on the image size:
-
-sp_size = Vec2f(reverse(size(sp_image) ./ 3))
-
-# Finally, we can plot everything (note that the Phylopic images have a transparent
-# background, so we are not hiding any information!):
+# We can now use this image in a scatter plot:
 
 # fig-final-plot
-scatter!(envirovars, [3.0], [700.0]; marker = sp_image, markersize = sp_size)
+silhouetteplot!(envirovars, 3.0, 700.0, sp_uuid; markersize = 70)
 current_figure() #hide

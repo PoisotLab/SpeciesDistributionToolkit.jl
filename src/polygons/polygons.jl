@@ -29,24 +29,41 @@ end
 Return a trimmed version of a layer, according to the feature defined a
 `GeoJSON` object. The object is first masked according to the `feature`, and then trimmed.
 """
-trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT} =
+trim(layer::SDMLayer, feature::T) where {T <: Union{Feature, FeatureCollection, Polygon, MultiPolygon}} =
     trim(mask!(copy(layer), feature))
 
-function change_inclusion!(inclusion, layer, polygon, op)
+
+function _reproject(proj, multipoly::MultiPolygon)
+    coords = SimpleSDMPolygons.GI.coordinates(multipoly.geometry)
+    MultiPolygon(SimpleSDMPolygons.AG.createmultipolygon([[proj.(b) for b in a] for a in coords]))
+end
+
+function _reproject(proj, poly::Polygon)
+    coords = SimpleSDMPolygons.GI.coordinates(poly.geometry)[1]
+    Polygon(SimpleSDMPolygons.AG.createpolygon([proj.(a) for a in coords]))
+end
+
+
+function _match_crs(layer, polygon)
+    poly_wkt = SimpleSDMPolygons.GI.crs(polygon).val
+    layer_wkt = SimpleSDMPolygons.AG.toWKT(SimpleSDMPolygons.AG.importPROJ4(layer.crs))
+
+    poly_wkt == layer_wkt && return polygon 
     xytrans = SimpleSDMLayers.Proj.Transformation(
-        "+proj=longlat +datum=WGS84 +no_defs",
-        layer.crs;
+        poly_wkt,
+        layer_wkt,
         always_xy = true,
     )
+    return _reproject(xytrans, polygon)
+end
 
-    transformed_polygon = xytrans.(polygon)
+function change_inclusion!(inclusion, layer, polygon::P) where P
+    transformed_polygon = _match_crs(layer, polygon)
     E, N = eastings(layer), northings(layer)
 
-    lons = extrema(first.(transformed_polygon))
-    valid_eastings = findall(e -> lons[1] <= e <= lons[2], eastings(layer))
-
-    lats = extrema(last.(transformed_polygon))
-    valid_northings = findall(n -> lats[1] <= n <= lats[2], northings(layer))
+    bbox = SimpleSDMPolygons.boundingbox(transformed_polygon)
+    valid_eastings = findall(e -> bbox.left <= e <= bbox.right, eastings(layer))
+    valid_northings = findall(n -> bbox.bottom <= n <= bbox.top, northings(layer))
 
     if isempty(valid_northings)
         return nothing
@@ -60,78 +77,124 @@ function change_inclusion!(inclusion, layer, polygon, op)
         valid_eastings[1]:valid_eastings[end],
     ))
 
-    for position in grid
-        if PolygonOps.inpolygon((E[position[2]], N[position[1]]), transformed_polygon) != 0
-            inclusion[position] = op
-        end
-    end
-    return inclusion
-end
+    # Thread-safe structure
+    chunk_size = max(1, length(grid) ÷ (10 * Threads.nthreads()))
+    data_chunks = Base.Iterators.partition(grid, chunk_size)
 
-"""
-    SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolygon)
+    coords = SimpleSDMPolygons.GI.coordinates(transformed_polygon.geometry)
 
-Turns of fall the cells outside the polygon (or within holes in the polygon). This modifies the object.
-"""
-function SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolygon)
-    inclusion = zeros(eltype(layer.indices), size(layer))
-    for element in multipolygon
-        change_inclusion!(inclusion, layer, element[1], true)
-        if length(element) > 2
-            for i in 2:length(element)
-                change_inclusion!(inclusion, layer, element[i], false)
+    tasks = map(data_chunks) do chunk
+        Threads.@spawn begin
+            for position in chunk
+                coord = (E[position[2]], N[position[1]])
+                val = false 
+                if polygon isa MultiPolygon
+                    val = any(isone, vcat([[PolygonOps.inpolygon(coord, ci) for ci in c] for c in coords]...))
+                else
+                    val = any(isone, [PolygonOps.inpolygon(coord, c) for c in coords]...)
+                end 
+                inclusion[position] = val
             end
         end
     end
+
+    inclusions_batched = fetch.(tasks)
+    return inclusion
+end
+
+_get_inclusion_from_polygon!(inclusion, layer, poly::T) where T<:Union{Polygon,MultiPolygon} = 
+    change_inclusion!(inclusion, layer, poly)
+
+"""
+    SimpleSDMLayers.mask!(layer::SDMLayer, poly::T) where T<:Union{Polygon,MultiPolygon}
+
+Turns off all the cells outside the polygon (or within holes in the polygon). This modifies the object.
+"""
+function SimpleSDMLayers.mask!(layer::SDMLayer, poly::T) where T<:Union{Polygon,MultiPolygon}
+    inclusion = zeros(eltype(layer.indices), size(layer))
+    _get_inclusion_from_polygon!(inclusion, layer, poly)
     layer.indices .&= inclusion
     return layer
 end
 
+function SimpleSDMLayers.mask!(
+    layers::Vector{<:SDMLayer},
+    poly::T,
+) where T<:Union{Polygon,MultiPolygon}
+    inclusion = .!reduce(.|, [l.indices for l in layers])
+    _get_inclusion_from_polygon!(inclusion, first(layers), poly)
+    for layer in layers
+        layer.indices .&= inclusion
+    end
+    return layers
+end
+
+
+SimpleSDMLayers.mask!(layer::L, feature::Feature)  where {L<:Union{<:SDMLayer,Vector{<:SDMLayer}}} =
+    mask!(layer, feature.geometry)
+
+function SimpleSDMLayers.mask!(layer::L, features::FeatureCollection) where{L<:Union{<:SDMLayer,Vector{<:SDMLayer}}}
+    for feat in features
+        mask!(layer, feat)
+    end 
+    return layer
+end 
+
 """
-    SimpleSDMLayers.mask(occ::T, multipolygon::GeoJSON.MultiPolygon) where {T <: AsbtractOccurrenceCollection}
+   SimpleSDMLayers.mask(layer::L, feature::T) where {L<:Union{<:SDMLayer,Vector{<:SDMLayer}}, T <: Union{Feature, FeatureCollection, Polygon, MultiPolygon}}
+
+Returns a copy of the layer by the polygon.
+"""
+SimpleSDMLayers.mask(layer::L, feature::T) where {
+    L <: Union{<:SDMLayer,Vector{<:SDMLayer}},
+    T <: Union{Feature, FeatureCollection, Polygon, MultiPolygon}
+    } = mask!(copy(layer), feature)
+
+"""
+    SimpleSDMLayers.mask(occ::T, poly::P) where {T <: AbstractOccurrenceCollection, P<:Union{Polygon,MultiPolygon}}
 
 Returns a copy of the occurrences that are within the polygon.
 """
 function SimpleSDMLayers.mask(
     occ::T,
-    multipolygon::GeoJSON.MultiPolygon,
-) where {T <: AbstractOccurrenceCollection}
+    poly::P
+) where {T <: AbstractOccurrenceCollection, P<:Union{Polygon,MultiPolygon}}
     inclusion = zeros(Bool, length(elements(occ)))
-    for element in multipolygon
-        for i in eachindex(elements(occ))
-            if PolygonOps.inpolygon(
-                place(occ)[i],
-                element[1],
-            ) != 0
-                inclusion[i] = true
-                if length(element) > 2
-                    for i in 2:length(element)
-                        if PolygonOps.inpolygon(
-                            place(occ)[i],
-                            element[i],
-                        ) != 0
-                            inclusion[i] = false
-                        end
-                    end
-                end
-            end
-        end
+    coords = SimpleSDMPolygons.GI.coordinates(poly.geometry)
+    places = place(occ)
+    for i in eachindex(elements(occ))
+        val = false
+        if poly isa MultiPolygon
+            val = any(isone, vcat([[PolygonOps.inpolygon(places[i], ci) for ci in c] for c in coords]...))
+        else
+            val = any(isone, [PolygonOps.inpolygon(places[i], c) for c in coords]...)
+        end 
+        inclusion[i] = val
     end
     return elements(occ)[findall(inclusion)]
 end
 
-SimpleSDMLayers.mask!(layer::SDMLayer, features::GeoJSON.FeatureCollection, feature = 1) =
-    mask!(layer, features[feature])
+function SimpleSDMLayers.mask(
+    occ::T,
+    features::FeatureCollection
+) where {T <: AbstractOccurrenceCollection} 
+    for feat in features 
+        occ = mask(occ, feat)
+    end 
+    return occ
+end 
+
 SimpleSDMLayers.mask(
     occ::T,
-    features::GeoJSON.FeatureCollection,
-    feature = 1,
-) where {T <: AbstractOccurrenceCollection} =
-    mask(occ, features[feature])
-SimpleSDMLayers.mask!(layer::SDMLayer, feature::GeoJSON.Feature) =
-    mask!(layer, feature.geometry)
-SimpleSDMLayers.mask(
-    occ::T,
-    feature::GeoJSON.Feature,
-) where {T <: AbstractOccurrenceCollection} =
-    mask(occ, feature.geometry)
+    feature::Feature
+) where {T <: AbstractOccurrenceCollection} = mask(occ, feature.geometry)
+
+
+@testitem "We can mask with a polygon (multi-threaded)" begin
+    POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Switzerland")
+    L = SDMLayer(RasterData(CHELSA1, MinimumTemperature); SpeciesDistributionToolkit.boundingbox(POL; padding=1.0)...)
+    Lc = count(L)
+    mask!(L, POL)
+    @test typeof(L) <: SDMLayer
+    @test count(L) <= Lc
+end

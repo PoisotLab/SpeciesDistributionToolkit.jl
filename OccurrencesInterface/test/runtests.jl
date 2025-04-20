@@ -2,18 +2,22 @@ using TestItemRunner
 
 @run_package_tests filter=ti->!(:skipci in ti.tags)
 
-# write tests here
+@testitem "We can plot a series of occurrences" begin
+    using CairoMakie
+    r = OccurrencesInterface.__demodata()
+    scatter(r)
+    scatter(Occurrences(elements(r)))
+end
 
-## NOTE add JET to the test environment, then uncomment
-# using JET
-# @testset "static analysis with JET.jl" begin
-#     @test isempty(JET.get_reports(report_package(SDMLayers, target_modules=(SDMLayers,))))
-# end
+@testitem "We can hexbin of occurrences" begin
+    using CairoMakie
+    r = OccurrencesInterface.__demodata()
+    hexbin(r)
+    hexbin(Occurrences(elements(r)))
+end
 
-## NOTE add Aqua to the test environment, then uncomment
-# @testset "QA with Aqua" begin
-#     import Aqua
-#     Aqua.test_all(SDMLayers; ambiguities = false)
-#     # testing separately, cf https://github.com/JuliaTesting/Aqua.jl/issues/77
-#     Aqua.test_ambiguities(SDMLayers)
-# end
+@testitem "We can plot a series of occurrences and color by attribute" begin
+    using CairoMakie
+    r = OccurrencesInterface.__demodata()
+    scatter(r, color=presence(r))
+end

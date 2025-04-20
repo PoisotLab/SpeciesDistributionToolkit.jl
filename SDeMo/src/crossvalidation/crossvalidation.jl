@@ -22,6 +22,32 @@ end
 end
 
 """
+    __classsplit(y)
+
+Returns a tuple with the presences indices, and the absences indices - this is used to maintain class balance in cross-validation and bagging
+"""
+__classsplit(y) = findall(y), findall(!, y)
+
+function __validation_idx(idx, p::T) where {T <: AbstractFloat}
+    return idx[1:round(Int, p * length(idx))]
+end
+
+function __validation_idx(idx, k::Int)
+    start_stop = unique(round.(Int, LinRange(1, length(idx), k + 1)))
+    folds = Vector{eltype(idx)}[]
+    for (i, stop) in enumerate(start_stop)
+        if stop > 1
+            start = start_stop[i - 1]
+            if start > 1
+                start += 1
+            end
+            push!(folds, idx[start:stop])
+        end
+    end
+    return folds
+end
+
+"""
     holdout(y, X; proportion = 0.2, permute = true)
 
 Sets aside a proportion (given by the `proportion` keyword, defaults to `0.2`)
@@ -35,15 +61,18 @@ validation data second. To use this with `crossvalidate`, it must be put in
 """
 function holdout(y, X; proportion = 0.2, permute = true)
     @assert size(y, 1) == size(X, 2)
-    sample_size = size(X, 2)
-    n_holdout = round(Int, proportion * sample_size)
-    positions = collect(axes(X, 2))
+    # Split in positive/negative cases
+    pos, neg = __classsplit(y)
     if permute
-        Random.shuffle!(positions)
+        Random.shuffle!(pos)
+        Random.shuffle!(neg)
     end
-    data_pos = positions[1:(sample_size - n_holdout - 1)]
-    hold_pos = positions[(sample_size - n_holdout):sample_size]
-    return (data_pos, hold_pos)
+    positions = collect(axes(X, 2))
+    # Create the dataset
+    holdout_instances =
+        vcat(__validation_idx(pos, proportion), __validation_idx(neg, proportion))
+    data_instances = setdiff(positions, holdout_instances)
+    return (data_instances, holdout_instances)
 end
 
 @testitem "We can do holdout validation" begin
@@ -82,33 +111,25 @@ end
 
 Returns splits of the data in which 1 group is used for validation, and `k`-1
 groups are used for training. All `k`` groups have the (approximate) same size, and each instance is only used once for validation (and `k`-1 times for
-training).
+training). The groups are stratified (so that they have the same prevalence).
 
 This method returns a vector of tuples, with each entry have the training data
 first, and the validation data second.
 """
 function kfold(y, X; k = 10, permute = true)
     @assert size(y, 1) == size(X, 2)
-    sample_size = size(X, 2)
-    @assert k <= sample_size
-    positions = collect(axes(X, 2))
+    # Split in positive/negative cases
+    pos, neg = __classsplit(y)
     if permute
-        Random.shuffle!(positions)
+        Random.shuffle!(pos)
+        Random.shuffle!(neg)
     end
-    folds = []
-    fold_ends = unique(round.(Int, LinRange(1, sample_size, k + 1)))
-    for (i, stop) in enumerate(fold_ends)
-        if stop > 1
-            start = fold_ends[i - 1]
-            if start > 1
-                start += 1
-            end
-            hold_pos = positions[start:stop]
-            data_pos = filter(p -> !(p in hold_pos), positions)
-            push!(folds, (data_pos, hold_pos))
-        end
-    end
-    return folds
+    # List of instances positions
+    positions = collect(axes(X, 2))
+    # Validation data for pos/neg
+    val = __validation_idx(pos, k) .∪ __validation_idx(neg, k)
+    trn = [setdiff(positions, v) for v in val]
+    return collect(zip(trn, val))
 end
 
 @testitem "We can do kfold validation" begin
@@ -159,27 +180,51 @@ for each set of validation data first, and the confusion matrix for the training
 data second.
 """
 function crossvalidate(sdm::T, folds; thr = nothing, kwargs...) where {T <: AbstractSDM}
-    Cv = zeros(ConfusionMatrix, length(folds))
-    Ct = zeros(ConfusionMatrix, length(folds))
-    models = [deepcopy(sdm) for _ in Base.OneTo(Threads.nthreads())]
-    Threads.@threads for i in eachindex(folds)
-        trn, val = folds[i]
-        train!(models[Threads.threadid()]; training = trn, kwargs...)
-        pred = predict(models[Threads.threadid()], features(sdm)[:, val]; threshold = false)
-        ontrn =
-            predict(models[Threads.threadid()], features(sdm)[:, trn]; threshold = false)
-        thr = isnothing(thr) ? threshold(sdm) : thr
-        Cv[i] = ConfusionMatrix(pred, labels(sdm)[val], thr)
-        Ct[i] = ConfusionMatrix(ontrn, labels(sdm)[trn], thr)
+    # We get the threshold to use for classification only once
+    τ = isnothing(thr) ? threshold(sdm) : thr
+
+    # Thread-safe structure
+    chunk_size = max(1, length(folds) ÷ (5 * Threads.nthreads() ))
+    data_chunks = Base.Iterators.partition(folds, chunk_size)
+
+    tasks = map(data_chunks) do chunk
+        Threads.@spawn begin
+            model = deepcopy(sdm)
+            Cv = zeros(ConfusionMatrix, length(chunk))
+            Ct = zeros(ConfusionMatrix, length(chunk))
+            for i in eachindex(chunk)
+                Cv[i], Ct[i] = SDeMo._validate_one_model!(model, chunk[i], τ, kwargs...)
+            end
+            return Cv, Ct
+        end
     end
-    return (validation = Cv, training = Ct)
+
+    confmats_batched = fetch.(tasks)
+    return (validation = vcat(first.(confmats_batched)...), training = vcat(last.(confmats_batched)...))
+end
+
+"""
+    _validate_one_model!(model::AbstractSDM, fold, τ, kwargs...)
+
+Trains the model and returns the Cv and Ct conf matr. Used internally by
+cross-validation.
+"""
+function _validate_one_model!(model::T, fold, τ, kwargs...) where {T <: AbstractSDM}
+    trn, val = fold
+    train!(model; training = trn, kwargs...)
+    pred = predict(model, features(model)[:, val]; threshold = false)
+    ontrn = predict(model, features(model)[:, trn]; threshold = false)
+    Cv = ConfusionMatrix(pred, labels(model)[val], τ)
+    Ct = ConfusionMatrix(ontrn, labels(model)[trn], τ)
+    return Cv, Ct
 end
 
 @testitem "We can cross-validate an SDM" begin
     X, y = SDeMo.__demodata()
     sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.5, X, y, [1, 2, 12])
     train!(sdm)
-    cv = crossvalidate(sdm, kfold(sdm; k = 15))
+    folds = kfold(sdm; k = 15)
+    cv = crossvalidate(sdm, folds)
     @test eltype(cv.validation) <: ConfusionMatrix
     @test eltype(cv.training) <: ConfusionMatrix
 end
@@ -190,7 +235,8 @@ end
     sdm = SDM(MultivariateTransform{PCA}(), NaiveBayes(), 0.5, X, y, [1, 2, 12])
     ens = Bagging(sdm, 10)
     train!(ens)
-    cv = crossvalidate(ens, kfold(ens; k = 15); consensus = median)
+    folds = kfold(sdm; k=15)
+    cv = crossvalidate(ens, folds; consensus = median)
     @test eltype(cv.validation) <: ConfusionMatrix
     @test eltype(cv.training) <: ConfusionMatrix
 end

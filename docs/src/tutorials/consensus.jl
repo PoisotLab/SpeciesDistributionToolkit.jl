@@ -1,8 +1,8 @@
 # # Creating a landcover consensus map
 
-# In this vignette, we will look at the different landcover classes in Corsica.
-# This is an opportunity to see how we can edit, mask, and aggregate data for
-# processing.
+# In this vignette, we will look at the different landcover classes in the Alps
+# mountain range. This is an opportunity to see how we can edit, mask, and
+# aggregate data for processing.
 
 using SpeciesDistributionToolkit
 using CairoMakie
@@ -10,7 +10,8 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 #-
 
-spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
+POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Alps")
+spatial_extent = SpeciesDistributionToolkit.boundingbox(POL)
 
 # Defining a bounding box is important because, although we can clip any layer,
 # the package will only *read* what is required. For large data (like landcover
@@ -38,18 +39,9 @@ stack = [
     layer in landcover_types
 ];
 
-# We know that the last layer (`"Open Water"`) is a little less interesting, so we
-# can create a mask for the pixels that are less than 100% open water.
+# We then mask the layers using the polygon we are interested in:
 
-open_water_idx = findfirst(isequal("Open Water"), landcover_types)
-open_water_mask = nodata(stack[open_water_idx], 100.0f0)
-
-# We can now mask all of the rasters in the stack, to remove the open water
-# pixels:
-
-for i in eachindex(stack)
-    mask!(stack[i], open_water_mask)
-end
+mask!(stack, POL)
 
 # At this point, we are ready to get the most important land use category for each
 # pixel, using the `mosaic` function:
@@ -74,25 +66,32 @@ landcover_colors = [
     colorant"#5566AA",
 ];
 
+# We can check which categories are actually represented in the consensus map:
+
+repr = sort(unique(values(consensus)))
+
 # We can now create our plot:
 
 # fig-consensus-heatmap
-fig = Figure(; size = (900, 1000))
+fig = Figure(; size = (900, 700))
 panel = Axis(
     fig[1, 1];
     xlabel = "Easting",
     ylabel = "Northing",
     aspect = DataAspect(),
 )
+hidedecorations!(panel)
+hidespines!(panel)
 heatmap!(
     panel,
     consensus;
-    colormap = landcover_colors,
+    colormap = landcover_colors[repr],
 )
+lines!(panel, POL, color=:black)
 Legend(
     fig[2, 1],
-    [PolyElement(; color = landcover_colors[i]) for i in eachindex(landcover_colors)],
-    landcover_types;
+    [PolyElement(; color = landcover_colors[repr][i]) for i in eachindex(landcover_colors[repr])],
+    landcover_types[repr];
     orientation = :horizontal,
     nbanks = 4,
 )

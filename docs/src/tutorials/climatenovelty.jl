@@ -19,10 +19,12 @@ import Dates
 
 # ## Accessing historical climate data
 
-# In order to only load a reasonable amount of data, we will specify a bounding box for the
-# area we are interested in:
+# In order to only load a reasonable amount of data, we will specify a bounding
+# box for the area we are interested in (or, in this case, get the boundingbox
+# from the GeoJSON polygon):
 
-spatial_extent = (left = 23.42, bottom = 34.75, right = 26.41, top = 35.74)
+POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Laurentides")
+spatial_extent = SpeciesDistributionToolkit.boundingbox(POL)
 
 # Note that the bounding box is given in WGS84. Although layers can use any projection, we
 # follow the GeoJSON specification and use WGS84 for point data. This includes species
@@ -35,14 +37,14 @@ spatial_extent = (left = 23.42, bottom = 34.75, right = 26.41, top = 35.74)
 #
 # :::
 
-# We will get the [BioClim data from CHELSA v1](/datasets/CHELSA1/).
-# CHELSA v1 offers access to the 19 original bioclim variable, and their
+# We will get the [BioClim data from CHELSA v2](/datasets/CHELSA2/).
+# CHELSA v2 offers access to the 19 original bioclim variable, and their
 # projection under a variety of CMIP5 models/scenarios. These are pretty large
 # data, and so this operation may take a while in terms of download/read time.
 # The first time you run this command will download the data, and the next calls
 # will read them from disk.
 
-dataprovider = RasterData(CHELSA1, BioClim)
+dataprovider = RasterData(CHELSA2, BioClim)
 
 # We can search the layer that correspond to annual precipitation and annual
 # mean temperature in the list of provided layers:
@@ -56,6 +58,7 @@ layers_code = findall(
 # annual precipitation, by specifying the layer and the spatial extent:
 
 historical = [SDMLayer(dataprovider; layer = l, spatial_extent...) for l in layers_code];
+mask!(historical, POL)
 
 # Although we specificed a bounding box, the entire layer has been downloaded, so if we want
 # to use it in another area, it will simply be read from the disk, which will be much
@@ -82,7 +85,7 @@ current_figure() #hide
 # model. This information is used by the package to verify that this combination
 # exists within the dataset we are working with.
 
-projection = Projection(RCP85, IPSL_CM5A_MR)
+projection = Projection(SSP370, GFDL_ESM4)
 
 # Future data are available for different years, so we will take a look at what
 # years are available:
@@ -98,7 +101,8 @@ available_timeperiods = SimpleSDMDatasets.timespans(dataprovider, projection)
 
 # If we do not specify an argument, the data retrieved will be the ones for the
 # closest timespan. Getting the projected temperature is the *same* call as
-# before, except we now pass an additional argument -- the projection.
+# before, except we now pass additional arguments -- the projection and the
+# timespan.
 
 projected = [
     SDMLayer(
@@ -106,9 +110,10 @@ projected = [
         projection; # [!code highlight]
         layer = l,
         spatial_extent...,
-        timespan = last(available_timeperiods),
+        timespan = last(available_timeperiods), # [!code highlight]
     ) for l in layers_code
 ];
+mask!(projected, POL)
 
 # ## Re-scaling the variables
 
@@ -154,16 +159,31 @@ for position in keys(cr_historical[1])
     Δclim[position] = minimum(sqrt.(dtemp .+ dprec))
 end
 
-# Because we have stored the information about the smallest possible distance directly inside the raster, we can
-# plot it. Large values on this map indicate that this area will experience more novel
-# climatic conditions under the scenario/model we have specified.
+# Because we have stored the information about the smallest possible distance
+# directly inside the raster, we can plot it. Large values on this map indicate
+# that this area will experience more novel climatic conditions under the
+# scenario/model we have specified.
 
 # fig-novelty
 fig, ax, hm = heatmap(
     Δclim;
-    colormap = :lipari,
+    colormap = :tempo,
     figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
-Colorbar(fig[:, end + 1], hm)
+lines!(ax, POL, color=:black)
+hidespines!(ax)
+hidedecorations!(ax)
+Colorbar(
+    fig[1, 1],
+    hm;
+    label = "Climatic novelty",
+    alignmode = Inside(),
+    width = Relative(0.4),
+    valign = :bottom,
+    halign = :left,
+    tellheight = false,
+    tellwidth = false,
+    vertical = false,
+)
 current_figure() #hide

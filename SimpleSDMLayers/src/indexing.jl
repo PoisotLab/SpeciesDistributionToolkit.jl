@@ -38,7 +38,11 @@ function __get_grid_coordinate_by_latlon(
     if isequal("+proj=longlat +datum=WGS84 +no_defs")(layer.crs)
         return __get_grid_coordinate_by_crs(layer, longitude, latitude)
     else
-        prj = Proj.Transformation("+proj=longlat +datum=WGS84 +no_defs", layer.crs; always_xy = true)
+        prj = Proj.Transformation(
+            "+proj=longlat +datum=WGS84 +no_defs",
+            layer.crs;
+            always_xy = true,
+        )
         return __get_grid_coordinate_by_crs(layer, prj(longitude, latitude)...)
     end
 end
@@ -54,8 +58,8 @@ function __get_grid_coordinate_by_crs(layer::SDMLayer, easting, northing)
     (northing > maximum(northings)) && return nothing
 
     # Return the coordinate
-    ei = findfirst(easting .<= eastings) - 1
-    ni = findfirst(northing .<= northings) - 1
+    ei = Base.Sort.searchsortedfirst(eastings, easting) - 1
+    ni = Base.Sort.searchsortedfirst(northings, northing) - 1
     return (ni, ei)
 end
 
@@ -79,7 +83,11 @@ end
 
 @testitem "We get the correct cell when indexing the ends of the bounding box" begin
     layer = SimpleSDMLayers.__demodata()
-    prj = SimpleSDMLayers.Proj.Transformation(layer.crs, "+proj=longlat +datum=WGS84 +no_defs"; always_xy = true)
+    prj = SimpleSDMLayers.Proj.Transformation(
+        layer.crs,
+        "+proj=longlat +datum=WGS84 +no_defs";
+        always_xy = true,
+    )
 
     ll_ll = prj(layer.x[1], layer.y[1]) .+ (0.001, 0.001)
     lr_ll = prj(layer.x[2], layer.y[1]) .+ (-0.001, 0.001)

@@ -48,6 +48,12 @@ jobs:
             token: ${{ secrets.GITHUB_TOKEN }}
             ssh: ${{ secrets.DOCUMENTER_KEY }}
             subdir: SimpleSDMDatasets
+      - name: Tag SSP
+        uses: JuliaRegistries/TagBot@v1
+        with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            ssh: ${{ secrets.DOCUMENTER_KEY }}
+            subdir: SimpleSDMPolygons
       - name: Tag Phylopic
         uses: JuliaRegistries/TagBot@v1
         with:
@@ -72,4 +78,10 @@ jobs:
             token: ${{ secrets.GITHUB_TOKEN }}
             ssh: ${{ secrets.DOCUMENTER_KEY }}
             subdir: OccurrencesInterface
+      - name: Tag PseudoAbsences
+        uses: JuliaRegistries/TagBot@v1
+        with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            ssh: ${{ secrets.DOCUMENTER_KEY }}
+            subdir: PseudoAbsences
     

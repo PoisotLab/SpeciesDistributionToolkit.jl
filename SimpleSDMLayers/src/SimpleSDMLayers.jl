@@ -66,8 +66,24 @@ export quantize!, quantize
 include("mosaic.jl")
 export mosaic
 
+# Caorsen
+include("coarsen.jl")
+export coarsen
+
 # Interpolation
 include("interpolation.jl")
-export interpolate
+export interpolate, interpolate!
+
+# Burn values in layers
+include("burnin.jl")
+export burnin, burnin!
+
+# Cell area
+include("cellarea.jl")
+export cellarea
+
+# Reclassify
+include("reclassify.jl")
+export reclassify
 
 end # module

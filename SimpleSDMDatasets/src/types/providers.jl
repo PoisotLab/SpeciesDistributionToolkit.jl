@@ -41,3 +41,10 @@ struct BiodiversityMapping <: RasterProvider end
 Paleoclimate data from http://www.paleoclim.org/ - see this website for citation information
 """
 struct PaleoClim <: RasterProvider end
+
+"""
+    Copernicus
+
+Produced by the global component of the Copernicus Land Service, derived from PROBA-V satellite observations and ancillary datasets -- see https://land.copernicus.eu/en/products/global-dynamic-land-cover
+"""
+struct Copernicus <: RasterProvider end

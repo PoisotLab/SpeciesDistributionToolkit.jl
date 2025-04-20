@@ -22,7 +22,9 @@ import ArchGDAL as AG
 
 import SimpleSDMDatasets
 
-_GADM_MAX_LEVELS = Dict([r[Symbol("alpha-3")] => r.max_level for r in eachrow(CSV.read(joinpath(@__DIR__, "..", "assets", "GADM.csv"), DataFrame))])
+const _GADM_MAX_LEVELS = Dict([r[Symbol("alpha-3")] => r.max_level for r in eachrow(CSV.read(joinpath(@__DIR__, "..", "assets", "GADM.csv"), DataFrame))])
+
+const _ONEEARTH_CODES = Dict([r.Code=>Dict("Region"=>String(r.Region), "Subregion"=>r.Subregion, "Name"=>r.Name) for r in eachrow(CSV.read(joinpath("SimpleSDMPolygons", "assets", "OneEarth.csv"), DataFrame))])
 
 include(joinpath("types", "datasets.jl"))
 export PolygonDataset

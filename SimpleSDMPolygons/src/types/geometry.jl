@@ -78,7 +78,6 @@ getname(fc::FeatureCollection) = getname.(fc.features)
 
 function uniqueproperties(fc::FeatureCollection) 
     propkeys = collect(keys(fc[1].properties))
-
     return Dict([k=>unique([f.properties[k] for f in fc]) for k in propkeys])
 end
 

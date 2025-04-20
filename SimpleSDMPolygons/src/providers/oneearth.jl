@@ -15,10 +15,13 @@ function source(data::PolygonData{OneEarth, Bioregions})
 end
 
 function postprocess(data::PolygonData{OneEarth, Bioregions}, res::R; kw...) where {R}
-    return res
-    fields = _fields_to_extract(data)
-    feats = [Feature(_polygonize(res.geometry[i]), Dict([v=>getproperty(res, k)[i] for (k,v) in fields])) for i in eachindex(res.geometry)]
+    feats = [Feature(_polygonize(res.geometry[i]), _ONEEARTH_CODES[res.Bioregions[i]]) for i in eachindex(res.geometry)]
     return FeatureCollection(feats)
+end 
+
+function _get_properties(code)
+    trunc_code = code[1:2]
+    return _ONEEARTH_CODES[trunc_code]
 end 
 
 _fields_to_extract(::PolygonData{OneEarth,Bioregions}) =  Dict(

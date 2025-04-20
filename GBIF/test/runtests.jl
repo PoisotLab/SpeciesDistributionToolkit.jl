@@ -14,6 +14,7 @@ tests = [
     "tables interface" => "tables.jl",
     "edge cases" => "edgecases.jl",
     "occurrences interface" => "occurrencesinterface.jl",
+    "download API" => "download.jl",
 ]
 
 for test in tests

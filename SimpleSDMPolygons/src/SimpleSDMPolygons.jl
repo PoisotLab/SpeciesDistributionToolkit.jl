@@ -39,6 +39,7 @@ export PolygonData
 
 include(joinpath("types", "geometry.jl"))
 export FeatureCollection, Feature, Polygon, MultiPolygon
+export getname
 
 # These are overloaded from SimpleSDMDatasets
 include("overloads/interface.jl")

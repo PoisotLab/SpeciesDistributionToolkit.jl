@@ -84,9 +84,14 @@ end
     download(key)
 
 Downloads the zip file associated to a specific query (identified by its key) as
-a zip file.
+a zip file. Note that if you do not know the dataset key, this function also
+accepts the DOI. For now, the results are returned as `Occurrences` as opposed
+to `GBIFRecords`. This will be modifiable in a future release.
 """
 function download(key)
+    if contains(key, "/dl.")
+        key = GBIF.doi(key)["key"]
+    end
     request_url = GBIF.gbifurl * "occurrence/download/request/$(key)"
     dl_req = HTTP.get(request_url; headers=GBIF.apiauth())
     if dl_req.status == 200
@@ -94,8 +99,28 @@ function download(key)
         open("$(key).zip", "w") do f
             write(f, dl_req.body)
         end
-        return "$(key).zip"
+        archive = "$(key).zip"
+        csv = CSV.File(GBIF._get_csv_from_zip(archive))
+        return OccurrencesInterface.Occurrences(GBIF._materialize.(OccurrencesInterface.Occurrence, csv))
     end
+end
+
+function _materialize(::Type{OccurrencesInterface.Occurrence}, row::CSV.Row)
+    date = missing
+    if !ismissing(row.eventDate)
+        try
+            date = Dates.DateTime(replace(row.eventDate, "Z" => ""))
+        catch
+            @info "Malformed date for record $(row.gbifID) - date will be missing"
+        end
+    end
+    place = ismissing(row.decimalLatitude)|ismissing(row.decimalLongitude) ? missing : (row.decimalLongitude, row.decimalLatitude)
+    return OccurrencesInterface.Occurrence(
+        presence = row.occurrenceStatus == "PRESENT",
+        what = row.verbatimScientificName,
+        when = date,
+        where = place
+    )
 end
 
 function mydownloads(; preparing=true, running=true, succeeded=true, cancelled=true, killed=true, failed=true, suspended=true, erased=true)
@@ -114,4 +139,29 @@ function mydownloads(; preparing=true, running=true, succeeded=true, cancelled=t
     if request_resp.status == 200
         return JSON.parse(String(request_resp.body))
     end
+end
+
+"""
+   doi(doi::String)
+
+Returns the information of a download request by its DOI.
+"""
+function doi(doi::String)
+    request_url = GBIF.gbifurl * "occurrence/download/$doi"
+    request_resp = HTTP.get(request_url; headers = GBIF.apiauth())
+    if request_resp.status == 200
+        return JSON.parse(String(request_resp.body))
+    end
+end
+
+function _get_csv_from_zip(archive)
+    zip_archive = ZipArchives.ZipReader(read(archive))
+    for file_in_zip in ZipArchives.zip_names(zip_archive)
+        if file_in_zip == replace(archive, ".zip" => ".csv")
+            out = open(file_in_zip, "w")
+            write(out, ZipArchives.zip_readentry(zip_archive, file_in_zip, String))
+            close(out)
+        end
+    end
+    return replace(archive, ".zip" => ".csv")
 end

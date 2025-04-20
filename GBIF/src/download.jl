@@ -93,7 +93,7 @@ function download(key)
         key = GBIF.doi(key)["key"]
     end
     request_url = GBIF.gbifurl * "occurrence/download/request/$(key)"
-    dl_req = HTTP.get(request_url; headers=GBIF.apiauth())
+    dl_req = HTTP.get(request_url)#; headers=GBIF.apiauth())
     if dl_req.status == 200
         # Get that bag
         open("$(key).zip", "w") do f
@@ -148,7 +148,7 @@ Returns the information of a download request by its DOI.
 """
 function doi(doi::String)
     request_url = GBIF.gbifurl * "occurrence/download/$doi"
-    request_resp = HTTP.get(request_url; headers = GBIF.apiauth())
+    request_resp = HTTP.get(request_url)#; headers = GBIF.apiauth())
     if request_resp.status == 200
         return JSON.parse(String(request_resp.body))
     end

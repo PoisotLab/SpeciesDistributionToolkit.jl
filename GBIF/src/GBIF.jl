@@ -5,6 +5,8 @@ using JSON
 using Dates
 using Tables
 import Base64
+import ZipArchives
+import CSV
 import OccurrencesInterface
 
 function safeget(endpoint)
@@ -86,8 +88,8 @@ include("paging.jl")
 export occurrence, occurrences
 export occurrences!
 
-include("download.jl")
-
 include("occurrencesinterface.jl")
+
+include("download.jl")
 
 end # module

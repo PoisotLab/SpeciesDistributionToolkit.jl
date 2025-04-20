@@ -115,9 +115,10 @@ function _materialize(::Type{OccurrencesInterface.Occurrence}, row::CSV.Row)
         end
     end
     place = ismissing(row.decimalLatitude)|ismissing(row.decimalLongitude) ? missing : (row.decimalLongitude, row.decimalLatitude)
+    whatis = ismissing(row.verbatimScientificName) ? row.scientificName : row.verbatimScientificName
     return OccurrencesInterface.Occurrence(
         presence = row.occurrenceStatus == "PRESENT",
-        what = row.verbatimScientificName,
+        what = whatis,
         when = date,
         where = place
     )

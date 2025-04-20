@@ -76,13 +76,18 @@ Base.iterate(fc::FeatureCollection, i) = iterate(fc.features, i)
 
 getname(fc::FeatureCollection) = getname.(fc.features)
 
+function uniqueproperties(fc::FeatureCollection) 
+    propkeys = collect(keys(fc[1].properties))
+
+    return Dict([k=>unique([f.properties[k] for f in fc]) for k in propkeys])
+end
+
 Base.getindex(fc::FeatureCollection, i) = getindex(fc.features, i)
 Base.getindex(fc::FeatureCollection, str::String) = begin
     names = getname.(fc)    
     idx = findfirst(isequal(str), names)
     return fc[idx]
 end
-
 Base.getindex(fc::FeatureCollection, pr::Pair) = begin
     vals = getproperty.(fc.features, pr[1])
     idx = findall(isequal(pr[2]), vals)

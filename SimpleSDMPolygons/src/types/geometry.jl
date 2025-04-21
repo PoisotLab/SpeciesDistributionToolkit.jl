@@ -10,12 +10,12 @@ struct Polygon <: AbstractGeometry
     geometry::AG.IGeometry{AG.wkbPolygon}
 end
 GI.isgeometry(::Polygon)::Bool = true
-GI.geomtrait(::Polygon)::DataType = GI.PolygonTrait
-GI.ngeom(::Type{GI.PolygonTrait}, geom::Polygon)::Integer = GI.ngeom(geom.geometry)
-GI.getgeom(::Type{GI.PolygonTrait}, geom::Polygon, i) = 
+GI.geomtrait(::Polygon)::DataType = GI.PolygonTrait()
+GI.ngeom(::GI.PolygonTrait, geom::Polygon)::Integer = GI.ngeom(geom.geometry)
+GI.getgeom(::GI.PolygonTrait, geom::Polygon, i) = 
 GI.getgeom(geom.geometry, i)
-GI.crs(::Type{GI.PolygonTrait}, geom::Polygon)= GI.crs(geom.geometry)
-GI.extent(::Type{GI.PolygonTrait}, geom::Polygon)::GI.Extents.Extent = GI.extent(geom.geometry)
+GI.crs(::GI.PolygonTrait, geom::Polygon)= GI.crs(geom.geometry)
+GI.extent(::GI.PolygonTrait, geom::Polygon)::GI.Extents.Extent = GI.extent(geom.geometry)
 
 
 """
@@ -26,12 +26,12 @@ struct MultiPolygon <: AbstractGeometry
 end
 Base.show(io::IO, mp::MultiPolygon) = print(io, "MultiPolygon with $(GI.ngeom(mp.geometry)) subpolygons")
 GI.isgeometry(::MultiPolygon)::Bool = true
-GI.geomtrait(::MultiPolygon)::DataType = GI.MultiPolygonTrait
-GI.ngeom(::Type{GI.MultiPolygonTrait}, geom::MultiPolygon)::Integer = GI.ngeom(geom.geometry)
-GI.getgeom(::Type{GI.MultiPolygonTrait}, geom::MultiPolygon, i) = 
+GI.geomtrait(::MultiPolygon)::DataType = GI.MultiPolygonTrait()
+GI.ngeom(::GI.MultiPolygonTrait, geom::MultiPolygon)::Integer = GI.ngeom(geom.geometry)
+GI.getgeom(::GI.MultiPolygonTrait, geom::MultiPolygon, i) = 
 GI.getgeom(geom.geometry, i)
-GI.crs(::Type{GI.MultiPolygonTrait}, geom::MultiPolygon)= GI.crs(geom.geometry)
-GI.extent(::Type{GI.MultiPolygonTrait}, geom::MultiPolygon)::GI.Extents.Extent = GI.extent(geom.geometry)
+GI.crs(::GI.MultiPolygonTrait, geom::MultiPolygon)= GI.crs(geom.geometry)
+GI.extent(::GI.MultiPolygonTrait, geom::MultiPolygon)::GI.Extents.Extent = GI.extent(geom.geometry)
 
 """
     Feature
@@ -99,7 +99,7 @@ end
 
 # This is (somehow) that most straightforward way to take an ArchGDAL geometry without an associated CRS and add one to it. Don't ask. 
 function _add_crs(geom::AG.IGeometry, target_crs)
-    source_crs = isnothing(GI.crs(geom)) ? AG.importEPSG(4326) : AG.importEPSG(GI.crs(geom).val[1])
+    source_crs = isnothing(GI.crs(geom)) ? AG.importEPSG(4326) : AG.importCRS(GI.crs(geom))
     AG.createcoordtrans(source_crs, target_crs) do transform
         AG.transform!(geom, transform) 
     end    

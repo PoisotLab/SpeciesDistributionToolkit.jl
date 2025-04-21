@@ -19,11 +19,6 @@ function postprocess(data::PolygonData{OneEarth, Bioregions}, res::R; kw...) whe
     return FeatureCollection(feats)
 end 
 
-function _get_properties(code)
-    trunc_code = code[1:2]
-    return _ONEEARTH_CODES[trunc_code]
-end 
-
 _fields_to_extract(::PolygonData{OneEarth,Bioregions}) =  Dict(
     :Bioregions => "Name"
 )

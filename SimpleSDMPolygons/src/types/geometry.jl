@@ -85,11 +85,13 @@ Base.getindex(fc::FeatureCollection, i) = getindex(fc.features, i)
 Base.getindex(fc::FeatureCollection, str::String) = begin
     names = getname.(fc)    
     idx = findfirst(isequal(str), names)
+    isnothing(idx) && return nothing
     return fc[idx]
 end
 Base.getindex(fc::FeatureCollection, pr::Pair) = begin
     vals = getproperty.(fc.features, pr[1])
     idx = findall(isequal(pr[2]), vals)
+    isempty(idx) && return nothing
     FeatureCollection(fc[idx])
 end 
 

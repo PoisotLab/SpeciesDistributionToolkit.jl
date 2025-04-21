@@ -13,6 +13,7 @@ using Markdown
 using InteractiveUtils
 using Dates
 using PrettyTables
+import Downloads
 
 # Download the bibliography from paperpile public URL
 const bibfile = joinpath(@__DIR__, "src", "references.bib")

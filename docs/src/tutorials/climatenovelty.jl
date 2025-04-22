@@ -141,7 +141,7 @@ cr_projected = (projected .- μ) ./ σ;
 
 # We will use a simple measure of climate novelty, which is defined as the
 # smallest Euclidean distance between a cell in the raster and all the possible
-# cells in the future raster [Fitzpatrick2018](@cite).
+# cells in the future raster, as in [Fitzpatrick2018](@citet).
 
 # To have a way to store the results, we will start by making a copy of one of
 # the input rasters:

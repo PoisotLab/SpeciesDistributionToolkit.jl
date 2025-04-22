@@ -51,6 +51,10 @@ Base.show(io::IO, feat::Feature{T}) where {T} = begin
     print(io, feat_str)
 end
 
+Base.getproperty(feat::Feature, propname::String) = haskey(feat.properties, propname) ? feat.properties[propname] : nothing 
+
+getname(feat::Feature) = getproperty(feat, "Name")
+
 """
     FeatureCollection
 """
@@ -64,14 +68,33 @@ Base.show(io::IO, fc::FeatureCollection) = print(
     "FeatureCollection with $(length(fc)) features, each with $(length(first(fc.features).properties)) properties",
 )
 
+Base.length(fc::FeatureCollection) = length(fc.features)
 Base.firstindex(::FeatureCollection) = 1
 Base.lastindex(fc::FeatureCollection) = length(fc)
-
-Base.length(fc::FeatureCollection) = length(fc.features)
-Base.getindex(fc::FeatureCollection, i) = getindex(fc.features, i)
 Base.eachindex(fc::FeatureCollection) = eachindex(fc.features)
 Base.iterate(fc::FeatureCollection) = iterate(fc.features)
 Base.iterate(fc::FeatureCollection, i) = iterate(fc.features, i)
+
+getname(fc::FeatureCollection) = getname.(fc.features)
+
+function uniqueproperties(fc::FeatureCollection) 
+    propkeys = collect(keys(fc[1].properties))
+    return Dict([k=>unique([f.properties[k] for f in fc]) for k in propkeys])
+end
+
+Base.getindex(fc::FeatureCollection, i) = getindex(fc.features, i)
+Base.getindex(fc::FeatureCollection, str::String) = begin
+    names = getname.(fc)    
+    idx = findfirst(isequal(str), names)
+    isnothing(idx) && return nothing
+    return fc[idx]
+end
+Base.getindex(fc::FeatureCollection, pr::Pair) = begin
+    vals = getproperty.(fc.features, pr[1])
+    idx = findall(isequal(pr[2]), vals)
+    isempty(idx) && return nothing
+    FeatureCollection(fc[idx])
+end 
 
 # --------------------------------------------------------------
 # boundingbox

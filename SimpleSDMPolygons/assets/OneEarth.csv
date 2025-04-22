@@ -1,0 +1,186 @@
+Code,Region,Subregion,Name
+NA01,North America,Greenland,Greenland
+NA02,North America,Canadian Tundra,Canadian Tundra
+NA03,North America,Alaska,North Alaskan Tundra
+NA04,North America,Alaska,Greater Alaska Taiga & Tundra
+NA05,North America,Alaska,Far Northern Pacific Coast
+NA06,North America,Canadian Boreal Forest,Greater Yukon
+NA07,North America,Canadian Boreal Forest,"Northwest Canadian Taiga, Lakes, & Wetlands"
+NA08,North America,Canadian Boreal Forest,Mid-Canada Boreal Plains & Foothill Forests
+NA09,North America,Canadian Boreal Forest,Canadian Shield & Coastal Taiga-Forests
+NA10,North America,Northeast American Forests,Northeastern American Mixed Forests
+NA11,North America,Northeast American Forests,Northern Great Lakes Forests
+NA12,North America,Great Plains,Northern Prairie & Aspen Forests
+NA13,North America,American West,Greater Rockies & Mountain Forests
+NA14,North America,American West,Northwest Intermountain Conifer Forests
+NA15,North America,North Pacific Coast,Pacific Northwest Coastal Forests
+NA16,North America,North Pacific Coast,Cascades Mountain Forests & Valleys
+NA17,North America,American West,Columbia Plateau & Blue Mountains
+NA18,North America,American West,Great Basin & Columbia Steppe
+NA19,North America,American West,Colorado Plateau & Mountain Forests
+NA20,North America,Great Plains,Southern Prairie Mixed Grasslands
+NA21,North America,Great Plains,Midwestern Tallgrass Prairie & Forest Transition
+NA22,North America,Southeast US Savannas & Forests,Ozarks Mixed Forests
+NA23,North America,Northeast American Forests,Interior Plateau & Southern Great Lakes Forests
+NA24,North America,Northeast American Forests,Appalachia & Allegheny Interior Forests
+NA25,North America,Southeast US Savannas & Forests,Southeast Savannas & Riparian Forests
+NA26,North America,Southeast US Savannas & Forests,Caribbean Islands
+NA27,North America,Southeast US Savannas & Forests,Western Gulf Coastal Grasslands
+NA28,North America,Southeast US Savannas & Forests,Southern Mixed Forests & Blackland Prairies
+NA29,North America,Mexican Drylands,Sierra Madre Forests & Mexican Drylands
+NA30,North America,Mexican Drylands,Baja California & Southern Deserts
+NA31,North America,North Pacific Coast,Greater California
+NT01,South America,Andes & Pacific Coast,Chilean Mixed Forests
+NT02,South America,South American Grasslands,Patagonia Steppe & Low Mountains
+NT03,South America,South American Grasslands,Rio de la Plata Grasslands
+NT04,South America,South American Grasslands,Chaco Grasslands
+NT05,South America,Andes & Pacific Coast,Andean Mountain Grasslands
+NT06,South America,Andes & Pacific Coast,Chilean Matorral Shrublands & Savanna
+NT07,South America,Andes & Pacific Coast,Juan Fernández & Desventuradas Islands
+NT08,South America,Andes & Pacific Coast,South American Coastal Deserts
+NT09,South America,Andes & Pacific Coast,Galápagos Islands
+NT10,South America,Andes & Pacific Coast,Ecuadorean Dry Coastal Forests & Flooded Grasslands
+NT11,South America,Andes & Pacific Coast,Andean Mountain Forests & Valleys
+NT12,South America,Brazil Cerrado & Atlantic Coast,Pantanal Flooded Grasslands & Dry Forests
+NT13,South America,Brazil Cerrado & Atlantic Coast,Cerrado Savannas
+NT14,South America,Brazil Cerrado & Atlantic Coast,Brazilian Atlantic Moist Forests
+NT15,South America,Brazil Cerrado & Atlantic Coast,Brazilian Atlantic Dry Forests
+NT16,South America,Amazonia,Amazon River Estuary
+NT17,South America,Amazonia,Southern Amazonian Forests
+NT18,South America,Amazonia,Western Amazonian Forests & Plains
+NT19,South America,Amazonia,Central Amazonian Forests
+NT20,South America,Amazonia,Northern Amazonian Forests
+NT21,South America,Upper South America,Guianan Forests & Savanna
+NT22,South America,Upper South America,Llanos & Dry Forests
+NT23,South America,Upper South America,Venezuelan Coast
+NT24,Central America,Central America,Central American Isthmian & Colombian Coastal Forests
+NT25,Central America,Central America,Central American Mixed Forests
+NT26,Central America,Caribbean,Caribbean Islands
+NT27,Central America,Central America,Yucatan & Veracruz Mixed Forests
+NT28,Central America,Central America,Mexican Dry & Coniferous Forests
+NT29,Central America,Central America,Mexican Subtropical Islands
+PA01,Subarctic Eurasia,Palearctic Tundra,Russian Arctic Desert Islands
+PA02,Subarctic Eurasia,Scandinavia & West Boreal Forests,Iceland
+PA03,Subarctic Eurasia,Scandinavia & West Boreal Forests,Scandinavian Birch & Coastal Conifer Forests
+PA04,Subarctic Eurasia,Palearctic Tundra,Greater Eurasian Tundra
+PA05,Subarctic Eurasia,Sea of Okhotsk & Bearing Tundra/Taiga,East Eurasian Coastal Tundra
+PA06,Subarctic Eurasia,Sea of Okhotsk & Bearing Tundra/Taiga,"Sea of Okhotsk Coastal Taiga, Meadows & Tundra"
+PA07,Subarctic Eurasia,Siberia & East Boreal Forests,Siberian Boreal Forests & Mountain Tundra
+PA08,Subarctic Eurasia,Scandinavia & West Boreal Forests,Ural Mountains & West Eurasian Taiga Forests
+PA09,Western Eurasia,Anglo-Celtic Isles,"Great Britain, Ireland & Faroe Islands"
+PA10,Western Eurasia,Greater European Mixed Forests,West European Coastal Mixed Forests
+PA11,Western Eurasia,Greater European Mixed Forests,Baltic Sea & Sarmatic Mixed Forests
+PA12,Western Eurasia,Greater European Mixed Forests,European Interior Mixed Forests
+PA13,Western Eurasia,European Mountain Forests,Alps & Po Basin Mixed Forests
+PA14,Western Eurasia,European Mountain Forests,Carpathian Mountain & Plains Mixed Forests
+PA15,Western Eurasia,European Mountain Forests,Dinaric Mountains & Balkan Mixed Forests
+PA16,Western Eurasia,Black Sea Forests & Steppe,Pontic Steppe Grasslands
+PA17,Western Eurasia,Black Sea Forests & Steppe,"Black Sea, Caucasus-Anatolian Mixed Forests & Steppe"
+PA18,Western Eurasia,Mediterranean,Aegean Sea & East Mediterranean Mixed Forests
+PA19,Western Eurasia,Mediterranean,Adriatic Sea & Central Mediterranean Mixed Forests
+PA20,Western Eurasia,Mediterranean,Balearic Sea & West Mediterranean Mixed Forests
+PA21,Western Eurasia,Mediterranean,Azores Forest Islands
+PA22,Southern Eurasia,North Africa,Madeira Evergreen Island
+PA23,Southern Eurasia,North Africa,South Mediterranean Mixed Woodlands & Forests
+PA24,Southern Eurasia,North Africa,"Northern Sahara Deserts, Savannas & Marshes"
+PA25,Southern Eurasia,North Africa,Southern Sahara Deserts & Mountain Woodlands
+PA26,Southern Eurasia,Greater Arabian Peninsula,"Red Sea, Arabian Deserts & Salt Marshes"
+PA27,Central Eurasia,Persian Deserts & Forests,Zagros Mountain Forests & East Anatolian Steppe
+PA28,Central Eurasia,Persian Deserts & Forests,South Caspian Coastal & Mountain Mixed Forests
+PA29,Central Eurasia,Persian Deserts & Forests,Persian Deserts & Mountain Woodlands
+PA30,Central Eurasia,Persian Deserts & Forests,"Afghan-Balochistan Drylands, Mountain Meadows & Conifer Forests"
+PA31,Central Eurasia,Tien Shan Mountains,"Tian Shan-Pamir Grasslands, Mountain Steppe & Conifer Forests"
+PA32,Central Eurasia,Capsian Sea & Central Asian Deserts,Central Asian Deserts & Riparian Woodlands
+PA33,Central Eurasia,Capsian Sea & Central Asian Deserts,"Caspian Sea, Coastal Deserts & Kopet Dagh Mountain Woodlands"
+PA34,Central Eurasia,Kazakh Steppes & Hemiboreal Forests,Kazakh Forest Steppe & Grasslands
+PA35,Central Eurasia,Kazakh Steppes & Hemiboreal Forests,Siberian Hemiboreal Forests & Steppe
+PA36,Central Eurasia,Altai-Sayan Mountains,"Sayan Mountain Conifer Forests, Alpine Meadows & Steppe"
+PA37,Central Eurasia,Altai-Sayan Mountains,Altai Mountains & Ermin Valley
+PA38,Eastern Eurasia,East Asian Deserts,Junggar Semi-Desert & Ermin Valley Steppe
+PA39,Eastern Eurasia,East Asian Deserts,Taklimakan Desert & Lowland Deciduous Forests
+PA40,Eastern Eurasia,Tibetan Plateau,Greater Tibetan Plateau Alpine Meadows & Shrublands
+PA41,Eastern Eurasia,Tibetan Plateau,Himalayan-Pamir Alpine Shrub & Meadows
+PA42,Eastern Eurasia,Mongolian Grasslands,Ordos Plateau Steppe & Mountain Conifer Forests
+PA43,Eastern Eurasia,East Asian Deserts,Greater Gobi Desert
+PA44,Eastern Eurasia,Mongolian Grasslands,"Mongolian Grasslands, Alpine Meadows & Forest Steppe"
+PA45,Eastern Eurasia,Northeast Asian Forests,Dzhagdy Mountain Conifer Forests
+PA46,Eastern Eurasia,Northeast Asian Forests,Manchuria-Ussuri Mixed Forests & Meadow Steppes
+PA47,Eastern Eurasia,Japanese Islands,Japan Forest Islands
+PA48,Eastern Eurasia,Northeast Asian Forests,Korean Peninsula Mixed Forests
+PA49,Eastern Eurasia,Central East Asian Forests,Loess Plateau & Huang He Plain Mixed Forests
+PA50,Eastern Eurasia,Central East Asian Forests,Chang Jiang Plain Evergreen Forests
+PA51,Eastern Eurasia,Central East Asian Forests,Sichuan Basin & Central Mountain Forests
+PA52,Eastern Eurasia,Central East Asian Forests,Guizhou & Yunnan Subtropical Forest Plateaus
+PA53,Eastern Eurasia,Central East Asian Forests,Hengduan Mountain Conifer Forests
+AT01,Afrotropics,Southern Afrotropics,Tristan Volcanic Islands
+AT02,Afrotropics,Southern Afrotropics,South African Cape Shrublands & Mountain Forests
+AT03,Afrotropics,Madagascar & East African Coast,Amsterdam-Saint Paul Islands
+AT04,Afrotropics,Madagascar & East African Coast,Mascarene Tropical Forest Islands
+AT05,Afrotropics,Madagascar & East African Coast,Seychelles & Comoros Tropical Islands
+AT06,Afrotropics,Madagascar & East African Coast,Madagascar Island
+AT07,Afrotropics,Madagascar & East African Coast,East African Coastal Forests
+AT08,Afrotropics,Southern Afrotropics,Southeast African Subtropical Grasslands
+AT09,Afrotropics,Southern Afrotropics,Greater Karoo & Kalahari Drylands
+AT10,Afrotropics,Southern Afrotropics,Southwest African Coastal Drylands
+AT11,Afrotropics,Sub-Equatorial Afrotropics,Greater African Subequatorial Savannas & Mixed Woodlands
+AT12,Afrotropics,Equatorial Afrotropics,Victoria Basin & Albertine Rift Forests
+AT13,Afrotropics,Equatorial Afrotropics,South Congolian Forest-Savannas & Coastal Scarp
+AT14,Afrotropics,Equatorial Afrotropics,Central Congolian Tropical Forests
+AT15,Afrotropics,Equatorial Afrotropics,North Congolian Lowland Forests
+AT16,Afrotropics,Equatorial Afrotropics,Mandara Mountain & North Congolian Forest-Savannas
+AT17,Afrotropics,Equatorial Afrotropics,Gulf of Guinea Coastal Forests & Mangroves
+AT18,Afrotropics,Sub-Equatorial Afrotropics,St. Helena & Ascension Islands
+AT19,Afrotropics,Equatorial Afrotropics,West African Coastal Forests & Savanna
+AT20,Afrotropics,Sub-Saharan Afrotropics,West Sudanian Savanna
+AT21,Afrotropics,Horn of Africa,"Lake Turkana-Sudd Grasslands, Bushlands & Forests"
+AT22,Afrotropics,Horn of Africa,South Red Sea & Gulf of Aden Coastal Drylands
+AT23,Afrotropics,Sub-Saharan Afrotropics,Sahel Acacia Savannas
+AT24,Afrotropics,Equatorial Afrotropics,Cape Verde Islands
+IM01,Indomalaya,Indian Subcontinent,Central Indian Ocean Islands
+IM02,Indomalaya,Indian Subcontinent,Indian Tropical Coastal Forests
+IM03,Indomalaya,Indian Subcontinent,Indian Dry Deciduous Forests
+IM04,Indomalaya,Indian Subcontinent,North Indomalayan Deserts & Scrub Forest
+IM05,Indomalaya,Indian Subcontinent,Himalayan Mixed Forests & Grasslands
+IM06,Indomalaya,Indian Subcontinent,North Indian Tropical Forests & Sundarbans
+IM07,Indomalaya,Indian Subcontinent,Northern Deccan & Odisha Tropical Forests
+IM08,Indomalaya,Indian Subcontinent,Greater Deccan-Sri Lankan Forests & Drylands
+IM09,Indomalaya,Southeast Asian Forests,Myanmar Coastal Rainforests & Andaman Sea Islands
+IM10,Indomalaya,Southeast Asian Forests,Arakan Mountains & Northern Triangle Forests
+IM11,Indomalaya,Southeast Asian Forests,Irrawaddy & North Indochina Mixed Forests
+IM12,Indomalaya,Southeast Asian Forests,Indochina Mixed Forests & Peatlands
+IM13,Indomalaya,Southeast Asian Forests,South China Subtropical Evergreen & Monsoon Forests
+IM14,Indomalaya,Southeast Asian Forests,Nansei Islands Subtropical Evergreen Forests
+IM15,Indomalaya,Southeast Asian Forests,Philippines & Sulu Sea Tropical Forests
+IM16,Indomalaya,Malaysia & Western Indonesia,Borneo Tropical Forests & Sundaland Heath Forests
+IM17,Indomalaya,Malaysia & Western Indonesia,Javan-Bali Tropical Rainforests
+IM18,Indomalaya,Malaysia & Western Indonesia,Peninsular Malaysian & Sumatran Tropical Rainforests
+AU01,Australasia,New Zealand,New Zealand
+AU02,Australasia,New Zealand,Lord Howe & Norfolk Islands
+AU03,Australasia,Australia,East Australian Temperate Forests & Mountain Shrublands
+AU04,Australasia,Australia,East Australian Mediterranean Woodlands & Temperate Savannas
+AU05,Australasia,Australia,"South Australian Mediterranean Forests, Woodlands & Scrub"
+AU06,Australasia,Australia,West Australian Dry Coastal Shrublands
+AU07,Australasia,Australia,Greater Australian Interior Desert & Shrublands
+AU08,Australasia,Australia,North Australian Tropical Savannas
+AU09,Australasia,Australia,Queensland Tropical Rainforests & Savannas
+AU10,Australasia,Australasian Islands & Eastern Indonesia,Coral Sea & New Caledonia Islands
+AU11,Australasia,Australasian Islands & Eastern Indonesia,Vanuatu Islands
+AU12,Australasia,Australasian Islands & Eastern Indonesia,Solomon Islands
+AU13,Australasia,Australasian Islands & Eastern Indonesia,New Guinea & Surrounding Islands
+AU14,Australasia,Australasian Islands & Eastern Indonesia,Sulawesi & Maluku Islands
+AU15,Australasia,Australasian Islands & Eastern Indonesia,Southeast Indonesian Dry Forest Islands
+AU16,Australasia,New Zealand,Subantarctic Antipodes Islands
+OC01,Oceania,Oceanic Islands,Salas y Gómez & Easter Islands
+OC02,Oceania,Oceanic Islands,Marquesas Tropical Islands
+OC03,Oceania,Oceanic Islands,Southeast Polynesian Islands
+OC04,Oceania,Oceanic Islands,Central Polynesian Islands
+OC05,Oceania,Oceanic Islands,Samoa & West Polynesian Tropical Islands
+OC06,Oceania,Oceanic Islands,Fiji & Tongan Tropical Islands
+OC07,Oceania,Oceanic Islands,East Micronesian Islands
+OC08,Oceania,Oceanic Islands,Palau & Caroline Tropical Islands
+OC09,Oceania,Oceanic Islands,Guam & Marianas Dry Tropical Islands
+OC10,Oceania,Oceanic Islands,Ogasawara Subtropical Islands
+OC11,Oceania,Oceanic Islands,Hawai’i Tropical Islands
+AN01,Antarctica,Antarctic Continent & Islands,Continental Antarctica
+AN02,Antarctica,Antarctic Continent & Islands,Antarctic Peninsula & Scotia Sea
+AN03,Antarctica,Antarctic Continent & Islands,Subantarctic Indian Ocean Islands

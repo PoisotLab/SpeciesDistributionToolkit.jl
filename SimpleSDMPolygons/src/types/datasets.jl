@@ -28,6 +28,13 @@ struct Lakes <: PolygonDataset end
 """
 struct Ecoregions <: PolygonDataset end 
 
+"""
+    Bioregions
+
+This is an _alias_ for `Ecoregions`
+"""
+const Bioregions = Ecoregions
+
 """ 
     Oceans
 """

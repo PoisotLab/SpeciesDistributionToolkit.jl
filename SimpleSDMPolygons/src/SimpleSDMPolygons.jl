@@ -22,15 +22,17 @@ import ArchGDAL as AG
 
 import SimpleSDMDatasets
 
-_GADM_MAX_LEVELS = Dict([r[Symbol("alpha-3")] => r.max_level for r in eachrow(CSV.read(joinpath(@__DIR__, "..", "assets", "GADM.csv"), DataFrame))])
+const _GADM_MAX_LEVELS = Dict([r[Symbol("alpha-3")] => r.max_level for r in eachrow(CSV.read(joinpath(@__DIR__, "..", "assets", "GADM.csv"), DataFrame))])
+
+const _ONEEARTH_CODES = Dict([r.Code=>Dict("Region"=>String(r.Region), "Subregion"=>r.Subregion, "Name"=>r.Name) for r in eachrow(CSV.read(joinpath("SimpleSDMPolygons", "assets", "OneEarth.csv"), DataFrame))])
 
 include(joinpath("types", "datasets.jl"))
 export PolygonDataset
-export Land, Oceans, Lakes, Countries, Places, Ecoregions, ParksAndProtected
+export Land, Oceans, Lakes, Countries, Places, Ecoregions, Bioregions, ParksAndProtected
 
 include(joinpath("types", "providers.jl"))
 export PolygonProvider
-export EPA, NaturalEarth, OpenStreetMap, GADM, Resolv
+export EPA, NaturalEarth, OpenStreetMap, GADM, Resolv, OneEarth
 
 include(joinpath("types", "filetypes.jl"))
 
@@ -39,6 +41,7 @@ export PolygonData
 
 include(joinpath("types", "geometry.jl"))
 export FeatureCollection, Feature, Polygon, MultiPolygon
+export getname, uniqueproperties
 
 # These are overloaded from SimpleSDMDatasets
 include("overloads/interface.jl")
@@ -51,6 +54,7 @@ include(joinpath("providers", "naturalearth.jl"))
 include(joinpath("providers", "openstreetmap.jl"))
 include(joinpath("providers", "gadm.jl"))
 include(joinpath("providers", "resolv.jl"))
+include(joinpath("providers", "oneearth.jl"))
 
 # Utility function
 

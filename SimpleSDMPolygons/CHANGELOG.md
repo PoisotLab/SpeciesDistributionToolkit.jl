@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.1.0`
+
+- **added** `OneEarth` dataset of ecoregions [#442]
+- **added** indexing of `FeatureCollections` by the "name" property, and arbitrary pairs of property keys/values [#449]
+- **added** the `getproperty` method for `Feature`s
+- **added** the `getname` method for `Feature`s (an alias for `getproperty(feat, "Name")`)
+- **added** the `uniqueproperties` for `FeatureCollections` method
+
 ## `v1.0.5`
 
 - **fixed** the GeoInterface for polygons

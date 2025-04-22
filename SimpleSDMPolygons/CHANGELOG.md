@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **added** the `getname` method for `Feature`s (an alias for `getproperty(feat, "Name")`)
 - **added** the `uniqueproperties` for `FeatureCollections` method
 
+## `v1.0.5`
+
+- **fixed** the GeoInterface for polygons
+
 ## `v1.0.4`
 
 - **added** Makie support for `lines!`/`poly!` without axis argument

@@ -6,16 +6,19 @@ using CairoMakie
 Random.seed!(1234567890); #hide
 CairoMakie.activate!(; px_per_unit = 3) #hide
 
+# The methodology to generate fauxcurrences comes from [Osborne2022](@citet).
+
 # ## Getting observed occurrence data
 
 # Get the observation data in the correct format, which is an array of matrices
 # with two rows (longitude, latitude) and one column for observed occurrence.
 # This is usually an array of observations that are a subtype of
-# `AbstractOccurenceCollection` (data returned from the GBIF package work), but all that matters is that
-# this is a matrix with longitudes in the first row, and latitudes in the second
-# row. The matrix *has* to be column-major, with observations as columns. To
-# make sure that we cover a reasonable spatial extent, we will look at the
-# rather small area in space (part of the Gaspésie region):
+# `AbstractOccurenceCollection` (data returned from the GBIF package work), but
+# all that matters is that this is a matrix with longitudes in the first row,
+# and latitudes in the second row. The matrix *has* to be column-major, with
+# observations as columns. To make sure that we cover a reasonable spatial
+# extent, we will look at the rather small area in space (part of the Gaspésie
+# region):
 
 bbox = (bottom = 43.28, left = -66.5, top = 47.20, right = -59.45)
 layer = SDMLayer(RasterData(CHELSA1, BioClim); layer = 1, bbox...)
@@ -297,3 +300,10 @@ current_figure() #hide
 # Note that the inter-specific distances are not fully respected, but this is
 # because we decided to give more weight to the intra-specific distances in the
 # initial parameters.
+
+# ## References
+
+# ```@bibliography
+# Pages = [@__FILE__]
+# Style = :numeric
+# ```

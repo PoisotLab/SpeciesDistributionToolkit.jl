@@ -300,3 +300,10 @@ current_figure() #hide
 # Note that the inter-specific distances are not fully respected, but this is
 # because we decided to give more weight to the intra-specific distances in the
 # initial parameters.
+
+# ## References
+
+# ```@bibliography
+# Pages = [@__FILE__]
+# Style = :numeric
+# ```

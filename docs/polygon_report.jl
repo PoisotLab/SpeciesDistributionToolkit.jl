@@ -45,7 +45,7 @@ if ~ispath(polygon_catalogue_path)
     mkpath(polygon_catalogue_path)
 end
 
-for P in subtypes(PolygonsProvider)
+for P in subtypes(PolygonProvider)
     cardfile = joinpath(polygon_catalogue_path, "$(P).md")
     open(
         cardfile,

@@ -192,5 +192,5 @@ current_figure() #hide
 
 # ```@bibliography
 # Pages = [@__FILE__]
-# Style = :numeric
+# Style = :authoryear
 # ```

@@ -15,6 +15,8 @@ using GeoJSON
 using HTTP
 using DataFrames, CSV
 
+using TestItems
+
 const GJ = GeoJSON
 import Shapefile as SF
 import GeoInterface as GI

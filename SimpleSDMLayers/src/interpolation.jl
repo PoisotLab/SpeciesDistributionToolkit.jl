@@ -112,7 +112,7 @@ end
 function polynomialinterpolation(x1, x, x2, y1, y, y2, Q11, Q12, Q21, Q22)
     Q = [Q11; Q12; Q21; Q22]
     corr = (1.0 / ((x2 - x1) * (y2 - y1)))
-    X = [x2*y2 -x2*y1 -x1*y2 x1*y1; -y2 y1 y2 -y1; -x2 x2 x1 -x1; 1 -1 -1 1]
+    X = [x2*y2 -x2*y1 -x1*y2 x1*y1; -y2 y1 y2 -y1; -x2 x2 x1 -x1; 1.0 -1.0 -1.0 1.0]
     coeff = corr * X * Q
     return coeff[1] + coeff[2] * x + coeff[3] * y + coeff[4] * x * y
 end

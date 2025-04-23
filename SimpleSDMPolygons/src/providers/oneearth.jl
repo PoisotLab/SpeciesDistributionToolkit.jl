@@ -22,3 +22,29 @@ end
 _fields_to_extract(::PolygonData{OneEarth,Bioregions}) =  Dict(
     :Bioregions => "Name"
 )
+
+@testitem "We can get all OneEarth polygons using Ecoregions" begin
+    prov = PolygonData(OneEarth, Ecoregions)
+    polys = getpolygon(prov)
+    @test polys isa FeatureCollection
+end
+
+@testitem "We can get all OneEarth polygons using Bioregions" begin
+    prov = PolygonData(OneEarth, Bioregions)
+    polys = getpolygon(prov)
+    @test polys isa FeatureCollection
+end
+
+@testitem "We can access OneEarth polygons by region" begin
+    prov = PolygonData(OneEarth, Bioregions)
+    polys = getpolygon(prov)
+    subreg = polys["Subregion" => "Southern Afrotropics"]
+    @test subreg isa FeatureCollection
+end
+
+@testitem "We can access OneEarth polygons by name" begin
+    prov = PolygonData(OneEarth, Bioregions)
+    polys = getpolygon(prov)
+    subreg = polys["Southern Prairie Mixed Grasslands"]
+    @test subreg isa Feature
+end

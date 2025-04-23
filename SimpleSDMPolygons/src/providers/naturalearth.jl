@@ -60,3 +60,36 @@ _fields_to_extract(::PolygonData{NaturalEarth,ParksAndProtected}) = Dict(
 
 _fields_to_extract(::PolygonData{NaturalEarth,Oceans}) = Dict()
 _fields_to_extract(::PolygonData{NaturalEarth,Land}) = Dict()
+
+@testitem "We can get countries from Natural Earth" begin
+    prov = PolygonData(NaturalEarth, Countries)
+    poly = getpolygon(prov)
+    @test poly isa FeatureCollection
+end
+
+@testitem "We can get countries from Natural Earth at 110m resolution" begin
+    prov = PolygonData(NaturalEarth, Countries)
+    poly = getpolygon(prov; resolution = 110)
+    @test poly isa FeatureCollection
+end
+
+@testitem "We can get countries from Natural Earth within a region" begin
+    prov = PolygonData(NaturalEarth, Countries)
+    poly = getpolygon(prov; resolution = 110)
+    EUR = poly["Region" => "Europe"]
+    @test EUR isa FeatureCollection
+end
+
+@testitem "We can get countries from Natural Earth within a sub-region" begin
+    prov = PolygonData(NaturalEarth, Countries)
+    poly = getpolygon(prov; resolution = 110)
+    CAM = poly["Subregion" => "Central America"]
+    @test CAM isa FeatureCollection
+end
+
+@testitem "We can get countries from Natural Earth by name" begin
+    prov = PolygonData(NaturalEarth, Countries)
+    poly = getpolygon(prov; resolution = 110)
+    CHL = poly["Chile"]
+    @test CHL isa Feature
+end

@@ -52,13 +52,29 @@ export default defineConfig({
             {
                 text: 'Datasets',
                 items: [
-                    { text: "BiodiversityMapping", link: "/datasets/BiodiversityMapping" },
-                    { text: "CHELSA 1", link: "/datasets/CHELSA1" },
-                    { text: "CHELSA 2", link: "/datasets/CHELSA2" },
-                    { text: "Copernicus", link: "/datasets/Copernicus" },
-                    { text: "EarthEnv", link: "/datasets/EarthEnv" },
-                    { text: "PaleoClim", link: "/datasets/PaleoClim" },
-                    { text: "WorldClim 2", link: "/datasets/WorldClim2" },
+                    {
+                        text: "Raster data",
+                        items: [
+                            { text: "BiodiversityMapping", link: "/datasets/BiodiversityMapping" },
+                            { text: "CHELSA 1", link: "/datasets/CHELSA1" },
+                            { text: "CHELSA 2", link: "/datasets/CHELSA2" },
+                            { text: "Copernicus", link: "/datasets/Copernicus" },
+                            { text: "EarthEnv", link: "/datasets/EarthEnv" },
+                            { text: "PaleoClim", link: "/datasets/PaleoClim" },
+                            { text: "WorldClim 2", link: "/datasets/WorldClim2" },
+                        ]
+                    },
+                    {
+                        text: "Polygon data",
+                        items: [
+                            { text: "EPA", link: "/polygons/EPA" },
+                            { text: "GADM", link: "/polygons/GADM" },
+                            { text: "Natural Earth", link: "/polygons/NaturalEarth" },
+                            { text: "One Earth", link: "/polygons/OneEarth" },
+                            { text: "OpenStreetMap", link: "/polygons/OpenStreetMap" },
+                            { text: "Resolv", link: "/polygons/Resolv" },
+                        ]
+                    }
                 ]
             },
             {

@@ -67,9 +67,12 @@ export default defineConfig({
                     {
                         text: "Polygon data",
                         items: [
-                            { text: "One Earth", link: "/polygons/OneEarth" },
+                            { text: "EPA", link: "/polygons/EPA" },
+                            { text: "GADM", link: "/polygons/GADM" },
                             { text: "Natural Earth", link: "/polygons/NaturalEarth" },
+                            { text: "One Earth", link: "/polygons/OneEarth" },
                             { text: "OpenStreetMap", link: "/polygons/OpenStreetMap" },
+                            { text: "Resolv", link: "/polygons/Resolv" },
                         ]
                     }
                 ]

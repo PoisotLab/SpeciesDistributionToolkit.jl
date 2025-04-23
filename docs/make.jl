@@ -46,11 +46,12 @@ end
 
 bib = CitationBibliography(
     bibfile;
-    style = :numeric,
+    style = :authoryear,
 )
 
 # Generate a report card for each known dataset
 include("dataset_report.jl")
+include("polygon_report.jl")
 
 # Additional functions to process the text when handled by Literate
 include("processing.jl")

@@ -1,7 +1,7 @@
 name = "SimpleSDMPolygons"
 uuid = "dd4c243c-bc7b-45f6-b2b3-6bd128d3a12b"
 authors = ["Michael D. Catchen <mdcatchen@gmail.com>"]
-version = "1.1.0"
+version = "1.1.1"
 
 
 [deps]

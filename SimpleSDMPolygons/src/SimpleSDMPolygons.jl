@@ -24,7 +24,7 @@ import SimpleSDMDatasets
 
 const _GADM_MAX_LEVELS = Dict([r[Symbol("alpha-3")] => r.max_level for r in eachrow(CSV.read(joinpath(@__DIR__, "..", "assets", "GADM.csv"), DataFrame))])
 
-const _ONEEARTH_CODES = Dict([r.Code=>Dict("Region"=>String(r.Region), "Subregion"=>r.Subregion, "Name"=>r.Name) for r in eachrow(CSV.read(joinpath("SimpleSDMPolygons", "assets", "OneEarth.csv"), DataFrame))])
+const _ONEEARTH_CODES = Dict([r.Code => Dict("Region" => String(r.Region), "Subregion" => r.Subregion, "Name" => r.Name) for r in eachrow(CSV.read(joinpath(@__DIR__, "..", "assets", "OneEarth.csv"), DataFrame))])
 
 include(joinpath("types", "datasets.jl"))
 export PolygonDataset
@@ -58,7 +58,7 @@ include(joinpath("providers", "oneearth.jl"))
 
 # Utility function
 
-getpolygon(pd::T, args...; kwargs...) where {T <: PolygonData} = SimpleSDMDatasets.downloader(pd, args...; kwargs...)
+getpolygon(pd::T, args...; kwargs...) where {T<:PolygonData} = SimpleSDMDatasets.downloader(pd, args...; kwargs...)
 export getpolygon
 
 end # module PolygonInterface

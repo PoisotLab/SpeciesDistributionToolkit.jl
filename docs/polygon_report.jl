@@ -60,7 +60,7 @@ for P in subtypes(PolygonProvider)
     end
     # Run the report for each dataset
     for D in subtypes(PolygonDataset)
-        if SimpleSDMPolygons.provides(P, D)
+        if SimpleSDMDatasets.provides(P, D)
             open(
                 cardfile,
                 "a",

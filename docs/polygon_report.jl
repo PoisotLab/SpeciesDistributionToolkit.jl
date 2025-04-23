@@ -2,18 +2,18 @@ function _document_uniqueproperties(
     data::PolygonData{P, D},
 ) where {P <: PolygonProvider, D <: PolygonDataset}
     return ""
-    exk = SimpleSDMDatasets.extrakeys(data)
-    if !isnothing(exk)
-        text = ""
-        for (k,v) in exk
-            text *= "\n\n::: details Keyword argument `$(k)`\n\n"
-            for (val,def) in v
-                text *= "\n\n$(def) - `$(val)`\n\n"
-            end
-            text *= "\n:::\n\n"
-        end
-        return text
-    end
+    # exk = uniqueproperties(data)
+    # if !isnothing(exk)
+    #     text = ""
+    #     for (k,v) in exk
+    #         text *= "\n\n::: details Possible values for `$(k)`\n\n"
+    #         for (val,def) in v
+    #             text *= "\n\n$(def) - `$(val)`\n\n"
+    #         end
+    #         text *= "\n:::\n\n"
+    #     end
+    #     return text
+    # end
     return ""
 end
 

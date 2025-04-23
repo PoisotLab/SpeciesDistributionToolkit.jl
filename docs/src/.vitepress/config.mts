@@ -52,13 +52,26 @@ export default defineConfig({
             {
                 text: 'Datasets',
                 items: [
-                    { text: "BiodiversityMapping", link: "/datasets/BiodiversityMapping" },
-                    { text: "CHELSA 1", link: "/datasets/CHELSA1" },
-                    { text: "CHELSA 2", link: "/datasets/CHELSA2" },
-                    { text: "Copernicus", link: "/datasets/Copernicus" },
-                    { text: "EarthEnv", link: "/datasets/EarthEnv" },
-                    { text: "PaleoClim", link: "/datasets/PaleoClim" },
-                    { text: "WorldClim 2", link: "/datasets/WorldClim2" },
+                    {
+                        text: "Raster data",
+                        items: [
+                            { text: "BiodiversityMapping", link: "/datasets/BiodiversityMapping" },
+                            { text: "CHELSA 1", link: "/datasets/CHELSA1" },
+                            { text: "CHELSA 2", link: "/datasets/CHELSA2" },
+                            { text: "Copernicus", link: "/datasets/Copernicus" },
+                            { text: "EarthEnv", link: "/datasets/EarthEnv" },
+                            { text: "PaleoClim", link: "/datasets/PaleoClim" },
+                            { text: "WorldClim 2", link: "/datasets/WorldClim2" },
+                        ]
+                    },
+                    {
+                        text: "Polygon data",
+                        items: [
+                            { text: "One Earth", link: "/polygons/OneEarth" },
+                            { text: "Natural Earth", link: "/polygons/NaturalEarth" },
+                            { text: "OpenStreetMap", link: "/polygons/OpenStreetMap" },
+                        ]
+                    }
                 ]
             },
             {

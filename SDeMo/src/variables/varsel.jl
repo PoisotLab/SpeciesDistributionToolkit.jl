@@ -88,6 +88,7 @@ function _next_round(::Type{VarianceInflationFactor{N}}, model, forced, possible
 end
 
 _initial_proposal(::Type{<:VariableSelectionStrategy}, model) = copy(variables(model))
+_initial_proposal(::Type{AllVariables}, model) = collect(axes(features(model), 1))
 _initial_proposal(::Type{ForwardSelection}, model) = Int[]
 
 """

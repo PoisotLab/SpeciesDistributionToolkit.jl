@@ -88,6 +88,7 @@ function _next_round(::Type{VarianceInflationFactor{N}}, model, forced, possible
 end
 
 _initial_proposal(::Type{<:VariableSelectionStrategy}, model) = copy(variables(model))
+_initial_proposal(::Type{AllVariables}, model) = collect(axes(features(model), 1))
 _initial_proposal(::Type{ForwardSelection}, model) = Int[]
 
 """
@@ -128,59 +129,166 @@ function variables!(
     bagfeatures::Bool = false,
     kwargs...,
 ) where {T <: VariableSelectionStrategy, M <: Union{SDM, Bagging}}
+
+    # If bagfeatures is called for a model where it doesn't apply, we raise a
+    # warning, but keep working because this is a no-op.
     if bagfeatures
         if !(typeof(model) <: Bagging)
             @warn "The bagfeatures keyword is only used for Bagging models"
         end
     end
-    baseline = optimality(noskill(model))
+
+    # The possible variables we operate on are always the list of variables
+    # currently used in the model, which allows chaining variable selection
+    # steps together. This is at best a questionable idea, but it makes some
+    # sense when doing VIF before iterative selection, for example.
     possible = copy(variables(model))
+
+    # The checkpoint is a vector containing the list of variables to include in
+    # the model at first. This is not a series of variables to test, but the
+    # content of the model originally. Each VariableSelectionStrategy will have
+    # its own initial proposal.
     checkpoint = _initial_proposal(T, model)
+
+    # We then initialize the model with the variables that have been retained as
+    # part of the initial proposal. The selection can start now.
     variables!(model, checkpoint)
+
+    # The initial optimal score to beat will be different if the initial
+    # proposal has variables in it or not. By default, we will pick the no-skill
+    # classifier.
+    baseline = optimality(noskill(model))
+
+    # But if there are already variables in the model, then our baseline to beat
+    # is the cross-validation on this initial situation. This is important when
+    # chaining variable selection steps together, otherwise the first proposal
+    # is unfairly evaluated.
+    if ~isempty(variables(model))
+        C = crossvalidate(model, folds; kwargs...)
+        baseline = optimality(C.validation)
+    end
+
+    # In case of verbose output, we return the baseline performance.
     if verbose
         @info "Baseline $(optimality): $(baseline)"
     end
+
+    # This little flag is here to let us know that we are still currently
+    # looking for the optimal set of variables. As soon as we set it to false,
+    # we will jump out of the loop.
     still_looking = true
+
+    # This is the variable selection loop proper. Pay attention.
     while still_looking
+
+        # We will overwrite the variables in this loop, so checkpoint.
+        checkpoint = copy(variables(model))
+
+        # The list of variables combinations to test is decided here. It is
+        # determined based on three criteria: the model itself (to look at
+        # already included variables), the list of variables forcibly included,
+        # which are never dropped/not-considered, and the list of variables that
+        # are eligible for inclusion.
         combination_todo = _next_round(T, model, included, possible)
-        scores = zeros(length(combination_todo))
+
+        # If there are no combinations of variable to evaluate based on the
+        # VariableSelectionStrategy, we want to break out of the loop!
         if isempty(combination_todo)
+            stil_looking = false # This isn't particularly required but it's free. Good value.
             break
         end
+
+        # Each combination of variables to consider will receive a score based
+        # on the optimality measure, and for this reason we will initialize an
+        # array of zeros, to store them. This array has one entry for each
+        # variable combination.
+        scores = zeros(length(combination_todo))
+
+        # This loop will go through all of the the variables combinations, put
+        # these variables as the current variables for the model, and then
+        # cross-validate the proposal.
         for (i, combination) in enumerate(combination_todo)
+
+            # This is where we temporarily replace the variables in the model by
+            # the proposal.
             variables!(model, combination)
+
+            # For bagged ensembles only, assuming we want to bag the features as
+            # well (bagging features is great, you should def do it), it happens
+            # here.
             if (typeof(model) <: Bagging) & bagfeatures
                 bagfeatures!(model)
             end
+
+            # This is just the cross-validation.
             C = crossvalidate(model, folds; kwargs...)
+
+            # The score for each proposal is the optimality measure applied to
+            # the validation sets (averaged).
             scores[i] = optimality(C.validation)
         end
-        newbest = maximum(scores)
-        if newbest <= baseline
-            still_looking = false
-            # We have found a model that is not as good as the previous one, so
-            # we can return it
-            if verbose
-                @info "Returning model with $(length(variables(model))) variables - $(optimality) ≈ $(round(baseline; digits=4))"
-            end
-            variables!(model, checkpoint)
+
+        # OK wait. We have fucked up the model by putting different proposals
+        # inside it when cross-validating. This was worth it because
+        # over-writing models is good and training is cheap, but let's take a
+        # moment to remember that the variables in the model may not be optimal
+        # yet. So we restore the variables, just in case we have not found a
+        # more optimal solution.
+        variables!(model, checkpoint)
+
+        # To know whether we have identified an optimal set of variables, we
+        # look at the maximum value of the various proposals. To save some time,
+        # we also extract the position matching the best set, as will save us a
+        # step later on.
+        newbest, bestset = findmax(scores)
+
+        # We want to check whether the best proposal of variables managed to
+        # beat the current baseline.
+        if newbest > baseline
+
+            # The first thing we need to do is to assign this proposal as the
+            # new set of variables for the model.
+            variables!(model, combination_todo[bestset])
+
+            # Again, bag features, etc etc
             if (typeof(model) <: Bagging) & bagfeatures
                 bagfeatures!(model)
             end
-        else
-            # There is an improvement in the model, so we keep going
-            variables!(model, combination_todo[last(findmax(scores))])
-            if (typeof(model) <: Bagging) & bagfeatures
-                bagfeatures!(model)
-            end
+
+            # Yap yap yap
             if verbose
                 @info "Optimal $(length(variables(model))) variables model - $(optimality) ≈ $(round(newbest; digits=4))"
             end
-            checkpoint = copy(variables(model))
+
+            # Really important step here: the baseline has changed, as the model
+            # is getting better.
             baseline = newbest
+
+        else
+
+            # If no variable combination results in an improvement, we know that
+            # the previous model was the best under this variable selection
+            # scheme, so we are done looking.
+            still_looking = false
+
+            # We can return this model - note that we have restored it to the
+            # checkpoint before the proposals.
+            if verbose
+                @info "Returning model with $(length(variables(model))) variables - $(optimality) ≈ $(round(baseline; digits=4))"
+            end
+
+            # Again, we bag the features if required and the model is compatible
+            # with this step.
+            if (typeof(model) <: Bagging) & bagfeatures
+                bagfeatures!(model)
+            end
         end
     end
+
+    # We finally re-train the model
     train!(model; kwargs...)
+
+    # And return it - we're done with variable selection
     return model
 end
 
@@ -259,7 +367,7 @@ end
     variables!(sdm, VarianceInflationFactor{10.0}, f; included = [1, 12])
     @test 1 in variables(sdm)
     @test 12 in variables(sdm)
-    @test length(variables(sdm)) < 19
+    @test length(variables(sdm)) <= 19
 end
 
 @testitem "We can do selection on a bagged ensemble" begin

@@ -137,10 +137,6 @@ function variables!(
         end
     end
 
-    # The initial optimal score to beat is given by the optimality measure
-    # applied to the no-skill classifier.
-    baseline = optimality(noskill(model))
-
     # The possible variables we operate on are always the list of variables
     # currently used in the model, which allows chaining variable selection
     # steps together. This is at best a questionable idea, but it makes some
@@ -156,6 +152,20 @@ function variables!(
     # We then initialize the model with the variables that have been retained as
     # part of the initial proposal. The selection can start now.
     variables!(model, checkpoint)
+
+    # The initial optimal score to beat will be different if the initial
+    # proposal has variables in it or not. By default, we will pick the no-skill
+    # classifier.
+    baseline = optimality(noskill(model))
+
+    # But if there are already variables in the model, then our baseline to beat
+    # is the cross-validation on this initial situation. This is important when
+    # chaining variable selection steps together, otherwise the first proposal
+    # is unfairly evaluated.
+    if ~isempty(variables(model))
+        C = crossvalidate(model, folds; kwargs...)
+        baseline = optimality(C.validation)
+    end
 
     # In case of verbose output, we return the baseline performance.
     if verbose

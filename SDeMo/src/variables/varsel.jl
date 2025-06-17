@@ -207,7 +207,7 @@ function variables!(
         # these variables as the current variables for the model, and then
         # cross-validate the proposal.
         for (i, combination) in enumerate(combination_todo)
-            
+
             # This is where we temporarily replace the variables in the model by
             # the proposal.
             variables!(model, combination)
@@ -241,31 +241,10 @@ function variables!(
         # step later on.
         newbest, bestset = findmax(scores)
 
-        # The first situation is that none of the variables evaluated as part of
-        # the previous round are better than what the model was before.
-        if newbest < baseline
+        # We want to check whether the best proposal of variables managed to
+        # beat the current baseline.
+        if newbest > baseline
 
-            # If no variable combination results in an improvement, we know that
-            # the previous model was the best under this variable selection
-            # scheme, so we are done looking.
-            still_looking = false
-
-            # We can return this model - note that we have restored it to the
-            # checkpoint before the proposals.
-            if verbose
-                @info "Returning model with $(length(variables(model))) variables - $(optimality) ≈ $(round(baseline; digits=4))"
-            end
-
-            # Again, we bag the features if required and the model is compatible
-            # with this step.
-            if (typeof(model) <: Bagging) & bagfeatures
-                bagfeatures!(model)
-            end
-        else
-
-            # This block is reached when there is a variable combination that
-            # boosts the performance of the model.
-            
             # The first thing we need to do is to assign this proposal as the
             # new set of variables for the model.
             variables!(model, combination_todo[bestset])
@@ -283,12 +262,31 @@ function variables!(
             # Really important step here: the baseline has changed, as the model
             # is getting better.
             baseline = newbest
+
+        else
+
+            # If no variable combination results in an improvement, we know that
+            # the previous model was the best under this variable selection
+            # scheme, so we are done looking.
+            still_looking = false
+
+            # We can return this model - note that we have restored it to the
+            # checkpoint before the proposals.
+            if verbose
+                @info "Returning model with $(length(variables(model))) variables - $(optimality) ≈ $(round(baseline; digits=4))"
+            end
+
+            # Again, we bag the features if required and the model is compatible
+            # with this step.
+            if (typeof(model) <: Bagging) & bagfeatures
+                bagfeatures!(model)
+            end
         end
     end
 
     # We finally re-train the model
     train!(model; kwargs...)
-    
+
     # And return it - we're done with variable selection
     return model
 end

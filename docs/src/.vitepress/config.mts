@@ -2,6 +2,98 @@ import { defineConfig } from 'vitepress'
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 import mathjax3 from "markdown-it-mathjax3";
 import footnote from "markdown-it-footnote";
+import path from 'path'
+
+// console.log(process.env)
+
+function getBaseRepository(base: string): string {
+    if (!base || base === '/') return '/';
+    const parts = base.split('/').filter(Boolean);
+    return parts.length > 0 ? `/${parts[0]}/` : '/';
+}
+
+const baseTemp = {
+    base: 'REPLACE_ME_DOCUMENTER_VITEPRESS',// TODO: replace this in makedocs!
+}
+
+const navTemp = {
+    nav: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
+}
+
+const nav = [
+    ...navTemp.nav,
+    { text: 'Index', link: '/index' },
+    {
+        text: 'Manual',
+        items: [
+            { text: "Tutorials", link: "/tutorials" },
+            { text: "How-to", link: "/howto" },
+            { text: "Reference", link: "/reference" }
+        ]
+    },
+    {
+        text: 'Datasets',
+        items: [
+            {
+                text: "Raster data",
+                items: [
+                    { text: "BiodiversityMapping", link: "/datasets/BiodiversityMapping" },
+                    { text: "CHELSA 1", link: "/datasets/CHELSA1" },
+                    { text: "CHELSA 2", link: "/datasets/CHELSA2" },
+                    { text: "Copernicus", link: "/datasets/Copernicus" },
+                    { text: "EarthEnv", link: "/datasets/EarthEnv" },
+                    { text: "PaleoClim", link: "/datasets/PaleoClim" },
+                    { text: "WorldClim 2", link: "/datasets/WorldClim2" },
+                ]
+            },
+            {
+                text: "Polygon data",
+                items: [
+                    { text: "EPA", link: "/polygons/EPA" },
+                    { text: "GADM", link: "/polygons/GADM" },
+                    { text: "Natural Earth", link: "/polygons/NaturalEarth" },
+                    { text: "One Earth", link: "/polygons/OneEarth" },
+                    { text: "OpenStreetMap", link: "/polygons/OpenStreetMap" },
+                    { text: "Resolv", link: "/polygons/Resolv" },
+                ]
+            }
+        ]
+    },
+    {
+        text: "Ecosystem",
+        items: [
+            {
+                text: "Core packages",
+                items: [
+                    { text: "Fauxcurrences.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Fauxcurrences/" },
+                    { text: "GBIF.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/" },
+                    { text: "OccurrencesInterface.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/OccurrencesInterface/" },
+                    { text: "Phylopic.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/" },
+                    { text: "PseudoAbsences.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/PseudoAbsences/" },
+                    { text: "SDeMo.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SDeMo/" },
+                    { text: "SimpleSDMDatasets.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/" },
+                    { text: "SimpleSDMPolygons.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMPolygons/" },
+                    { text: "SimpleSDMLayers.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/" },
+                ]
+            },
+            {
+                text: "Packages we support",
+                items: [
+                    { text: "BON.jl", link: "https://poisotlab.github.io/BiodiversityObservationNetworks.jl/dev/" },
+                    { text: "Clustering.jl", link: "https://juliastats.org/Clustering.jl/stable/" },
+                    { text: "MultivariateStats.jl", link: "https://juliastats.org/MultivariateStats.jl/stable/" },
+                    { text: "NeutralLandscapes.jl", link: "https://docs.ecojulia.org/NeutralLandscapes.jl/dev/" },
+                    { text: "SpatialBoundaries.jl", link: "https://poisotlab.github.io/SpatialBoundaries.jl/dev/" },
+                    { text: "STAC.jl", link: "https://juliaclimate.github.io/STAC.jl/dev/" },
+                ]
+            }
+
+        ]
+    },
+    {
+        component: 'VersionPicker',
+    }
+]
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -39,76 +131,7 @@ export default defineConfig({
                 detailedView: true
             }
         },
-        nav: [
-            { text: 'Index', link: '/index' },
-            {
-                text: 'Manual',
-                items: [
-                    { text: "Tutorials", link: "/tutorials" },
-                    { text: "How-to", link: "/howto" },
-                    { text: "Reference", link: "/reference" }
-                ]
-            },
-            {
-                text: 'Datasets',
-                items: [
-                    {
-                        text: "Raster data",
-                        items: [
-                            { text: "BiodiversityMapping", link: "/datasets/BiodiversityMapping" },
-                            { text: "CHELSA 1", link: "/datasets/CHELSA1" },
-                            { text: "CHELSA 2", link: "/datasets/CHELSA2" },
-                            { text: "Copernicus", link: "/datasets/Copernicus" },
-                            { text: "EarthEnv", link: "/datasets/EarthEnv" },
-                            { text: "PaleoClim", link: "/datasets/PaleoClim" },
-                            { text: "WorldClim 2", link: "/datasets/WorldClim2" },
-                        ]
-                    },
-                    {
-                        text: "Polygon data",
-                        items: [
-                            { text: "EPA", link: "/polygons/EPA" },
-                            { text: "GADM", link: "/polygons/GADM" },
-                            { text: "Natural Earth", link: "/polygons/NaturalEarth" },
-                            { text: "One Earth", link: "/polygons/OneEarth" },
-                            { text: "OpenStreetMap", link: "/polygons/OpenStreetMap" },
-                            { text: "Resolv", link: "/polygons/Resolv" },
-                        ]
-                    }
-                ]
-            },
-            {
-                text: "Ecosystem",
-                items: [
-                    {
-                        text: "Core packages",
-                        items: [
-                            { text: "Fauxcurrences.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Fauxcurrences/" },
-                            { text: "GBIF.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/GBIF/" },
-                            { text: "OccurrencesInterface.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/OccurrencesInterface/" },
-                            { text: "Phylopic.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/Phylopic/" },
-                            { text: "PseudoAbsences.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/PseudoAbsences/" },
-                            { text: "SDeMo.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SDeMo/" },
-                            { text: "SimpleSDMDatasets.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMDatasets/" },
-                            { text: "SimpleSDMPolygons.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMPolygons/" },
-                            { text: "SimpleSDMLayers.jl", link: "https://poisotlab.github.io/SpeciesDistributionToolkit.jl/SimpleSDMLayers/" },
-                        ]
-                    },
-                    {
-                        text: "Packages we support",
-                        items: [
-                            { text: "BON.jl", link: "https://poisotlab.github.io/BiodiversityObservationNetworks.jl/dev/" },
-                            { text: "Clustering.jl", link: "https://juliastats.org/Clustering.jl/stable/" },
-                            { text: "MultivariateStats.jl", link: "https://juliastats.org/MultivariateStats.jl/stable/" },
-                            { text: "NeutralLandscapes.jl", link: "https://docs.ecojulia.org/NeutralLandscapes.jl/dev/" },
-                            { text: "SpatialBoundaries.jl", link: "https://poisotlab.github.io/SpatialBoundaries.jl/dev/" },
-                            { text: "STAC.jl", link: "https://juliaclimate.github.io/STAC.jl/dev/" },
-                        ]
-                    }
-
-                ]
-            }
-        ],
+        nav,
         sidebar: {
             "/howto/": [
                 {
@@ -275,15 +298,15 @@ export default defineConfig({
                     text: "Changelogs",
                     collapsed: true,
                     items: [
-                        { text: "SpeciesDistributionToolkit", link: "/reference/changelog/SpeciesDistributionToolkit/"},
-                        { text: "Fauxcurrences", link: "/reference/changelog/Fauxcurrences/"}, 
-                        { text: "GBIF", link: "/reference/changelog/GBIF/"}, 
-                        { text: "OccurrencesInterfaces", link: "/reference/changelog/OccurrencesInterface/"}, 
-                        { text: "Phylopic", link: "/reference/changelog/Phylopic/"},
-                        { text: "PseudoAbsences", link: "/reference/changelog/PseudoAbsences/"},
-                        { text: "SDeMo", link: "/reference/changelog/SDeMo/"}, 
-                        { text: "SimpleSDMDatasets", link: "/reference/changelog/SimpleSDMDatasets/"}, 
-                        { text: "SimpleSDMLayers", link: "/reference/changelog/SimpleSDMLayers/"}, 
+                        { text: "SpeciesDistributionToolkit", link: "/reference/changelog/SpeciesDistributionToolkit/" },
+                        { text: "Fauxcurrences", link: "/reference/changelog/Fauxcurrences/" },
+                        { text: "GBIF", link: "/reference/changelog/GBIF/" },
+                        { text: "OccurrencesInterfaces", link: "/reference/changelog/OccurrencesInterface/" },
+                        { text: "Phylopic", link: "/reference/changelog/Phylopic/" },
+                        { text: "PseudoAbsences", link: "/reference/changelog/PseudoAbsences/" },
+                        { text: "SDeMo", link: "/reference/changelog/SDeMo/" },
+                        { text: "SimpleSDMDatasets", link: "/reference/changelog/SimpleSDMDatasets/" },
+                        { text: "SimpleSDMLayers", link: "/reference/changelog/SimpleSDMLayers/" },
                     ]
                 },
                 {

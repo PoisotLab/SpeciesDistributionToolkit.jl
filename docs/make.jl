@@ -85,8 +85,10 @@ makedocs(;
     plugins = [bib],
 )
 
-deploydocs(;
+DocumenterVitepress.deploydocs(;
     repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl.git",
+    target = joinpath(@__DIR__, "build"),
+    branch = "gh-pages",
     devbranch = "main",
     push_preview = true,
 )

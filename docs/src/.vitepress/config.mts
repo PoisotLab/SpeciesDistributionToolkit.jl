@@ -2,30 +2,6 @@ import { defineConfig } from 'vitepress'
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 import mathjax3 from "markdown-it-mathjax3";
 import footnote from "markdown-it-footnote";
-import path from 'path'
-
-// console.log(process.env)
-
-function getBaseRepository(base: string): string {
-  if (!base || base === '/') return '/';
-  const parts = base.split('/').filter(Boolean);
-  return parts.length > 0 ? `/${parts[0]}/` : '/';
-}
-
-const baseTemp = {
-  base: 'REPLACE_ME_DOCUMENTER_VITEPRESS',// TODO: replace this in makedocs!
-}
-
-const navTemp = {
-  nav: 'REPLACE_ME_DOCUMENTER_VITEPRESS',
-}
-
-const nav = [
-  ...navTemp.nav,
-  {
-    component: 'VersionPicker',
-  }
-]
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({

@@ -243,7 +243,7 @@ function variables!(
 
         # The first situation is that none of the variables evaluated as part of
         # the previous round are better than what the model was before.
-        if newbest <= baseline
+        if newbest < baseline
 
             # If no variable combination results in an improvement, we know that
             # the previous model was the best under this variable selection

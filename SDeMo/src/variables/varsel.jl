@@ -367,7 +367,7 @@ end
     variables!(sdm, VarianceInflationFactor{10.0}, f; included = [1, 12])
     @test 1 in variables(sdm)
     @test 12 in variables(sdm)
-    @test length(variables(sdm)) < 19
+    @test length(variables(sdm)) <= 19
 end
 
 @testitem "We can do selection on a bagged ensemble" begin

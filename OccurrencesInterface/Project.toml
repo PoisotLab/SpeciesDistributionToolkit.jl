@@ -1,7 +1,7 @@
 name = "OccurrencesInterface"
 uuid = "ee6415c8-122a-4855-89a1-90f4bac06ba6"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "1.1.1"
+version = "1.2.0"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"

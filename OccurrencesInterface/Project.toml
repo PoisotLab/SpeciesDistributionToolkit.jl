@@ -18,7 +18,7 @@ OccIntMakie = "MakieCore"
 [compat]
 Dates = "1"
 JSON = "0.21"
-MakieCore = "0.9"
+MakieCore = "0.10"
 Tables = "1"
 TestItems = "1"
 julia = "^1.8"

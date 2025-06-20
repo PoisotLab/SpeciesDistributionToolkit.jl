@@ -21,4 +21,4 @@ SpatialBoundaries = "8d2ba62a-3d23-4a2b-b692-6b63e9267be2"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
-DocumenterVitepress = "0.1"
+DocumenterVitepress = "0.2.6"

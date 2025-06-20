@@ -52,7 +52,7 @@ for P in subtypes(PolygonProvider)
         "w",
     ) do io
         print(io, "# $(P) \n\n")
-        print(io, "\n\n")
+        return print(io, "\n\n")
         # print(io, "$(SimpleSDMDatasets.blurb(P))")
         # print(io, "\n\n")
         # print(io, "For more information about this provider: $(SimpleSDMDatasets.url(P))")
@@ -66,7 +66,7 @@ for P in subtypes(PolygonProvider)
                 "a",
             ) do io
                 print(io, report(P, D))
-                print(io, "\n\n")
+                return print(io, "\n\n")
             end
         end
     end

@@ -1,3 +1,8 @@
+# This file will create the changelogs for each packages. Specifically, it will
+# go through all the folders for component packages, then format the lines so
+# that any issue number is turned into a link to the repo. This happens
+# automatically during building, and requires no user input.
+
 chg_path = joinpath(dirname(dirname(@__FILE__)), "docs", "src", "reference", "changelog")
 
 if !ispath(chg_path)

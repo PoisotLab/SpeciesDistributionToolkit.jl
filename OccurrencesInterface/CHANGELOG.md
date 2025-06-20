@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.2.0`
 
+- **added** built-in support for iteration on `Occurrences` [#460]
 - **added** `0.10` as a supported `MakieCore` version [#458]
 
 ## `v1.1.1`

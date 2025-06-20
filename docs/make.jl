@@ -20,31 +20,9 @@ include(joinpath("steps", "bibliography.jl")) # References for the doc
 include(joinpath("steps", "changelogs.jl")) # CHANGELOG files on the website
 include(joinpath("steps", "datasets.jl")) # Prepare the datasets vignettes
 include(joinpath("steps", "polygons.jl")) # Prepare the polygons vignettes
+include(joinpath("steps", "manual.jl")) # Compile the manual (this is the big one!)
 
-# Generate a report card for each known dataset
-include("dataset_report.jl")
-include("polygon_report.jl")
-
-# Additional functions to process the text when handled by Literate
-include("processing.jl")
-
-# Render the tutorials and how-to using Literate
-for folder in ["howto", "tutorials"]
-    fpath = joinpath(@__DIR__, "src", folder)
-    files_to_build = filter(endswith(".jl"), readdir(fpath; join = true))
-    for docfile in files_to_build
-        if ~isfile(replace(docfile, r".jl$" => ".md"))
-            Literate.markdown(
-                docfile, fpath;
-                flavor = Literate.DocumenterFlavor(),
-                config = Dict("credit" => false, "execute" => true),
-                preprocess = pre!,
-                postprocess = post!,
-            )
-        end
-    end
-end
-
+# This MAKES the docs - this is required to succeed before we can deploy the docs
 makedocs(;
     sitename = "Species Distribution Toolkit",
     format = MarkdownVitepress(;

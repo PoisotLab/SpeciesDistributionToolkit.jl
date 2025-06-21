@@ -1,7 +1,7 @@
 import Downloads
 
 # Download the bibliography from paperpile public URL
-const bibfile = joinpath(dirname(@__DIR__), "src", "references.bib")
+const bibfile = joinpath(docpath, "src", "references.bib")
 const paperpile_url = "https://paperpile.com/eb/nimbzsGosN"
 if isfile(bibfile)
     rm(bibfile)

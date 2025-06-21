@@ -15,6 +15,10 @@ using InteractiveUtils
 using Dates
 using PrettyTables
 
+# We will maintain the path to the root of the documentation here. This is
+# important to ensure that the script building the documentation works.
+const docpath = dirname(@__FILE__)
+
 # Steps required before the build
 include(joinpath("steps", "bibliography.jl")) # References for the doc
 include(joinpath("steps", "changelogs.jl")) # CHANGELOG files on the website

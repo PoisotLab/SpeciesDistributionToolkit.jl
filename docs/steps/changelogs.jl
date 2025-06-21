@@ -3,7 +3,7 @@
 # that any issue number is turned into a link to the repo. This happens
 # automatically during building, and requires no user input.
 
-chg_path = joinpath(dirname(dirname(@__FILE__)), "docs", "src", "reference", "changelog")
+chg_path = joinpath(docpath, "src", "reference", "changelog")
 
 if !ispath(chg_path)
     mkpath(chg_path)
@@ -26,7 +26,7 @@ end
 
 # SDT
 cp(
-    joinpath(dirname(dirname(@__FILE__)), "CHANGELOG.md"),
+    joinpath(dirname(docpath), "CHANGELOG.md"),
     joinpath(chg_path, "SpeciesDistributionToolkit.md");
     force = true,
 )
@@ -43,7 +43,7 @@ for pkg in [
     "PseudoAbsences",  
 ]
     cp(
-        joinpath(dirname(dirname(@__FILE__)), pkg, "CHANGELOG.md"),
+        joinpath(dirname(docpath), pkg, "CHANGELOG.md"),
         joinpath(chg_path, "$(pkg).md");
         force = true,
     )

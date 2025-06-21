@@ -30,6 +30,6 @@ postprocess(::PolygonData{P,D}, result::R) where {P,D,R} = error("`postprocess` 
 
 Used for checking combinations of keyword arguments. 
 
-For example, for some [`Country`](@ref) providers, different `country`s have different available `level`s, and these provider implement this method to check if the requested (country, level) pair is provided. 
+For example, for some [`Countries`](@ref) providers, different `country`s have different available `level`s, and these provider implement this method to check if the requested (country, level) pair is provided. 
 """
 _extra_keychecks(::PolygonData{P,D}; kw...) where {P,D} = nothing 

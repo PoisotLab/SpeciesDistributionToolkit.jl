@@ -1,7 +1,7 @@
 name = "SimpleSDMPolygons"
 uuid = "dd4c243c-bc7b-45f6-b2b3-6bd128d3a12b"
 authors = ["Michael D. Catchen <mdcatchen@gmail.com>"]
-version = "1.1.1"
+version = "1.1.2"
 
 
 [deps]
@@ -20,10 +20,10 @@ TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 ZipArchives = "49080126-0e18-4c2a-b176-c102e4b3760c"
 
 [weakdeps]
-MakieCore = "20f20a25-4f0e-4fdf-b5d1-57303727442b"
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 
 [extensions]
-SDMPolygonsMakieExt = "MakieCore"
+MakieExtension = "Makie"
 
 [compat]
 ArchGDAL = "0.10"
@@ -34,6 +34,7 @@ GeoInterface = "1.4"
 GeoJSON = "0.8"
 HTTP = "1.10"
 JSON = "0.21"
+Makie = "0.21 - 0.24"
 Proj = "1.8"
 Shapefile = "0.13"
 SimpleSDMDatasets = "1"

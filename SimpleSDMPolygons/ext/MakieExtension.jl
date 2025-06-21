@@ -1,7 +1,10 @@
 module MakieExtension
 
-import Makie
-using SimpleSDMPolygons
+@static if isdefined(Base, :get_extension)
+    using Makie, SimpleSDMPolygons
+else
+    using ..Makie, ..SimpleSDMPolygons
+end
 
 const SSP_TYPES = Union{Polygon,MultiPolygon,Feature}
 

@@ -3,79 +3,33 @@ sdt_path = dirname(dirname(Base.current_project()))
 push!(LOAD_PATH, sdt_path)
 using SpeciesDistributionToolkit
 
-# Load the rest of the build environment
+# These packages are required to build the documentation website
 using Documenter
-using DocumenterVitepress
 using DocumenterCitations
-using GeoJSON
+using DocumenterVitepress
+
+# These packages are used to generate the cards (for datasets) and pages (for the manual)
 using Literate
 using Markdown
 using InteractiveUtils
 using Dates
 using PrettyTables
-import Downloads
 
-# Download the bibliography from paperpile public URL
-const bibfile = joinpath(@__DIR__, "src", "references.bib")
-const paperpile_url = "https://paperpile.com/eb/nimbzsGosN"
-if isfile(bibfile)
-    rm(bibfile)
-end
-Downloads.download(paperpile_url, bibfile)
+# This is required as we refer to it in the documentation
+import GeoJSON
 
-# Cleanup the bibliography file to make DocumenterCitations happy despite their
-# refusal to acknowledge modern field names. The people will partu like it's
-# 1971 and they will like it.
-lines = readlines(bibfile)
-open(bibfile, "w") do bfile
-    for line in lines
-        if contains(line, "journaltitle")
-            println(bfile, replace(line, "journaltitle" => "journal"))
-        elseif contains(line, "date")
-            yrmatch = match(r"{(\d{4})", line)
-            if !isnothing(yrmatch)
-                println(bfile, "year = {$(yrmatch[1])},")
-            end
-            println(bfile, line)
-        else
-            println(bfile, line)
-        end
-    end
-end
-# Look how they massacred my boy
+# We will maintain the path to the root of the documentation here. This is
+# important to ensure that the script building the documentation works.
+const docpath = dirname(@__FILE__)
 
-bib = CitationBibliography(
-    bibfile;
-    style = :authoryear,
-)
+# Steps required before the build
+include(joinpath("steps", "bibliography.jl")) # References for the doc
+include(joinpath("steps", "changelogs.jl")) # CHANGELOG files on the website
+include(joinpath("steps", "datasets.jl")) # Prepare the datasets vignettes
+include(joinpath("steps", "polygons.jl")) # Prepare the polygons vignettes
+#include(joinpath("steps", "manual.jl")) # Compile the manual (this is the big one!)
 
-# Generate a report card for each known dataset
-include("dataset_report.jl")
-include("polygon_report.jl")
-
-# Additional functions to process the text when handled by Literate
-include("processing.jl")
-
-# Changelogs
-include("changelogs.jl")
-
-# Render the tutorials and how-to using Literate
-for folder in ["howto", "tutorials"]
-    fpath = joinpath(@__DIR__, "src", folder)
-    files_to_build = filter(endswith(".jl"), readdir(fpath; join = true))
-    for docfile in files_to_build
-        if ~isfile(replace(docfile, r".jl$" => ".md"))
-            Literate.markdown(
-                docfile, fpath;
-                flavor = Literate.DocumenterFlavor(),
-                config = Dict("credit" => false, "execute" => true),
-                preprocess = pre!,
-                postprocess = post!,
-            )
-        end
-    end
-end
-
+# This MAKES the docs - this is required to succeed before we can deploy the docs
 makedocs(;
     sitename = "Species Distribution Toolkit",
     format = MarkdownVitepress(;

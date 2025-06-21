@@ -10,7 +10,7 @@ end
 
 @testitem "We can plot a single silhouette with a custom size" begin
     using CairoMakie
-    silhouetteplot(0, 0, PhylopicSilhouette("Ebolavirus"), markersize=200)
+    silhouetteplot(0., 0., PhylopicSilhouette("Ebolavirus"), markersize=200)
     @test true
 end
 

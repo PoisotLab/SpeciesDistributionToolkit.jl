@@ -2,8 +2,8 @@
 
 # In this vignette, we provide a demonstration of how the different
 # SpeciesDistributionToolkit functions can be chained together to rapidly create
-# a virtual species, generate its range map, and sample points from it according
-# to the predicted suitability.
+# a virtual species [Meynard2013](@cite), generate its range map, and sample
+# points from it according to the predicted suitability.
 
 using SpeciesDistributionToolkit
 using CairoMakie
@@ -154,7 +154,7 @@ hidespines!(ax)
 current_figure() #hide
 
 # We can now transform these data into a partition of the contribution of each
-# species and location to the total beta-diversity:
+# species and location to the total beta-diversity [Legendre2013](@cite):
 
 function LCBD(ranges::Vector{SDMLayer{Bool}}; transformation::Function = identity)
     Y = transformation(hcat(values.(ranges)...))
@@ -186,7 +186,8 @@ end
 βl, βs, βt = LCBD(ranges; transformation = hellinger)
 
 # We can now plot the various elements (most of the code below is actually
-# laying out the sub-panels for the plot):
+# laying out the sub-panels for the plot), to identify areas in space that
+# contribute most to ecological uniqueness [Dansereau2022](@cite):
 
 # fig-betadivmap
 f = Figure(; size = (700, 700))
@@ -226,3 +227,10 @@ hideydecorations!(ax_inset)
 hidexdecorations!(ax_inset; ticks = false, ticklabels = false, label = false)
 tightlimits!(ax_inset)
 current_figure() #hide
+
+# ## References
+
+# ```@bibliography
+# Pages = [@__FILE__]
+# Style = :authoryear
+# ```

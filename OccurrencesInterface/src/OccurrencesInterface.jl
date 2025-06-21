@@ -18,6 +18,8 @@ include("tables.jl")
 
 include("indexing.jl")
 
+include("iteration.jl")
+
 include("io.jl")
 
 include("demodata.jl")

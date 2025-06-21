@@ -1,11 +1,11 @@
 # # Integration with SpatialBoundaries
 
-# In this tutorial, we will use methods from `SpatialBoundaries` to estimate
-# boundaries for (*i.e.* patches of) wooded areas on the Southwestern islands of
-# the Hawaiian Islands using landcover data from the EarthEnv project. The
-# `SpatialBoundaries` package works with `SpeciesDistributionToolkit` through an
-# extension, so that you can get access to the integration when
-# `SpatialBoundaries` is loaded in your project:
+# In this tutorial, we will use methods from `SpatialBoundaries`
+# [Strydom2023a](@cite) to estimate boundaries for (*i.e.* patches of) wooded
+# areas on the Southwestern islands of the Hawaiian Islands using landcover data
+# from the EarthEnv project. The `SpatialBoundaries` package works with
+# `SpeciesDistributionToolkit` through an extension, so that you can get access
+# to the integration when `SpatialBoundaries` is loaded in your project:
 
 using SpeciesDistributionToolkit
 using SpatialBoundaries # [!code highlight]
@@ -95,3 +95,10 @@ ax = PolarAxis(f[1, 1], theta_0 = -pi/2, direction = -1)
 h = fit(Histogram, deg2rad.(values(direction)); nbins = 100)
 stairs!(ax, h.edges[1], h.weights[[axes(h.weights, 1)..., 1]]; color = :purple, linewidth = 2)
 current_figure() #hide
+
+# ## References
+
+# ```@bibliography
+# Pages = [@__FILE__]
+# Style = :authoryear
+# ```

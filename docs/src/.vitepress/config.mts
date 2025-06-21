@@ -134,6 +134,7 @@ export default defineConfig({
                             collapsed: true,
                             items: [
                                 { text: "Getting GBIF data", link: "/howto/get-gbif-data/" },
+                                { text: "Downloading GBIF data", link: "/howto/download-gbif-data/" },
                                 { text: "Getting STAC data", link: "/howto/stac/" },
                                 { text: "Reading part of a layer", link: "/howto/read-part-layer/" },
                                 { text: "Listing provided layers", link: "/howto/list-provided-layers/" },

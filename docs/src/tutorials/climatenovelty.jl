@@ -37,12 +37,12 @@ spatial_extent = SpeciesDistributionToolkit.boundingbox(POL)
 #
 # :::
 
-# We will get the [BioClim data from CHELSA v2](/datasets/CHELSA2/).
-# CHELSA v2 offers access to the 19 original bioclim variable, and their
-# projection under a variety of CMIP5 models/scenarios. These are pretty large
-# data, and so this operation may take a while in terms of download/read time.
-# The first time you run this command will download the data, and the next calls
-# will read them from disk.
+# We will get the [BioClim data from CHELSA v2](/datasets/CHELSA2/). CHELSA v2
+# [Karger2017](@cite) offers access to the 19 original bioclim variable, and
+# their projection under a variety of CMIP5 models/scenarios. These are pretty
+# large data, and so this operation may take a while in terms of download/read
+# time. The first time you run this command will download the data, and the next
+# calls will read them from disk.
 
 dataprovider = RasterData(CHELSA2, BioClim)
 
@@ -80,10 +80,10 @@ current_figure() #hide
 
 # ## Accessing future climate data
 
-# In the next step, we will download the projected climate data under RCP85. This
-# requires setting up a projection object, which is composed of a scenario and a
-# model. This information is used by the package to verify that this combination
-# exists within the dataset we are working with.
+# In the next step, we will download the projected climate data under
+# SSP3-RCP7.0. This requires setting up a projection object, which is composed
+# of a scenario and a model. This information is used by the package to verify
+# that this combination exists within the dataset we are working with.
 
 projection = Projection(SSP370, GFDL_ESM4)
 
@@ -168,7 +168,7 @@ end
 fig, ax, hm = heatmap(
     Δclim;
     colormap = :tempo,
-    figure = (; size = (800, 400)),
+    figure = (; size = (600, 400)),
     axis = (; aspect = DataAspect()),
 )
 lines!(ax, POL, color=:black)

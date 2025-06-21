@@ -124,7 +124,7 @@ function report(::Type{P}, ::Type{D}) where {P <: RasterProvider, D <: RasterDat
 end
 
 # Make sure the path is therethemes
-dataset_catalogue_path = joinpath("docs", "src", "datasets")
+dataset_catalogue_path = joinpath(docpath, "src", "datasets")
 if ~ispath(dataset_catalogue_path)
     mkpath(dataset_catalogue_path)
 end

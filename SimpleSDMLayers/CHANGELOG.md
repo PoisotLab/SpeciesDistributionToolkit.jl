@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.3.1`
 
-- **added** support for `MakieCore` 0.10
+- **fixed** plotting support to use `Makie` instead of `MakieCore`
 
 ## `v1.3.0
 

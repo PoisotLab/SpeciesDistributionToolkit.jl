@@ -14,13 +14,13 @@ TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
 [weakdeps]
 Clustering = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
-MakieCore = "20f20a25-4f0e-4fdf-b5d1-57303727442b"
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 MultivariateStats = "6f286f6a-111f-5878-ab1e-185364afe411"
 NeutralLandscapes = "71847384-8354-4223-ac08-659a5128069f"
 
 [extensions]
 ClusteringExtension = "Clustering"
-MakieExtension = "MakieCore"
+MakieExtension = "Makie"
 MultivariateStatsExtension = "MultivariateStats"
 NeutralLandscapesExtension = "NeutralLandscapes"
 
@@ -28,7 +28,7 @@ NeutralLandscapesExtension = "NeutralLandscapes"
 ArchGDAL = "0.10"
 Clustering = "0.15"
 Distances = "0.10"
-MakieCore = "0.9, 0.10"
+Makie = "0.21, 0.22, 0.23"
 MultivariateStats = "0.10"
 NeutralLandscapes = "0.1"
 Proj = "1"

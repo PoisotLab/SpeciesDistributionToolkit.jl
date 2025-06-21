@@ -17,7 +17,7 @@ occ = GBIF.download("10.15468/dl.ttnmj9")
 
 # We will get the list of unique taxa contained within this data download:
 
-tax = unique(entity(occ))
+tax = unique(entity(occ));
 
 # We will make a map with the number of observations for *Procyon lotor*:
 
@@ -29,7 +29,7 @@ ax = Axis(fig[1,1], aspect=DataAspect())
 poly!(ax, coast, color=:lightgrey)
 xlims!(ax, bbox.left, bbox.right)
 ylims!(ax, bbox.bottom, bbox.top)
-hexbin!(ax, filter(o -> entity(o) == "Procyon lotor", elements(occ)), bins=300, colormap=:linear_worb_100_25_c53_n256, colorscale=log10)
+hexbin!(ax, filter(o -> startswith("Procyon lotor")(entity(o)), elements(occ)), bins=300, colormap=:linear_worb_100_25_c53_n256, colorscale=log10)
 lines!(ax, coast, color=:grey)
 current_figure() #hide
 

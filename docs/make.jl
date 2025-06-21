@@ -15,6 +15,9 @@ using InteractiveUtils
 using Dates
 using PrettyTables
 
+# This is required as we refer to it in the documentation
+import GeoJSON
+
 # We will maintain the path to the root of the documentation here. This is
 # important to ensure that the script building the documentation works.
 const docpath = dirname(@__FILE__)
@@ -24,7 +27,7 @@ include(joinpath("steps", "bibliography.jl")) # References for the doc
 include(joinpath("steps", "changelogs.jl")) # CHANGELOG files on the website
 include(joinpath("steps", "datasets.jl")) # Prepare the datasets vignettes
 include(joinpath("steps", "polygons.jl")) # Prepare the polygons vignettes
-include(joinpath("steps", "manual.jl")) # Compile the manual (this is the big one!)
+#include(joinpath("steps", "manual.jl")) # Compile the manual (this is the big one!)
 
 # This MAKES the docs - this is required to succeed before we can deploy the docs
 makedocs(;

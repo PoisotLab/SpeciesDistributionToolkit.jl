@@ -40,7 +40,7 @@ function report(::Type{P}, ::Type{D}) where {P <: PolygonProvider, D <: PolygonD
 end
 
 # Make sure the path is therethemes
-polygon_catalogue_path = joinpath("docs", "src", "polygons")
+polygon_catalogue_path = joinpath(docpath, "src", "polygons")
 if ~ispath(polygon_catalogue_path)
     mkpath(polygon_catalogue_path)
 end

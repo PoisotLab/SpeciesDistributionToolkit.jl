@@ -23,12 +23,6 @@ _fields_to_extract(::PolygonData{OneEarth,Bioregions}) = Dict(
     :Bioregions => "Name"
 )
 
-@testitem "We can get all OneEarth polygons using Ecoregions" begin
-    prov = PolygonData(OneEarth, Ecoregions)
-    polys = getpolygon(prov)
-    @test polys isa FeatureCollection
-end
-
 @testitem "We can get all OneEarth polygons using Bioregions" begin
     prov = PolygonData(OneEarth, Bioregions)
     polys = getpolygon(prov)

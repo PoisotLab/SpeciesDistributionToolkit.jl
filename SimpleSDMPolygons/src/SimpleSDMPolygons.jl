@@ -34,7 +34,7 @@ export Land, Oceans, Lakes, Countries, Places, Ecoregions, Bioregions, ParksAndP
 
 include(joinpath("types", "providers.jl"))
 export PolygonProvider
-export EPA, NaturalEarth, OpenStreetMap, GADM, Resolv, OneEarth
+export EPA, NaturalEarth, OpenStreetMap, GADM, Resolve, OneEarth
 
 include(joinpath("types", "filetypes.jl"))
 
@@ -55,7 +55,7 @@ include(joinpath("providers", "epa.jl"))
 include(joinpath("providers", "naturalearth.jl"))
 include(joinpath("providers", "openstreetmap.jl"))
 include(joinpath("providers", "gadm.jl"))
-include(joinpath("providers", "resolv.jl"))
+include(joinpath("providers", "resolve.jl"))
 include(joinpath("providers", "oneearth.jl"))
 
 # Utility function

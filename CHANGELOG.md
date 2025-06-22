@@ -5,9 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.6.3`
+
+- **fixed** a bug where `SDMLayer`s could not be masked by a `FeatureCollection` [#477]
+
 ## `v1.6.2`
 
-- **fixed** a bug where `AbstactOccurrenceCollection` could not be masked with a `FeatureCollection` [#476]
+- **fixed** a bug where `AbstactOccurrenceCollection` could not be masked by a `FeatureCollection` [#476]
 
 ## `v1.6.1`
 

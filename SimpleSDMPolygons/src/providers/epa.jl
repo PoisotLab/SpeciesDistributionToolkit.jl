@@ -30,6 +30,11 @@ function _merge_ecoregions(sf_table, level, fields)
 end
 
 function postprocess(data::PolygonData{EPA,Ecoregions}, res::R; kw...) where {R}
+    # This bit is important as for some reason, the level argument is not
+    # carried over when calling getpolygon
+    if !(:level in keys(kw))
+        kw = (kw..., level = 1)
+    end
     sf_table, ag_prj = res
     fields = _fields_to_extract(data, kw[:level])
     agdal_multipolys, properties = _merge_ecoregions(sf_table, kw[:level], fields)
@@ -63,5 +68,17 @@ end
 @testitem "We can get all polygons from EPA" begin
     prov = PolygonData(EPA, Ecoregions)
     pol = getpolygon(prov)
-    @test pol isa Feature
+    @test pol isa FeatureCollection
+end
+
+@testitem "We can get all level 2 polygons from EPA" begin
+    prov = PolygonData(EPA, Ecoregions)
+    pol = getpolygon(prov; level=2)
+    @test pol isa FeatureCollection
+end
+
+@testitem "We can get all level 3 polygons from EPA" begin
+    prov = PolygonData(EPA, Ecoregions)
+    pol = getpolygon(prov; level=3)
+    @test pol isa FeatureCollection
 end

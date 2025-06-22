@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.1.3`
 
-- **fixed** the difference between `Bioregions` and `Ecoregions`
+- **fixed** the difference between `Bioregions` and `Ecoregions` [#482]
+- **fixed** an issue with the `EPA` provider not getting the right level [#481]
 - **fixed** the name of the `Resolve` provider [#480]
 
 ## `v1.1.2`

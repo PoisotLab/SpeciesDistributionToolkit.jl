@@ -59,3 +59,10 @@ function _slug(::PolygonData{EPA, Ecoregions}, level)
     @info "you should never get here if keychecker does its job"
     error("Not an available Ecoregion level")
 end
+
+
+@testitem "We can get all polygons from EPA" begin
+    prov = PolygonData(EPA, EcoRegions)
+    pol = getpolygon(prov)
+    @test pol isa Feature
+end

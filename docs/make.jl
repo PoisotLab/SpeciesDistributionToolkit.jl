@@ -7,7 +7,6 @@ using SpeciesDistributionToolkit
 using Documenter
 using DocumenterVitepress
 using DocumenterCitations
-using GeoJSON
 using Literate
 using Markdown
 using InteractiveUtils

@@ -178,11 +178,18 @@ function SimpleSDMLayers.mask(
     occ::T,
     features::FeatureCollection
 ) where {T <: AbstractOccurrenceCollection} 
-    for feat in features 
-        occ = mask(occ, feat)
-    end 
-    return occ
+    return vcat([mask(occ, feat) for feat in features.features]...)
 end 
+
+@testitem "We can mask Occurrences with a FeatureCollection" begin
+    polyprovider = PolygonData(OneEarth, Bioregions)
+    bioregions = getpolygon(polyprovider)
+    northpac = bioregions["Region" => "North America"]["Subregion" => "North Pacific Coast"]
+    sightings = OccurrencesInterface.__demodata()
+    occ = mask(sightings, northpac)
+    @test occ isa Vector{Occurrence}
+    @test length(occ) < length(sightings)
+end
 
 SimpleSDMLayers.mask(
     occ::T,

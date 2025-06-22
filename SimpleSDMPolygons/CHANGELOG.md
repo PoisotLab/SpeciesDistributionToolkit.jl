@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.1.3`
+
+- **added** unit tests to `Resolve` and `EPA`
+- **fixed** the difference between `Bioregions` and `Ecoregions` [#482]
+- **fixed** an issue with the `EPA` provider not getting the right level [#481]
+- **fixed** the name of the `Resolve` provider [#480]
+
 ## `v1.1.2`
 
 - **fixed** plotting support to use `Makie` instead of `MakieCore`

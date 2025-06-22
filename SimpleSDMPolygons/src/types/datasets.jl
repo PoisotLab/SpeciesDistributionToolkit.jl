@@ -31,9 +31,9 @@ struct Ecoregions <: PolygonDataset end
 """
     Bioregions
 
-This is an _alias_ for `Ecoregions`
+This is a largest unit than `Ecoregions`, used by `OneEarth`
 """
-const Bioregions = Ecoregions
+struct Bioregions <: PolygonDataset end 
 
 """ 
     Oceans

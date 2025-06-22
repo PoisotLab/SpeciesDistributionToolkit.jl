@@ -2,11 +2,10 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-import GeoJSON
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
-# In this tutorial, we will clip a layer to a polygon (in GeoJSON format), then
-# use the same polygon to filter GBIF records.
+# In this tutorial, we will mask a layer using information from a polygon, then
+# use the same polygon to mask occurrence records.
 
 # ::: warning About coordinates
 # 
@@ -17,9 +16,10 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 # :::
 
 # We provide a very lightweight tool that uses open street map to turn plain
-# text queries into GeoJSON polygons:
+# text queries into polygons:
 
-POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Yosemite National Park")
+POL = getpolygon(PolygonData(OpenStreetMap, Places); place="Idaho")
+lines(POL)
 
 # Note that if these polygons are too big, the `simplify` and `simplify!`
 # methods (which are not exported) can be used to reduce their complexity.
@@ -38,7 +38,7 @@ layer = SDMLayer(
 
 # fig-whole-region
 heatmap(layer; colormap = :Greens, axis = (; aspect = DataAspect()))
-lines!(POL, color=:red)
+lines!(POL, color=:black)
 current_figure() #hide
 
 # We can now mask this layer according to the polygon. This uses the same
@@ -52,7 +52,8 @@ lines!(POL, color=:black)
 current_figure() #hide
 
 # This is a much larger layer than we need! For this reason, we will trim it so
-# that the empty areas are removed:
+# that the empty areas are removed. The `trim` method works on a layer and will
+# return a *copy* of it (as opposed to modifying it in place).
 
 # fig-region-trimmed
 heatmap(
@@ -63,33 +64,19 @@ heatmap(
 lines!(POL, color=:black)
 current_figure() #hide
 
-# Let's now get some occurrences in the area defined by the layer boundingbox:
+# Let's now get some occurrences. The demonstration data from
+# `OccurrencesInterface` are records of sightings of bigfoot
+# [Lozier2009](@cite). These are useful data to think about species distribution
+# modeling in slightly more abstract terms than using data on existing species,
+# and slighty less abstract terms than simulated data [Foxon2024](@cite).
 
-sp = taxon("Ursus americanus")
-presences = occurrences(
-    sp,
-    trim(layer),
-    "occurrenceStatus" => "PRESENT",
-    "limit" => 300,
-)
-while length(presences) < count(presences)
-    occurrences!(presences)
-end
-
-# ::: details Occurrences from a layer
-# 
-# The `GBIF.occurrences` method can accept a layer as its second argument, to
-# limit to the occurrence of a species within the bounding box of this layer. If
-# a layer is used as the sole argument, all occurrences in the bounding box are
-# queried.
-# 
-# :::
+presences = OccurrencesInterface.__demodata()
 
 # We can plot the layer and the occurrences we have retrieved so far:
 
 # fig-all-occurrences
 heatmap(
-    trim(layer);
+    SpeciesDistributionToolkit.trim(layer);
     colormap = :Greens,
     axis = (; aspect = DataAspect()),
 )
@@ -102,11 +89,11 @@ current_figure() #hide
 
 # fig-trimmed-occurrences
 f, ax, plt = heatmap(
-    trim(layer);
+    SpeciesDistributionToolkit.trim(layer);
     colormap = :Greens,
     axis = (; aspect = DataAspect()),
 )
-scatter!(mask(presences, POL); color = :orange, markersize = 4)
+scatter!(mask(presences, POL); color = :orange, markersize = 8)
 lines!(POL, color=:black)
 hidespines!(ax)
 hidedecorations!(ax)
@@ -117,10 +104,21 @@ current_figure() #hide
 # The reason why `mask` called on a GBIF result is not mutating the result is
 # that GBIF results also store the query that was used. For this reason, it
 # makes little sense to modify this object. The non-mutating `mask` returns a
-# vector of GBIF records, which for most purposes can be used in-place of the
+# vector of `Occurrence`, which for most purposes can be used in-place of the
 # result - this is because GBIF records are `AbstractOccurrence`, and vectors of these are
 # handled correctly by the package.
 # 
 # :::
 
 #-
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# OccurrencesInterface.Occurrence
+# SimpleSDMLayers.mask
+# SimpleSDMLayers.mask!
+# SimpleSDMLayers.trim
+# ```

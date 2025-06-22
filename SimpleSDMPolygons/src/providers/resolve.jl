@@ -1,13 +1,13 @@
-const ResolvDatasets = Union{
+const ResolveDatasets = Union{
     Ecoregions
 }
 
-SimpleSDMDatasets.provides(::Type{Resolv}, ::Type{T}) where {T<:ResolvDatasets} = true
-SimpleSDMDatasets.downloadtype(::PolygonData{Resolv, Ecoregions}) = _Zip
-SimpleSDMDatasets.filetype(::PolygonData{Resolv, Ecoregions}) = _Shapefile
-root(::PolygonData{Resolv, Ecoregions}) = "https://storage.googleapis.com/teow2016/"
+SimpleSDMDatasets.provides(::Type{Resolve}, ::Type{T}) where {T<:ResolveDatasets} = true
+SimpleSDMDatasets.downloadtype(::PolygonData{Resolve, Ecoregions}) = _Zip
+SimpleSDMDatasets.filetype(::PolygonData{Resolve, Ecoregions}) = _Shapefile
+root(::PolygonData{Resolve, Ecoregions}) = "https://storage.googleapis.com/teow2016/"
 
-function source(data::PolygonData{Resolv, Ecoregions})    
+function source(data::PolygonData{Resolve, Ecoregions})    
     stem = "Ecoregions2017.zip"
     return (
         url = root(data) * stem,
@@ -16,7 +16,7 @@ function source(data::PolygonData{Resolv, Ecoregions})
     )
 end
 
-function postprocess(data::PolygonData{Resolv,T}, res::R; kw...) where {T,R}
+function postprocess(data::PolygonData{Resolve,T}, res::R; kw...) where {T,R}
     feat, prj = res
     agdal_multipolys = [AG.createmultipolygon(GI.coordinates(mp)) for mp in feat.geometry]
     target_crs = AG.importEPSG(4326) 
@@ -30,7 +30,7 @@ function postprocess(data::PolygonData{Resolv,T}, res::R; kw...) where {T,R}
     FeatureCollection([Feature(MultiPolygon(agdal_multipolys[i]), prop[i]) for i in 1:length(feat.geometry)]) 
 end 
 
-_fields_to_extract(::PolygonData{Resolv,Ecoregions}) = Dict(
+_fields_to_extract(::PolygonData{Resolve,Ecoregions}) = Dict(
     :ECO_NAME => "Name",
     :BIOME_NAME => "Biome",
     :REALM => "Realm",

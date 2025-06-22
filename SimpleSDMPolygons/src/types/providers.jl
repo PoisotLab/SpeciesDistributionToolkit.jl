@@ -32,10 +32,10 @@ It's specifically openstreetmap.fr, and a python script that does...something...
 abstract type OpenStreetMap <: PolygonProvider end 
 
 """
-    Resolv
+    Resolve
 
 """
-abstract type Resolv <: PolygonProvider end 
+abstract type Resolve <: PolygonProvider end 
 
 """
     OneEarth

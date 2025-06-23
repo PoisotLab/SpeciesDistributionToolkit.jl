@@ -38,7 +38,7 @@ function postprocess(data::PolygonData{EPA,Ecoregions}, res::R; kw...) where {R}
     sf_table, ag_prj = res
     fields = _fields_to_extract(data, kw[:level])
     agdal_multipolys, properties = _merge_ecoregions(sf_table, kw[:level], fields)
-    target_crs = AG.importEPSG(4326)
+    target_crs = AG.importEPSG(4326; order=:trad) # ORDER IS IMPORTANT OTHERWISE THE POLYGON IS FLIPPED
     for mp in agdal_multipolys
         AG.createcoordtrans(ag_prj, target_crs) do transform
             AG.transform!(mp, transform)

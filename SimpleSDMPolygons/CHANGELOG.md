@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.1.4`
 
+- **fixed** a bug where the EPA polygons where read with the wrong axis [#485]
 - **fixed** a bug where the first feature in a plot did not take the keyword argument [#486]
 
 ## `v1.1.3`

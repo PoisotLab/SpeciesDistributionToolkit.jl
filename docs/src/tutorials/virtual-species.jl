@@ -23,7 +23,7 @@ extent = SpeciesDistributionToolkit.boundingbox(place)
 # variables as distributed by CHELSA. In order to simplify the code, we will
 # only use BIO1 (mean annual temperature) and BIO12 (total annual
 # precipitation). Note that we collect these layers in a vector typed as
-# SDMLayer{Float32}, in order to ensure that future operations already recevie
+# SDMLayer{Float32}, in order to ensure that future operations already receive
 # floating point values.
 
 provider = RasterData(CHELSA2, BioClim)

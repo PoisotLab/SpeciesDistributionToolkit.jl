@@ -175,7 +175,7 @@ export default defineConfig({
                         { text: "Generating fauxcurrences", link: "/tutorials/fauxcurrences/" },
                         { text: "Generating virtual species", link: "/tutorials/virtual-species/" },
                         { text: "Identifying spatial boundaries", link: "/tutorials/spatial-boundaries/" },
-                        { text: "SDMs - integration", link: "/tutorials/sdemo-integration/" },
+                        { text: "Building a species distribution model", link: "/tutorials/sdemo-integration/" },
                         { text: "SDMs - ensembles", link: "/tutorials/sdemo-ensembles/" },
                     ]
                 }

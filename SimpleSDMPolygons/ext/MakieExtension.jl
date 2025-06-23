@@ -20,9 +20,8 @@ function Makie.convert_arguments(P::Makie.PointBased, t::SSP_TYPES)
     return Makie.convert_arguments(P, t.geometry)
 end
 
-
 function Makie.lines(fc::FeatureCollection; kw...)
-    fig = lines(fc[begin])
+    fig = lines(fc[begin]; kw...)
     for f in fc[2:end]
         lines!(f; kw...)
     end
@@ -30,7 +29,7 @@ function Makie.lines(fc::FeatureCollection; kw...)
 end
 
 function Makie.poly(fc::FeatureCollection; kw...)
-    fig = poly(fc[begin])
+    fig = poly(fc[begin]; kw...)
     for f in fc[2:end]
         poly!(f; kw...)
     end

@@ -1,4 +1,4 @@
-# # Using SDeMo with other packages
+# # Building a species distribution model
 
 # In this tutorial, we will work on the same species and location as in [the
 # excellent tutorial on SDMs by Damaris
@@ -44,16 +44,7 @@ mask!(L, CHE)
 # The next step is to get the data, using the *eBird* dataset:
 
 ouzel = taxon("Turdus torquatus")
-presences = occurrences(
-    ouzel,
-    first(L),
-    "occurrenceStatus" => "PRESENT",
-    "limit" => 300,
-    "datasetKey" => "4fa7b334-ce0d-4e88-aaae-2e0c138d049e",
-)
-while length(presences) < count(presences)
-    occurrences!(presences)
-end
+presences = GBIF.download("10.15468/dl.wye52h")
 
 # And after this, we prepare a layer with presence data:
 

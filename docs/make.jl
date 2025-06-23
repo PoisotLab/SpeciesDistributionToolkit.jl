@@ -7,13 +7,13 @@ using SpeciesDistributionToolkit
 using Documenter
 using DocumenterVitepress
 using DocumenterCitations
-using GeoJSON
 using Literate
 using Markdown
 using InteractiveUtils
 using Dates
 using PrettyTables
 import Downloads
+import GeoJSON
 
 # Download the bibliography from paperpile public URL
 const bibfile = joinpath(@__DIR__, "src", "references.bib")
@@ -53,28 +53,8 @@ bib = CitationBibliography(
 include("dataset_report.jl")
 include("polygon_report.jl")
 
-# Additional functions to process the text when handled by Literate
-include("processing.jl")
-
 # Changelogs
 include("changelogs.jl")
-
-# Render the tutorials and how-to using Literate
-for folder in ["howto", "tutorials"]
-    fpath = joinpath(@__DIR__, "src", folder)
-    files_to_build = filter(endswith(".jl"), readdir(fpath; join = true))
-    for docfile in files_to_build
-        if ~isfile(replace(docfile, r".jl$" => ".md"))
-            Literate.markdown(
-                docfile, fpath;
-                flavor = Literate.DocumenterFlavor(),
-                config = Dict("credit" => false, "execute" => true),
-                preprocess = pre!,
-                postprocess = post!,
-            )
-        end
-    end
-end
 
 makedocs(;
     sitename = "Species Distribution Toolkit",

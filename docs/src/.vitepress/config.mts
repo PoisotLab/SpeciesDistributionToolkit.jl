@@ -134,6 +134,7 @@ export default defineConfig({
                             collapsed: true,
                             items: [
                                 { text: "Getting GBIF data", link: "/howto/get-gbif-data/" },
+                                { text: "Downloading GBIF data", link: "/howto/download-gbif-data/" },
                                 { text: "Getting STAC data", link: "/howto/stac/" },
                                 { text: "Reading part of a layer", link: "/howto/read-part-layer/" },
                                 { text: "Listing provided layers", link: "/howto/list-provided-layers/" },
@@ -174,8 +175,8 @@ export default defineConfig({
                         { text: "Generating fauxcurrences", link: "/tutorials/fauxcurrences/" },
                         { text: "Generating virtual species", link: "/tutorials/virtual-species/" },
                         { text: "Identifying spatial boundaries", link: "/tutorials/spatial-boundaries/" },
-                        { text: "SDMs - integration", link: "/tutorials/sdemo-integration/" },
-                        { text: "SDMs - ensembles", link: "/tutorials/sdemo-ensembles/" },
+                        { text: "Building a species distribution model", link: "/tutorials/sdm-training/" },
+                        { text: "Ensemble models", link: "/tutorials/sdm-ensembles/" },
                     ]
                 }
             ],

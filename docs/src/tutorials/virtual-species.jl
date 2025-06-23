@@ -5,6 +5,10 @@
 # a virtual species, generate its range map, and sample points from it according
 # to the predicted suitability.
 
+# Note that the generation of virtual species is its own domain of research
+# [Meynard2013](@cite), and this tutorial is only meant to show how the
+# functions in the package can be made to work together.
+
 using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
@@ -16,23 +20,21 @@ Random.seed!(1234567); #hide
 # species. For the purpose of this example, we will use the country of Paraguay.
 # Note that the boundingbox function returns the coordinates in WGS84.
 
-place = getpolygon(PolygonData(OpenStreetMap, Places), place="Paraguay") 
+place = getpolygon(PolygonData(OpenStreetMap, Places); place = "Paraguay")
 extent = SpeciesDistributionToolkit.boundingbox(place)
 
 # We then download some environmental data. In this example, we use the BioClim
 # variables as distributed by CHELSA. In order to simplify the code, we will
 # only use BIO1 (mean annual temperature) and BIO12 (total annual
 # precipitation). Note that we collect these layers in a vector typed as
-# SDMLayer{Float32}, in order to ensure that future operations already recevie
+# SDMLayer{Float32}, in order to ensure that future operations already receive
 # floating point values.
 
 provider = RasterData(CHELSA2, BioClim)
 L = SDMLayer{Float32}[SDMLayer(provider; layer = l, extent...) for l in ["BIO1", "BIO12"]]
 
-# We now mask the layers using the polygons we downloaded initially. Here, this
-# is done in two steps, first the masking of the first layer, and second the
-# masking of all other layers. Currently unreleased versions of the package have
-# a shortcut for this operation.
+# We now mask the layers using the polygons we downloaded initially. At the same
+# time, we will transform their values so that they are all in the unit range.
 
 rescale!.(mask!(L, place))
 
@@ -60,7 +62,7 @@ function virtualspecies(L::Vector{<:SDMLayer}; prevalence::Float64 = 0.25)
         predictions = [predictors[i].(L[i]) for i in eachindex(L)]
         rescale!.(predictions)
         global prediction = prod(predictions)
-        rescale!(prediction)
+        #rescale!(prediction)
         invalid = any(isnan, prediction)
     end
     cutoff = quantile(prediction, 1 - prevalence)
@@ -119,11 +121,9 @@ axislegend(ax; position = :lb, framevisible = false)
 current_figure() #hide
 
 # These data could, for example, be used to benchmark species distribution
-# models. For the analysis presented in the manuscript, we are interested in
-# applying the simulation of virtual species to a large number, in order to say
-# something about potential patterns of biodiversity. For this reason, we will
-# now simulate 100 species, with prevalences drawn uniformly in the unit
-# interval.
+# models. Here, in order to say something about potential patterns of
+# biodiversity, we will simulate 100 species, with prevalences drawn uniformly
+# in the unit interval.
 
 ranges = [virtualspecies(L; prevalence = rand())[3] for _ in 1:100]
 first(ranges)
@@ -154,7 +154,7 @@ hidespines!(ax)
 current_figure() #hide
 
 # We can now transform these data into a partition of the contribution of each
-# species and location to the total beta-diversity:
+# species and location to the total beta-diversity [Legendre2013](@cite):
 
 function LCBD(ranges::Vector{SDMLayer{Bool}}; transformation::Function = identity)
     Y = transformation(hcat(values.(ranges)...))
@@ -186,7 +186,8 @@ end
 βl, βs, βt = LCBD(ranges; transformation = hellinger)
 
 # We can now plot the various elements (most of the code below is actually
-# laying out the sub-panels for the plot):
+# laying out the sub-panels for the plot), to identify areas in space that
+# contribute most to ecological uniqueness [Dansereau2022](@cite):
 
 # fig-betadivmap
 f = Figure(; size = (700, 700))
@@ -226,3 +227,10 @@ hideydecorations!(ax_inset)
 hidexdecorations!(ax_inset; ticks = false, ticklabels = false, label = false)
 tightlimits!(ax_inset)
 current_figure() #hide
+
+# ## References
+
+# ```@bibliography
+# Pages = [@__FILE__]
+# Style = :authoryear
+# ```

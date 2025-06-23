@@ -1,8 +1,8 @@
-# # Use with the SDeMo package
+# # Ensemble models
 
 # In this tutorial, we will see how to deal with ensemble models. It is assumed
-# that you will have read the previous tutorial, explaining how to use
-# prediction functions more generally.
+# that you will have read the previous tutorial, explaining the general pipeline
+# to train SDMs.
 
 using SpeciesDistributionToolkit
 using CairoMakie
@@ -33,16 +33,7 @@ L = mask!(L, CHE)
 # The next step is to get the data, using the *eBird* dataset:
 
 ouzel = taxon("Turdus torquatus")
-presences = occurrences(
-    ouzel,
-    first(L),
-    "occurrenceStatus" => "PRESENT",
-    "limit" => 300,
-    "datasetKey" => "4fa7b334-ce0d-4e88-aaae-2e0c138d049e",
-)
-while length(presences) < count(presences)
-    occurrences!(presences)
-end
+presences = GBIF.download("10.15468/dl.wye52h")
 
 # And after this, we prepare a layer with presence data.
 

@@ -7,10 +7,6 @@ polygon must be WGS84.
 
 ## Masking
 
-```@docs
-SimpleSDMLayers.mask!(layer::SDMLayer, multipolygon::GeoJSON.MultiPolygon)
-```
-
 ## Trimming
 
 ```@docs

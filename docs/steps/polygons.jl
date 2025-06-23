@@ -40,7 +40,7 @@ function report(::Type{P}, ::Type{D}) where {P <: PolygonProvider, D <: PolygonD
 end
 
 # Make sure the path is therethemes
-polygon_catalogue_path = joinpath("docs", "src", "polygons")
+polygon_catalogue_path = joinpath(docpath, "src", "polygons")
 if ~ispath(polygon_catalogue_path)
     mkpath(polygon_catalogue_path)
 end
@@ -52,7 +52,7 @@ for P in subtypes(PolygonProvider)
         "w",
     ) do io
         print(io, "# $(P) \n\n")
-        print(io, "\n\n")
+        return print(io, "\n\n")
         # print(io, "$(SimpleSDMDatasets.blurb(P))")
         # print(io, "\n\n")
         # print(io, "For more information about this provider: $(SimpleSDMDatasets.url(P))")
@@ -66,7 +66,7 @@ for P in subtypes(PolygonProvider)
                 "a",
             ) do io
                 print(io, report(P, D))
-                print(io, "\n\n")
+                return print(io, "\n\n")
             end
         end
     end

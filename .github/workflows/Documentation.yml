@@ -227,7 +227,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
         run: julia --project=SimpleSDMPolygons/docs/ SimpleSDMPolygons/docs/make.jl
-  Vignettes:
+  HowTo:
     permissions:
       actions: write
       contents: write
@@ -250,19 +250,43 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
           DATADEPS_ALWAYS_ACCEPT: true
-        run: julia --project=docs/ --threads=auto docs/vignettes.jl
+        run: julia --project=docs/ --threads=auto docs/build-howto.jl
       - name: "Upload the howto folder"
         uses: actions/upload-artifact@v4
         with:
           path: "docs/src/howto"
-          name: "howto-folder"
-      - name: "Upload the tutorial folder"
+          name: howto-folder
+  Tutorials:
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: read
+      statuses: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+      - name: "Bootstrap the package"
+        run: julia --project=. bootstrap.jl
+      - uses: julia-actions/cache@v2
+      - name: Install dependencies
+        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+      - name: Build and deploy
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+          DATADEPS_ALWAYS_ACCEPT: true
+        run: julia --project=docs/ --threads=auto docs/build-tutorials.jl
+      - name: "Upload the tutorials folder"
         uses: actions/upload-artifact@v4
         with:
           path: "docs/src/tutorials"
-          name: "tutorials-folder"
+          name: tutorials-folder
   SpeciesDistributionToolkit:
-    needs: [Vignettes, SimpleSDMPolygons]
+    needs: [HowTo, Tutorials, SimpleSDMPolygons]
     permissions:
       actions: write
       contents: write

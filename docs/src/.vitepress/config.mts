@@ -176,7 +176,7 @@ export default defineConfig({
                         { text: "Generating virtual species", link: "/tutorials/virtual-species/" },
                         { text: "Identifying spatial boundaries", link: "/tutorials/spatial-boundaries/" },
                         { text: "Building a species distribution model", link: "/tutorials/sdm-training/" },
-                        { text: "Ensemble models", link: "/tutorials/sdm-ensemble/" },
+                        { text: "Ensemble models", link: "/tutorials/sdm-ensembles/" },
                     ]
                 }
             ],

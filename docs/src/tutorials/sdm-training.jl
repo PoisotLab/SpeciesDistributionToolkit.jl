@@ -1,4 +1,4 @@
-# # Using SDeMo with other packages
+# # Building a species distribution model
 
 # In this tutorial, we will work on the same species and location as in [the
 # excellent tutorial on SDMs by Damaris

@@ -38,9 +38,10 @@ bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
 
 # train a weak learner using NBC
 
-sdm = SDM(RawData, BIOCLIM, L, presencelayer, bgpoints)
+sdm = SDM(ZScore, BIOCLIM, L, presencelayer, bgpoints)
 variables!(sdm, BackwardSelection)
 train!(sdm)
+variables(sdm)
 
 # make initial prediction with this model
 
@@ -59,14 +60,18 @@ current_figure()
 
 # now setup the boosting
 
-bst = AdaBoost(sdm; iterations = 100)
+bst = AdaBoost(sdm; iterations = 60)
 train!(bst)
 
 # check the number of iterations and effect on weight
 
 scatterlines(bst.weights, color=:black)
 
-brd = predict(bst, L; limit=60)
+#-
+
+brd = predict(bst, L)
+
+#-
 
 fg, ax, pl = heatmap(brd; colormap = :tempo, colorrange=(0, 1))
 ax.aspect = DataAspect()
@@ -79,7 +84,7 @@ current_figure()
 
 # difference of quantiles
 
-fg, ax, pl = heatmap(quantize(brd) - quantize(prd); colormap = Reverse(:balance), colorrange=(-0.1, 0.1))
+fg, ax, pl = heatmap(quantize(brd) - quantize(prd); colormap = Reverse(:balance), colorrange=(-0.15, 0.15))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)
@@ -88,9 +93,9 @@ Colorbar(fg[1, 2], pl, height=Relative(0.6))
 current_figure()
 
 # 
-
-lines(partialresponse(bst, 10)...)
-lines!(partialresponse(sdm, 10; threshold=false)...)
+v = rand(variables(sdm))
+lines(partialresponse(bst, v)...)
+lines!(partialresponse(sdm, v; threshold=false)...)
 current_figure()
 
 #
@@ -106,6 +111,8 @@ end
 
 lines(T, mcc.(C))
 
+#-
+
 thr = T[last(findmax(mcc.(C)))]
 
 rbst = brd .>= thr
@@ -113,7 +120,7 @@ rsdm = predict(sdm, L)
 
 #
 
-fg, ax, pl = heatmap(gainloss(rsdm, rbst); colormap = [:firebrick, :tan, :black])
+fg, ax, pl = heatmap(gainloss(rsdm, rbst); colormap = [:firebrick, :tan, :black], colorrange=(-1, 1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)

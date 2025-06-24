@@ -11,6 +11,13 @@ function Base.show(io::IO, ensemble::Ensemble)
     return print(io, join(strs, "\n"))
 end
 
+function Base.show(io::IO, b::AdaBoost)
+    strs = [
+        "AdaBoost {$(b.model)} × $(b.iterations) iterations",
+    ]
+    return print(io, join(strs, "\n"))
+end
+
 function Base.show(io::IO, sdm::SDM)
     strs = [
         "$(typeof(sdm.transformer))",

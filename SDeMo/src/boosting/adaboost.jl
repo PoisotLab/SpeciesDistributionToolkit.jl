@@ -19,7 +19,7 @@ end
 function AdaBoost(model::SDM; iterations = 50)
     return AdaBoost(
         deepcopy(model),
-        fill(deepcopy(model), iterations),
+        [deepcopy(model) for i in Base.OneTo(iterations)],
         zeros(iterations),
         iterations,
         fill(1 / length(labels(model)), length(labels(model))),
@@ -117,15 +117,24 @@ end
 function StatsAPI.predict(
     b::AdaBoost,
     X::Matrix{T};
+    positives::Bool = false,
+    limit::Integer = b.iterations,
     kwargs...
 ) where {T <: Number}
+    up_to = min(b.iterations, limit)
     # We handle the threshold separately here
     y = fill(0.0, size(X, 2)) # Initial prediction is 0
-    for i in Base.OneTo(b.iterations)
+    for i in Base.OneTo(up_to)
+        if positives
+            if b.weights[i] <= 0.0
+                continue
+            end
+        end
         y_learner = predict(models(b)[i], X; threshold=false)
         y .+= (__y_spread(y_learner) .* b.weights[i])
     end
-    ỹ = __y_gather(y ./ (sum(b.weights)))
+    w = positives ? sum(filter(x -> x > 0, b.weights[1:up_to])) : sum(b.weights[1:up_to])
+    ỹ = __y_gather(y ./ w)
     return isone(length(ỹ)) ? only(ỹ) : ỹ
 end
 

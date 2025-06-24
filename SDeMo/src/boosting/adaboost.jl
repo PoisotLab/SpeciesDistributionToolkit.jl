@@ -32,6 +32,7 @@ models(b::AdaBoost) = b.learners
 # These three will probably be abstracted at some point
 labels(b::AdaBoost) = labels(b.model)
 features(b::AdaBoost) = features(b.model)
+features(b::AdaBoost, i...) = features(b.model, i...)
 variables(b::AdaBoost) = variables(b.model)
 threshold(b::AdaBoost) = 0.5
 
@@ -77,19 +78,18 @@ function train!(b::AdaBoost; kwargs...)
         #end
 
         # We re-train the model for this iteration
-        train!(learner; training = training_samples, threshold = true, trainargs...)
+        train!(learner; training = training_samples, threshold = false, trainargs...)
 
         # We get the prediction and outcomes for the model based on this training round
         y = __y_spread(labels(learner)) # Target
-        raw_scores = predict(learner)
-        #s = __y_spread(raw_scores) # Score (used to update the weight proportionally to the error)
-        p = __y_spread(raw_scores .>= threshold(learner)) # Classification (used to decide which weight should be updated)
+        yhat = predict(learner; threshold=false)
+        p = __y_spread(yhat .>= threshold(learner))
 
         # We need to know which samples were not correctly predicted
         m = findall(y .!= p) # Index of missed classifications
 
         # Weighted error
-        ε = sum(b.w[m]) # Sum of weights for missed samples
+        ε = sum(b.w[m]) # Sum of weights for missed samples - this essentially measures accuracy
 
         # We now calculate the relative weight of this learner in the ensemble so far
         α = 0.5 * log((1 - ε) / ε)
@@ -99,11 +99,11 @@ function train!(b::AdaBoost; kwargs...)
         b.weights[iteration] = α
 
         # Now we update the weights of the model
-        s = __y_spread(raw_scores .- threshold(learner))
-        margin = y .* s # Correct prediction time score returned
+        s = __y_spread(yhat)
+        margin = y .* s # Correct prediction x score gives us the margin of error
 
         # And we update the data weights according to how big the error is
-        b.w .*= exp.(-margin .* α)
+        b.w .*= exp.(-α .* margin)
         b.w ./= sum(b.w)
     end
 

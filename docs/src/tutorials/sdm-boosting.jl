@@ -119,7 +119,7 @@ current_figure() #hide
 # This is close enough. We can now apply this model to the bioclimatic
 # variables:
 
-brd = predict(bst, L; threshold=false, calibrated=false)
+brd = predict(bst, L; threshold=false)
 
 # This gives the following map - note that the scores returned by the boosting
 # model are not calibrated probabilities, so they are centered on 0.5, but have

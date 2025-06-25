@@ -80,8 +80,6 @@ ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)
 lines!(ax, POL, color=:grey20)
-#scatter!(ax, presences, color=:black)
-#scatter!(ax, bgpoints, color=:grey50)
 Colorbar(fg[1, 2], pl, height=Relative(0.6))
 current_figure() #hide
 
@@ -112,17 +110,20 @@ current_figure() #hide
 # Models with a weight of 0 are not contributing new information to the model.
 # These are expecteed to become increasingly common at later iterations, so it
 # is a good idea to examine the cumulative weights to see whether we get close
-# from a plateau.
+# to a plateau.
 
 # fig-weights-cumsum
 scatterlines(cumsum(bst.weights), color=:black)
 current_figure() #hide
 
-# This is close enough. We can now apply this model to the bioclimatic variables:
+# This is close enough. We can now apply this model to the bioclimatic
+# variables:
 
-brd = predict(bst, L; threshold=false)
+brd = predict(bst, L; threshold=false, calibrated=false)
 
-# This gives the following map:
+# This gives the following map - note that the scores returned by the boosting
+# model are not calibrated probabilities, so they are centered on 0.5, but have
+# typically low variance.
 
 # fig-boosted-map
 fg, ax, pl = heatmap(brd; colormap = :tempo, colorrange=(0, 1))

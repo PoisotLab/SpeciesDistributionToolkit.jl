@@ -73,7 +73,7 @@ function train!(b::AdaBoost; kwargs...)
                 replace = true,
             ),
         )
-        
+
         # We re-train the model for this iteration
         train!(learner; training = training_samples, trainargs...)
 
@@ -138,7 +138,7 @@ function StatsAPI.predict(
         y .+= __y_spread(y_learner) .* b.weights[i]
     end
 
-    # And return the prediction
+    # And prepare the final prediction
     ỹ = __y_gather(y ./ w)
 
     if threshold

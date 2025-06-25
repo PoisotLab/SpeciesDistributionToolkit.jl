@@ -150,10 +150,7 @@ fg, ax, pl = heatmap(gainloss(sdm_range, bst_range); colormap = [:firebrick, :gr
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)
-#contour!(rbst, color=:firebrick, linewidth=0.5)
 lines!(ax, POL, color=:grey20)
-#scatter!(ax, presences, color=:purple, markersize=5)
-#scatter!(ax, bgpoints)
 current_figure() #hide
 
 # ## References

@@ -12,19 +12,18 @@ Random.seed!(123451234123121); #hide
 
 # 
 
-POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Paraguay")
-presences = GBIF.download("10.15468/dl.d3cxpr")
+POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Switzerland")
+presences = GBIF.download("10.15468/dl.wye52h")
 
 # get the spatial data
 
-bio_vars = 1:19
 provider = RasterData(CHELSA2, BioClim)
 L = SDMLayer{Float32}[
     SDMLayer(
         provider;
         layer = x,
         SDT.boundingbox(POL; padding=0.0)...,
-    ) for x in bio_vars
+    ) for x in 1:19
 ];
 
 # mask 
@@ -35,7 +34,17 @@ mask!(L, POL);
 
 presencelayer = mask(first(L), presences)
 background = pseudoabsencemask(DistanceToEvent, presencelayer)
-bgpoints = backgroundpoints(nodata(background, d -> (d < 20)|(d > 300)), 2sum(presencelayer))
+bgpoints = backgroundpoints(nodata(background, d -> (d < 5)|(d > 200)), 2sum(presencelayer))
+
+# fig-data-position
+fig = Figure()
+ax = Axis(fig[1,1], aspect=DataAspect())
+poly!(ax, POL, color=:grey90, strokewidth=1, strokecolor=:grey20)
+scatter!(ax, presences, color=:black)
+scatter!(ax, bgpoints, color=:grey50)
+hidedecorations!(ax)
+hidespines!(ax)
+current_figure() #hide
 
 # train a weak learner (bioclim)
 
@@ -47,7 +56,11 @@ bgpoints = backgroundpoints(nodata(background, d -> (d < 20)|(d > 300)), 2sum(pr
 # that we will attempt to improve through boosting.
 
 sdm = SDM(RawData, NaiveBayes, L, presencelayer, bgpoints)
-variables!(sdm, BackwardSelection)
+variables!(sdm, ForwardSelection; included=[1])
+
+# see variables
+
+variables(sdm)
 
 # make initial prediction with this model
 
@@ -56,23 +69,33 @@ prd = predict(sdm, L; threshold = false)
 # plot now
 
 # fig-bioclim-output
-fg, ax, pl = heatmap(prd; colormap = :tempo)
+fg, ax, pl = heatmap(prd; colormap = :tempo, colorrange=(0,1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)
 lines!(ax, POL, color=:grey20)
-scatter!(ax, presencelayer; color = :orange, markersize=4)
-Colorbar(fg[1, 2], pl)
+#scatter!(ax, presences, color=:black)
+#scatter!(ax, bgpoints, color=:grey50)
+Colorbar(fg[1, 2], pl, height=Relative(0.6))
 current_figure() #hide
 
 # now setup the boosting
 
-bst = AdaBoost(sdm; iterations = 40)
+bst = AdaBoost(sdm; iterations = 50)
 train!(bst)
 
 # check the number of iterations and effect on weight
 
+# fig-weights-iterative
 scatterlines(bst.weights, color=:black)
+current_figure() #hide
+
+# look at cumulative weights, should plateau as we expect adaboost to minimize the loss exponentially fast
+
+# fig-weights-cumsum
+scatterlines(cumsum(bst.weights), color=:black)
+current_figure() #hide
+
 
 #-
 
@@ -86,14 +109,15 @@ ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)
 lines!(ax, POL, color=:grey20)
-scatter!(ax, presencelayer; color = :orange, markersize=5)
+#scatter!(ax, presences, color=:black)
+#scatter!(ax, bgpoints, color=:grey50)
 Colorbar(fg[1, 2], pl, height=Relative(0.6))
 current_figure() #hide
 
 # difference of quantiles
 
 # fig-quantile-diff
-fg, ax, pl = heatmap(quantize(brd) - quantize(prd); colormap = Reverse(:balance), colorrange=(-0.15, 0.15))
+fg, ax, pl = heatmap(quantize(brd) - quantize(prd); colormap = Reverse(:balance), colorrange=(-0.5, 0.5))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)
@@ -115,7 +139,7 @@ current_figure() #hide
 
 yhat = predict(bst; threshold=false)
 
-T = LinRange(0.0, 1.0, 1000)
+T = LinRange(extrema(yhat)..., 1000)
 C = zeros(ConfusionMatrix, length(T))
 
 for i in eachindex(T)
@@ -136,12 +160,12 @@ rsdm = predict(sdm, L)
 #
 
 # fig-gainloss-boosting
-fg, ax, pl = heatmap(gainloss(rsdm, rbst); colormap = [:firebrick, :tan, :black], colorrange=(-1, 1))
+fg, ax, pl = heatmap(gainloss(rsdm, rbst); colormap = [:green, :tan, :black], colorrange=(-1, 1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)
-contour!(rbst, color=:firebrick, linewidth=0.5)
+#contour!(rbst, color=:firebrick, linewidth=0.5)
 lines!(ax, POL, color=:grey20)
-scatter!(ax, presences)
-scatter!(ax, bgpoints)
+scatter!(ax, presences, color=:purple, markersize=5)
+#scatter!(ax, bgpoints)
 current_figure() #hide

@@ -56,7 +56,7 @@ current_figure() #hide
 # that we will attempt to improve through boosting.
 
 sdm = SDM(RawData, NaiveBayes, L, presencelayer, bgpoints)
-variables!(sdm, ForwardSelection; included=[1])
+variables!(sdm, ForwardSelection; included=[1, 12])
 
 # see variables
 
@@ -81,7 +81,7 @@ current_figure() #hide
 
 # now setup the boosting
 
-bst = AdaBoost(sdm; iterations = 50)
+bst = AdaBoost(sdm; iterations = 100)
 train!(bst)
 
 # check the number of iterations and effect on weight
@@ -125,17 +125,17 @@ lines!(ax, POL, color=:grey20)
 Colorbar(fg[1, 2], pl, height=Relative(0.6))
 current_figure() #hide
 
-#-
-
-v = rand(variables(sdm))
-
-#-
+# test with partial response
 
 # fig-response-boosted
-lines(partialresponse(bst, v)...)
-lines!(partialresponse(sdm, v; threshold=false)...)
+fig = Figure()
+ax = Axis(fig[1,1]; aspect=1)
+lines!(ax, partialresponse(sdm, 1; threshold=false)..., label="Base model", linestyle=:dash, color=:grey)
+lines!(ax, partialresponse(bst, 1)..., label="AdaBoost", color=:black, linewidth=2)
+Legend(fig[1,2], ax)
 current_figure() #hide
-#
+
+# find a threshold?
 
 yhat = predict(bst; threshold=false)
 
@@ -146,26 +146,30 @@ for i in eachindex(T)
     C[i] = ConfusionMatrix(yhat, labels(bst), T[i])
 end
 
+# now plot the learning curve for the threshold
+
 # fig-response-curve
 lines(T, mcc.(C))
 current_figure() #hide
 
-#-
+# what is the threshold
 
 thr = T[last(findmax(mcc.(C)))]
+
+# get the ranges with base/boosted model
 
 rbst = brd .>= thr
 rsdm = predict(sdm, L)
 
-#
+# and plot the difference
 
 # fig-gainloss-boosting
-fg, ax, pl = heatmap(gainloss(rsdm, rbst); colormap = [:green, :tan, :black], colorrange=(-1, 1))
+fg, ax, pl = heatmap(gainloss(rsdm, rbst); colormap = [:red, :tan, :black], colorrange=(-1, 1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)
 #contour!(rbst, color=:firebrick, linewidth=0.5)
 lines!(ax, POL, color=:grey20)
-scatter!(ax, presences, color=:purple, markersize=5)
+#scatter!(ax, presences, color=:purple, markersize=5)
 #scatter!(ax, bgpoints)
 current_figure() #hide

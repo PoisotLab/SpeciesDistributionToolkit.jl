@@ -1,4 +1,4 @@
-# # Using AdaBoost
+# # Boosting and calibrating a probabilistic classifier
 
 # In this vignette, we will see how we can use AdaBoost to turn a mediocre model
 # into a less mediocre one.

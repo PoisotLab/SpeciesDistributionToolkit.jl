@@ -69,6 +69,10 @@ export models
 include("boosting/adaboost.jl")
 export AdaBoost
 
+# Calibration
+include("calibration/calibration.jl")
+# THIS IS CURRENTLY UNEXPORTED
+
 # Main pipeline
 include("pipeline.jl")
 export reset!, train!, predict

@@ -4,7 +4,7 @@
 Returns a function for model calibration, using Platt scaling, optimized with
 the Newton method. The returned function can be applied to a model output.
 """
-function calibration(sdm::T; kwargs...) where {T <: AbstractSDM}
+function calibration(sdm::T; maxiter=1_000, tol=1e-5, kwargs...) where {T <: AbstractSDM}
 
     d = predict(sdm; threshold=false, kwargs...)
     C = labels(sdm)
@@ -13,7 +13,6 @@ function calibration(sdm::T; kwargs...) where {T <: AbstractSDM}
     n₁ = length(C) - sum(C)
 
     # Newton method parameters
-    maxiter = 1000
     minstep = 1e-10
     σ = 1e-12
 
@@ -39,7 +38,7 @@ function calibration(sdm::T; kwargs...) where {T <: AbstractSDM}
     end
 
     # Iteration
-    for iter in Base.OneTo(maxiter)
+    for _ in Base.OneTo(maxiter)
         # Gradient, Hessian
         h11 = h22 = σ
         h21 = g1 = g2 = 0.0
@@ -61,8 +60,8 @@ function calibration(sdm::T; kwargs...) where {T <: AbstractSDM}
             g2 += d1
         end
 
-        # Early stopping if optimization fails
-        if (abs(g1) < 1e-5) && (abs(g2) < 1e-5)
+        # Early stopping if the gradient is very small
+        if (abs(g1) < tol) && (abs(g2) < tol)
             break
         end
 
@@ -99,6 +98,17 @@ function calibration(sdm::T; kwargs...) where {T <: AbstractSDM}
         end
     end
 
-
     return (x) -> 1.0 ./ (1.0 .+ exp.(A .* x .+ B))
+end
+
+function reliability(yhat, y; bins=11)
+    cutoffs = LinRange(0.0, 1.0+eps(), bins)
+    avgpred = zeros(bins-1)
+    avgactu = zeros(bins-1)
+    for i in eachindex(avgpred)
+        inbin = findall(x -> cutoffs[i] < x <= cutoffs[i+1], yhat)
+        avgpred[i] = mean(yhat[inbin])
+        avgactu[i] = mean(y[inbin])
+    end
+    return (avgpred, avgactu)
 end

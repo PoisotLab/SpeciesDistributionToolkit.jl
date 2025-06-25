@@ -121,9 +121,7 @@ current_figure() #hide
 
 brd = predict(bst, L; threshold=false)
 
-# This gives the following map - note that the scores returned by the boosting
-# model are not calibrated probabilities, so they are centered on 0.5, but have
-# typically low variance.
+# This gives the following map:
 
 # fig-boosted-map
 fg, ax, pl = heatmap(brd; colormap = :tempo, colorrange=(0, 1))
@@ -134,9 +132,79 @@ lines!(ax, POL, color=:grey20)
 Colorbar(fg[1, 2], pl, height=Relative(0.6))
 current_figure() #hide
 
-# Note that the default threshold for `AdaBoost` is 0.5, which is explained by
-# the fact that the final decision step is a weighted voting based on the sum of
-# all weak learners. We can get the predicted range under both models:
+# The scores returned by the boosted model are not calibrated probabilities, so
+# they are centered on 0.5, but have typically low variance. This can be
+# explained by the fact that each component models tends to make one-sided
+# errors near 0 and 1, wich accumulate with more models over time. This is
+# pretty obvious from lookin at the histogram of the results:
+
+# fig-hist-boostpred
+hist(brd, color=:grey)
+hideydecorations!()
+hidexdecorations!(current_axis(); ticks=false, ticklabels=false)
+hidespines!(current_axis(), :l)
+hidespines!(current_axis(), :r)
+hidespines!(current_axis(), :t)
+xlims!(0, 1)
+tightlimits!(current_axis())
+current_figure() #hide
+
+# We can also look at the reliability curve for this model:
+
+# fig-reliability-part-one
+f = Figure()
+ax = Axis(f[1,1], aspect=1, xlabel="Average prediction", ylabel="Average empirical probability")
+lines!(ax, [0,1], [0,1], color=:grey, linestyle=:dash)
+xlims!(ax, 0, 1)
+ylims!(ax, 0, 1)
+scatterlines!(ax, SDeMo.reliability(predict(bst; threshold=false), labels(sdm))..., color=:black)
+current_figure() #hide
+
+# In order to turn this score into a value that is closer to a probability, we
+# can estimate a calibration function for this model:
+
+cal = SDeMo.calibration(bst);
+
+# This step uses the Platt scaling approach, where the outputs from the model
+# are regressed against the true class probabilities, to attempt to bring the
+# model prediction more in line with true probabilities.
+
+# ::: warning Experimental API
+# 
+# The `reliability` and `calibration` methods are currently not exported, which
+# means that they are very likely to change in the future, and are not
+# guaranteed to be stable.
+# 
+# :::
+
+# It is a good idea to check that the calibration function is indeed bringing us
+# closer to the 1:1 line, which is to say that it provides us with a score that
+# is closer to a true probability.
+
+# fig-reliability-part-two
+scatterlines!(ax, SDeMo.reliability(cal(predict(bst; threshold=false)), labels(sdm))..., color=:red)
+current_figure() #hide
+
+# Of course the calibration function can be applied to a layer, so we can now
+# use AdaBoost to estimate the probability of species presence:
+
+# fig-boosted-proba
+fg, ax, pl = heatmap(cal(brd); colormap = :tempo, colorrange=(0, 1))
+ax.aspect = DataAspect()
+hidedecorations!(ax)
+hidespines!(ax)
+lines!(ax, POL, color=:grey20)
+Colorbar(fg[1, 2], pl, height=Relative(0.6))
+current_figure() #hide
+
+# Note that the calibration is not required to obtain a binary map, as the
+# transformation applied to the scores is monotonous. For this reason, the
+# AdaBoost function will internally work on the raw scores, and turn them into
+# binary predictions using thresholding.
+
+# The default threshold for `AdaBoost` is 0.5, which is explained by the fact
+# that the final decision step is a weighted voting based on the sum of all weak
+# learners. We can get the predicted range under both models:
 
 sdm_range = predict(sdm, L)
 bst_range = predict(bst, L)

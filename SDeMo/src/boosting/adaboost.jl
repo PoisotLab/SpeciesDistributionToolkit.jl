@@ -55,9 +55,9 @@ transformers would create data leakage.
 function train!(b::AdaBoost; kwargs...)
     # We start by training the initial model
     train!(b.model; kwargs...)
-    
+
     # The threshold is handled a little differently for boosted models
-    trainargs = filter(kw -> (kw.first != :threshold) & (kw.first != :training), kwargs)
+    trainargs = filter(kw -> kw.first != :training, kwargs)
 
     for iteration in Base.OneTo(b.iterations)
 
@@ -73,20 +73,16 @@ function train!(b::AdaBoost; kwargs...)
                 replace = true,
             ),
         )
-        #if iteration == 1
-        #    training_samples = eachindex(labels(learner))
-        #end
-
+        
         # We re-train the model for this iteration
-        train!(learner; training = training_samples, threshold = false, trainargs...)
+        train!(learner; training = training_samples, trainargs...)
 
         # We get the prediction and outcomes for the model based on this training round
         y = __y_spread(labels(learner)) # Target
-        yhat = predict(learner; threshold=false)
-        p = __y_spread(yhat .>= threshold(learner))
+        yhat = __y_spread(predict(learner))
 
         # We need to know which samples were not correctly predicted
-        m = findall(y .!= p) # Index of missed classifications
+        m = findall(y .!= yhat) # Index of missed classifications
 
         # Weighted error
         ε = sum(b.w[m]) # Sum of weights for missed samples - this essentially measures accuracy
@@ -99,8 +95,7 @@ function train!(b::AdaBoost; kwargs...)
         b.weights[iteration] = α
 
         # Now we update the weights of the model
-        s = __y_spread(yhat)
-        margin = y .* s # Correct prediction x score gives us the margin of error
+        margin = y .* yhat # Correct prediction x score gives us the margin of error
 
         # And we update the data weights according to how big the error is
         b.w .*= exp.(-α .* margin)
@@ -110,31 +105,46 @@ function train!(b::AdaBoost; kwargs...)
     return b
 end
 
-
 """
     TODO
 """
 function StatsAPI.predict(
     b::AdaBoost,
     X::Matrix{T};
-    positives::Bool = false,
-    limit::Integer = b.iterations,
-    kwargs...
+    kwargs...,
 ) where {T <: Number}
-    up_to = min(b.iterations, limit)
-    # We handle the threshold separately here
-    y = fill(0.0, size(X, 2)) # Initial prediction is 0
-    for i in Base.OneTo(up_to)
-        if positives
-            if b.weights[i] <= 0.0
-                continue
-            end
-        end
-        y_learner = predict(models(b)[i], X; threshold=false)
-        y .+= (__y_spread(y_learner) .* b.weights[i])
+
+    # We don't use the threshold as part of each tree here
+    predictargs = filter(kw -> kw.first != :threshold, kwargs)
+
+    # We do use the threshold to return the boosted prediction, so we will
+    # extract it from the keywords if given, and other wise set it to true
+    # (binary prediction)
+    threshold_argument = filter(kw -> kw.first == :threshold, kwargs)
+    threshold = isempty(threshold_argument) ? true : threshold_argument[:threshold]
+
+    # Start with an initial prediction of 0.0 in the -1, 1 space
+    y = fill(0.0, size(X, 2))
+
+    # We get the total sum of the weights in the boosted model
+    w = sum(abs.(b.weights))
+
+    for i in Base.OneTo(b.iterations)
+
+        # We get the classification from the ith learner
+        y_learner = predict(models(b)[i], X; threshold = true, predictargs...)
+
+        # And we multiply it by the weight, again in the -1, 1 space
+        y .+= __y_spread(y_learner) .* b.weights[i]
     end
-    w = positives ? sum(filter(x -> x > 0, b.weights[1:up_to])) : sum(b.weights[1:up_to])
+
+    # And return the prediction
     ỹ = __y_gather(y ./ w)
+
+    if threshold
+        ỹ = ỹ .>= 0.5
+    end
+
     return isone(length(ỹ)) ? only(ỹ) : ỹ
 end
 

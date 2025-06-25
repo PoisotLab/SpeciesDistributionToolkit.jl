@@ -167,7 +167,9 @@ cal = SDeMo.calibration(bst);
 
 # This step uses the Platt scaling approach, where the outputs from the model
 # are regressed against the true class probabilities, to attempt to bring the
-# model prediction more in line with true probabilities.
+# model prediction more in line with true probabilities
+# [Niculescu-Mizil2005](@cite). Internally, the package uses the fast and robust
+# algorithm of [Lin2007](@citet).
 
 # ::: warning Experimental API
 # 
@@ -186,7 +188,8 @@ scatterlines!(ax, SDeMo.reliability(cal(predict(bst; threshold=false)), labels(s
 current_figure() #hide
 
 # Of course the calibration function can be applied to a layer, so we can now
-# use AdaBoost to estimate the probability of species presence:
+# use AdaBoost to estimate the probability of species presence.
+# [Dormann2020](@citet) has several strong arguments in favor of this approach.
 
 # fig-boosted-proba
 fg, ax, pl = heatmap(cal(brd); colormap = :tempo, colorrange=(0, 1))

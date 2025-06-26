@@ -135,21 +135,35 @@ current_figure() #hide
 # The scores returned by the boosted model are not calibrated probabilities, so
 # they are centered on 0.5, but have typically low variance. This can be
 # explained by the fact that each component models tends to make one-sided
-# errors near 0 and 1, wich accumulate with more models over time. This is
-# pretty obvious from lookin at the histogram of the results:
+# errors near 0 and 1, wich accumulate with more models over time. This problem
+# is typically more serious when adding multiple classifiers together, as with
+# bagging and boosting. Some classifiers tend to exagerate the proportion of
+# extreme values (Naive Bayes classifiers, for example), some others tend to
+# create peaks near values slightly above 0 and below 1 (tree-based methods),
+# while methods like logistic regression typically do a fair job at predicting
+# probabilities.
+
+# The type of bias that a classifier accumulates is usually pretty obvious from
+# lookin at the histogram of the results:
 
 # fig-hist-boostpred
-hist(brd; color = :grey)
-hideydecorations!()
-hidexdecorations!(current_axis(); ticks = false, ticklabels = false)
-hidespines!(current_axis(), :l)
-hidespines!(current_axis(), :r)
-hidespines!(current_axis(), :t)
-xlims!(0, 1)
-tightlimits!(current_axis())
+f = Figure(; size=(600, 300))
+ax = Axis(f[1,1]; xlabel="Predicted score")
+hist!(ax, brd; color = :lightgrey, bins=70)
+hideydecorations!(ax)
+hidexdecorations!(ax; ticks = false, ticklabels = false)
+hidespines!(ax, :l)
+hidespines!(ax, :r)
+hidespines!(ax, :t)
+xlims!(ax, 0, 1)
+tightlimits!(ax)
 current_figure() #hide
 
-# We can also look at the reliability curve for this model:
+# We can also look at the reliability curve for this model. The reliability
+# curve divides the predictions into bins, and compares the average score on the
+# training data to the proportion of events in the training data. When these two
+# quantities are almost equal, the score outputed by the model is a good
+# prediction of the probability of the event.
 
 # fig-reliability-part-one
 f = Figure()
@@ -165,8 +179,9 @@ ylims!(ax, 0, 1)
 scatterlines!(ax, SDeMo.reliability(bst)...; color = :black, label = "Raw scores")
 current_figure() #hide
 
-# In order to turn this score into a value that is closer to a probability, we
-# can estimate a calibration function for this model:
+# Based on the reliability curve, it is clear that the model outputs are not
+# probabilities. In order to turn these scores into a value that are closer to
+# probabilities, we can estimate a calibration function for this model:
 
 cal = SDeMo.calibration(bst);
 

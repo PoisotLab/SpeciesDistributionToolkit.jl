@@ -195,13 +195,6 @@ C = calibrate(bst)
 
 f = correct(C)
 
-# ::: warning Experimental API
-# 
-# The `calibration` methods are currently not exported, which means that they
-# are very likely to change in the future, and are not guaranteed to be stable.
-# 
-# :::
-
 # It is a good idea to check that the calibration function is indeed bringing us
 # closer to the 1:1 line, which is to say that it provides us with a score that
 # is closer to a true probability.

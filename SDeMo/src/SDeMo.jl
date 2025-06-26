@@ -73,6 +73,9 @@ export AdaBoost
 include("calibration/calibration.jl")
 # THIS IS CURRENTLY UNEXPORTED
 
+include("calibration/reliability.jl")
+export reliability
+
 # Main pipeline
 include("pipeline.jl")
 export reset!, train!, predict

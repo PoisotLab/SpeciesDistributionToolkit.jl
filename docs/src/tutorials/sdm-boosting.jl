@@ -12,14 +12,14 @@ Random.seed!(123451234123121); #hide
 
 # We work on the same data as for the previous SDM tutorials:
 
-POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Switzerland")
+POL = getpolygon(PolygonData(OpenStreetMap, Places); place = "Switzerland")
 presences = GBIF.download("10.15468/dl.wye52h")
 provider = RasterData(CHELSA2, BioClim)
 L = SDMLayer{Float32}[
     SDMLayer(
         provider;
         layer = x,
-        SDT.boundingbox(POL; padding=0.0)...,
+        SDT.boundingbox(POL; padding = 0.0)...,
     ) for x in 1:19
 ];
 mask!(L, POL)
@@ -34,10 +34,10 @@ bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
 
 # fig-data-position
 fig = Figure()
-ax = Axis(fig[1,1], aspect=DataAspect())
-poly!(ax, POL, color=:grey90, strokewidth=1, strokecolor=:grey20)
-scatter!(ax, presences, color=:black, markersize=6)
-scatter!(ax, bgpoints, color=:grey50, markersize=4)
+ax = Axis(fig[1, 1]; aspect = DataAspect())
+poly!(ax, POL; color = :grey90, strokewidth = 1, strokecolor = :grey20)
+scatter!(ax, presences; color = :black, markersize = 6)
+scatter!(ax, bgpoints; color = :grey50, markersize = 4)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
@@ -75,19 +75,19 @@ prd = predict(sdm, L; threshold = false)
 # boosting.
 
 # fig-bioclim-output
-fg, ax, pl = heatmap(prd; colormap = :tempo, colorrange=(0,1))
+fg, ax, pl = heatmap(prd; colormap = :tempo, colorrange = (0, 1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)
-lines!(ax, POL, color=:grey20)
-Colorbar(fg[1, 2], pl, height=Relative(0.6))
+lines!(ax, POL; color = :grey20)
+Colorbar(fg[1, 2], pl; height = Relative(0.6))
 current_figure() #hide
 
 # To train this model using the AdaBoost algorithm, we wrap it into an
 # `AdaBoost` object, and specify the number of iterations (how many learners we
 # want to train). The default is 50.
 
-bst = AdaBoost(sdm; iterations=60)
+bst = AdaBoost(sdm; iterations = 60)
 
 # Training the model is done in the exact same way as other `SDeMo` models, with
 # one important exception. AdaBoost uses the predicted class (presence/absence)
@@ -104,7 +104,7 @@ train!(bst)
 # counted by flipping their prediction in the final recommendation.
 
 # fig-weights-iterative
-scatterlines(bst.weights, color=:black)
+scatterlines(bst.weights; color = :black)
 current_figure() #hide
 
 # Models with a weight of 0 are not contributing new information to the model.
@@ -113,23 +113,23 @@ current_figure() #hide
 # to a plateau.
 
 # fig-weights-cumsum
-scatterlines(cumsum(bst.weights), color=:black)
+scatterlines(cumsum(bst.weights); color = :black)
 current_figure() #hide
 
 # This is close enough. We can now apply this model to the bioclimatic
 # variables:
 
-brd = predict(bst, L; threshold=false)
+brd = predict(bst, L; threshold = false)
 
 # This gives the following map:
 
 # fig-boosted-map
-fg, ax, pl = heatmap(brd; colormap = :tempo, colorrange=(0, 1))
+fg, ax, pl = heatmap(brd; colormap = :tempo, colorrange = (0, 1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)
-lines!(ax, POL, color=:grey20)
-Colorbar(fg[1, 2], pl, height=Relative(0.6))
+lines!(ax, POL; color = :grey20)
+Colorbar(fg[1, 2], pl; height = Relative(0.6))
 current_figure() #hide
 
 # The scores returned by the boosted model are not calibrated probabilities, so
@@ -139,9 +139,9 @@ current_figure() #hide
 # pretty obvious from lookin at the histogram of the results:
 
 # fig-hist-boostpred
-hist(brd, color=:grey)
+hist(brd; color = :grey)
 hideydecorations!()
-hidexdecorations!(current_axis(); ticks=false, ticklabels=false)
+hidexdecorations!(current_axis(); ticks = false, ticklabels = false)
 hidespines!(current_axis(), :l)
 hidespines!(current_axis(), :r)
 hidespines!(current_axis(), :t)
@@ -153,11 +153,16 @@ current_figure() #hide
 
 # fig-reliability-part-one
 f = Figure()
-ax = Axis(f[1,1], aspect=1, xlabel="Average predicted probability", ylabel="Average empirical probability")
-lines!(ax, [0,1], [0,1], color=:grey, linestyle=:dash)
+ax = Axis(
+    f[1, 1];
+    aspect = 1,
+    xlabel = "Average predicted probability",
+    ylabel = "Average empirical probability",
+)
+lines!(ax, [0, 1], [0, 1]; color = :grey, linestyle = :dash)
 xlims!(ax, 0, 1)
 ylims!(ax, 0, 1)
-scatterlines!(ax, SDeMo.reliability(predict(bst; threshold=false), labels(sdm))..., color=:black, label="Raw scores")
+scatterlines!(ax, SDeMo.reliability(bst)...; color = :black, label = "Raw scores")
 current_figure() #hide
 
 # In order to turn this score into a value that is closer to a probability, we
@@ -173,9 +178,8 @@ cal = SDeMo.calibration(bst);
 
 # ::: warning Experimental API
 # 
-# The `reliability` and `calibration` methods are currently not exported, which
-# means that they are very likely to change in the future, and are not
-# guaranteed to be stable.
+# The `calibration` methods are currently not exported, which means that they
+# are very likely to change in the future, and are not guaranteed to be stable.
 # 
 # :::
 
@@ -184,8 +188,14 @@ cal = SDeMo.calibration(bst);
 # is closer to a true probability.
 
 # fig-reliability-part-two
-scatterlines!(ax, SDeMo.reliability(cal(predict(bst; threshold=false)), labels(sdm))..., color=:blue, marker=:rect, label="Calibrated")
-axislegend(ax, position=:lt)
+scatterlines!(
+    ax,
+    SDeMo.reliability(bst; link = cal)...;
+    color = :blue,
+    marker = :rect,
+    label = "Calibrated",
+)
+axislegend(ax; position = :lt)
 current_figure() #hide
 
 # Of course the calibration function can be applied to a layer, so we can now
@@ -193,12 +203,12 @@ current_figure() #hide
 # [Dormann2020](@citet) has several strong arguments in favor of this approach.
 
 # fig-boosted-proba
-fg, ax, pl = heatmap(cal(brd); colormap = :tempo, colorrange=(0, 1))
+fg, ax, pl = heatmap(cal(brd); colormap = :tempo, colorrange = (0, 1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)
-lines!(ax, POL, color=:grey20)
-Colorbar(fg[1, 2], pl, height=Relative(0.6))
+lines!(ax, POL; color = :grey20)
+Colorbar(fg[1, 2], pl; height = Relative(0.6))
 current_figure() #hide
 
 # Note that the calibration is not required to obtain a binary map, as the
@@ -218,11 +228,15 @@ bst_range = predict(bst, L)
 # conserved is in black.
 
 # fig-gainloss-boosting
-fg, ax, pl = heatmap(gainloss(sdm_range, bst_range); colormap = [:firebrick, :grey10, :grey75], colorrange=(-1, 1))
+fg, ax, pl = heatmap(
+    gainloss(sdm_range, bst_range);
+    colormap = [:firebrick, :grey10, :grey75],
+    colorrange = (-1, 1),
+)
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)
-lines!(ax, POL, color=:grey20)
+lines!(ax, POL; color = :grey20)
 current_figure() #hide
 
 # ## References

@@ -100,15 +100,3 @@ function calibration(sdm::T; maxiter=1_000, tol=1e-5, kwargs...) where {T <: Abs
 
     return (x) -> 1.0 ./ (1.0 .+ exp.(A .* x .+ B))
 end
-
-function reliability(yhat, y; bins=9)
-    cutoffs = LinRange(minimum(yhat), maximum(yhat)+eps(), bins)
-    avgpred = zeros(bins-1)
-    avgactu = zeros(bins-1)
-    for i in eachindex(avgpred)
-        inbin = findall(x -> cutoffs[i] < x <= cutoffs[i+1], yhat)
-        avgpred[i] = mean(yhat[inbin])
-        avgactu[i] = mean(y[inbin])
-    end
-    return (avgpred, avgactu)
-end

@@ -181,15 +181,19 @@ current_figure() #hide
 
 # Based on the reliability curve, it is clear that the model outputs are not
 # probabilities. In order to turn these scores into a value that are closer to
-# probabilities, we can estimate a calibration function for this model:
+# probabilities, we can estimate calibration parameters for this model:
 
-cal = SDeMo.calibration(bst);
+C = calibrate(bst)
 
 # This step uses the [Platt1999](@citet) scaling approach, where the outputs
 # from the model are regressed against the true class probabilities, to attempt
 # to bring the model prediction more in line with true probabilities
 # [Niculescu-Mizil2005](@cite). Internally, the package uses the fast and robust
 # algorithm of [Lin2007](@citet).
+
+# These parameters can be turned into a correction function:
+
+f = correct(C)
 
 # ::: warning Experimental API
 # 
@@ -205,7 +209,7 @@ cal = SDeMo.calibration(bst);
 # fig-reliability-part-two
 scatterlines!(
     ax,
-    SDeMo.reliability(bst; link = cal)...;
+    SDeMo.reliability(bst; link = f)...;
     color = :blue,
     marker = :rect,
     label = "Calibrated",
@@ -218,7 +222,7 @@ current_figure() #hide
 # [Dormann2020](@citet) has several strong arguments in favor of this approach.
 
 # fig-boosted-proba
-fg, ax, pl = heatmap(cal(brd); colormap = :tempo, colorrange = (0, 1))
+fg, ax, pl = heatmap(f(brd); colormap = :tempo, colorrange = (0, 1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)

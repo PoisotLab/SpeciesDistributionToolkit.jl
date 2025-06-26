@@ -69,9 +69,9 @@ export models
 include("boosting/adaboost.jl")
 export AdaBoost
 
-# Calibration
+# Calibration and correction
 include("calibration/calibration.jl")
-# THIS IS CURRENTLY UNEXPORTED
+export calibrate, correct
 
 include("calibration/reliability.jl")
 export reliability

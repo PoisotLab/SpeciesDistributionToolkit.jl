@@ -1,10 +1,17 @@
+abstract type AbstractCalibration end
+
+Base.@kwdef struct PlattCalibration <: AbstractCalibration
+    A::Real = 0.0
+    B::Real = 0.0
+end
+
 """
     calibration(sdm::T; kwargs...) where {T <: AbstractSDM}
 
 Returns a function for model calibration, using Platt scaling, optimized with
 the Newton method. The returned function can be applied to a model output.
 """
-function calibration(sdm::T; maxiter=1_000, tol=1e-5, kwargs...) where {T <: AbstractSDM}
+function calibrate(::Type{PlattCalibration}, sdm::T; maxiter=1_000, tol=1e-5, kwargs...) where {T <: AbstractSDM}
 
     d = predict(sdm; threshold=false, kwargs...)
     C = labels(sdm)
@@ -98,5 +105,18 @@ function calibration(sdm::T; maxiter=1_000, tol=1e-5, kwargs...) where {T <: Abs
         end
     end
 
-    return (x) -> 1.0 ./ (1.0 .+ exp.(A .* x .+ B))
+    return PlattCalibration(A, B)
+end
+
+function calibrate(sdm::T; kwargs...) where {T <: AbstractSDM}
+    return calibrate(PlattCalibration, sdm; maxiter=1_000, tol=1e-5, kwargs...)
+end
+
+function correct(pl::PlattCalibration, y)
+    ŷ = 1.0 ./ (1.0 .+ exp.(pl.A .* y .+ pl.B))
+    return ŷ
+end
+
+function correct(cal::AbstractCalibration)
+    return (y) -> correct(cal, y)
 end

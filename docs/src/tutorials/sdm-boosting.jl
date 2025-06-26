@@ -153,11 +153,11 @@ current_figure() #hide
 
 # fig-reliability-part-one
 f = Figure()
-ax = Axis(f[1,1], aspect=1, xlabel="Average prediction", ylabel="Average empirical probability")
+ax = Axis(f[1,1], aspect=1, xlabel="Average predicted probability", ylabel="Average empirical probability")
 lines!(ax, [0,1], [0,1], color=:grey, linestyle=:dash)
 xlims!(ax, 0, 1)
 ylims!(ax, 0, 1)
-scatterlines!(ax, SDeMo.reliability(predict(bst; threshold=false), labels(sdm))..., color=:black)
+scatterlines!(ax, SDeMo.reliability(predict(bst; threshold=false), labels(sdm))..., color=:black, label="Raw scores")
 current_figure() #hide
 
 # In order to turn this score into a value that is closer to a probability, we
@@ -184,7 +184,8 @@ cal = SDeMo.calibration(bst);
 # is closer to a true probability.
 
 # fig-reliability-part-two
-scatterlines!(ax, SDeMo.reliability(cal(predict(bst; threshold=false)), labels(sdm))..., color=:red)
+scatterlines!(ax, SDeMo.reliability(cal(predict(bst; threshold=false)), labels(sdm))..., color=:blue, marker=:rect, label="Calibrated")
+axislegend(ax, position=:lt)
 current_figure() #hide
 
 # Of course the calibration function can be applied to a layer, so we can now

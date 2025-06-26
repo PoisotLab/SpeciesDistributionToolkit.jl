@@ -102,6 +102,8 @@ hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange = (0,
 contour!(ax, predict(sdm, L); color = :black, linewidth = 0.5)
 Colorbar(f[1, 2], hm)
 lines!(ax, CHE; color = :black)
+bbox = SpeciesDistributionToolkit.boundingbox(CHE)
+silhouetteplot!(ax, bbox.left+0.3, bbox.top-0.2, Phylopic.imagesof(ouzel; items=1), markersize=70)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide

@@ -16,7 +16,7 @@ include("utilities/demodata.jl")
 
 # Types
 include("models.jl")
-export AbstractSDM, AbstractEnsembleSDM
+export AbstractSDM, AbstractEnsembleSDM, AbstractBoostedSDM
 export Transformer, Classifier
 export SDM
 export threshold, features, labels, variables, instance
@@ -64,6 +64,17 @@ export Ensemble
 
 include("ensembles/pipeline.jl")
 export models
+
+# Boosting
+include("boosting/adaboost.jl")
+export AdaBoost
+
+# Calibration and correction
+include("calibration/calibration.jl")
+export calibrate, correct
+
+include("calibration/reliability.jl")
+export reliability
 
 # Main pipeline
 include("pipeline.jl")

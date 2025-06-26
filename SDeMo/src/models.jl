@@ -1,28 +1,39 @@
 """
     AbstractSDM
 
-This abstract type covers both the regular and the ensemble models.
+This abstract type covers the regular, ensemble, and boosted models.
 """
 abstract type AbstractSDM end
 
 """
     AbstractEnsembleSDM
 
-This abstract types covers model that combine different SDMs to make a prediction, which currently covers `Bagging` and `Ensemble`.
+This abstract types covers model that combine different SDMs to make a
+prediction, which currently covers `Bagging` and `Ensemble`.
 """
 abstract type AbstractEnsembleSDM <: AbstractSDM end
 
 """
+    AbstractBoostedSDM
+
+This type covers model that use boosting to iteratively improve on the least
+well predicted instances of a problem.
+"""
+abstract type AbstractBoostedSDM <: AbstractSDM end
+
+"""
     Transformer
 
-This abstract type covers all transformations that are applied to the data before fitting the classifier.
+This abstract type covers all transformations that are applied to the data
+before fitting the classifier.
 """
 abstract type Transformer end
 
 """
     Classifier
 
-This abstract type covers all algorithms to convert transformed data into prediction.
+This abstract type covers all algorithms to convert transformed data into
+prediction.
 """
 abstract type Classifier end
 
@@ -97,7 +108,9 @@ features(sdm::SDM, n) = sdm.X[n, :]
 """
     instance(sdm::SDM, n; strict=true)
 
-Returns the *n*-th instance stored in the field `X` of the SDM. If the keyword argument `strict` is `true`, only the variables used for prediction are returned.
+Returns the *n*-th instance stored in the field `X` of the SDM. If the keyword
+argument `strict` is `true`, only the variables used for prediction are
+returned.
 """
 function instance(sdm::SDM, n; strict = true)
     if strict

@@ -165,9 +165,9 @@ current_figure() #hide
 
 cal = SDeMo.calibration(bst);
 
-# This step uses the Platt scaling approach, where the outputs from the model
-# are regressed against the true class probabilities, to attempt to bring the
-# model prediction more in line with true probabilities
+# This step uses the [Platt1999](@citet) scaling approach, where the outputs
+# from the model are regressed against the true class probabilities, to attempt
+# to bring the model prediction more in line with true probabilities
 # [Niculescu-Mizil2005](@cite). Internally, the package uses the fast and robust
 # algorithm of [Lin2007](@citet).
 

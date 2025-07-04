@@ -14,7 +14,7 @@ instance(model::Bagging, args...; kwargs...) = instance(model.model, args...; kw
 """
     train!(ensemble::Bagging; kwargs...)
 
-Trains all the model in an ensemble model - the keyword arguments are passed to
+Trains all the models in an ensemble model - the keyword arguments are passed to
 `train!` for each model. Note that this retrains the *entire* model, which
 includes the transformers.
 """

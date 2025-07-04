@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.5.0`
+
+- **added** the `AdaBoost` model for boosting, currently the only `AbstractBoostedSDM`
+- **added** the `reliability` method to get the data for a reliability curve
+- **added** a vignette for boosting and probability calibration
+
 ## `v1.4.1`
 
 - **fixed** a bug where the wrong checkpoint was restored during variable selection

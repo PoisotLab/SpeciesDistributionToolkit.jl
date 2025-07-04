@@ -177,6 +177,7 @@ export default defineConfig({
                         { text: "Identifying spatial boundaries", link: "/tutorials/spatial-boundaries/" },
                         { text: "Building a species distribution model", link: "/tutorials/sdm-training/" },
                         { text: "Ensemble models", link: "/tutorials/sdm-ensembles/" },
+                        { text: "SDM with AdaBoost", link: "/tutorials/sdm-boosting/" },
                     ]
                 }
             ],

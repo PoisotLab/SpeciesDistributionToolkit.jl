@@ -2,7 +2,7 @@
 
 # Polygons can be manipulated with various different operations: _(1) adding_, which returns the union of polygons, _(2) subtracting_, which returns the difference of two polygons, _(3) intersecting_, which returns the regions both polygons contain, and _(4) inverting_, which takes a single polygon and returns a new polygon that encloses all the area within the original polygons bounding box that is not contained in the original. 
 
-using SimpleSDMPolygons
+using SpeciesDistributionToolkit
 using CairoMakie
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 

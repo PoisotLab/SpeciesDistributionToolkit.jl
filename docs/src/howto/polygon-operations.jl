@@ -15,14 +15,17 @@ oklahoma = getpolygon(PolygonData(OpenStreetMap, Places), place="Oklahoma")
 
 # We can plot them to show that they are two adjacent states (that don't overlap).
 
+# fig-tex-ok-separate
 lines(texas)
 lines!(oklahoma)
-current_figure()
+current_figure()  #hide
 
 # By default, these are both downloaded as `FeatureCollection`s with a single feature. We can add them as `FeatureCollection`s to yield a single polygon that consists of all regions enclosed by both of them. 
 
 tex_and_ok = add(texas, oklahoma)
-lines(tex_and_ok)
+
+# fig-tex-ok-together
+lines(tex_and_ok) # hide
 
 # We can also do this with the single features directly
 
@@ -50,13 +53,13 @@ louisiana = getpolygon(PolygonData(OpenStreetMap, Places), place="Louisiana")
 
 tx_ok_la = texas + oklahoma + louisiana
 
-lines(tx_ok_la)
+lines(tx_ok_la) # hide
 
 # If we want to keep their separate boundaries, we should use vcat
 
 tx_ok_la_separate = vcat(texas, oklahoma, louisiana)
 
-lines(tx_ok_la_separate)
+lines(tx_ok_la_separate) # hide
 
 # ## Subtracting polygons
 
@@ -72,11 +75,15 @@ houston = getpolygon(PolygonData(OpenStreetMap, Places), place="Houston")
 rural_texas = texas 
 rural_texas = subtract(rural_texas, dallas)
 rural_texas = subtract(rural_texas, houston)
-lines(rural_texas)
+
+# fig-rural-texas
+lines(rural_texas) # hide
 
 # Or in a single line using the `-` operator
 
-lines(texas - dallas - houston)
+rural_texas = texas - dallas - houston
+# fig-rural-texas-sub-symbol
+lines(rural_texas) #hide
 
 # ## Intersecting a Polygon
 
@@ -84,10 +91,11 @@ lines(texas - dallas - houston)
 
 # As an example, let's consider trying to make a map of Texas, which different polygons corresponding to different ecoregions. We'll start by downloading the EPA North America 2nd level ecoregions
 
-ecoregions = getpolygon(PolygonData(EPA, Ecoregions), level=2)
+ecoregions = getpolygon(PolygonData(EPA, Ecoregions), level=3)
 
 # and then intersect them
 
 tx_ecoregions = intersect(texas, ecoregions)
 
-lines(tx_ecoregions)
+# fig-tx-ecoregions
+poly(tx_ecoregions) # hide

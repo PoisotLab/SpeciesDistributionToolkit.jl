@@ -20,6 +20,7 @@ lines(texas)
 lines!(oklahoma)
 current_figure() #hide
 
+
 # By default, these are both downloaded as `FeatureCollection`s with a single feature. We can add them as `FeatureCollection`s to yield a single polygon that consists of all regions enclosed by both of them. 
 
 tex_and_ok = add(texas, oklahoma)

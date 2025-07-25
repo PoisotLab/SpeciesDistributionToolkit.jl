@@ -13,7 +13,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 texas = getpolygon(PolygonData(OpenStreetMap, Places), place="Texas")
 oklahoma = getpolygon(PolygonData(OpenStreetMap, Places), place="Oklahoma")
 
-# We can plot them to show that they are two adjacent states (that don't overlap).
+# We can plot them to show that they are two adjacent states (that don't overlap):
 
 # fig-tex-ok-separate
 lines(texas)
@@ -24,7 +24,7 @@ current_figure() #hide
 
 tex_and_ok = add(texas, oklahoma)
 
-# and plot to verify
+# which we can then visualize:
 
 # fig-tex-ok-together
 lines(tex_and_ok) 
@@ -56,7 +56,7 @@ louisiana = getpolygon(PolygonData(OpenStreetMap, Places), place="Louisiana")
 
 tx_ok_la = texas + oklahoma + louisiana
 
-# which we can visualize
+# which we can visualize:
 
 # fig-added-tx-ok-la
 lines(tx_ok_la) 
@@ -87,7 +87,7 @@ rural_texas = texas
 rural_texas = subtract(rural_texas, dallas)
 rural_texas = subtract(rural_texas, houston)
 
-# and visualize
+# and visualize:
 
 # fig-rural-texas
 lines(rural_texas) 
@@ -97,10 +97,11 @@ current_figure() #hide
 
 rural_texas = texas - dallas - houston
 
-# which results in the same thing
+# which results in the same thin:g
 
 # fig-rural-texas-sub-symbol
-lines(rural_texas) #hide
+lines(rural_texas)
+current_figure() #hide
 
 # ## Intersecting a Polygon
 

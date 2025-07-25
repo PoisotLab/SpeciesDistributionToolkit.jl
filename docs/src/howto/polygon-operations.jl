@@ -125,3 +125,7 @@ tx_ecoregions = intersect(texas, ecoregions)
 #fig-tx-ecoregions
 poly(tx_ecoregions) 
 current_figure() #hide
+
+
+
+

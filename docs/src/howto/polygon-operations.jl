@@ -24,8 +24,11 @@ current_figure() #hide
 
 tex_and_ok = add(texas, oklahoma)
 
+# and plot to verify
+
 # fig-tex-ok-together
-lines(tex_and_ok) #hide
+lines(tex_and_ok) 
+current_figure() #hide
 
 # We can also do this with the single features directly
 
@@ -53,13 +56,21 @@ louisiana = getpolygon(PolygonData(OpenStreetMap, Places), place="Louisiana")
 
 tx_ok_la = texas + oklahoma + louisiana
 
-lines(tx_ok_la) #hide
+# which we can visualize
+
+# fig-added-tx-ok-la
+lines(tx_ok_la) 
+current_figure() #hide
 
 # If we want to keep their separate boundaries, we should use vcat
 
 tx_ok_la_separate = vcat(texas, oklahoma, louisiana)
 
-lines(tx_ok_la_separate) #hide
+# and plot to show they keep their individual boundaries
+
+# fig-tx-ok-la-separate
+lines(tx_ok_la_separate) 
+current_figure() #hide
 
 # ## Subtracting polygons
 
@@ -76,12 +87,17 @@ rural_texas = texas
 rural_texas = subtract(rural_texas, dallas)
 rural_texas = subtract(rural_texas, houston)
 
+# and visualize
+
 # fig-rural-texas
-lines(rural_texas) #hide
+lines(rural_texas) 
+current_figure() #hide
 
 # Or in a single line using the `-` operator
 
 rural_texas = texas - dallas - houston
+
+# which results in the same thing
 
 # fig-rural-texas-sub-symbol
 lines(rural_texas) #hide
@@ -98,5 +114,8 @@ ecoregions = getpolygon(PolygonData(EPA, Ecoregions), level=3)
 
 tx_ecoregions = intersect(texas, ecoregions)
 
+# and visualize the different ecoregions in texas
+
 #fig-tx-ecoregions
-poly(tx_ecoregions) #hide
+poly(tx_ecoregions) 
+current_figure() #hide

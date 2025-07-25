@@ -63,6 +63,7 @@ tx_ok_la = texas + oklahoma + louisiana
 lines(tx_ok_la) 
 current_figure() #hide
 
+
 # If we want to keep their separate boundaries, we should use vcat
 
 tx_ok_la_separate = vcat(texas, oklahoma, louisiana)
@@ -72,6 +73,7 @@ tx_ok_la_separate = vcat(texas, oklahoma, louisiana)
 # fig-tx-ok-la-separate
 lines(tx_ok_la_separate) 
 current_figure() #hide
+
 
 # ## Subtracting polygons
 
@@ -94,6 +96,7 @@ rural_texas = subtract(rural_texas, houston)
 lines(rural_texas) 
 current_figure() #hide
 
+
 # Or in a single line using the `-` operator
 
 rural_texas = texas - dallas - houston
@@ -103,6 +106,7 @@ rural_texas = texas - dallas - houston
 # fig-rural-texas-sub-symbol
 lines(rural_texas)
 current_figure() #hide
+
 
 # ## Intersecting a Polygon
 

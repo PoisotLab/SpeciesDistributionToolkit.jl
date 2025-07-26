@@ -139,6 +139,7 @@ export default defineConfig({
                                 { text: "Reading part of a layer", link: "/howto/read-part-layer/" },
                                 { text: "Listing provided layers", link: "/howto/list-provided-layers/" },
                                 { text: "Data interpolation", link: "/howto/interpolate/" },
+                                { text: "Operations on polygons", link: "/howto/polygon-operations/" },
                             ]
                         },
                         {

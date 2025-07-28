@@ -10,6 +10,7 @@ rasters.
 module SimpleSDMLayers
 
 using LinearAlgebra
+using Statistics
 using TestItems
 
 import ArchGDAL
@@ -92,5 +93,6 @@ include("quantiletransfer.jl")
 export quantiletransfer, quantiletransfer!
 
 # Shift and rotate
+include("shift-and-rotate.jl")
 
 end # module

@@ -1,102 +1,87 @@
-"""
-    _rotate_coordinate(lon, lat, roll, pitch, yaw)
+function _shift_coordinates(points::Vector{Tuple{Float64, Float64}}, angle_lon::Float64, angle_lat::Float64)
+    shifted_points = Vector{Tuple{Float64, Float64}}()
+    rotation_angle_lon = deg2rad(angle_lon)
+    rotation_angle_lat = deg2rad(angle_lat)
 
-Transforms a coordinate under a rotation of the Earth, represented as a unit
-sphere. The rotation is specified using the roll (α, x-axis rotation), pitch (β,
-y-axis rotation), and yaw (γ, z-axis rotation), all angles are given in degrees.
-The returned point is given as a pair of lon, lat coordinates.
-"""
-function _rotate_coordinate(lon, lat, roll, pitch, yaw)
+    for (lon, lat) in points
+        # Convert longitude and latitude to radians
+        lon_rad = deg2rad(lon)
+        lat_rad = deg2rad(lat)
 
-    # Move everything to rads
-    α = deg2rad(roll)
-    β = deg2rad(pitch)
-    γ = deg2rad(yaw)
+        # Perform rotation using spherical trigonometry
+        new_lon_rad = lon_rad + rotation_angle_lon * cos(lat_rad)
+        new_lat_rad = lat_rad + rotation_angle_lat * cos(lon_rad)
 
-    # Coordinates to unit sphere position
-    x = cos(deg2rad(lat)) * cos(deg2rad(lon))
-    y = cost(deg2rad(lat)) * sin(deg2rad(lon))
-    z = sin(deg2rad(lat))
+        # Convert back to degrees
+        new_lon = rad2deg(new_lon_rad)
+        new_lat = rad2deg(new_lat_rad)
 
-    # Point vector
-    p = [x, y, z]
+        # Ensure longitude stays within [-180, 180]
+        new_lon = mod(new_lon + 180, 360) - 180
 
-    # Rotation matrix for the roll
-    Rx = [1 0 0; 0 cos(α) -sin(α); 0 sin(α) cos(α)]
-    # Rotation matrix for the pitch
-    Ry = [cos(β) 0 sin(β); 0 1 0; -sin(β) - cos(β)]
-    # Rotation matrix for the yaw
-    Rz = [cos(γ) -sin(γ) 0; sin(γ) cos(γ) 0; 0 0 1]
+        # Ensure latitude stays within [-90, 90]
+        new_lat = max(min(new_lat, 90), -90)
 
-    # Rotation matrix (x, then y, then z)
-    R = Rz * Ry * Rx
-
-    # New point
-    X, Y, Z = R * p
-
-    # New longitude and latitude
-    projected = (atan(Y, X), asin(Z))
-    
-    # Return the new point in degrees
-    return rad2deg.(projected)
-end
-
-#=
-
-function generate_valid_rotation(reference, pool; roll=(-5.0, 5.0), pitch=(-5.0, 5.0), yaw=(-5.0, 5.0))
-    E, N, K = eastings(reference), northings(reference), keys(reference)
-    still_searching = true
-    Θ = (0.0, 0.0, 0.0)
-    while still_searching
-        α = rand() * (roll[2]-roll[1]) + roll[1] 
-        β = rand() * (pitch[2]-pitch[1]) + pitch[1]
-        γ = rand() * (yaw[2]-yaw[1]) + yaw[1]
-        Θ = (α, β, γ)
-        still_searching = false
-        for k in K
-            lat, lon = rotate_earth_coordinates(N[k[1]], E[k[2]], Θ...)
-            try
-                nv = pool[lon, lat]
-                if isnothing(nv)
-                    still_searching = true
-                    break
-                end
-            catch err
-                still_searching = true
-                break
-            end
-        end
+        # Append the rotated point to the result
+        push!(shifted_points, (new_lon, new_lat))
     end
-    return Θ
-end
-=#
 
-#=
-
-temp = SDMLayer(RasterData(WorldClim2, BioClim); layer=1, resolution=2.5)
-pol = getpolygon(PolygonData(NaturalEarth, Countries))["Czech Republic"]
-ref = trim(mask(temp, pol))
-lat, lon = northings(ref), eastings(ref)
-
-# rotation, up/down, left/right
-angles = generate_valid_rotation(ref, temp)
-@info angles
-
-sar = deepcopy(ref)
-
-for k in keys(ref)
-    coords = (lat[k[1]], lon[k[2]])
-    nlat, nlon = rotate_earth_coordinates(coords..., angles...)
-    sar.grid[k] = temp[nlon, nlat]
+    return shifted_points
 end
 
-replaced = quantiletransfer(sar, ref)
+function _rotate_coordinates(points::Vector{Tuple{Float64, Float64}}, angle::Float64)
+    # Compute the centroid of the points
+    centroid_lon = mean(map(p -> p[1], points))
+    centroid_lat = mean(map(p -> p[2], points))
 
-f = Figure()
-ax = Axis(f[1,1], aspect=DataAspect())
-ax2 = Axis(f[2,1])
-hm = heatmap!(ax, replaced, colormap=:navia)
-hist!(ax2, replaced, bins=100)
-Colorbar(f[1:2,2], hm)
-f
-=#
+    # Convert centroid to radians
+    centroid_lon_rad = deg2rad(centroid_lon)
+    centroid_lat_rad = deg2rad(centroid_lat)
+
+    # Convert angle to radians
+    rotation_angle = deg2rad(angle)
+
+    rotated_points = Vector{Tuple{Float64, Float64}}()
+
+    for (lon, lat) in points
+        # Convert point to radians
+        lon_rad = deg2rad(lon)
+        lat_rad = deg2rad(lat)
+
+        # Convert to Cartesian coordinates
+        x = cos(lat_rad) * cos(lon_rad)
+        y = cos(lat_rad) * sin(lon_rad)
+        z = sin(lat_rad)
+
+        # Compute centroid in Cartesian coordinates
+        cx = cos(centroid_lat_rad) * cos(centroid_lon_rad)
+        cy = cos(centroid_lat_rad) * sin(centroid_lon_rad)
+        cz = sin(centroid_lat_rad)
+
+        # Rotate around the centroid using Rodrigues' rotation formula
+        kx, ky, kz = cx, cy, cz
+        dot_product = x * kx + y * ky + z * kz
+        new_x = x * cos(rotation_angle) + (ky * z - kz * y) * sin(rotation_angle) + kx * dot_product * (1 - cos(rotation_angle))
+        new_y = y * cos(rotation_angle) + (kz * x - kx * z) * sin(rotation_angle) + ky * dot_product * (1 - cos(rotation_angle))
+        new_z = z * cos(rotation_angle) + (kx * y - ky * x) * sin(rotation_angle) + kz * dot_product * (1 - cos(rotation_angle))
+
+        # Convert back to spherical coordinates
+        new_lon_rad = atan(new_y, new_x)
+        new_lat_rad = atan(new_z, sqrt(new_x^2 + new_y^2))
+
+        # Convert back to degrees
+        new_lon = rad2deg(new_lon_rad)
+        new_lat = rad2deg(new_lat_rad)
+
+        # Ensure longitude stays within [-180, 180]
+        new_lon = mod(new_lon + 180, 360) - 180
+
+        # Ensure latitude stays within [-90, 90]
+        new_lat = max(min(new_lat, 90), -90)
+
+        # Append the rotated point to the result
+        push!(rotated_points, (new_lon, new_lat))
+    end
+
+    return rotated_points
+end

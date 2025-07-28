@@ -9,6 +9,7 @@ rasters.
 """
 module SimpleSDMLayers
 
+using LinearAlgebra
 using TestItems
 
 import ArchGDAL
@@ -85,5 +86,11 @@ export cellarea
 # Reclassify
 include("reclassify.jl")
 export reclassify
+
+# Quantile transfer
+include("quantiletransfer.jl")
+export quantiletransfer, quantiletransfer!
+
+# Shift and rotate
 
 end # module

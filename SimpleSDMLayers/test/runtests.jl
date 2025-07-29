@@ -49,3 +49,17 @@ end
     @test M isa Vector{<:SDMLayer}
     @test length(M) <= 3
 end
+
+@testitem "We can heatmap" begin
+    using CairoMakie
+    L = SDMLayer(DiamondSquare(), (10, 20))
+    heatmap(L)
+    @test true
+end
+
+@testitem "We can heatmap with a different color scale" begin
+    using CairoMakie
+    L = SDMLayer(DiamondSquare(), (10, 20))
+    heatmap(L; colormap=:Spectral)
+    @test true
+end

@@ -1,27 +1,3 @@
-#=
-using SpeciesDistributionToolkit
-const SDT = SpeciesDistributionToolkit
-using CairoMakie
-
-# Test layer
-cntrs = getpolygon(PolygonData(NaturalEarth, Countries))
-pol = cntrs["Kenya"]
-P = SDMLayer(RasterData(WorldClim2, BioClim); resolution=2.5)
-L = SDMLayer(RasterData(WorldClim2, BioClim); resolution=2.5, SDT.boundingbox(pol)...)
-mask!(L, pol)
-
-# Check the data
-heatmap(L)
-
-# Step 1 - get the coordinates
-function lonlat(L::SDMLayer)
-    E, N, K = eastings(L), northings(L), keys(L)
-    xy = [(E[k[2]], N[k[1]]) for k in K]
-    return xy
-end
-
-# Step 2 - plot the coordinates
-scatter(lonlat(L))
 
 """
     _rotation_z(x, y, z, θ)
@@ -180,43 +156,3 @@ function _rotate_latitudes(xy, degrees)
     shifted = _spherical_rotation(aligned, degrees, 2)
     return _spherical_rotation(shifted, -align_angle, 3)
 end
-
-shiftlongitudes(angle) = (xy) -> _spherical_rotation(xy, angle, 3)
-shiftlatitudes(angle) = (xy) -> _rotate_latitudes(xy, -angle)
-localrotation(angle) = (xy) -> _centroid_rotation(xy, angle)
-shiftandrotate(longitude, latitude, rotation) = (xy) -> xy |> shiftlatitudes(latitude) |> shiftlongitudes(longitude) |> localrotation(rotation)
-
-rangelat = LinRange(-10.0, 10.0, 40)
-rangelon = LinRange(-10.0, 10.0, 40)
-rangerot = LinRange(-45.0, 45.0, 200)
-
-r = (rand(rangelat), rand(rangelon), rand(rangerot))
-searching = true
-while searching
-    r = (rand(rangelat), rand(rangelon), rand(rangerot))
-    trf = shiftandrotate(r...)
-    u = [P[c...] for c in trf(lonlat(L))]
-    if !any(isnothing, u)
-        searching = false
-    end
-end
-
-@info r
-trf = shiftandrotate(r...)
-
-f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-
-heatmap!(ax, P)
-scatter!(ax, lonlat(L))
-scatter!(ax, trf(lonlat(L)))
-xlims!(ax, extrema(first.(vcat(lonlat(L), trf(lonlat(L))))) .+ (-1, 1))
-ylims!(ax, extrema(last.(vcat(lonlat(L), trf(lonlat(L))))) .+ (-1, 1))
-
-Y = deepcopy(L)
-SimpleSDMLayers.burnin!(Y, [P[c...] for c in trf(lonlat(L))])
-ax2 = Axis(f[1,2]; aspect=DataAspect())
-heatmap!(ax2, Y)
-
-current_figure()
-=#

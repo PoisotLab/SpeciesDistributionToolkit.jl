@@ -5,11 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.3.2`
+
+- **added** a `Makie` compatibility entry for `0.24`
+
 ## `v1.3.1`
 
 - **fixed** plotting support to use `Makie` instead of `MakieCore`
 
-## `v1.3.0
+## `v1.3.0`
 
 - **fixed** a deprecation in the syntax of MultivariateStats
 - **added** the `reclassify` function to change layer values using rules [#407]

@@ -49,3 +49,45 @@ end
     @test M isa Vector{<:SDMLayer}
     @test length(M) <= 3
 end
+
+@testitem "We can run a heatmap for a layer" begin
+    using CairoMakie
+    using NeutralLandscapes
+    L = SDMLayer(DiamondSquare(), (10, 20))
+    heatmap(L)
+    @test true
+end
+
+@testitem "We can run a heatmap with a different color scale" begin
+    using CairoMakie
+    using NeutralLandscapes
+    L = SDMLayer(DiamondSquare(), (10, 20))
+    heatmap(L; colormap=:Spectral)
+    @test true
+end
+
+@testitem "We can run a hist on a layer" begin
+    using CairoMakie
+    using NeutralLandscapes
+    L = SDMLayer(DiamondSquare(), (10, 20))
+    hist(L)
+    @test true
+end
+
+@testitem "We can scatter two layers" begin
+    using CairoMakie
+    using NeutralLandscapes
+    L = SDMLayer(DiamondSquare(), (10, 20))
+    M = SDMLayer(DiamondSquare(), (10, 20))
+    scatter(L, M)
+    @test true
+end
+
+@testitem "We can hexbin two layers" begin
+    using CairoMakie
+    using NeutralLandscapes
+    L = SDMLayer(DiamondSquare(), (10, 20))
+    M = SDMLayer(DiamondSquare(), (10, 20))
+    hexbin(L, M)
+    @test true
+end

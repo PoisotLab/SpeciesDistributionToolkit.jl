@@ -88,7 +88,7 @@ end
 
 # SimpleSDMPolygons
 
-const _SDMPOLY_TYPES = Union{SimpleSDMPolygons.FeatureCollection, SimpleSDMPolygons.Feature, SimpleSDMPolygons.Polygon}
+const _SDMPOLY_TYPES = Union{SimpleSDMPolygons.FeatureCollection, SimpleSDMPolygons.Feature, SimpleSDMPolygons.Polygon, SimpleSDMPolygons.MultiPolygon}
 
 function boundingbox(fc::T; kwargs...) where T<:_SDMPOLY_TYPES
     return SimpleSDMPolygons.boundingbox(fc.geometry; kwargs...)

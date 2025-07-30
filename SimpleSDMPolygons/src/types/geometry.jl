@@ -32,6 +32,8 @@ GI.crs(::GI.MultiPolygonTrait, geom::MultiPolygon) = GI.crs(geom.geometry)
 GI.extent(::GI.MultiPolygonTrait, geom::MultiPolygon)::GI.Extents.Extent =
     GI.extent(geom.geometry)
 
+const POLY_AND_MP = Union{Polygon,MultiPolygon}
+
 """
     Feature
 """
@@ -67,6 +69,7 @@ Base.show(io::IO, fc::FeatureCollection) = print(
     io,
     "FeatureCollection with $(length(fc)) features, each with $(length(first(fc.features).properties)) properties",
 )
+Base.vcat(fcs::FeatureCollection...) = FeatureCollection(vcat([fc.features for fc in fcs]...))
 
 Base.length(fc::FeatureCollection) = length(fc.features)
 Base.firstindex(::FeatureCollection) = 1

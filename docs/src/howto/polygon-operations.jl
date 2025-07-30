@@ -116,6 +116,8 @@ rural_texas = texas - dallas - houston
 lines(rural_texas)
 current_figure() #hide
 
+# These operations can be chained to perform more complex clipping. 
+
 # ## Intersecting a Polygon
 
 # We can also use the `intersect` method to extract the region where two
@@ -135,4 +137,14 @@ tx_ecoregions = intersect(texas, ecoregions)
 
 # fig-tx-ecoregions
 poly(tx_ecoregions)
+current_figure() #hide
+
+# Finally, we can clip a series of polygons with a boundingbox:
+
+bbox = (left=-100., right=-95.0, bottom=27.5, top=32.5)
+
+tx_clip = clip(tx_ecoregions, bbox)
+
+# fig-tx-clipped-by-bbox
+poly(tx_clip)
 current_figure() #hide

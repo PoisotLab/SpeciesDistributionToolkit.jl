@@ -73,15 +73,17 @@ tx_ok_la = texas + oklahoma + louisiana
 lines(tx_ok_la)
 current_figure() #hide
 
-# If we want to keep their separate boundaries, we should use vcat
+# If we want to keep their separate boundaries, we should use `vcat`:
 
 tx_ok_la_separate = vcat(texas, oklahoma, louisiana)
 
-# and plot to show they keep their individual boundaries
+# And plot to show they keep their individual boundaries
 
 # fig-tx-ok-la-separate
 lines(tx_ok_la_separate)
 current_figure() #hide
+
+# This covers the addition of polygons.
 
 # ## Subtracting polygons
 
@@ -146,5 +148,9 @@ bbox = (left=-100., right=-95.0, bottom=27.5, top=32.5)
 tx_clip = clip(tx_ecoregions, bbox)
 
 # fig-tx-clipped-by-bbox
-poly(tx_clip)
+lines(tx_clip)
 current_figure() #hide
+
+#-
+
+#

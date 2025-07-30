@@ -4,7 +4,6 @@ function lonlat(L::SDMLayer)
     return xy
 end
 
-
 roll(angle) = (xy) -> _spherical_rotation(xy, angle, 1)
 pitch(angle) = (xy) -> _spherical_rotation(xy, angle, 2)
 yaw(angle) = (xy) -> _spherical_rotation(xy, angle, 3)
@@ -15,7 +14,6 @@ shiftlatitudes(angle) = (xy) -> _rotate_latitudes(xy, -angle)
 localrotation(angle) = (xy) -> _centroid_rotation(xy, angle)
 
 shiftandrotate(longitude, latitude, rotation) = (xy) -> xy |> shiftlongitudes(longitude) |> shiftlatitudes(latitude) |> localrotation(rotation)
-
 
 function find_rotations(L, P; longitudes=(-10., 10.), latitudes=(-10., 10.), rotation=(-10., 10.), maxiter=10_000, steps=150)
     iter = 1

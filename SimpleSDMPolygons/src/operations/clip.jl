@@ -22,7 +22,7 @@ function clip(
     bbox::NamedTuple
 )
     bbox_poly = _get_polygon_from_bbox(bbox)
-    return intersect(add(fc), bbox_poly)
+    return intersect(fc, bbox_poly)
 end
 
 function clip(

@@ -5,10 +5,10 @@ import Phylopic: silhouetteplot, silhouetteplot!
 
 @recipe(SilhouettePlot) do scene
     Attributes(
-        markersize = 100,
-        color = nothing,
-        colormap = :viridis,
-        colorrange = (0., 1.),
+        markersize=100,
+        color=nothing,
+        colormap=:viridis,
+        colorrange=(0., 1.),
     )
 end
 
@@ -17,9 +17,9 @@ function _recolor(img, color, colormap, colorrange)
     new_img = convert.(Makie.Colors.RGBA, img)
     if !isnothing(color)
         if string(color) in keys(Makie.Colors.color_names)
-            col = Makie.Colors.RGB((Makie.Colors.color_names[String(color)]./255)...)
+            col = Makie.Colors.RGB((Makie.Colors.color_names[String(color)] ./ 255)...)
         else
-            nv = clamp((color - colorrange[1])/(colorrange[2]-colorrange[1]), 0, 1)
+            nv = clamp((color - colorrange[1]) / (colorrange[2] - colorrange[1]), 0, 1)
             col = Makie.ColorSchemes.get(Makie.ColorSchemes.colorschemes[colormap], nv)
         end
         clrd = findall(!isequal(Makie.Colors.RGBA(0.0, 0.0, 0.0, 0.0)), img)
@@ -30,18 +30,18 @@ function _recolor(img, color, colormap, colorrange)
     return new_img
 end
 
-function Makie.plot!(sp::SilhouettePlot{<:Tuple{Real, Real, PhylopicSilhouette}})
-    img = Phylopic._download_silhouette(sp[3].val)
-    img = _recolor(img, sp.color.val, sp.colormap.val, sp.colorrange.val)
-    scatter!(sp, [sp[1].val], [sp[2].val], marker=img, markersize = sp.markersize.val)
+function Makie.plot!(sp::SilhouettePlot{<:Tuple{Real,Real,PhylopicSilhouette}})
+    img = Phylopic._download_silhouette(sp[3][])
+    img = _recolor(img, sp.color[], sp.colormap[], sp.colorrange[])
+    scatter!(sp, [sp[1][]], [sp[2][]], marker=img, markersize=sp.markersize[])
 end
 
-function Makie.plot!(sp::SilhouettePlot{<:Tuple{AbstractVector{<:Real}, AbstractVector{<:Real}, AbstractVector{<:PhylopicSilhouette}}})
-    img = Phylopic._download_silhouette.(sp[3].val)
+function Makie.plot!(sp::SilhouettePlot{<:Tuple{AbstractVector{<:Real},AbstractVector{<:Real},AbstractVector{<:PhylopicSilhouette}}})
+    img = Phylopic._download_silhouette.(sp[3][])
     for i in eachindex(img)
-        c = sp.color.val isa Vector ? sp.color.val[i] : sp.color.val
-        nimg = _recolor(img[i], c, sp.colormap.val, sp.colorrange.val)
-        scatter!(sp, [sp[1].val[i]], [sp[2].val[i]], marker=nimg, markersize = sp.markersize.val, color = sp.color.val, colormap = sp.colormap.val, colorrange=sp.colorrange.val)
+        c = sp.color[] isa Vector ? sp.color[][i] : sp.color[]
+        nimg = _recolor(img[i], c, sp.colormap[], sp.colorrange[])
+        scatter!(sp, [sp[1][][i]], [sp[2][][i]], marker=nimg, markersize=sp.markersize[])
     end
 end
 

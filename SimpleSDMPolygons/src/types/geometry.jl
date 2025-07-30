@@ -16,6 +16,15 @@ GI.getgeom(::GI.PolygonTrait, geom::Polygon, i) = GI.getgeom(geom.geometry, i)
 GI.crs(::GI.PolygonTrait, geom::Polygon) = GI.crs(geom.geometry)
 GI.extent(::GI.PolygonTrait, geom::Polygon)::GI.Extents.Extent = GI.extent(geom.geometry)
 
+Polygon(coords::Vector{<:Tuple{<:Real,<:Real}}) = Polygon(coords...)
+function Polygon(coords::Tuple{<:Real,<:Real}...)
+    if coords[begin] != coords[end]
+        return Polygon(AG.createpolygon([coords..., coords[begin]]))
+    else
+        return Polygon(AG.createpolygon([coords..., coords[begin]]))
+    end 
+end
+
 """
     MultiPolygon
 """

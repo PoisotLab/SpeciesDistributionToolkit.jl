@@ -1,11 +1,15 @@
 """
     lonlat(L::SDMLayer)
 
-Returns a vector of longitudes and latitudes for a layer.
+Returns a vector of longitudes and latitudes for a layer. This will handle the
+CRS of the layer correctly. Note that only the positions that are valued (_i.e._
+using `keys`) will be returned. The values are given in an order suitable for
+use in `burnin!`.
 """
 function lonlat(L::SDMLayer)
     E, N, K = eastings(L), northings(L), keys(L)
-    xy = [(E[k[2]], N[k[1]]) for k in K]
+    prj = SimpleSDMLayers.Proj.Transformation(L.crs, "+proj=longlat +datum=WGS84 +no_defs"; always_xy=true)
+    xy = [prj(E[k[2]], N[k[1]]) for k in K]    
     return xy
 end
 

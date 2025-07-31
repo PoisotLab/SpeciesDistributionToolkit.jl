@@ -93,6 +93,7 @@ export tpr, tnr, fpr, fnr
 export ppv, npv, fdir, fomr, plr, nlr
 export accuracy, balancedaccuracy, f1, fscore
 export trueskill, markedness, dor, κ, mcc
+export gmean
 export ci
 
 # Variable selection

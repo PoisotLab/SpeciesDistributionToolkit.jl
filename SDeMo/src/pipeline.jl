@@ -25,20 +25,24 @@ function train!(
     optimality = mcc,
     absences = false,
 )
-    tr_training =
-        absences ? axes(features(sdm), 2)[training] : findall(labels(sdm)[training])
+    data_axes = axes(features(sdm), 2)
+    tr_training = absences ? data_axes[training] : findall(labels(sdm)[training])
     train!(transformer(sdm), features(sdm)[variables(sdm), tr_training])
     X₁ = predict(transformer(sdm), features(sdm)[variables(sdm), training])
-    validation = setdiff(collect(axes(features(sdm), 2)), collect(axes(features(sdm), 2))[training])
+    validation = setdiff(data_axes, data_axes[training])
     Xₜ = predict(transformer(sdm), features(sdm)[variables(sdm), validation])
     yₜ = labels(sdm)[validation]
     train!(classifier(sdm), labels(sdm)[training], X₁; Xt = Xₜ, yt = yₜ)
-    ŷ = predict(classifier(sdm), X₁)
-    ŷ[findall(isnan.(ŷ))] .= 0.0
     if threshold
+        # List of indices to compare - we use the validation if there are at
+        # least 100, otherwise we use the training data
+        idx = length(validation) < 100 ? training : validation
+        ŷ = predict(sdm; threshold=false)[idx]
+        ŷ[isnan.(ŷ)] .= zero(eltype(ŷ))
+        # We look at a range of 200 possible values
         thr_range = LinRange(extrema(ŷ)..., 200)
-        C = [ConfusionMatrix(ŷ, sdm.y[training], thr) for thr in thr_range]
-        sdm.τ = thr_range[last(findmax(optimality, C))]
+        C = [ConfusionMatrix(ŷ, labels(sdm)[idx], thr) for thr in thr_range]
+        threshold!(sdm, thr_range[last(findmax(optimality, C))])
     end
     return sdm
 end

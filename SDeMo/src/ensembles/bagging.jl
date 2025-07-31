@@ -3,8 +3,8 @@
 """
 function bootstrap(y, X; n = 50)
     @assert size(y, 1) == size(X, 2)
-    bags = []
     pos, neg = __classsplit(y)
+    bags = Vector{Tuple{typeof(pos), typeof(pos)}}[]
     for _ in 1:n
         inbag_pos = unique(sample(pos, length(pos); replace=true))
         inbag_neg = unique(sample(neg, length(neg); replace=true))

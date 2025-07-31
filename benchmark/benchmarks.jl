@@ -30,4 +30,5 @@ SUITE["SDeMo"]["crossvalidate"]["rawdata - decisiontree"] = @benchmarkable cross
 SUITE["SDeMo"]["crossvalidate"]["pca - decisiontree"] = @benchmarkable crossvalidate(sdm, kfold(sdm)) setup=(sdm=SDM(PCATransform, DecisionTree, X, y))
 
 SUITE["SDeMo"]["train"]["random forest"] = @benchmarkable train!(sdm) setup=(sdm=Bagging(SDM(ZScore, DecisionTree, X, y), 20))
+SUITE["SDeMo"]["train"]["boosting"] = @benchmarkable train!(sdm) setup=(sdm=AdaBoost(SDM(ZScore, DecisionTree, X, y)))
 SUITE["SDeMo"]["train"]["rotation forest"] = @benchmarkable train!(sdm) setup=(sdm=Bagging(SDM(PCATransform, DecisionTree, X, y), 20))

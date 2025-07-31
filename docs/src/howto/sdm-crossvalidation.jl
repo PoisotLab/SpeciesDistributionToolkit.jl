@@ -82,3 +82,12 @@ train!(sdm)
 
 # Training the model will automatically optimize the threshold, using the MCC as
 # a measure of optimal predictive ability.
+
+# If you want to optimize the threshold using cross-validation, there is a
+# specific method for that:
+
+threshold!(sdm, folds; optimality=mcc)
+
+# It works by finding the value of the threshold that optimizes the average
+# performance across folds, and can be used with any measure of performance you
+# want to optimize.

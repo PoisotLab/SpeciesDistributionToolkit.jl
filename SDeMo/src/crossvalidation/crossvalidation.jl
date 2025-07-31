@@ -204,6 +204,80 @@ function crossvalidate(sdm::T, folds; thr = nothing, kwargs...) where {T <: Abst
 end
 
 """
+    crossvalidate(sdm::T, args...; kwargs...) where {T <: AbstractSDM}
+
+Performs cross-validation using 10-fold validation as a default. Called when
+`crossvalidate` is used without a `folds` second argument.
+"""
+function crossvalidate(sdm::T, args...; kwargs...) where {T <: AbstractSDM}
+    return crossvalidate(sdm, kfold(sdm; k=10), args...; kwargs...)
+end
+
+"""
+    threshold!(sdm::SDM, folds::Vector{Tuple{Vector{Int}, Vector{Int}}}; optimality=mcc)
+
+Optimizes the threshold for a SDM using cross-validation, as given by the
+`folds`. This is meant to be used _after_ cross-validation, as it will
+cross-validate the threshold across all the training data in a way that is a
+little more robust than the version in `train!`.
+
+The specific technique used is to train one model per fold, then aggregate all
+of their predictions on the validation data, and find the value of the threshold
+that maximizes the average performance across folds.
+"""
+function threshold!(sdm::SDM, folds::Vector{Tuple{Vector{Int}, Vector{Int}}}; optimality=mcc)
+    p = predict(sdm; threshold=false)
+    
+    # We will save all the predictions in this object
+    Y = Vector{typeof(p)}(undef, length(folds))
+
+    # Thread-safe structure for the models
+    chunk_size = max(1, length(folds) ÷ (5 * Threads.nthreads() ))
+    data_chunks = Base.Iterators.partition(eachindex(folds), chunk_size)
+
+    tasks = map(data_chunks) do chunk
+        Threads.@spawn begin
+            model = deepcopy(sdm)
+            for i in chunk
+                train!(model; training = folds[i][1], threshold = false)
+                Y[i] = predict(model; threshold=false)[folds[i][2]]
+            end
+            return Y[chunk]
+        end
+    end
+
+    # We wait until it's done
+    fetch.(tasks)
+    
+    # We now aggregate the values in Y
+    y = extrema(vcat(Y...))
+    thresholds = LinRange(y..., 100)
+    opt = zeros(length(thresholds), length(folds))
+    for i in eachindex(folds)
+        for j in eachindex(thresholds)
+            opt[j, i] = optimality(ConfusionMatrix(Y[i], labels(sdm)[folds[i][2]], thresholds[j]))
+        end
+    end
+
+    # We measure teh MEAN performance across threshold values
+    mean_opt = vec(mapslices(mean, opt, dims=2))
+
+    # And we apply the best threshold and return the model
+    threshold!(sdm, thresholds[last(findmax(mean_opt))])
+    return sdm
+end
+
+"""
+    threshold!(sdm::SDM; kwargs...)
+
+Version of `threshold!` without folds, for which the default of 10-fold
+validation will be used.
+"""
+function threshold!(sdm::SDM; kwargs...)
+    return threshold!(sdm, kfold(sdm; k=10); kwargs...)
+end
+
+"""
     _validate_one_model!(model::AbstractSDM, fold, τ, kwargs...)
 
 Trains the model and returns the Cv and Ct conf matr. Used internally by
@@ -225,6 +299,15 @@ end
     train!(sdm)
     folds = kfold(sdm; k = 15)
     cv = crossvalidate(sdm, folds)
+    @test eltype(cv.validation) <: ConfusionMatrix
+    @test eltype(cv.training) <: ConfusionMatrix
+end
+
+@testitem "We can cross-validate a model without specifying folds" begin
+    X, y = SDeMo.__demodata()
+    sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.5, X, y, [1, 2, 12])
+    train!(sdm)
+    cv = crossvalidate(sdm)
     @test eltype(cv.validation) <: ConfusionMatrix
     @test eltype(cv.training) <: ConfusionMatrix
 end

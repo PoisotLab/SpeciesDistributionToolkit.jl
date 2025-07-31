@@ -86,6 +86,12 @@ hyperparameters!(classifier(sdm), :epochs, 10_000);
 
 train!(sdm)
 
+# In order to make sure we have a robust threshold for the model, we will also
+# re-estimate it on cross-validation samples. This is a slightly more reliable
+# version than the thresholding done as part of `train!`.
+
+threshold!(sdm)
+
 # ## Making the first prediction
 
 # We can predict using the model by giving a vector of layers as an input. This

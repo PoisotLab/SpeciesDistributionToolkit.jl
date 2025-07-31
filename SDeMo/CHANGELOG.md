@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.5.1`
+
+- **improved** the performance of `train!`
+- **fixed** the traininig of the threshold to use validation data when there are enough
+- **fixed** the bags being returned as a `Vector{Any}`
+- **added** a method for `crossvalidate` using `kfold` when no folds are given
+- **added** a method for `threshold!` that cross-validates the threshold for the SDM
+
 ## `v1.5.0`
 
 - **added** the `AdaBoost` model for boosting, currently the only `AbstractBoostedSDM`

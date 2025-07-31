@@ -16,6 +16,15 @@ GI.getgeom(::GI.PolygonTrait, geom::Polygon, i) = GI.getgeom(geom.geometry, i)
 GI.crs(::GI.PolygonTrait, geom::Polygon) = GI.crs(geom.geometry)
 GI.extent(::GI.PolygonTrait, geom::Polygon)::GI.Extents.Extent = GI.extent(geom.geometry)
 
+Polygon(coords::Vector{<:Tuple{<:Real,<:Real}}) = Polygon(coords...)
+function Polygon(coords::Tuple{<:Real,<:Real}...)
+    if coords[begin] != coords[end]
+        return Polygon(AG.createpolygon([coords..., coords[begin]]))
+    else
+        return Polygon(AG.createpolygon([coords..., coords[begin]]))
+    end 
+end
+
 """
     MultiPolygon
 """
@@ -31,6 +40,8 @@ GI.getgeom(::GI.MultiPolygonTrait, geom::MultiPolygon, i) = GI.getgeom(geom.geom
 GI.crs(::GI.MultiPolygonTrait, geom::MultiPolygon) = GI.crs(geom.geometry)
 GI.extent(::GI.MultiPolygonTrait, geom::MultiPolygon)::GI.Extents.Extent =
     GI.extent(geom.geometry)
+
+const POLY_AND_MP = Union{Polygon,MultiPolygon}
 
 """
     Feature
@@ -67,6 +78,7 @@ Base.show(io::IO, fc::FeatureCollection) = print(
     io,
     "FeatureCollection with $(length(fc)) features, each with $(length(first(fc.features).properties)) properties",
 )
+Base.vcat(fcs::FeatureCollection...) = FeatureCollection(vcat([fc.features for fc in fcs]...))
 
 Base.length(fc::FeatureCollection) = length(fc.features)
 Base.firstindex(::FeatureCollection) = 1

@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **fixed** the bags being returned as a `Vector{Any}`
 - **added** a method for `crossvalidate` using `kfold` when no folds are given
 - **added** a method for `threshold!` that cross-validates the threshold for the SDM
+- **added** a method for `fscore` that takes the value of β as an argument and returns a function
+- **added** a `gmean` function
 
 ## `v1.5.0`
 

@@ -25,24 +25,56 @@ function train!(
     optimality = mcc,
     absences = false,
 )
+    # These are all the possible instances to train on
     data_axes = axes(features(sdm), 2)
-    tr_training = absences ? data_axes[training] : findall(labels(sdm)[training])
-    train!(transformer(sdm), features(sdm)[variables(sdm), tr_training])
+
+    # For the transformer, we may only want to train the presence data
+    transformer_training_idx = absences ? data_axes[training] : findall(labels(sdm)[training])
+    
+    # This trains the transformer
+    train!(transformer(sdm), features(sdm)[variables(sdm), transformer_training_idx])
+
+    # We can now use the transformer to project the input data
     X₁ = predict(transformer(sdm), features(sdm)[variables(sdm), training])
-    validation = setdiff(data_axes, data_axes[training])
+
+    # The validation data is whatever is available and not explicitely used for
+    # training. This may be empty.
+    validation = setdiff(data_axes, data_axes[training]) 
+
+    # We can now get the predictions for the transformer using the validation data
     Xₜ = predict(transformer(sdm), features(sdm)[variables(sdm), validation])
+    # And same with the labels
     yₜ = labels(sdm)[validation]
+
+    # This is the final training step
     train!(classifier(sdm), labels(sdm)[training], X₁; Xt = Xₜ, yt = yₜ)
+
+    # When the training is done, we can set the threshold
     if threshold
         # List of indices to compare - we use the validation if there are at
         # least 100, otherwise we use the training data
         idx = length(validation) < 100 ? training : validation
         ŷ = predict(sdm; threshold=false)[idx]
         ŷ[isnan.(ŷ)] .= zero(eltype(ŷ))
-        # We look at a range of 200 possible values
-        thr_range = LinRange(extrema(ŷ)..., 200)
-        C = [ConfusionMatrix(ŷ, labels(sdm)[idx], thr) for thr in thr_range]
-        threshold!(sdm, thr_range[last(findmax(optimality, C))])
+        
+        # This is the ground truth for our thresholding data
+        yₛ = labels(sdm)[idx]
+        
+        # We look at a range of 100 values
+        thresholds = LinRange(extrema(ŷ)..., 150)
+
+        best_threshold = minimum(thresholds)
+        best = -Inf
+
+        for i in eachindex(thresholds)
+            score = optimality(ConfusionMatrix(ŷ, yₛ, thresholds[i]))
+            if score > best
+                best = score
+                best_threshold = thresholds[i]
+            end
+        end
+
+        threshold!(sdm, best_threshold)
     end
     return sdm
 end

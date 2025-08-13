@@ -62,6 +62,14 @@ Base.show(io::IO, feat::Feature{T}) where {T} = begin
     end
     print(io, feat_str)
 end
+GI.isgeometry(::GI.FeatureTrait)::Bool = true
+GI.geomtrait(::Feature) = GI.FeatureTrait()
+GI.ngeom(::GI.FeatureTrait, geom::Feature)::Integer = GI.ngeom(geom.geometry)
+GI.getgeom(::GI.FeatureTrait, geom::Feature, i) = GI.getgeom(geom.geometry, i)
+GI.crs(::GI.FeatureTrait, geom::Feature) = GI.crs(geom.geometry)
+GI.extent(::GI.FeatureTrait, geom::Feature)::GI.Extents.Extent =
+    GI.extent(geom.geometry)
+
 
 Base.getproperty(feat::Feature, propname::String) = haskey(feat.properties, propname) ? feat.properties[propname] : nothing 
 
@@ -74,6 +82,14 @@ struct FeatureCollection{T} <: AbstractGeometry
     features::Vector{T}
 end
 FeatureCollection(f::Feature) = FeatureCollection([f])
+
+GI.isgeometry(::GI.FeatureCollectionTrait)::Bool = true
+GI.geomtrait(::FeatureCollection) = GI.FeatureCollectionTrait()
+GI.ngeom(::GI.FeatureCollectionTrait, geom::FeatureCollection)::Integer = length(geom.features)
+GI.getgeom(::GI.FeatureCollectionTrait, geom::FeatureCollection, i) = geom.features[i]
+GI.crs(::GI.FeatureCollectionTrait, geom::FeatureCollection) = GI.crs(first(geom.features))
+GI.extent(::GI.FeatureCollectionTrait, geom::FeatureCollection)::GI.Extents.Extent = reduce(GI.Extents.union, [GI.extent(f) for f in geom.features])
+
 
 Base.show(io::IO, fc::FeatureCollection) = print(
     io,

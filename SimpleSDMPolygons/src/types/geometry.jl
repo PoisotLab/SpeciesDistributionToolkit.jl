@@ -18,10 +18,11 @@ GI.extent(::GI.PolygonTrait, geom::Polygon)::GI.Extents.Extent = GI.extent(geom.
 
 Polygon(coords::Vector{<:Tuple{<:Real,<:Real}}) = Polygon(coords...)
 function Polygon(coords::Tuple{<:Real,<:Real}...)
+    target_crs = AG.importEPSG(4326)
     if coords[begin] != coords[end]
-        return Polygon(AG.createpolygon([coords..., coords[begin]]))
+        return Polygon(_add_crs(AG.createpolygon([coords..., coords[begin]]), target_crs))
     else
-        return Polygon(AG.createpolygon([coords..., coords[begin]]))
+        return Polygon(_add_crs(AG.createpolygon([coords..., coords[begin]]), target_crs))
     end 
 end
 

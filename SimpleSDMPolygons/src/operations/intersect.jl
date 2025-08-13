@@ -30,6 +30,8 @@ Base.intersect(f1::Feature, f2::Feature) = intersect(f1.geometry, f2.geometry)
 Base.intersect(p1::POLY_AND_MP, f1::Feature) = intersect(f1, p1)
 Base.intersect(f1::Feature, p1::POLY_AND_MP) = intersect(f1.geometry, p1)
 function Base.intersect(p1::POLY_AND_MP, p2::POLY_AND_MP)
+    GI.crs(p1.geometry) == GI.crs(p2.geometry) || throw(ArgumentError("Cannot intersect two geometries with different CRSs"))
+
     p = AG.intersection(p1.geometry, p2.geometry)
     return p isa AG.IGeometry{AG.wkbPolygon} ? Polygon(p) : MultiPolygon(p)
 end 

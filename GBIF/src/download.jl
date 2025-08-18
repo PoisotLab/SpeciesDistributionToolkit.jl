@@ -100,7 +100,7 @@ function download(key)
             write(f, dl_req.body)
         end
         archive = "$(key).zip"
-        csv = CSV.File(GBIF._get_csv_from_zip(archive))
+        csv = CSV.File(GBIF._get_csv_from_zip(archive); delim='\t')
         return OccurrencesInterface.Occurrences(GBIF._materialize.(OccurrencesInterface.Occurrence, csv))
     end
 end

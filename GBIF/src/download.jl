@@ -99,13 +99,12 @@ function download(key::AbstractString; path=nothing)
         key = GBIF.doi(key)["key"]
     end
     # If the files go in a specific path, we will handle this here, by creating
-    # the path if it does not exist
-    if !isnothing(path)
-        if !ispath(path)
-            mkpath(path)
-        end
-    end
+    # the path if it does not exist, and by making sure this path is added to
+    # the archive.
     archive = isnothing(path) ? "$(key).zip" : joinpath(path, "$(key).zip")
+    if !ispath(dirname(archive))
+        mkpath(dirname(archive))
+    end
     request_url = GBIF.gbifurl * "occurrence/download/request/$(key)"
     dl_req = HTTP.get(request_url)
     if dl_req.status == 200

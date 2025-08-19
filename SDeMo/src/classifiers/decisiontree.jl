@@ -80,6 +80,20 @@ function train!(dn::DecisionNode, X, y; kwargs...)
     return dn
 end
 
+@testitem "We can train a decision stub" begin
+    X, y = SDeMo.__demodata()
+    stub = DecisionTree()
+    # Turn the tree into a stub - a single depth and two nodes
+    hyperparameters!(stub, :maxdepth, 1)
+    hyperparameters!(stub, :maxnodes, 2)
+    # Train the stub
+    train!(stub, y, X)
+    @test SDeMo.depth(stub) == 1
+    # Make a prediction
+    ŷ = predict(stub, X)
+    @test length(unique(ŷ)) == 2
+end
+
 """
     DecisionTree
 
@@ -142,7 +156,7 @@ function tips(dn::SDeMo.DecisionNode)
     end
 end
 
-depth(dt::DecisionTree) = maximum(depth.(tips(dt)))
+depth(dt::DecisionTree) = maximum(depth.(tips(dt))) - 1
 depth(dn::DecisionNode) = 1 + depth(dn.parent)
 depth(::Nothing) = 0
 
@@ -210,7 +224,6 @@ function train!(
     root.prediction = mean(y)
     dt.root = root
     train!(dt.root, X, y)
-    # TODO: This line is why we cannot do decision stubs, which have a maxdepth of 1. So the way we deal with depth calculation during training must be changed, there is no reason to deal with the maxdepth - 2.
     for _ in 1:(dt.maxdepth - 2)
         for tip in SDeMo.tips(dt)
             p = SDeMo._pool(tip, X)

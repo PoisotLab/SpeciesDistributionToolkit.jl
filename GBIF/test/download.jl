@@ -30,5 +30,6 @@ temp_cache_file = join(rand('a':'z', 10), "")
 GBIF.download(doi; path = temp_cache_file)
 @test isfile(joinpath(temp_cache_file, "0015079-250811113504898.csv"))
 rm(joinpath(temp_cache_file, "0015079-250811113504898.csv"))
+rm(joinpath)
 
 end

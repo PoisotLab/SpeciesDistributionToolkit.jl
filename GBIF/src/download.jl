@@ -83,23 +83,37 @@ end
 """
     download(key)
 
-Downloads the zip file associated to a specific query (identified by its key) as
-a zip file. Note that if you do not know the dataset key, this function also
-accepts the DOI. For now, the results are returned as `Occurrences` as opposed
-to `GBIFRecords`. This will be modifiable in a future release.
+Download the GBIF occurrence download archive for the given `key` (or DOI), extract and return
+the parsed records as `Occurrences` (future release will support option of `GBIFRecords`.
+
+# Arguments
+
+- `key::AbstractString`: A GBIF download key such as `"0012345-240613123456789"`, or a DOI
+  such as `"10.15468/dl.abcd12"`. If a DOI is provided, it is first resolved to the
+  corresponding GBIF download key.
+
+# Keywords
+
+- `cache_dirpath::AbstractString = ""`: Directory path where the archive
+  will be saved.
+  - When empty (the default), the archive is written to the current working directory.
+  - When nonempty, the directory is created if it does not already exist (via `mkpath`).
+
 """
-function download(key)
+function download(key::AbstractString; cache_dirpath::AbstractString="")
     if contains(key, "/dl.")
         key = GBIF.doi(key)["key"]
     end
     request_url = GBIF.gbifurl * "occurrence/download/request/$(key)"
     dl_req = HTTP.get(request_url)#; headers=GBIF.apiauth())
     if dl_req.status == 200
-        # Get that bag
-        open("$(key).zip", "w") do f
+        if !isempty(cache_dirpath)
+            mkpath(cache_dirpath)
+        end
+        archive = joinpath(cache_dirpath, "$(key).zip")
+        open(archive, "w") do f
             write(f, dl_req.body)
         end
-        archive = "$(key).zip"
         csv = CSV.File(GBIF._get_csv_from_zip(archive); delim='\t')
         return OccurrencesInterface.Occurrences(GBIF._materialize.(OccurrencesInterface.Occurrence, csv))
     end
@@ -157,12 +171,17 @@ end
 
 function _get_csv_from_zip(archive)
     zip_archive = ZipArchives.ZipReader(read(archive))
+    archive_dirpath = dirname(archive)
+    archive_basename = basename(archive)
+    target_filename = splitext(archive_basename)[1] * ".csv"
+    target_filepath = joinpath(archive_dirpath, target_filename)
     for file_in_zip in ZipArchives.zip_names(zip_archive)
-        if file_in_zip == replace(archive, ".zip" => ".csv")
-            out = open(file_in_zip, "w")
+        if file_in_zip == target_filename
+            out = open(target_filepath, "w")
             write(out, ZipArchives.zip_readentry(zip_archive, file_in_zip, String))
             close(out)
         end
     end
-    return replace(archive, ".zip" => ".csv")
+    return target_filepath
+    # return replace(archive, ".zip" => ".csv")
 end

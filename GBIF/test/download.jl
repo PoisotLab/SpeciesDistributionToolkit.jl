@@ -28,8 +28,12 @@ rm("0015079-250811113504898.csv")
 # Download with a path
 temp_cache_file = join(rand('a':'z', 10), "")
 GBIF.download(doi; path = temp_cache_file)
-@test isfile(joinpath(temp_cache_file, "0015079-250811113504898.csv"))
-rm(joinpath(temp_cache_file, "0015079-250811113504898.csv"))
-rm(joinpath)
+csv_file = joinpath(temp_cache_file, "0015079-250811113504898.csv")
+zip_file = joinpath(temp_cache_file, "0015079-250811113504898.zip")
+@test isfile(csv_file)
+@test isfile(zip_file)
+rm(csv_file)
+rm(zip_file)
+rm(temp_cache_file)
 
 end

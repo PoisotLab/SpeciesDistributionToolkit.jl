@@ -81,27 +81,40 @@ function request(query::Pair...; notification::Bool = false)
 end
 
 """
-    download(key)
+    download(key; path=nothing)
 
-Downloads the zip file associated to a specific query (identified by its key) as
-a zip file. Note that if you do not know the dataset key, this function also
-accepts the DOI. For now, the results are returned as `Occurrences` as opposed
-to `GBIFRecords`. This will be modifiable in a future release.
+Download the GBIF occurrence download archive for the given `key` (or DOI), extract and
+return the parsed records as `Occurrences`. The `key` (`AbstractString`) is a GBIF
+download key such as `"0012345-240613123456789"`, or a DOI such as `"10.15468/dl.abcd12"`.
+If a DOI is provided, it is first resolved to the corresponding GBIF download key.
+
+The `path` keyword (defaults to `nothing`) can be used to specify where the
+files will be downloaded. The default is the working directory. If the `path`
+does not exist, it will be created using `mkpath`. The intended use-case is to
+put the downloaded files in a git-ignored folder.
 """
-function download(key)
+function download(key::AbstractString; path=nothing)
+    # If this is a DOI, we start by getting the correct key
     if contains(key, "/dl.")
         key = GBIF.doi(key)["key"]
     end
+    # If the files go in a specific path, we will handle this here, by creating
+    # the path if it does not exist, and by making sure this path is added to
+    # the archive.
+    archive = isnothing(path) ? "$(key).zip" : joinpath(path, "$(key).zip")
+    if !ispath(dirname(archive))
+        mkpath(dirname(archive))
+    end
     request_url = GBIF.gbifurl * "occurrence/download/request/$(key)"
-    dl_req = HTTP.get(request_url)#; headers=GBIF.apiauth())
+    dl_req = HTTP.get(request_url)
     if dl_req.status == 200
-        # Get that bag
-        open("$(key).zip", "w") do f
-            write(f, dl_req.body)
+        open(archive, "w") do f
+            return write(f, dl_req.body)
         end
-        archive = "$(key).zip"
-        csv = CSV.File(GBIF._get_csv_from_zip(archive))
-        return OccurrencesInterface.Occurrences(GBIF._materialize.(OccurrencesInterface.Occurrence, csv))
+        csv = CSV.File(GBIF._get_csv_from_zip(archive); delim = '\t')
+        return OccurrencesInterface.Occurrences(
+            GBIF._materialize.(OccurrencesInterface.Occurrence, csv),
+        )
     end
 end
 
@@ -114,17 +127,36 @@ function _materialize(::Type{OccurrencesInterface.Occurrence}, row::CSV.Row)
             @info "Malformed date for record $(row.gbifID) - date will be missing"
         end
     end
-    place = ismissing(row.decimalLatitude)|ismissing(row.decimalLongitude) ? missing : (row.decimalLongitude, row.decimalLatitude)
-    whatis = ismissing(row.verbatimScientificName) ? row.scientificName : row.verbatimScientificName
-    return OccurrencesInterface.Occurrence(
+    place = if ismissing(row.decimalLatitude) | ismissing(row.decimalLongitude)
+        missing
+    else
+        (row.decimalLongitude, row.decimalLatitude)
+    end
+    whatis = if !ismissing(row.scientificName)
+        row.scientificName
+    elseif !ismissing(row.verbatimScienceName)
+        row.verbatimScientificName
+    else
+        "Unknown taxon"
+    end
+    return OccurrencesInterface.Occurrence(;
         presence = row.occurrenceStatus == "PRESENT",
         what = whatis,
         when = date,
-        where = place
+        where = place,
     )
 end
 
-function mydownloads(; preparing=true, running=true, succeeded=true, cancelled=true, killed=true, failed=true, suspended=true, erased=true)
+function mydownloads(;
+    preparing = true,
+    running = true,
+    succeeded = true,
+    cancelled = true,
+    killed = true,
+    failed = true,
+    suspended = true,
+    erased = true,
+)
     statuses = String[]
     preparing && push!(statuses, "PREPARING")
     running && push!(statuses, "RUNNING")
@@ -136,14 +168,18 @@ function mydownloads(; preparing=true, running=true, succeeded=true, cancelled=t
     erased && push!(statuses, "FILE_ERASED")
     # Get the predicates
     request_url = GBIF.gbifurl * "occurrence/download/user/$(GBIF.username())"
-    request_resp = HTTP.get(request_url; query="status=$(join(statuses, ','))", headers = GBIF.apiauth())
+    request_resp = HTTP.get(
+        request_url;
+        query = "status=$(join(statuses, ','))",
+        headers = GBIF.apiauth(),
+    )
     if request_resp.status == 200
         return JSON.parse(String(request_resp.body))
     end
 end
 
 """
-   doi(doi::String)
+doi(doi::String)
 
 Returns the information of a download request by its DOI.
 """
@@ -157,12 +193,14 @@ end
 
 function _get_csv_from_zip(archive)
     zip_archive = ZipArchives.ZipReader(read(archive))
+    csvfile = replace(archive, ".zip" => ".csv")
     for file_in_zip in ZipArchives.zip_names(zip_archive)
-        if file_in_zip == replace(archive, ".zip" => ".csv")
-            out = open(file_in_zip, "w")
+        if file_in_zip == basename(csvfile)
+            out = open(csvfile, "w")
             write(out, ZipArchives.zip_readentry(zip_archive, file_in_zip, String))
             close(out)
         end
     end
-    return replace(archive, ".zip" => ".csv")
+    return csvfile
 end
+

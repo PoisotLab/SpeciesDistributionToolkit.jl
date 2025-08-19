@@ -195,7 +195,7 @@ function _get_csv_from_zip(archive)
     zip_archive = ZipArchives.ZipReader(read(archive))
     csvfile = replace(archive, ".zip" => ".csv")
     for file_in_zip in ZipArchives.zip_names(zip_archive)
-        if file_in_zip == csvfile
+        if file_in_zip == basename(csvfile)
             out = open(csvfile, "w")
             write(out, ZipArchives.zip_readentry(zip_archive, file_in_zip, String))
             close(out)

@@ -21,7 +21,8 @@ rm("0007229-250415084134356.csv")
 
 # This dataset had issues with delimited
 doi = "10.15468/dl.t7jzv8"
-@test typeof(GBIF.download(doi)) == OccurrencesInterface.Occurrences
+occ3 = GBIF.download(doi)
+@test length(occ3) > 0
 rm("0015079-250811113504898.csv")
 
 # Download with a path

@@ -19,5 +19,15 @@ occ2 = GBIF.download("10.15468/dl.kbmyap")
 rm("0007229-250415084134356.zip")
 rm("0007229-250415084134356.csv")
 
+# This dataset had issues with delimited
+doi = "10.15468/dl.t7jzv8"
+@test typeof(GBIF.download(doi)) == OccurrencesInterface.Occurrences
+rm("0015079-250811113504898.csv")
+
+# Download with a path
+temp_cache_file = join(rand('a':'z', 10), "")
+GBIF.download(doi; path = temp_cache_file)
+@test isfile(joinpath(temp_cache_file, "0015079-250811113504898.csv"))
+rm(joinpath(temp_cache_file, "0015079-250811113504898.csv"))
 
 end

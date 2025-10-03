@@ -16,7 +16,7 @@ TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
 [compat]
 Distributions = "0.25"
-JSON = "0.21"
+JSON = "0.21, 1"
 LinearAlgebra = "1"
 MultivariateStats = "0.10"
 Random = "1"

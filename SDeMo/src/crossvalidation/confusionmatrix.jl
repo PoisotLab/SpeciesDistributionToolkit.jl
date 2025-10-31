@@ -121,3 +121,7 @@ Base.:+(c1::ConfusionMatrix, c2::ConfusionMatrix) =
     ConfusionMatrix(c1.tp + c2.tp, c1.tn + c2.tn, c1.fp + c2.fp, c1.fn + c2.fn)
 Base.:-(c1::ConfusionMatrix, c2::ConfusionMatrix) =
     ConfusionMatrix(c1.tp - c2.tp, c1.tn - c2.tn, c1.fp - c2.fp, c1.fn - c2.fn)
+
+function Base.show(io::IO, c::ConfusionMatrix)
+    print(io, "(tp: $(c.tp), fp: $(c.fp); fn: $(c.fn), tn: $(c.tn))")
+end

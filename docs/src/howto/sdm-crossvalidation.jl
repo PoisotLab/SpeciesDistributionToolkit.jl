@@ -70,8 +70,8 @@ pretty_table(
     hcat(string.(measures), hcat(cvresult, nullresult));
     alignment = [:l, :c, :c, :c, :c],
     backend = Val(:markdown),
-    header = ["Measure", "Validation", "Training", "Coin-flip", "No-skill"],
-    formatters = ft_printf("%5.3f", [2, 3, 4, 5]),
+    column_labels = ["Measure", "Validation", "Training", "Coin-flip", "No-skill"],
+    formatter = ft_printf("%5.3f", [2, 3, 4, 5]),
 )
 
 # Note that `crossvalidate` *does not* train the model. The point of

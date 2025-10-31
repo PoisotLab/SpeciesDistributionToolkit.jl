@@ -56,8 +56,8 @@ pretty_table(
     hcat(variables(sdm), instance(sdm, inst), cf[variables(sdm), :]);
     alignment = [:l, :c, :c, :c, :c, :c, :c],
     backend = Val(:markdown),
-    header = ["Variable", "Obs.", "C. 1", "C. 2", "C. 3", "C. 4", "C. 5"],
-    formatters = (ft_printf("%4.1f", [2, 3, 4, 5, 6]), ft_printf("%d", 1)),
+    column_labels = ["Variable", "Obs.", "C. 1", "C. 2", "C. 3", "C. 4", "C. 5"],
+    formatter = (ft_printf("%4.1f", [2, 3, 4, 5, 6]), ft_printf("%d", 1)),
 )
 
 # We can check the prediction that would be made on all the counterfactuals:

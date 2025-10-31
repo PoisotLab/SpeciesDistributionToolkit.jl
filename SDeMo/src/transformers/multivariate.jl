@@ -36,7 +36,7 @@ for tf in types_to_train
                 # Apply z-score as learned from the data
                 n = (x .- trf.μ) ./ trf.σ
                 # Return the prediction
-                return $(fitpkg).$(fitfunc)(trf.trf, x)
+                return $(fitpkg).$(fitfunc)(trf.trf, n)
             end
         end,
     )

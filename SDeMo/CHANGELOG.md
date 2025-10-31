@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.5.3`
 
+- **added** a `show` method for `ConfusionMatrix`
+- **added** a method to divide a `ConfusionMatrix` by a number
 - **fixed** the need to use ZScore before logistic and multivariate transforms
 
 ## `v1.5.2`

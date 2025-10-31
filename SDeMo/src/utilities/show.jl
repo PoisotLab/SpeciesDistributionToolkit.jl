@@ -27,7 +27,6 @@ function Base.show(io::IO, sdm::SDM)
     return print(io, join(strs, " → "))
 end
 
-function Base.show(io::IO, C::ConfusionMatrix)
-    str = "[TP: $(C.tp), TN $(C.tn), FP $(C.fp), FN $(C.fn)]"
-    return print(io, str)
+function Base.show(io::IO, c::ConfusionMatrix)
+    print(io, "(tp: $(c.tp), fp: $(c.fp); fn: $(c.fn), tn: $(c.tn))")
 end

@@ -163,7 +163,7 @@ current_figure() #hide
 # We can also build ensembles of different models. Let's bring in the model we
 # used in the previous tutorial:
 
-sdm2 = SDM(ZScore, Logistic, L, presencelayer, bgpoints)
+sdm2 = SDM(RawData, Logistic, L, presencelayer, bgpoints)
 variables!(sdm2, [1, 11, 5, 8, 6])
 hyperparameters!(classifier(sdm2), :η, 1e-4);
 hyperparameters!(classifier(sdm2), :interactions, :all);

@@ -115,9 +115,12 @@ function ConfusionMatrix(ensemble::Bagging; kwargs...)
 end
 
 Base.Matrix(c::ConfusionMatrix) = [c.tp c.fp; c.fn c.tn]
-Base.zero(ConfusionMatrix) = ConfusionMatrix(0, 0, 0, 0)
+Base.zero(::Type{ConfusionMatrix}) = ConfusionMatrix(0, 0, 0, 0)
+
+ConfusionMatrix(m::Matrix{<:Real}) = ConfusionMatrix(m[1,1], m[2,2], m[1,2], m[2, 1])
 
 Base.:+(c1::ConfusionMatrix, c2::ConfusionMatrix) =
     ConfusionMatrix(c1.tp + c2.tp, c1.tn + c2.tn, c1.fp + c2.fp, c1.fn + c2.fn)
 Base.:-(c1::ConfusionMatrix, c2::ConfusionMatrix) =
     ConfusionMatrix(c1.tp - c2.tp, c1.tn - c2.tn, c1.fp - c2.fp, c1.fn - c2.fn)
+Base.:/(c::ConfusionMatrix, n::Real) = ConfusionMatrix(Matrix(c)./n)

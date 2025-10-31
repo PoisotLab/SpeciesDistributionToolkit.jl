@@ -69,9 +69,9 @@ nullresult = [measure(null(sdm)) for measure in measures, null in [coinflip, nos
 pretty_table(
     hcat(string.(measures), hcat(cvresult, nullresult));
     alignment = [:l, :c, :c, :c, :c],
-    backend = Val(:markdown),
-    header = ["Measure", "Validation", "Training", "Coin-flip", "No-skill"],
-    formatters = ft_printf("%5.3f", [2, 3, 4, 5]),
+    backend = :markdown,
+    column_labels = ["Measure", "Validation", "Training", "Coin-flip", "No-skill"],
+    formatters = [fmt__printf("%5.3f", [2, 3, 4, 5])],
 )
 
 # Note that `crossvalidate` *does not* train the model. The point of

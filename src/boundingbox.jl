@@ -88,7 +88,7 @@ end
 
 # SimpleSDMPolygons
 
-const _SDMPOLY_TYPES = Union{SimpleSDMPolygons.FeatureCollection, SimpleSDMPolygons.Feature, SimpleSDMPolygons.Polygon}
+const _SDMPOLY_TYPES = Union{SimpleSDMPolygons.FeatureCollection, SimpleSDMPolygons.Feature, SimpleSDMPolygons.Polygon, SimpleSDMPolygons.MultiPolygon}
 
 function boundingbox(fc::T; kwargs...) where T<:_SDMPOLY_TYPES
     return SimpleSDMPolygons.boundingbox(fc.geometry; kwargs...)
@@ -97,3 +97,19 @@ end
 function boundingbox(fc::SimpleSDMPolygons.FeatureCollection; kwargs...)
     return _reconcile([SimpleSDMPolygons.boundingbox(ft; kwargs...) for ft in fc.features])
 end
+
+
+@testitem "We can apply boundingbox to each type of Polygon" begin 
+    
+    fc = getpolygon(PolygonData(OpenStreetMap, Places), place="Switzerland")
+    feat = fc[1]
+    mp = feat.geometry
+    pol = SpeciesDistributionToolkit.SimpleSDMPolygons.Polygon(SpeciesDistributionToolkit.SimpleSDMPolygons.AG.getgeom(mp.geometry, 1))
+
+
+    @test SimpleSDMPolygons.boundingbox(fc) isa NamedTuple
+    @test SimpleSDMPolygons.boundingbox(feat) isa NamedTuple
+    @test SimpleSDMPolygons.boundingbox(mp) isa NamedTuple
+    @test SimpleSDMPolygons.boundingbox(pol) isa NamedTuple
+
+end 

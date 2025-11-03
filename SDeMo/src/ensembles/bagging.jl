@@ -1,16 +1,20 @@
 """
     bootstrap(y, X; n = 50)
+
+Generate a series of `n` bootstrap samples for molde bagging. The present and
+absent classes are boostrapped separately so that in and out of bag respect (on
+average) class balance.
 """
 function bootstrap(y, X; n = 50)
     @assert size(y, 1) == size(X, 2)
-    bags = []
     pos, neg = __classsplit(y)
-    for _ in 1:n
+    bags = Vector{Tuple{typeof(pos), typeof(pos)}}(undef, n)
+    for i in 1:n
         inbag_pos = unique(sample(pos, length(pos); replace=true))
         inbag_neg = unique(sample(neg, length(neg); replace=true))
         inbag = Random.shuffle!(vcat(inbag_pos, inbag_neg))
         outbag = setdiff(axes(y, 1), inbag)
-        push!(bags, (inbag, outbag))
+        bags[i] = (inbag, outbag)
     end
     return bags
 end

@@ -16,6 +16,16 @@ GI.getgeom(::GI.PolygonTrait, geom::Polygon, i) = GI.getgeom(geom.geometry, i)
 GI.crs(::GI.PolygonTrait, geom::Polygon) = GI.crs(geom.geometry)
 GI.extent(::GI.PolygonTrait, geom::Polygon)::GI.Extents.Extent = GI.extent(geom.geometry)
 
+Polygon(coords::Vector{<:Tuple{<:Real,<:Real}}) = Polygon(coords...)
+function Polygon(coords::Tuple{<:Real,<:Real}...)
+    target_crs = AG.importEPSG(4326)
+    if coords[begin] != coords[end]
+        return Polygon(_add_crs(AG.createpolygon([coords..., coords[begin]]), target_crs))
+    else
+        return Polygon(_add_crs(AG.createpolygon([coords..., coords[begin]]), target_crs))
+    end 
+end
+
 """
     MultiPolygon
 """
@@ -31,6 +41,8 @@ GI.getgeom(::GI.MultiPolygonTrait, geom::MultiPolygon, i) = GI.getgeom(geom.geom
 GI.crs(::GI.MultiPolygonTrait, geom::MultiPolygon) = GI.crs(geom.geometry)
 GI.extent(::GI.MultiPolygonTrait, geom::MultiPolygon)::GI.Extents.Extent =
     GI.extent(geom.geometry)
+
+const POLY_AND_MP = Union{Polygon,MultiPolygon}
 
 """
     Feature
@@ -50,6 +62,14 @@ Base.show(io::IO, feat::Feature{T}) where {T} = begin
     end
     print(io, feat_str)
 end
+GI.isgeometry(::GI.FeatureTrait)::Bool = true
+GI.geomtrait(::Feature) = GI.FeatureTrait()
+GI.ngeom(::GI.FeatureTrait, geom::Feature)::Integer = GI.ngeom(geom.geometry)
+GI.getgeom(::GI.FeatureTrait, geom::Feature, i) = GI.getgeom(geom.geometry, i)
+GI.crs(::GI.FeatureTrait, geom::Feature) = GI.crs(geom.geometry)
+GI.extent(::GI.FeatureTrait, geom::Feature)::GI.Extents.Extent =
+    GI.extent(geom.geometry)
+
 
 Base.getproperty(feat::Feature, propname::String) = haskey(feat.properties, propname) ? feat.properties[propname] : nothing 
 
@@ -63,10 +83,19 @@ struct FeatureCollection{T} <: AbstractGeometry
 end
 FeatureCollection(f::Feature) = FeatureCollection([f])
 
+GI.isgeometry(::GI.FeatureCollectionTrait)::Bool = true
+GI.geomtrait(::FeatureCollection) = GI.FeatureCollectionTrait()
+GI.ngeom(::GI.FeatureCollectionTrait, geom::FeatureCollection)::Integer = length(geom.features)
+GI.getgeom(::GI.FeatureCollectionTrait, geom::FeatureCollection, i) = geom.features[i]
+GI.crs(::GI.FeatureCollectionTrait, geom::FeatureCollection) = GI.crs(first(geom.features))
+GI.extent(::GI.FeatureCollectionTrait, geom::FeatureCollection)::GI.Extents.Extent = reduce(GI.Extents.union, [GI.extent(f) for f in geom.features])
+
+
 Base.show(io::IO, fc::FeatureCollection) = print(
     io,
     "FeatureCollection with $(length(fc)) features, each with $(length(first(fc.features).properties)) properties",
 )
+Base.vcat(fcs::FeatureCollection...) = FeatureCollection(vcat([fc.features for fc in fcs]...))
 
 Base.length(fc::FeatureCollection) = length(fc.features)
 Base.firstindex(::FeatureCollection) = 1

@@ -125,6 +125,13 @@ fscore(M::ConfusionMatrix, β = 1.0) =
     (1 + β^2.0) * (ppv(M) * tpr(M)) / (β^2.0 * ppv(M) + tpr(M))
 
 """
+    fscore(β::Real)
+
+Creates a function for the Fᵦ score, which takes a confusion matrix as an input.
+"""
+fscore(β::Real) = (M::ConfusionMatrix) -> fscore(M, β)
+
+"""
     trueskill(M::ConfusionMatrix)
 
 True skill statistic (a.k.a Youden's J, or informedness)
@@ -223,6 +230,13 @@ recall(M::ConfusionMatrix) = tpr(M)
 Alias for `tnr`, the true negative rate
 """
 specificity(M::ConfusionMatrix) = tnr(M)
+
+"""
+    gmean(M::ConfusionMatrix)
+
+Geometric mean of sensitivity and specificity.
+"""
+gmean(M::ConfusionMatrix) = sqrt(sensitivity(M) * specificity(M))
 
 """
     precision(M::ConfusionMatrix)

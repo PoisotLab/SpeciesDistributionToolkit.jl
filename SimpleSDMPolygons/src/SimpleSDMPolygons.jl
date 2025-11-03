@@ -59,8 +59,12 @@ include(joinpath("providers", "resolve.jl"))
 include(joinpath("providers", "oneearth.jl"))
 
 # Operations
-include("operations.jl")
-export add, subtract, intersect, invert
+include(joinpath("operations", "add.jl"))
+include(joinpath("operations", "subtract.jl"))
+include(joinpath("operations", "invert.jl"))
+include(joinpath("operations", "clip.jl"))
+include(joinpath("operations", "intersect.jl"))
+export add, subtract, intersect, invert, clip
 
 # Utility function
 getpolygon(pd::T, args...; kwargs...) where {T<:PolygonData} = SimpleSDMDatasets.downloader(pd, args...; kwargs...)

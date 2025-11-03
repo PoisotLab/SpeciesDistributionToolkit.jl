@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.5.4`
+
+- **fixed** a bug where multivariate transforms predicted on the unscale predictors
+
+## `v1.5.3`
+
+- **added** a `show` method for `ConfusionMatrix`
+- **added** a method to divide a `ConfusionMatrix` by a number
+- **fixed** the need to use ZScore before logistic and multivariate transforms
+
+## `v1.5.2`
+
+- **fixed** support for decision stubs
+
+## `v1.5.1`
+
+- **improved** the performance of `train!`
+- **fixed** the traininig of the threshold to use validation data when there are enough
+- **fixed** the bags being returned as a `Vector{Any}`
+- **added** a method for `crossvalidate` using `kfold` when no folds are given
+- **added** a method for `threshold!` that cross-validates the threshold for the SDM
+- **added** a method for `fscore` that takes the value of β as an argument and returns a function
+- **added** a `gmean` function
+
 ## `v1.5.0`
 
 - **added** the `AdaBoost` model for boosting, currently the only `AbstractBoostedSDM`

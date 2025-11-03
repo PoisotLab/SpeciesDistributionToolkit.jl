@@ -69,9 +69,9 @@ nullresult = [measure(null(sdm)) for measure in measures, null in [coinflip, nos
 pretty_table(
     hcat(string.(measures), hcat(cvresult, nullresult));
     alignment = [:l, :c, :c, :c, :c],
-    backend = Val(:markdown),
-    header = ["Measure", "Validation", "Training", "Coin-flip", "No-skill"],
-    formatters = ft_printf("%5.3f", [2, 3, 4, 5]),
+    backend = :markdown,
+    column_labels = ["Measure", "Validation", "Training", "Coin-flip", "No-skill"],
+    formatters = [fmt__printf("%5.3f", [2, 3, 4, 5])],
 )
 
 # Note that `crossvalidate` *does not* train the model. The point of
@@ -82,3 +82,12 @@ train!(sdm)
 
 # Training the model will automatically optimize the threshold, using the MCC as
 # a measure of optimal predictive ability.
+
+# If you want to optimize the threshold using cross-validation, there is a
+# specific method for that:
+
+threshold!(sdm, folds; optimality=mcc)
+
+# It works by finding the value of the threshold that optimizes the average
+# performance across folds, and can be used with any measure of performance you
+# want to optimize.

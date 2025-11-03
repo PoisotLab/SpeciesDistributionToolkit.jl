@@ -57,8 +57,8 @@ function train!(dn::DecisionNode, X, y; kwargs...)
                 p_left = n_left / length(y)
                 p_right = 1.0 - p_left
                 s_right = sum(y) - s_left
-                e_left = SDeMo._entropy(s_left/n_left)
-                e_right = SDeMo._entropy(s_right/n_right)
+                e_left = SDeMo._entropy(s_left / n_left)
+                e_right = SDeMo._entropy(s_right / n_right)
                 IG = current_entropy - p_left * e_left - p_right * e_right
                 if (IG > best_gain) & (IG > 0.0)
                     best_gain = IG
@@ -78,6 +78,20 @@ function train!(dn::DecisionNode, X, y; kwargs...)
         end
     end
     return dn
+end
+
+@testitem "We can train a decision stub" begin
+    X, y = SDeMo.__demodata()
+    stub = DecisionTree()
+    # Turn the tree into a stub - a single depth and two nodes
+    hyperparameters!(stub, :maxdepth, 1)
+    hyperparameters!(stub, :maxnodes, 2)
+    # Train the stub
+    train!(stub, y, X)
+    @test SDeMo.depth(stub) == 1
+    # Make a prediction
+    ŷ = predict(stub, X)
+    @test length(unique(ŷ)) == 2
 end
 
 """
@@ -142,7 +156,7 @@ function tips(dn::SDeMo.DecisionNode)
     end
 end
 
-depth(dt::DecisionTree) = maximum(depth.(tips(dt)))
+depth(dt::DecisionTree) = maximum(depth.(tips(dt))) - 1
 depth(dn::DecisionNode) = 1 + depth(dn.parent)
 depth(::Nothing) = 0
 
@@ -178,18 +192,23 @@ function _information_gain(dn::SDeMo.DecisionNode, X, y)
     return e - mean(yl) * el - mean(yr) * er
 end
 
+"""
+    prune!(tree, X, y)
+
+This function will take each twig in a tree, and merge the one with the worst
+contribution to information gain.
+"""
 function prune!(tree, X, y)
-    tw = twigs(tree)
-    wrst = Inf
-    widx = 0
-    for i in eachindex(tw)
-        ef = _information_gain(tw[i], X, y)
-        if ef < wrst
-            wrst = ef
-            widx = i
+    all_tree_twigs = twigs(tree)
+    worst_info, worst_index = Inf, 0
+    for i in eachindex(all_tree_twigs)
+        ef = _information_gain(all_tree_twigs[i], X, y)
+        if ef < worst_info
+            worst_info = ef
+            worst_index = i
         end
     end
-    SDeMo.merge!(tw[widx])
+    SDeMo.merge!(all_tree_twigs[worst_index])
     return tree
 end
 
@@ -199,7 +218,7 @@ function train!(
     dt::DecisionTree,
     y::Vector{Bool},
     X::Matrix{T};
-    kwargs...
+    kwargs...,
 ) where {T <: Number}
     root = SDeMo.DecisionNode()
     root.prediction = mean(y)

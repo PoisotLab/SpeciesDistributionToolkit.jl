@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.2.2`
+
+- **fixed** bug where polygons initialized by coordinates don't have a CRS [#499]
+
+## `v1.2.1`
+
+- **added** support to clip features by a boundingbox
+- **added** a `Polygon` constructor for tuples of coordinates
 
 ## `v1.2.0`
 

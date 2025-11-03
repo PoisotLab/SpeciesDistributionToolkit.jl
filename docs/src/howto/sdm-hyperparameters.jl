@@ -16,7 +16,7 @@ X, y = SDeMo.__demodata()
 # We will limit the model to two variables for the sake of
 # illustration.
 
-sdm = SDM(ZScore, Logistic, X, y)
+sdm = SDM(RawData, Logistic, X, y)
 variables!(sdm, [1, 12])
 
 # We can inspect the hyper-parameters for the transformer:

@@ -85,11 +85,12 @@ on a raster at a coarser resolution.
 function findrotation(L::SDMLayer, P::SDMLayer; longitudes=-10:0.1:10, latitudes=-10:0.1:10, rotations=-10:0.1:10, maxiter=10_000)
     iter = 1
     r = (rand(longitudes), rand(latitudes), rand(rotations))
+    ll = lonlat(L)
     while iter < maxiter
         iter += 1
         r = (rand(longitudes), rand(latitudes), rand(rotations))
         trf = rotator(r...)
-        u = [P[c...] for c in trf(lonlat(L))]
+        u = [P[c...] for c in trf(ll)]
         if !any(isnothing, u)
             trf
         end

@@ -96,9 +96,9 @@ export quantiletransfer, quantiletransfer!
 include("shift-and-rotate/rotations.jl")
 include("shift-and-rotate/shift-and-rotate.jl")
 export lonlat
-export roll, pitch, yaw
-export shiftlatitudes, shiftlongitudes, localrotation
+# export roll, pitch, yaw
+# export shiftlatitudes, shiftlongitudes, localrotation
+export findrotation, rotator
 export shiftandrotate
-export findrotation
 
 end # module

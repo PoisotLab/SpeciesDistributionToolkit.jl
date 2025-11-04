@@ -84,9 +84,13 @@ P = SDMLayer{Float32}[
 # The rotation is a shift in latitude and longitude, and then a rotation around
 # the axis.
 
-# It can be turned into a function to generate a new layer. 
+# It can be turned into a function to generate the rotation:
 
-sar = shiftandrotate(θ...)
+rotator(θ...)
+
+# We can, for example, shift and rotate the first layer:
+
+Y = shiftandrotate(first(L), first(P), rotator(θ...))
 
 # We can visualize the output of this transformation:
 
@@ -100,3 +104,49 @@ scatter!(ax, trf(lonlat(L)), markersize=1, color=:red)
 xlims!(ax, extrema(first.(vcat(lonlat(L), trf(lonlat(L))))) .+ (-1, 1))
 ylims!(ax, extrema(last.(vcat(lonlat(L), trf(lonlat(L))))) .+ (-1, 1))
 current_figure() #hide
+
+# Now, also ensure that although the spatial structure of this layer has
+# changed, it should have the same distribution of values as the original layer.
+# This can be done with the quantile transfer function:
+
+quantiletransfer!(Y, L)
+
+# We can check the extrema of both layers:
+
+extrema(Y)
+
+# and the original layer
+
+extrema(L)
+
+# All things together, we can now create a series of shifted and rotated layers
+# with the original distribution of values:
+
+Z = [
+    quantiletransfer!(
+        shiftandrotate(L[i], P[i], rotator(θ...)), 
+        L[i])
+    for i in eachindex(L)
+]
+
+# We can apply the previously trained SDM on the new layers
+
+# fig-shift-heatmap2
+fig = Figure(; size = (900, 700))
+panel = Axis(
+    fig[1, 1];
+    xlabel = "Easting",
+    ylabel = "Northing",
+    aspect = DataAspect(),
+)
+hidedecorations!(panel)
+hidespines!(panel)
+heatmap!(
+    panel,
+    predict(sdm, Z),
+    colormap=[:white, :purple]
+)
+lines!(panel, pol, color=:black)
+current_figure() #hide
+
+# We can, of course, also decide to train a different model based on these data, etc.

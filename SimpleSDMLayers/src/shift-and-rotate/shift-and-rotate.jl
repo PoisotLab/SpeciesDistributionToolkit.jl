@@ -49,7 +49,7 @@ Returns a function to create a rotation of coordinates around their centroids.
 localrotation(angle) = (xy) -> _centroid_rotation(xy, angle)
 
 """
-    shiftandrotate(longitude::T, latitude::T, rotation::T) where T <: Number
+    rotator(longitude::T, latitude::T, rotation::T) where T <: Number
 
 Returns a function to transform a vector of lon,lat points according to three
 operations done in order:
@@ -63,7 +63,7 @@ that takes a vector of coordinates to transform. The transformations do account
 for the curvature of the Earth. For this reason, rotations and changes in the
 latitudes will deform the points, but shift in the longitudes will not.
 """
-function shiftandrotate(longitude::T, latitude::T, rotation::T) where T <: Number
+function rotator(longitude::T, latitude::T, rotation::T) where T <: Number
     return shiftlongitudes(longitude) ∘ shiftlatitudes(latitude) ∘ localrotation(rotation)
 end
 
@@ -76,6 +76,9 @@ valid coordinates in the layer `P`. The range of angles to explore is given as
 keywords, and the function accepts a `maxiter` argument after which, if no
 rotation is found, it returns `nothing`.
 
+The output of this method is either `nothing` (no valid rotation found), or a
+rotator function (see the documentation for `rotator`).
+
 Note that it is almost always a valid strategy to look for shifts and rotations
 on a raster at a coarser resolution.
 """
@@ -85,44 +88,36 @@ function findrotation(L::SDMLayer, P::SDMLayer; longitudes=-10:0.1:10, latitudes
     while iter < maxiter
         iter += 1
         r = (rand(longitudes), rand(latitudes), rand(rotations))
-        trf = shiftandrotate(r...)
+        trf = rotator(r...)
         u = [P[c...] for c in trf(lonlat(L))]
         if !any(isnothing, u)
-            return r
+            trf
         end
     end
     return nothing
 end
 
-#=
-cntrs = getpolygon(PolygonData(NaturalEarth, Countries))
-pol = cntrs["Czech Republic"]
-P = SDMLayer(RasterData(WorldClim2, BioClim); resolution=2.5)
-L = SDMLayer(RasterData(WorldClim2, BioClim); resolution=2.5, SDT.boundingbox(pol)...)
-mask!(L, pol)
+"""
+    shiftandrotate!(L::SDMLayer, P::SDMLayer, rotator)
 
-# Check the data
-heatmap(L)
+Returns the output of shifting and rotating the layer `L` on the layer `P`,
+according to a `rotator` function, obtained with for example `findrotation`.
+This function overwrites `L`.
+"""
+function shiftandrotate!(L::SDMLayer, P::SDMLayer, rotator)
+    SimpleSDMLayers.burnin!(L, [P[c...] for c in rotator(lonlat(L))])
+    return L
+end
 
+"""
+    shiftandrotate(L::SDMLayer, P::SDMLayer, rotator)
 
-r = find_rotations(L, P; latitudes=(-10., 10.), longitudes=(-20., 20.), rotation=(-1., 1.))
-@info r
-
-trf = shiftandrotate(r...)
-
-f = Figure(; size=(1000, 1000))
-ax = Axis(f[1, 1]; aspect=DataAspect())
-
-heatmap!(ax, P, colormap=:greys)
-scatter!(ax, lonlat(L), markersize=1, color=:black)
-scatter!(ax, trf(lonlat(L)), markersize=1, color=:red)
-xlims!(ax, extrema(first.(vcat(lonlat(L), trf(lonlat(L))))) .+ (-1, 1))
-ylims!(ax, extrema(last.(vcat(lonlat(L), trf(lonlat(L))))) .+ (-1, 1))
-
-Y = deepcopy(L)
-SimpleSDMLayers.burnin!(Y, [P[c...] for c in trf(lonlat(L))])
-ax2 = Axis(f[1, 2]; aspect=DataAspect())
-heatmap!(ax2, Y)
-
-current_figure()
-=#
+Returns the output of shifting and rotating the layer `L` on the layer `P`,
+according to a `rotator` function, obtained with for example `findrotation`.
+This function generates a copy of `L`.
+"""
+function shiftandrotate(L::SDMLayer, P::SDMLayer, rotator)
+    Y = similar(L)
+    shiftandrotate!(Y, P, rotator)
+    return Y
+end

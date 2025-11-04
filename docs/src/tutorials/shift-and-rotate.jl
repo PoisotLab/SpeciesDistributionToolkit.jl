@@ -100,5 +100,3 @@ scatter!(ax, trf(lonlat(L)), markersize=1, color=:red)
 xlims!(ax, extrema(first.(vcat(lonlat(L), trf(lonlat(L))))) .+ (-1, 1))
 ylims!(ax, extrema(last.(vcat(lonlat(L), trf(lonlat(L))))) .+ (-1, 1))
 current_figure() #hide
-
-# We can then put the 

@@ -38,15 +38,67 @@ presencelayer = mask(first(L), Occurrences(mask(presences, pol)))
 background = pseudoabsencemask(DistanceToEvent, presencelayer)
 bgpoints = backgroundpoints(nodata(background, d -> d < 20), 2sum(presencelayer))
 
-# And finally train an ensemble model:
+# And finally train a model:
 
-sdm = Bagging(SDM(RawData, DecisionTree, L, presencelayer, bgpoints), 50)
-bagfeatures!(sdm)
+sdm = SDM(RawData, Logistic, L, presencelayer, bgpoints)
+variables!(sdm, ForwardSelection)
 
-# Let's look at the first prediction of this model:
+# Now, we can make the prediction based on this model
 
-train!(sdm)
+# fig-shift-heatmap
+fig = Figure(; size = (900, 700))
+panel = Axis(
+    fig[1, 1];
+    xlabel = "Easting",
+    ylabel = "Northing",
+    aspect = DataAspect(),
+)
+hidedecorations!(panel)
+hidespines!(panel)
+heatmap!(
+    panel,
+    predict(sdm, L),
+    colormap=[:white, :purple]
+)
+lines!(panel, pol, color=:black)
+current_figure() #hide
 
-heatmap(predict(sdm, L))
-lines!(pol)
-current_figure()
+# This represents the prediction on the original data. Now, we will identify a
+# rotation under which we can generate a different landscape. Before we do this,
+# we need a pool of layers to get the potential values from, so we will use a
+# version with a padding:
+
+poolextent = SDT.boundingbox(pol; padding=10.0)
+P = SDMLayer{Float32}[
+    SDMLayer(
+        provider;
+        layer = x,
+        poolextent...,
+    ) for x in 1:19
+];
+
+# We now find a rotation:
+
+θ = findrotation(first(L), first(P))
+
+# The rotation is a shift in latitude and longitude, and then a rotation around
+# the axis.
+
+# It can be turned into a function to generate a new layer. 
+
+sar = shiftandrotate(θ...)
+
+# We can visualize the output of this transformation:
+
+# fig-shift-transform
+f = Figure()
+ax = Axis(f[1, 1]; aspect=DataAspect())
+
+heatmap!(ax, P, colormap=:greys)
+scatter!(ax, lonlat(L), markersize=1, color=:black)
+scatter!(ax, trf(lonlat(L)), markersize=1, color=:red)
+xlims!(ax, extrema(first.(vcat(lonlat(L), trf(lonlat(L))))) .+ (-1, 1))
+ylims!(ax, extrema(last.(vcat(lonlat(L), trf(lonlat(L))))) .+ (-1, 1))
+current_figure() #hide
+
+# We can then put the 

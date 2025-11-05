@@ -60,8 +60,9 @@ function train!(
         # This is the ground truth for our thresholding data
         yₛ = labels(sdm)[idx]
         
-        # We look at a range of 100 values
-        thresholds = LinRange(extrema(ŷ)..., 150)
+        # We look at the optimal range of values.
+        _valrange = extrema(ŷ)
+        thresholds = LinRange(_valrange..., 150)
 
         best_threshold = minimum(thresholds)
         best = -Inf

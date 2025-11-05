@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.5.4`
 
-- **fixed** a bug where multivariate transforms predicted on the unscale predictors
+- **fixed** a bug where multivariate transforms predicted on the unscaled predictors
 
 ## `v1.5.3`
 

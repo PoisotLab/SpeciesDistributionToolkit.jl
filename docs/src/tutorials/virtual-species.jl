@@ -58,7 +58,7 @@ function virtualspecies(L::Vector{<:SDMLayer}; prevalence::Float64 = 0.25)
     while invalid
         centers = [rand(values(l)) for l in L]
         shapes = randn(length(L))
-        predictors = [logistic(centers[i], shapes[i]) for i in eachindex(L)]
+        predictors = [logistic(shapes[i], centers[i]) for i in eachindex(L)]
         predictions = [predictors[i].(L[i]) for i in eachindex(L)]
         rescale!.(predictions)
         global prediction = prod(predictions)

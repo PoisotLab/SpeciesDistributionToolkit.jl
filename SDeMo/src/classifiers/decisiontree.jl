@@ -63,7 +63,7 @@ function train!(dn::DecisionNode, X, y; kwargs...)
                 if (IG > best_gain) & (IG > 0.0)
                     best_gain = IG
                     best_split = (vᵢ, xᵢ)
-                    pl, pr = p_left, p_right
+                    pl, pr = s_left / n_left, s_right / n_right
                     found = true
                 end
             end
@@ -80,17 +80,17 @@ function train!(dn::DecisionNode, X, y; kwargs...)
     return dn
 end
 
-@testitem "We can train a decision stub" begin
+@testitem "We can train a decision stump" begin
     X, y = SDeMo.__demodata()
-    stub = DecisionTree()
-    # Turn the tree into a stub - a single depth and two nodes
-    hyperparameters!(stub, :maxdepth, 1)
-    hyperparameters!(stub, :maxnodes, 2)
-    # Train the stub
-    train!(stub, y, X)
-    @test SDeMo.depth(stub) == 1
+    stump = DecisionTree()
+    # Turn the tree into a stump - a single depth and two nodes
+    hyperparameters!(stump, :maxdepth, 1)
+    hyperparameters!(stump, :maxnodes, 2)
+    # Train the stump
+    train!(stump, y, X)
+    @test SDeMo.depth(stump) == 1
     # Make a prediction
-    ŷ = predict(stub, X)
+    ŷ = predict(stump, X)
     @test length(unique(ŷ)) == 2
 end
 

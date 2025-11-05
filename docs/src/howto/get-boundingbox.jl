@@ -7,7 +7,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 # The `boundingbox` method accepts most types that `SpeciesDistributionToolkit`
 # knows about, and returns a tuple:
 
-occ = occurrences("hasCoordinate" => true, "country" => "CH", "limit" => 300)
+occ = occurrences("hasCoordinate" => true, "country" => "AT", "limit" => 300)
 SpeciesDistributionToolkit.boundingbox(occ)
 
 # We can also specify a padding (in degrees) that is added to the bounding box:
@@ -44,8 +44,8 @@ current_figure() #hide
 # The same method also applies to polygons:
 
 cnt = PolygonData(OpenStreetMap, Countries)
-CHE = getpolygon(cnt, country="Switzerland")
-SpeciesDistributionToolkit.boundingbox(CHE; padding = 0.5)
+pol = getpolygon(cnt, country="Austria")
+SpeciesDistributionToolkit.boundingbox(pol; padding = 0.5)
 
 # ```@meta
 # CollapsedDocStrings = true

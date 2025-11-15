@@ -3,13 +3,15 @@ Base.@kwdef struct PlattCalibration <: AbstractCalibration
     B::Real = 0.0
 end
 
+_keywordsfor(::Type{PlattCalibration}) = [:maxiter, :tol]
+
 """
-    calibration(sdm::T; kwargs...) where {T <: AbstractSDM}
+    calibration(sdm::T; kwargs...)
 
 Returns a function for model calibration, using Platt scaling, optimized with
 the Newton method. The returned function can be applied to a model output.
 """
-function calibrate(::Type{PlattCalibration}, x, y; maxiter=1_000, tol=1e-5) where {T <: AbstractSDM}
+function calibrate(::Type{PlattCalibration}, x::Vector{<:Real}, y::Vector{Bool}; maxiter=1_000, tol=1e-5)
     n₀ = sum(y)
     n₁ = length(y) - sum(y)
 

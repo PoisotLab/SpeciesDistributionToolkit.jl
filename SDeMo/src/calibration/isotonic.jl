@@ -2,12 +2,14 @@ Base.@kwdef struct IsotonicCalibration <: AbstractCalibration
     calibrator::Function
 end
 
+_keywordsfor(::Type{IsotonicCalibration}) = [:bins]
+
 """
     calibrate(::Type{IsotonicCalibration}, sdm::T; bins=25, kwargs...)
 
 Returns the isotonic calibration result for a given SDM
 """
-function calibrate(::Type{IsotonicCalibration}, x, y; bins=25)
+function calibrate(::Type{IsotonicCalibration}, x::Vector{<:Real}, y::Vector{Bool}; bins=25)
     X, Y = SDeMo._calibration_bins(x, y, bins)
     return PAVA(X, Y)
 end
@@ -86,4 +88,8 @@ function PAVA(x, y, w=ones(length(y)))
     end
 
     return IsotonicCalibration(evaluate)
+end
+
+function correct(is::IsotonicCalibration, y)
+    return is.calibrator(y)
 end

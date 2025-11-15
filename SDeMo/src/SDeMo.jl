@@ -74,6 +74,7 @@ include("calibration/reliability.jl")
 export reliability
 
 include("calibration/calibration.jl")
+export AbstractCalibration
 export calibrate, correct
 
 include("calibration/platt.jl")

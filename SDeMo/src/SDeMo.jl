@@ -70,6 +70,9 @@ include("boosting/adaboost.jl")
 export AdaBoost
 
 # Calibration and correction
+include("calibration/reliability.jl")
+export reliability
+
 include("calibration/calibration.jl")
 export calibrate, correct
 
@@ -78,9 +81,6 @@ export PlattCalibration
 
 include("calibration/isotonic.jl")
 export IsotonicCalibration
-
-include("calibration/reliability.jl")
-export reliability
 
 # Main pipeline
 include("pipeline.jl")

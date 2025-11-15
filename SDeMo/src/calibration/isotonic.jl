@@ -1,9 +1,22 @@
 Base.@kwdef struct IsotonicCalibration <: AbstractCalibration
-    A::Real = 0.0
-    B::Real = 0.0
+    calibrator::Function
 end
 
+"""
+    calibrate(::Type{IsotonicCalibration}, sdm::T; bins=25, kwargs...)
+
+Returns the isotonic calibration result for a given SDM
+"""
+function calibrate(::Type{IsotonicCalibration}, sdm::T; bins=25, kwargs...)
+    d = predict(sdm; threshold=false, kwargs...)
+    C = labels(sdm)
+    X, Y = SDeMo._calibration_bins(d, C, bins)
+    return PAVA(X, Y)
+end
+
+
 function PAVA(x, y, w=ones(length(y)))
+    
     # Sort by x values
     perm = sortperm(x)
     x_sorted = x[perm]
@@ -15,7 +28,7 @@ function PAVA(x, y, w=ones(length(y)))
     ws = copy(w_sorted)
     xs = copy(x_sorted)
     target = [[i] for i in 1:n]
-    i = 2  # Julia uses 1-based indexing, so start at 2
+    i = 2
     counter = 0
 
     while i <= n
@@ -75,30 +88,5 @@ function PAVA(x, y, w=ones(length(y)))
         end
     end
 
-    return (solution=sol, weights=ws, blocks=target,
-        breakpoints=breakpoints[1:end-1], values=values,
-        x_breaks=breakpoints, evaluate=evaluate)
-end
-
-function mkbins(x, y, bins)
-    nqs = bins
-    #qs = quantile(x, LinRange(0.0, 1.0, nqs))
-    qs = LinRange(extrema(x)..., nqs)
-
-    X = zeros(nqs - 1)
-    Y = zeros(nqs - 1)
-
-    for i in 1:(nqs-1)
-        in_chunk = findall(qs[i] .<= x .< qs[i+1])
-        X[i] = mean(x[in_chunk])
-        Y[i] = mean(y[in_chunk])
-    end
-    return X, Y
-end
-
-function pava_calibration(prd, trt; range=:, bins=25)
-
-    X, Y = mkbins(prd[range], trt[range], bins)
-
-    return PAVA(X, Y).evaluate
+    return IsotonicCalibration(evaluate)
 end

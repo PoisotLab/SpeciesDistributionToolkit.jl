@@ -1,3 +1,17 @@
+function _calibration_bins(x, y, bins)
+    qs = LinRange(extrema(x)..., bins)
+
+    X = zeros(bins - 1)
+    Y = zeros(bins - 1)
+
+    for i in 1:(bins-1)
+        in_chunk = findall(qs[i] .<= x .< qs[i+1])
+        X[i] = mean(x[in_chunk])
+        Y[i] = mean(y[in_chunk])
+    end
+    return X, Y
+end
+
 """
     reliability(yhat, y; bins=9)
 

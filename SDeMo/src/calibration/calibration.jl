@@ -15,6 +15,10 @@ function _kwsplitter(C::Type{<:AbstractCalibration}, args::Base.Pairs)
     return cal_kw, mod_kw
 end
 
+function calibrate(sdm::T; kwargs...) where {T <: AbstractSDM}
+    return calibrate(PlattCalibration, sdm; kwargs...)
+end
+
 function calibrate(cal::Type{C}, sdm::T; kwargs...) where {C <: AbstractCalibration, T <: AbstractSDM}
     calibrator_kw, model_kw = _kwsplitter(cal, kwargs)
     x, y = _calibrationdata(sdm; model_kw...)

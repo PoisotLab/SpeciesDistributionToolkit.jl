@@ -162,6 +162,7 @@ export default defineConfig({
                                 { text: "PR and ROC curves", link: "/howto/sdm-pr-roc/" },
                                 { text: "Interpretability", link: "/howto/sdm-interpretability/" },
                                 { text: "Counterfactuals", link: "/howto/sdm-counterfactuals/" },
+                                { text: "Calibration", link: "/howto/sdm-calibration/" },
                             ]
                         }
                     ]

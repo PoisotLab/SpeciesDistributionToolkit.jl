@@ -73,3 +73,12 @@ end
     folds = first.(bootstrap(model))
     C = [calibrate(IsotonicCalibration, model; samples=s, bins=35) for s in folds]
 end
+
+@testitem "We can do Platt calibration (bootstrapped values)" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(PCATransform, NaiveBayes, X, y)
+    train!(model)
+    @assert PlattCalibration <: AbstractCalibration
+    folds = first.(bootstrap(model))
+    C = [calibrate(PlattCalibration, model; samples=s) for s in folds]
+end

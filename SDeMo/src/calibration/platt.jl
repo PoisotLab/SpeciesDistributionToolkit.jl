@@ -22,7 +22,7 @@ function calibrate(::Type{PlattCalibration}, x::Vector{<:Real}, y::Vector{Bool};
     # Updated targets with a correction for prevalence
     t₁ = (n₁ + 1.0) / (n₁ + 2.0)
     t₀ = 1 / (n₀ + 2.0)
-    t = fill(t₀, length(C))
+    t = fill(t₀, length(y))
     t[findall(y)] .= t₁
 
     # Initial values for A and B
@@ -32,7 +32,7 @@ function calibrate(::Type{PlattCalibration}, x::Vector{<:Real}, y::Vector{Bool};
     # Initial update of f
     fval = 0.0
     for i in eachindex(t)
-        fApB = d[i] * A + B
+        fApB = x[i] * A + B
         if fApB >= 0.0
             fval += t[i] * fApB + log(1 + exp(-fApB))
         else
@@ -46,7 +46,7 @@ function calibrate(::Type{PlattCalibration}, x::Vector{<:Real}, y::Vector{Bool};
         h11 = h22 = σ
         h21 = g1 = g2 = 0.0
         for i in eachindex(y)
-            fApB = d[i] * A + B
+            fApB = x[i] * A + B
             if fApB >= 0
                 p = exp(-fApB) / (1.0 + exp(-fApB))
                 q = 1.0 / (1.0 + exp(-fApB))
@@ -79,8 +79,8 @@ function calibrate(::Type{PlattCalibration}, x::Vector{<:Real}, y::Vector{Bool};
             newA = A + stepsize * dA
             newB = B + stepsize * dB
             newf = 0.0
-            for i in eachindex(C)
-                fApB = d[i] * newA + newB
+            for i in eachindex(y)
+                fApB = x[i] * newA + newB
                 if (fApB >= 0)
                     newf += t[i] * fApB + log(1 + exp(-fApB))
                 else

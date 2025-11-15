@@ -73,6 +73,12 @@ export AdaBoost
 include("calibration/calibration.jl")
 export calibrate, correct
 
+include("calibration/platt.jl")
+export PlattCalibration
+
+include("calibration/isotonic.jl")
+export IsotonicCalibration
+
 include("calibration/reliability.jl")
 export reliability
 

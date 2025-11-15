@@ -9,13 +9,9 @@ end
 Returns a function for model calibration, using Platt scaling, optimized with
 the Newton method. The returned function can be applied to a model output.
 """
-function calibrate(::Type{PlattCalibration}, sdm::T; maxiter=1_000, tol=1e-5, kwargs...) where {T <: AbstractSDM}
-
-    d = predict(sdm; threshold=false, kwargs...)
-    C = labels(sdm)
-
-    n₀ = sum(C)
-    n₁ = length(C) - sum(C)
+function calibrate(::Type{PlattCalibration}, x, y; maxiter=1_000, tol=1e-5) where {T <: AbstractSDM}
+    n₀ = sum(y)
+    n₁ = length(y) - sum(y)
 
     # Newton method parameters
     minstep = 1e-10
@@ -25,7 +21,7 @@ function calibrate(::Type{PlattCalibration}, sdm::T; maxiter=1_000, tol=1e-5, kw
     t₁ = (n₁ + 1.0) / (n₁ + 2.0)
     t₀ = 1 / (n₀ + 2.0)
     t = fill(t₀, length(C))
-    t[findall(C)] .= t₁
+    t[findall(y)] .= t₁
 
     # Initial values for A and B
     A = 0.0
@@ -47,7 +43,7 @@ function calibrate(::Type{PlattCalibration}, sdm::T; maxiter=1_000, tol=1e-5, kw
         # Gradient, Hessian
         h11 = h22 = σ
         h21 = g1 = g2 = 0.0
-        for i in eachindex(C)
+        for i in eachindex(y)
             fApB = d[i] * A + B
             if fApB >= 0
                 p = exp(-fApB) / (1.0 + exp(-fApB))
@@ -57,11 +53,11 @@ function calibrate(::Type{PlattCalibration}, sdm::T; maxiter=1_000, tol=1e-5, kw
                 q = exp(fApB) / (1.0 + exp(fApB))
             end
             d2 = p * q
-            h11 += d[i] * d[i] * d2
+            h11 += x[i] * x[i] * d2
             h22 += d2
-            h21 += d[i] * d2
+            h21 += x[i] * d2
             d1 = t[i] - p
-            g1 += d[i] * d1
+            g1 += x[i] * d1
             g2 += d1
         end
 

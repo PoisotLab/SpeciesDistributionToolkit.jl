@@ -7,13 +7,10 @@ end
 
 Returns the isotonic calibration result for a given SDM
 """
-function calibrate(::Type{IsotonicCalibration}, sdm::T; bins=25, kwargs...)
-    d = predict(sdm; threshold=false, kwargs...)
-    C = labels(sdm)
-    X, Y = SDeMo._calibration_bins(d, C, bins)
+function calibrate(::Type{IsotonicCalibration}, x, y; bins=25)
+    X, Y = SDeMo._calibration_bins(x, y, bins)
     return PAVA(X, Y)
 end
-
 
 function PAVA(x, y, w=ones(length(y)))
     

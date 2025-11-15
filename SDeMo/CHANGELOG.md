@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## `v1.6.0`
 
 - **added** support for isotonic calibration
-- **changed** `JSON` requirements to 1
+- **changed** `JSON` requirements to 1 [#507]
 
 ## `v1.5.5`
 

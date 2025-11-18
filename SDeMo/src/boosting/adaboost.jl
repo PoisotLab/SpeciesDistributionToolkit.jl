@@ -106,7 +106,9 @@ function train!(b::AdaBoost; kwargs...)
 end
 
 """
-    TODO
+    predict(::AdaBoost, ::Matrix{T}; kwargs...)
+
+Predicts with a trained AdaBoost model.
 """
 function StatsAPI.predict(
     b::AdaBoost,

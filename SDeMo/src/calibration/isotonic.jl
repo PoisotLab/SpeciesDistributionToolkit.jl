@@ -7,11 +7,13 @@ _keywordsfor(::Type{IsotonicCalibration}) = [:bins]
 """
     calibrate(::Type{IsotonicCalibration}, sdm::T; bins=25, kwargs...)
 
-Returns the isotonic calibration result for a given SDM
+Returns the isotonic calibration result for a given SDM. Isotonic regression is
+done using the bin membership as a weight, which gives less importance to bins
+with a lower membership.
 """
 function calibrate(::Type{IsotonicCalibration}, x::Vector{<:Real}, y::Vector{Bool}; bins=25)
-    X, Y = SDeMo._calibration_bins(x, y, bins)
-    return PAVA(X, Y)
+    X, Y, W = SDeMo._calibration_bins(x, y, bins; weights=true)
+    return PAVA(X, Y, W)
 end
 
 function PAVA(x, y, w=ones(length(y)))
@@ -90,6 +92,4 @@ function PAVA(x, y, w=ones(length(y)))
     return IsotonicCalibration(evaluate)
 end
 
-function correct(is::IsotonicCalibration, y)
-    return is.calibrator(y)
-end
+correct(is::IsotonicCalibration, y) = is.calibrator(y)

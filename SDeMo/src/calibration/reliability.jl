@@ -1,8 +1,9 @@
-function _calibration_bins(x, y, bins)
+function _calibration_bins(x, y, bins; weights=false)
     qs = LinRange(extrema(x)..., bins)
 
     X = zeros(bins - 1)
     Y = zeros(bins - 1)
+    W = zeros(bins - 1)
     filled = zeros(Bool, bins - 1)
 
     for i in 1:(bins-1)
@@ -10,9 +11,13 @@ function _calibration_bins(x, y, bins)
         filled[i] = !isempty(in_chunk)
         X[i] = mean(x[in_chunk])
         Y[i] = mean(y[in_chunk])
+        W[i] = length(in_chunk)
     end
 
-    return X[findall(filled)], Y[findall(filled)]
+    W ./= sum(W)
+    W .*= sum(filled)
+
+    return weights ? (X[findall(filled)], Y[findall(filled)], W[findall(filled)]) : (X[findall(filled)], Y[findall(filled)])
 end
 
 """

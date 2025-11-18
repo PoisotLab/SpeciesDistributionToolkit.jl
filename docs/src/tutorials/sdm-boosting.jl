@@ -215,7 +215,7 @@ current_figure() #hide
 # [Dormann2020](@citet) has several strong arguments in favor of this approach.
 
 # fig-boosted-proba
-fg, ax, pl = heatmap(f(brd); colormap = :tempo, colorrange = (0, 1))
+fg, ax, pl = heatmap(f.(brd); colormap = :tempo, colorrange = (0, 1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)

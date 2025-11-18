@@ -16,12 +16,12 @@ function _is_in_node_parent(dn::DecisionNode, X)
     if isnothing(dn.parent)
         return BitVector(ones(Bool, size(X, 2)))
     end
-    to_the_left = X[dn.parent.variable, :] .< dn.parent.value
-    if dn == dn.parent.left
-        return to_the_left
-    else
-        return map(!, to_the_left)
+    return_value = zeros(Bool, size(X, 2))
+    for i in eachindex(return_value)
+        is_left = X[dn.parent.variable, i] < dn.parent.value
+        return_value[i] = dn == dn.parent.left ? is_left : !is_left
     end
+    return return_value
 end
 
 _pool(::Nothing, X) = _is_in_node_parent(nothing, X)

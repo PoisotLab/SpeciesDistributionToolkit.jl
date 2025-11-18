@@ -184,12 +184,32 @@ function twigs(dt::DecisionTree)
 end
 
 function _information_gain(dn::SDeMo.DecisionNode, X, y)
-    p = findall(SDeMo._pool(dn, X))
-    pl = [i for i in p if X[dn.variable, i] < dn.value]
-    pr = setdiff(p, pl)
+
+    # What is in the pool?
+    pool = SDeMo._pool(dn, X)
+
+    # Now we create an empty array with as many items as are in the pool
+    px = zeros(Int64, sum(pool))
+    leftpos, rightpos = 0, 0
+
+    # And we loop
+    for i in eachindex(pool)
+        if pool[i]
+            if X[dn.variable, i] < dn.value
+                leftpos += 1
+                px[leftpos] = i
+            else
+                px[end-rightpos] = i
+                rightpos += 1
+            end
+        end
+    end
+
+    pl, pr = px[1:leftpos], px[(leftpos+1):end]
+
     yl = y[pl]
     yr = y[pr]
-    yt = y[p]
+    yt = y[px]
     e = SDeMo._entropy(yt)
     el = SDeMo._entropy(yl)
     er = SDeMo._entropy(yr)

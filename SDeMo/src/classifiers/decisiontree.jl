@@ -9,7 +9,7 @@ Base.@kwdef mutable struct DecisionNode
 end
 
 function _is_in_node_parent(::Nothing, X)
-    return [true for _ in axes(X, 2)]
+    return BitVector(ones(Bool, size(X, 2)))
 end
 
 function _is_in_node_parent(dn::DecisionNode, X)
@@ -30,9 +30,10 @@ function _pool(dn::DecisionNode, X)::BitVector
     in_parent = _is_in_node_parent(dn, X)
     if isnothing(dn.parent)
         return in_parent
+    else
+        in_pool = _pool(dn.parent, X)
+        return  in_parent .& in_pool
     end
-    in_pool = _pool(dn.parent, X)
-    return  in_parent .& in_pool
 end
 
 function train!(dn::DecisionNode, X, y; kwargs...)

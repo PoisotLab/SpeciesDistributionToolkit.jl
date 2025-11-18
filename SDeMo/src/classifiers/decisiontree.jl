@@ -14,7 +14,7 @@ end
 
 function _is_in_node_parent(dn::DecisionNode, X)
     if isnothing(dn.parent)
-        return [true for _ in axes(X, 2)]
+        return BitVector(ones(Bool, size(X, 2)))
     end
     to_the_left = X[dn.parent.variable, :] .< dn.parent.value
     if dn == dn.parent.left
@@ -26,8 +26,13 @@ end
 
 _pool(::Nothing, X) = _is_in_node_parent(nothing, X)
 
-function _pool(dn::DecisionNode, X)
-    return _is_in_node_parent(dn, X) .& _pool(dn.parent, X)
+function _pool(dn::DecisionNode, X)::BitVector
+    in_parent = _is_in_node_parent(dn, X)
+    if isnothing(dn.parent)
+        return in_parent
+    end
+    in_pool = _pool(dn.parent, X)
+    return  in_parent .& in_pool
 end
 
 function train!(dn::DecisionNode, X, y; kwargs...)
@@ -43,8 +48,7 @@ function train!(dn::DecisionNode, X, y; kwargs...)
         found = false
         pl, pr = (0.0, 0.0)
         for vᵢ in axes(X, 1)
-            x = unique(X[vᵢ, :])
-            for xᵢ in x
+            for xᵢ in unique(X[vᵢ, :])
                 n_left = 0
                 s_left = 0
                 for k in axes(X, 2)

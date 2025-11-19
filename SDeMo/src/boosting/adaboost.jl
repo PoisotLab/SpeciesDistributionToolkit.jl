@@ -19,12 +19,14 @@ end
 function AdaBoost(model::SDM; iterations = 50)
     return AdaBoost(
         deepcopy(model),
-        [deepcopy(model) for i in Base.OneTo(iterations)],
+        [deepcopy(model) for _ in Base.OneTo(iterations)],
         zeros(iterations),
         iterations,
         fill(1 / length(labels(model)), length(labels(model))),
     )
 end
+
+AdaBoost(model::SDM, n::Integer) = AdaBoost(model; iterations = n)
 
 # Access to the top-level model in AdaBoost
 models(b::AdaBoost) = b.learners
@@ -58,22 +60,20 @@ function train!(b::AdaBoost; kwargs...)
 
     # The threshold is handled a little differently for boosted models
     trainargs = filter(kw -> kw.first != :training, kwargs)
-
+    
     for iteration in Base.OneTo(b.iterations)
 
         # We have pre-allocated the models so we can just refer to it here
         learner = models(b)[iteration]
 
         # We get the samples that will be used for training at this iteration
-        training_samples = sort(
-            sample(
+        training_samples = sample(
                 axes(labels(learner), 1),
                 Weights(b.w),
                 length(labels(learner));
                 replace = true,
-            ),
-        )
-
+            )
+        
         # We re-train the model for this iteration
         train!(learner; training = training_samples, trainargs...)
 
@@ -88,7 +88,7 @@ function train!(b::AdaBoost; kwargs...)
         ε = sum(b.w[m]) # Sum of weights for missed samples - this essentially measures accuracy
 
         # We now calculate the relative weight of this learner in the ensemble so far
-        α = 0.5 * log((1 - ε) / ε)
+        α = 0.5 * log((1 - (ε + eps())) / (ε + eps()))
 
         # The classifier is already in the ensemble, so we update its weight (it
         # has been trained earlier!)
@@ -106,7 +106,9 @@ function train!(b::AdaBoost; kwargs...)
 end
 
 """
-    TODO
+    predict(::AdaBoost, ::Matrix{T}; kwargs...)
+
+Predicts with a trained AdaBoost model.
 """
 function StatsAPI.predict(
     b::AdaBoost,

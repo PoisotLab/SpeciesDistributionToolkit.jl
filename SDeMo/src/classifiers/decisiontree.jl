@@ -9,25 +9,31 @@ Base.@kwdef mutable struct DecisionNode
 end
 
 function _is_in_node_parent(::Nothing, X)
-    return [true for _ in axes(X, 2)]
+    return BitVector(ones(Bool, size(X, 2)))
 end
 
 function _is_in_node_parent(dn::DecisionNode, X)
     if isnothing(dn.parent)
-        return [true for _ in axes(X, 2)]
+        return BitVector(ones(Bool, size(X, 2)))
     end
-    to_the_left = X[dn.parent.variable, :] .< dn.parent.value
-    if dn == dn.parent.left
-        return to_the_left
-    else
-        return map(!, to_the_left)
+    return_value = zeros(Bool, size(X, 2))
+    for i in eachindex(return_value)
+        is_left = X[dn.parent.variable, i] < dn.parent.value
+        return_value[i] = dn == dn.parent.left ? is_left : !is_left
     end
+    return return_value
 end
 
 _pool(::Nothing, X) = _is_in_node_parent(nothing, X)
 
-function _pool(dn::DecisionNode, X)
-    return _is_in_node_parent(dn, X) .& _pool(dn.parent, X)
+function _pool(dn::DecisionNode, X)::BitVector
+    in_parent = _is_in_node_parent(dn, X)
+    if isnothing(dn.parent)
+        return in_parent
+    else
+        in_pool = _pool(dn.parent, X)
+        return  in_parent .& in_pool
+    end
 end
 
 function train!(dn::DecisionNode, X, y; kwargs...)
@@ -43,8 +49,7 @@ function train!(dn::DecisionNode, X, y; kwargs...)
         found = false
         pl, pr = (0.0, 0.0)
         for vᵢ in axes(X, 1)
-            x = unique(X[vᵢ, :])
-            for xᵢ in x
+            for xᵢ in unique(X[vᵢ, :])
                 n_left = 0
                 s_left = 0
                 for k in axes(X, 2)
@@ -180,12 +185,30 @@ function twigs(dt::DecisionTree)
 end
 
 function _information_gain(dn::SDeMo.DecisionNode, X, y)
-    p = findall(SDeMo._pool(dn, X))
-    pl = [i for i in p if X[dn.variable, i] < dn.value]
-    pr = setdiff(p, pl)
-    yl = y[pl]
-    yr = y[pr]
-    yt = y[p]
+
+    # What is in the pool?
+    pool = SDeMo._pool(dn, X)
+
+    # Now we create an empty array with as many items as are in the pool
+    yt = zeros(Bool, sum(pool))
+    leftpos, rightpos = 0, 0
+
+    # And we loop, putting the left and right values at the left and right of
+    # the vector
+    for i in eachindex(pool)
+        if pool[i]
+            if X[dn.variable, i] < dn.value
+                leftpos += 1
+                yt[leftpos] = y[i]
+            else
+                yt[end-rightpos] = y[i]
+                rightpos += 1
+            end
+        end
+    end
+
+    yl, yr = yt[1:leftpos], yt[(leftpos+1):end]
+
     e = SDeMo._entropy(yt)
     el = SDeMo._entropy(yl)
     er = SDeMo._entropy(yr)

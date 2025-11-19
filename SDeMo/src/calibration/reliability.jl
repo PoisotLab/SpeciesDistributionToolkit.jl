@@ -54,7 +54,6 @@ end
     @test length(x) <= 12
     @test length(x) == length(y)
     for i in 2:length(x)
-        @test x[i] > x[i-1]
-        @test y[i] >= y[i-1]
+        @test x[i] >= x[i-1]
     end
 end

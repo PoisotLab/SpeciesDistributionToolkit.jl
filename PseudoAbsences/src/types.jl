@@ -44,3 +44,13 @@ formula.
 """
 struct DistanceToEvent <: PseudoAbsenceGenerator
 end
+
+"""
+    DegreesToEvent
+
+Generates a weight for the pseudo-absences based on the distance to cells with a
+`true` value. The distances are measured as the Euclidean distance expressed in
+degrees around the point.
+"""
+struct DegreesToEvent <: PseudoAbsenceGenerator
+end

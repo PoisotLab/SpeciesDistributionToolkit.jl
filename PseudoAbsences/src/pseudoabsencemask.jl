@@ -133,3 +133,52 @@ function pseudoabsencemask(
     end
     return background
 end
+
+"""
+    pseudoabsencemask( ::Type{DegreesToEvent}, presences::SDMLayer{Bool}; f = minimum, absolute::Bool = false)
+
+Generates a mask for pseudo-absences using the distance to event method.
+Candidate cells are weighted according to their distance to a known observation,
+with far away places being more likely. The `f` function is used to determine
+which distance is reported (`minimum` by default, but can be any other relevant
+function). The distance is measured in degrees, and is therefore very sensitive
+to the projection / position.
+
+When `absolute` is `false` (the default), the distance is measured as the
+absolute difference in coordinates instead of using the Euclidean distance.
+"""
+function pseudoabsencemask(::Type{DegreesToEvent}, presences::SDMLayer{Bool}; f = minimum, absolute::Bool = false)
+    _layer_works_for_pseudoabsence(presences)
+    presence_only = nodata(presences, false)
+    background = zeros(presences, Float64)
+
+    prj = SimpleSDMLayers.Proj.Transformation(
+        presences.crs,
+        "+proj=longlat +datum=WGS84 +no_defs";
+        always_xy = true,
+    )
+    E, N = eastings(presences), northings(presences)
+
+    points = [prj(E[i.I[2]], N[i.I[1]]) for i in keys(presence_only)]
+
+    # Distance function used for degrees
+    distfunc(pk, ko) = absolute ? sqrt(sum((pk .- ko).^2.0)) : sum(abs.(pk .- ko))
+
+    # Prepare for thread-safe parallelism
+    bg = keys(background)
+    chunk_size = max(1, length(bg) ÷ (50 * Threads.nthreads()))
+    data_chunks = Base.Iterators.partition(bg, chunk_size)
+    tasks = map(data_chunks) do chunk
+        Threads.@spawn begin
+            for k in chunk
+                pk = prj(E[k.I[2]], N[k.I[1]])
+                background[k] = f([distfunc(pk, ko) for ko in points])
+            end
+        end
+    end
+
+    # Fetch the tasks
+    fetch.(tasks)
+
+    return background
+end

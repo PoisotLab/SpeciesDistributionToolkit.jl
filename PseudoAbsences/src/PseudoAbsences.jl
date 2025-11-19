@@ -17,6 +17,7 @@ export WithinRadius
 export SurfaceRangeEnvelope
 export RandomSelection
 export DistanceToEvent
+export DegreesToEvent
 
 include("pseudoabsencemask.jl")
 export pseudoabsencemask

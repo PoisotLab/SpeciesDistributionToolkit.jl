@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.6.1`
 
+- **added** tests for reliability curve and calibration
 - **improved** the performance of applying `PlattCalibration` [#522]
 - **added** support for the weights in PAVA [#521]
 - **improved** the thread safety of `Bagging` training

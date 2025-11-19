@@ -22,9 +22,20 @@ function train!(ensemble::Bagging; kwargs...)
     # The ensemble model can be given a consensus argument, in which can we drop it for
     # training as it's relevant for prediction only
     trainargs = filter(kw -> kw.first != :consensus, kwargs)
-    Threads.@threads for m in eachindex(ensemble.models)
-        train!(ensemble.models[m]; training = ensemble.bags[m][1], trainargs...)
+
+    # Thread-safe structure
+    chunk_size = max(1, length(models(ensemble)) ÷ (5 * Threads.nthreads()))
+    i_chunks = Base.Iterators.partition(1:length(models(ensemble)), chunk_size)
+
+    tasks = map(i_chunks) do i_chnk
+        Threads.@spawn begin
+            for i in i_chnk
+                train!(ensemble.models[i]; training = ensemble.bags[i][1], trainargs...)
+            end
+        end
     end
+    models_batched = fetch.(tasks)
+
     train!(ensemble.model; trainargs...)
     return ensemble
 end

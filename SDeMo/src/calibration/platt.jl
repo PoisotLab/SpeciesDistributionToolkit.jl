@@ -104,7 +104,4 @@ function calibrate(::Type{PlattCalibration}, x::Vector{<:Real}, y::Vector{Bool};
     return PlattCalibration(A, B)
 end
 
-function correct(pl::PlattCalibration, y)
-    ŷ = 1.0 ./ (1.0 .+ exp.(pl.A .* y .+ pl.B))
-    return ŷ
-end
+correct(pl::PlattCalibration, y) = 1.0 / (1.0 + exp(pl.A * y + pl.B))

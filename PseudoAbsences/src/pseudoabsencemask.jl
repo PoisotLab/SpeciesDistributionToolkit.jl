@@ -210,7 +210,7 @@ function pseudoabsencemask(::Type{DegreesToEvent}, presences::SDMLayer{Bool}; f=
     points = [prj(E[i.I[2]], N[i.I[1]]) for i in keys(presence_only)]
 
     # Distance function used for degrees
-    distfunc(pk, ko) = absolute ? sqrt(sum((pk .- ko) .^ 2.0)) : sum(abs.(pk .- ko))
+    distfunc(pk, ko) = absolute ? sqrt(sum((pk .- ko) .^ 2.0)) : maximum(abs.(pk .- ko))
 
     # Prepare for thread-safe parallelism
     bg = keys(background)

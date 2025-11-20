@@ -4,7 +4,6 @@ version = "1.7.1"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 
 [deps]
-CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 Fauxcurrences = "a2d61402-033a-4ca9-aef4-652d70cf7c9c"
@@ -33,7 +32,6 @@ STACExt = "STAC"
 SpatialBoundariesExt = "SpatialBoundaries"
 
 [compat]
-CairoMakie = "0.15.6"
 Distances = "0.10"
 Downloads = "1"
 Fauxcurrences = "1"

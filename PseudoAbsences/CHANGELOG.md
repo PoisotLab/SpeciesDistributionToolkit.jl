@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.1.0`
 
+- **added** `Within`, `Without` and `Between` types for both distance and degrees
 - **added** `DegreesToEvent` as an analogue to `DistanceToEvent`
 
 ## `v1.0.1`

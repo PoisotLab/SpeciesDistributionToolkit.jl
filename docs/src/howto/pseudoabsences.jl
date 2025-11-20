@@ -119,6 +119,26 @@ scatter!(presences; color = :black)
 scatter!(bgpoints; color = :red, markersize = 4)
 current_figure() #hide
 
+
+# There are additional ways to produce pseudo-absences mask, notably the surface range
+# envelope method, which uses the bounding box of observations to allow pseudo-absences:
+
+sre = pseudoabsencemask(SurfaceRangeEnvelope, presencelayer)
+
+#-
+
+# fig-background-mask
+heatmap(
+    temperature;
+    colormap = :deep,
+    axis = (; aspect = DataAspect()),
+    figure = (; size = (800, 500)),
+)
+heatmap!(sre; colormap = cgrad([:transparent, :white]; alpha = 0.3))
+scatter!(presences; color = :black)
+current_figure() #hide
+
+
 # ## Related documentation
 
 # ```@meta

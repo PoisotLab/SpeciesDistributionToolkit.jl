@@ -117,9 +117,12 @@ hidespines!(current_axis())
 hidedecorations!(current_axis())
 current_figure() #hide
 
-# We can also work with distances in degrees rather than kilometers
+# We can also work with distances in degrees rather than kilometers -- for
+# example, this will create a rectangular buffer one degree wide and one degree
+# tall around each observation. Using `absolute=true` will turn this into a
+# circular buffer:
 
-background = pseudoabsencemask(WithinDegrees, presencelayer; distance = 0.5, absolute=false)
+background = pseudoabsencemask(WithoutDegrees, presencelayer; distance = 0.5, absolute=false)
 
 #-
 
@@ -135,7 +138,6 @@ scatter!(records; color = :black)
 hidespines!(current_axis())
 hidedecorations!(current_axis())
 current_figure() #hide
-
 
 # ## Related documentation
 

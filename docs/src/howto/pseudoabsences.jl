@@ -8,37 +8,24 @@ using SpeciesDistributionToolkit
 using CairoMakie
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
-# In order to work on a region that is not too big, we will define our spatial
-# extent:
-
-spatial_extent = (left = 8.412, bottom = 41.325, right = 9.662, top = 43.060)
-
 # Pseudo-absence generation requires occurrences super-imposed on a layer, so we
 # will collect a few occurrences:
 
-species = taxon("Sitta whiteheadi"; strict = false)
-query = [
-    "occurrenceStatus" => "PRESENT",
-    "hasCoordinate" => true,
-    "decimalLatitude" => (spatial_extent.bottom, spatial_extent.top),
-    "decimalLongitude" => (spatial_extent.left, spatial_extent.right),
-    "limit" => 300,
-]
-presences = occurrences(species, query...)
-for i in 1:3
-    occurrences!(presences)
-end
+records = OccurrencesInterface.__demodata()
+landmass = getpolygon(PolygonData(OpenStreetMap, Places); place="Wyoming")
+records = Occurrences(clip(records, landmass))
+spatial_extent = SpeciesDistributionToolkit.boundingbox(landmass)
 
-# We will get a single layer (temperature) from CHELSA1.
+# We will get a single layer (elevation, but it's not important here):
 
-dataprovider = RasterData(CHELSA1, BioClim)
-temperature = 0.1SDMLayer(dataprovider; layer = "BIO1", spatial_extent...)
+dataprovider = RasterData(WorldClim2, Elevation)
+layer = SDMLayer(dataprovider; resolution=10.0, spatial_extent...)
 
 # Pseudo-absences generations always starts by masking a layer by the
 # observations. The output of this command is a layer with Boolean values, where
 # the cells in which at least one occurrence is reported are `true`.
 
-presencelayer = mask(temperature, presences)
+presencelayer = mask(layer, presences)
 
 # We can for example generate a buffer for pseudo-absences in a radius of 30km
 # around each point. Note that the `WithinRadius` method uses *kilometers* and not
@@ -58,11 +45,11 @@ background = pseudoabsencemask(WithinRadius, presencelayer; distance = 30.0)
 # For example, we can decide that we do not want background points too close to
 # the actual observations, and put a buffer around each.
 
-buffer = pseudoabsencemask(WithinRadius, presencelayer; distance = 5.0)
+buffer = pseudoabsencemask(WithoutRadius, presencelayer; distance = 5.0)
 
 # We can now exclude the data that are in the buffer:
 
-bgmask = (!buffer) & background
+bgmask = background & buffer
 
 # Finally, we can plot the area in which we can put pseudo-absences as a shaded region over
 # the layer, and plot all known occurrences as well:
@@ -77,6 +64,14 @@ heatmap(
 heatmap!(bgmask; colormap = cgrad([:transparent, :white]; alpha = 0.3))
 scatter!(presences; color = :black)
 current_figure() #hide
+
+# Note that we can get the same information by using the `BetweenRadius` method:
+
+pseudoabsencemask(BetweenRadius, presencelayer; closer = 5.0, further = 30.0)
+
+# Or even by getting the distances directly
+
+pseudoabsencemask(DistanceToEvent, presencelayer; closer = 5.0, further = 30.0)
 
 # There are additional ways to produce pseudo-absences mask, notably the surface range
 # envelope method, which uses the bounding box of observations to allow pseudo-absences:
@@ -148,8 +143,15 @@ current_figure() #hide
 # ```@docs; canonical=false
 # PseudoAbsences.PseudoAbsenceGenerator
 # PseudoAbsences.WithinRadius
+# PseudoAbsences.WithoutRadius
+# PseudoAbsences.BetweenRadius
+# PseudoAbsences.WithinDegrees
+# PseudoAbsences.WithoutDegrees
+# PseudoAbsences.BetweenDegrees
 # PseudoAbsences.SurfaceRangeEnvelope
 # PseudoAbsences.RandomSelection
+# PseudoAbsences.DistanceToEvent
+# PseudoAbsences.DegreesToEvent
 # PseudoAbsences.pseudoabsencemask
 # PseudoAbsences.backgroundpoints
 # ```

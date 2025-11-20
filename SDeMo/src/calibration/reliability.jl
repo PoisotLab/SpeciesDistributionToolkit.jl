@@ -1,8 +1,9 @@
-function _calibration_bins(x, y, bins)
+function _calibration_bins(x, y, bins; weights=false)
     qs = LinRange(extrema(x)..., bins)
 
     X = zeros(bins - 1)
     Y = zeros(bins - 1)
+    W = ones(bins - 1)
     filled = zeros(Bool, bins - 1)
 
     for i in 1:(bins-1)
@@ -10,9 +11,15 @@ function _calibration_bins(x, y, bins)
         filled[i] = !isempty(in_chunk)
         X[i] = mean(x[in_chunk])
         Y[i] = mean(y[in_chunk])
+        if weights
+            W[i] = length(in_chunk)
+        end
     end
 
-    return X[findall(filled)], Y[findall(filled)]
+    W ./= sum(W)
+    W .*= sum(filled)
+
+    return X[findall(filled)], Y[findall(filled)], W[findall(filled)]
 end
 
 """
@@ -22,7 +29,8 @@ Returns a binned reliability curve for a series of predicted quantitative scores
 and a series of truth values.
 """
 function reliability(yhat::Vector{<:Real}, y::Vector{Bool}; bins=9)
-    return _calibration_bins(yhat, y, bins)
+    x, y, _ = _calibration_bins(yhat, y, bins)
+    return x, y
 end
 
 """
@@ -36,4 +44,16 @@ function reliability(sdm::AbstractSDM; link::Function=identity, bins=9, samples=
     ŷ = link.(predict(sdm; threshold=false, kwargs...))[samples]
     y = labels(sdm)[samples]
     return reliability(ŷ, y; bins=bins)
+end
+
+@testitem "We can do a calibration curve" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(PCATransform, NaiveBayes, X, y)
+    train!(model)
+    x, y = reliability(model, bins=12)
+    @test length(x) <= 12
+    @test length(x) == length(y)
+    for i in 2:length(x)
+        @test x[i] >= x[i-1]
+    end
 end

@@ -247,7 +247,7 @@ function pseudoabsencemask(
     kwargs...
 )
     _layer_works_for_pseudoabsence(presences)
-    bg = pseudoabsencemask(DegreesToEvent, presences; f=kwargs...)
+    bg = pseudoabsencemask(DegreesToEvent, presences; kwargs...)
     background = bg .<= distance
     return _zero_occ!(background, presences)
 end

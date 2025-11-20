@@ -288,7 +288,7 @@ function pseudoabsencemask(
     kwargs...
 )
     _layer_works_for_pseudoabsence(presences)
-    bg = pseudoabsencemask(DegreeToEvent, presences; kwargs...)
+    bg = pseudoabsencemask(DegreesToEvent, presences; kwargs...)
     background = closer .<= bg .<= further
     return _zero_occ!(background, presences)
 end

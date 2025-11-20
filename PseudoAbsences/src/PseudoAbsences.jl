@@ -13,10 +13,12 @@ const _distancefunction = Distances.Haversine(_earth_radius)
 # Types for the background point generation
 include("types.jl")
 export PseudoAbsenceGenerator
-export WithinRadius
 export SurfaceRangeEnvelope
 export RandomSelection
 export DistanceToEvent
+export WithinRadius, WithoutRadius, BetweenRadius
+export DegreesToEvent
+export WithinDegrees, WithoutDegrees, BetweenDegrees
 
 include("pseudoabsencemask.jl")
 export pseudoabsencemask

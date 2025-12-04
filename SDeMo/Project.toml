@@ -1,6 +1,6 @@
 name = "SDeMo"
 uuid = "3e5feb82-bcca-434d-9cd5-c11731a21467"
-version = "1.6.1"
+version = "1.7.0"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 
 [deps]

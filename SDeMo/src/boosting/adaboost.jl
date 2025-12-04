@@ -9,7 +9,8 @@ Note that this type uses training by re-sampling data according to their
 weights, as opposed to re-training on all samples and weighting internally.
 
 The learning rate `η` defaults to one, but can be lowered to improve stability /
-prevent over-fitting.
+prevent over-fitting. The learning rate _must_ be larger than 0, and decreasing
+it should lead to a larger number of iterations.
 """
 mutable struct AdaBoost <: AbstractBoostedSDM
     model::SDM

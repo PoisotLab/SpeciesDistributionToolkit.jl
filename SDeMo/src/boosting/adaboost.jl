@@ -6,7 +6,13 @@ vector of learner `weights`, a number of boosting `iterations`, and the weights
 `w` of each point.
 
 Note that this type uses training by re-sampling data according to their
-weights, as opposed to re-training on all samples and weighting internally.
+weights, as opposed to re-training on all samples and weighting internally. Some
+learners _may_ have negative weights, in which case their predictions are
+flipped at prediction time.
+
+The learning rate `η` defaults to one, but can be lowered to improve stability /
+prevent over-fitting. The learning rate _must_ be larger than 0, and decreasing
+it should lead to a larger number of iterations.
 """
 mutable struct AdaBoost <: AbstractBoostedSDM
     model::SDM
@@ -14,6 +20,7 @@ mutable struct AdaBoost <: AbstractBoostedSDM
     weights::Vector{<:AbstractFloat} # Model weights
     iterations::Integer # Number of iterations
     w::Vector{<:AbstractFloat} # Data weights
+    η::Real
 end
 
 function AdaBoost(model::SDM; iterations = 50)
@@ -23,6 +30,7 @@ function AdaBoost(model::SDM; iterations = 50)
         zeros(iterations),
         iterations,
         fill(1 / length(labels(model)), length(labels(model))),
+        1.0
     )
 end
 
@@ -37,6 +45,21 @@ features(b::AdaBoost) = features(b.model)
 features(b::AdaBoost, i...) = features(b.model, i...)
 variables(b::AdaBoost) = variables(b.model)
 threshold(b::AdaBoost) = 0.5
+
+# Hyper parameters
+hyperparameters(::Type{AdaBoost}) = (:η, )
+
+@testitem "We can change the hyper-parameters of an AdaBoost classifier" begin
+    X, y = SDeMo.__demodata()
+    stump = SDM(RawData, DecisionTree, X, y)
+    hyperparameters!(classifier(stump), :maxnodes, 2)
+    hyperparameters!(classifier(stump), :maxdepth, 1)
+    model = AdaBoost(stump, 50)
+    @test hyperparameters(model, :η) == 1.0
+    hyperparameters!(model, :η, 0.2)
+    @test hyperparameters(model, :η) == 0.2
+end
+
 
 # Turn a [0,1] prediction into a [-1,1] prediction
 __y_spread(x) = float.(2x .- 1.0)
@@ -87,8 +110,10 @@ function train!(b::AdaBoost; kwargs...)
         # Weighted error
         ε = sum(b.w[m]) # Sum of weights for missed samples - this essentially measures accuracy
 
-        # We now calculate the relative weight of this learner in the ensemble so far
-        α = 0.5 * log((1 - (ε + eps())) / (ε + eps()))
+        # We now calculate the relative weight of this learner in the ensemble
+        # so far - note that the learning rate is applied here, for the first
+        # learner as well!
+        α = b.η * 0.5 * log((1 - (ε + eps())) / (ε + eps()))
 
         # The classifier is already in the ensemble, so we update its weight (it
         # has been trained earlier!)

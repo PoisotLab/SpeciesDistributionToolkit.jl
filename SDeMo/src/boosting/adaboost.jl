@@ -6,7 +6,9 @@ vector of learner `weights`, a number of boosting `iterations`, and the weights
 `w` of each point.
 
 Note that this type uses training by re-sampling data according to their
-weights, as opposed to re-training on all samples and weighting internally.
+weights, as opposed to re-training on all samples and weighting internally. Some
+learners _may_ have negative weights, in which case their predictions are
+flipped at prediction time.
 
 The learning rate `η` defaults to one, but can be lowered to improve stability /
 prevent over-fitting. The learning rate _must_ be larger than 0, and decreasing

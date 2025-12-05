@@ -29,7 +29,7 @@ function AdaBoost(model::SDM; iterations = 50)
         [deepcopy(model) for _ in Base.OneTo(iterations)],
         zeros(iterations),
         iterations,
-        fill(1 / length(labels(model)), length(labels(model))),
+        fill(1.0 / length(labels(model)), length(labels(model))),
         1.0
     )
 end
@@ -60,6 +60,36 @@ hyperparameters(::Type{AdaBoost}) = (:η, )
     @test hyperparameters(model, :η) == 0.2
 end
 
+@testitem "We can train an AdaBoost classifier" begin
+    X, y = SDeMo.__demodata()
+    stump = SDM(RawData, DecisionTree, X, y)
+    hyperparameters!(classifier(stump), :maxnodes, 2)
+    hyperparameters!(classifier(stump), :maxdepth, 1)
+    model = AdaBoost(stump, 50)
+    train!(model)
+    @test eltype(predict(model)) <: Bool
+end
+
+function variables!(b::AdaBoost, v::Vector{Int})
+    variables!(b.model, v)
+    for learner in models(b)
+        variables!(learner, v)
+    end
+    return b
+end
+
+@testitem "We can set the variables of an AdaBoost model" begin
+    X, y = SDeMo.__demodata()
+    stump = SDM(RawData, DecisionTree, X, y)
+    hyperparameters!(classifier(stump), :maxnodes, 2)
+    hyperparameters!(classifier(stump), :maxdepth, 1)
+    model = AdaBoost(stump, 50)
+    variables!(model, [1, 12])
+    @test variables(model) == [1, 12]
+    for learner in models(model)
+        @test variables(learner) == variables(model)
+    end
+end
 
 # Turn a [0,1] prediction into a [-1,1] prediction
 __y_spread(x) = float.(2x .- 1.0)
@@ -80,6 +110,9 @@ transformers would create data leakage.
 function train!(b::AdaBoost; kwargs...)
     # We start by training the initial model
     train!(b.model; kwargs...)
+
+    # We set the weights to their initial values
+    b.w = fill(1.0 / length(labels(b)), length(labels(b)))
 
     # The threshold is handled a little differently for boosted models
     trainargs = filter(kw -> kw.first != :training, kwargs)

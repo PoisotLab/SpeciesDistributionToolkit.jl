@@ -6,11 +6,34 @@ on its own, for validation.
 
 This method returns a vector of tuples, with each entry have the training data
 first, and the validation data second.
+
+The `rebalanced` keyword, defaults to `false`, drops a random point of the
+opposite label as per `10.1126/sciadv.adx6976`.
 """
-function leaveoneout(y, X)
+function leaveoneout(y, X; rebalanced::Bool=false)
     @assert size(y, 1) == size(X, 2)
     positions = collect(axes(X, 2))
-    return [(setdiff(positions, i), i) for i in positions]
+    loosamples = [(setdiff(positions, i), i) for i in positions]
+
+    # If we rebalance to avoid data leakage due to class balance information, this happens here
+    if rebalanced
+
+        # Within each sample...
+        for S in loosamples
+
+            # We figure out the label of the tested sample
+            target_label = y[S[2]]
+
+            # And then we pick a random training sample with the opposite label
+            dropped_inverse_label = rand(findall(!=(target_label), S[1]))
+
+            # And drop it
+            deleteat!(S[1], dropped_inverse_label)
+        end
+    end
+    
+    # Now we return
+    return loosamples
 end
 
 @testitem "We can do LOO validation" begin
@@ -19,6 +42,13 @@ end
     folds = leaveoneout(model)
     cv = crossvalidate(model, folds)
     @test eltype(cv.validation) <: ConfusionMatrix
+end
+
+@testitem "We can do LOO validation with re-balancing" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    folds = leaveoneout(model; rebalanced=true)
+    @test length(folds[1][1]) == length(y)-2
 end
 
 """

@@ -82,7 +82,7 @@ function train!(b::AdaBoost; kwargs...)
     train!(b.model; kwargs...)
 
     # We set the weights to their initial values
-    b.weights = fill(1.0 / length(labels(b.model)), length(labels(b.model)))
+    b.weights = fill(1.0 / length(labels(b)), length(labels(b)))
 
     # The threshold is handled a little differently for boosted models
     trainargs = filter(kw -> kw.first != :training, kwargs)

@@ -29,7 +29,7 @@ function AdaBoost(model::SDM; iterations = 50)
         [deepcopy(model) for _ in Base.OneTo(iterations)],
         zeros(iterations),
         iterations,
-        fill(1 / length(labels(model)), length(labels(model))),
+        fill(1.0 / length(labels(model)), length(labels(model))),
         1.0
     )
 end
@@ -80,6 +80,9 @@ transformers would create data leakage.
 function train!(b::AdaBoost; kwargs...)
     # We start by training the initial model
     train!(b.model; kwargs...)
+
+    # We set the weights to their initial values
+    b.weights = fill(1.0 / length(labels(b.model)), length(labels(b.model))),
 
     # The threshold is handled a little differently for boosted models
     trainargs = filter(kw -> kw.first != :training, kwargs)

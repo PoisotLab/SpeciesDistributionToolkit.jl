@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## `v1.7.1`
 
 - **added** support for rebalanced leave one out, with `rebalanced` keyword argument [#529]
+- **added** support to set the variables for `AdaBoost`
 - **fixed** the weights of an `AdaBoost` when re-training
 
 ## `v1.7.0`

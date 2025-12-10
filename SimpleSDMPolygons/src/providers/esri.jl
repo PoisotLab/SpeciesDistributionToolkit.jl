@@ -5,7 +5,7 @@ const ESRIDatasets = Union{
 SimpleSDMDatasets.provides(::Type{ESRI}, ::Type{T}) where {T<:ESRIDatasets} = true
 SimpleSDMDatasets.downloadtype(::PolygonData{ESRI,T}) where T = _File
 SimpleSDMDatasets.filetype(::PolygonData{ESRI,T}) where T = _GeoJSON
-root(::PolygonData{NaturalEarth,T}) where T = "https://hub.arcgis.com"
+root(::PolygonData{ESRI,T}) where T = "https://hub.arcgis.com/"
 
 # 
 

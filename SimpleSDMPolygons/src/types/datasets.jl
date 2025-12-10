@@ -4,14 +4,14 @@
 abstract type PolygonDataset end 
 
 """
-    Countries
-"""
-struct Countries <: PolygonDataset end 
-
-"""
     Places
 """
 struct Places <: PolygonDataset end 
+
+"""
+    Countries
+"""
+struct Countries <: PolygonDataset end 
 
 """
     Land

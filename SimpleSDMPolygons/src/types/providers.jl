@@ -45,3 +45,11 @@ Ecoregions from https://www.oneearth.org/ - note that this is described as
 `BioRegions` and `EcoRegions` work as types.
 """
 abstract type OneEarth <: PolygonProvider end 
+
+
+"""
+    ESRI
+
+Datasets from the ESRI dataset hub - https://hub.arcgis.com/datasets/.
+"""
+abstract type ESRI <: PolygonProvider end 

@@ -6,7 +6,8 @@ abstract type PolygonProvider end
 """
     EPA
 
-This data is all hosted by the US Environmental Protection Agency (EPA), so there's really no guarantee it will stay available day-to-day. 
+This data is all hosted by the US Environmental Protection Agency (EPA), so
+there's really no guarantee it will stay available day-to-day. 
 """
 abstract type EPA <: PolygonProvider end 
 
@@ -27,7 +28,9 @@ abstract type NaturalEarth <: PolygonProvider end
 """
     OpenStreetMap
 
-It's specifically openstreetmap.fr, and a python script that does...something...and spits out a GeoJSON. OuvertRueCarte. Is that anything.
+This provider uses the nominatim OSM Germany service to map a user-provided name
+of any arbitrary place to an OSM ID, then uses the polygon creation service
+hosted by OSM France to return a GeoJSON file.
 """
 abstract type OpenStreetMap <: PolygonProvider end 
 

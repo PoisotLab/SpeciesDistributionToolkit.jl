@@ -1,9 +1,10 @@
 module SimpleSDMDatasets
 
 import Downloads
-using Dates
 import ZipArchives
+using Dates
 using Markdown
+using NetCDF
 using TestItems
 
 # Set the potential paths for downloads

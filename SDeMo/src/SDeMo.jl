@@ -70,11 +70,18 @@ include("boosting/adaboost.jl")
 export AdaBoost
 
 # Calibration and correction
-include("calibration/calibration.jl")
-export calibrate, correct
-
 include("calibration/reliability.jl")
 export reliability
+
+include("calibration/calibration.jl")
+export AbstractCalibration
+export calibrate, correct
+
+include("calibration/platt.jl")
+export PlattCalibration
+
+include("calibration/isotonic.jl")
+export IsotonicCalibration
 
 # Main pipeline
 include("pipeline.jl")
@@ -83,11 +90,14 @@ export reset!, train!, predict
 # Cross-validation code
 include("crossvalidation/confusionmatrix.jl")
 export ConfusionMatrix
+
 include("crossvalidation/crossvalidation.jl")
 export leaveoneout, kfold, holdout, montecarlo
 export crossvalidate
+
 include("crossvalidation/null.jl")
 export noskill, coinflip, constantnegative, constantpositive
+
 include("crossvalidation/validation.jl")
 export tpr, tnr, fpr, fnr
 export ppv, npv, fdir, fomr, plr, nlr
@@ -104,6 +114,7 @@ export ForwardSelection, BackwardSelection, AllVariables, VarianceInflationFacto
 # Old variable selection - these now come with deprecation warnings
 include("variables/selection.jl")
 export noselection!, forwardselection!, backwardselection!
+
 include("variables/vif.jl")
 export stepwisevif!, vif
 

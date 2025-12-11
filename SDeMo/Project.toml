@@ -1,7 +1,7 @@
 name = "SDeMo"
 uuid = "3e5feb82-bcca-434d-9cd5-c11731a21467"
+version = "1.7.1"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "1.5.4"
 
 [deps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
@@ -16,7 +16,7 @@ TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
 [compat]
 Distributions = "0.25"
-JSON = "0.21"
+JSON = "0.21, 1"
 LinearAlgebra = "1"
 MultivariateStats = "0.10"
 Random = "1"

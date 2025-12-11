@@ -5,9 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.7.1`
+
+- **added** support for rebalanced leave one out, with `rebalanced` keyword argument [#529]
+- **added** support to set the variables for `AdaBoost`
+- **fixed** the weights of an `AdaBoost` when re-training
+
+## `v1.7.0`
+
+- **added** a learning rate hyperparameter (`η`, in (0, Inf.)) to `AdaBoost` [#530]
+
+## `v1.6.1`
+
+- **added** tests for reliability curve and calibration
+- **improved** the performance of applying `PlattCalibration` [#522]
+- **added** support for the weights in PAVA [#521]
+- **improved** the thread safety of `Bagging` training
+- **improved** the performance of `DecisionTree`
+
+## `v1.6.0`
+
+- **added** support for isotonic calibration
+- **changed** `JSON` requirements to 1 [#507]
+
+## `v1.5.5`
+
+- **fixed** a bug in decision trees that would return the wrong probability [#517]
+
 ## `v1.5.4`
 
-- **fixed** a bug where multivariate transforms predicted on the unscale predictors
+- **fixed** a bug where multivariate transforms predicted on the unscaled predictors
 
 ## `v1.5.3`
 

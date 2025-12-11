@@ -17,6 +17,24 @@ struct WithinRadius <: PseudoAbsenceGenerator
 end
 
 """
+    WithoutRadius
+
+Generates pseudo-absences outside of a set radius (in kilometers) around each
+occurrence. Internally, this relies on `DistanceToEvent`.
+"""
+struct WithoutRadius <: PseudoAbsenceGenerator
+end
+
+"""
+    BetweenRadius
+
+Generates pseudo-absences within two set radii (in kilometers) around each
+occurrence. Internally, this relies on `DistanceToEvent`.
+"""
+struct BetweenRadius <: PseudoAbsenceGenerator
+end
+
+"""
     SurfaceRangeEnvelope
 
 Generates pseudo-absences at random within the geographic range covered by
@@ -43,4 +61,41 @@ Generates a weight for the pseudo-absences based on the distance to cells with a
 formula.
 """
 struct DistanceToEvent <: PseudoAbsenceGenerator
+end
+
+"""
+    DegreesToEvent
+
+Generates a weight for the pseudo-absences based on the distance to cells with a
+`true` value. The distances are measured as the Euclidean distance expressed in
+degrees around the point.
+"""
+struct DegreesToEvent <: PseudoAbsenceGenerator
+end
+
+
+"""
+    WithinDegrees
+
+Equivalent of `WithinRadius` with the distance measured in degrees.
+"""
+struct WithinDegrees <: PseudoAbsenceGenerator
+end
+
+
+"""
+    WithoutDegrees
+
+Equivalent of `WithoutRadius` with the distance measured in degrees.
+"""
+struct WithoutDegrees <: PseudoAbsenceGenerator
+end
+
+
+"""
+    BetweenDegrees
+
+Equivalent of `BetweenRadius` with the distance measured in degrees.
+"""
+struct BetweenDegrees <: PseudoAbsenceGenerator
 end

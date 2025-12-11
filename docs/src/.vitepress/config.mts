@@ -72,7 +72,8 @@ export default defineConfig({
                             { text: "Natural Earth", link: "/polygons/NaturalEarth" },
                             { text: "One Earth", link: "/polygons/OneEarth" },
                             { text: "OpenStreetMap", link: "/polygons/OpenStreetMap" },
-                            { text: "Resolv", link: "/polygons/Resolv" },
+                            { text: "Resolve", link: "/polygons/Resolve" },
+                            { text: "ESRI", link: "/polygons/ESRI" },
                         ]
                     }
                 ]
@@ -162,6 +163,7 @@ export default defineConfig({
                                 { text: "PR and ROC curves", link: "/howto/sdm-pr-roc/" },
                                 { text: "Interpretability", link: "/howto/sdm-interpretability/" },
                                 { text: "Counterfactuals", link: "/howto/sdm-counterfactuals/" },
+                                { text: "Calibration", link: "/howto/sdm-calibration/" },
                             ]
                         }
                     ]

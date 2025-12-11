@@ -8,6 +8,7 @@ components = [
     "GBIF",
     "Fauxcurrences",
     "Phylopic",
+    "PseudoAbsences",
     "SDeMo",
 ]
 

@@ -16,17 +16,18 @@ Random.seed!(123451234123121); #hide
 
 # We will get some occurrences from the butterfly *Aglais caschmirensis* in Pakistan:
 
-pol = getpolygon(PolygonData(NaturalEarth, Countries))["Pakistan"]
-presences = GBIF.download("10.15468/dl.emv5tj");
+pol = getpolygon(PolygonData(ESRI, Places))["Country" => "Tanzania"]
+records = GBIF.download("10.15468/dl.7ddsb7");
 extent = SDT.boundingbox(pol)
 
 # And then get some bioclimatic variables:
 
-provider = RasterData(CHELSA2, BioClim)
+provider = RasterData(WorldClim2, BioClim)
 L = SDMLayer{Float32}[
     SDMLayer(
         provider;
         layer = x,
+        resolution = 5.,
         extent...,
     ) for x in 1:19
 ];
@@ -34,7 +35,7 @@ mask!(L, pol)
 
 # As for the previous tutorials, we will generate some background points:
 
-presencelayer = mask(first(L), Occurrences(mask(presences, pol)))
+presencelayer = mask(first(L), records)
 background = pseudoabsencemask(DistanceToEvent, presencelayer)
 bgpoints = backgroundpoints(nodata(background, d -> d < 20), 2sum(presencelayer))
 
@@ -73,6 +74,7 @@ P = SDMLayer{Float32}[
     SDMLayer(
         provider;
         layer = x,
+        resolution = 5.,
         poolextent...,
     ) for x in 1:19
 ];

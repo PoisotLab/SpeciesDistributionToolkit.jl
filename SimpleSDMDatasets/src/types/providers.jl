@@ -45,6 +45,15 @@ struct PaleoClim <: RasterProvider end
 """
     Copernicus
 
-Produced by the global component of the Copernicus Land Service, derived from PROBA-V satellite observations and ancillary datasets -- see https://land.copernicus.eu/en/products/global-dynamic-land-cover
+Produced by the global component of the Copernicus Land Service, derived from
+PROBA-V satellite observations and ancillary datasets -- see
+https://land.copernicus.eu/en/products/global-dynamic-land-cover
 """
 struct Copernicus <: RasterProvider end
+
+"""
+    LUH2
+
+The LUH² current and future land cover states
+"""
+struct LUH2 <: RasterProvider end

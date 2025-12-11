@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **added** support for LULC data from LUH² [#217]
 - **added** a dependence to `NetCDF` at `0.12`
+- **added** support for indexing using the `year` keyword (additional `years` interface method)
 
 ## `v1.0.3`
 

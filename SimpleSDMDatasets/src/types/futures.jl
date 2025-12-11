@@ -2,9 +2,12 @@ abstract type FutureScenario end
 abstract type FutureModel end
 
 # SSP scenarios
+struct SSP119 <: FutureScenario end
 struct SSP126 <: FutureScenario end
 struct SSP245 <: FutureScenario end
 struct SSP370 <: FutureScenario end
+struct SSP434 <: FutureScenario end
+struct SSP534 <: FutureScenario end
 struct SSP585 <: FutureScenario end
 
 # RCP scenarios
@@ -78,7 +81,7 @@ struct MRI_ESM1 <: FutureModel end
 struct NorESM1_ME <: FutureModel end
 
 # CMIP6 Union types
-CMIP6Scenario = Union{SSP126, SSP245, SSP370, SSP585}
+CMIP6Scenario = Union{SSP119, SSP126, SSP245, SSP370, SSP434, SSP534, SSP585}
 CMIP6Model = Union{
     ACCESS_CM2,
     ACCESS_ESM1_5,

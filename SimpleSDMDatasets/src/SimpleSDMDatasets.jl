@@ -27,7 +27,7 @@ export MammalRichness, BirdRichness, AmphibianRichness
 
 include("types/providers.jl")
 export RasterProvider
-export WorldClim2, EarthEnv, CHELSA1, CHELSA2, BiodiversityMapping, PaleoClim, Copernicus
+export WorldClim2, EarthEnv, CHELSA1, CHELSA2, BiodiversityMapping, PaleoClim, Copernicus, LUH2
 
 include("types/futures.jl")
 export FutureScenario, FutureModel
@@ -36,7 +36,7 @@ include("types/enums.jl")
 
 # CMIP6 exports
 export CMIP6Scenario, CMIP6Model
-export SSP126, SSP245, SSP370, SSP585
+export SSP119, SSP126, SSP245, SSP370, SSP434, SSP534, SSP585
 export ACCESS_CM2, ACCESS_ESM1_5, BCC_CSM2_MR, CanESM5, CanESM5_CanOE, CMCC_ESM2,
     CNRM_CM6_1, CNRM_CM6_1_HR, CNRM_ESM2_1, EC_Earth3_Veg, EC_Earth3_Veg_LR, FIO_ESM_2_0,
     GFDL_ESM4, GISS_E2_1_G, GISS_E2_1_H, HadGEM3_GC31_LL, INM_CM4_8, INM_CM5_0,
@@ -78,6 +78,9 @@ include("providers/PaleoClim/bioclim.jl")
 
 include("providers/Copernicus/copernicus.jl")
 include("providers/Copernicus/landcover.jl")
+
+include("providers/LUH2/LUH2.jl")
+include("providers/LUH2/landcover.jl")
 
 # Key checker
 include("keychecker.jl")

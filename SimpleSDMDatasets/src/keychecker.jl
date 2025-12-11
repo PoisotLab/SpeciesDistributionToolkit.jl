@@ -16,6 +16,16 @@ function keychecker(data::R; kwargs...) where {R <: RasterData}
         end
     end
 
+    # Check for year
+    if :year in keys(kwargs)
+        if isnothing(years(data))
+            error("The $(R) dataset does not allow for year as a keyword argument")
+        end
+        if ~(values(kwargs).year in years(data))
+            error("The year $(values(kwargs).year) is not supported by the $(R) dataset")
+        end
+    end
+
     # Check for layer
     if :layer in keys(kwargs)
         if isnothing(layers(data))
@@ -71,10 +81,20 @@ function keychecker(data::R, future::F; kwargs...) where {R <: RasterData, F <: 
                 "The $(R) dataset does not allow for month as a keyword argument under $(F)",
             )
         end
-        if ~(values(kwargs).month in months(data))
+        if ~(values(kwargs).month in months(data, future))
             error(
                 "The month $(values(kwargs).month) is not supported by the $(R) dataset under $(F)",
             )
+        end
+    end
+
+    # Check for year
+    if :year in keys(kwargs)
+        if isnothing(years(data, future))
+            error("The $(R) dataset does not allow for year as a keyword argument under $(F)")
+        end
+        if ~(values(kwargs).year in years(data, future))
+            error("The year $(values(kwargs).year) is not supported by the $(R) dataset under $(F)")
         end
     end
 

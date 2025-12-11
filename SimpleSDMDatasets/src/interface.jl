@@ -114,6 +114,24 @@ Any dataset with a return value that is not `nothing` *must* accept the
 months(::R) where {R <: RasterData} = nothing
 months(data::R, ::F) where {R <: RasterData, F <: Projection} = months(data)
 
+
+"""
+    years(::R) where {R <: RasterData}
+
+This method controls whether the dataset has yearly layers. If this is
+`nothing` (the default), it means that the dataset is not accessible at a
+yearly resolution.
+
+An overload of this method is *required* when there are multiple years
+available, and *must* return a `Dates.Year`.
+
+Any dataset with a return value that is not `nothing` *must* accept the
+`year` keyword.
+"""
+years(::R) where {R <: RasterData} = nothing
+years(data::R, ::F) where {R <: RasterData, F <: Projection} = years(data)
+
+
 """
     timespans(data::R, ::F) where {R <: RasterData, F <: Future}
 

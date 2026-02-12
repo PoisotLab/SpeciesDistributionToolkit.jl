@@ -56,6 +56,7 @@ mutable struct SDM{F, L} <: AbstractSDM
     X::Matrix{F} # Features
     y::Vector{L} # Labels
     v::AbstractVector # Variables
+    coordinates::Vector{Tuple{<:Number, <:Number}}
 end
 
 function SDM(
@@ -71,7 +72,24 @@ function SDM(
         X,
         y,
         collect(1:size(X, 1)),
+        Tuple{Float64, Float64}[]
     )
+end
+
+"""
+    isgeoreferenced(sdm::SDM)
+
+Returns `true` if an SDM is georeferenced, _i.e._ if the `coordinates` field is
+not empty.
+"""
+function isgeoreferenced(sdm::SDM)
+    return !isempty(sdm.coordinates)
+end
+
+@testitem "We can create a SDM without geospatial references" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(RawData, NaiveBayes, X, y)
+    @test !isgeoreferenced(model)
 end
 
 """

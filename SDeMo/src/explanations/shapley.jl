@@ -148,6 +148,7 @@ end
 @testitem "We can calculate Shapley values on differently-typed data" begin
     X, y = SDeMo.__demodata()
     sdm = SDM(RawData, NaiveBayes, X, y)
+    variables!(sdm, [1, 3, 4, 17, 11, 2])
     train!(sdm)
     expl_indices = sort(unique(rand(axes(X, 2), 100)))
     eX = convert(Matrix{Float16}, X[:, expl_indices])

@@ -33,6 +33,7 @@ function _sdm_to_dict(sdm::SDM)
     w["variables"] = sdm.v
     w["labels"] = sdm.y
     w["instances"] = sdm.X
+    w["coordinates"] = sdm.coordinates
     w["classifier"] = __tosymbol(typeof(sdm.classifier))
     w["transformer"] = __tosymbol(typeof(sdm.transformer))
     hparams = Dict()
@@ -72,9 +73,12 @@ function loadsdm(file::String; kwargs...)
     y = convert(Vector{Bool}, (f["labels"]))
     v = convert(Vector{Int}, f["variables"])
     τ = f["threshold"]
+    co = f["coordinates"]
     CLS = __fromsymbol(Symbol(f["classifier"]))()
     TRF = __fromsymbol(Symbol(f["transformer"]))()
-    model = SDM(TRF, CLS, τ, X, y, v)
+    model = isempty(co) ? SDM(TRF, CLS, X, y) : DM(TRF, CLS, X, y, co)
+    variables!(sdm, v)
+    threshold!(sdm, τ)
     # Hyper parameters
     if "hyperparameters" in keys(f)
         if "classifier" in keys(f["hyperparameters"])
@@ -157,4 +161,14 @@ end
     @test variables(sdm) == variables(nsdm)
     @test labels(sdm) == labels(nsdm)
     @test features(sdm) == features(nsdm)
+end
+
+@testitem "We can save and load a SDM with geospatial references" begin
+    X, y = SDeMo.__demodata()
+    coordinates = [Tuple(randn(2)) for _ in eachindex(y)]
+    model = SDM(RawData, NaiveBayes, X, y, coordinates)
+    tf = tempname()
+    writesdm(tf, sdm)
+    nsdm = loadsdm(tf; threshold = false)
+    @test nsdm.coordinates == model.coordinates
 end

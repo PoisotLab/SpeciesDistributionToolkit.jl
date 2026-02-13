@@ -193,7 +193,7 @@ end
 
 @testitem "We can split data in an SDM" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.01, X, y, 1:size(X, 1))
+    sdm = SDM(PCATransform, BIOCLIM, X, y)
     folds = montecarlo(sdm; n = 10)
     @test length(folds) == 10
 end

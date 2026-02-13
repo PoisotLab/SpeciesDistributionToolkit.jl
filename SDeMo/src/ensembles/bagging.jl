@@ -10,8 +10,8 @@ function bootstrap(y, X; n = 50)
     pos, neg = __classsplit(y)
     bags = Vector{Tuple{typeof(pos), typeof(pos)}}(undef, n)
     for i in 1:n
-        inbag_pos = unique(sample(pos, length(pos); replace=true))
-        inbag_neg = unique(sample(neg, length(neg); replace=true))
+        inbag_pos = unique(sample(pos, length(pos); replace = true))
+        inbag_neg = unique(sample(neg, length(neg); replace = true))
         inbag = Random.shuffle!(vcat(inbag_pos, inbag_neg))
         outbag = setdiff(axes(y, 1), inbag)
         bags[i] = (inbag, outbag)
@@ -36,9 +36,31 @@ mutable struct Bagging <: AbstractEnsembleSDM
 end
 
 """
+    isgeoreferenced(bagged::Bagging)
+
+Returns `true` if the model that is bagged is georeferenced. Note that the bagged models contain all the data, so they also contain all of the localisation information.
+"""
+function isgeoreferenced(bagged::Bagging)
+    return isgeoreferenced(bagged.model)
+end
+
+@testitem "A default bagged model is not georeferenced" begin
+    X, y = SDeMo.__demodata()
+    model = Bagging(SDM(RawData, NaiveBayes, X, y), 10)
+    @test !isgeoreferenced(model)
+end
+
+@testitem "A bagged model from a georeferenced model is georeferenced" begin
+    X, y = SDeMo.__demodata()
+    coordinates = [Tuple(randn(2)) for _ in eachindex(y)]
+    model = Bagging(SDM(RawData, NaiveBayes, X, y, coordinates), 10)
+    @test isgeoreferenced(model)
+end
+
+"""
     Bagging(model::SDM, bags::Vector)
 
-blah
+Creates a baged model from an SDM by specifying the bags in advance.
 """
 function Bagging(model::SDM, bags::Vector)
     return Bagging(model, bags, [deepcopy(model) for _ in eachindex(bags)])
@@ -47,11 +69,11 @@ end
 """
     Bagging(model::SDM, n::Integer)
 
-Creates a bag from SDM
+Creates a bag from SDM by giving the number of bags to create in the bagged model.
 """
 function Bagging(model::SDM, n::Integer)
     bags = bootstrap(labels(model), features(model); n = n)
-    return Bagging(model, bags, [deepcopy(model) for _ in eachindex(bags)])
+    return Bagging(model, bags)
 end
 
 """

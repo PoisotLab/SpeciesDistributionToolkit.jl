@@ -145,7 +145,6 @@ end
     @test_throws DimensionMismatch SDM(RawData, NaiveBayes, X, y, coordinates)
 end
 
-
 @testitem "We get an error if the number of labels and coordinates do not match" begin
     X, y = SDeMo.__demodata()
     coordinates = [Tuple(randn(2)) for _ in Base.OneTo(length(y)+1)]

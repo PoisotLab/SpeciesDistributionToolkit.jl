@@ -74,6 +74,9 @@ function loadsdm(file::String; kwargs...)
     v = convert(Vector{Int}, f["variables"])
     τ = f["threshold"]
     co = f["coordinates"]
+    if !isempty(co)
+        co = [Tuple(c) for c in co]
+    end
     CLS = __fromsymbol(Symbol(f["classifier"]))()
     TRF = __fromsymbol(Symbol(f["transformer"]))()
     model = isempty(co) ? SDM(typeof(TRF), typeof(CLS), X, y) : SDM(typeof(TRF), typeof(CLS), X, y, co)

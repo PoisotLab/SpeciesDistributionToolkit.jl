@@ -76,9 +76,9 @@ function loadsdm(file::String; kwargs...)
     co = f["coordinates"]
     CLS = __fromsymbol(Symbol(f["classifier"]))()
     TRF = __fromsymbol(Symbol(f["transformer"]))()
-    model = isempty(co) ? SDM(TRF, CLS, X, y) : DM(TRF, CLS, X, y, co)
-    variables!(sdm, v)
-    threshold!(sdm, τ)
+    model = isempty(co) ? SDM(typeof(TRF), typeof(CLS), X, y) : SDM(typeof(TRF), typeof(CLS), X, y, co)
+    variables!(model, v)
+    threshold!(model, τ)
     # Hyper parameters
     if "hyperparameters" in keys(f)
         if "classifier" in keys(f["hyperparameters"])
@@ -168,7 +168,7 @@ end
     coordinates = [Tuple(randn(2)) for _ in eachindex(y)]
     model = SDM(RawData, NaiveBayes, X, y, coordinates)
     tf = tempname()
-    writesdm(tf, sdm)
+    writesdm(tf, model)
     nsdm = loadsdm(tf; threshold = false)
     @test nsdm.coordinates == model.coordinates
 end

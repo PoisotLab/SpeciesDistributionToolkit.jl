@@ -55,7 +55,7 @@ mutable struct SDM{F, L} <: AbstractSDM
     τ::Number # Threshold
     X::Matrix{F} # Features
     y::Vector{L} # Labels
-    v::AbstractVector # Variables
+    v::Vector{Int} # Variables
     coordinates::Vector{Tuple{Float64, Float64}}
 end
 

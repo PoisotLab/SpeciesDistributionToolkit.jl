@@ -38,7 +38,9 @@ end
 """
     isgeoreferenced(bagged::Bagging)
 
-Returns `true` if the model that is bagged is georeferenced. Note that the bagged models contain all the data, so they also contain all of the localisation information.
+Returns `true` if the model that is bagged is georeferenced. Note that the
+bagged models contain all the data, so they also contain all of the localisation
+information.
 """
 function isgeoreferenced(bagged::Bagging)
     return isgeoreferenced(bagged.model)

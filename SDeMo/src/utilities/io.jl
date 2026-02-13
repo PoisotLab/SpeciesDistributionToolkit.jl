@@ -1,4 +1,4 @@
-function __tosymbol(cl::Type{T}) where T <: Classifier
+function __tosymbol(cl::Type{T}) where {T <: Classifier}
     str = string(cl)
     contains(str, "NaiveBayes") && return :NaiveBayes
     contains(str, "BioClim") && return :BioClim
@@ -7,7 +7,7 @@ function __tosymbol(cl::Type{T}) where T <: Classifier
     return :NaiveBayes
 end
 
-function __tosymbol(tr::Type{T}) where T <: Transformer
+function __tosymbol(tr::Type{T}) where {T <: Transformer}
     str = string(tr)
     contains(str, "PCA") && return Symbol("MultivariateTransform{PCA}")
     contains(str, "Whitening") && return Symbol("MultivariateTransform{Whitening}")
@@ -19,7 +19,8 @@ function __fromsymbol(s)
     s == :RawData && return RawData
     s == :ZScore && return ZScore
     s == Symbol("MultivariateTransform{PCA}") && return MultivariateTransform{PCA}
-    s == Symbol("MultivariateTransform{Whitening}") && return MultivariateTransform{Whitening}
+    s == Symbol("MultivariateTransform{Whitening}") &&
+        return MultivariateTransform{Whitening}
     s == :NaiveBayes && return NaiveBayes
     s == :DecisionTree && return DecisionTree
     s == :BioClim && return BioClim
@@ -55,7 +56,7 @@ the *structure* of the model, as well as the data.
 """
 function writesdm(file::String, model::SDM)
     open(file, "w") do f
-        JSON.print(f, _sdm_to_dict(model), 4)
+        return JSON.print(f, _sdm_to_dict(model), 4)
     end
 end
 
@@ -97,11 +98,12 @@ end
 
 @testitem "We can write a model with no hyper-parameters and load it back" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(RawData(), BIOCLIM(), 0.5, X, y, [1,2,12])
+    sdm = SDM(RawData, BIOCLIM, X, y)
+    variables!(sdm, [1, 2, 12])
     train!(sdm)
     tf = tempname()
     writesdm(tf, sdm)
-    nsdm = loadsdm(tf; threshold=false)
+    nsdm = loadsdm(tf; threshold = false)
     @test threshold(sdm) == threshold(nsdm)
     @test variables(sdm) == variables(nsdm)
     @test labels(sdm) == labels(nsdm)
@@ -110,11 +112,12 @@ end
 
 @testitem "We can write a model and load it back" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.5, X, y, [1,2,12])
+    sdm = SDM(PCATransform, BIOCLIM, X, y)
+    variables!(sdm, [1, 2, 12])
     train!(sdm)
     tf = tempname()
     writesdm(tf, sdm)
-    nsdm = loadsdm(tf; threshold=false)
+    nsdm = loadsdm(tf; threshold = false)
     @test threshold(sdm) == threshold(nsdm)
     @test variables(sdm) == variables(nsdm)
     @test labels(sdm) == labels(nsdm)
@@ -123,11 +126,12 @@ end
 
 @testitem "We can write a Logistic model and load it back" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore(), Logistic(), 0.5, X, y, [1,2,12])
+    sdm = SDM(ZScore, Logistic, X, y)
+    variables!(sdm, [1, 2, 12])
     train!(sdm)
     tf = tempname()
     writesdm(tf, sdm)
-    nsdm = loadsdm(tf; threshold=false)
+    nsdm = loadsdm(tf; threshold = false)
     @test threshold(sdm) == threshold(nsdm)
     @test variables(sdm) == variables(nsdm)
     @test labels(sdm) == labels(nsdm)
@@ -136,7 +140,8 @@ end
 
 @testitem "We can preserve the hyper-parameters when loading a model" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore(), Logistic(), 0.5, X, y, [1,2,12])
+    sdm = SDM(ZScore, Logistic, X, y)
+    variables!(sdm, [1, 2, 12])
     hyperparameters!(classifier(sdm), :epochs, 100)
     hyperparameters!(classifier(sdm), :interactions, :self)
     hyperparameters!(classifier(sdm), :η, 1e-5)
@@ -144,7 +149,7 @@ end
     train!(sdm)
     tf = tempname()
     writesdm(tf, sdm)
-    nsdm = loadsdm(tf; threshold=false)
+    nsdm = loadsdm(tf; threshold = false)
     for hp in hyperparameters(typeof(classifier(sdm)))
         @test hyperparameters(classifier(sdm), hp) == hyperparameters(classifier(nsdm), hp)
     end

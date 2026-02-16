@@ -6,7 +6,13 @@ vector of learner `weights`, a number of boosting `iterations`, and the weights
 `w` of each point.
 
 Note that this type uses training by re-sampling data according to their
-weights, as opposed to re-training on all samples and weighting internally.
+weights, as opposed to re-training on all samples and weighting internally. Some
+learners _may_ have negative weights, in which case their predictions are
+flipped at prediction time.
+
+The learning rate `η` defaults to one, but can be lowered to improve stability /
+prevent over-fitting. The learning rate _must_ be larger than 0, and decreasing
+it should lead to a larger number of iterations.
 """
 mutable struct AdaBoost <: AbstractBoostedSDM
     model::SDM
@@ -14,17 +20,21 @@ mutable struct AdaBoost <: AbstractBoostedSDM
     weights::Vector{<:AbstractFloat} # Model weights
     iterations::Integer # Number of iterations
     w::Vector{<:AbstractFloat} # Data weights
+    η::Real
 end
 
 function AdaBoost(model::SDM; iterations = 50)
     return AdaBoost(
         deepcopy(model),
-        [deepcopy(model) for i in Base.OneTo(iterations)],
+        [deepcopy(model) for _ in Base.OneTo(iterations)],
         zeros(iterations),
         iterations,
-        fill(1 / length(labels(model)), length(labels(model))),
+        fill(1.0 / length(labels(model)), length(labels(model))),
+        1.0
     )
 end
+
+AdaBoost(model::SDM, n::Integer) = AdaBoost(model; iterations = n)
 
 # Access to the top-level model in AdaBoost
 models(b::AdaBoost) = b.learners
@@ -35,6 +45,51 @@ features(b::AdaBoost) = features(b.model)
 features(b::AdaBoost, i...) = features(b.model, i...)
 variables(b::AdaBoost) = variables(b.model)
 threshold(b::AdaBoost) = 0.5
+
+# Hyper parameters
+hyperparameters(::Type{AdaBoost}) = (:η, )
+
+@testitem "We can change the hyper-parameters of an AdaBoost classifier" begin
+    X, y = SDeMo.__demodata()
+    stump = SDM(RawData, DecisionTree, X, y)
+    hyperparameters!(classifier(stump), :maxnodes, 2)
+    hyperparameters!(classifier(stump), :maxdepth, 1)
+    model = AdaBoost(stump, 50)
+    @test hyperparameters(model, :η) == 1.0
+    hyperparameters!(model, :η, 0.2)
+    @test hyperparameters(model, :η) == 0.2
+end
+
+@testitem "We can train an AdaBoost classifier" begin
+    X, y = SDeMo.__demodata()
+    stump = SDM(RawData, DecisionTree, X, y)
+    hyperparameters!(classifier(stump), :maxnodes, 2)
+    hyperparameters!(classifier(stump), :maxdepth, 1)
+    model = AdaBoost(stump, 50)
+    train!(model)
+    @test eltype(predict(model)) <: Bool
+end
+
+function variables!(b::AdaBoost, v::Vector{Int})
+    variables!(b.model, v)
+    for learner in models(b)
+        variables!(learner, v)
+    end
+    return b
+end
+
+@testitem "We can set the variables of an AdaBoost model" begin
+    X, y = SDeMo.__demodata()
+    stump = SDM(RawData, DecisionTree, X, y)
+    hyperparameters!(classifier(stump), :maxnodes, 2)
+    hyperparameters!(classifier(stump), :maxdepth, 1)
+    model = AdaBoost(stump, 50)
+    variables!(model, [1, 12])
+    @test variables(model) == [1, 12]
+    for learner in models(model)
+        @test variables(learner) == variables(model)
+    end
+end
 
 # Turn a [0,1] prediction into a [-1,1] prediction
 __y_spread(x) = float.(2x .- 1.0)
@@ -56,24 +111,25 @@ function train!(b::AdaBoost; kwargs...)
     # We start by training the initial model
     train!(b.model; kwargs...)
 
+    # We set the weights to their initial values
+    b.w = fill(1.0 / length(labels(b)), length(labels(b)))
+
     # The threshold is handled a little differently for boosted models
     trainargs = filter(kw -> kw.first != :training, kwargs)
-
+    
     for iteration in Base.OneTo(b.iterations)
 
         # We have pre-allocated the models so we can just refer to it here
         learner = models(b)[iteration]
 
         # We get the samples that will be used for training at this iteration
-        training_samples = sort(
-            sample(
+        training_samples = sample(
                 axes(labels(learner), 1),
                 Weights(b.w),
                 length(labels(learner));
                 replace = true,
-            ),
-        )
-
+            )
+        
         # We re-train the model for this iteration
         train!(learner; training = training_samples, trainargs...)
 
@@ -87,8 +143,10 @@ function train!(b::AdaBoost; kwargs...)
         # Weighted error
         ε = sum(b.w[m]) # Sum of weights for missed samples - this essentially measures accuracy
 
-        # We now calculate the relative weight of this learner in the ensemble so far
-        α = 0.5 * log((1 - ε) / ε)
+        # We now calculate the relative weight of this learner in the ensemble
+        # so far - note that the learning rate is applied here, for the first
+        # learner as well!
+        α = b.η * 0.5 * log((1 - (ε + eps())) / (ε + eps()))
 
         # The classifier is already in the ensemble, so we update its weight (it
         # has been trained earlier!)
@@ -106,7 +164,9 @@ function train!(b::AdaBoost; kwargs...)
 end
 
 """
-    TODO
+    predict(::AdaBoost, ::Matrix{T}; kwargs...)
+
+Predicts with a trained AdaBoost model.
 """
 function StatsAPI.predict(
     b::AdaBoost,

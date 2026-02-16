@@ -1,122 +1,88 @@
 abstract type AbstractCalibration end
 
-Base.@kwdef struct PlattCalibration <: AbstractCalibration
-    A::Real = 0.0
-    B::Real = 0.0
-end
+_keywordsfor(::Type{<:AbstractCalibration}) = Symbol[]
 
-"""
-    calibration(sdm::T; kwargs...) where {T <: AbstractSDM}
-
-Returns a function for model calibration, using Platt scaling, optimized with
-the Newton method. The returned function can be applied to a model output.
-"""
-function calibrate(::Type{PlattCalibration}, sdm::T; maxiter=1_000, tol=1e-5, kwargs...) where {T <: AbstractSDM}
-
-    d = predict(sdm; threshold=false, kwargs...)
-    C = labels(sdm)
-
-    n₀ = sum(C)
-    n₁ = length(C) - sum(C)
-
-    # Newton method parameters
-    minstep = 1e-10
-    σ = 1e-12
-
-    # Updated targets with a correction for prevalence
-    t₁ = (n₁ + 1.0) / (n₁ + 2.0)
-    t₀ = 1 / (n₀ + 2.0)
-    t = fill(t₀, length(C))
-    t[findall(C)] .= t₁
-
-    # Initial values for A and B
-    A = 0.0
-    B = log((n₀ + 1.0) / (n₁ + 1.0))
-
-    # Initial update of f
-    fval = 0.0
-    for i in eachindex(t)
-        fApB = d[i] * A + B
-        if fApB >= 0.0
-            fval += t[i] * fApB + log(1 + exp(-fApB))
+function _kwsplitter(C::Type{<:AbstractCalibration}, args::Base.Pairs)
+    cal_kw = []
+    mod_kw = []
+    for arg in args
+        if arg.first in _keywordsfor(C)
+            push!(cal_kw, arg)
         else
-            fval += (t[i] - 1) * fApB + log(1 + exp(fApB))
+            push!(mod_kw, arg)
         end
     end
-
-    # Iteration
-    for _ in Base.OneTo(maxiter)
-        # Gradient, Hessian
-        h11 = h22 = σ
-        h21 = g1 = g2 = 0.0
-        for i in eachindex(C)
-            fApB = d[i] * A + B
-            if fApB >= 0
-                p = exp(-fApB) / (1.0 + exp(-fApB))
-                q = 1.0 / (1.0 + exp(-fApB))
-            else
-                p = 1.0 / (1.0 + exp(fApB))
-                q = exp(fApB) / (1.0 + exp(fApB))
-            end
-            d2 = p * q
-            h11 += d[i] * d[i] * d2
-            h22 += d2
-            h21 += d[i] * d2
-            d1 = t[i] - p
-            g1 += d[i] * d1
-            g2 += d1
-        end
-
-        # Early stopping if the gradient is very small
-        if (abs(g1) < tol) && (abs(g2) < tol)
-            break
-        end
-
-        # Newton directions
-
-        det = h11 * h22 - h21 * h21
-        dA = -(h22 * g1 - h21 * g2) / det
-        dB = -(-h21 * g1 + h11 * g2) / det
-        gd = g1 * dA + g2 * dB
-        stepsize = 1
-        while (stepsize >= minstep)
-            newA = A + stepsize * dA
-            newB = B + stepsize * dB
-            newf = 0.0
-            for i in eachindex(C)
-                fApB = d[i] * newA + newB
-                if (fApB >= 0)
-                    newf += t[i] * fApB + log(1 + exp(-fApB))
-                else
-                    newf += (t[i] - 1) * fApB + log(1 + exp(fApB))
-                end
-                if (newf < fval + 0.0001 * stepsize * gd)
-                    A = newA
-                    B = newB
-                    fval = newf
-                    break
-                else
-                    stepsize /= 2.0
-                end
-                if (stepsize < minstep)
-                    break
-                end
-            end
-        end
-    end
-
-    return PlattCalibration(A, B)
+    return cal_kw, mod_kw
 end
 
 function calibrate(sdm::T; kwargs...) where {T <: AbstractSDM}
-    return calibrate(PlattCalibration, sdm; maxiter=1_000, tol=1e-5, kwargs...)
+    return calibrate(PlattCalibration, sdm; kwargs...)
 end
 
-function correct(pl::PlattCalibration, y)
-    ŷ = 1.0 ./ (1.0 .+ exp.(pl.A .* y .+ pl.B))
-    return ŷ
+function calibrate(cal::Type{C}, sdm::T; kwargs...) where {C <: AbstractCalibration, T <: AbstractSDM}
+    calibrator_kw, model_kw = _kwsplitter(cal, kwargs)
+    x, y = _calibrationdata(sdm; model_kw...)
+    return calibrate(cal, x, y; calibrator_kw...)
 end
 
+function _calibrationdata(sdm::T; samples=:, kwargs...) where {T <: AbstractSDM}
+    scores = predict(sdm; threshold=false, kwargs...)[samples]
+    truth = labels(sdm)[samples]
+    return (scores, truth)
+end
+
+"""
+    correct(cal::AbstractCalibration)
+
+Returns a function that gives a probability given a calibration result.
+"""
 function correct(cal::AbstractCalibration)
     return (y) -> correct(cal, y)
+end
+
+"""
+    correct(cal::Vector{<:AbstractCalibration})
+
+Returns a function that gives the average of probabilities from a vector of
+calibration results. This is used when bootstrapping or cross-validating
+probabilities using a pre-trained model.
+"""
+function correct(cal::Vector{<:AbstractCalibration})
+    return (y) -> mean([correct(c, y) for c in cal])
+end
+
+@testitem "We can do Platt calibration (all values)" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(PCATransform, NaiveBayes, X, y)
+    train!(model)
+    C = calibrate(PlattCalibration, model)
+    @test typeof(C) <: PlattCalibration
+end
+
+
+@testitem "We can do Isotonic calibration (some values, keywords)" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(PCATransform, NaiveBayes, X, y)
+    train!(model)
+    @assert IsotonicCalibration <: AbstractCalibration
+    C = calibrate(IsotonicCalibration, model, bins=15, samples=bootstrap(model)[1][1])
+    @test typeof(C) <: IsotonicCalibration
+end
+
+@testitem "We can do Isotonic calibration (bootstrapped values, keywords)" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(PCATransform, NaiveBayes, X, y)
+    train!(model)
+    @assert IsotonicCalibration <: AbstractCalibration
+    folds = first.(bootstrap(model))
+    C = [calibrate(IsotonicCalibration, model; samples=s, bins=35) for s in folds]
+end
+
+@testitem "We can do Platt calibration (bootstrapped values)" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(PCATransform, NaiveBayes, X, y)
+    train!(model)
+    @assert PlattCalibration <: AbstractCalibration
+    folds = first.(bootstrap(model))
+    C = [calibrate(PlattCalibration, model; samples=s) for s in folds]
 end

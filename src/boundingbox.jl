@@ -16,9 +16,19 @@ Returns the bounding box for a collection of occurrences, with an additional
 padding.
 """
 function boundingbox(occ::AbstractOccurrenceCollection; padding=0.0)
-    left, right = extrema(longitudes(occ))
-    bottom, top = extrema(latitudes(occ))
+    left, right = extrema(skipmissing(longitudes(occ)))
+    bottom, top = extrema(skipmissing(latitudes(occ)))
     return _padbbox(left, right, bottom, top, padding)
+end
+
+@testitem "We can get the boundingbox for occurrences with missing places" begin
+    occ = [Occurrence("", true, (1.0i, 1.0i), missing) for i in 1:5]
+    push!(occ, Occurrence("", true, missing, missing))
+    bbox = SpeciesDistributionToolkit.boundingbox(occ)
+    @test bbox.left == 1.0
+    @test bbox.bottom == 1.0
+    @test bbox.right == 5.0
+    @test bbox.top == 5.0
 end
 
 """
@@ -28,8 +38,8 @@ Returns the bounding box for a vector of abstract occurrences, with an
 additional padding.
 """
 function boundingbox(occ::Vector{<:AbstractOccurrence}; padding=0.0)
-    left, right = extrema(longitudes(occ))
-    bottom, top = extrema(latitudes(occ))
+    left, right = extrema(skipmissing(longitudes(occ)))
+    bottom, top = extrema(skipmissing(latitudes(occ)))
     return _padbbox(left, right, bottom, top, padding)
 end
 

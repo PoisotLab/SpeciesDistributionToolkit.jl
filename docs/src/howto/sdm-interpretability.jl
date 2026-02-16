@@ -13,7 +13,7 @@ Random.seed!(123451234123121); #hide
 # We will work on the demo data:
 
 X, y = SDeMo.__demodata()
-sdm = SDM(ZScore, Logistic, X, y)
+sdm = SDM(RawData, Logistic, X, y)
 variables!(sdm, [1, 12])
 hyperparameters!(classifier(sdm), :interactions, :self)
 hyperparameters!(classifier(sdm), :η, 1e-4)

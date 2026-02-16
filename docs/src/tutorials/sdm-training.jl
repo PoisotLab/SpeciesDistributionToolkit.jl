@@ -77,7 +77,7 @@ current_figure() #hide
 # of labels, we give a vector of layers (features), and the two layers for
 # presences and absences:
 
-sdm = SDM(ZScore, Logistic, L, presencelayer, bgpoints)
+sdm = SDM(RawData, Logistic, L, presencelayer, bgpoints)
 hyperparameters!(classifier(sdm), :η, 1e-4);
 hyperparameters!(classifier(sdm), :interactions, :all);
 hyperparameters!(classifier(sdm), :epochs, 10_000);

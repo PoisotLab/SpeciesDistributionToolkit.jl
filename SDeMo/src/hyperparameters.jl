@@ -1,4 +1,4 @@
-HasHyperParams = Union{<:Classifier, <:Transformer}
+HasHyperParams = Union{<:Classifier, <:Transformer, <:AbstractSDM}
 
 """
     hyperparameters(::Type{<:HasHyperParams}) = nothing

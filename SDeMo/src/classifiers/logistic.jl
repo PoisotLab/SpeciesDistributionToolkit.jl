@@ -74,6 +74,8 @@ gradient descent, by showing the loss every 100 epochs, or to the value of the
 validation data will be automatically reported.
 """
 Base.@kwdef mutable struct Logistic <: Classifier
+    μ::Vector{<:Real} = zeros(2) # Averages
+    σ::Vector{<:Real} = zeros(2) # Standard deviations
     λ::Float64 = 0.1 # Regularization
     η::Float64 = 0.01 # Learning rate
     epochs::Int64 = 2_000 # Epochs
@@ -102,17 +104,25 @@ function SDeMo.train!(
     X::Matrix{T};
     kwargs...,
 ) where {T <: Number}
+
+    # We need to start by ranging the predictor
+    lreg.μ = vec(mean(X; dims=2))
+    lreg.σ = vec(std(X; dims=2))
+
     # Get the validation data if relevant
     Xt = get(kwargs, :Xt, nothing)
     yt = get(kwargs, :yt, nothing)
-    validation_data = !isempty(yt)
+    validation_data = !isempty(yt)    
+
     # Prepare interaction terms for validation data
-    Xv = validation_data ? SDeMo.__makex(Xt, lreg.interactions) : nothing
+    Nt = (Xt .- lreg.μ) ./ lreg.σ
+    Xv = validation_data ? SDeMo.__makex(Nt, lreg.interactions) : nothing
     Xvt = validation_data ? permutedims(Xv) : nothing
-    #
-    𝐗 = SDeMo.__makex(X, lreg.interactions)
+
+    N = (X .- lreg.μ) ./ lreg.σ
+    𝐗 = SDeMo.__makex(N, lreg.interactions)
     𝐗t = transpose(𝐗)
-    lreg.θ = SDeMo.__maketheta(X, lreg.interactions)
+    lreg.θ = SDeMo.__maketheta(N, lreg.interactions)
     # Pre-allocate variables for faster gradient descent
     z = 𝐗t * lreg.θ
     𝐲 = eltype(z).(y)
@@ -156,7 +166,8 @@ function StatsAPI.predict(lreg::Logistic, x::Vector{T}) where {T <: Number}
 end
 
 function StatsAPI.predict(lreg::Logistic, X::Matrix{T}) where {T <: Number}
-    𝐗 = __makex(X, lreg.interactions)
+    N = (X .- lreg.μ) ./ lreg.σ
+    𝐗 = __makex(N, lreg.interactions)
     z = transpose(𝐗) * lreg.θ
     return __sigmoid!(z, z)
 end

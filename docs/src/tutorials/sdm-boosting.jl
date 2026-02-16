@@ -89,6 +89,10 @@ current_figure() #hide
 
 bst = AdaBoost(sdm; iterations = 60)
 
+# We will decrease the learning rate of this model a little bit:
+
+hyperparameters!(bst, :η, 0.9)
+
 # Training the model is done in the exact same way as other `SDeMo` models, with
 # one important exception. AdaBoost uses the predicted class (presence/absence)
 # internally, so we will always train learners to return a thresholded
@@ -215,7 +219,7 @@ current_figure() #hide
 # [Dormann2020](@citet) has several strong arguments in favor of this approach.
 
 # fig-boosted-proba
-fg, ax, pl = heatmap(f(brd); colormap = :tempo, colorrange = (0, 1))
+fg, ax, pl = heatmap(f.(brd); colormap = :tempo, colorrange = (0, 1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)

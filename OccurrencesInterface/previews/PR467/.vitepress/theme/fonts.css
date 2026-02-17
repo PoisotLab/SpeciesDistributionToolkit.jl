@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@font-face {
+    font-family: JuliaMono-Regular;
+    src: url("https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.056/JuliaMono-Medium.woff2");
+}
+
+:root {
+    --vp-font-family-base: "Inter", "Pretendard", system-ui, sans-serif;
+    --vp-font-family-mono: JuliaMono-Medium, monospace;
+}
+
+.VPHero .name {
+    font-weight: 700;
+    font-family: "Inter Tight", var(--vp-font-family-base);
+}
+
+.VPHero .tagline {
+    font-weight: 350;
+}

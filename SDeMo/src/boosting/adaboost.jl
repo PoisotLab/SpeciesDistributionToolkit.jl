@@ -23,6 +23,17 @@ mutable struct AdaBoost <: AbstractBoostedSDM
     η::Real
 end
 
+"""
+    isgeoreferenced(boosted::AdaBoost)
+
+Returns `true` if the model that is boosted is georeferenced. Note that the
+bagged models contain all the data, so they also contain all of the localisation
+information.
+"""
+function isgeoreferenced(boosted::AdaBoost)
+    return isgeoreferenced(boosted.model)
+end
+
 function AdaBoost(model::SDM; iterations = 50)
     return AdaBoost(
         deepcopy(model),

@@ -48,6 +48,12 @@ prediction of a presence).
 In addition, the SDM carries with it the training features and labels, as well
 as a vector of indices indicating which variables are actually used by the
 model.
+
+The coordinates for each observation that is used to train the model are given
+in the `coordinates` field, and as with `OccurrencesInterface`, they must be
+given as longitude,latitude. If there are no known coordinates for the
+observations, this field must be an empty vector of the correct type. As of now,
+there is no plan to support datasets that only have some coordinates known.
 """
 mutable struct SDM{F, L} <: AbstractSDM
     transformer::Transformer

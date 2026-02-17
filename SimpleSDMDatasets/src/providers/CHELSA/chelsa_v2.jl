@@ -70,7 +70,8 @@ _var_slug(::RasterData{CHELSA2, BioClim}) = "bio"
 # Get the dataset source
 function source(data::RasterData{CHELSA2, BioClim}; layer = "BIO1")
     var_code = (layer isa Integer) ? layer : findfirst(isequal(layer), layers(data))
-    root = "https://os.zhdk.cloud.switch.ch/chelsav2/GLOBAL/climatologies/1981-2010/bio/"
+    var_code = lpad(var_code, 2, '0')
+    root = "https://os.unil.cloud.switch.ch/chelsa02/chelsa/global/bioclim/bio$(var_code)/1981-2010/"
     stem = "CHELSA_bio$(var_code)_1981-2010_V.2.1.tif"
     return (
         url = root * stem,

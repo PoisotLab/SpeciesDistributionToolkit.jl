@@ -9,6 +9,8 @@ rasters.
 """
 module SimpleSDMLayers
 
+using LinearAlgebra
+using Statistics
 using TestItems
 
 import ArchGDAL
@@ -85,5 +87,18 @@ export cellarea
 # Reclassify
 include("reclassify.jl")
 export reclassify
+
+# Quantile transfer
+include("quantiletransfer.jl")
+export quantiletransfer, quantiletransfer!
+
+# Shift and rotate
+include("shift-and-rotate/rotations.jl")
+include("shift-and-rotate/shift-and-rotate.jl")
+export lonlat
+# export roll, pitch, yaw
+# export shiftlatitudes, shiftlongitudes, localrotation
+export findrotation, rotator
+export shiftandrotate
 
 end # module

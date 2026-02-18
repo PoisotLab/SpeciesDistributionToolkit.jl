@@ -9,11 +9,14 @@ toolkit meant to deal with (surprise!) species distribution data.
 
 Specifically, the goal of these packages put together is to provide a consistent way to handle
 occurrence data, put them on a map, and make it interact with environmental
-information. 
+information. The package also contains a full-featured library for species distribution models.
 
 > [!TIP]
-> There is a manuscript describing this package, currently available as a preprint:  
-> Poisot, T., Bussières-Fournel, A., Dansereau, G., and Catchen, M. D. (2025). A Julia toolkit for species distribution data. EcoEvoRxiv. doi: [10.32942/X2405R](https://ecoevorxiv.org/repository/view/8582/)
+> If you use this package, please cite:
+> 
+> Poisot, T., Bussières-Fournel, A., Dansereau, G., and Catchen, M. D. (2025). A Julia toolkit for species distribution data. _Peer Community Journal_ 5(e101). doi: [10.24072/pcjournal.589](https://peercommunityjournal.org/articles/10.24072/pcjournal.589/)
+>
+> Dansereau, G., and Poisot, T. (2021). SimpleSDMLayers.jl and GBIF.jl: A Framework for Species Distribution Modeling in Julia. _Journal of Open Source Software_ 6(57), 2872, doi: [10.21105/joss.02872](https://doi.org/10.21105/joss.02872)
 
 <p align="center">
   <img src="https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/blob/main/structure.drawio.png?raw=true" alt="Package overview"/>

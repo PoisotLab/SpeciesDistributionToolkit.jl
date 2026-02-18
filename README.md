@@ -28,6 +28,24 @@ contains tutorials showcasing the package in action, how-to guides to serve as a
 quick reference, and links to the documentation for all methods in the component
 packages.
 
+## Overview
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=v*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=Full%20toolkit&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=Occurrences*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=Occurrences%20interface&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=PseudoAbsences*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=Pseudo-absence%20generation&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=GBIF*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=GBIF%20wrapper&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=SDeMo*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=SDM%20functions&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=SimpleSDMDatasets*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=Raster%20data%20access&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=SimpleSDMPolygons*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=Polygon%20data%20access&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=Phylopic*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=Phylopic%20integration&labelColor=%23000000&color=%23ffffff)
+
 ## Want to help?
 
 🧑‍💻 To get a sense of the next steps and help with the development, see the

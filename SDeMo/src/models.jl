@@ -48,6 +48,12 @@ prediction of a presence).
 In addition, the SDM carries with it the training features and labels, as well
 as a vector of indices indicating which variables are actually used by the
 model.
+
+The coordinates for each observation that is used to train the model are given
+in the `coordinates` field, and as with `OccurrencesInterface`, they must be
+given as longitude,latitude. If there are no known coordinates for the
+observations, this field must be an empty vector of the correct type. As of now,
+there is no plan to support datasets that only have some coordinates known.
 """
 mutable struct SDM{F, L} <: AbstractSDM
     transformer::Transformer
@@ -55,7 +61,40 @@ mutable struct SDM{F, L} <: AbstractSDM
     τ::Number # Threshold
     X::Matrix{F} # Features
     y::Vector{L} # Labels
-    v::AbstractVector # Variables
+    v::Vector{Int} # Variables
+    coordinates::Vector{Tuple{Float64, Float64}}
+end
+
+function SDM(
+    ::Type{TF},
+    ::Type{CF},
+    X::Matrix{T},
+    y::Vector{Bool},
+    coordinates::Vector{Tuple{F, F}},
+) where {TF <: Transformer, CF <: Classifier, T <: Number, F <: AbstractFloat}
+    if size(X, 2) != length(y)
+        throw(
+            DimensionMismatch(
+                "The number of instances ($(size(X, 2))) and the number of labels ($(length(y))) do not match",
+            ),
+        )
+    end
+    if length(coordinates) != length(y)
+        throw(
+            DimensionMismatch(
+                "The number of coordinates ($(length(coordinates))) and the number of labels ($(length(y))) do not match",
+            ),
+        )
+    end
+    return SDM(
+        TF(),
+        CF(),
+        zero(CF),
+        X,
+        y,
+        collect(1:size(X, 1)),
+        coordinates,
+    )
 end
 
 function SDM(
@@ -64,6 +103,13 @@ function SDM(
     X::Matrix{T},
     y::Vector{Bool},
 ) where {TF <: Transformer, CF <: Classifier, T <: Number}
+    if size(X, 2) != length(y)
+        throw(
+            DimensionMismatch(
+                "The number of instances ($(size(X, 2))) and the number of labels ($(length(y))) do not match",
+            ),
+        )
+    end
     return SDM(
         TF(),
         CF(),
@@ -71,7 +117,44 @@ function SDM(
         X,
         y,
         collect(1:size(X, 1)),
+        Tuple{Float64, Float64}[],
     )
+end
+
+"""
+    isgeoreferenced(sdm::SDM)
+
+Returns `true` if an SDM is georeferenced, _i.e._ if the `coordinates` field is
+not empty.
+"""
+function isgeoreferenced(sdm::SDM)
+    return !isempty(sdm.coordinates)
+end
+
+@testitem "We can create a SDM without geospatial references" begin
+    X, y = SDeMo.__demodata()
+    model = SDM(RawData, NaiveBayes, X, y)
+    @test !isgeoreferenced(model)
+end
+
+@testitem "We can create a SDM with geospatial references" begin
+    X, y = SDeMo.__demodata()
+    coordinates = [Tuple(randn(2)) for _ in eachindex(y)]
+    model = SDM(RawData, NaiveBayes, X, y, coordinates)
+    @test isgeoreferenced(model)
+end
+
+@testitem "We get an error if the number of observations and labels do not match" begin
+    X, y = SDeMo.__demodata()
+    push!(y, true)
+    coordinates = [Tuple(randn(2)) for _ in eachindex(y)]
+    @test_throws DimensionMismatch SDM(RawData, NaiveBayes, X, y, coordinates)
+end
+
+@testitem "We get an error if the number of labels and coordinates do not match" begin
+    X, y = SDeMo.__demodata()
+    coordinates = [Tuple(randn(2)) for _ in Base.OneTo(length(y)+1)]
+    @test_throws DimensionMismatch SDM(RawData, NaiveBayes, X, y, coordinates)
 end
 
 """

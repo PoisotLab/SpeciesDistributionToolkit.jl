@@ -10,7 +10,7 @@ first, and the validation data second.
 The `rebalanced` keyword, defaults to `false`, drops a random point of the
 opposite label as per `10.1126/sciadv.adx6976`.
 """
-function leaveoneout(y, X; rebalanced::Bool=false)
+function leaveoneout(y, X; rebalanced::Bool = false)
     @assert size(y, 1) == size(X, 2)
     positions = collect(axes(X, 2))
     loosamples = [(setdiff(positions, i), i) for i in positions]
@@ -31,7 +31,7 @@ function leaveoneout(y, X; rebalanced::Bool=false)
             deleteat!(S[1], dropped_inverse_label)
         end
     end
-    
+
     # Now we return
     return loosamples
 end
@@ -47,8 +47,8 @@ end
 @testitem "We can do LOO validation with re-balancing" begin
     X, y = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
-    folds = leaveoneout(model; rebalanced=true)
-    @test length(folds[1][1]) == length(y)-2
+    folds = leaveoneout(model; rebalanced = true)
+    @test length(folds[1][1]) == length(y) - 2
 end
 
 """
@@ -193,7 +193,7 @@ end
 
 @testitem "We can split data in an SDM" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.01, X, y, 1:size(X, 1))
+    sdm = SDM(PCATransform, BIOCLIM, X, y)
     folds = montecarlo(sdm; n = 10)
     @test length(folds) == 10
 end
@@ -214,7 +214,7 @@ function crossvalidate(sdm::T, folds; thr = nothing, kwargs...) where {T <: Abst
     τ = isnothing(thr) ? threshold(sdm) : thr
 
     # Thread-safe structure
-    chunk_size = max(1, length(folds) ÷ (5 * Threads.nthreads() ))
+    chunk_size = max(1, length(folds) ÷ (5 * Threads.nthreads()))
     data_chunks = Base.Iterators.partition(folds, chunk_size)
 
     tasks = map(data_chunks) do chunk
@@ -230,7 +230,10 @@ function crossvalidate(sdm::T, folds; thr = nothing, kwargs...) where {T <: Abst
     end
 
     confmats_batched = fetch.(tasks)
-    return (validation = vcat(first.(confmats_batched)...), training = vcat(last.(confmats_batched)...))
+    return (
+        validation = vcat(first.(confmats_batched)...),
+        training = vcat(last.(confmats_batched)...),
+    )
 end
 
 """
@@ -240,7 +243,7 @@ Performs cross-validation using 10-fold validation as a default. Called when
 `crossvalidate` is used without a `folds` second argument.
 """
 function crossvalidate(sdm::T, args...; kwargs...) where {T <: AbstractSDM}
-    return crossvalidate(sdm, kfold(sdm; k=10), args...; kwargs...)
+    return crossvalidate(sdm, kfold(sdm; k = 10), args...; kwargs...)
 end
 
 """
@@ -255,14 +258,18 @@ The specific technique used is to train one model per fold, then aggregate all
 of their predictions on the validation data, and find the value of the threshold
 that maximizes the average performance across folds.
 """
-function threshold!(sdm::SDM, folds::Vector{Tuple{Vector{Int}, Vector{Int}}}; optimality=mcc)
-    p = predict(sdm; threshold=false)
-    
+function threshold!(
+    sdm::SDM,
+    folds::Vector{Tuple{Vector{Int}, Vector{Int}}};
+    optimality = mcc,
+)
+    p = predict(sdm; threshold = false)
+
     # We will save all the predictions in this object
     Y = Vector{typeof(p)}(undef, length(folds))
 
     # Thread-safe structure for the models
-    chunk_size = max(1, length(folds) ÷ (5 * Threads.nthreads() ))
+    chunk_size = max(1, length(folds) ÷ (5 * Threads.nthreads()))
     data_chunks = Base.Iterators.partition(eachindex(folds), chunk_size)
 
     tasks = map(data_chunks) do chunk
@@ -270,7 +277,7 @@ function threshold!(sdm::SDM, folds::Vector{Tuple{Vector{Int}, Vector{Int}}}; op
             model = deepcopy(sdm)
             for i in chunk
                 train!(model; training = folds[i][1], threshold = false)
-                Y[i] = predict(model; threshold=false)[folds[i][2]]
+                Y[i] = predict(model; threshold = false)[folds[i][2]]
             end
             return Y[chunk]
         end
@@ -278,19 +285,20 @@ function threshold!(sdm::SDM, folds::Vector{Tuple{Vector{Int}, Vector{Int}}}; op
 
     # We wait until it's done
     fetch.(tasks)
-    
+
     # We now aggregate the values in Y
     y = extrema(vcat(Y...))
     thresholds = LinRange(y..., 100)
     opt = zeros(length(thresholds), length(folds))
     for i in eachindex(folds)
         for j in eachindex(thresholds)
-            opt[j, i] = optimality(ConfusionMatrix(Y[i], labels(sdm)[folds[i][2]], thresholds[j]))
+            opt[j, i] =
+                optimality(ConfusionMatrix(Y[i], labels(sdm)[folds[i][2]], thresholds[j]))
         end
     end
 
     # We measure teh MEAN performance across threshold values
-    mean_opt = vec(mapslices(mean, opt, dims=2))
+    mean_opt = vec(mapslices(mean, opt; dims = 2))
 
     # And we apply the best threshold and return the model
     threshold!(sdm, thresholds[last(findmax(mean_opt))])
@@ -304,7 +312,7 @@ Version of `threshold!` without folds, for which the default of 10-fold
 validation will be used.
 """
 function threshold!(sdm::SDM; kwargs...)
-    return threshold!(sdm, kfold(sdm; k=10); kwargs...)
+    return threshold!(sdm, kfold(sdm; k = 10); kwargs...)
 end
 
 """
@@ -325,7 +333,8 @@ end
 
 @testitem "We can cross-validate an SDM" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.5, X, y, [1, 2, 12])
+    sdm = SDM(PCATransform, BIOCLIM, X, y)
+    variables!(sdm, [1, 2, 12])
     train!(sdm)
     folds = kfold(sdm; k = 15)
     cv = crossvalidate(sdm, folds)
@@ -335,7 +344,8 @@ end
 
 @testitem "We can cross-validate a model without specifying folds" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.5, X, y, [1, 2, 12])
+    sdm = SDM(PCATransform, BIOCLIM, X, y)
+    variables!(sdm, [1, 2, 12])
     train!(sdm)
     cv = crossvalidate(sdm)
     @test eltype(cv.validation) <: ConfusionMatrix
@@ -345,10 +355,11 @@ end
 @testitem "We can cross-validate an ensemble model using the consensus keyword" begin
     using Statistics
     X, y = SDeMo.__demodata()
-    sdm = SDM(MultivariateTransform{PCA}(), NaiveBayes(), 0.5, X, y, [1, 2, 12])
+    sdm = SDM(PCATransform, NaiveBayes, X, y)
+    variables!(sdm, [1, 2, 12])
     ens = Bagging(sdm, 10)
     train!(ens)
-    folds = kfold(sdm; k=15)
+    folds = kfold(sdm; k = 15)
     cv = crossvalidate(ens, folds; consensus = median)
     @test eltype(cv.validation) <: ConfusionMatrix
     @test eltype(cv.training) <: ConfusionMatrix

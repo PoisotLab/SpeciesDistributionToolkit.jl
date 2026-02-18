@@ -59,35 +59,35 @@ end
 
 @testitem "We can declare a NBC SDM" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, 1:size(X,1))
+    sdm = SDM(RawData, NaiveBayes, X, y)
     @test threshold(sdm) == 0.5
     @test variables(sdm) == 1:size(X, 1)
 end
 
 @testitem "We can train a NBC SDM" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, 1:size(X,1))
+    sdm = SDM(RawData, NaiveBayes, X, y)
     train!(sdm)
     @test threshold(sdm) != 0.5
 end
 
 @testitem "We can train a NBC SDM with some indices only" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, 1:size(X,1))
+    sdm = SDM(RawData, NaiveBayes, X, y)
     train!(sdm; training=rand(axes(X,2), 150))
     @test threshold(sdm) != 0.5
 end
 
 @testitem "We can train a NBC SDM without thresholding" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, 1:size(X,1))
+    sdm = SDM(RawData, NaiveBayes, X, y)
     train!(sdm; threshold=false)
     @test threshold(sdm) == 0.5
 end
 
 @testitem "We can predict with a NBC SDM" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, 1:size(X,1))
+    sdm = SDM(RawData, NaiveBayes, X, y)
     train!(sdm)
     @test eltype(predict(sdm)) <: Bool
     @test eltype(predict(sdm; threshold=false)) <: Float64
@@ -96,7 +96,7 @@ end
 
 @testitem "We can get the confusion matrix of a trained NBC SDM" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, 1:size(X,1))
+    sdm = SDM(RawData, NaiveBayes, X, y)
     train!(sdm)
     cm = ConfusionMatrix(sdm)
     @test sum(Matrix(cm)) == length(y)

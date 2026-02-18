@@ -112,7 +112,8 @@ end
 
 @testitem "We can calculate Shapley values" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, [1, 2])
+    sdm = SDM(RawData, NaiveBayes, X, y)
+    variables!(sdm, [1, 2])
     train!(sdm)
     expl = explain(sdm, 1)
     @test expl isa Vector{Float64}
@@ -123,7 +124,8 @@ end
 
 @testitem "We can calculate Shapley values on non-training data" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, [1, 2])
+    sdm = SDM(RawData, NaiveBayes, X, y)
+    variables!(sdm, [1, 2])
     train!(sdm)
     expl_indices = sort(unique(rand(axes(X, 2), 100)))
     eX = X[:, expl_indices]
@@ -134,7 +136,8 @@ end
 
 @testitem "We can calculate Shapley values for a single observation" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, [1, 3, 4, 17, 11, 2])
+    sdm = SDM(RawData, NaiveBayes, X, y)
+    variables!(sdm, [1, 3, 4, 17, 11, 2])
     train!(sdm)
     expl_1 = explain(sdm, 1; observation=1)
     @test expl_1 != 0.0
@@ -144,7 +147,8 @@ end
 
 @testitem "We can calculate Shapley values on differently-typed data" begin
     X, y = SDeMo.__demodata()
-    sdm = SDM(RawData(), NaiveBayes(), 0.5, X, y, [1, 2])
+    sdm = SDM(RawData, NaiveBayes, X, y)
+    variables!(sdm, [1, 3, 4, 17, 11, 2])
     train!(sdm)
     expl_indices = sort(unique(rand(axes(X, 2), 100)))
     eX = convert(Matrix{Float16}, X[:, expl_indices])

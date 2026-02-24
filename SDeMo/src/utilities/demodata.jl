@@ -15,7 +15,7 @@ function __demodata()
     datapath = joinpath(dirname(dirname(pathof(SDeMo))), "data")
     y = convert(Vector{Bool}, parse.(Bool, readlines(joinpath(datapath, "labels.csv"))))
     X = parse.(Float64, hcat(split.(readlines(joinpath(datapath, "features.csv")), "\t")...))
-    C = nothing 
+    C = [tuple(line) for line in readlines(joinpath(datapath, "coordinates.csv"))]
     return (permutedims(X), y, C)
 end
 

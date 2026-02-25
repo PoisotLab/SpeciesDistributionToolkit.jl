@@ -136,9 +136,28 @@ function _read_geotiff(
             min_height:max_height,
             min_width:max_width,
         )
+
+        # Get the scale and offset value, with default values of 1 and 0
+        scale = 1.0
+        try
+            scale = ArchGDAL.getscale(band)
+        catch
+            nothing
+        end
+        offset = 0.0
+        try
+            offset = ArchGDAL.getoffset(band)
+        catch
+            nothing
+        end
+
+        # Get the mask and apply the re-scaling of the layer
+        buffer_mask = rotl90(buffer .!= nodata)
+        unscaled_buffer = rotl90(buffer .* scale .+ offset)
+
         return SDMLayer(
-            rotl90(buffer),
-            rotl90(buffer .!= nodata),
+            unscaled_buffer,
+            buffer_mask,
             (left_pos - 0.5lon_stride, right_pos + 0.5lon_stride),
             (bottom_pos - 0.5lat_stride, top_pos + 0.5lat_stride),
             replace(string(wkt), "Spatial Reference System: " => ""),
@@ -217,4 +236,10 @@ end
     )
 
     @test isfile(f)
+end
+
+@testitem "We can read a layer with scale and offset info" begin
+    _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
+    k = SDMLayer(joinpath(_data_path, "temperature.tif"); bandnumber=1)
+    @test typeof(k) <: SDMLayer
 end

@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.3.3`
+
+- **added** a demonstration dataset with temperature
+- **added** the correct handling of scale and offset data [#540]
+
 ## `v1.3.2`
 
 - **added** a `Makie` compatibility entry for `0.24`
@@ -31,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.2.0`
 
-- **added** support for the `NeutralLandcapes` package through an extension (not currently supporting updaters) [#368]
+- **added** support for the `NeutralLandscapes` package through an extension (not currently supporting updaters) [#368]
 - **removed** `Requires` as a dependency
 - **changed** the Julia version to LTS (1.10)
 

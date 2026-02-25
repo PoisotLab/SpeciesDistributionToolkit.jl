@@ -15,13 +15,13 @@ function __demodata()
     datapath = joinpath(dirname(dirname(pathof(SDeMo))), "data")
     y = convert(Vector{Bool}, parse.(Bool, readlines(joinpath(datapath, "labels.csv"))))
     X = parse.(Float64, hcat(split.(readlines(joinpath(datapath, "features.csv")), "\t")...))
-    C = [tuple(line) for line in readlines(joinpath(datapath, "coordinates.csv"))]
+    C = [tuple(parse.(Float64, split(line, "\t"))...) for line in readlines(joinpath(datapath, "coordinates.csv"))]
     return (permutedims(X), y, C)
 end
 
 @testitem "We can load the demonstration data, and they contain the coordinates for each instance" begin
     X, y, C = SDeMo.__demodata()
-    @assert length(y) == 1484
+    @assert length(y) == 1533
     @assert length(C) == length(y)
     @assert size(X, 2) == length(y)
     @assert size(X, 1) == 19

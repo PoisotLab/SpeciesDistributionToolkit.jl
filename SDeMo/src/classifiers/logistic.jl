@@ -237,7 +237,7 @@ function __equation(sdm::SDM; digits = 2)
 end
 
 @testitem "We can run a Logistic model" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, Logistic, X, y)
     variables!(sdm, [1, 2, 12])
     folds = holdout(sdm)
@@ -248,7 +248,7 @@ end
 end
 
 @testitem "We can run a verbose Logistic model with no training data" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, Logistic, X, y)
     variables!(sdm, [1, 2, 12])
     classifier(sdm).verbose = true

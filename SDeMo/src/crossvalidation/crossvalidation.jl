@@ -37,7 +37,7 @@ function leaveoneout(y, X; rebalanced::Bool = false)
 end
 
 @testitem "We can do LOO validation" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = leaveoneout(model)
     cv = crossvalidate(model, folds)
@@ -45,7 +45,7 @@ end
 end
 
 @testitem "We can do LOO validation with re-balancing" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = leaveoneout(model; rebalanced = true)
     @test length(folds[1][1]) == length(y) - 2
@@ -106,7 +106,7 @@ function holdout(y, X; proportion = 0.2, permute = true)
 end
 
 @testitem "We can do holdout validation" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = holdout(model)
     cv = crossvalidate(model, [folds])
@@ -128,7 +128,7 @@ function montecarlo(y, X; n = 100, kwargs...)
 end
 
 @testitem "We can do montecarlo validation" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = montecarlo(model; n = 10)
     cv = crossvalidate(model, folds)
@@ -163,7 +163,7 @@ function kfold(y, X; k = 10, permute = true)
 end
 
 @testitem "We can do kfold validation" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = kfold(model; k = 12)
     cv = crossvalidate(model, folds)
@@ -192,7 +192,7 @@ for op in (:leaveoneout, :holdout, :montecarlo, :kfold)
 end
 
 @testitem "We can split data in an SDM" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(PCATransform, BIOCLIM, X, y)
     folds = montecarlo(sdm; n = 10)
     @test length(folds) == 10
@@ -332,7 +332,7 @@ function _validate_one_model!(model::T, fold, τ, kwargs...) where {T <: Abstrac
 end
 
 @testitem "We can cross-validate an SDM" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(PCATransform, BIOCLIM, X, y)
     variables!(sdm, [1, 2, 12])
     train!(sdm)
@@ -343,7 +343,7 @@ end
 end
 
 @testitem "We can cross-validate a model without specifying folds" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(PCATransform, BIOCLIM, X, y)
     variables!(sdm, [1, 2, 12])
     train!(sdm)
@@ -354,7 +354,7 @@ end
 
 @testitem "We can cross-validate an ensemble model using the consensus keyword" begin
     using Statistics
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(PCATransform, NaiveBayes, X, y)
     variables!(sdm, [1, 2, 12])
     ens = Bagging(sdm, 10)

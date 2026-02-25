@@ -61,7 +61,7 @@ threshold(b::AdaBoost) = 0.5
 hyperparameters(::Type{AdaBoost}) = (:η, )
 
 @testitem "We can change the hyper-parameters of an AdaBoost classifier" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     stump = SDM(RawData, DecisionTree, X, y)
     hyperparameters!(classifier(stump), :maxnodes, 2)
     hyperparameters!(classifier(stump), :maxdepth, 1)
@@ -72,7 +72,7 @@ hyperparameters(::Type{AdaBoost}) = (:η, )
 end
 
 @testitem "We can train an AdaBoost classifier" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     stump = SDM(RawData, DecisionTree, X, y)
     hyperparameters!(classifier(stump), :maxnodes, 2)
     hyperparameters!(classifier(stump), :maxdepth, 1)
@@ -90,7 +90,7 @@ function variables!(b::AdaBoost, v::Vector{Int})
 end
 
 @testitem "We can set the variables of an AdaBoost model" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     stump = SDM(RawData, DecisionTree, X, y)
     hyperparameters!(classifier(stump), :maxnodes, 2)
     hyperparameters!(classifier(stump), :maxdepth, 1)

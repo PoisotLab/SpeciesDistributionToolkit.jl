@@ -11,7 +11,7 @@ end
 Ensemble(m::T...) where {T <: AbstractSDM} = Ensemble([m...])
 
 @testitem "We can setup an ensemble" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     m1 = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     m2 = SDM(ZScore, BIOCLIM, X, y)
     ens = Ensemble([m1, m2])
@@ -19,7 +19,7 @@ Ensemble(m::T...) where {T <: AbstractSDM} = Ensemble([m...])
 end
 
 @testitem "We can setup an ensemble the other way" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     m1 = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     m2 = SDM(ZScore, BIOCLIM, X, y)
     ens = Ensemble(m1, m2)
@@ -32,7 +32,7 @@ Base.popat!(ens::Ensemble, i) = popat!(ens.models, i)
 Base.deleteat!(ens::Ensemble, i) = deleteat!(ens.models, i)
 
 @testitem "We can add and remove models from an ensemble" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     m1 = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     ens = Ensemble([m1])
     @test ens isa Ensemble
@@ -45,7 +45,7 @@ Base.deleteat!(ens::Ensemble, i) = deleteat!(ens.models, i)
 end
 
 @testitem "We can setup an ensemble where one model is a bagged one" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     m1 = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     m2 = SDM(ZScore, BIOCLIM, X, y)
     m3 = Bagging(m1, 5)

@@ -52,7 +52,7 @@ function correct(cal::Vector{<:AbstractCalibration})
 end
 
 @testitem "We can do Platt calibration (all values)" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(PCATransform, NaiveBayes, X, y)
     train!(model)
     C = calibrate(PlattCalibration, model)
@@ -61,7 +61,7 @@ end
 
 
 @testitem "We can do Isotonic calibration (some values, keywords)" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(PCATransform, NaiveBayes, X, y)
     train!(model)
     @assert IsotonicCalibration <: AbstractCalibration
@@ -70,7 +70,7 @@ end
 end
 
 @testitem "We can do Isotonic calibration (bootstrapped values, keywords)" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(PCATransform, NaiveBayes, X, y)
     train!(model)
     @assert IsotonicCalibration <: AbstractCalibration
@@ -79,7 +79,7 @@ end
 end
 
 @testitem "We can do Platt calibration (bootstrapped values)" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(PCATransform, NaiveBayes, X, y)
     train!(model)
     @assert PlattCalibration <: AbstractCalibration

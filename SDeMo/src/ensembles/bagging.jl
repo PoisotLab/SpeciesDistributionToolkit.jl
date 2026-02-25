@@ -47,13 +47,13 @@ function isgeoreferenced(bagged::Bagging)
 end
 
 @testitem "A default bagged model is not georeferenced" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = Bagging(SDM(RawData, NaiveBayes, X, y), 10)
     @test !isgeoreferenced(model)
 end
 
 @testitem "A bagged model from a georeferenced model is georeferenced" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     coordinates = [Tuple(randn(2)) for _ in eachindex(y)]
     model = Bagging(SDM(RawData, NaiveBayes, X, y, coordinates), 10)
     @test isgeoreferenced(model)
@@ -134,7 +134,7 @@ function variables!(ensemble::Bagging, v::Vector{Int})
 end
 
 @testitem "We can bag the features of an ensemble model" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, DecisionTree, X, y)
     ensemble = Bagging(model, 10)
     bagfeatures!(ensemble)

@@ -133,7 +133,7 @@ function counterfactual(
 end
 
 @testitem "We can generate a counterfactual" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     train!(model)
     c = counterfactual(
@@ -148,7 +148,7 @@ end
 
 @testitem "We can generate a counterfactual from a bagged model" begin
     using Statistics
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = Bagging(SDM(MultivariateTransform{PCA}, DecisionTree, X, y), 10)
     train!(model)
     c = counterfactual(

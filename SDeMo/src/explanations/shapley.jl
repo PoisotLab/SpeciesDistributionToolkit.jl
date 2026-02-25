@@ -111,7 +111,7 @@ function explain(
 end
 
 @testitem "We can calculate Shapley values" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(RawData, NaiveBayes, X, y)
     variables!(sdm, [1, 2])
     train!(sdm)
@@ -123,7 +123,7 @@ end
 end
 
 @testitem "We can calculate Shapley values on non-training data" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(RawData, NaiveBayes, X, y)
     variables!(sdm, [1, 2])
     train!(sdm)
@@ -135,7 +135,7 @@ end
 end
 
 @testitem "We can calculate Shapley values for a single observation" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(RawData, NaiveBayes, X, y)
     variables!(sdm, [1, 3, 4, 17, 11, 2])
     train!(sdm)
@@ -146,7 +146,7 @@ end
 end
 
 @testitem "We can calculate Shapley values on differently-typed data" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(RawData, NaiveBayes, X, y)
     variables!(sdm, [1, 3, 4, 17, 11, 2])
     train!(sdm)

@@ -104,7 +104,7 @@ function loadsdm(file::String; kwargs...)
 end
 
 @testitem "We can write a model with no hyper-parameters and load it back" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(RawData, BIOCLIM, X, y)
     variables!(sdm, [1, 2, 12])
     train!(sdm)
@@ -118,7 +118,7 @@ end
 end
 
 @testitem "We can write a model and load it back" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(PCATransform, BIOCLIM, X, y)
     variables!(sdm, [1, 2, 12])
     train!(sdm)
@@ -132,7 +132,7 @@ end
 end
 
 @testitem "We can write a Logistic model and load it back" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, Logistic, X, y)
     variables!(sdm, [1, 2, 12])
     train!(sdm)
@@ -146,7 +146,7 @@ end
 end
 
 @testitem "We can preserve the hyper-parameters when loading a model" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, Logistic, X, y)
     variables!(sdm, [1, 2, 12])
     hyperparameters!(classifier(sdm), :epochs, 100)
@@ -167,7 +167,7 @@ end
 end
 
 @testitem "We can save and load a SDM with geospatial references" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     coordinates = [Tuple(randn(2)) for _ in eachindex(y)]
     model = SDM(RawData, NaiveBayes, X, y, coordinates)
     tf = tempname()

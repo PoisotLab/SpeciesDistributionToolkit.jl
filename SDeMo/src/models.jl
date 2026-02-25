@@ -132,27 +132,27 @@ function isgeoreferenced(sdm::SDM)
 end
 
 @testitem "We can create a SDM without geospatial references" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(RawData, NaiveBayes, X, y)
     @test !isgeoreferenced(model)
 end
 
 @testitem "We can create a SDM with geospatial references" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     coordinates = [Tuple(randn(2)) for _ in eachindex(y)]
     model = SDM(RawData, NaiveBayes, X, y, coordinates)
     @test isgeoreferenced(model)
 end
 
 @testitem "We get an error if the number of observations and labels do not match" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     push!(y, true)
     coordinates = [Tuple(randn(2)) for _ in eachindex(y)]
     @test_throws DimensionMismatch SDM(RawData, NaiveBayes, X, y, coordinates)
 end
 
 @testitem "We get an error if the number of labels and coordinates do not match" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     coordinates = [Tuple(randn(2)) for _ in Base.OneTo(length(y)+1)]
     @test_throws DimensionMismatch SDM(RawData, NaiveBayes, X, y, coordinates)
 end

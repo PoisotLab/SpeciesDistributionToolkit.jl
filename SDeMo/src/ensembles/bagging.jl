@@ -130,6 +130,7 @@ function bagfeatures!(ensemble::Bagging, n::Integer)
     for model in ensemble.models
         sampled_variables = StatsBase.sample(variables(model), n; replace = false)
         variables!(model, sampled_variables)
+        model.trained = false
     end
     return ensemble
 end
@@ -148,13 +149,15 @@ function variables!(ensemble::Bagging, v::Vector{Int})
     return ensemble
 end
 
-@testitem "We can bag the features of an ensemble model" begin
+@testitem "We can bag the features of an ensemble model (in un-trains the model)" begin
     X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, DecisionTree, X, y)
     ensemble = Bagging(model, 10)
     bagfeatures!(ensemble)
+    @test !istrained(ensemble)
     for model in ensemble.models
         @test length(variables(model)) == ceil(Int64, sqrt(size(X, 1)))
+        @test !istrained(model)
     end
 end
 

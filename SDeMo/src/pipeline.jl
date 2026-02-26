@@ -49,7 +49,8 @@ function train!(
 
     # This is the final training step
     train!(classifier(sdm), labels(sdm)[training], X₁; Xt = Xₜ, yt = yₜ)
-
+    sdm.trained = true
+    
     # When the training is done, we can set the threshold
     if threshold
         # List of indices to compare - we use the validation if there are at
@@ -78,7 +79,7 @@ function train!(
 
         threshold!(sdm, best_threshold)
     end
-    sdm.trained = true
+
     return sdm
 end
 

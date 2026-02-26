@@ -126,6 +126,15 @@ function _read_geotiff(
 
         max_height, min_height = height .- (min_height, max_height) .+ 1
 
+        # Get the scale and offset value
+        scale = ArchGDAL.getscale(band)
+        offset = ArchGDAL.getoffset(band)
+
+        # If the scale and offset are set, we will need the data in a different type
+        if !(isone(scale) & iszero(offset))
+            T = eltype(promote(scale, one(T)))
+        end
+
         # We are now ready to initialize a matrix of the correct type.
         buffer =
             Matrix{T}(undef, length(min_width:max_width), length(min_height:max_height))
@@ -136,9 +145,22 @@ function _read_geotiff(
             min_height:max_height,
             min_width:max_width,
         )
+
+        # Get the mask and apply the re-scaling of the layer
+        buffer = rotl90(buffer)
+        valued = buffer .!= nodata
+
+        # Apply scale and offset AFTER getting the nodata values, as needed
+        if !isone(scale)
+            buffer .*= scale
+        end
+        if !iszero(offset)
+            buffer .+= offset
+        end
+
         return SDMLayer(
-            rotl90(buffer),
-            rotl90(buffer .!= nodata),
+            buffer,
+            valued,
             (left_pos - 0.5lon_stride, right_pos + 0.5lon_stride),
             (bottom_pos - 0.5lat_stride, top_pos + 0.5lat_stride),
             replace(string(wkt), "Spatial Reference System: " => ""),
@@ -217,4 +239,12 @@ end
     )
 
     @test isfile(f)
+end
+
+@testitem "We can read a layer with scale and offset info" begin
+    _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
+    k = SDMLayer(joinpath(_data_path, "temperature.tif"); bandnumber = 1)
+    @test typeof(k) <: SDMLayer
+    @test minimum(k) <= -25.0f0
+    @test maximum(k) >= 19.0f0
 end

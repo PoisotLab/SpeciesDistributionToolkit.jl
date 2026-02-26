@@ -55,7 +55,7 @@ given as longitude,latitude. If there are no known coordinates for the
 observations, this field must be an empty vector of the correct type. As of now,
 there is no plan to support datasets that only have some coordinates known.
 """
-mutable struct SDM{F, L} <: AbstractSDM
+Base.@kwdef mutable struct SDM{F, L} <: AbstractSDM
     transformer::Transformer
     classifier::Classifier
     τ::Number # Threshold
@@ -63,6 +63,7 @@ mutable struct SDM{F, L} <: AbstractSDM
     y::Vector{L} # Labels
     v::Vector{Int} # Variables
     coordinates::Vector{Tuple{Float64, Float64}}
+    trained::Bool = false
 end
 
 function SDM(
@@ -94,6 +95,7 @@ function SDM(
         y,
         collect(1:size(X, 1)),
         coordinates,
+        false
     )
 end
 
@@ -118,6 +120,7 @@ function SDM(
         y,
         collect(1:size(X, 1)),
         Tuple{Float64, Float64}[],
+        false
     )
 end
 
@@ -131,6 +134,16 @@ function isgeoreferenced(sdm::SDM)
     return !isempty(sdm.coordinates)
 end
 
+"""
+    istrained(sdm::SDM)
+
+Returns `true` if the SDM has been trained. Attempting to predict on an
+un-trained SDM will result in an error.
+"""
+function istrained(sdm::SDM)
+    return sdm.trained
+end
+
 @testitem "We can create a SDM without geospatial references" begin
     X, y, C = SDeMo.__demodata()
     model = SDM(RawData, NaiveBayes, X, y)
@@ -139,22 +152,26 @@ end
 
 @testitem "We can create a SDM with geospatial references" begin
     X, y, C = SDeMo.__demodata()
-    coordinates = [Tuple(randn(2)) for _ in eachindex(y)]
-    model = SDM(RawData, NaiveBayes, X, y, coordinates)
+    model = SDM(RawData, NaiveBayes, X, y, C)
     @test isgeoreferenced(model)
 end
 
 @testitem "We get an error if the number of observations and labels do not match" begin
     X, y, C = SDeMo.__demodata()
     push!(y, true)
-    coordinates = [Tuple(randn(2)) for _ in eachindex(y)]
-    @test_throws DimensionMismatch SDM(RawData, NaiveBayes, X, y, coordinates)
+    @test_throws DimensionMismatch SDM(RawData, NaiveBayes, X, y, C)
 end
 
 @testitem "We get an error if the number of labels and coordinates do not match" begin
     X, y, C = SDeMo.__demodata()
-    coordinates = [Tuple(randn(2)) for _ in Base.OneTo(length(y)+1)]
-    @test_throws DimensionMismatch SDM(RawData, NaiveBayes, X, y, coordinates)
+    popfirst!(C)
+    @test_throws DimensionMismatch SDM(RawData, NaiveBayes, X, y, C)
+end
+
+@testitem "We have untrained SDMs when created" begin
+    X, y, C = SDeMo.__demodata()
+    model = SDM(RawData, NaiveBayes, X, y, C)
+    @test !istrained(model)
 end
 
 """

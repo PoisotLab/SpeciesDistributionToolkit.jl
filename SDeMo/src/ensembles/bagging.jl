@@ -42,9 +42,10 @@ Returns `true` if the model that is bagged is georeferenced. Note that the
 bagged models contain all the data, so they also contain all of the localisation
 information.
 """
-function isgeoreferenced(bagged::Bagging)
-    return isgeoreferenced(bagged.model)
-end
+isgeoreferenced(bagged::Bagging) = isgeoreferenced(bagged.model)
+
+istrained(bagged::Bagging) = all(istrained.(bagged.models))
+
 
 @testitem "A default bagged model is not georeferenced" begin
     X, y, C = SDeMo.__demodata()

@@ -34,6 +34,8 @@ function isgeoreferenced(boosted::AdaBoost)
     return isgeoreferenced(boosted.model)
 end
 
+istrained(boosted::AdaBoost) = all(istrained.(boosted.learners))
+
 function AdaBoost(model::SDM; iterations = 50)
     return AdaBoost(
         deepcopy(model),

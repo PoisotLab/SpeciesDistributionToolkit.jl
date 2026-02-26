@@ -79,7 +79,9 @@ end
     hyperparameters!(classifier(stump), :maxnodes, 2)
     hyperparameters!(classifier(stump), :maxdepth, 1)
     model = AdaBoost(stump, 50)
+    @test !istrained(model)
     train!(model)
+    @test istrained(model)
     @test eltype(predict(model)) <: Bool
 end
 

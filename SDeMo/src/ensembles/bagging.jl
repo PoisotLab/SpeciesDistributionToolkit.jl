@@ -47,9 +47,10 @@ isgeoreferenced(bagged::Bagging) = isgeoreferenced(bagged.model)
 istrained(bagged::Bagging) = all(istrained.(bagged.models))
 
 
-@testitem "A default bagged model is not georeferenced" begin
+@testitem "A default bagged model is not georeferenced and untrained" begin
     X, y, C = SDeMo.__demodata()
     model = Bagging(SDM(RawData, NaiveBayes, X, y), 10)
+    @test !istrained(model)
     @test !isgeoreferenced(model)
 end
 
@@ -66,7 +67,20 @@ end
 Creates a baged model from an SDM by specifying the bags in advance.
 """
 function Bagging(model::SDM, bags::Vector)
-    return Bagging(model, bags, [deepcopy(model) for _ in eachindex(bags)])
+    bagged = Bagging(model, bags, [deepcopy(model) for _ in eachindex(bags)])
+    for i in eachindex(bagged.models)
+        bagged.models[i].trained = false
+    end
+    return bagged
+end
+
+@testitem "A bagged model from a trained model is untrained" begin
+    X, y, C = SDeMo.__demodata()
+    sdm = SDM(RawData, NaiveBayes, X, y, C)
+    train!(sdm)
+    @test istrained(sdm)
+    model = Bagging(sdm, 10)
+    @test !istrained(model)
 end
 
 """

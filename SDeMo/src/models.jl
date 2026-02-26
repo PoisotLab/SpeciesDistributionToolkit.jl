@@ -95,7 +95,7 @@ function SDM(
         y,
         collect(1:size(X, 1)),
         coordinates,
-        false
+        false,
     )
 end
 
@@ -120,7 +120,7 @@ function SDM(
         y,
         collect(1:size(X, 1)),
         Tuple{Float64, Float64}[],
-        false
+        false,
     )
 end
 
@@ -257,3 +257,47 @@ transformer(model::SDM) = model.transformer
 Returns the classifier used by the model
 """
 classifier(model::SDM) = model.classifier
+
+"""
+    transformer!(model::SDM, ::Type{Transformer})
+
+Update the model to use a different transformer. This (obviously) marks the
+model as untrained.
+"""
+function transformer!(model::SDM, ::Type{T}) where {T <: Transformer}
+    model.trained = false
+    model.transformer = T()
+    return model
+end
+
+"""
+    classifier!(model::SDM, ::Type{Classifier})
+
+Update the model to use a different classifier. This (obviously) marks the
+model as untrained.
+"""
+function classifier!(model::SDM, ::Type{T}) where {T <: Classifier}
+    model.trained = false
+    model.classifier = T()
+    return model
+end
+
+@testitem "We can replace the classifier in a model" begin
+    X, y, C = SDeMo.__demodata()
+    model = SDM(RawData, NaiveBayes, X, y, C)
+    train!(model)
+    @test istrained(model)
+    classifier!(model, Logistic)
+    @test !istrained(model)
+    @test typeof(classifier(model)) isa Logistic
+end
+
+@testitem "We can replace the transformer in a model" begin
+    X, y, C = SDeMo.__demodata()
+    model = SDM(RawData, NaiveBayes, X, y, C)
+    train!(model)
+    @test istrained(model)
+    transformer!(model, PCATransform)
+    @test !istrained(model)
+    @test typeof(transformer(model)) isa PCATransform
+end

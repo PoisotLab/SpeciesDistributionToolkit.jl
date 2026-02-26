@@ -12,7 +12,7 @@ Random.seed!(123451234123121); #hide
 
 # We will work on the demo data:
 
-X, y = SDeMo.__demodata()
+X, y, C = SDeMo.__demodata()
 
 # We will limit the model to two variables for the sake of illustration. We will
 # train a simple decision tree with two variables:

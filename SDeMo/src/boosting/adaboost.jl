@@ -23,6 +23,17 @@ mutable struct AdaBoost <: AbstractBoostedSDM
     η::Real
 end
 
+"""
+    isgeoreferenced(boosted::AdaBoost)
+
+Returns `true` if the model that is boosted is georeferenced. Note that the
+bagged models contain all the data, so they also contain all of the localisation
+information.
+"""
+function isgeoreferenced(boosted::AdaBoost)
+    return isgeoreferenced(boosted.model)
+end
+
 function AdaBoost(model::SDM; iterations = 50)
     return AdaBoost(
         deepcopy(model),
@@ -50,7 +61,7 @@ threshold(b::AdaBoost) = 0.5
 hyperparameters(::Type{AdaBoost}) = (:η, )
 
 @testitem "We can change the hyper-parameters of an AdaBoost classifier" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     stump = SDM(RawData, DecisionTree, X, y)
     hyperparameters!(classifier(stump), :maxnodes, 2)
     hyperparameters!(classifier(stump), :maxdepth, 1)
@@ -61,7 +72,7 @@ hyperparameters(::Type{AdaBoost}) = (:η, )
 end
 
 @testitem "We can train an AdaBoost classifier" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     stump = SDM(RawData, DecisionTree, X, y)
     hyperparameters!(classifier(stump), :maxnodes, 2)
     hyperparameters!(classifier(stump), :maxdepth, 1)
@@ -79,7 +90,7 @@ function variables!(b::AdaBoost, v::Vector{Int})
 end
 
 @testitem "We can set the variables of an AdaBoost model" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     stump = SDM(RawData, DecisionTree, X, y)
     hyperparameters!(classifier(stump), :maxnodes, 2)
     hyperparameters!(classifier(stump), :maxdepth, 1)

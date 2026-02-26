@@ -137,7 +137,7 @@ end
 
 @testitem "We can train a model without the absences" begin
     using Statistics
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(ZScore, NaiveBayes, X, y)
     train!(model)
     tf = transformer(model)
@@ -150,7 +150,7 @@ end
 
 @testitem "We can train a model with the absences" begin
     using Statistics
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(ZScore, NaiveBayes, X, y)
     train!(model; absences = true)
     tf = transformer(model)

@@ -301,7 +301,7 @@ function variables!(
 end
 
 @testitem "We can do forward variable selection" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     f = kfold(sdm)
     variables!(sdm, ForwardSelection, f; included = [1, 12])
@@ -311,7 +311,7 @@ end
 end
 
 @testitem "We can do backward variable selection" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     f = kfold(sdm)
     variables!(sdm, BackwardSelection, f; included = [1, 12])
@@ -321,7 +321,7 @@ end
 end
 
 @testitem "The default folds are used in variable selection if not specified" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     f = kfold(sdm)
     variables!(sdm, ForwardSelection; included = [1, 12])
@@ -331,28 +331,28 @@ end
 end
 
 @testitem "All variables are used if no pool is given" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     variables!(sdm, ForwardSelection, kfold(sdm))
     @test length(variables(sdm)) < 19
 end
 
 @testitem "We can do variable selection without any arguments" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     variables!(sdm, ForwardSelection)
     @test length(variables(sdm)) < 19
 end
 
 @testitem "We can do variable selection with a different measure" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     variables!(sdm, ForwardSelection; optimality = κ)
     @test length(variables(sdm)) < 19
 end
 
 @testitem "We can reset variables" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     variables!(sdm, ForwardSelection)
     @test length(variables(sdm)) < 19
@@ -361,7 +361,7 @@ end
 end
 
 @testitem "We can do VIF selection" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     f = kfold(sdm)
     variables!(sdm, VarianceInflationFactor{10.0}, f; included = [1, 12])
@@ -371,7 +371,7 @@ end
 end
 
 @testitem "We can do selection on a bagged ensemble" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     f = kfold(sdm)
     ensemble = Bagging(sdm, 10)
@@ -387,7 +387,7 @@ end
 end
 
 @testitem "We can do selection on a bagged ensemble with bagged features" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     f = kfold(sdm)
     ensemble = Bagging(sdm, 10)
@@ -446,7 +446,7 @@ function variables!(
 end
 
 @testitem "We can do strict VIF selection" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     sdm = SDM(ZScore, DecisionTree, X, y)
     variables!(sdm, StrictVarianceInflationFactor{50.0}; included = [1, 12])
     @test 1 in variables(sdm)

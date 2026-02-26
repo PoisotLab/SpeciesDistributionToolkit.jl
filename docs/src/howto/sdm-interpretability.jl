@@ -12,7 +12,7 @@ Random.seed!(123451234123121); #hide
 
 # We will work on the demo data:
 
-X, y = SDeMo.__demodata()
+X, y, C = SDeMo.__demodata()
 sdm = SDM(RawData, Logistic, X, y)
 variables!(sdm, [1, 12])
 hyperparameters!(classifier(sdm), :interactions, :self)

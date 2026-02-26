@@ -79,8 +79,8 @@ for op in (:noskill, :coinflip, :constantpositive, :constantnegative)
 end
 
 @testitem "We can construct null CM from an SDM" begin
-    X, y = SDeMo.__demodata()
-    sdm = SDM(MultivariateTransform{PCA}(), BIOCLIM(), 0.01, X, y, 1:size(X, 1))
+    X, y, C = SDeMo.__demodata()
+    sdm = SDM(PCATransform, BIOCLIM, X, y)
     train!(sdm)
     @test sum(Matrix(ConfusionMatrix(sdm))) == length(y)
 end

@@ -144,7 +144,7 @@ end
 
 
 @testitem "We can do forward selection with no included features" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     forwardselection!(model, folds)
@@ -152,7 +152,7 @@ end
 end
 
 @testitem "We can do forward selection with included features" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     forwardselection!(model, folds, [1,12]; verbose=true)
@@ -162,7 +162,7 @@ end
 end
 
 @testitem "We can do backward selection with no included features" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     backwardselection!(model, folds)
@@ -170,7 +170,7 @@ end
 end
 
 @testitem "We can do backward selection with included features" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     backwardselection!(model, folds, [1,12])
@@ -180,7 +180,7 @@ end
 end
 
 @testitem "We can do verbose forward selection" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     forwardselection!(model, folds; verbose=true)
@@ -188,7 +188,7 @@ end
 end
 
 @testitem "We can do verbose backward selection" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     backwardselection!(model, folds; verbose=true)
@@ -196,7 +196,7 @@ end
 end
 
 @testitem "Variable selection does not reset the model" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     pool = [1,2,3,4,5,6,7,8,9]
@@ -209,7 +209,7 @@ end
 end
 
 @testitem "Variable selection with non-model variables forced works" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     pool = [1,2,3,4,5,6,7,8,9]
@@ -228,7 +228,7 @@ end
 
 
 @testitem "Variable selection methods can be chained" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     n0 = length(variables(model))
     stepwisevif!(model, 50.0)

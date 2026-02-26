@@ -76,7 +76,7 @@ const WhiteningTransform = MultivariateTransform{Whitening}
 export PCATransform, PPCATransform, kPCATransform, WhiteningTransform
 
 @testitem "We can declare a model with a type alias" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(PCATransform, NaiveBayes, X, y)
     @test typeof(transformer(model)) === MultivariateTransform{PCA}
 end

@@ -289,7 +289,7 @@ end
     @test istrained(model)
     classifier!(model, Logistic)
     @test !istrained(model)
-    @test typeof(classifier(model)) isa Logistic
+    @test classifier(model) isa Logistic
 end
 
 @testitem "We can replace the transformer in a model" begin
@@ -299,5 +299,5 @@ end
     @test istrained(model)
     transformer!(model, PCATransform)
     @test !istrained(model)
-    @test typeof(transformer(model)) isa PCATransform
+    @test transformer(model) isa PCATransform
 end

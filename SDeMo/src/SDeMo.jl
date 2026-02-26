@@ -14,12 +14,15 @@ using StatsBase
 # Demo data
 include("utilities/demodata.jl")
 
+# Error handling
+include("errors.jl")
+export UntrainedModelError
 # Types
 include("models.jl")
 export AbstractSDM, AbstractEnsembleSDM, AbstractBoostedSDM
 export Transformer, Classifier
 export SDM
-export isgeoreferenced
+export isgeoreferenced, istrained
 export threshold, features, labels, variables, instance
 export threshold!, variables!
 export classifier, transformer

@@ -42,13 +42,15 @@ Returns `true` if the model that is bagged is georeferenced. Note that the
 bagged models contain all the data, so they also contain all of the localisation
 information.
 """
-function isgeoreferenced(bagged::Bagging)
-    return isgeoreferenced(bagged.model)
-end
+isgeoreferenced(bagged::Bagging) = isgeoreferenced(bagged.model)
 
-@testitem "A default bagged model is not georeferenced" begin
+istrained(bagged::Bagging) = all(istrained.(bagged.models))
+
+
+@testitem "A default bagged model is not georeferenced and untrained" begin
     X, y, C = SDeMo.__demodata()
     model = Bagging(SDM(RawData, NaiveBayes, X, y), 10)
+    @test !istrained(model)
     @test !isgeoreferenced(model)
 end
 
@@ -65,7 +67,20 @@ end
 Creates a baged model from an SDM by specifying the bags in advance.
 """
 function Bagging(model::SDM, bags::Vector)
-    return Bagging(model, bags, [deepcopy(model) for _ in eachindex(bags)])
+    bagged = Bagging(model, bags, [deepcopy(model) for _ in eachindex(bags)])
+    for i in eachindex(bagged.models)
+        bagged.models[i].trained = false
+    end
+    return bagged
+end
+
+@testitem "A bagged model from a trained model is untrained" begin
+    X, y, C = SDeMo.__demodata()
+    sdm = SDM(RawData, NaiveBayes, X, y, C)
+    train!(sdm)
+    @test istrained(sdm)
+    model = Bagging(sdm, 10)
+    @test !istrained(model)
 end
 
 """
@@ -115,6 +130,7 @@ function bagfeatures!(ensemble::Bagging, n::Integer)
     for model in ensemble.models
         sampled_variables = StatsBase.sample(variables(model), n; replace = false)
         variables!(model, sampled_variables)
+        model.trained = false
     end
     return ensemble
 end
@@ -133,13 +149,15 @@ function variables!(ensemble::Bagging, v::Vector{Int})
     return ensemble
 end
 
-@testitem "We can bag the features of an ensemble model" begin
+@testitem "We can bag the features of an ensemble model (in un-trains the model)" begin
     X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, DecisionTree, X, y)
     ensemble = Bagging(model, 10)
     bagfeatures!(ensemble)
+    @test !istrained(ensemble)
     for model in ensemble.models
         @test length(variables(model)) == ceil(Int64, sqrt(size(X, 1)))
+        @test !istrained(model)
     end
 end
 

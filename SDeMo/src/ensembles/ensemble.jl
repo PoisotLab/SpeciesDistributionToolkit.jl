@@ -10,12 +10,15 @@ end
 
 Ensemble(m::T...) where {T <: AbstractSDM} = Ensemble([m...])
 
+istrained(model::Ensemble) = all(istrained.(model.models))
+
 @testitem "We can setup an ensemble" begin
     X, y, C = SDeMo.__demodata()
     m1 = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     m2 = SDM(ZScore, BIOCLIM, X, y)
     ens = Ensemble([m1, m2])
     @test ens isa Ensemble
+    @test !istrained(ens)
 end
 
 @testitem "We can setup an ensemble the other way" begin

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.8.0`
 
+- **fixed** a bug where calling `reset!` would use a magic number threshold instead of the correct `zero`
+- **added** `transformer!` and `classifier!` to switch models [#539]
 - **added** `istrained` to check that the model is trained [#513]
 - **added** support for training point coordinates to `SDM`
 - **changed** the syntax to declare SDMs in most tests to streamline it

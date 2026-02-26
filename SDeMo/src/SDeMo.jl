@@ -26,6 +26,7 @@ export isgeoreferenced, istrained
 export threshold, features, labels, variables, instance
 export threshold!, variables!
 export classifier, transformer
+export classifier!, transformer!
 
 # Hyper-parameters
 include("hyperparameters.jl")

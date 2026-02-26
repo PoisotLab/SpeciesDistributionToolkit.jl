@@ -126,6 +126,15 @@ function _read_geotiff(
 
         max_height, min_height = height .- (min_height, max_height) .+ 1
 
+        # Get the scale and offset value
+        scale = ArchGDAL.getscale(band)
+        offset = ArchGDAL.getoffset(band)
+
+        # If the scale and offset are set, we will need the data in a different type
+        if !(isone(scale) & iszero(offset))
+            T = eltype(promote(scale, one(T)))
+        end
+
         # We are now ready to initialize a matrix of the correct type.
         buffer =
             Matrix{T}(undef, length(min_width:max_width), length(min_height:max_height))
@@ -137,19 +146,15 @@ function _read_geotiff(
             min_width:max_width,
         )
 
-        # Get the scale and offset value
-        scale = ArchGDAL.getscale(band)
-        offset = ArchGDAL.getoffset(band)
-
         # Get the mask and apply the re-scaling of the layer
         buffer = rotl90(buffer)
         valued = buffer .!= nodata
 
-        # Apply scale and offset AFTER getting the nodata values
-        if scale != 1.0
+        # Apply scale and offset AFTER getting the nodata values, as needed
+        if !isone(scale)
             buffer .*= scale
         end
-        if offset != 0.0
+        if !iszero(offset)
             buffer .+= offset
         end
 

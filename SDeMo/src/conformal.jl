@@ -103,6 +103,12 @@ function _ensure_conformal_is_trained(cp::Conformal)
     return nothing
 end
 
+"""
+    StatsAPI.predict(cp::Conformal, ŷ::Number)
+
+Makes a prediction using a conformal predictor, for a given quantitative
+prediction. The result is a set that contains boolean values (or is empty).
+"""
 function StatsAPI.predict(cp::Conformal, ŷ::Number)
     _ensure_conformal_is_trained(cp)
 
@@ -123,13 +129,31 @@ function StatsAPI.predict(cp::Conformal, ŷ::Number)
     return ℂ
 end
 
-StatsAPI.predict(cp::Conformal, ŷ::Vector{T}) where {T <: Number} = map(y -> StatsAPI.predict(cp, y), ŷ)
+"""
+    StatsAPI.predict(cp::Conformal, ŷ::Vector{T}) where {T <: Number}
 
+Makes a prediction for a conformal prediction, for a vector of quantitative
+predictions. Returns the output as a vector of sets.
+"""
+StatsAPI.predict(cp::Conformal, ŷ::Vector{T}) where {T <: Number} =
+    map(y -> StatsAPI.predict(cp, y), ŷ)
+
+"""
+    train!(::Conformal, ::AbstractSDM, training, calibration; mondrian=true, kwargs...)
+
+This trains a conformal predictor from a model, using a specified training and
+calibration set, given as vectors of integers.
+
+When using the `mondrian=true` keyword, the cutoffs are calculated for each
+class separately.
+
+All other `kwargs` are passed on to the model for training.
+"""    
 function train!(
     cp::Conformal,
     model::T,
-    training,
-    calibration;
+    training::Vector{Integer},
+    calibration::Vector{Integer};
     mondrian::Bool = true,
     kwargs...,
 ) where {T <: AbstractSDM}
@@ -150,7 +174,18 @@ function train!(
     return cp
 end
 
-function train!(cp::Conformal, model::S, folds::Vector{Tuple{Vector{Int}, Vector{Int}}}; kwargs...) where {S <: AbstractSDM}
+"""
+    train!(::Conformal, ::AbstractSDM, folds; kwargs...)
+
+Trains a conformal predictor by taking the median cutoffs obtained across
+different folds.
+"""
+function train!(
+    cp::Conformal,
+    model::S,
+    folds::Vector{Tuple{Vector{Int}, Vector{Int}}};
+    kwargs...,
+) where {S <: AbstractSDM}
     cps = [Conformal(risklevel(cp)) for _ in eachindex(folds)]
     for i in eachindex(cps)
         train!(cp, model, folds[i]...; kwargs...)
@@ -161,6 +196,11 @@ function train!(cp::Conformal, model::S, folds::Vector{Tuple{Vector{Int}, Vector
     return cp
 end
 
+"""
+    train!(cp::Conformal, model::S; kwargs...) where {S <: AbstractSDM}
+
+Trains a conformal predictor by taking the median over k-fold sets.
+"""
 function train!(cp::Conformal, model::S; kwargs...) where {S <: AbstractSDM}
     train!(cp, model, kfold(model); kwargs...)
     return cp
@@ -170,7 +210,7 @@ end
     model = SDM(ZScore, Logistic, SDeMo.__demodata()...)
     cp = Conformal(0.05)
     train!(model)
-    train!(cp, model, holdout(model)...; threshold=false, mondrian=true)
+    train!(cp, model, holdout(model)...; threshold = false, mondrian = true)
     @test istrained(cp)
     @test !iszero(cp.q₊)
     @test !iszero(cp.q₋)
@@ -180,7 +220,7 @@ end
     model = SDM(ZScore, Logistic, SDeMo.__demodata()...)
     cp = Conformal(0.05)
     train!(model)
-    train!(cp, model, holdout(model)...; threshold=false, mondrian=false)
+    train!(cp, model, holdout(model)...; threshold = false, mondrian = false)
     @test istrained(cp)
     @test !iszero(cp.q₊)
     @test !iszero(cp.q₋)
@@ -190,8 +230,8 @@ end
     model = SDM(ZScore, Logistic, SDeMo.__demodata()...)
     cp = Conformal(0.05)
     train!(model)
-    train!(cp, model, holdout(model)...; threshold=false)
-    outcomes = predict(cp, predict(model; threshold=false))
+    train!(cp, model, holdout(model)...; threshold = false)
+    outcomes = predict(cp, predict(model; threshold = false))
     @test outcomes isa Vector{<:Set}
 end
 
@@ -207,7 +247,7 @@ end
     cp = Conformal(0.05)
     train!(model)
     train!(cp, model, kfold(model))
-    outcomes = predict(cp, predict(model; threshold=false))
+    outcomes = predict(cp, predict(model; threshold = false))
     @test outcomes isa Vector{<:Set}
 end
 
@@ -216,6 +256,6 @@ end
     cp = Conformal(0.05)
     train!(model)
     train!(cp, model)
-    outcomes = predict(cp, predict(model; threshold=false))
+    outcomes = predict(cp, predict(model; threshold = false))
     @test outcomes isa Vector{<:Set}
 end

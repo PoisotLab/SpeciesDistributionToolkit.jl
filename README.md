@@ -9,11 +9,14 @@ toolkit meant to deal with (surprise!) species distribution data.
 
 Specifically, the goal of these packages put together is to provide a consistent way to handle
 occurrence data, put them on a map, and make it interact with environmental
-information. 
+information. The package also contains a full-featured library for species distribution models.
 
 > [!TIP]
-> There is a manuscript describing this package, currently available as a preprint:  
-> Poisot, T., Bussières-Fournel, A., Dansereau, G., and Catchen, M. D. (2025). A Julia toolkit for species distribution data. EcoEvoRxiv. doi: [10.32942/X2405R](https://ecoevorxiv.org/repository/view/8582/)
+> If you use this package, please cite:
+> 
+> Poisot, T., Bussières-Fournel, A., Dansereau, G., and Catchen, M. D. (2025). A Julia toolkit for species distribution data. _Peer Community Journal_ 5(e101). doi: [10.24072/pcjournal.589](https://peercommunityjournal.org/articles/10.24072/pcjournal.589/)
+>
+> Dansereau, G., and Poisot, T. (2021). SimpleSDMLayers.jl and GBIF.jl: A Framework for Species Distribution Modeling in Julia. _Journal of Open Source Software_ 6(57), 2872, doi: [10.21105/joss.02872](https://doi.org/10.21105/joss.02872)
 
 <p align="center">
   <img src="https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/blob/main/structure.drawio.png?raw=true" alt="Package overview"/>
@@ -24,6 +27,24 @@ The up-to-date documentation for the most recent version can be found
 contains tutorials showcasing the package in action, how-to guides to serve as a
 quick reference, and links to the documentation for all methods in the component
 packages.
+
+## Overview
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=v*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=Full%20toolkit&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=Occurrences*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=Occurrences%20interface&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=PseudoAbsences*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=Pseudo-absence%20generation&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=GBIF*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=GBIF%20wrapper&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=SDeMo*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=SDM%20functions&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=SimpleSDMDatasets*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=Raster%20data%20access&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=SimpleSDMPolygons*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=Polygon%20data%20access&labelColor=%23000000&color=%23ffffff)
+
+![GitHub Release](https://img.shields.io/github/v/release/PoisotLab/SpeciesDistributionToolkit.jl?sort=semver&filter=Phylopic*&display_name=release&style=for-the-badge&logo=julia&logoColor=%23ffffff&label=Phylopic%20integration&labelColor=%23000000&color=%23ffffff)
 
 ## Want to help?
 

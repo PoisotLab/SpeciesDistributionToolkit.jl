@@ -29,10 +29,11 @@ function source(
     timespan = first(SimpleSDMDatasets.timespans(data, future)),
 ) where {T <: BioClim, S <: CHELSA2Scenario, M <: CHELSA2Model}
     var_code = (layer isa Integer) ? layer : findfirst(isequal(layer), layers(data))
+    var_code = lpad(var_code, 2, '0')
     year_sep = string(timespan.first.value) * "-" * string(timespan.second.value)
     model_sep = replace(uppercase(string(M)) * "/" * lowercase(string(S)), "_" => "-")
-    root = "https://os.zhdk.cloud.switch.ch/chelsav2/GLOBAL/climatologies/$(year_sep)/$(model_sep)/bio/"
-    stem = "CHELSA_bio$(var_code)_$(year_sep)_$(lowercase(replace(string(M), "_" => "-")))_$(lowercase(string(S)))_V.2.1.tif"
+    root = "https://os.unil.cloud.switch.ch/chelsa02/chelsa/global/bioclim/bio$(var_code)/$(year_sep)/$(model_sep)/"
+    stem = "CHELSA_$(lowercase(replace(string(M), "_" => "-")))_$(lowercase(string(S)))_bio$(var_code)_$(year_sep)_V.2.1.tif"
     return (
         url = root * stem,
         filename = lowercase(stem),

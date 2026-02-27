@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.8.0`
 
+- **added** an overload of `copy` for SDMs
 - **added** `Conformal` and related functions for conformal prediction [#538]
 - **added** `transformer!` and `classifier!` to switch models [#539]
 - **added** `istrained` to check that the model is trained [#513]

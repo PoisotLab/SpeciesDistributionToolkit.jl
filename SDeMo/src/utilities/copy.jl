@@ -1,20 +1,20 @@
 Base.copy(model::T) where {T <: AbstractSDM} = deepcopy(model)
 
-function Base.copy(model::T)
+function Base.copy(model::SDM)
     return SDM(
-        copy(classifier(model)),
-        copy(transformer(model)),
+        deepcopy(transformer(model)),
+        deepcopy(classifier(model)),
         threshold(model),
         copy(features(model)),
         copy(labels(model)),
         copy(variables(model)),
-        copy(coordinates(model)),
+        copy(model.coordinates),
         istrained(model)
     )
 end
 
 @testitem "We can copy a SDM" begin
-    model = SDM(RawData, ZScore, SDeMo.__demodata()...)
+    model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     cp = copy(model)
     @test istrained(cp) == false
     @test isgeoreferenced(cp) == true

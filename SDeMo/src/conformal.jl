@@ -105,40 +105,6 @@ function _ensure_conformal_is_trained(cp::Conformal)
     return nothing
 end
 
-"""
-    StatsAPI.predict(cp::Conformal, ŷ::Number)
-
-Makes a prediction using a conformal predictor, for a given quantitative
-prediction. The result is a set that contains boolean values (or is empty).
-"""
-function StatsAPI.predict(cp::Conformal, ŷ::Number)
-    _ensure_conformal_is_trained(cp)
-
-    # Scoring function
-    scoring = (p) -> [p, 1.0 - p]
-
-    # Scores
-    p₊, p₋ = 1.0 .- scoring(ŷ)
-
-    # And now get the the prediction set
-    ℂ = Set()
-    if p₊ <= cp.q₊
-        push!(ℂ, true)
-    end
-    if p₋ <= cp.q₋
-        push!(ℂ, false)
-    end
-    return ℂ
-end
-
-"""
-    StatsAPI.predict(cp::Conformal, ŷ::Vector{T}) where {T <: Number}
-
-Makes a prediction for a conformal prediction, for a vector of quantitative
-predictions. Returns the output as a vector of sets.
-"""
-StatsAPI.predict(cp::Conformal, ŷ::Vector{T}) where {T <: Number} =
-    map(y -> StatsAPI.predict(cp, y), ŷ)
 
 """
     train!(::Conformal, ::AbstractSDM, training, calibration; mondrian=true, kwargs...)
@@ -176,6 +142,42 @@ function train!(
     return cp
 end
 
+
+"""
+    StatsAPI.predict(cp::Conformal, ŷ::Number)
+
+Makes a prediction using a conformal predictor, for a given quantitative
+prediction. The result is a set that contains boolean values (or is empty).
+"""
+function StatsAPI.predict(cp::Conformal, ŷ::Number)
+    _ensure_conformal_is_trained(cp)
+
+    # Scoring function
+    scoring = (p) -> [p, 1.0 - p]
+
+    # Scores
+    p₊, p₋ = 1.0 .- scoring(ŷ)
+
+    # And now get the the prediction set
+    ℂ = Set()
+    if p₊ <= cp.q₊
+        push!(ℂ, true)
+    end
+    if p₋ <= cp.q₋
+        push!(ℂ, false)
+    end
+    return ℂ
+end
+
+"""
+    StatsAPI.predict(cp::Conformal, ŷ::Vector{T}) where {T <: Number}
+
+Makes a prediction for a conformal prediction, for a vector of quantitative
+predictions. Returns the output as a vector of sets.
+"""
+StatsAPI.predict(cp::Conformal, ŷ::Vector{T}) where {T <: Number} =
+    map(y -> StatsAPI.predict(cp, y), ŷ)
+
 """
     train!(::Conformal, ::AbstractSDM, folds; kwargs...)
 
@@ -190,7 +192,7 @@ function train!(
 ) where {S <: AbstractSDM}
     cps = [Conformal(risklevel(cp)) for _ in eachindex(folds)]
     for i in eachindex(cps)
-        train!(cp, model, folds[i]...; kwargs...)
+        train!(cps[i], model, folds[i]...; kwargs...)
     end
     cp.trained = true
     cp.q₊ = median([c.q₊ for c in cps])

@@ -217,15 +217,3 @@ end
     train!(cp, model)
     @test outcomes isa Vector{<:Set}
 end
-
-#=
-TODO: port this too
-function conformal(cp::C, model::S, folds::Vector{Tuple{Vector{Int}, Vector{Int}}}; kwargs...) where {C <: AbstractConformal, S <: AbstractSDM}
-    mc_q = [conformal(cp, model, f...; kwargs...) for f in folds]
-    return Tuple(vec(median(vcat([hcat(q...) for q in mc_q]...), dims=1)))
-end
-
-function conformal(cp::C, model::S; kwargs...) where {C <: AbstractConformal, S <: AbstractSDM}
-    return conformal(cp, model, kfold(model); kwargs...)
-end
-=#

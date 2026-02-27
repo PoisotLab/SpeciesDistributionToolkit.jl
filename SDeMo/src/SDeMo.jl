@@ -128,7 +128,7 @@ export variableimportance
 
 # Conformal prediction
 include("conformal.jl")
-export risklevel
+export risklevel, risklevel!, Conformal
 
 # Explanations, etc
 include("explanations/counterfactual.jl")

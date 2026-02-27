@@ -8,7 +8,7 @@ different.
 
 This type has a trained flag and supports the `istrained` function.
 """
-Base.@kwdef struct Conformal{T} where {T <: AbstractFloat}
+Base.@kwdef mutable struct Conformal{T}
     α::T = 0.05
     q₊::T = zero(T)
     q₋::T = zero(T)
@@ -22,7 +22,7 @@ Creates an empty conformal predictor with a given risk level.
 """
 function Conformal(α::T) where {T <: AbstractFloat}
     @assert zero(T) <= α <= one(T)
-    return Conformal(; α = α)
+    return Conformal{T}(; α = α)
 end
 
 """
@@ -148,6 +148,42 @@ function train!(
     cp.trained = true
 
     return cp
+end
+
+@testitem "We can train a Mondrian conformal predictor" begin
+    model = SDM(ZScore, Logistic, SDeMo.__demodata()...)
+    cp = Conformal(0.05)
+    train!(model)
+    train!(cp, model, holdout(model)...; threshold=false, mondrian=true)
+    @test istrained(cp)
+    @test !iszero(cp.q₊)
+    @test !iszero(cp.q₋)
+end
+
+@testitem "We can train a conformal predictor" begin
+    model = SDM(ZScore, Logistic, SDeMo.__demodata()...)
+    cp = Conformal(0.05)
+    train!(model)
+    train!(cp, model, holdout(model)...; threshold=false, mondrian=false)
+    @test istrained(cp)
+    @test !iszero(cp.q₊)
+    @test !iszero(cp.q₋)
+end
+
+@testitem "We can predict with a trained conformal predictor" begin
+    model = SDM(ZScore, Logistic, SDeMo.__demodata()...)
+    cp = Conformal(0.05)
+    train!(model)
+    train!(cp, model, holdout(model)...; threshold=false)
+    outcomes = predict(cp, predict(model; threshold=false))
+    @test outcomes isa Vector{<:Set}
+end
+
+@testitem "We cannot predict with an untrained conformal predictor" begin
+    model = SDM(ZScore, Logistic, SDeMo.__demodata()...)
+    cp = Conformal(0.05)
+    train!(model)
+    @test_throws UntrainedModelError predict(cp, 0.5)
 end
 
 #=

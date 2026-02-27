@@ -6,7 +6,9 @@ threshold for the positive and negative classes, resp. q₊ and q₋. In the cas
 regular CP, the two thresholds are the same. For Mondrian CP, they are
 different.
 
-This type has a trained flag and supports the `istrained` function.
+This type has a trained flag and therefore supports the `istrained` function. If
+the prediction is attempted with a model that has not been trained, it should
+result in an `UntrainedModelError`.
 """
 Base.@kwdef mutable struct Conformal{T}
     α::T = 0.05

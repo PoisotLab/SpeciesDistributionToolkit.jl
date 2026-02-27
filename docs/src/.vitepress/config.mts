@@ -164,6 +164,7 @@ export default defineConfig({
                                 { text: "Interpretability", link: "/howto/sdm-interpretability/" },
                                 { text: "Counterfactuals", link: "/howto/sdm-counterfactuals/" },
                                 { text: "Calibration", link: "/howto/sdm-calibration/" },
+                                { text: "Conformal", link: "/howto/sdm-conformal/" },
                             ]
                         }
                     ]

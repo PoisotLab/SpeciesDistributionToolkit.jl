@@ -23,8 +23,7 @@ end
 
 @testitem "We can plot the occurrences of a georeferenced model" begin
     using CairoMakie
-    X, y, C = SDeMo.__demodata()
-    stump = SDM(RawData, DecisionTree, X, y)
+    stump = SDM(RawData, DecisionTree, SDeMo.__demodata()...)
     scatter(stump)
     @test true
 end

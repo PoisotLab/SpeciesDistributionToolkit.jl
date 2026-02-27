@@ -28,3 +28,16 @@ end
         @test pr_orig[i] == pr_copy[i]
     end
 end
+
+@testitem "We can train a copied SDM without affecting the original" begin
+    model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
+    cp = copy(model)
+    cp.y = [!l for l in cp.y]
+    train!(cp)
+    train!(model)
+    pr_orig = predict(model, threshold=false)
+    pr_copy = predict(cp, threshold=false)
+    for i in eachindex(pr_orig)
+        @test pr_orig[i] != pr_copy[i]
+    end
+end

@@ -207,6 +207,7 @@ end
     cp = Conformal(0.05)
     train!(model)
     train!(cp, model, kfold(model))
+    outcomes = predict(cp, predict(model; threshold=false))
     @test outcomes isa Vector{<:Set}
 end
 
@@ -215,5 +216,6 @@ end
     cp = Conformal(0.05)
     train!(model)
     train!(cp, model)
+    outcomes = predict(cp, predict(model; threshold=false))
     @test outcomes isa Vector{<:Set}
 end

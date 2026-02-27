@@ -12,7 +12,7 @@ Random.seed!(123451234123121); #hide
 
 # We will work on the demo data:
 
-X, y = SDeMo.__demodata()
+X, y, C = SDeMo.__demodata()
 sdm = SDM(PCATransform, DecisionTree, X, y)
 
 # We can now set a series of points at which to evaluate the threshold. Because

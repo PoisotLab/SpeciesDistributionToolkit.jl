@@ -20,7 +20,7 @@ SUITE["SimpleSDMLayers"]["quantize"] = @benchmarkable quantize($L, 10)
 # SDeMo benchmark
 SUITE["SDeMo"] = BenchmarkGroup()
 
-X, y = SDeMo.__demodata()
+X, y, C = SDeMo.__demodata()
 
 SUITE["SDeMo"]["splits"]["kfold"] = @benchmarkable kfold(sdm) setup=(sdm=SDM(RawData, NaiveBayes, X, y))
 SUITE["SDeMo"]["splits"]["LOO"] = @benchmarkable leaveoneout(sdm) setup=(sdm=SDM(RawData, NaiveBayes, X, y))

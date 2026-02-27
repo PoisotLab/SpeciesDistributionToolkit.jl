@@ -84,24 +84,24 @@ function partialresponse(model::T, i::Integer, j::Integer, s::Tuple=(50, 50); in
 end
 
 @testitem "We can get partial responses for a model" begin
-    X, y = SDeMo.__demodata()
-    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    X, y, C = SDeMo.__demodata()
+    model = SDM(PCATransform, NaiveBayes, X, y)
     train!(model)
     pr = partialresponse(model, 1)
     @test eltype(pr[2]) <: Bool
 end
 
 @testitem "We can get inflated partial responses for a model" begin
-    X, y = SDeMo.__demodata()
-    model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
+    X, y, C = SDeMo.__demodata()
+    model = SDM(PCATransform, NaiveBayes, X, y)
     train!(model)
     pr = partialresponse(model, 1; inflated=true)
     @test eltype(pr[2]) <: Bool
 end
 
 @testitem "We can get inflated partial responses for an ensemble" begin
-    X, y = SDeMo.__demodata()
-    model = Bagging(SDM(MultivariateTransform{PCA}, NaiveBayes, X, y), 5)
+    X, y, C = SDeMo.__demodata()
+    model = Bagging(SDM(RawData, NaiveBayes, X, y), 5)
     train!(model)
     pr = partialresponse(model, 1; inflated=true, threshold=false)
     @test eltype(pr[2]) <: Float64

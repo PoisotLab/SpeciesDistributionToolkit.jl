@@ -32,3 +32,9 @@ train!
 predict
 reset!
 ```
+
+### Error types
+
+```@docs
+UntrainedModelError
+```

@@ -47,7 +47,7 @@ function reliability(sdm::AbstractSDM; link::Function=identity, bins=9, samples=
 end
 
 @testitem "We can do a calibration curve" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(PCATransform, NaiveBayes, X, y)
     train!(model)
     x, y = reliability(model, bins=12)

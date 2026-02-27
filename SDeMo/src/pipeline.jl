@@ -29,8 +29,9 @@ function train!(
     data_axes = axes(features(sdm), 2)
 
     # For the transformer, we may only want to train the presence data
-    transformer_training_idx = absences ? data_axes[training] : findall(labels(sdm)[training])
-    
+    transformer_training_idx =
+        absences ? data_axes[training] : findall(labels(sdm)[training])
+
     # This trains the transformer
     train!(transformer(sdm), features(sdm)[variables(sdm), transformer_training_idx])
 
@@ -39,7 +40,7 @@ function train!(
 
     # The validation data is whatever is available and not explicitely used for
     # training. This may be empty.
-    validation = setdiff(data_axes, data_axes[training]) 
+    validation = setdiff(data_axes, data_axes[training])
 
     # We can now get the predictions for the transformer using the validation data
     Xₜ = predict(transformer(sdm), features(sdm)[variables(sdm), validation])
@@ -48,18 +49,19 @@ function train!(
 
     # This is the final training step
     train!(classifier(sdm), labels(sdm)[training], X₁; Xt = Xₜ, yt = yₜ)
+    sdm.trained = true
 
     # When the training is done, we can set the threshold
     if threshold
         # List of indices to compare - we use the validation if there are at
         # least 100, otherwise we use the training data
         idx = length(validation) < 100 ? training : validation
-        ŷ = predict(sdm; threshold=false)[idx]
+        ŷ = predict(sdm; threshold = false)[idx]
         ŷ[isnan.(ŷ)] .= zero(eltype(ŷ))
-        
+
         # This is the ground truth for our thresholding data
         yₛ = labels(sdm)[idx]
-        
+
         # We look at the optimal range of values.
         _valrange = extrema(ŷ)
         thresholds = LinRange(_valrange..., 150)
@@ -77,6 +79,7 @@ function train!(
 
         threshold!(sdm, best_threshold)
     end
+
     return sdm
 end
 
@@ -88,6 +91,9 @@ of features. The only keyword argument is `threshold`, which determines whether
 the prediction is returned raw or as a binary value (default is `true`).
 """
 function StatsAPI.predict(sdm::SDM, X::Matrix{T}; threshold = true) where {T <: Number}
+    if !istrained(sdm)
+        throw(UntrainedModelError)
+    end
     X₁ = predict(sdm.transformer, X[sdm.v, :])
     ŷ = predict(sdm.classifier, X₁)
     ŷ = isone(length(ŷ)) ? ŷ[1] : ŷ
@@ -109,6 +115,9 @@ function StatsAPI.predict(
     args...;
     kwargs...,
 ) where {S <: AbstractSDM, T <: Number}
+    if !istrained(sdm)
+        throw(UntrainedModelError)
+    end
     X = reshape(v, length(v), 1)
     return predict(sdm, X, args...; kwargs...)
 end
@@ -120,7 +129,16 @@ This method performs the prediction on the entire set of training data available
 for the training of an SDM.
 """
 function StatsAPI.predict(sdm::SDM; kwargs...)
+    if !istrained(sdm)
+        throw(UntrainedModelError())
+    end
     return StatsAPI.predict(sdm, features(sdm); kwargs...)
+end
+
+@testitem "We get an UntrainedModelError when predicting with an untrained model" begin
+    X, y, C = SDeMo.__demodata()
+    model = SDM(ZScore, NaiveBayes, X, y)
+    @test_throws UntrainedModelError predict(model)
 end
 
 """
@@ -130,14 +148,15 @@ Resets a model, with a potentially specified value of the threshold. This
 amounts to re-using all the variables, and removing the tuned threshold version.
 """
 function reset!(sdm::SDM, thr = 0.5)
+    sdm.trained = false
     sdm.v = collect(axes(sdm.X, 1))
-    sdm.τ = thr
+    sdm.τ = zero(typeof(classifier(sdm)))
     return sdm
 end
 
 @testitem "We can train a model without the absences" begin
     using Statistics
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(ZScore, NaiveBayes, X, y)
     train!(model)
     tf = transformer(model)
@@ -150,7 +169,7 @@ end
 
 @testitem "We can train a model with the absences" begin
     using Statistics
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(ZScore, NaiveBayes, X, y)
     train!(model; absences = true)
     tf = transformer(model)

@@ -13,33 +13,33 @@ function risklevel(cp::Conformal)
     return cp.α
 end
 
-function conformal_scores(model, training_instances, calibration_instances; kwargs...)
+function conformal_scores(model, training, calibration; kwargs...)
     # We will retrain the model so it needs to go into a copy
     𝐂 = deepcopy(model)
-    train!(𝐂; training = training_instances, kwargs...)
+    train!(𝐂; training = training, kwargs...)
 
     # Scoring function applied to the classes
     scoring = (p) -> [p, 1.0 - p]
 
     # Now we need to get the predictions
-    f̂ = predict(𝐂; threshold = false)[calibration_instances]
+    f̂ = predict(𝐂; threshold = false)[calibration]
 
     # The scores for the calibration instances are
     s = scoring.(f̂)
 
     # We will now accumulate the scores in two different arrays -- this is
     # because it helps with Mondrian CP if we want to go this route
-    s₊ = zeros(sum(labels(𝐂)[calibration_instances]))
-    s₋ = zeros(sum(.!labels(𝐂)[calibration_instances]))
+    s₊ = zeros(sum(labels(𝐂)[calibration]))
+    s₋ = zeros(sum(.!labels(𝐂)[calibration]))
 
     # We also get a counter for each class
     c₊ = 0
     c₋ = 0
 
     # And now we loop, and assign the correct conformity score
-    for i in eachindex(calibration_instances)
-        c = 1 - (labels(𝐂)[calibration_instances][i] ? s[i][1] : s[i][2])
-        if labels(𝐂)[calibration_instances][i]
+    for i in eachindex(calibration)
+        c = 1 - (labels(𝐂)[calibration][i] ? s[i][1] : s[i][2])
+        if labels(𝐂)[calibration][i]
             c₊ += 1
             s₊[c₊] = c
         else

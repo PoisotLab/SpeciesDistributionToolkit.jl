@@ -171,8 +171,8 @@ function train!(
         cp.q₋ = q
     end
 
+    # The conformal is now trained
     cp.trained = true
-
     return cp
 end
 

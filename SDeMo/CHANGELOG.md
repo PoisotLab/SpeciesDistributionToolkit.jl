@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.8.0`
 
+- **added** `Conformal` and related functions for conformal prediction [#538]
 - **fixed** a bug where calling `reset!` would use a magic number threshold instead of the correct `zero`
 - **added** `transformer!` and `classifier!` to switch models [#539]
 - **added** `istrained` to check that the model is trained [#513]

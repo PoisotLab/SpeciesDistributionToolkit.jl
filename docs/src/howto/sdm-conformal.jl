@@ -11,7 +11,7 @@ Random.seed!(123451234123121); #hide
 
 # We will work on the demo data:
 
-sdm = SDM(PCATransform, NaiveBayes, SDeMo.__demodata())
+sdm = SDM(PCATransform, NaiveBayes, SDeMo.__demodata()...)
 variables!(sdm, ForwardSelection)
 
 # We are now going to set-up a conformal predictor with a risk level of α =

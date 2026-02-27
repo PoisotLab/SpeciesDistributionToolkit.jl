@@ -245,6 +245,7 @@ export default defineConfig({
                         { text: "Cross-validation", link: "/reference/sdemo/crossvalidation/" },
                         { text: "Feature selection", link: "/reference/sdemo/features/" },
                         { text: "Explanations", link: "/reference/sdemo/explanations/" },
+                        { text: "Conformal predictions", link: "/reference/sdemo/conformal/" },
                     ]
                 },
                 {

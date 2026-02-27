@@ -25,7 +25,7 @@ train!(cp, sdm; mondrian=true)
 
 # We can now identify which of the model predictions are uncertain:
 
-pred = predict(model; threshold=false)
+pred = predict(sdm; threshold=false)
 sets = predict(cp, pred)
 n_uncertain = count(isequal(Set([true, false])), pred)
 n_uncertain / length(pred)

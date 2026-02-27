@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **added** `transformer!` and `classifier!` to switch models [#539]
 - **added** `istrained` to check that the model is trained [#513]
 - **added** support for training point coordinates to `SDM`
+- **added** a Makie extension for georeferenced SDMs [#545]
 - **changed** the syntax to declare SDMs in most tests to streamline it (this is not a breaking, user-facing change)
 - **fixed** a bug where calling `reset!` would use a magic number threshold instead of the correct `zero`
 - **fixed** a bug where the `gmean` mesure of model performance had no method for vectors of confusion matrices

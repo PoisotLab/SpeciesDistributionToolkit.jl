@@ -20,3 +20,11 @@ end
     train!(stump)
     @test sum(predict(stump)) < length(y)
 end
+
+@testitem "We can plot the occurrences of a georeferenced model" begin
+    using CairoMakie
+    X, y, C = SDeMo.__demodata()
+    stump = SDM(RawData, DecisionTree, X, y)
+    scatter(stump)
+    @test true
+end

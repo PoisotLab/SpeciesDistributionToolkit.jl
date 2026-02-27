@@ -1,19 +1,57 @@
-Base.@kwdef struct Conformal
-    α::Float64 = 0.05
-    q₊::Float64 = 0.0
-    q₋::Float74 = 0.0
+"""
+    Conformal
+
+This objects wraps values for conformal prediction. It has a risk level α, and a
+threshold for the positive and negative classes, resp. q₊ and q₋. In the case of
+regular CP, the two thresholds are the same. For Mondrian CP, they are
+different.
+
+This type has a trained flag and supports the `istrained` function.
+"""
+Base.@kwdef struct Conformal{T} where {T <: AbstractFloat}
+    α::T = 0.05
+    q₊::T = zero(T)
+    q₋::T = zero(T)
+    trained::Bool = false
 end
 
-function Conformal(α::Float64)
-    @assert 0.0 <= α <= 1.0
+"""
+    Conformal(α::AbstractFloat)
+
+Creates an empty conformal predictor with a given risk level.
+"""
+function Conformal(α::T) where {T <: AbstractFloat}
+    @assert zero(T) <= α <= one(T)
     return Conformal(; α = α)
 end
 
-function risklevel(cp::Conformal)
-    return cp.α
+"""
+    risklevel(cp::Conformal)
+
+Returns the risk level of the conformal predictor.
+"""
+risklevel(cp::Conformal) = cp.α
+
+"""
+    risklevel!(cp::Conformal, α::T) where {T <: AbstractFloat}
+
+Changes the risk level of the conformal predictor. It will need to be recalibrated.
+"""
+function risklevel!(cp::Conformal, α::T) where {T <: AbstractFloat}
+    cp.α = α
+    cp.trained = false
+    return cp
 end
 
-function conformal_scores(model, training, calibration; kwargs...)
+"""
+    istrained(cp::Conformal)
+
+Returns `true` if the conformal predictor is ready to be used. This is used to
+throw an `UntrainedModelError` otherwise.
+"""
+istrained(cp::Conformal) = cp.trained
+
+function _conformal_score_from_model(model, training, calibration; kwargs...)
     # We will retrain the model so it needs to go into a copy
     𝐂 = deepcopy(model)
     train!(𝐂; training = training, kwargs...)
@@ -52,32 +90,42 @@ function conformal_scores(model, training, calibration; kwargs...)
     return (s₊, s₋)
 end
 
-function _get_q_from_scores(scores, risk_level)
+function _q_from_conformal_scores(scores, risk_level)
     n = length(scores)
     cutoff = clamp(ceil((n + 1) * (1 - risk_level)) / n, 0.0, 1.0)
     return quantile(scores, cutoff)
 end
 
-function credibleclasses(ŷ::Number, q::Tuple{F, F}; kwargs...) where {F <: AbstractFloat}
-    return credibleclasses(ŷ, q...; kwargs...)
-end
-
-function credibleclasses(ŷ::SDMLayer, args...; kwargs...)
-    presence = zeros(ŷ, Bool)
-    absence = zeros(ŷ, Bool)
-    for k in keys(ŷ)
-        ℂ = credibleclasses(ŷ[k], args...; kwargs...)
-        if true in ℂ
-            presence[k] = true
-        end
-        if false in ℂ
-            absence[k] = true
-        end
+function _ensure_conformal_is_trained(cp::Conformal)
+    if !istrained(cp)
+        throw(UntrainedModelError())
     end
-    return (presence, absence)
+    return nothing
 end
 
-function conformal!(
+function StatsAPI.predict(cp::Conformal, ŷ::Number)
+    _ensure_conformal_is_trained(cp)
+
+    # Scoring function
+    scoring = (p) -> [p, 1.0 - p]
+
+    # Scores
+    p₊, p₋ = 1.0 .- scoring(ŷ)
+
+    # And now get the the prediction set
+    ℂ = Set()
+    if p₊ <= cp.q₊
+        push!(ℂ, true)
+    end
+    if p₋ <= cp.q₋
+        push!(ℂ, false)
+    end
+    return ℂ
+end
+
+StatsAPI.predict(cp::Conformal, ŷ::Vector{T}) where {T <: Number} = map(y -> StatsAPI.predict(cp, y), ŷ)
+
+function train!(
     cp::Conformal,
     model::T,
     training,
@@ -85,32 +133,22 @@ function conformal!(
     mondrian::Bool = true,
     kwargs...,
 ) where {T <: AbstractSDM}
-    s₊, s₋ = conformal_scores(model, training, calibration; kwargs...)
+    s₊, s₋ = _conformal_score_from_model(model, training, calibration; kwargs...)
 
     if mondrian
-        cp.q₊ = _get_q_from_scores(s₊, risklevel(cp))
-        cp.q₋ = _get_q_from_scores(s₋, risklevel(cp))
+        cp.q₊ = _q_from_conformal_scores(s₊, risklevel(cp))
+        cp.q₋ = _q_from_conformal_scores(s₋, risklevel(cp))
     else
         s = vcat(s₊, s₋)
-        q = _get_q_from_scores(s, risklevel(cp))
+        q = _q_from_conformal_scores(s, risklevel(cp))
         cp.q₊ = q
         cp.q₋ = q
     end
 
+    cp.trained = true
+
     return cp
 end
-
-function conformal(
-    model::T,
-    training,
-    calibration;
-    mondrian::Bool = true,
-    kwargs...,
-) where {T <: AbstractSDM}
-    cp = Conformal()
-    conformal!(cp, model, training, calibration; mondrian=mondrian, kwargs...)
-end
-
 
 #=
 TODO: port this too
@@ -123,31 +161,3 @@ function conformal(cp::C, model::S; kwargs...) where {C <: AbstractConformal, S 
     return conformal(cp, model, kfold(model); kwargs...)
 end
 =#
-
-
-# TODO: from here on, refactor to have a design kinda like
-# f(cp, blah)
-# f(cp) = g -> g(blah)
-# and also rename the function
-function credibleclasses(ŷ, q₊, q₋)
-
-    # Scoring function
-    scoring = (p) -> [p, 1.0 - p]
-
-    # We get the scores
-    p₊, p₋ = 1.0 .- scoring(ŷ)
-
-    # And now we collect the credible classes in a Set
-    ℂ = Set()
-    if p₊ <= q₊
-        push!(ℂ, true)
-    end
-    if p₋ <= q₋
-        push!(ℂ, false)
-    end
-    return ℂ
-end
-
-function credibleclasses(ŷ::Number, q::Tuple{F, F}; kwargs...) where {F <: AbstractFloat}
-    return credibleclasses(ŷ, q...; kwargs...)
-end

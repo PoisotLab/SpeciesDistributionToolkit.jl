@@ -150,12 +150,12 @@ When using the `mondrian=true` keyword, the cutoffs are calculated for each
 class separately.
 
 All other `kwargs` are passed on to the model for training.
-"""    
+"""
 function train!(
     cp::Conformal,
     model::T,
-    training::Vector{Integer},
-    calibration::Vector{Integer};
+    training::Vector{Int},
+    calibration::Vector{Int};
     mondrian::Bool = true,
     kwargs...,
 ) where {T <: AbstractSDM}
@@ -253,11 +253,29 @@ end
     @test outcomes isa Vector{<:Set}
 end
 
+@testitem "We can train a model using folds with a keyword argument" begin
+    model = SDM(ZScore, Logistic, SDeMo.__demodata()...)
+    cp = Conformal(0.05)
+    train!(model)
+    train!(cp, model, kfold(model); mondrian=false)
+    outcomes = predict(cp, predict(model; threshold = false))
+    @test outcomes isa Vector{<:Set}
+end
+
 @testitem "We can train a model using folds without specifying them" begin
     model = SDM(ZScore, Logistic, SDeMo.__demodata()...)
     cp = Conformal(0.05)
     train!(model)
     train!(cp, model)
+    outcomes = predict(cp, predict(model; threshold = false))
+    @test outcomes isa Vector{<:Set}
+end
+
+@testitem "We can train a model using folds without specifying them but with a keyword argument" begin
+    model = SDM(PCATransform, NaiveBayes, SDeMo.__demodata()...)
+    variables!(model, ForwardSelection)
+    cp = Conformal(0.05)
+    train!(cp, model; mondrian = false)
     outcomes = predict(cp, predict(model; threshold = false))
     @test outcomes isa Vector{<:Set}
 end

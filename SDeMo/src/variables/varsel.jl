@@ -194,7 +194,6 @@ function variables!(
         # If there are no combinations of variable to evaluate based on the
         # VariableSelectionStrategy, we want to break out of the loop!
         if isempty(combination_todo)
-            stil_looking = false # This isn't particularly required but it's free. Good value.
             break
         end
 

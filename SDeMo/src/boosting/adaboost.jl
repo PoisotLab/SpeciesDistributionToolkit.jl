@@ -38,8 +38,8 @@ istrained(boosted::AdaBoost) = all(istrained.(boosted.learners))
 
 function AdaBoost(model::SDM; iterations = 50)
     return AdaBoost(
-        deepcopy(model),
-        [deepcopy(model) for _ in Base.OneTo(iterations)],
+        copy(model),
+        [copy(model) for _ in Base.OneTo(iterations)],
         zeros(iterations),
         iterations,
         fill(1.0 / length(labels(model)), length(labels(model))),

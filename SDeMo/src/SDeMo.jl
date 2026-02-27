@@ -141,6 +141,7 @@ include("explanations/shapley.jl")
 export explain
 
 include("utilities/show.jl")
+include("utilities/copy.jl")
 include("utilities/io.jl")
 export writesdm, loadsdm
 

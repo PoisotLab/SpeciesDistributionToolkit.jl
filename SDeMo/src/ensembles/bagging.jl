@@ -67,7 +67,7 @@ end
 Creates a baged model from an SDM by specifying the bags in advance.
 """
 function Bagging(model::SDM, bags::Vector)
-    bagged = Bagging(model, bags, [deepcopy(model) for _ in eachindex(bags)])
+    bagged = Bagging(model, bags, [copy(model) for _ in eachindex(bags)])
     for i in eachindex(bagged.models)
         bagged.models[i].trained = false
     end

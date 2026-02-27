@@ -55,7 +55,7 @@ istrained(cp::Conformal) = cp.trained
 
 function _conformal_score_from_model(model, training, calibration; kwargs...)
     # We will retrain the model so it needs to go into a copy
-    𝐂 = deepcopy(model)
+    𝐂 = copy(model)
     train!(𝐂; training = training, kwargs...)
 
     # Scoring function applied to the classes

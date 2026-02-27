@@ -219,7 +219,7 @@ function crossvalidate(sdm::T, folds; thr = nothing, kwargs...) where {T <: Abst
 
     tasks = map(data_chunks) do chunk
         Threads.@spawn begin
-            model = deepcopy(sdm)
+            model = copy(sdm)
             Cv = zeros(ConfusionMatrix, length(chunk))
             Ct = zeros(ConfusionMatrix, length(chunk))
             for i in eachindex(chunk)
@@ -274,7 +274,7 @@ function threshold!(
 
     tasks = map(data_chunks) do chunk
         Threads.@spawn begin
-            model = deepcopy(sdm)
+            model = copy(sdm)
             for i in chunk
                 train!(model; training = folds[i][1], threshold = false)
                 Y[i] = predict(model; threshold = false)[folds[i][2]]

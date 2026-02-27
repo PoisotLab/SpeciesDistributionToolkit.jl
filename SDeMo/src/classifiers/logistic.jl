@@ -1,4 +1,4 @@
-__sigmoid(z::Number) = 1.0 / (1.0 + exp(-z))
+__sigmoid(z::T) where {T <: Number} = one(T) / (one(T) + exp(-z))
 function __sigmoid!(store::Vector{<:AbstractFloat}, z::Vector{<:AbstractFloat})
     for i in eachindex(z)
         store[i] = __sigmoid(z[i])
@@ -13,7 +13,7 @@ end
 end
 
 function __interactions(X)
-    XiXi = X .^ 2
+    XiXi = X .^ 2.0
     nfeat = size(X, 1)
     intft = round(Int64, nfeat * (nfeat - 1) / 2)
     XiXj = zeros(eltype(X), intft, size(X, 2))
@@ -133,7 +133,7 @@ function SDeMo.train!(
         __sigmoid!(z, z)
         ∇ᵣ = (lreg.λ / length(lreg.θ)) * lreg.θ
         LinearAlgebra.mul!(∇, 𝐗, z-𝐲)
-        ∇ₗ = (1 / length(lreg.θ)) * ∇
+        ∇ₗ = (1.0 / length(lreg.θ)) * ∇
         gradient = ∇ₗ + ∇ᵣ
         LinearAlgebra.mul!(gradient, lreg.η, gradient)
         lreg.θ -= gradient
@@ -142,10 +142,10 @@ function SDeMo.train!(
             if validation_data
                 zv = Xvt * lreg.θ
                 __sigmoid!(zv, zv)
-                validation_loss = -mean(yt .* log.(zv) .+ (1 .- yt) .* log.(1 .- zv))
+                validation_loss = -mean(yt .* log.(zv) .+ (1.0 .- yt) .* log.(1.0 .- zv))
             end
-            z = clamp.(z, eps(), 1 - eps())
-            loss = -mean(y .* log.(z) .+ (1 .- y) .* log.(1 .- z))
+            z = clamp.(z, eps(), 1.0 - eps())
+            loss = -mean(y .* log.(z) .+ (1.0 .- y) .* log.(1.0 .- z))
             # Percent done
             prct = lpad(round(Int64, (epoch / lreg.epochs) * 100), 3, " ")
             infostr = "[$(prct)%] LOSS: training ≈ $(rpad(round(loss; digits=4), 6, " "))"

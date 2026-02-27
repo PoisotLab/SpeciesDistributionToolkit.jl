@@ -126,6 +126,10 @@ export stepwisevif!, vif
 include("variables/importance.jl")
 export variableimportance
 
+# Conformal prediction
+include("conformal.jl")
+export risklevel, risklevel!, Conformal
+
 # Explanations, etc
 include("explanations/counterfactual.jl")
 export counterfactual

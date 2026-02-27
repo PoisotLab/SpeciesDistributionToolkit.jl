@@ -150,6 +150,22 @@ function train!(
     return cp
 end
 
+function train!(cp::Conformal, model::S, folds::Vector{Tuple{Vector{Int}, Vector{Int}}}; kwargs...) where {S <: AbstractSDM}
+    cps = [Conformal(risklevel(cp)) for _ in eachindex(folds)]
+    for i in eachindex(cps)
+        train!(cp, model, folds[i]...; kwargs...)
+    end
+    cp.trained = true
+    cp.q₊ = median([c.q₊ for c in cps])
+    cp.q₋ = median([c.q₋ for c in cps])
+    return cp
+end
+
+function train!(cp::Conformal, model::S; kwargs...) where {S <: AbstractSDM}
+    train!(cp, model, kfold(model); kwargs...)
+    return cp
+end
+
 @testitem "We can train a Mondrian conformal predictor" begin
     model = SDM(ZScore, Logistic, SDeMo.__demodata()...)
     cp = Conformal(0.05)
@@ -184,6 +200,22 @@ end
     cp = Conformal(0.05)
     train!(model)
     @test_throws UntrainedModelError predict(cp, 0.5)
+end
+
+@testitem "We can train a model using folds" begin
+    model = SDM(ZScore, Logistic, SDeMo.__demodata()...)
+    cp = Conformal(0.05)
+    train!(model)
+    train!(cp, model, kfold(model))
+    @test outcomes isa Vector{<:Set}
+end
+
+@testitem "We can train a model using folds without specifying them" begin
+    model = SDM(ZScore, Logistic, SDeMo.__demodata()...)
+    cp = Conformal(0.05)
+    train!(model)
+    train!(cp, model)
+    @test outcomes isa Vector{<:Set}
 end
 
 #=

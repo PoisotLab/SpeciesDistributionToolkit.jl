@@ -30,7 +30,7 @@ packages.
 
 > [!NOTE] 
 > 🧑‍💻 To get a sense of the next steps and help with the development, see the
-[issues and bugs tracker](https://github.com/orgs/PoisotLab/projects/3).
+[issues and bugs tracker](https://github.com/orgs/PoisotLab/projects/3).   
 > 💬 Reach out using the
 [Discussions](https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions)
 tab on this repo!

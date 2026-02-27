@@ -27,7 +27,7 @@ train!(cp, sdm; mondrian=true)
 
 pred = predict(sdm; threshold=false)
 sets = predict(cp, pred)
-n_uncertain = count(isequal(Set([true, false])), pred)
+n_uncertain = count(isequal(Set([true, false])), sets)
 n_uncertain / length(pred)
 
 

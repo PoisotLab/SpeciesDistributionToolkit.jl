@@ -1,6 +1,6 @@
 using TestItemRunner
 
-@run_package_tests filter = ti -> !(:skipci in ti.tags)
+@run_package_tests filter = ti -> !((:skipci in ti.tags)|(:deprecated in ti.tags))
 
 @testitem "We can set hyper-parameters for a full model" begin
     X, y, C = SDeMo.__demodata()

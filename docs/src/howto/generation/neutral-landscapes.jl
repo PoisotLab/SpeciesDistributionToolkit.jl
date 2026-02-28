@@ -22,7 +22,24 @@ current_figure() #hide
 
 # If we have a layer already, it can be used in place of the size argument, in
 # which case the mask of the layer is also preserved. This is useful to rapidly
-# fill layers with the same structure with random data.
+# fill layers that have the same structure with random data.
 
 # Finally, the `SDMLayer` constructor, when used this way, accepts keyword
-# arguments like the `crs` of the layer, as well as its `x` and `y` fields.
+# arguments like the `crs` of the layer, as well as its `x` and `y` fields. This
+# is important if you want to ensure that the generated data can be overlaid on
+# an actual layer with coordinates and projections.
+
+# Note that by default, the returned layer will be entirely filled. You can mask
+# parts of it using `nodata`, or by masking it with a layer containing actual
+# data.
+
+# ## Related documentation
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# nodata
+# nodata!
+# ```

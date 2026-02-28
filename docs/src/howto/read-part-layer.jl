@@ -2,7 +2,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
 
 # To illustrate the process, we will load the demo dataset:
 

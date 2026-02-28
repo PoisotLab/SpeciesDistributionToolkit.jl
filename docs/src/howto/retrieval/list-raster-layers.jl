@@ -1,4 +1,4 @@
-# # ... know which layers are provided?
+# # Listing available raster datasets
 
 # This page gives an overview of the methods to get access to additional
 # information about the data available through different data providers. Note that

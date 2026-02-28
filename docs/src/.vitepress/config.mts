@@ -139,15 +139,22 @@ export default defineConfig({
                             ]
                         },
                         {
+                            text: "Data retrieval",
+                            collapsed: true,
+                            items: [
+                                { text: "GBIF API", link: "/howto/retrieval/gbif-api/" },
+                                { text: "GBIF downloads", link: "/howto/retrieval/gbif-download/" },
+                                { text: "STAC Catalogues", link: "/howto/retrieval/stac/" },
+                                { text: "List raster layers", link: "/howto/retrieval/list-raster-layers/" },
+                                { text: "List polygon information", link: "/howto/retrieval/list-polygon-information/" },
+                            ]
+                        },
+                        {
                             text: "Data preparation",
                             collapsed: true,
                             items: [
                                 { text: "Splitting layers in tiles", link: "/howto/split-layer/" },
-                                { text: "Getting GBIF data", link: "/howto/get-gbif-data/" },
-                                { text: "Downloading GBIF data", link: "/howto/download-gbif-data/" },
-                                { text: "Getting STAC data", link: "/howto/stac/" },
                                 { text: "Reading part of a layer", link: "/howto/read-part-layer/" },
-                                { text: "Listing provided layers", link: "/howto/list-provided-layers/" },
                                 { text: "Data interpolation", link: "/howto/interpolate/" },
                             ]
                         },

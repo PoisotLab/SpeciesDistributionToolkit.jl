@@ -8,7 +8,7 @@ using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
 using Dates
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
 import Random #hide
 Random.seed!(123451234123121); #hide
 

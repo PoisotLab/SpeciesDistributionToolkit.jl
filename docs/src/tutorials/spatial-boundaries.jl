@@ -12,7 +12,7 @@ using SpatialBoundaries # [!code highlight]
 using CairoMakie
 using StatsBase
 using Statistics
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
 
 # Because there are four different layers in the EarthEnv database that
 # represent different types of woody cover, we will use the overall mean wombling

@@ -1,4 +1,4 @@
-# # Getting data from a STAC catalogue
+# # Retrieving data from a STAC catalogue
 
 # The purpose of this vignette is to demonstrate how we can use the `STAC`
 # package to get data from STAC services.
@@ -9,7 +9,7 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 using STAC # [!code highlight]
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
 
 # The support is currently very bare-bones, and can return a layer when given an
 # asset. To demonstrate, we will get the time to the nearest city (in minutes)

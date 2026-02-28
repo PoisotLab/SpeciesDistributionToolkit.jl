@@ -11,7 +11,7 @@ using CairoMakie
 using Statistics
 import StatsBase
 using MultivariateStats # [!code highlight]
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
 
 # The support is currently limited to PCA
 

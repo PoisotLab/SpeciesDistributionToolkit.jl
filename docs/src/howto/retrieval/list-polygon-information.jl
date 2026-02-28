@@ -1,39 +1,45 @@
 # # Listing polygon properties
 
 # This page gives an overview of the methods to get access to additional
-# information about the data available through different data providers. Note that
-# the documentation website has a series of auto-generated pages that summarize
-# the same information.
+# information stored in the polygon data.
 
 using SpeciesDistributionToolkit
-using InteractiveUtils
 
-# Note that when working from the REPL, `InteractiveUtils` is loaded by default.
+# We will select the `Countries` dataset from `NaturalEarth` as our example:
 
-# Data are identified by a `RasterProvider` (*e.g.* the initiative or website
-# providing the data), and a `RasterDataset` that is a collection of layers
-# representing specific information.
+polydata = PolygonData(NaturalEarth, Countries)
 
-# ## Listing the providers
+# These data can be retrieved with `getpolygon`:
 
-subtypes(RasterProvider)
+pol = getpolygon(polydata)
 
-# ## Listing the datasets associated to a provider
+# This returns the complete dataset, which is almost always a lot more polygons
+# that we want. To figure out which polygons are relevant, we need to inspect
+# the properties attached to each:
 
-# The `provides` method from `SimpleSDMDatasets` will return `true` if the provide
-# offers the dataset:
+keys(uniqueproperties(pol))
 
-[ds for ds in subtypes(RasterDataset) if SimpleSDMDatasets.provides(WorldClim2, ds)]
+# Note that by default, the `Name` key can be used directly:
 
-# ## Datasets with multiple layers
+pol["Ghana"]
 
-# The `layers` and `layerdescriptions` methods return a list of layers:
+# We will look at which regions are available here:
 
-SimpleSDMDatasets.layers(RasterData(CHELSA2, BioClim))
+uniqueproperties(pol)["Region"]
 
-#-
+# Getting the countries for Africa is therefore:
 
-SimpleSDMDatasets.layerdescriptions(RasterData(CHELSA2, BioClim))
+pol["Region" => "Africa"]
+
+# We can apply the `uniqueproperties` function to the object that is returned
+# here, for example to list all available sub-regions:
+
+uniqueproperties(pol["Region" => "Africa"])["Subregion"]
+
+# We can now get all of the polygons in the region of Africa that are in the
+# sub-region of Eastern Africa with:
+
+eastern_afr = pol["Region" => "Africa"]["Subregion" => "Eastern Africa"]
 
 # ## Related documentation
 
@@ -42,6 +48,7 @@ SimpleSDMDatasets.layerdescriptions(RasterData(CHELSA2, BioClim))
 # ```
 
 # ```@docs; canonical=false
-# RasterDataset
-# RasterProvider
+# uniqueproperties
+# getpolygon
+# PolygonData
 # ```

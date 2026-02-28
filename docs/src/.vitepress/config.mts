@@ -111,6 +111,17 @@ export default defineConfig({
                     text: "How-to",
                     items: [
                         {
+                            text: "Data retrieval",
+                            collapsed: true,
+                            items: [
+                                { text: "GBIF API", link: "/howto/retrieval/gbif-api/" },
+                                { text: "GBIF downloads", link: "/howto/retrieval/gbif-download/" },
+                                { text: "STAC Catalogues", link: "/howto/retrieval/stac/" },
+                                { text: "List raster layers", link: "/howto/retrieval/list-raster-layers/" },
+                                { text: "List polygon information", link: "/howto/retrieval/list-polygon-information/" },
+                            ]
+                        },
+                        {
                             text: "Operations on layers",
                             collapsed: true,
                             items: [
@@ -136,17 +147,6 @@ export default defineConfig({
                             items: [
                                 { text: "Neutral landscapes", link: "/howto/generation/neutral-landscapes/" },
                                 { text: "Pseudo-absences", link: "/howto/generation/pseudoabsences/" },
-                            ]
-                        },
-                        {
-                            text: "Data retrieval",
-                            collapsed: true,
-                            items: [
-                                { text: "GBIF API", link: "/howto/retrieval/gbif-api/" },
-                                { text: "GBIF downloads", link: "/howto/retrieval/gbif-download/" },
-                                { text: "STAC Catalogues", link: "/howto/retrieval/stac/" },
-                                { text: "List raster layers", link: "/howto/retrieval/list-raster-layers/" },
-                                { text: "List polygon information", link: "/howto/retrieval/list-polygon-information/" },
                             ]
                         },
                         {

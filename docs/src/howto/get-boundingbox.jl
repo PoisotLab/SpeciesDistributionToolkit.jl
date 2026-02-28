@@ -51,6 +51,8 @@ SpeciesDistributionToolkit.boundingbox(pol; padding = 0.5)
 # CollapsedDocStrings = true
 # ```
 
+# ## Related documentation
+#
 # ```@docs; canonical=false
 # SpeciesDistributionToolkit.boundingbox
 # ```

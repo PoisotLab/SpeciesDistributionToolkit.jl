@@ -52,6 +52,14 @@ current_figure() #hide
 
 # ## Using `mask!`
 
+# ::: details A note about how this works
+#
+# The `SDMLayer` type stores a `BitMatrix` (in the `indices` field) that tracks
+# which cells in the raster are visible. This costs a little more memory, but
+# allows to rapidly turn pixels on and off.
+#
+# :::
+
 # When using `mask!`, the first layer will be modified so that only the cells that
 # are also valued in the second layer are used. For example, we can use the fact
 # that the CHELSA1 layers do not have values outside of land, to mask the CHELSA2
@@ -74,6 +82,10 @@ mask(temp2, temp1)
 heatmap(mask(temp2, temp1), colormap=:navia, axis=(;aspect=DataAspect())) # hide
 current_figure() #hide
 
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
 # ## Related documentation
 # 
 # ```@docs; canonical=false
@@ -81,14 +93,4 @@ current_figure() #hide
 # nodata
 # mask!
 # mask
-# ```
-
-# ## A note about how this works
-
-# The `SDMLayer` type stores a `BitMatrix` (in the `indices` field) that tracks
-# which cells in the raster are visible. This costs a little more memory, but
-# allows to rapidly turn pixels on and off.
-
-# ```@meta
-# CollapsedDocStrings = true
 # ```

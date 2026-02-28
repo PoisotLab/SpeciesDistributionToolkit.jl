@@ -42,4 +42,5 @@ current_figure() #hide
 # ```@docs; canonical=false
 # nodata
 # nodata!
+# mask!
 # ```

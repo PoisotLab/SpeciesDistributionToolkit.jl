@@ -16,7 +16,8 @@ function SDeMo.SDM(
     ks = [keys(pr)..., keys(ab)...]
     X = Float32.([predictors[i][k] for i in eachindex(predictors), k in ks])
     y = [ones(Bool, sum(pr))..., zeros(Bool, sum(ab))...]
-    return SDM(TF, CF, X, y)
+    coords = vcat(coordinates(pr), coordinates(ab))
+    return SDM(TF, CF, X, y, coords)
 end
 
 """
@@ -36,7 +37,7 @@ function SDeMo.SDM(
 }
     pr = nodata(mask(first(predictors), presences(occurrences)), false)
     ab = nodata(mask(first(predictors), absences(occurrences)), false)
-    return SDM(TF, CF, predictpors, pr, ab)
+    return SDM(TF, CF, predictors, pr, ab)
 end
 
 function _X_from_layers(layers::Vector{T}) where {T <: SDMLayer}

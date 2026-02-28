@@ -17,3 +17,17 @@ latitudes(o::T) where {T <: AbstractOccurrenceCollection} = latitudes.(elements(
 
 longitudes(o::Vector{<:T}) where {T <: AbstractOccurrence} = longitudes.(o)
 latitudes(o::Vector{<:T}) where {T <: AbstractOccurrence} = latitudes.(o)
+
+
+"""
+    coordinates(L::SDMLayer)
+
+Returns an array of tuples with eastings, northings for all occupied cells in a
+layer.
+"""
+function coordinates(L::SDMLayer)
+    ks = keys(L)
+    N = northings(L)
+    E = eastings(L)
+    return [(E[k[2]], N[k[1]]) for k in ks]
+end

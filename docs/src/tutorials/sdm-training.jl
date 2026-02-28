@@ -82,6 +82,11 @@ hyperparameters!(classifier(sdm), :η, 1e-4);
 hyperparameters!(classifier(sdm), :interactions, :all);
 hyperparameters!(classifier(sdm), :epochs, 10_000);
 
+# Note that, because we are generating the SDM from a series of layers, it is
+# georeferenced. We can confirm this with:
+
+isgeoreferenced(sdm)
+
 # We will now train the model on all the training data.
 
 train!(sdm)

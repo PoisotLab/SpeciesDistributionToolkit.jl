@@ -34,7 +34,18 @@ L = (L .- mean.(L)) ./ std.(L)
 K = kmeans(L, 3)
 
 # Note that this will return a `Clustering` result object, which can therefore
-# be validated using any measure of clustering performance.
+# be validated using any measure of clustering performance. Under the hood, the
+# package is converting the stack of layers into a matrix, which is what
+# `Clustering` handles.
+
+# ::: details But what if I want to work on a very large layer?
+# 
+# You can absolutely decide to extract the data from your layers, work with them
+# in `Clustering`, then write them back in. In our experience, the limitation of
+# not using clustering methods that require a distance matrix has never been a
+# blocking point.
+# 
+# :::
 
 # To bring this result back to a layer, we can use the following syntax:
 
@@ -42,7 +53,13 @@ k = SDMLayer(K, L)
 
 # The last argument *must* be a layer (or a vector of layers), which will be
 # used as a template to store the output values in. In the case of `kmeans`,
-# this is the cluster to which each pixel is assigned.
+# this is the cluster to which each pixel is assigned. We must pass a layer here
+# because the clustering result has no information that would allow us to
+# re-create the layer from scratch. For example, it has no CRS, no coordinates,
+# etc.
+
+# The layer given as the second argument here is NOT modified, and the object
+# returned in `k` is a *new* layer.
 
 # We can get the quality of this clustering with
 
@@ -59,7 +76,8 @@ fig, ax, hm = heatmap(
 )
 current_figure() #hide
 
-# Fuzzy C-means is also supported. We can get three fuzzy clusters (under a fuzzyness parameter of 2) with
+# Fuzzy C-means is also supported. We can get three fuzzy clusters (under a
+# fuzzyness parameter of 2) with
 
 F = fuzzy_cmeans(L, 3, 2)
 

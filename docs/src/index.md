@@ -14,7 +14,7 @@ hero:
       text: Read the tutorials
       link: /tutorials
     - theme: alt
-      text: How-to...?
+      text: Read the vignettes
       link: /howto
     - theme: alt
       text: Reach out!

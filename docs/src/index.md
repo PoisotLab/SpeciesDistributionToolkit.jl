@@ -15,7 +15,7 @@ hero:
       link: /tutorials
     - theme: alt
       text: How-to...?
-      link: /how-to
+      link: /howto
     - theme: alt
       text: Reach out!
       link: https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions

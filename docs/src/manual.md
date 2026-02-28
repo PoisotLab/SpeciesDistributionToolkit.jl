@@ -2,7 +2,9 @@
 
 `SpeciesDistributionToolkit.jl` is a collection of packages for species
 distribution modeling and biodiversity research, for the
-[Julia](https://julialang.org/) programming language.
+[Julia](https://julialang.org/) programming language. It is built and maintained
+by the *Laboratoire d'Écologie Prédictive et Interprétable pour la Crise de la
+Biodiversité* ([ÉPIC Biodiversity](https://epic-biodiversity.org/)).
 
 ::: info Not just for research!
 
@@ -16,8 +18,14 @@ indicators](https://www.cbd.int/gbf). See the [BON in a Box tool page](https://b
 If you use the package, please cite
 
 > Poisot, T., Bussières-Fournel, A., Dansereau, G., and Catchen, M. D. (2025). A
-> Julia toolkit for species distribution data. EcoEvoRxiv.
-> [10.32942/X2405R](https://ecoevorxiv.org/repository/view/8582/)
+> Julia toolkit for species distribution data. _Peer Community Journal_ 5(e101).
+> doi:
+> [10.24072/pcjournal.589](https://peercommunityjournal.org/articles/10.24072/pcjournal.589/)
+>
+> Dansereau, G., and Poisot, T. (2021). SimpleSDMLayers.jl and GBIF.jl: A
+> Framework for Species Distribution Modeling in Julia. _Journal of Open Source
+> Software_ 6(57), 2872, doi:
+> [10.21105/joss.02872](https://doi.org/10.21105/joss.02872)
 
 ## Getting started
 
@@ -49,22 +57,6 @@ Pkg.update() # [!code highlight]
 to get the latest features of each component package
 
 :::
-
-## Contents of the package
-
-![Overview of the package](https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/blob/main/structure.drawio.png?raw=true)
-
-The package offers a series of methods to acces data required to build species distribution models, including:
-
-- a wrapper around the [GBIF](https://www.gbif.org/) occurrences API to access occurrence data
-- a wrapper around the [Phylopic](https://www.phylopic.org/) images API
-- ways to generate fake occurrences with statistical properties similar to actual occurrences
-- ways to generate pseudo-absences based on a series of heuristics
-- a simple way to represent layers as mutable objects
-- utility functions for *teaching* species distribution models
-- a way to collect historic and future climate and land-use data to feed into the models, pre-loaded with datasets like CHELSA, WorldClim, EarthEnv, PaleoClim, etc
-- an interface to [Makie](https://docs.makie.org/stable/) for plotting and data visualisation
-- interfaces with _many_ different packages from the Julia ecosystem
 
 ## Contents of the manual
 

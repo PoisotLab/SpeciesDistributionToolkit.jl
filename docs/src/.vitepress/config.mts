@@ -41,14 +41,8 @@ export default defineConfig({
         },
         nav: [
             { text: 'Index', link: '/index' },
-            {
-                text: 'Manual',
-                items: [
-                    { text: "Tutorials", link: "/tutorials" },
-                    { text: "How-to", link: "/howto" },
-                    { text: "Reference", link: "/reference" }
-                ]
-            },
+            { text: "Tutorials", link: "/tutorials" },
+            { text: "How-to", link: "/howto" },
             {
                 text: 'Datasets',
                 items: [
@@ -81,6 +75,7 @@ export default defineConfig({
             {
                 text: "Ecosystem",
                 items: [
+                    { text: "Internals", link: "/internals/" },
                     {
                         text: "Core packages",
                         items: [
@@ -185,119 +180,44 @@ export default defineConfig({
                     ]
                 }
             ],
-            "/reference/": [
+            "/internals/": [
                 {
                     text: "SpeciesDistributionToolkit",
                     collapsed: true,
                     items: [
-                        { text: "Documentation", link: "/reference/" },
-                        { text: "GADM", link: "/reference/sdt/gadm/" },
-                        { text: "Polygons", link: "/reference/sdt/gadm/" },
-                        { text: "GBIF", link: "/reference/sdt/gbif/" },
+                        { text: "Documentation", link: "/internals/" },
+                        { text: "Utilities", link: "/internals/integration/utilities/" },
+                        { text: "GBIF extension", link: "/internals/integration/gbif/" },
                     ]
                 },
                 {
-                    text: "GBIF",
+                    text: "Interfaces",
                     collapsed: true,
                     items: [
-                        { text: "Documentation", link: "/reference/gbif/" },
-                        { text: "Types", link: "/reference/gbif/types/" },
-                        { text: "Data", link: "/reference/gbif/data/" },
-                        { text: "Enumerated values", link: "/reference/gbif/enumerated/" },
-                        { text: "Internals", link: "/reference/gbif/internals/" },
-                    ]
-                },
-                {
-                    text: "OccurrencesInterface",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/occint/" },
-                    ]
-                },
-                {
-                    text: "PseudoAbsences",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/pseudo/" },
-                    ]
-                },
-                {
-                    text: "Phylopic",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/phylopic/" },
-                    ]
-                },
-                {
-                    text: "Fauxcurrences",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/fauxcurrences/" },
-                    ]
-                },
-                {
-                    text: "SDeMo",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/sdemo/" },
-                        { text: "Models", link: "/reference/sdemo/models/" },
-                        { text: "Ensembles", link: "/reference/sdemo/ensembles/" },
-                        { text: "Saving", link: "/reference/sdemo/saving/" },
-                        { text: "Cross-validation", link: "/reference/sdemo/crossvalidation/" },
-                        { text: "Feature selection", link: "/reference/sdemo/features/" },
-                        { text: "Explanations", link: "/reference/sdemo/explanations/" },
-                        { text: "Conformal predictions", link: "/reference/sdemo/conformal/" },
-                    ]
-                },
-                {
-                    text: "SimpleSDMDatasets",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/datasets/" },
-                        { text: "Interface", link: "/reference/datasets/interface/" },
-                        { text: "Types", link: "/reference/datasets/types/" },
-                        { text: "Internal", link: "/reference/datasets/internals/" },
-                    ]
-                },
-                {
-                    text: "SimpleSDMPolygons",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/polygons/" },
-                        { text: "Interface", link: "/reference/polygons/interface/" },
-                        { text: "Types", link: "/reference/polygons/types/" },
-                        { text: "Internal", link: "/reference/polygons/internals/" },
-                    ]
-                },
-                {
-                    text: "SimpleSDMLayers",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/layers/" },
-                        { text: "Types", link: "/reference/layers/types/" },
-                        { text: "Operations", link: "/reference/layers/operations/" },
+                        { text: "Datasets", link: "/internals/interfaces/datasets/" },
+                        { text: "Occurrences", link: "/internals/interfaces/occurrences/" },
                     ]
                 },
                 {
                     text: "Changelogs",
                     collapsed: true,
                     items: [
-                        { text: "SpeciesDistributionToolkit", link: "/reference/changelog/SpeciesDistributionToolkit/" },
-                        { text: "Fauxcurrences", link: "/reference/changelog/Fauxcurrences/" },
-                        { text: "GBIF", link: "/reference/changelog/GBIF/" },
-                        { text: "OccurrencesInterfaces", link: "/reference/changelog/OccurrencesInterface/" },
-                        { text: "Phylopic", link: "/reference/changelog/Phylopic/" },
-                        { text: "PseudoAbsences", link: "/reference/changelog/PseudoAbsences/" },
-                        { text: "SDeMo", link: "/reference/changelog/SDeMo/" },
-                        { text: "SimpleSDMDatasets", link: "/reference/changelog/SimpleSDMDatasets/" },
-                        { text: "SimpleSDMLayers", link: "/reference/changelog/SimpleSDMLayers/" },
+                        { text: "SpeciesDistributionToolkit", link: "/internals/changelog/SpeciesDistributionToolkit/" },
+                        { text: "Fauxcurrences", link: "/internals/changelog/Fauxcurrences/" },
+                        { text: "GBIF", link: "/internals/changelog/GBIF/" },
+                        { text: "OccurrencesInterfaces", link: "/internals/changelog/OccurrencesInterface/" },
+                        { text: "Phylopic", link: "/internals/changelog/Phylopic/" },
+                        { text: "PseudoAbsences", link: "/internals/changelog/PseudoAbsences/" },
+                        { text: "SDeMo", link: "/internals/changelog/SDeMo/" },
+                        { text: "SimpleSDMDatasets", link: "/internals/changelog/SimpleSDMDatasets/" },
+                        { text: "SimpleSDMLayers", link: "/internals/changelog/SimpleSDMLayers/" },
                     ]
                 },
                 {
                     text: "Contribute",
                     items: [
-                        { text: "Code of Conduct", link: "/reference/code-of-conduct/" },
-                        { text: "Contribution guidelines", link: "/reference/contributing/" },
+                        { text: "Code of Conduct", link: "/internals/code-of-conduct/" },
+                        { text: "Contribution guidelines", link: "/internals/contributing/" },
                         { text: "Roadmap", link: "https://github.com/orgs/PoisotLab/projects/3" },
                         { text: "Discussions", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions" },
                         { text: "Good first issues", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/issues?q=is%3Aopen%20is%3Aissue%20label%3A%22%F0%9F%A4%97%20good%20first%20PR%22" },

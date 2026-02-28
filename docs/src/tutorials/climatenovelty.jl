@@ -12,8 +12,8 @@ using Statistics
 using CairoMakie
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
-# Accessing future data involves the `Dates` standard library, to make an explicit reference
-# to years in the dataset.
+# Accessing future data involves the `Dates` standard library, to make an
+# explicit reference to years in the dataset.
 
 import Dates
 
@@ -26,23 +26,25 @@ import Dates
 POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Laurentides")
 spatial_extent = SpeciesDistributionToolkit.boundingbox(POL)
 
-# Note that the bounding box is given in WGS84. Although layers can use any projection, we
-# follow the GeoJSON specification and use WGS84 for point data. This includes species
-# occurrence, and all polygons.
+# Note that the bounding box is given in WGS84. Although layers can use any
+# projection, we follow the GeoJSON specification and use WGS84 for point data.
+# This includes species occurrence, and all polygons.
 
 # ::: tip Finding bounding boxes
 #
-# The [bboxfinder](http://bboxfinder.com/) website is a really nice tool to rapidly draw and
-# get the coordinates for a bounding box.
+# The [bboxfinder](http://bboxfinder.com/) website is a really nice tool to
+# rapidly draw and get the coordinates for a bounding box.
 #
 # :::
 
 # We will get the [BioClim data from CHELSA v2](/datasets/CHELSA2/). CHELSA v2
 # [Karger2017](@cite) offers access to the 19 original bioclim variable, and
-# their projection under a variety of CMIP5 models/scenarios. These are pretty
-# large data, and so this operation may take a while in terms of download/read
-# time. The first time you run this command will download the data, and the next
-# calls will read them from disk.
+# their projection under a variety of CMIP6 models/scenarios.
+
+# These are pretty large data (the resolution is 30s of arc), and so this
+# operation may take a while in terms of download/read time. The first time you
+# run this command will download the data, and the next calls will read them
+# from disk.
 
 dataprovider = RasterData(CHELSA2, BioClim)
 

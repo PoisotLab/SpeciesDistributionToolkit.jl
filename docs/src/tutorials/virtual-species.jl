@@ -12,9 +12,11 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
 import Random #hide
 Random.seed!(1234567); #hide
+
+# ## Data preparation
 
 # We start by defining the extent in which we want to create the virtual
 # species. For the purpose of this example, we will use the country of Paraguay.
@@ -37,6 +39,8 @@ L = SDMLayer{Float32}[SDMLayer(provider; layer = l, extent...) for l in ["BIO1",
 # time, we will transform their values so that they are all in the unit range.
 
 rescale!.(mask!(L, place))
+
+# ## Creation of virtual species
 
 # In the next steps, we will generate some virtual species. These are defined by
 # an environmental response to each layer, linking the value of the layer at a
@@ -121,9 +125,13 @@ axislegend(ax; position = :lb, framevisible = false)
 current_figure() #hide
 
 # These data could, for example, be used to benchmark species distribution
-# models. Here, in order to say something about potential patterns of
-# biodiversity, we will simulate 100 species, with prevalences drawn uniformly
-# in the unit interval.
+# models.
+
+# ## Analysis of virtual communities
+
+# Here, in order to say something about potential distribution of biodiversity,
+# we will simulate 100 species, with prevalences drawn uniformly in the unit
+# interval.
 
 ranges = [virtualspecies(L; prevalence = rand())[3] for _ in 1:100]
 first(ranges)
@@ -135,7 +143,7 @@ first(ranges)
 f = Figure(; size = (700, 700))
 richness = mosaic(sum, ranges)
 ax = Axis(f[1, 1]; aspect = DataAspect())
-hm = heatmap!(ax, richness; colorrange = (0, length(ranges)), colormap = :navia)
+hm = heatmap!(ax, richness; colorrange = (0, maximum(richness)), colormap = :navia)
 Colorbar(
     f[1, 1],
     hm;

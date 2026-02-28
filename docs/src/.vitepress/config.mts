@@ -111,15 +111,13 @@ export default defineConfig({
                     text: "How-to",
                     items: [
                         {
-                            text: "Basic layer operations",
+                            text: "Operations on layers",
                             collapsed: true,
                             items: [
-                                { text: "Arithmetic on layers", link: "/howto/layer-arithmetic/" },
-                                { text: "Statistics on layers", link: "/howto/layer-statistics/" },
-                                { text: "Neutral landscapes", link: "/howto/neutral-landscapes/" },
-                                { text: "Splitting layers in tiles", link: "/howto/split-layer/" },
-                                { text: "Clustering layers", link: "/howto/cluster-layers/" },
-                                { text: "Multivariate transformations", link: "/howto/multivariate-stats/" },
+                                { text: "Arithmetic", link: "/howto/layers/layer-arithmetic/" },
+                                { text: "Statistics", link: "/howto/layers/layer-statistics/" },
+                                { text: "Multivariate transformations", link: "/howto/layers/multivariate/" },
+                                { text: "Clustering", link: "/howto/layers/clustering/" },
                             ]
                         },
                         {
@@ -133,9 +131,18 @@ export default defineConfig({
                             ]
                         },
                         {
+                            text: "Data generation",
+                            collapsed: true,
+                            items: [
+                                { text: "Neutral landscapes", link: "/howto/generation/neutral-landscapes/" },
+                                { text: "Pseudo-absences", link: "/howto/generation/pseudo-absences/" },
+                            ]
+                        },
+                        {
                             text: "Data preparation",
                             collapsed: true,
                             items: [
+                                { text: "Splitting layers in tiles", link: "/howto/split-layer/" },
                                 { text: "Getting GBIF data", link: "/howto/get-gbif-data/" },
                                 { text: "Downloading GBIF data", link: "/howto/download-gbif-data/" },
                                 { text: "Getting STAC data", link: "/howto/stac/" },
@@ -150,7 +157,6 @@ export default defineConfig({
                             items: [
                                 { text: "Bounding boxes", link: "/howto/get-boundingbox/" },
                                 { text: "Access layers at occurrences positions", link: "/howto/layer-occurrences/" },
-                                { text: "Pseudo-absences", link: "/howto/pseudoabsences/" },
                                 { text: "Makie integration", link: "/howto/makie/" },
                             ]
                         },

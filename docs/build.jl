@@ -31,7 +31,7 @@ include("processing.jl")
 for docfile in files_to_build
     if ~isfile(replace(docfile, r".jl$" => ".md"))
         Literate.markdown(
-            docfile, fpath;
+            docfile, dirname(docfile);
             flavor = Literate.DocumenterFlavor(),
             config = Dict("credit" => false, "execute" => true),
             preprocess = pre!,

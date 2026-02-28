@@ -152,14 +152,14 @@ export default defineConfig({
                             text: "Species Distribution Models",
                             collapsed: true,
                             items: [
-                                { text: "Cross-validation", link: "/howto/sdm-crossvalidation/" },
-                                { text: "Variable selection", link: "/howto/sdm-variableselection/" },
-                                { text: "Hyper-parameters", link: "/howto/sdm-hyperparameters/" },
-                                { text: "PR and ROC curves", link: "/howto/sdm-pr-roc/" },
-                                { text: "Interpretability", link: "/howto/sdm-interpretability/" },
-                                { text: "Counterfactuals", link: "/howto/sdm-counterfactuals/" },
-                                { text: "Calibration", link: "/howto/sdm-calibration/" },
-                                { text: "Conformal", link: "/howto/sdm-conformal/" },
+                                { text: "Cross-validation", link: "/howto/sdm/crossvalidation/" },
+                                { text: "Variable selection", link: "/howto/sdm/variableselection/" },
+                                { text: "Hyper-parameters", link: "/howto/sdm/hyperparameters/" },
+                                { text: "PR and ROC curves", link: "/howto/sdm/pr-roc/" },
+                                { text: "Interpretability", link: "/howto/sdm/interpretability/" },
+                                { text: "Counterfactuals", link: "/howto/sdm/counterfactuals/" },
+                                { text: "Calibration", link: "/howto/sdm/calibration/" },
+                                { text: "Conformal", link: "/howto/sdm/conformal/" },
                             ]
                         }
                     ]

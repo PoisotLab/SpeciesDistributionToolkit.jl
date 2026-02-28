@@ -1,4 +1,4 @@
-# # Statistics on layers
+# # Measuring statistics on layers
 
 # The purpose of this vignette is to demonstrate how we can use common statistical
 # functions on layers.

@@ -1,4 +1,4 @@
-# # Conformal prediction
+# # Quantifying uncertainty with conformal prediction
 
 # The purpose of this vignette is to show how we can detect which predictions
 # are uncertain, using conformal prediction.

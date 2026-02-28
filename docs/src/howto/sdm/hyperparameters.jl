@@ -1,4 +1,4 @@
-# # Change hyper-parameters
+# # Changing hyper-parameters
 
 # The purpose of this vignette is to show how the hyper-parameters of models are
 # handled by `SDeMo`.

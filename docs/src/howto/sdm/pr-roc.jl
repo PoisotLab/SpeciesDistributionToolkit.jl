@@ -1,4 +1,4 @@
-# # PR and ROC curves
+# # Producing the PR and ROC curves
 
 # The purpose of this vignette is to show how to trace the PR and ROC curves from `SDeMo`
 # models.

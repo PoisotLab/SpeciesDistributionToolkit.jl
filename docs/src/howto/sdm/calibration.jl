@@ -1,4 +1,4 @@
-# # Calibration of SDM outputs
+# # Calibrating SDM outputs
 
 # The purpose of this vignette is to show how to calibrate the results of an
 # SDM.

@@ -135,7 +135,7 @@ export default defineConfig({
                             collapsed: true,
                             items: [
                                 { text: "Neutral landscapes", link: "/howto/generation/neutral-landscapes/" },
-                                { text: "Pseudo-absences", link: "/howto/generation/pseudo-absences/" },
+                                { text: "Pseudo-absences", link: "/howto/generation/pseudoabsences/" },
                             ]
                         },
                         {

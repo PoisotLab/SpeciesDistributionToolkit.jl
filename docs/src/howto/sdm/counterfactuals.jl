@@ -1,4 +1,4 @@
-# # Counterfactuals
+# # Generating counterfactuals
 
 # The purpose of this vignette is to show how to generate counterfactual
 # explanations from `SDeMo` models.

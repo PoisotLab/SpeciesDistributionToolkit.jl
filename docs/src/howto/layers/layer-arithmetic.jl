@@ -1,4 +1,4 @@
-# # Arithmetic on layers
+# # Performing arithmetic on layers
 
 # Layers can be manipulated as any other objects on which you can perform
 # arithmetic. In other words, you can substract, add, multiply, and divide layers,

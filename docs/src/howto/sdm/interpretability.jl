@@ -1,4 +1,4 @@
-# # Interpretability
+# # Interpreting models
 
 # The purpose of this vignette is to show how to generate explanations from
 # `SDeMo` models, using partial responses and Shapley values.

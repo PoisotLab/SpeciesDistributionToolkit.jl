@@ -1,4 +1,4 @@
-# # Working with polygons
+# # Masking with polygons
 
 using SpeciesDistributionToolkit
 using CairoMakie

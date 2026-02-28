@@ -1,4 +1,4 @@
-# # Training and cross-validation
+# # Training and cross-validating a model
 
 # The purpose of this vignette is to show how to train and cross-validate
 # `SDeMo` models.

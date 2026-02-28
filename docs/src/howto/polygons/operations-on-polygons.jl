@@ -1,4 +1,4 @@
-# # Operations on Polygons
+# # Operating on polygons
 
 # Polygons can be manipulated with various different operations: _(1) adding_,
 # which returns the union of polygons, _(2) subtracting_, which returns the

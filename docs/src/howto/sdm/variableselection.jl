@@ -1,4 +1,4 @@
-# # Variable selection
+# # Selection variables
 
 # The purpose of this vignette is to show how to select variables from `SDeMo`
 # models.

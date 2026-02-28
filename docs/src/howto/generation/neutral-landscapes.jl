@@ -1,4 +1,4 @@
-# # Creating neutral landscapes
+# # Generating neutral landscapes
 
 # The purpose of this vignette is to demonstrate how we can use the `NeutralLandscapes`
 # package to generate random spatial structures.

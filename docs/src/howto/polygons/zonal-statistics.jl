@@ -1,4 +1,4 @@
-# # Zonal statistics
+# # Caclulating zonal statistics
 
 # In this tutorial, we will grab some bioclimatic variables for Bretagne, and
 # then identify the departments that have extreme values of this variable.

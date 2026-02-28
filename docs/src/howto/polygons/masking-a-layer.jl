@@ -1,4 +1,4 @@
-# # ... mask a layer?
+# # Masking a layer
 
 # The process of *masking* refers to turning cells on a layer's grid to *off*,
 # which will result in them being excluded from the analysis/display.

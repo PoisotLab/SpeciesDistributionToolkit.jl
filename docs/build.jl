@@ -15,7 +15,7 @@ import Downloads
 include("processing.jl")
 
 # Render the tutorials and how-to using Literate
-folder = "howto"
+folder = ARGS[1]
 fpath = joinpath(@__DIR__, "src", folder)
 files_to_build = filter(endswith(".jl"), readdir(fpath; join = true))
 for docfile in files_to_build

@@ -6,6 +6,7 @@ on:
       - main
     tags: '*'
   pull_request:
+  release:
 
 concurrency:
     group: doc-build-pipeline
@@ -250,7 +251,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
           DATADEPS_ALWAYS_ACCEPT: true
-        run: julia --project=docs/ --threads=auto docs/build-howto.jl
+        run: julia --project=docs/ --threads=auto docs/build.jl howto
       - name: "Upload the howto folder"
         uses: actions/upload-artifact@v4
         with:
@@ -279,7 +280,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
           DATADEPS_ALWAYS_ACCEPT: true
-        run: julia --project=docs/ --threads=auto docs/build-tutorials.jl
+        run: julia --project=docs/ --threads=auto docs/build.jl tutorials
       - name: "Upload the tutorials folder"
         uses: actions/upload-artifact@v4
         with:

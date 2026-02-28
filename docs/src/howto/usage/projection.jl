@@ -1,4 +1,4 @@
-# # ... interpolate to a new projection?
+# # Interpolating to a new projection
 
 using SpeciesDistributionToolkit
 using CairoMakie

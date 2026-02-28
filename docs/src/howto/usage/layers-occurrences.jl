@@ -1,4 +1,4 @@
-# # Layers and occurrence data
+# # Accessing layers with occurrence data
 
 # In this vignette, we will have a look at the ways in which occurrence data
 # (from GBIF) and layer data can interact. In order to illustrate this, we will

@@ -1,4 +1,4 @@
-# # ... only read part of a layer?
+# # Reading part of a layer
 
 using SpeciesDistributionToolkit
 using CairoMakie

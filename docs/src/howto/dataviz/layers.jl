@@ -1,4 +1,4 @@
-# # ... plot layers using Makie?
+# # Plotting layers
 
 # The layers are integrated with the [Makie](https://docs.makie.org/stable/)
 # plotting package.

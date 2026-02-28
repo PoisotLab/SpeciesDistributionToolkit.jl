@@ -142,6 +142,16 @@ export default defineConfig({
                             ]
                         },
                         {
+                            text: "Data visualization",
+                            collapsed: true,
+                            items: [
+                                { text: "Layers", link: "/howto/dataviz/layers/" },
+                                { text: "Occurrences", link: "/howto/dataviz/occurrences/" },
+                                { text: "Polygons", link: "/howto/dataviz/polygons/" },
+                                { text: "Models", link: "/howto/dataviz/models/" },
+                            ]
+                        },
+                        {
                             text: "Data generation",
                             collapsed: true,
                             items: [
@@ -150,25 +160,18 @@ export default defineConfig({
                             ]
                         },
                         {
-                            text: "Data preparation",
+                            text: "Data usage",
                             collapsed: true,
                             items: [
-                                { text: "Splitting layers in tiles", link: "/howto/split-layer/" },
-                                { text: "Reading part of a layer", link: "/howto/read-part-layer/" },
-                                { text: "Data interpolation", link: "/howto/interpolate/" },
+                                { text: "Bounding boxes", link: "/howto/usage/boundingbox/" },
+                                { text: "Reading part of a layer", link: "/howto/usage/read-part-layer/" },
+                                { text: "Splitting and tiling", link: "/howto/usage/tiling/" },
+                                { text: "Projection", link: "/howto/usage/projection/" },
+                                { text: "Layers and occurrences", link: "/howto/usage/layers-occurrences/" },
                             ]
                         },
                         {
-                            text: "Working with occurrence data",
-                            collapsed: true,
-                            items: [
-                                { text: "Bounding boxes", link: "/howto/get-boundingbox/" },
-                                { text: "Access layers at occurrences positions", link: "/howto/layer-occurrences/" },
-                                { text: "Makie integration", link: "/howto/makie/" },
-                            ]
-                        },
-                        {
-                            text: "Species Distribution Models",
+                            text: "Distribution Models",
                             collapsed: true,
                             items: [
                                 { text: "Cross-validation", link: "/howto/sdm/crossvalidation/" },

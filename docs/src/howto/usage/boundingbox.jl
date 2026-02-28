@@ -1,4 +1,4 @@
-# # Bounding boxes
+# # Getting bounding boxes
 
 using SpeciesDistributionToolkit
 using CairoMakie

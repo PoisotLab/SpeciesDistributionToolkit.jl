@@ -114,15 +114,22 @@ export default defineConfig({
                             text: "Basic layer operations",
                             collapsed: true,
                             items: [
-                                { text: "Masking layers", link: "/howto/mask-layer/" },
-                                { text: "Masking layers with polygons", link: "/howto/mask-polygons/" },
                                 { text: "Arithmetic on layers", link: "/howto/layer-arithmetic/" },
                                 { text: "Statistics on layers", link: "/howto/layer-statistics/" },
-                                { text: "Zonal statistics on layers", link: "/howto/zonal-statistics/" },
                                 { text: "Neutral landscapes", link: "/howto/neutral-landscapes/" },
                                 { text: "Splitting layers in tiles", link: "/howto/split-layer/" },
                                 { text: "Clustering layers", link: "/howto/cluster-layers/" },
                                 { text: "Multivariate transformations", link: "/howto/multivariate-stats/" },
+                            ]
+                        },
+                        {
+                            text: "Polygons and masking",
+                            collapsed: true,
+                            items: [
+                                { text: "Masking layers", link: "/howto/polygons/masking-a-layer/" },
+                                { text: "Masking with polygons", link: "/howto/polygons/masking-with-polygons/" },
+                                { text: "Polygon operations", link: "/howto/polygons/operations-on-polygons/" },
+                                { text: "Zonal statistics", link: "/howto/polygons/zonal-statistics/" },
                             ]
                         },
                         {
@@ -135,7 +142,6 @@ export default defineConfig({
                                 { text: "Reading part of a layer", link: "/howto/read-part-layer/" },
                                 { text: "Listing provided layers", link: "/howto/list-provided-layers/" },
                                 { text: "Data interpolation", link: "/howto/interpolate/" },
-                                { text: "Operations on polygons", link: "/howto/polygon-operations/" },
                             ]
                         },
                         {

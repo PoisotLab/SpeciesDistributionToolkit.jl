@@ -11,10 +11,9 @@ Random.seed!(123451234123121); #hide
 # todo
 
 records = OccurrencesInterface.__demodata()
-landmass = getpolygon(PolygonData(OpenStreetMap, Places); place="Idaho")
+landmass = getpolygon(PolygonData(OpenStreetMap, Places); place = "Oregon")
 records = Occurrences(mask(records, landmass))
 spatial_extent = SpeciesDistributionToolkit.boundingbox(landmass)
-
 
 # todo
 
@@ -34,12 +33,14 @@ mask!(L, landmass)
 # todo
 
 presencelayer = mask(first(L), records)
-absencemask = pseudoabsencemask(BetweenRadius, presencelayer; closer = 15.0, further = 90.0)
-absencelayer = backgroundpoints(absencemask, 2sum(presencelayer))
+absencemask =
+    pseudoabsencemask(BetweenRadius, presencelayer; closer = 40.0, further = 120.0)
+absencelayer = backgroundpoints(absencemask, 4sum(presencelayer))
 
 # model
 
 model = SDM(PCATransform, Logistic, L, presencelayer, absencelayer)
+variables!(model, ForwardSelection)
 
 # georef?
 
@@ -57,7 +58,7 @@ train!(model)
 
 # make model prediction
 
-Y = predict(model, L; threshold=false)
+Y = predict(model, L; threshold = false)
 
 # train a conformal with alpha 0.05
 
@@ -69,9 +70,49 @@ present, absent, unsure, undetermined = predict(conformal, Y)
 
 # these can then be mapped
 
-heatmap(sure, colormap=[:darkgreen])
-heatmap!(unsure, colormap=[:grey80])
-current_figure()
+# fig-conformal-range
+f = Figure(; size = (500, 350))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+heatmap!(ax, nodata(present, false); colormap = [:darkgreen])
+heatmap!(ax, nodata(unsure, false); colormap = [:grey80])
+scatter!(ax, records; color = :black, markersize = 12)
+lines!(ax, landmass; color = :black)
+hidedecorations!(ax)
+hidespines!(ax)
+current_figure() #hide
 
 # and we can see what the risk level does to the estimation of range size
 
+A = cellarea(Y)
+
+# loop
+
+rls = LinRange(0.01, 0.15, 10)
+rangesize = zeros(Float64, 4, length(rls))
+
+# loop
+
+for (i, rl) in enumerate(rls)
+    risklevel!(conformal, rl)
+    train!(conformal, model, splits)
+    pr, ab, un, ud = predict(conformal, Y)
+    rangesize[1, i] += sum(mask(A, nodata(pr, false)))
+    rangesize[2, i] += sum(mask(A, nodata(ab, false)))
+    rangesize[3, i] += sum(mask(A, nodata(un, false)))
+    rangesize[4, i] += sum(mask(A, nodata(ud, false)))
+end
+
+# now we turn this into a more reasonable scale
+
+rangesize ./= 1e4
+
+# and we plot
+
+# fig-risklevel-effect
+f = Figure(; size = (500, 350))
+ax = Axis(f[1, 1]; ylabel = "Surface (in 10⁴ km²)", xlabel="Risk level α")
+scatterlines!(ax, rls, rangesize[1, :]; label = "Presence")
+scatterlines!(ax, rls, rangesize[2, :]; label = "Absence")
+scatterlines!(ax, rls, rangesize[3, :]; label = "Unsure")
+axislegend(ax; position = :rb, nbanks = 3)
+current_figure() #hide

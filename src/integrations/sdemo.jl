@@ -102,11 +102,7 @@ function SDeMo.predict(
     store = Dict(zip(outcomes, output))
     cpred = predict(cp, collect(layer))
     for o in outcomes
-        @info "outcome $(o) starting"
-        @info length(cpred .== o)
-        @info typeof(cpred .== o)
         burnin!(store[o], convert(Vector{Bool}, isequal(o).(cpred)))
-        @info "outcome $(o) done"
     end
     return store[Set([true])],
     store[Set([false])],

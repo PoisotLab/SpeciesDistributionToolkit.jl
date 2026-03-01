@@ -114,5 +114,5 @@ ax = Axis(f[1, 1]; ylabel = "Surface (in 10⁴ km²)", xlabel="Risk level α")
 scatterlines!(ax, rls, rangesize[1, :]; label = "Presence")
 scatterlines!(ax, rls, rangesize[2, :]; label = "Absence")
 scatterlines!(ax, rls, rangesize[3, :]; label = "Unsure")
-axislegend(ax; position = :rb, nbanks = 3)
+axislegend(ax; position = :lb, nbanks = 3)
 current_figure() #hide

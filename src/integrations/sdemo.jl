@@ -109,10 +109,7 @@ function SDeMo.predict(
     for o in outcomes
         burnin!(store[o], convert(Vector{Bool}, isequal(o).(cpred)))
     end
-    return store[Set([true])],
-    store[Set([false])],
-    store[Set([true, false])],
-    store[Set{Bool}()]
+    return (store[o] for o in outcomes)
 end
 
 function SDeMo.predict(

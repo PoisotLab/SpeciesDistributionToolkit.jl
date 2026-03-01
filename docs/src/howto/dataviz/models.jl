@@ -15,6 +15,11 @@ model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
 
 scatter(model)
 
+# This can be coupled with information about the model itself, to provide more
+# interesting visualisations:
+
+scatter(model, color=labels(model))
+
 # ## Model diagnostic plots
 
 # These plots require a trained model:

@@ -68,6 +68,10 @@ conformal = train!(Conformal(0.05), model)
 
 present, absent, unsure, undetermined = predict(conformal, Y)
 
+# note that if we want to get a single outcome, for example only the unsure predictions, we can
+
+predict(conformal, Y; outcome=Set([true]))
+
 # these can then be mapped
 
 # fig-conformal-range

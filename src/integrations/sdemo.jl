@@ -95,9 +95,14 @@ end
 
 function SDeMo.predict(
     cp::Conformal,
-    layer::SDMLayer{T},
+    layer::SDMLayer{T};
+    outcomes::Vector{Set{Bool}} = [
+        Set([true]),
+        Set([false]),
+        Set([true, false]),
+        Set{Bool}(),
+    ],
 ) where {T <: Number}
-    outcomes = [Set([true]), Set([false]), Set([true, false]), Set{Bool}()]
     output = [similar(layer, Bool) for _ in eachindex(outcomes)]
     store = Dict(zip(outcomes, output))
     cpred = predict(cp, collect(layer))
@@ -108,6 +113,14 @@ function SDeMo.predict(
     store[Set([false])],
     store[Set([true, false])],
     store[Set{Bool}()]
+end
+
+function SDeMo.predict(
+    cp::Conformal,
+    layer::SDMLayer{T},
+    outcome::Set{Bool},
+) where {T <: Number}
+    return only(predict(cp, layer; outcomes = [outcome]))
 end
 
 # @testitem "We can get Shapley values on a different layer than was used for training" begin

@@ -87,14 +87,14 @@ A = cellarea(Y)
 
 # loop
 
-rls = LinRange(0.01, 0.15, 10)
+rls = LinRange(0.01, 0.15, 15)
 rangesize = zeros(Float64, 4, length(rls))
 
 # loop
 
 for (i, rl) in enumerate(rls)
     risklevel!(conformal, rl)
-    train!(conformal, model, splits)
+    train!(conformal, model)
     pr, ab, un, ud = predict(conformal, Y)
     rangesize[1, i] += sum(mask(A, nodata(pr, false)))
     rangesize[2, i] += sum(mask(A, nodata(ab, false)))
@@ -110,9 +110,40 @@ rangesize ./= 1e4
 
 # fig-risklevel-effect
 f = Figure(; size = (500, 350))
-ax = Axis(f[1, 1]; ylabel = "Surface (in 10⁴ km²)", xlabel="Risk level α")
-scatterlines!(ax, rls, rangesize[1, :]; label = "Presence")
-scatterlines!(ax, rls, rangesize[2, :]; label = "Absence")
-scatterlines!(ax, rls, rangesize[3, :]; label = "Unsure")
+ax = Axis(f[1, 1]; ylabel = "Surface (in 10⁴ km²)", xlabel = "Risk level α")
+scatter!(ax, rls, rangesize[1, :]; label = "Presence")
+scatter!(ax, rls, rangesize[2, :]; label = "Absence")
+scatter!(ax, rls, rangesize[3, :]; label = "Unsure")
 axislegend(ax; position = :lb, nbanks = 3)
+current_figure() #hide
+
+# also can be bootstrapped
+
+bagged = Bagging(model, 25)
+
+train!(bagged)
+
+# retrain
+
+risklevel!(conformal, 0.05)
+train!(conformal, model)
+
+# custom func
+
+isunsure = (x) -> count(isequal(Set([true, false])), predict(conformal, x))/length(x)
+
+# bootstrapped conformal
+
+B = predict(bagged, L; threshold = false, consensus = isunsure)
+
+# now we plot
+
+# fig-conformal-bootstrap
+f = Figure(; size = (500, 350))
+ax = Axis(f[2, 1]; aspect = DataAspect())
+hm = heatmap!(ax, B; colormap = Reverse(:navia))
+lines!(ax, landmass; color = :black)
+Colorbar(f[1, 1], hm; label = "Fraction of unsure samples", vertical = false)
+hidedecorations!(ax)
+hidespines!(ax)
 current_figure() #hide

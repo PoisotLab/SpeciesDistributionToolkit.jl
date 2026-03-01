@@ -166,6 +166,8 @@ export default defineConfig({
                                 { text: "Bounding boxes", link: "/howto/usage/boundingbox/" },
                                 { text: "Reading part of a layer", link: "/howto/usage/read-part-layer/" },
                                 { text: "Splitting and tiling", link: "/howto/usage/tiling/" },
+                                { text: "Coarsening layers", link: "/howto/usage/coarsening/" },
+                                { text: "Sliding windows", link: "/howto/usage/sliding-windows/" },
                                 { text: "Projection", link: "/howto/usage/projection/" },
                                 { text: "Layers and occurrences", link: "/howto/usage/layers-occurrences/" },
                             ]

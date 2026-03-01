@@ -21,4 +21,8 @@ scatter(model)
 
 train!(model)
 
-# **COMING SOON**
+# ::: info Coming soon
+#
+# These plots will be included in a future release of  `SDeMo`- stay tuned! 
+#
+# :::

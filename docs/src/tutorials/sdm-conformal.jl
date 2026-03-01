@@ -119,7 +119,7 @@ current_figure() #hide
 
 # also can be bootstrapped
 
-bagged = Bagging(model, 25)
+bagged = Bagging(model, 100)
 
 train!(bagged)
 

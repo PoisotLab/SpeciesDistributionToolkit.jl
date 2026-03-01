@@ -110,7 +110,7 @@ rangesize ./= 1e4
 
 # fig-risklevel-effect
 f = Figure(; size = (500, 350))
-ax = Axis(f[1, 1]; ylabel = "Surface (in 10⁴ km²)", xlabel = "Risk level α")
+ax = Axis(f[1, 1]; ylabel = "Surface (10⁴ km²)", xlabel = "Risk level α")
 scatter!(ax, rls, rangesize[1, :]; label = "Presence")
 scatter!(ax, rls, rangesize[2, :]; label = "Absence")
 scatter!(ax, rls, rangesize[3, :]; label = "Unsure")

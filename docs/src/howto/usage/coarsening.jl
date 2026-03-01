@@ -63,6 +63,5 @@ current_figure() #hide
 # ```
 
 # ```@docs; canonical=false
-# slidingwindow
-# slidingwindow!
+# coarsen
 # ```

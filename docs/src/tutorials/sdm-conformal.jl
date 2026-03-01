@@ -90,6 +90,12 @@ A = cellarea(Y)
 rls = LinRange(0.01, 0.15, 15)
 rangesize = zeros(Float64, 4, length(rls))
 
+# ::: tip Stability of results
+# 
+# note on keeping same folds / reporting average / variance
+# 
+# :::
+
 # loop
 
 for (i, rl) in enumerate(rls)
@@ -135,6 +141,15 @@ isunsure = (x) -> count(isequal(Set([true, false])), predict(conformal, x))/leng
 # bootstrapped conformal
 
 B = predict(bagged, L; threshold = false, consensus = isunsure)
+
+
+# ::: warning This is not best practice
+# 
+# not a published technique or particularly well tested idea, but shows how
+# package can be used to do new things relatively easily
+# 
+# :::
+
 
 # now we plot
 

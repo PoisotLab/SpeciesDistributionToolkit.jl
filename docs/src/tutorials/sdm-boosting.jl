@@ -153,7 +153,7 @@ current_figure() #hide
 # fig-hist-boostpred
 f = Figure(; size=(600, 300))
 ax = Axis(f[1,1]; xlabel="Predicted score")
-hist!(ax, brd; color = :lightgrey, bins=70)
+hist!(ax, brd; color = :lightgrey, bins=30)
 hideydecorations!(ax)
 hidexdecorations!(ax; ticks = false, ticklabels = false)
 hidespines!(ax, :l)
@@ -209,17 +209,38 @@ scatterlines!(
     SDeMo.reliability(bst; link = f)...;
     color = :blue,
     marker = :rect,
-    label = "Calibrated",
+    label = "Calibrated (Platt)",
 )
 axislegend(ax; position = :lt)
 current_figure() #hide
 
-# Of course the calibration function can be applied to a layer, so we can now
-# use AdaBoost to estimate the probability of species presence.
-# [Dormann2020](@citet) has several strong arguments in favor of this approach.
+# This calibration function is very obviously not adapted to this problem, so we
+# can switch to the more flexible method of isotonic calibration:
+
+C = calibrate(IsotonicCalibration, bst)
+f = correct(C)
+
+# fig-reliability-part-three
+scatterlines!(
+    ax,
+    SDeMo.reliability(bst; link = f)...;
+    color = :orange,
+    marker = :rect,
+    label = "Calibrated (isotonic)",
+)
+axislegend(ax; position = :lt)
+current_figure() #hide
+
+# This gives a much better result, and so we will use this calibration function
+# to return the probability prediction.
+
+# Of course the calibration function can (like any other function) be applied to
+# a layer, so we can now use AdaBoost to estimate the probability of species
+# presence. [Dormann2020](@citet) has several strong arguments in favor of this
+# approach.
 
 # fig-boosted-proba
-fg, ax, pl = heatmap(f.(brd); colormap = :tempo, colorrange = (0, 1))
+fg, ax, pl = heatmap(f.(brd); colormap = Reverse(:navia), colorrange = (0, 1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
 hidespines!(ax)
@@ -254,6 +275,19 @@ hidedecorations!(ax)
 hidespines!(ax)
 lines!(ax, POL; color = :grey20)
 current_figure() #hide
+
+# ## Related documentation
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# AdaBoost
+# calibrate
+# correct
+# SDeMo.reliability
+# ```
 
 # ## References
 

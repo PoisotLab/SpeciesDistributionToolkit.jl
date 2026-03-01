@@ -141,7 +141,7 @@ B = predict(bagged, L; threshold = false, consensus = isunsure)
 # fig-conformal-bootstrap
 f = Figure(; size = (500, 350))
 ax = Axis(f[2, 1]; aspect = DataAspect())
-hm = heatmap!(ax, B; colormap = Reverse(:navia))
+hm = heatmap!(ax, B; colormap = Reverse(:lipari))
 lines!(ax, landmass; color = :black)
 Colorbar(f[1, 1], hm; label = "Fraction of unsure samples", vertical = false)
 hidedecorations!(ax)

@@ -68,9 +68,10 @@ conformal = train!(Conformal(0.05), model)
 
 present, absent, unsure, undetermined = predict(conformal, Y)
 
-# note that if we want to get a single outcome, for example only the unsure predictions, we can
+# note that if we want to get a single outcome, for example only the unsure
+# predictions, we can pass it as a final argument there
 
-predict(conformal, Y; outcome=Set([true]))
+predict(conformal, Y, Set([true, false]))
 
 # these can then be mapped
 

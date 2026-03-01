@@ -93,6 +93,27 @@ function SDeMo.explain(
     return [explain(sdm, layers, v; kwargs...) for v in variables(sdm)]
 end
 
+function SDeMo.predict(
+    cp::Conformal,
+    layer::SDMLayer{T},
+) where {T <: Number}
+    outcomes = [Set([true]), Set([false]), Set([true, false]), Set{Bool}()]
+    output = [similar(layer, Bool) for _ in eachindex(outcomes)]
+    store = Dict(zip(outcomes, output))
+    cpred = predict(cp, collect(layer))
+    for o in outcomes
+        @info "outcome $(o) starting"
+        @info length(cpred .== o)
+        @info typeof(cpred .== o)
+        burnin!(store[o], convert(Vector{Bool}, isequal(o).(cpred)))
+        @info "outcome $(o) done"
+    end
+    return store[Set([true])],
+    store[Set([false])],
+    store[Set([true, false])],
+    store[Set{Bool}()]
+end
+
 # @testitem "We can get Shapley values on a different layer than was used for training" begin
 #     provider = RasterData(CHELSA2, BioClim)
 #     orig_layers = [

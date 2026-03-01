@@ -199,6 +199,7 @@ export default defineConfig({
                         { text: "Building a species distribution model", link: "/tutorials/sdm-training/" },
                         { text: "Ensemble models", link: "/tutorials/sdm-ensembles/" },
                         { text: "SDM with AdaBoost", link: "/tutorials/sdm-boosting/" },
+                        { text: "Conformal range prediction", link: "/tutorials/sdm-conformal/" },
                     ]
                 }
             ],

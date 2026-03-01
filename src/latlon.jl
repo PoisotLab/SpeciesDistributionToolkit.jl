@@ -23,7 +23,8 @@ latitudes(o::Vector{<:T}) where {T <: AbstractOccurrence} = latitudes.(o)
     coordinates(L::SDMLayer)
 
 Returns an array of tuples with eastings, northings for all occupied cells in a
-layer.
+layer. This method is not exported because it is mostly meant to be used
+internally.
 """
 function coordinates(L::SDMLayer)
     ks = keys(L)

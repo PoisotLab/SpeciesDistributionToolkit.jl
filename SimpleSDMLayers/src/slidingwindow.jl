@@ -1,4 +1,5 @@
 _centers(layer::SDMLayer) = _centers(layer, "+proj=longlat +datum=WGS84 +no_defs")
+
 function _centers(layer::SDMLayer, prj)
     # Projection function
     prfunc = Proj.Transformation(layer.crs, prj; always_xy=true)
@@ -79,3 +80,13 @@ function slidingwindow!(destination::SDMLayer, f::Function, layer::SDMLayer; rad
     return destination
 end
 
+
+#=
+@testitem "We can read a layer with scale and offset info" begin
+    _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
+    L = SDMLayer(joinpath(_data_path, "temperature.tif"); bandnumber = 1)
+    @test typeof(L) <: SDMLayer
+    @test minimum(L) <= -25.0f0
+    @test maximum(L) >= 19.0f0
+end
+=#

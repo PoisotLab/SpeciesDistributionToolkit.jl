@@ -33,14 +33,26 @@ re. what is returned by `f`.
 
 Internally, this function uses threads to speed up calculation quite a bit.
 """
-function slidingwindow!(destination::SDMLayer, f::Function, layer::SDMLayer; radius::AbstractFloat=100.0)
-    
+function slidingwindow!(
+    destination::SDMLayer,
+    f::Function,
+    layer::SDMLayer;
+    radius::AbstractFloat = 100.0,
+)
+
     # Infer the return type of the operation
     _rtype = eltype(f(values(layer)[1:min(3, length(layer))]))
     if _rtype != eltype(destination)
-        throw(TypeError(:swin!, "The destination layer must have the correct type", eltype(destination), _rtype))
+        throw(
+            TypeError(
+                :swin!,
+                "The destination layer must have the correct type",
+                eltype(destination),
+                _rtype,
+            ),
+        )
     end
-    
+
     est, nor = eastings(layer), northings(layer)
 
     # Collect keys
@@ -87,8 +99,16 @@ end
 
 @testitem "We can perform a slidingwindow analysis" begin
     _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
-    L = SDMLayer(joinpath(_data_path, "temperature.tif"); bandnumber = 1)
-    C = similar(L, Float32)
-    slidingwindow!(C, x -> sum(x) / length(x), L; radius=10.0)
-    @test C isa SDMLayer{Float32}
+    L = SDMLayer(
+        joinpath(_data_path, "temperature.tif");
+        bandnumber = 1,
+        left = 69.0,
+        right = 71.0,
+        bottom = 38.0,
+        top = 40.0,
+    )
+
+    C = slidingwindow(x -> sum(x) / length(x), L; radius = 10.0)
+    @test C isa SDMLayer{Float64}
+    @test size(C) == size(L)
 end

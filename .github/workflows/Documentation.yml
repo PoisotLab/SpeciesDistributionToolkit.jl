@@ -286,7 +286,7 @@ jobs:
         with:
           path: "docs/src/howto"
           name: howto-folder-part2
-  Tutorials:
+  TutorialsSDM:
     permissions:
       actions: write
       contents: write
@@ -309,14 +309,43 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
           DATADEPS_ALWAYS_ACCEPT: true
-        run: julia --project=docs/ --threads=auto docs/build.jl tutorials
+        run: julia --project=docs/ --threads=auto docs/build.jl tutorials/sdm
       - name: "Upload the tutorials folder"
         uses: actions/upload-artifact@v4
         with:
           path: "docs/src/tutorials"
-          name: tutorials-folder
+          name: tutorials-folder-sdm
+  TutorialsUsage:
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: read
+      statuses: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+      - name: "Bootstrap the package"
+        run: julia --project=. bootstrap.jl
+      - uses: julia-actions/cache@v2
+      - name: Install dependencies
+        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+      - name: Build and deploy
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+          DATADEPS_ALWAYS_ACCEPT: true
+        run: julia --project=docs/ --threads=auto docs/build.jl tutorials/usage
+      - name: "Upload the tutorials folder"
+        uses: actions/upload-artifact@v4
+        with:
+          path: "docs/src/tutorials"
+          name: tutorials-folder-usage
   SpeciesDistributionToolkit:
-    needs: [HowToPartOne, HowToPartTwo, Tutorials, SimpleSDMPolygons]
+    needs: [HowToPartOne, HowToPartTwo, TutorialsSDM, TutorialsUsage, SimpleSDMPolygons]
     permissions:
       actions: write
       contents: write
@@ -335,10 +364,15 @@ jobs:
         with:
           name: howto-folder-part2
           path: docs/src/howto
-      - name: "Download the compiled tutorials"
+      - name: "Download the compiled tutorials (SDM)"
         uses: actions/download-artifact@v4
         with:
-          name: tutorials-folder
+          name: tutorials-folder-sdm
+          path: docs/src/tutorials
+      - name: "Download the compiled tutorials (usage)"
+        uses: actions/download-artifact@v4
+        with:
+          name: tutorials-folder-usage
           path: docs/src/tutorials
       - uses: julia-actions/setup-julia@v2
         with:

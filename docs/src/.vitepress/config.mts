@@ -173,7 +173,7 @@ export default defineConfig({
                             ]
                         },
                         {
-                            text: "Distribution Models",
+                            text: "Distribution models",
                             collapsed: true,
                             items: [
                                 { text: "Cross-validation", link: "/howto/sdm/crossvalidation/" },
@@ -193,15 +193,27 @@ export default defineConfig({
                 {
                     text: "Tutorials",
                     items: [
-                        { text: "Calculating climate novelty", link: "/tutorials/climatenovelty/" },
-                        { text: "Generating a landcover consensus", link: "/tutorials/consensus/" },
-                        { text: "Generating fauxcurrences", link: "/tutorials/fauxcurrences/" },
-                        { text: "Generating virtual species", link: "/tutorials/virtual-species/" },
-                        { text: "Identifying spatial boundaries", link: "/tutorials/spatial-boundaries/" },
-                        { text: "Building a species distribution model", link: "/tutorials/sdm-training/" },
-                        { text: "Ensemble models", link: "/tutorials/sdm-ensembles/" },
-                        { text: "SDM with AdaBoost", link: "/tutorials/sdm-boosting/" },
-                        { text: "Conformal range prediction", link: "/tutorials/sdm-conformal/" },
+                        {
+                            text: "Distribution models",
+                            collapsed: true,
+                            items: [
+                                { text: "Building a model", link: "/tutorials/sdm/training/" },
+                                { text: "Bagging", link: "/tutorials/sdm/bagging/" },
+                                { text: "Boosting", link: "/tutorials/sdm/adaboost/" },
+                                { text: "Conformal prediction", link: "/tutorials/sdm/conformal/" },
+                            ]
+                        },
+                        {
+                            text: "General use",
+                            collapsed: true,
+                            items: [
+                                { text: "Calculating climate novelty", link: "/tutorials/usage/climatenovelty/" },
+                                { text: "Generating a landcover consensus", link: "/tutorials/usage/consensus/" },
+                                { text: "Generating fauxcurrences", link: "/tutorials/usage/fauxcurrences/" },
+                                { text: "Generating virtual species", link: "/tutorials/usage/virtual-species/" },
+                                { text: "Identifying spatial boundaries", link: "/tutorials/usage/spatial-boundaries/" },
+                            ]
+                        }
                     ]
                 }
             ],

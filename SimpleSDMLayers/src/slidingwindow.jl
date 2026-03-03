@@ -20,6 +20,12 @@ function _window(nor, est, point, r)
     return CIs
 end
 
+function _sliding_return_type(f, layer, centervalue)
+    demosample = values(layer)[1:min(10, length(layer))]
+    output = centervalue ? f(first(demosample), demosample[2:end]) : f(demosample)
+    return eltype(output)
+end
+
 """
     slidingwindow!(destination::SDMLayer, f::Function, layer::SDMLayer; radius::AbstractFloat=100.0)
 
@@ -31,6 +37,11 @@ The `f` function _must_ take a vector of value as an input, and _must_ return a
 single value as an output. The destination layer _must_ have the correct type
 re. what is returned by `f`.
 
+If the `centervalue` keyword is set to `true` (default is `false`), then the `f`
+function _must_ take `(r, v)` an input, where `r` is the value for the reference
+cell, and `v` is the vector of values for all other cells in the window. This is
+useful to measure, for example, z-scores within a known distance radius: `(r,v) -> (r-mean(v))/std(v)`.
+
 Internally, this function uses threads to speed up calculation quite a bit.
 """
 function slidingwindow!(
@@ -38,10 +49,11 @@ function slidingwindow!(
     f::Function,
     layer::SDMLayer;
     radius::AbstractFloat = 100.0,
+    centervalue::Bool = false,
 )
 
     # Infer the return type of the operation
-    _rtype = eltype(f(values(layer)[1:min(3, length(layer))]))
+    _rtype = _sliding_return_type(f, layer, centervalue)
     if _rtype != eltype(destination)
         throw(
             TypeError(
@@ -68,7 +80,7 @@ function slidingwindow!(
                 point = (est[k.I[2]], nor[k.I[1]])
                 window = _window(nor, est, point, radius)
                 vals = [layer.grid[w] for w in window if layer.indices[w]]
-                destination.grid[k] = f(vals)
+                destination.grid[k] = centervalue ? f(layer.grid[k], vals) : f(vals)
             end
         end
     end
@@ -85,16 +97,22 @@ Performs a sliding window analysis in which all cells in the returned layer
 receive the output of applying the function `f` to all cells in a radius of
 `radius` kilometer on the `layer` layer.
 
-The `f` function _must_ take a vector of value as an input, and _must_ return a
-single value as an output. The returned layer will have the type returned by `f`.
+The `f` function _must_ take a vector of values as an input, and _must_ return a
+single value as an output. The returned layer will have the type returned by
+`f`.
+
+If the `centervalue` keyword is set to `true` (default is `false`), then the `f`
+function _must_ take `(r, v)` an input, where `r` is the value for the reference
+cell, and `v` is the vector of values for all other cells in the window. This is
+useful to measure, for example, z-scores within a known distance radius: `(r,v) -> (r-mean(v))/std(v)`.
 
 Internally, this function uses threads to speed up calculation quite a bit, and
 uses the `slidingwindow!` function.
 """
-function slidingwindow(f::Function, layer::SDMLayer; kwargs...)
-    _rtype = eltype(f(values(layer)[1:min(3, length(layer))]))
+function slidingwindow(f::Function, layer::SDMLayer; centervalue::Bool = false, kwargs...)
+    _rtype = _sliding_return_type(f, layer, centervalue)
     destination = similar(layer, _rtype)
-    return slidingwindow!(destination, f, layer; kwargs...)
+    return slidingwindow!(destination, f, layer; centervalue = centervalue, kwargs...)
 end
 
 @testitem "We can perform a slidingwindow analysis" begin
@@ -129,4 +147,20 @@ end
     @test size(C) == size(L)
     @test all(C.grid .== one(Float16))
     @test !all(L.grid .== 1.0)
+end
+
+@testitem "We can perform a slidingwindow analysis with centervalue" begin
+    _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
+    L = SDMLayer(
+        joinpath(_data_path, "temperature.tif");
+        bandnumber = 1,
+        left = 69.0,
+        right = 71.0,
+        bottom = 38.0,
+        top = 40.0,
+    )
+    C = slidingwindow((r, v) -> r, L; radius = 10.0, centervalue = true)
+    @test C isa typeof(L)
+    @test size(C) == size(L)
+    @test all(C.grid .== L.grid)
 end

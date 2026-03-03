@@ -124,9 +124,9 @@ end
         top = 40.0,
     )
 
-    C = slidingwindow(x -> 1.0, L; radius = 10.0)
-    @test C isa typeof(L)
+    C = slidingwindow(x -> one(Float16), L; radius = 10.0)
+    @test C isa SDMLayer{Float16}
     @test size(C) == size(L)
-    @test all(C.grid == 1.0)
+    @test all(C.grid == one(Float16))
     @test !all(L.grid == 1.0)
 end

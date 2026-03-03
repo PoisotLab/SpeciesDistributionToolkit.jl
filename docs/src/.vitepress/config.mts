@@ -195,7 +195,7 @@ export default defineConfig({
                     items: [
                         {
                             text: "Distribution models",
-                            collapsed: true,
+                            collapsed: false,
                             items: [
                                 { text: "Building a model", link: "/tutorials/sdm/training/" },
                                 { text: "Bagging", link: "/tutorials/sdm/bagging/" },
@@ -205,7 +205,7 @@ export default defineConfig({
                         },
                         {
                             text: "General use",
-                            collapsed: true,
+                            collapsed: false,
                             items: [
                                 { text: "Calculating climate novelty", link: "/tutorials/usage/climatenovelty/" },
                                 { text: "Generating a landcover consensus", link: "/tutorials/usage/consensus/" },

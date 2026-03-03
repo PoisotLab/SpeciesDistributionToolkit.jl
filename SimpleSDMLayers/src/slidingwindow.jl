@@ -112,7 +112,7 @@ uses the `slidingwindow!` function.
 function slidingwindow(f::Function, layer::SDMLayer; centervalue::Bool = false, kwargs...)
     _rtype = _sliding_return_type(f, layer, centervalue)
     destination = similar(layer, _rtype)
-    return slidingwindow!(destination, f, layer; kwargs...)
+    return slidingwindow!(destination, f, layer; centervalue = centervalue, kwargs...)
 end
 
 @testitem "We can perform a slidingwindow analysis" begin

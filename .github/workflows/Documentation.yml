@@ -20,6 +20,14 @@ jobs:
             folder: [howto/dataviz, howto/generation, howto/layers, howto/polygons, howto/retrieval, howto/sdm, howto/usage, tutorials/sdm, tutorials/usage]
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare the artifact name
+        id: prep_artifact_name
+        run: |
+            if [ "${{ matrix.folder }}" != "" ] ; then
+                name="${{ matrix.folder }}"
+            fi
+            name=$(echo -n "$name" | sed -e 's/[ \t:\/\\"<>|*?]/-/g' -e 's/--*/-/g')
+            echo "ARTIFACT_NAME=$name" >> $GITHUB_ENV
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1'
@@ -41,7 +49,7 @@ jobs:
           path: |
             docs/src/howto
             docs/src/tutorials
-          name: build-${{ matrix.folder }}
+          name: build-${{ env.ARTIFACT_NAME }}
   OccurrencesInterface:
     permissions:
       actions: write

@@ -158,38 +158,14 @@ hidedecorations!(ax2)
 hidespines!(ax2)
 current_figure() #hide
 
-## Heterogeneous ensembles
+# ```@meta
+# CollapsedDocStrings = true
+# ```
 
-# We can also build ensembles of different models. Let's bring in the model we
-# used in the previous tutorial:
-
-sdm2 = SDM(RawData, Logistic, L, presencelayer, bgpoints)
-variables!(sdm2, [1, 11, 5, 8, 6])
-hyperparameters!(classifier(sdm2), :η, 1e-4);
-hyperparameters!(classifier(sdm2), :interactions, :all);
-hyperparameters!(classifier(sdm2), :epochs, 10_000);
-
-# As well as a Naive Bayes classifier:
-
-sdm3 = SDM(RawData, NaiveBayes, L, presencelayer, bgpoints)
-variables!(sdm3, ForwardSelection)
-
-# These models can all be merged into an heterogeneous ensemble:
-
-hens = Ensemble(sdm2, sdm3)
-train!(hens)
-
-# Heterogeneous ensembles can be used in the exact same way as bagged models, so
-# we can for example predict the range according to the three models:
-
-p_range = predict(hens, L; threshold = true, consensus = majority)
-
-# fig-range-map
-f = Figure(; size = (600, 300))
-ax = Axis(f[1, 1]; aspect = DataAspect())
-hm = heatmap!(ax, p_range; colormap = Reverse(:terrain), colorrange = (0, 1))
-contour!(ax, p_range; color = :black, linewidth = 0.5)
-lines!(ax, CHE; color = :black)
-hidedecorations!(ax)
-hidespines!(ax)
-current_figure() #hide
+# ## Related documentation
+#
+# ```@docs; canonical=false
+# SpeciesDistributionToolkit.Bagging
+# SpeciesDistributionToolkit.outofbox
+# SpeciesDistributionToolkit.bagfeatures!
+# ```

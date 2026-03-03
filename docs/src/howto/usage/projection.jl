@@ -50,6 +50,14 @@ current_figure() #hide
 #
 # :::
 
+
 # ```@meta
 # CollapsedDocStrings = true
+# ```
+
+# ## Related documentation
+#
+# ```@docs; canonical=false
+# SpeciesDistributionToolkit.interpolate
+# SpeciesDistributionToolkit.interpolate!
 # ```

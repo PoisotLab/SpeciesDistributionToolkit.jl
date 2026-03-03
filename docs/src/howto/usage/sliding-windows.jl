@@ -41,7 +41,7 @@ current_figure() #hide
 # We will start by reporting the average temperature within a 12 km radius from
 # any given point:
 
-avg_12km = slidingwindow(Statistics.mean, temperature; radius = 15.0)
+avg_12km = slidingwindow(Statistics.mean, temperature; radius = 12.0)
 
 # The radius is always expressed in kilometers. Once the operation is finished,
 # we can look at the results:
@@ -103,7 +103,7 @@ hm = heatmap!(ax, z_12km; colormap = Reverse(:managua), colorrange = (-1, 1))
 lines!(ax, region; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)
-Colorbar(f[1, 2], hm; label = "Relative temperature difference")
+Colorbar(f[1, 2], hm; label = "Relative local temperature difference")
 current_figure() #hide
 
 # ## Related documentation

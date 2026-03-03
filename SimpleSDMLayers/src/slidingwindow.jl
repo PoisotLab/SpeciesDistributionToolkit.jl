@@ -112,3 +112,21 @@ end
     @test C isa typeof(L)
     @test size(C) == size(L)
 end
+
+@testitem "We can perform a slidingwindow analysis" begin
+    _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
+    L = SDMLayer(
+        joinpath(_data_path, "temperature.tif");
+        bandnumber = 1,
+        left = 69.0,
+        right = 71.0,
+        bottom = 38.0,
+        top = 40.0,
+    )
+
+    C = slidingwindow(x -> 1.0, L; radius = 10.0)
+    @test C isa typeof(L)
+    @test size(C) == size(L)
+    @test all(C.grid == 1.0)
+    @test !all(L.grid == 1.0)
+end

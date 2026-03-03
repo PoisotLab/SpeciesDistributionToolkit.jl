@@ -228,7 +228,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
         run: julia --project=SimpleSDMPolygons/docs/ SimpleSDMPolygons/docs/make.jl
-  HowTo:
+  HowToPartOne:
     permissions:
       actions: write
       contents: write
@@ -251,12 +251,41 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
           DATADEPS_ALWAYS_ACCEPT: true
-        run: julia --project=docs/ --threads=auto docs/build.jl howto
-      - name: "Upload the howto folder"
+        run: julia --project=docs/ --threads=auto docs/build.jl howto/dataviz howto/generation howto/layers howto/polygons
+      - name: "Upload the howto folder part 1"
         uses: actions/upload-artifact@v4
         with:
           path: "docs/src/howto"
-          name: howto-folder
+          name: howto-folder-part1
+  HowToPartTwo:
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: read
+      statuses: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1'
+      - name: "Bootstrap the package"
+        run: julia --project=. bootstrap.jl
+      - uses: julia-actions/cache@v2
+      - name: Install dependencies
+        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+      - name: Build and deploy
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+          DATADEPS_ALWAYS_ACCEPT: true
+        run: julia --project=docs/ --threads=auto docs/build.jl howto/retrieval howto/sdm howto/usage
+      - name: "Upload the howto folder part 2"
+        uses: actions/upload-artifact@v4
+        with:
+          path: "docs/src/howto"
+          name: howto-folder-part2
   Tutorials:
     permissions:
       actions: write
@@ -287,7 +316,7 @@ jobs:
           path: "docs/src/tutorials"
           name: tutorials-folder
   SpeciesDistributionToolkit:
-    needs: [HowTo, Tutorials, SimpleSDMPolygons]
+    needs: [HowToPartOne, HowToPartTwo, Tutorials, SimpleSDMPolygons]
     permissions:
       actions: write
       contents: write
@@ -296,10 +325,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: "Download the compiled how-to"
+      - name: "Download the compiled how-to part 1"
         uses: actions/download-artifact@v4
         with:
-          name: howto-folder
+          name: howto-folder-part1
+          path: docs/src/howto
+      - name: "Download the compiled how-to part 2"
+        uses: actions/download-artifact@v4
+        with:
+          name: howto-folder-part2
           path: docs/src/howto
       - name: "Download the compiled tutorials"
         uses: actions/download-artifact@v4

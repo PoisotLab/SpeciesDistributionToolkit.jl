@@ -1,15 +1,18 @@
 # Select the files that we are rendering - if no argument is given, we do the "how-to" folder
-folder = isempty(ARGS) ? "howto" : ARGS[1]
-fpath = joinpath(@__DIR__, "src", folder)
-folder_content = readdir(fpath; join = true)
+folders = isempty(ARGS) ? ["howto"] : ARGS
 
-# Walk the sub-folders as well
-for dir in filter(isdir, folder_content)
-    append!(folder_content, readdir(dir; join = true))
+function get_files_from_folder(folder)
+    fpath = joinpath(@__DIR__, "src", folder)
+    folder_content = readdir(fpath; join = true)
+    # Walk the sub-folders as well
+    for dir in filter(isdir, folder_content)
+        append!(folder_content, readdir(dir; join = true))
+    end
+    return filter(endswith(".jl"), folder_content)
 end
 
-# We only want to .jl files
-files_to_build = filter(endswith(".jl"), folder_content)
+# This works on many folders at once
+files_to_build = vcat(get_files_from_folder.(folders)...)
 
 # Make sure we work from the version in the repo
 sdt_path = dirname(dirname(Base.current_project()))

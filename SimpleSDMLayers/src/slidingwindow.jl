@@ -109,6 +109,6 @@ end
     )
 
     C = slidingwindow(x -> sum(x) / length(x), L; radius = 10.0)
-    @test C isa SDMLayer{Float64}
+    @test C isa typeof(L)
     @test size(C) == size(L)
 end

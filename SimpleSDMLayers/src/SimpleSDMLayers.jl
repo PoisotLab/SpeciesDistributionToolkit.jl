@@ -51,7 +51,7 @@ export mask, mask!
 
 # Sliding window
 include("slidingwindow.jl")
-export slidingwindow
+export slidingwindow, slidingwindow!
 
 # Tiling
 include("tiling.jl")

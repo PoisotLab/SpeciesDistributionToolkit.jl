@@ -1,81 +1,132 @@
-_centers(layer::SDMLayer) = _centers(layer, "+proj=longlat +datum=WGS84 +no_defs")
-function _centers(layer::SDMLayer, prj)
-    # Projection function
-    prfunc = Proj.Transformation(layer.crs, prj; always_xy=true)
+_dx_from_point(point, distance) = 1.0 / (111.319 * cos(point[2] * (π / 180.0))) * distance
+_dy_from_point(point, distance) = 1.0 / 110.574 * distance
 
-    # Northings and eastings for the layer
-    nrt, est = northings(layer), eastings(layer)
+function _window(nor, est, point, r)
+    CIs = CartesianIndex[]
+    dy = _dy_from_point(point, r)
+    y_min = max(Base.Sort.searchsortedfirst(nor, point[2] - dy), 1)
+    y_max = min(Base.Sort.searchsortedfirst(nor, point[2] + dy), length(nor))
+    H = SimpleSDMLayers.Distances.Haversine(6371.0)
+    for y in y_min:y_max
+        d = H(point, (point[1], nor[y]))
+        if d <= r
+            chord = 2 * sqrt(r^2 - min(r, d)^2)
+            dx = _dx_from_point((point[1], nor[y]), chord / 2)
+            x_min = max(Base.Sort.searchsortedfirst(est, point[1] - dx), 1)
+            x_max = min(Base.Sort.searchsortedfirst(est, point[1] + dx), length(est))
+            append!(CIs, [CartesianIndex(y, x) for x in x_min:x_max])
+        end
+    end
+    return CIs
+end
 
-    # Prepare the centers as a matrix (for distances!)
-    centers = zeros(Float64, (2, count(layer)))
+"""
+    slidingwindow!(destination::SDMLayer, f::Function, layer::SDMLayer; radius::AbstractFloat=100.0)
 
-    # Fill in the information
-    for (i,idx) in enumerate(CartesianIndices(layer))
-        centers[:,i] .= prfunc(est[idx.I[2]], nrt[idx.I[1]])
+Performs a sliding window analysis in which all cells in the `destination` layer
+receive the output of applying the function `f` to all cells in a radius of
+`radius` kilometer on the `layer` layer.
+
+The `f` function _must_ take a vector of value as an input, and _must_ return a
+single value as an output. The destination layer _must_ have the correct type
+re. what is returned by `f`.
+
+Internally, this function uses threads to speed up calculation quite a bit.
+"""
+function slidingwindow!(
+    destination::SDMLayer,
+    f::Function,
+    layer::SDMLayer;
+    radius::AbstractFloat = 100.0,
+)
+
+    # Infer the return type of the operation
+    _rtype = eltype(f(values(layer)[1:min(3, length(layer))]))
+    if _rtype != eltype(destination)
+        throw(
+            TypeError(
+                :swin!,
+                "The destination layer must have the correct type",
+                eltype(destination),
+                _rtype,
+            ),
+        )
     end
 
-    return centers
+    est, nor = eastings(layer), northings(layer)
+
+    # Collect keys
+    K = keys(layer)
+
+    # Thread-safe structure
+    chunk_size = max(1, length(K) ÷ (100 * Threads.nthreads()))
+    data_chunks = Base.Iterators.partition(K, chunk_size)
+
+    tasks = map(data_chunks) do chunk
+        Threads.@spawn begin
+            for k in chunk
+                point = (est[k.I[2]], nor[k.I[1]])
+                window = _window(nor, est, point, radius)
+                vals = [layer.grid[w] for w in window if layer.indices[w]]
+                destination.grid[k] = f(vals)
+            end
+        end
+    end
+
+    fetch.(tasks)
+
+    return destination
 end
 
-function __get_idx_within_radius(centers, idx, radius)
-    # Approximate lat/lon for the valid coordinates
-    max_lat = centers[2,idx] + (180.0 * 1.001radius) / (π * 6371.0)
-    min_lat = centers[2,idx] - (180.0 * 1.001radius) / (π * 6371.0)
-    max_lon = centers[1,idx] + (360.0 * 1.001radius) / (π * 6371.0)
-    min_lon = centers[1,idx] - (360.0 * 1.001radius) / (π * 6371.0)
+"""
+    slidingwindow(f::Function, layer::SDMLayer; kwargs...)
 
-    # Reduce the list of centers
-    candidates = findall((min_lon .<= centers[1,:]) .& (centers[1,:] .<= max_lon).&(min_lat .<= centers[2,:]) .& (centers[2,:] .<= max_lat))
+Performs a sliding window analysis in which all cells in the returned layer
+receive the output of applying the function `f` to all cells in a radius of
+`radius` kilometer on the `layer` layer.
 
-    # Distance function
-    H = Distances.Haversine(6371.0)
-    D = Distances.colwise(H, centers[:,idx], centers[:,candidates])
+The `f` function _must_ take a vector of value as an input, and _must_ return a
+single value as an output. The returned layer will have the type returned by `f`.
 
-    # Filter by distance
-    window = findall(D .<= radius)
-
-    # Return
-    return candidates[window]
-end
-
-
+Internally, this function uses threads to speed up calculation quite a bit, and
+uses the `slidingwindow!` function.
+"""
 function slidingwindow(f::Function, layer::SDMLayer; kwargs...)
     _rtype = eltype(f(values(layer)[1:min(3, length(layer))]))
     destination = similar(layer, _rtype)
     return slidingwindow!(destination, f, layer; kwargs...)
 end
 
-function slidingwindow!(destination::SDMLayer, f::Function, layer::SDMLayer; radius::AbstractFloat=100.0, threads::Bool=true)
-    # Infer the return type of the operation
-    _rtype = eltype(f(values(layer)[1:min(3, length(layer))]))
-    if _rtype != eltype(destination)
-        throw(TypeError(:swin!, "The destination layer must have the correct type", eltype(destination), _rtype))
-    end
+@testitem "We can perform a slidingwindow analysis" begin
+    _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
+    L = SDMLayer(
+        joinpath(_data_path, "temperature.tif");
+        bandnumber = 1,
+        left = 69.0,
+        right = 71.0,
+        bottom = 38.0,
+        top = 40.0,
+    )
 
-    # Prepare the function to get the lat/lon
-    centers = SimpleSDMLayers._centers(layer)
-
-    # NOTE: very likely that this would be sped up by chunking all the positions
-    # rather than doing them one at a time, but not sure how to actually do this
-    # yet
-
-    # Go to town
-    if !threads
-        for (idx,pos) in enumerate(CartesianIndices(layer))
-            window = SimpleSDMLayers.__get_idx_within_radius(centers, idx, radius)
-            destination[pos] = f(values(layer)[window])
-        end
-    else
-        batchsize = max(floor(Int, size(centers, 2) / Threads.nthreads()), 1)
-        Threads.@threads for thrid in 1:Threads.nthreads()
-            start = (Threads.threadid()-1)*batchsize + 1
-            stop = Threads.threadid()==Threads.nthreads() ? size(centers, 2) : start + batchsize
-            for idx in start:stop
-                window = SimpleSDMLayers.__get_idx_within_radius(centers, idx, radius)
-                destination[CartesianIndices(layer)[idx]] = f(values(layer)[window])
-            end
-        end
-    end
-    return destination
+    C = slidingwindow(x -> sum(x) / length(x), L; radius = 10.0)
+    @test C isa typeof(L)
+    @test size(C) == size(L)
 end
 
+@testitem "We can perform a slidingwindow analysis" begin
+    _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
+    L = SDMLayer(
+        joinpath(_data_path, "temperature.tif");
+        bandnumber = 1,
+        left = 69.0,
+        right = 71.0,
+        bottom = 38.0,
+        top = 40.0,
+    )
+
+    C = slidingwindow(x -> one(Float16), L; radius = 10.0)
+    @test C isa SDMLayer{Float16}
+    @test size(C) == size(L)
+    @test all(C.grid .== one(Float16))
+    @test !all(L.grid .== 1.0)
+end

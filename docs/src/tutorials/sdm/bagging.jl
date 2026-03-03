@@ -54,7 +54,7 @@ bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
 # shallow):
 
 sdm = SDM(PCATransform, DecisionTree, L, presencelayer, bgpoints)
-variables!(sdm, ForwardSelection, kfold(sdm))
+train!(sdm)
 
 # ## Making the first prediction
 
@@ -90,16 +90,6 @@ bagfeatures!(ensemble)
 # By default, the `bagfeatures!` function called on an ensemble will sample the variables
 # forom the model, so that each model in the ensemble has the square root (rounded _up_) of
 # the number of original variables.
-
-# A probably better alternative is to reset the variables of our model:
-
-variables!(ensemble, AllVariables)
-
-# And then perform variable selection with feature bagging:
-
-variables!(ensemble, ForwardSelection, kfold(sdm); bagfeatures = true)
-
-# This will take longer to run, but will usually provide better results.
 
 # ::: info About this ensemble model
 # 

@@ -116,7 +116,7 @@ export default defineConfig({
                             items: [
                                 { text: "GBIF API", link: "/howto/retrieval/gbif-api/" },
                                 { text: "GBIF downloads", link: "/howto/retrieval/gbif-download/" },
-                                { text: "STAC Catalogues", link: "/howto/retrieval/stac/" },
+                                { text: "STAC catalogues", link: "/howto/retrieval/stac/" },
                                 { text: "List raster layers", link: "/howto/retrieval/list-raster-layers/" },
                                 { text: "List polygon information", link: "/howto/retrieval/list-polygon-information/" },
                             ]

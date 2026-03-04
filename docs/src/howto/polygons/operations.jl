@@ -22,8 +22,12 @@ oklahoma = getpolygon(PolygonData(OpenStreetMap, Places); place = "Oklahoma")
 # We can plot them to show that they are two adjacent states (that don't overlap):
 
 #figure tex-ok-separate
-lines(texas)
-lines!(oklahoma)
+f, ax, pl = poly(texas, color=:lightgreen)
+poly!(oklahoma, color=:lightblue)
+lines!(texas, color=:darkgreen)
+lines!(oklahoma, color=:darkblue)
+hidedecorations!(ax)
+hidespines!(ax)
 current_figure() #hide
 
 # By default, these are both downloaded as `FeatureCollection`s with a single
@@ -35,7 +39,11 @@ tex_and_ok = add(texas, oklahoma)
 # which we can then visualize:
 
 #figure tex-ok-together
-lines(tex_and_ok)
+f, ax, pl = poly(tex_and_ok, color=:moccasin)
+lines!(texas, color=:grey50, linewidth=0.5)
+lines!(tex_and_ok, color=:orange)
+hidedecorations!(ax)
+hidespines!(ax)
 current_figure() #hide
 
 # We can also do this with the single features directly
@@ -70,7 +78,13 @@ tx_ok_la = texas + oklahoma + louisiana
 # which we can visualize:
 
 #figure added-tx-ok-la
-lines(tx_ok_la)
+f, ax, pl = poly(tx_ok_la, color=:moccasin)
+lines!(texas, color=:grey50, linewidth=0.5)
+lines!(oklahoma, color=:grey50, linewidth=0.5)
+lines!(louisiana, color=:grey50, linewidth=0.5)
+lines!(tx_ok_la, color=:orange)
+hidedecorations!(ax)
+hidespines!(ax)
 current_figure() #hide
 
 # If we want to keep their separate boundaries, we should use `vcat`:
@@ -80,7 +94,10 @@ tx_ok_la_separate = vcat(texas, oklahoma, louisiana)
 # And plot to show they keep their individual boundaries
 
 #figure tx-ok-la-separate
-lines(tx_ok_la_separate)
+f, ax, pl = poly(tx_ok_la_separate, color=:moccasin)
+lines!(tx_ok_la_separate, color=:orange)
+hidedecorations!(ax)
+hidespines!(ax)
 current_figure() #hide
 
 # This covers the addition of polygons.
@@ -105,17 +122,26 @@ rural_texas = subtract(rural_texas, houston)
 # and visualize:
 
 #figure rural-texas
-lines(rural_texas)
+f, ax, pl = poly(rural_texas, color=:moccasin)
+poly!(dallas, color=:grey90)
+poly!(houston, color=:grey90)
+lines!(rural_texas, color=:orange)
+hidedecorations!(ax)
+hidespines!(ax)
 current_figure() #hide
 
 # Or in a single line using the `-` operator
 
-rural_texas = texas - dallas - houston
+rural_texas = texas - (dallas + houston)
 
 # which results in the same thing:
 
 #figure rural-texas-sub-symbol
-lines(rural_texas)
+f, ax, pl = poly(rural_texas, color=:moccasin)
+poly!(dallas + houston, color=:grey90)
+lines!(rural_texas, color=:orange)
+hidedecorations!(ax)
+hidespines!(ax)
 current_figure() #hide
 
 # These operations can be chained to perform more complex clipping. 
@@ -127,9 +153,9 @@ current_figure() #hide
 
 # As an example, let's consider trying to make a map of Texas, which different
 # polygons corresponding to different ecoregions. We'll start by downloading the
-# EPA North America 2nd level ecoregions
+# EPA North America level 3 ecoregions
 
-ecoregions = getpolygon(PolygonData(EPA, Ecoregions); level = 3)
+ecoregions = getpolygon(PolygonData(EPA, Ecoregions); level = 2)
 
 # and then intersect them
 
@@ -138,7 +164,17 @@ tx_ecoregions = intersect(texas, ecoregions)
 # and visualize the different ecoregions in texas
 
 #figure tx-ecoregions
-poly(tx_ecoregions)
+c = cgrad(:batlow10, length(tx_ecoregions), categorical=true)
+f = Figure()
+ax = Axis(f[1,1], aspect=DataAspect())
+for (i, ecoregion) in enumerate(tx_ecoregions)
+    poly!(ax, ecoregion, label=titlecase(ecoregion.properties["Name"]), color=c[i])
+end
+lines!(ax, tx_ecoregions, color=:black)
+hidedecorations!(ax)
+hidespines!(ax)
+Legend(f[2,1], ax, framevisible=false, nbanks=2, tellwidth=false, tellheight=false)
+rowsize!(f.layout, 2, Relative(0.2))
 current_figure() #hide
 
 # Finally, we can clip a series of polygons with a boundingbox:
@@ -148,5 +184,18 @@ bbox = (left=-100., right=-95.0, bottom=27.5, top=32.5)
 tx_clip = clip(tx_ecoregions, bbox)
 
 #figure tx-clipped-by-bbox
-lines(tx_clip)
+c = cgrad(:batlow10, length(tx_clip), categorical=true)
+f = Figure()
+ax = Axis(f[1,1], aspect=DataAspect())
+for (i, ecoregion) in enumerate(tx_clip)
+    poly!(ax, ecoregion, label=titlecase(ecoregion.properties["Name"]), color=c[i])
+end
+lines!(ax, tx_clip, color=:black)
+hidedecorations!(ax)
+hidespines!(ax)
+Legend(f[2,1], ax, framevisible=false, nbanks=2, tellwidth=false, tellheight=false)
+rowsize!(f.layout, 2, Relative(0.2))
 current_figure() #hide
+
+# Chained together, these functions can be used to create the right polygon to
+# clip or mask data.

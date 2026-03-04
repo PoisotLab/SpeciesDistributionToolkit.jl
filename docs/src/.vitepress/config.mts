@@ -137,7 +137,7 @@ export default defineConfig({
                             items: [
                                 { text: "Masking layers", link: "/howto/polygons/masking-a-layer/" },
                                 { text: "Masking with polygons", link: "/howto/polygons/masking-with-polygons/" },
-                                { text: "Polygon operations", link: "/howto/polygons/operations-on-polygons/" },
+                                { text: "Polygon operations", link: "/howto/polygons/operations/" },
                                 { text: "Zonal statistics", link: "/howto/polygons/zonal-statistics/" },
                             ]
                         },

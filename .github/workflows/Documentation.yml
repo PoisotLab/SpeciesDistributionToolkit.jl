@@ -280,10 +280,11 @@ jobs:
         with:
             name: manual-compiled
             delete-merged: true
-      - name: "Put the compilde manual in its place"
-        uses: actions/download-artifact@v5
+      - name: "Put the compiled manual in its place"
+        uses: actions/download-artifact@v8
         with:
             name: manual-compiled
+            path: docs/src
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1'

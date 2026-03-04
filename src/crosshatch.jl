@@ -1,6 +1,15 @@
+function _pts_to_poly(pol, pts)
+    cpol = SimpleSDMPolygons.AG.createpolygon(pts)
+    SimpleSDMPolygons._add_crs(
+        cpol,
+        SimpleSDMPolygons.AG.importCRS(SimpleSDMPolygons.GI.crs(pol)),
+    )
+    return Polygon(cpol)
+end
+
 function crosshatch(region::SimpleSDMPolygons.AbstractGeometry; spacing=1.0, angle=80.)
     
-    bbox = SDT.boundingbox(region)
+    bbox = SpeciesDistributionToolkit.boundingbox(region)
     
     O = bbox.top - bbox.bottom
     A = O / tan(deg2rad(angle))

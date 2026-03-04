@@ -50,10 +50,26 @@ current_figure()
 # spacing and angle of which can be modified.
 
 poly(regions; color = :grey90, label = "Central America region")
-lines!(crosshatch(regions["Name" => "Central American Mixed Forests"], spacing=1.0, angle=45.); color = :forestgreen)
-lines!(regions; color = :grey10, label = "Central America region")
-poly!(regions["Name" => "Central American Mixed Forests"], color = :forestgreen, alpha=0.2, label="Central American Mixed Forests")
-lines!(regions["Name" => "Central American Mixed Forests"], color = :forestgreen, label="Central American Mixed Forests")
+poly!(
+    regions["Name" => "Central American Mixed Forests"];
+    color = :forestgreen,
+    alpha = 0.2,
+    label = "Central American Mixed Forests",
+)
+lines!(
+    crosshatch(
+        regions["Name" => "Central American Mixed Forests"];
+        spacing = 0.8,
+        angle = 45.0,
+    );
+    label = "Central American Mixed Forests",
+    color = :forestgreen,
+)
+lines!(
+    regions;
+    color = :grey10,
+    label = "Central America region"
+)
 axislegend(; unique = true, merge = true, position = :lb)
 hidedecorations!(current_axis())
 hidespines!(current_axis())

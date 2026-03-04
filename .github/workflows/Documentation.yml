@@ -58,6 +58,7 @@ jobs:
       statuses: write
     runs-on: ubuntu-latest
     strategy:
+        max-parallel: 1
         matrix:
             pkg: [OccurrencesInterface, GBIF, PseudoAbsences, SDeMo, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, SimpleSDMPolygons, Phylopic]
     steps:

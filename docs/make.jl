@@ -65,12 +65,6 @@ makedocs(;
     plugins = [bib],
 )
 
-try
-    run(`git pull`)
-catch err
-    nothing
-end
-
 deploydocs(;
     repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl.git",
     devbranch = "main",

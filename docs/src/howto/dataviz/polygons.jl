@@ -68,9 +68,48 @@ lines!(
 lines!(
     regions;
     color = :grey10,
-    label = "Central America region"
+    label = "Central America region",
 )
 axislegend(; unique = true, merge = true, position = :lb)
 hidedecorations!(current_axis())
 hidespines!(current_axis())
 current_figure()
+
+# When cross-hatching multiple regions, it may be a good idea to generate the
+# hatching for the largest possible extent:
+
+hatch = crosshatch(add(regions); angle = 35)
+lines(hatch; color = :black)
+
+# One reason for which this is important is that it will result in a more
+# homogenous look when the cross-hatched regions are next to one another.
+
+# The bit of code to accomplish this is currently ugly do a limitation of
+# clipping in SimpleSDMPolygons, which will be fixed in a future release.
+
+poly(regions; color = :grey90, label = "Central America region")
+for region in regions
+    if contains(region.properties["Name"], "Forests")
+        sub_hatch = FeatureCollection([
+            f for f in intersect(hatch, region).features if
+            !(SimpleSDMPolygons.AG.isempty(f.geometry.geometry))
+        ])
+        if contains(region.properties["Name"], "Mixed")
+            lines!(sub_hatch; color = :forestgreen, label = "Mixed forests")
+        else
+            lines!(sub_hatch; color = :orange, label = "Other forests")
+        end
+    end
+end
+lines!(
+    regions;
+    color = :grey10,
+    label = "Central America region",
+)
+axislegend(; unique = true, merge = true, position = :lb)
+hidedecorations!(current_axis())
+hidespines!(current_axis())
+current_figure()
+
+# Note that the hatches are shared between the different polygons, which cannot
+# be guaranteed if each polygon is hatched independently.

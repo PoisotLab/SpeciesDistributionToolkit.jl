@@ -9,13 +9,13 @@ end
 
 function crosshatch(region::SimpleSDMPolygons.AbstractGeometry; spacing=1.0, angle=80.)
     
-    bbox = SpeciesDistributionToolkit.boundingbox(region)
+    bbox = SimpleSDMPolygons.boundingbox(region)
     
     O = bbox.top - bbox.bottom
     A = O / tan(deg2rad(angle))
 
-    start_at = bbox.left - abs(A)
-    stop_at = bbox.right + abs(A)
+    start_at = bbox.left - 2abs(A)
+    stop_at = bbox.right + 2abs(A)
     xpoints = start_at:spacing:stop_at
 
     pols = []

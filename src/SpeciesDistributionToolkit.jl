@@ -63,6 +63,10 @@ export gainloss
 include("reproject.jl")
 export reproject
 
+# Hatching
+include("crosshatch.jl")
+export crosshatch
+
 # Get the boundingbox tuple
 include("boundingbox.jl")
 export boundingbox

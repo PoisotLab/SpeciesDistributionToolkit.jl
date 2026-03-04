@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## `v1.8.0`
 
 - **changed** a lot of the presentation of the documentation
+- **added** a `crosshatch` function to generate hatching
 - **added** support for conformal prediction from `SDeMo`
 - **added** support for reprojection [#516]
 

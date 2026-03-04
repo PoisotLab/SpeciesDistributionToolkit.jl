@@ -19,8 +19,7 @@ lines(regions)
 
 # The `color` argument will set the same color to all polygons:
 
-lines(regions, color=:grey50)
-
+lines(regions; color = :grey50)
 
 # ## Polygons
 
@@ -28,15 +27,34 @@ poly(regions)
 
 # The `color` argument will set the background:
 
-poly(regions, color=:grey90)
+poly(regions; color = :grey90)
 
 # ## Combination
 
-poly(regions, color=:grey90, label="Central America region")
-lines!(regions, color=:grey10, label="Central America region")
-poly!(regions["Subregion" => "Caribbean"], color=:lime, label="Caribbean sub-region")
-lines!(regions["Subregion" => "Caribbean"], color=:darkgreen, label="Caribbean sub-region")
-axislegend(unique=true, merge=true, position=:lb)
+poly(regions; color = :grey90, label = "Central America region")
+lines!(regions; color = :grey10, label = "Central America region")
+poly!(regions["Subregion" => "Caribbean"]; color = :lime, label = "Caribbean sub-region")
+lines!(
+    regions["Subregion" => "Caribbean"];
+    color = :darkgreen,
+    label = "Caribbean sub-region",
+)
+axislegend(; unique = true, merge = true, position = :lb)
+hidedecorations!(current_axis())
+hidespines!(current_axis())
+current_figure()
+
+# ## Cross-hatching
+
+# The `crosshatch` function returns a polygon that has cross-hatches, the
+# spacing and angle of which can be modified.
+
+poly(regions; color = :grey90, label = "Central America region")
+lines!(crosshatch(regions["Name" => "Central American Mixed Forests"], spacing=1.0, angle=45.); color = :forestgreen)
+lines!(regions; color = :grey10, label = "Central America region")
+poly!(regions["Name" => "Central American Mixed Forests"], color = :forestgreen, alpha=0.2, label="Central American Mixed Forests")
+lines!(regions["Name" => "Central American Mixed Forests"], color = :forestgreen, label="Central American Mixed Forests")
+axislegend(; unique = true, merge = true, position = :lb)
 hidedecorations!(current_axis())
 hidespines!(current_axis())
 current_figure()

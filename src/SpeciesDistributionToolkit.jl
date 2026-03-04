@@ -59,6 +59,10 @@ export zone, byzone
 include("utilities.jl")
 export gainloss
 
+# Reprojection
+include("reproject.jl")
+export reproject
+
 # Get the boundingbox tuple
 include("boundingbox.jl")
 export boundingbox

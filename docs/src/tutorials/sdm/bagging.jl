@@ -155,7 +155,7 @@ current_figure() #hide
 # ## Related documentation
 #
 # ```@docs; canonical=false
-# SpeciesDistributionToolkit.Bagging
-# SpeciesDistributionToolkit.outofbox
-# SpeciesDistributionToolkit.bagfeatures!
+# SDeMo.Bagging
+# SDeMo.outofbag
+# SDeMo.bagfeatures!
 # ```

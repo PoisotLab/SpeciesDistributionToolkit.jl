@@ -7,8 +7,6 @@ ranges. The two layers given as input must be layers with boolean values where
 is irrelevant as these are ignored internally.
 """
 function gainloss(contemporary::SDMLayer{Bool}, future::SDMLayer{Bool})
-    rangemask = nodata((contemporary)|(future), false)
+    rangemask = nodata((contemporary) | (future), false)
     return mask(Int8.(contemporary) - Int8.(future), rangemask)
 end
-
-

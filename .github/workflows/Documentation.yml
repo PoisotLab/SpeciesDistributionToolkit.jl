@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         matrix:
-            pkg: [OccurencesInterface, GBIF, PseudoAbsences, SDeMo, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, SimpleSDMPolygons, Phylopic]
+            pkg: [OccurrencesInterface, GBIF, PseudoAbsences, SDeMo, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, SimpleSDMPolygons, Phylopic]
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2

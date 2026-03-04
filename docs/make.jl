@@ -69,4 +69,5 @@ deploydocs(;
     repo = "github.com/PoisotLab/SpeciesDistributionToolkit.jl.git",
     devbranch = "main",
     push_preview = true,
+    forcepush = true,
 )

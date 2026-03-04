@@ -142,17 +142,6 @@ export default defineConfig({
                             ]
                         },
                         {
-                            text: "Data visualization",
-                            collapsed: true,
-                            items: [
-                                { text: "Layers", link: "/howto/dataviz/layers/" },
-                                { text: "Occurrences", link: "/howto/dataviz/occurrences/" },
-                                { text: "Polygons", link: "/howto/dataviz/polygons/" },
-                                { text: "Models", link: "/howto/dataviz/models/" },
-                                { text: "Projections", link: "/howto/dataviz/projections/" },
-                            ]
-                        },
-                        {
                             text: "Data generation",
                             collapsed: true,
                             items: [
@@ -185,6 +174,17 @@ export default defineConfig({
                                 { text: "Counterfactuals", link: "/howto/sdm/counterfactuals/" },
                                 { text: "Calibration", link: "/howto/sdm/calibration/" },
                                 { text: "Conformal", link: "/howto/sdm/conformal/" },
+                            ]
+                        },
+                        {
+                            text: "Data visualization",
+                            collapsed: true,
+                            items: [
+                                { text: "Layers", link: "/howto/dataviz/layers/" },
+                                { text: "Occurrences", link: "/howto/dataviz/occurrences/" },
+                                { text: "Polygons", link: "/howto/dataviz/polygons/" },
+                                { text: "Models", link: "/howto/dataviz/models/" },
+                                { text: "Projections", link: "/howto/dataviz/projections/" },
                             ]
                         }
                     ]

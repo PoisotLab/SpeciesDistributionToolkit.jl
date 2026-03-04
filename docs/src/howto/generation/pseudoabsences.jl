@@ -6,7 +6,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # Pseudo-absence generation requires occurrences super-imposed on a layer, so we
 # will collect a few occurrences:

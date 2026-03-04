@@ -10,7 +10,7 @@ using SpeciesDistributionToolkit
 
 using Statistics
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # Accessing future data involves the `Dates` standard library, to make an
 # explicit reference to years in the dataset.

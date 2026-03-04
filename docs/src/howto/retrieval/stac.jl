@@ -9,7 +9,7 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 using STAC # [!code highlight]
-CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # The support is currently very bare-bones, and can return a layer when given an
 # asset. To demonstrate, we will get the time to the nearest city (in minutes)

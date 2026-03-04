@@ -1,8 +1,8 @@
-# # Download data from a GBIF DOI?
+# # Downloading data from a GBIF DOI
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # The correct way to consume a large amount of GBIF data is to get them through
 # the download mechanism, in particular to ensure that the data contributors can

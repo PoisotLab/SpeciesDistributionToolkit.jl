@@ -6,7 +6,7 @@
 using SpeciesDistributionToolkit
 using Statistics
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # We can get polygon data from Open Street Map:
 

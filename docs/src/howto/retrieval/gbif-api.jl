@@ -1,4 +1,4 @@
-# # Stream data from the GBIF API?
+# # Streaming data from the GBIF API
 
 using SpeciesDistributionToolkit
 using DataFrames

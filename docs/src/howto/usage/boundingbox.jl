@@ -2,7 +2,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # The `boundingbox` method accepts most types that `SpeciesDistributionToolkit`
 # knows about, and returns a tuple:

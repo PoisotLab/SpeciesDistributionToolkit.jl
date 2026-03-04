@@ -11,7 +11,7 @@ using CairoMakie
 using Statistics
 import StatsBase
 using Clustering # [!code highlight]
-CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # The support is currently limited to clustering methods that take a matrix of
 # features, as distance matrices for large layers risk getting extremely large.

@@ -7,14 +7,26 @@ function _projector(source, target)
 end
 
 """
-    reproject(pol::SimpleSDMPolygons.AbstractGeometry, dest)
+    reproject(pol::SimpleSDMPolygons.FeatureCollection, dest)
 
 Converts the points in a polygon to a different CRS, defined by its WKT.
 """
-function reproject(pol::SimpleSDMPolygons.AbstractGeometry, dest)
+function reproject(pol::SimpleSDMPolygons.FeatureCollection, dest)
+    return FeatureCollection([
+        reproject(pol[i], dest) for i in Base.OneTo(length(pol))
+    ])
+end
+
+function reproject(pol::SimpleSDMPolygons.Feature, dest)
     source = SimpleSDMPolygons.GI.crs(pol).val
     target = dest
-    return SpeciesDistributionToolkit._reproject(_projector(source, target), pol[1].geometry)
+    return SpeciesDistributionToolkit._reproject(_projector(source, target), pol.geometry)
+end
+
+function reproject(pol::SimpleSDMPolygons.MultiPolygon, dest)
+    source = SimpleSDMPolygons.GI.crs(pol).val
+    target = dest
+    return SpeciesDistributionToolkit._reproject(_projector(source, target), pol)
 end
 
 """

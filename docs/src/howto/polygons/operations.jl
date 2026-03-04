@@ -21,7 +21,7 @@ oklahoma = getpolygon(PolygonData(OpenStreetMap, Places); place = "Oklahoma")
 
 # We can plot them to show that they are two adjacent states (that don't overlap):
 
-#figure tex-ok-separate
+#figure separate
 f, ax, pl = poly(texas, color=:lightgreen)
 poly!(oklahoma, color=:lightblue)
 lines!(texas, color=:darkgreen)
@@ -38,7 +38,7 @@ tex_and_ok = add(texas, oklahoma)
 
 # which we can then visualize:
 
-#figure tex-ok-together
+#figure together
 f, ax, pl = poly(tex_and_ok, color=:moccasin)
 lines!(texas, color=:grey50, linewidth=0.5)
 lines!(tex_and_ok, color=:orange)
@@ -75,9 +75,10 @@ louisiana = getpolygon(PolygonData(OpenStreetMap, Places); place = "Louisiana")
 
 tx_ok_la = texas + oklahoma + louisiana
 
-# which we can visualize:
+# We can look at the output (the state lines have been added, and are in light
+# grey):
 
-#figure added-tx-ok-la
+#figure added-states
 f, ax, pl = poly(tx_ok_la, color=:moccasin)
 lines!(texas, color=:grey50, linewidth=0.5)
 lines!(oklahoma, color=:grey50, linewidth=0.5)
@@ -93,7 +94,7 @@ tx_ok_la_separate = vcat(texas, oklahoma, louisiana)
 
 # And plot to show they keep their individual boundaries
 
-#figure tx-ok-la-separate
+#figure separate-states
 f, ax, pl = poly(tx_ok_la_separate, color=:moccasin)
 lines!(tx_ok_la_separate, color=:orange)
 hidedecorations!(ax)
@@ -136,7 +137,7 @@ rural_texas = texas - (dallas + houston)
 
 # which results in the same thing:
 
-#figure rural-texas-sub-symbol
+#figure alternative-rural-texas
 f, ax, pl = poly(rural_texas, color=:moccasin)
 poly!(dallas + houston, color=:grey90)
 lines!(rural_texas, color=:orange)
@@ -163,7 +164,7 @@ tx_ecoregions = intersect(texas, ecoregions)
 
 # and visualize the different ecoregions in texas
 
-#figure tx-ecoregions
+#figure ecoregions-for-texas
 c = cgrad(:batlow10, length(tx_ecoregions), categorical=true)
 f = Figure()
 ax = Axis(f[1,1], aspect=DataAspect())
@@ -183,7 +184,7 @@ bbox = (left=-100., right=-95.0, bottom=27.5, top=32.5)
 
 tx_clip = clip(tx_ecoregions, bbox)
 
-#figure tx-clipped-by-bbox
+#figure bbox-clip
 c = cgrad(:batlow10, length(tx_clip), categorical=true)
 f = Figure()
 ax = Axis(f[1,1], aspect=DataAspect())

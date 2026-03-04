@@ -13,7 +13,7 @@ function pre_collapse_figure(content)
     (?<code>(?>^[^#].*$\n){1,})^current_figure\(\) #hide$"""m
 
     replacement_template = """
-    # ::: tabs
+    # :::tabs
 
     # == Figure
 

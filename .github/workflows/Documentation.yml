@@ -275,8 +275,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: "Download the compiled examples"
+      - name: "Merge the manual artifacts"
         uses: actions/upload-artifact/merge@v4
+        with:
+            name: manual-compiled
+            delete-merged: true
+      - name: "Put the compilde manual in its place"
+        uses: actions/download-artifact@v5
+        with:
+            name: manual-compiled
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1'

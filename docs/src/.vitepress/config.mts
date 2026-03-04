@@ -149,6 +149,7 @@ export default defineConfig({
                                 { text: "Occurrences", link: "/howto/dataviz/occurrences/" },
                                 { text: "Polygons", link: "/howto/dataviz/polygons/" },
                                 { text: "Models", link: "/howto/dataviz/models/" },
+                                { text: "Projections", link: "/howto/dataviz/projections/" },
                             ]
                         },
                         {

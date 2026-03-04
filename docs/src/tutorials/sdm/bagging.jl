@@ -65,7 +65,7 @@ prd = predict(sdm, L; threshold = false)
 
 # This gives the following initial prediction:
 
-# fig-initial-map
+#figure initial-map
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction (tree)")
 hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange = (0, 1))
@@ -119,7 +119,7 @@ prd = predict(ensemble, L; consensus = median, threshold = false)
 
 unc = predict(ensemble, L; consensus = iqr, threshold = false)
 
-# fig-sdm-prediction
+#figure sdm-prediction
 f = Figure(; size = (600, 600))
 ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Prediction")
 hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange = (0, 1))

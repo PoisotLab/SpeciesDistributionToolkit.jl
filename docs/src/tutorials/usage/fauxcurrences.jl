@@ -40,7 +40,7 @@ obs = [Fauxcurrences.get_valid_coordinates(o, layer) for o in observations];
 
 # The observed data are distributed this way:
 
-# fig-observations
+#figure observations
 heatmap(layer; colormap = [:grey80, :grey80])
 for i in eachindex(taxa)
     scatter!(obs[i]; label = taxa[i].name)
@@ -131,7 +131,7 @@ sum(D)
 
 #-
 
-# fig-bootstrap
+#figure bootstrap
 heatmap(layer; colormap = [:grey80, :grey80])
 for i in eachindex(taxa)
     scatter!(sim[i]; label = taxa[i].name)
@@ -218,7 +218,7 @@ println(
 
 #-
 
-# fig-progress-lines
+#figure progress-lines
 lines(
     progress[1:findlast(x -> x > 0, progress)];
     axis = (; yscale = sqrt, xlabel = "Iteration", ylabel = "JS divergence"),
@@ -235,7 +235,7 @@ current_figure() #hide
 
 # The final disposition of the fauxcurrences is:
 
-# fig-final-fauxcurrences
+#figure final-fauxcurrences
 heatmap(layer; colormap = [:grey80, :grey80])
 for i in eachindex(taxa)
     scatter!(sim[i]; label = taxa[i].name)
@@ -250,7 +250,7 @@ current_figure() #hide
 # For the intra-specific distances, with observations in black and the
 # simulation in orange, this looks like:
 
-# fig-distances-intra
+#figure distances-intra
 f = Figure(; size = (700, 250))
 ax1 = Axis(f[1, 1])
 ax2 = Axis(f[1, 2])
@@ -275,7 +275,7 @@ current_figure() #hide
 # For the components of the inter-specific distance matrix, this gives the
 # following plot:
 
-# fig-distances-inter
+#figure distances-inter
 f = Figure(; size = (700, 250))
 ax1 = Axis(f[1, 1])
 ax2 = Axis(f[1, 2])

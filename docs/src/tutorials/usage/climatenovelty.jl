@@ -69,7 +69,7 @@ mask!(historical, POL)
 # We can have a little look at this dataset by checking the density of the values
 # for the first layer (we can pass a layer to a Makie function directly):
 
-# fig-histogram
+#figure histogram
 f, ax, plt = hist(
     historical[1]; color = (:grey, 0.5),
     figure = (; size = (800, 300)),
@@ -166,7 +166,7 @@ end
 # that this area will experience more novel climatic conditions under the
 # scenario/model we have specified.
 
-# fig-novelty
+#figure novelty
 fig, ax, hm = heatmap(
     Δclim;
     colormap = :tempo,

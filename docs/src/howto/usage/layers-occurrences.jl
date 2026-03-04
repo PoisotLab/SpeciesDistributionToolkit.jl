@@ -42,7 +42,7 @@ end
 # indexing method to extract the values from the layers at the location of each
 # occurrence.
 
-# fig-environment
+#figure environment
 figure = Figure(; size = (800, 400))
 envirovars =
     Axis(figure[1, 1]; xlabel = "Temperature (°C)", ylabel = "Precipitation (kg×m⁻²)")
@@ -52,7 +52,7 @@ current_figure() #hide
 # In order to also show these on the map, we will add a simple heatmap to the left of the
 # figure, and overlay the points using `longitudes` and `latitudes` for the observations:
 
-# fig-species-map
+#figure species-map
 spmap = Axis(figure[1, 2]; aspect = DataAspect())
 hidedecorations!(spmap)
 hidespines!(spmap)
@@ -83,6 +83,6 @@ Phylopic.attribution(sp_uuid)
 
 # We can now use this image in a scatter plot:
 
-# fig-final-plot
+#figure final-plot
 silhouetteplot!(envirovars, 3.0, 700.0, sp_uuid; markersize = 70)
 current_figure() #hide

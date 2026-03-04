@@ -60,7 +60,7 @@ bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
 # We can take a minute to visualize the dataset, as well as the location of
 # presences and pseudo-absences:
 
-# fig-pseudoabsences
+#figure pseudoabsences
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 poly!(ax, CHE; color = :grey90, strokecolor = :black, strokewidth = 1)
@@ -106,7 +106,7 @@ prd = predict(sdm, L; threshold = false)
 
 # Because this prediction is a layer, we can plot it directly:
 
-# fig-initial-map
+#figure initial-map
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange = (0, 1))
@@ -127,7 +127,7 @@ partial1 = partialresponse(sdm, L, 1; threshold=false)
 # The output can be visualised as well. Partial responses are given in the same
 # units as the prediction.
 
-# fig-partial-resp
+#figure partial-resp
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, partial1; colormap = :tempo, colorrange = (0, 1))
@@ -152,7 +152,7 @@ shapley1 = explain(sdm, L, 1; threshold=false)
 # request an explanation of the binary response (this is usually less
 # informative).
 
-# fig-shapley-resp
+#figure shapley-resp
 col_lims = maximum(abs.(quantile(shapley1, [0.1, 0.9]))).*(-1, 1)
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
@@ -172,7 +172,7 @@ S = explain(sdm, L; threshold=false)
 # We can then put this object into the `mosaic` function to get the index of
 # which variable is the most important for each pixel:
 
-# fig-sdm-mosaicplot
+#figure sdm-mosaicplot
 f = Figure(; size = (600, 300))
 mostimp = mosaic(argmax, map(x -> abs.(x), S))
 colmap = [colorant"#E69F00", colorant"#56B4E9", colorant"#009E73", colorant"#D55E00", colorant"#CC79A7"]

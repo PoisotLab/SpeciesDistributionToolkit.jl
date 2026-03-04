@@ -55,7 +55,7 @@ bgmask = background & buffer
 # Finally, we can plot the area in which we can put pseudo-absences as a shaded region over
 # the layer, and plot all known occurrences as well:
 
-# fig-known-occurrences
+#figure known-occurrences
 heatmap(
     layer;
     colormap = :darkterrain,
@@ -79,7 +79,7 @@ sre = pseudoabsencemask(SurfaceRangeEnvelope, presencelayer)
 
 #-
 
-# fig-background-mask
+#figure background-mask
 heatmap(
     layer;
     colormap = :darkterrain,
@@ -103,7 +103,7 @@ bgpoints = backgroundpoints(bgmask, 2sum(presencelayer))
 
 # And finally, we can make a plot:
 
-# fig-pseudoabsences
+#figure pseudoabsences
 heatmap(
     layer;
     colormap = :darkterrain,
@@ -126,7 +126,7 @@ background = pseudoabsencemask(WithoutDegrees, presencelayer; distance = 0.5, ab
 
 #-
 
-# fig-background-degree-mask
+#figure background-degree-mask
 heatmap(
     layer;
     colormap = :darkterrain,

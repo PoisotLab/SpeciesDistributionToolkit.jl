@@ -75,7 +75,7 @@ predict(conformal, Y, Set([true, false]))
 
 # these can then be mapped
 
-# fig-conformal-range
+#figure conformal-range
 f = Figure(; size = (500, 350))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, nodata(present, false); colormap = [:darkgreen])
@@ -119,7 +119,7 @@ rangesize ./= 1e4
 
 # and we plot
 
-# fig-risklevel-effect
+#figure risklevel-effect
 f = Figure(; size = (500, 350))
 ax = Axis(f[1, 1]; ylabel = "Surface (10⁴ km²)", xlabel = "Risk level α")
 scatter!(ax, rls, rangesize[1, :]; label = "Presence")
@@ -158,7 +158,7 @@ B = predict(bagged, L; threshold = false, consensus = isunsure)
 
 # now we plot
 
-# fig-conformal-bootstrap
+#figure conformal-bootstrap
 f = Figure(; size = (500, 350))
 ax = Axis(f[2, 1]; aspect = DataAspect())
 hm = heatmap!(ax, B; colormap = Reverse(:lipari))

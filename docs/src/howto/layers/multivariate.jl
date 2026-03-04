@@ -41,7 +41,7 @@ X = predict(M, L)
 
 # We can visualize the result of this projection (first principal component):
 
-# fig-pca
+#figure pca
 fig, ax, hm = heatmap(
     X[1],
     colormap = :Spectral,

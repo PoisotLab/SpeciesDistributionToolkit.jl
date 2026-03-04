@@ -27,7 +27,7 @@ layer = trim(layer)
 
 #-
 
-# fig-trimmed-layer
+#figure trimmed-layer
 fig, ax, plt = heatmap(layer; axis = (; aspect = DataAspect()), colormap = :Greys)
 hidespines!(ax)
 hidedecorations!(ax)
@@ -38,7 +38,7 @@ current_figure() #hide
 # function. It will return a layer where the value of each pixel is the index of
 # the polygon containing this pixel:
 
-# fig-districts
+#figure districts
 heatmap(zone(layer, DPTs); colormap = :hokusai, axis = (; aspect = DataAspect()))
 current_figure() #hide
 
@@ -51,7 +51,7 @@ nodata!(z, 0.0)
 
 #-
 
-# fig-zone-index
+#figure zone-index
 fig, ax, plt = heatmap(z; axis = (; aspect = DataAspect()))
 hidespines!(ax)
 hidedecorations!(ax)
@@ -72,7 +72,7 @@ i = findfirst(isequal(depts_ranked[1].first), departements)
 
 #-
 
-# fig-highlight-areas
+#figure highlight-areas
 fig, ax, plt =
     heatmap(layer; axis = (; aspect = DataAspect()), colormap = [:grey80, :grey20])
 lines!(ax, DPTs[i]; label = departements[i], linewidth = 2, color=:red)

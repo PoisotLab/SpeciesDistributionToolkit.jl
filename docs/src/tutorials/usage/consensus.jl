@@ -72,7 +72,7 @@ repr = sort(unique(values(consensus)))
 
 # We can now create our plot:
 
-# fig-consensus-heatmap
+#figure consensus-heatmap
 fig = Figure(; size = (900, 700))
 panel = Axis(
     fig[1, 1];

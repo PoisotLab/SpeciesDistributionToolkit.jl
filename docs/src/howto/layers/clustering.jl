@@ -67,7 +67,7 @@ clustering_quality(L, K; quality_index = :davies_bouldin)
 
 # We can visualize the result of this clustering:
 
-# fig-kmeans
+#figure kmeans
 fig, ax, hm = heatmap(
     k,
     colormap = :Spectral,
@@ -89,7 +89,7 @@ f = SDMLayer(F, L)
 # If required, these can be passed through `mosaic` with `argmax` to get the
 # most likely cluster.
 
-# fig-fuzzycmeans
+#figure fuzzycmeans
 fig, ax, hm = heatmap(
     f[1],
     colormap = :bamako,

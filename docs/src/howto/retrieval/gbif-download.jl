@@ -21,7 +21,7 @@ tax = unique(entity(occ));
 
 # We will make a map with the number of observations for *Procyon lotor*:
 
-# fig-map
+#figure map
 coast = getpolygon(PolygonData(NaturalEarth, Land))
 bbox = SpeciesDistributionToolkit.boundingbox(occ; padding=3.0)
 fig = Figure()

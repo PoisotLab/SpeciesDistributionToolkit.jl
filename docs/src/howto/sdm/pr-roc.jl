@@ -24,7 +24,7 @@ cv = [crossvalidate(sdm, montecarlo(sdm; n = 5); thr = t) for t in thresholds];
 
 # We can then plot the output:
 
-# fig-sdemo-tuning
+#figure sdemo-tuning
 f = Figure()
 ax =
     Axis(f[1, 1]; aspect = 1, xlabel = "False positive rate", ylabel = "True positive rate")
@@ -49,7 +49,7 @@ train!(sdm)
 # distribution of predicted values makes sense knowing their true label (the
 # threshold is in red):
 
-# fig-sanity
+#figure sanity
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "True class", ylabel = "Prediction")
 boxplot!(ax, labels(sdm), predict(sdm; threshold = false))

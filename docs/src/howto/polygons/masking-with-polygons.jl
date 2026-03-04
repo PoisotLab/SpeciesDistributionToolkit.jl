@@ -36,7 +36,7 @@ layer = SDMLayer(
 
 # We can check that this polygon is larger than the area we want:
 
-# fig-whole-region
+#figure whole-region
 heatmap(layer; colormap = :Greens, axis = (; aspect = DataAspect()))
 lines!(POL, color=:black)
 current_figure() #hide
@@ -46,7 +46,7 @@ current_figure() #hide
 
 mask!(layer, POL)
 
-# fig-region-masked
+#figure region-masked
 heatmap(layer; colormap = :Greens, axis = (; aspect = DataAspect()))
 lines!(POL, color=:black)
 current_figure() #hide
@@ -55,7 +55,7 @@ current_figure() #hide
 # that the empty areas are removed. The `trim` method works on a layer and will
 # return a *copy* of it (as opposed to modifying it in place).
 
-# fig-region-trimmed
+#figure region-trimmed
 heatmap(
     trim(layer);
     colormap = :Greens,
@@ -74,7 +74,7 @@ presences = OccurrencesInterface.__demodata()
 
 # We can plot the layer and the occurrences we have retrieved so far:
 
-# fig-all-occurrences
+#figure all-occurrences
 heatmap(
     SpeciesDistributionToolkit.trim(layer);
     colormap = :Greens,
@@ -87,7 +87,7 @@ current_figure() #hide
 # Some of these occurrences are outside of the masked region in the layer. For
 # this reason, we will use the *non-mutating* `mask` method on the GBIF records:
 
-# fig-trimmed-occurrences
+#figure trimmed-occurrences
 f, ax, plt = heatmap(
     SpeciesDistributionToolkit.trim(layer);
     colormap = :Greens,

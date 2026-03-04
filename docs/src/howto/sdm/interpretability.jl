@@ -27,7 +27,7 @@ prx, pry = partialresponse(sdm, 1, LinRange(5.0, 15.0, 100); threshold = false);
 # Note that we use `threshold=false` to make sure that we look at the score that
 # is returned by the classifier, and not the thresholded version (_i.e._ presence/absence).
 
-# fig-partialrespo-bio1
+#figure partialrespo-bio1
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Partial response")
 lines!(ax, prx, pry; color = :black)
@@ -41,7 +41,7 @@ prx, pry, prz = partialresponse(sdm, variables(sdm)[1:2]..., (50, 50); threshold
 # sense to visualize the result as a heatmap. Although the idea of a the partial response
 # curves generalizes to more than two dimensions, it is not supported by the package.
 
-# fig-partialresp-surface
+#figure partialresp-surface
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO$(variables(sdm)[1])", ylabel = "BIO$(variables(sdm)[2])")
 cm = heatmap!(prx, pry, prz; colormap = :Greys, colorrange = (0, 1))
@@ -51,7 +51,7 @@ current_figure() #hide
 # Inflated partial responses replace the average value by other values drawn from different
 # quantiles of the variables:
 
-# fig-inflated-curve
+#figure inflated-curve
 f = Figure()
 ax = Axis(f[1, 1])
 prx, pry = partialresponse(sdm, 1; inflated = false, threshold = false)
@@ -73,7 +73,7 @@ current_figure() #hide
 # We can also produce a figure that looks like the partial response curve, by
 # showing the effect on a variable on each training instance:
 
-# fig-bio1-effect-map
+#figure bio1-effect-map
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Effect on the average prediction")
 scatter!(ax, features(sdm, 1), explain(sdm, 1; threshold = false))

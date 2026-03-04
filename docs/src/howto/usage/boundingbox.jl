@@ -36,7 +36,7 @@ L = SDMLayer(
 # Note that the bounding box is returned in WGS84, but the function to load any
 # part of a layer will handle the conversion.
 
-# fig-partialload
+#figure partialload
 heatmap(L; colormap = :tempo)
 scatter!(occ, color=:white, strokecolor=:orange, strokewidth=1.5)
 current_figure() #hide

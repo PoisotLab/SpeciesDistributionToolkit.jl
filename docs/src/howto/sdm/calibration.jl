@@ -17,7 +17,7 @@ variables!(sdm, ForwardSelection)
 
 # This model returns the following class scores:
 
-# fig-calibration-hist
+#figure calibration-hist
 f = Figure()
 ax = Axis(f[1, 1])
 hist!(ax, predict(sdm; threshold=false))
@@ -26,7 +26,7 @@ current_figure() #hide
 # To figure out whether these are close to actual probabilities, we can look at
 # the reliability curve
 
-# fig-calibration-reliability
+#figure calibration-reliability
 f = Figure()
 ax = Axis(f[1, 1])
 lines!(ax, [0, 1], [0, 1], color=:grey, linestyle=:dash)
@@ -41,7 +41,7 @@ C = calibrate(IsotonicCalibration, sdm)
 # The calibration can be applied by passing it to the `correct` function, which
 # returns a function to correct a point prediction:
 
-# fig-calibration-corrected
+#figure calibration-corrected
 f = Figure()
 x = LinRange(0.0, 1.0, 50)
 ax = Axis(f[1, 1])
@@ -53,7 +53,7 @@ current_figure() #hide
 # We can check that this calibration is indeed making the model more reliable
 # compared to the initial version:
 
-# fig-calibration-check
+#figure calibration-check
 f = Figure()
 x = LinRange(0.0, 1.0, 50)
 ax = Axis(f[1, 1])
@@ -72,7 +72,7 @@ cfunc = correct(C)
 # The correction function will then average the results for each calibration to
 # return the final probability:
 
-# fig-calibration-ensemble
+#figure calibration-ensemble
 f = Figure()
 x = LinRange(0.0, 1.0, 50)
 ax = Axis(f[1, 1])

@@ -79,7 +79,7 @@ vsp, τ, vrng = virtualspecies(L; prevalence = 0.33)
 
 # We can plot the output of this function to inspect what the generated range looks like:
 
-# fig-virtualspeciescomparison
+#figure virtualspeciescomparison
 f = Figure(; size = (700, 300))
 ax1 = Axis(f[1, 1]; aspect = DataAspect(), title = "Score")
 ax2 = Axis(f[1, 2]; aspect = DataAspect(), title = "Range")
@@ -104,7 +104,7 @@ presencelayer = backgroundpoints(mask(vsp, nodata(vrng, false)), 100)
 
 # We can finally plot the result:
 
-# fig-virtualspeciessample
+#figure virtualspeciessample
 f = Figure(; size = (700, 700))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, vrng; colormap = :Greens)
@@ -139,7 +139,7 @@ first(ranges)
 # We can sum these layers to obtain a measurement of the simulated species
 # richness:
 
-# fig-virtualspeciesrichness
+#figure virtualspeciesrichness
 f = Figure(; size = (700, 700))
 richness = mosaic(sum, ranges)
 ax = Axis(f[1, 1]; aspect = DataAspect())
@@ -197,7 +197,7 @@ end
 # laying out the sub-panels for the plot), to identify areas in space that
 # contribute most to ecological uniqueness [Dansereau2022](@cite):
 
-# fig-betadivmap
+#figure betadivmap
 f = Figure(; size = (700, 700))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(

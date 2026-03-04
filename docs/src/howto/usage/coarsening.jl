@@ -16,7 +16,7 @@ mask!(temperature, region)
 
 # We will look at the temperature distribution in the raw data.
 
-# fig-data-temp
+#figure data-temp
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, temperature; colormap = :magma)
@@ -45,7 +45,7 @@ coarse_temperature = coarsen(Statistics.mean, temperature, (4, 4))
 
 # We now look at the layer with coarser resolution:
 
-# fig-data-coarsen
+#figure data-coarsen
 f = Figure()
 ax = Axis(f[1,1]; aspect=DataAspect())
 hm = heatmap!(ax, coarse_temperature, colormap=:magma, colorrange=extrema(temperature))

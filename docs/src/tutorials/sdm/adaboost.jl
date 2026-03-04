@@ -32,7 +32,7 @@ bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
 
 # This is the dataset we start from:
 
-# fig-data-position
+#figure data-position
 fig = Figure()
 ax = Axis(fig[1, 1]; aspect = DataAspect())
 poly!(ax, POL; color = :grey90, strokewidth = 1, strokecolor = :grey20)
@@ -74,7 +74,7 @@ prd = predict(sdm, L; threshold = false)
 # not doing a spectacular job at it. This model is a good candidate for
 # boosting.
 
-# fig-bioclim-output
+#figure bioclim-output
 fg, ax, pl = heatmap(prd; colormap = :tempo, colorrange = (0, 1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
@@ -107,7 +107,7 @@ train!(bst)
 # negative weight, which means that they are consistently wrong. These are
 # counted by flipping their prediction in the final recommendation.
 
-# fig-weights-iterative
+#figure weights-iterative
 scatterlines(bst.weights; color = :black)
 current_figure() #hide
 
@@ -116,7 +116,7 @@ current_figure() #hide
 # is a good idea to examine the cumulative weights to see whether we get close
 # to a plateau.
 
-# fig-weights-cumsum
+#figure weights-cumsum
 scatterlines(cumsum(bst.weights); color = :black)
 current_figure() #hide
 
@@ -127,7 +127,7 @@ brd = predict(bst, L; threshold = false)
 
 # This gives the following map:
 
-# fig-boosted-map
+#figure boosted-map
 fg, ax, pl = heatmap(brd; colormap = :tempo, colorrange = (0, 1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
@@ -150,7 +150,7 @@ current_figure() #hide
 # The type of bias that a classifier accumulates is usually pretty obvious from
 # lookin at the histogram of the results:
 
-# fig-hist-boostpred
+#figure hist-boostpred
 f = Figure(; size=(600, 300))
 ax = Axis(f[1,1]; xlabel="Predicted score")
 hist!(ax, brd; color = :lightgrey, bins=30)
@@ -169,7 +169,7 @@ current_figure() #hide
 # quantities are almost equal, the score outputed by the model is a good
 # prediction of the probability of the event.
 
-# fig-reliability-part-one
+#figure reliability-part-one
 f = Figure()
 ax = Axis(
     f[1, 1];
@@ -203,7 +203,7 @@ f = correct(C)
 # closer to the 1:1 line, which is to say that it provides us with a score that
 # is closer to a true probability.
 
-# fig-reliability-part-two
+#figure reliability-part-two
 scatterlines!(
     ax,
     SDeMo.reliability(bst; link = f)...;
@@ -220,7 +220,7 @@ current_figure() #hide
 C = calibrate(IsotonicCalibration, bst)
 f = correct(C)
 
-# fig-reliability-part-three
+#figure reliability-part-three
 scatterlines!(
     ax,
     SDeMo.reliability(bst; link = f)...;
@@ -239,7 +239,7 @@ current_figure() #hide
 # presence. [Dormann2020](@citet) has several strong arguments in favor of this
 # approach.
 
-# fig-boosted-proba
+#figure boosted-proba
 fg, ax, pl = heatmap(f.(brd); colormap = Reverse(:navia), colorrange = (0, 1))
 ax.aspect = DataAspect()
 hidedecorations!(ax)
@@ -264,7 +264,7 @@ bst_range = predict(bst, L)
 # the areas lost by boosting are in light grey. The part of the range that is
 # conserved is in black.
 
-# fig-gainloss-boosting
+#figure gainloss-boosting
 fg, ax, pl = heatmap(
     gainloss(sdm_range, bst_range);
     colormap = [:firebrick, :grey10, :grey75],

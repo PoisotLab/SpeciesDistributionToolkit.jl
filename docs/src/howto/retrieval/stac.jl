@@ -29,6 +29,6 @@ L = SDMLayer(access; left=-76.0, right=-72.0, bottom=45.1, top=47.5)
 
 # We can visualize the resulting layer:
 
-# fig-ghmts
+#figure ghmts
 heatmap(L; colormap=:tempo)
 current_figure() #hide

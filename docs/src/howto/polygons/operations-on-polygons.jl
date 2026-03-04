@@ -21,7 +21,7 @@ oklahoma = getpolygon(PolygonData(OpenStreetMap, Places); place = "Oklahoma")
 
 # We can plot them to show that they are two adjacent states (that don't overlap):
 
-# fig-tex-ok-separate
+#figure tex-ok-separate
 lines(texas)
 lines!(oklahoma)
 current_figure() #hide
@@ -34,7 +34,7 @@ tex_and_ok = add(texas, oklahoma)
 
 # which we can then visualize:
 
-# fig-tex-ok-together
+#figure tex-ok-together
 lines(tex_and_ok)
 current_figure() #hide
 
@@ -69,7 +69,7 @@ tx_ok_la = texas + oklahoma + louisiana
 
 # which we can visualize:
 
-# fig-added-tx-ok-la
+#figure added-tx-ok-la
 lines(tx_ok_la)
 current_figure() #hide
 
@@ -79,7 +79,7 @@ tx_ok_la_separate = vcat(texas, oklahoma, louisiana)
 
 # And plot to show they keep their individual boundaries
 
-# fig-tx-ok-la-separate
+#figure tx-ok-la-separate
 lines(tx_ok_la_separate)
 current_figure() #hide
 
@@ -104,7 +104,7 @@ rural_texas = subtract(rural_texas, houston)
 
 # and visualize:
 
-# fig-rural-texas
+#figure rural-texas
 lines(rural_texas)
 current_figure() #hide
 
@@ -114,7 +114,7 @@ rural_texas = texas - dallas - houston
 
 # which results in the same thing:
 
-# fig-rural-texas-sub-symbol
+#figure rural-texas-sub-symbol
 lines(rural_texas)
 current_figure() #hide
 
@@ -137,7 +137,7 @@ tx_ecoregions = intersect(texas, ecoregions)
 
 # and visualize the different ecoregions in texas
 
-# fig-tx-ecoregions
+#figure tx-ecoregions
 poly(tx_ecoregions)
 current_figure() #hide
 
@@ -147,10 +147,6 @@ bbox = (left=-100., right=-95.0, bottom=27.5, top=32.5)
 
 tx_clip = clip(tx_ecoregions, bbox)
 
-# fig-tx-clipped-by-bbox
+#figure tx-clipped-by-bbox
 lines(tx_clip)
 current_figure() #hide
-
-#-
-
-#

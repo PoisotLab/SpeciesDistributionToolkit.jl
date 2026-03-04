@@ -28,7 +28,7 @@ mask!(temperature, region)
 
 # We can now plot the raw data:
 
-# fig-data-temp
+#figure data-temp
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, temperature; colormap = :magma)
@@ -46,7 +46,7 @@ avg_12km = slidingwindow(Statistics.mean, temperature; radius = 12.0)
 # The radius is always expressed in kilometers. Once the operation is finished,
 # we can look at the results:
 
-# fig-avg-12k
+#figure avg-12k
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, temperature; colormap = :magma, colorrange = extrema(temperature))
@@ -60,7 +60,7 @@ current_figure() #hide
 # radius of the problem. We can illustrate this with a simple (and not very
 # robust) benchmark:
 
-# fig-sliding-benchmark
+#figure sliding-benchmark
 R = LinRange(1.0, 20.0, 12)
 T = zeros(length(R))
 destination = copy(temperature)
@@ -96,7 +96,7 @@ z_12km = slidingwindow(zscore, temperature; radius = 12.0, centervalue = true)
 # This layer can be plotted to show which locations are colder/warmer than their
 # surroundings.
 
-# fig-z-12k
+#figure z-12k
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, z_12km; colormap = Reverse(:managua), colorrange = (-1, 1))

@@ -16,7 +16,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
 
 L = SDMLayer(DiamondSquare(), (100, 100))
 
-# fig-diamondsquare
+#figure diamondsquare
 heatmap(L)
 current_figure() #hide
 

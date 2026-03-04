@@ -28,7 +28,7 @@ tree = tiles(trees, (2, 2));
 
 # This can now be plotted:
 
-# fig-tiled-map
+#figure tiled-map
 tile_plot = heatmap(
     rand(tree);
     colormap = :Greens,

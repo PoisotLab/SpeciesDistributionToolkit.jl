@@ -10,7 +10,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 3) #hide
 # We get the polygon for Alaska:
 
 AL = getpolygon(PolygonData(OpenStreetMap, Places); place="Alaska")
-LD = getpolygon(PolygonData(NaturalEarth, Land))
+LD = getpolygon(PolygonData(NaturalEarth, Land), resolution=10)
 AL = intersect(AL, LD)
 
 # Intersecting with the land polygon is not necessary, but OpenStreetMap adds
@@ -40,14 +40,15 @@ mask!(L, AL)
 # From the how-to on interpolation, we know that we can reproject the layer to
 # an appropriate representation:
 
-R = interpolate(L, dest="+proj=aea +lat_0=50 +lon_0=-154 +lat_1=55 +lat_2=65 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs")
+R = interpolate(L, dest="+proj=aea +lat_0=50 +lon_0=-154 +lat_1=55 +lat_2=65 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs", newsize=(2000, 2000))
 R = trim(R)
 
-# We can check that the plot is correct:
+# We can check that the plot is correct -- note that the bands represent
+# latitudes:
 
 f = Figure()
 ax = Axis(f[1,1]; aspect=DataAspect())
-heatmap!(ax, R, colormap=:Greys)
+heatmap!(ax, R, colormap=cgrad(:Greens, 10, categorical=true))
 current_figure()
 
 # We can use the `reproject` function to plot the polygon in the correct
@@ -61,4 +62,6 @@ current_figure()
 
 occ = Occurrences(mask(OccurrencesInterface.__demodata(), AL))
 scatter!(reproject(occ, R.crs), color=:orange, markersize=12)
+hidespines!(current_axis())
+hidedecorations!(current_axis())
 current_figure()

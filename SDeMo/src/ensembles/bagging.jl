@@ -28,6 +28,14 @@ end
 
 """
     Bagging
+
+A bagged (bootstrap aggregated) model is the same template model repeated an
+arbitrary number of times, with each replicated model having access to a
+bootstrapped sample of the data. These models are represented by three fields:
+
+- `model` is the base model
+- `bags` is a vector of tuples with the in and out-of sample instances
+- `models` is an array of replicated models
 """
 mutable struct Bagging <: AbstractEnsembleSDM
     model::SDM

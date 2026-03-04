@@ -16,10 +16,10 @@ landmass = getpolygon(PolygonData(OpenStreetMap, Places); place="Idaho")
 records = Occurrences(mask(records, landmass))
 spatial_extent = SpeciesDistributionToolkit.boundingbox(landmass)
 
-# We will get a single layer (elevation, but it's not important here):
+# We will get a single layer for the illustration:
 
-dataprovider = RasterData(WorldClim2, Elevation)
-layer = SDMLayer(dataprovider; resolution=2.5, spatial_extent...)
+dataprovider = RasterData(CHELSA2, AverageTemperature)
+layer = SDMLayer(dataprovider; spatial_extent...)
 mask!(layer, landmass)
 
 # Pseudo-absences generations always starts by masking a layer by the
@@ -119,10 +119,10 @@ current_figure() #hide
 
 # We can also work with distances in degrees rather than kilometers -- for
 # example, this will create a rectangular buffer one degree wide and one degree
-# tall around each observation. Using `absolute=true` will turn this into a
-# circular buffer:
+# tall around each observation. Using `absolute=false` will turn this into a
+# square buffer:
 
-background = pseudoabsencemask(WithoutDegrees, presencelayer; distance = 0.5, absolute=false)
+background = pseudoabsencemask(WithoutDegrees, presencelayer; distance = 0.5, absolute=true)
 
 #-
 

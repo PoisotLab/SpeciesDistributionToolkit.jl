@@ -48,13 +48,13 @@ R = trim(R)
 
 f = Figure()
 ax = Axis(f[1,1]; aspect=DataAspect())
-heatmap!(ax, R, colormap=cgrad(:Greens, 10, categorical=true))
+heatmap!(ax, R, colormap=cgrad(:Greens, 20, categorical=true))
 current_figure()
 
 # We can use the `reproject` function to plot the polygon in the correct
 # projection:
 
-lines!(reproject(AL, R.crs), color=:black, linewidth=2)
+lines!(reproject(AL, R.crs), color=:black, linewidth=1.0)
 current_figure()
 
 # We can similarly reproject a series of occurrences. For example, we can
@@ -75,6 +75,5 @@ current_figure()
 
 # ```@docs; canonical=false
 # interpolate
-# interpolate!
 # reproject
 # ```

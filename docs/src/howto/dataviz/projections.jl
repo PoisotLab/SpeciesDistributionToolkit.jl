@@ -65,3 +65,16 @@ scatter!(reproject(occ, R.crs), color=:orange, markersize=12)
 hidespines!(current_axis())
 hidedecorations!(current_axis())
 current_figure()
+
+
+# ## Related documentation
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# interpolate
+# interpolate!
+# reproject
+# ```

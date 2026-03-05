@@ -7,10 +7,9 @@ function _pts_to_poly(pol, pts)
     return Polygon(cpol)
 end
 
-function crosshatch(region::SimpleSDMPolygons.AbstractGeometry; spacing=1.0, angle=80.)
-    
+function crosshatch(region::SimpleSDMPolygons.AbstractGeometry; spacing = 1.0, angle = 80.0)
     bbox = SimpleSDMPolygons.boundingbox(region)
-    
+
     O = bbox.top - bbox.bottom
     A = O / tan(deg2rad(angle))
 

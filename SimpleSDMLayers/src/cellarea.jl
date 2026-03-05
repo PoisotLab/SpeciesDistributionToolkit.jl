@@ -7,7 +7,7 @@ km). This is only returned for layers in WGS84, which can be forced with
 """
 function cellarea(layer::T; R = 6371.0) where {T <: SDMLayer}
     @assert isequal("+proj=longlat +datum=WGS84 +no_defs")(layer.crs)
-    lonstride, latstride = 2.0 .* stride(layer)
+    latstride, lonstride = 2.0 .* stride(layer)
     cells_per_ribbon = 360.0 / lonstride
     latitudes_ranges = LinRange(layer.y..., length(northings(layer))+1)
     # We need to express the latitudes in gradients for the top and bottom of each row of

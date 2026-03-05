@@ -75,41 +75,40 @@ hidedecorations!(current_axis())
 hidespines!(current_axis())
 current_figure()
 
-# When cross-hatching multiple regions, it may be a good idea to generate the
-# hatching for the largest possible extent:
+# ## Generating polygons from layers
 
-hatch = crosshatch(add(regions); angle = 35)
-lines(hatch; color = :black)
+# There is a function to generate a polygon (or a multi-polygon) from a boolean
+# layer. We will use it to highlight which area are in the top and bottom decile
+# of precipitation:
 
-# One reason for which this is important is that it will result in a more
-# homogenous look when the cross-hatched regions are next to one another.
+camf = regions["Name" => "Central American Mixed Forests"]
+precipitation = SDMLayer(RasterData(CHELSA2, Precipitation); SpeciesDistributionToolkit.boundingbox(camf)...)
+mask!(precipitation, camf)
 
-# The bit of code to accomplish this is currently ugly do a limitation of
-# clipping in SimpleSDMPolygons, which will be fixed in a future release.
+# This new layer is a Boolean layer with `true` corresponding to the area of interest.
 
-poly(regions; color = :grey90, label = "Central America region")
-for region in regions
-    if contains(region.properties["Name"], "Forests")
-        sub_hatch = FeatureCollection([
-            f for f in intersect(hatch, region).features if
-            !(SimpleSDMPolygons.AG.isempty(f.geometry.geometry))
-        ])
-        if contains(region.properties["Name"], "Mixed")
-            lines!(sub_hatch; color = :forestgreen, label = "Mixed forests")
-        else
-            lines!(sub_hatch; color = :orange, label = "Other forests")
-        end
-    end
-end
-lines!(
-    regions;
-    color = :grey10,
-    label = "Central America region",
-)
-axislegend(; unique = true, merge = true, position = :lb)
-hidedecorations!(current_axis())
-hidespines!(current_axis())
+import Statistics
+dry = precipitation .<= quantile(precipitation, 0.1)
+wet = precipitation .>= quantile(precipitation, 0.9)
+
+# We generate the polygon through a call to `polygonize`:
+
+dry_poly = polygonize(dry)
+wet_poly = polygonize(wet)
+
+# And we can finally plot
+
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+poly!(ax, camf, color=:grey94, label="Central American Mixed Forests")
+poly!(ax, dry_poly, color=:red, label="Low precipitation", alpha=0.2)
+poly!(ax, wet_poly, color=:darkblue, label="High precipitation", alpha=0.2)
+lines!(ax, crosshatch(dry_poly, spacing=0.2, angle=40); color = :red, linewidth=0.5)
+lines!(ax, crosshatch(wet_poly, spacing=0.2, angle=40); color = :darkblue, linewidth=0.5)
+lines!(ax, dry_poly; color = :red, label="Low precipitation")
+lines!(ax, wet_poly; color = :darkblue, label="High precipitation")
+lines!(ax, camf; color = :black, linewidth=2)
+axislegend(; unique = true, merge = true, position = :lb, framevisible=false)
+hidedecorations!(ax)
+hidespines!(ax)
 current_figure()
-
-# Note that the hatches are shared between the different polygons, which cannot
-# be guaranteed if each polygon is hatched independently.

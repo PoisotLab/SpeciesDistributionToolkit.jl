@@ -65,7 +65,7 @@ export reproject
 
 # Hatching
 include("crosshatch.jl")
-export crosshatch
+export crosshatch, polygonize
 
 # Get the boundingbox tuple
 include("boundingbox.jl")

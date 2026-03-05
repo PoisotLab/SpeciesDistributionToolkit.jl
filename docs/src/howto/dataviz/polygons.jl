@@ -88,8 +88,8 @@ mask!(precipitation, camf)
 # This new layer is a Boolean layer with `true` corresponding to the area of interest.
 
 import Statistics
-dry = precipitation .<= quantile(precipitation, 0.1)
-wet = precipitation .>= quantile(precipitation, 0.9)
+dry = precipitation .<= Statistics.quantile(precipitation, 0.1)
+wet = precipitation .>= Statistics.quantile(precipitation, 0.9)
 
 # We generate the polygon through a call to `polygonize`:
 

@@ -42,3 +42,37 @@ function crosshatch(region::SimpleSDMPolygons.AbstractGeometry; spacing = 1.0, a
 
     return hatch
 end
+
+function polygonize(L::SDMLayer{Bool})
+    layer = copy(L)
+    nodata!(layer, false)
+    pols = Polygon[]
+
+    layer_crs = SimpleSDMPolygons.AG.importPROJ4(layer.crs)
+    if layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
+        layer_crs = SimpleSDMPolygons.AG.importEPSG(4326)
+    end
+
+    eb = LinRange(layer.x..., size(layer, 2) + 1)
+    nb = LinRange(layer.y..., size(layer, 1) + 1)
+
+    for k in keys(layer)
+        north, east = k.I
+        points = [
+            (eb[east], nb[north]),
+            (eb[east + 1], nb[north]),
+            (eb[east + 1], nb[north + 1]),
+            (eb[east], nb[north + 1]),
+        ]
+        push!(points, first(points))
+        cellpol = SimpleSDMPolygons.AG.createpolygon(points)
+        SimpleSDMPolygons._add_crs(
+            cellpol,
+            layer_crs,
+        )
+        push!(pols, Polygon(cellpol))
+    end
+    
+    cells = sum(pols)
+    return cells
+end

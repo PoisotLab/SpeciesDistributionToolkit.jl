@@ -6,7 +6,8 @@ using CairoMakie
 Random.seed!(1234567890); #hide
 CairoMakie.activate!(; px_per_unit = 3) #hide
 
-# The methodology to generate fauxcurrences comes from [Osborne2022](@citet).
+# The methodology to generate fauxcurrences comes from
+# [osborne_fauxcurrence_2022](@citet).
 
 # ## Getting observed occurrence data
 

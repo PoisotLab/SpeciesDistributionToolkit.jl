@@ -18,7 +18,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 # We provide a very lightweight tool that uses open street map to turn plain
 # text queries into polygons:
 
-POL = getpolygon(PolygonData(OpenStreetMap, Places); place="Idaho")
+POL = getpolygon(PolygonData(OpenStreetMap, Places); place = "Idaho")
 lines(POL)
 
 # Note that if these polygons are too big, the `simplify` and `simplify!`
@@ -31,14 +31,14 @@ provider = RasterData(EarthEnv, LandCover)
 layer = SDMLayer(
     provider;
     layer = "Shrubs",
-    SpeciesDistributionToolkit.boundingbox(POL; padding=1.0)...
+    SpeciesDistributionToolkit.boundingbox(POL; padding = 1.0)...,
 )
 
 # We can check that this polygon is larger than the area we want:
 
 #figure whole-region
 heatmap(layer; colormap = :Greens, axis = (; aspect = DataAspect()))
-lines!(POL, color=:black)
+lines!(POL; color = :black)
 current_figure() #hide
 
 # We can now mask this layer according to the polygon. This uses the same
@@ -48,7 +48,7 @@ mask!(layer, POL)
 
 #figure region-masked
 heatmap(layer; colormap = :Greens, axis = (; aspect = DataAspect()))
-lines!(POL, color=:black)
+lines!(POL; color = :black)
 current_figure() #hide
 
 # This is a much larger layer than we need! For this reason, we will trim it so
@@ -61,14 +61,15 @@ heatmap(
     colormap = :Greens,
     axis = (; aspect = DataAspect()),
 )
-lines!(POL, color=:black)
+lines!(POL; color = :black)
 current_figure() #hide
 
 # Let's now get some occurrences. The demonstration data from
 # `OccurrencesInterface` are records of sightings of bigfoot
-# [Lozier2009](@cite). These are useful data to think about species distribution
-# modeling in slightly more abstract terms than using data on existing species,
-# and slighty less abstract terms than simulated data [Foxon2024](@cite).
+# [lozier_predicting_2009](@cite). These are useful data to think about species
+# distribution modeling in slightly more abstract terms than using data on
+# existing species, and slighty less abstract terms than simulated data
+# [foxon_bigfoot_2024](@cite).
 
 presences = OccurrencesInterface.__demodata()
 
@@ -81,7 +82,7 @@ heatmap(
     axis = (; aspect = DataAspect()),
 )
 scatter!(presences; color = :orange, markersize = 4)
-lines!(POL, color=:black)
+lines!(POL; color = :black)
 current_figure() #hide
 
 # Some of these occurrences are outside of the masked region in the layer. For
@@ -94,7 +95,7 @@ f, ax, plt = heatmap(
     axis = (; aspect = DataAspect()),
 )
 scatter!(mask(presences, POL); color = :orange, markersize = 8)
-lines!(POL, color=:black)
+lines!(POL; color = :black)
 hidespines!(ax)
 hidedecorations!(ax)
 current_figure() #hide

@@ -202,11 +202,11 @@ function _write_geotiff(
     # Geotransform
     gt = zeros(Float64, 6)
     gt[1] = layers[1].x[1]
-    gt[2] = 2stride(layers[1], 1)
+    gt[2] = 2stride(layers[1], 2)
     gt[3] = 0.0
     gt[4] = layers[1].y[2]
     gt[5] = 0.0
-    gt[6] = -2stride(layers[1], 2)
+    gt[6] = -2stride(layers[1], 1)
 
     # Write
     ArchGDAL.create(file;

@@ -22,10 +22,10 @@ oklahoma = getpolygon(PolygonData(OpenStreetMap, Places); place = "Oklahoma")
 # We can plot them to show that they are two adjacent states (that don't overlap):
 
 #figure separate
-f, ax, pl = poly(texas, color=:lightgreen)
-poly!(oklahoma, color=:lightblue)
-lines!(texas, color=:darkgreen)
-lines!(oklahoma, color=:darkblue)
+f, ax, pl = poly(texas; color = :lightgreen)
+poly!(oklahoma; color = :lightblue)
+lines!(texas; color = :darkgreen)
+lines!(oklahoma; color = :darkblue)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
@@ -39,9 +39,9 @@ tex_and_ok = add(texas, oklahoma)
 # which we can then visualize:
 
 #figure together
-f, ax, pl = poly(tex_and_ok, color=:moccasin)
-lines!(texas, color=:grey50, linewidth=0.5)
-lines!(tex_and_ok, color=:orange)
+f, ax, pl = poly(tex_and_ok; color = :moccasin)
+lines!(texas; color = :grey50, linewidth = 0.5)
+lines!(tex_and_ok; color = :orange)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
@@ -78,12 +78,12 @@ tx_ok_la = texas + oklahoma + louisiana
 # We can look at the output (the state lines have been added, and are in light
 # grey):
 
-#figure added-states
-f, ax, pl = poly(tx_ok_la, color=:moccasin)
-lines!(texas, color=:grey50, linewidth=0.5)
-lines!(oklahoma, color=:grey50, linewidth=0.5)
-lines!(louisiana, color=:grey50, linewidth=0.5)
-lines!(tx_ok_la, color=:orange)
+#figure addedstates
+f, ax, pl = poly(tx_ok_la; color = :moccasin)
+lines!(texas; color = :grey50, linewidth = 0.5)
+lines!(oklahoma; color = :grey50, linewidth = 0.5)
+lines!(louisiana; color = :grey50, linewidth = 0.5)
+lines!(tx_ok_la; color = :orange)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
@@ -94,9 +94,9 @@ tx_ok_la_separate = vcat(texas, oklahoma, louisiana)
 
 # And plot to show they keep their individual boundaries
 
-#figure separate-states
-f, ax, pl = poly(tx_ok_la_separate, color=:moccasin)
-lines!(tx_ok_la_separate, color=:orange)
+#figure separatestates
+f, ax, pl = poly(tx_ok_la_separate; color = :moccasin)
+lines!(tx_ok_la_separate; color = :orange)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
@@ -106,15 +106,13 @@ current_figure() #hide
 # ## Subtracting polygons
 
 # We subtract polygons in a similar way. The method `subtract(x, y)` removes the
-# area contained in `y` from `x`.
-
-# For example, let's remove the two largest metropolitan regions from Texas,
-# first by loading them 
+# area contained in `y` from `x`. For example, let's remove the two largest
+# metropolitan regions from Texas, first by loading them 
 
 dallas = getpolygon(PolygonData(OpenStreetMap, Places); place = "Dallas")
 houston = getpolygon(PolygonData(OpenStreetMap, Places); place = "Houston")
 
-# We can use subtract them iteratively
+# We can use subtract on them iteratively
 
 rural_texas = texas
 rural_texas = subtract(rural_texas, dallas)
@@ -122,11 +120,11 @@ rural_texas = subtract(rural_texas, houston)
 
 # and visualize:
 
-#figure rural-texas
-f, ax, pl = poly(rural_texas, color=:moccasin)
-poly!(dallas, color=:grey90)
-poly!(houston, color=:grey90)
-lines!(rural_texas, color=:orange)
+#figure ruraltexas
+f, ax, pl = poly(rural_texas; color = :moccasin)
+poly!(dallas; color = :grey90)
+poly!(houston; color = :grey90)
+lines!(rural_texas; color = :orange)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
@@ -138,9 +136,9 @@ rural_texas = texas - (dallas + houston)
 # which results in the same thing:
 
 #figure alternative-rural-texas
-f, ax, pl = poly(rural_texas, color=:moccasin)
-poly!(dallas + houston, color=:grey90)
-lines!(rural_texas, color=:orange)
+f, ax, pl = poly(rural_texas; color = :moccasin)
+poly!(dallas + houston; color = :grey90)
+lines!(rural_texas; color = :orange)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
@@ -164,37 +162,37 @@ tx_ecoregions = intersect(texas, ecoregions)
 
 # and visualize the different ecoregions in texas
 
-#figure ecoregions-for-texas
-c = cgrad(:batlow10, length(tx_ecoregions), categorical=true)
+#figure ecoregions-texas
+c = cgrad(:batlow10, length(tx_ecoregions); categorical = true)
 f = Figure()
-ax = Axis(f[1,1], aspect=DataAspect())
+ax = Axis(f[1, 1]; aspect = DataAspect())
 for (i, ecoregion) in enumerate(tx_ecoregions)
-    poly!(ax, ecoregion, label=titlecase(ecoregion.properties["Name"]), color=c[i])
+    poly!(ax, ecoregion; label = titlecase(ecoregion.properties["Name"]), color = c[i])
 end
-lines!(ax, tx_ecoregions, color=:black)
+lines!(ax, tx_ecoregions; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
-Legend(f[2,1], ax, framevisible=false, nbanks=2, tellwidth=false, tellheight=false)
+Legend(f[2, 1], ax; framevisible = false, nbanks = 2, tellwidth = false, tellheight = false)
 rowsize!(f.layout, 2, Relative(0.2))
 current_figure() #hide
 
 # Finally, we can clip a series of polygons with a boundingbox:
 
-bbox = (left=-100., right=-95.0, bottom=27.5, top=32.5)
+bbox = (left = -100.0, right = -95.0, bottom = 27.5, top = 32.5)
 
 tx_clip = clip(tx_ecoregions, bbox)
 
-#figure bbox-clip
-c = cgrad(:batlow10, length(tx_clip), categorical=true)
+#figure poly-bboxclip
+c = cgrad(:batlow10, length(tx_clip); categorical = true)
 f = Figure()
-ax = Axis(f[1,1], aspect=DataAspect())
+ax = Axis(f[1, 1]; aspect = DataAspect())
 for (i, ecoregion) in enumerate(tx_clip)
-    poly!(ax, ecoregion, label=titlecase(ecoregion.properties["Name"]), color=c[i])
+    poly!(ax, ecoregion; label = titlecase(ecoregion.properties["Name"]), color = c[i])
 end
-lines!(ax, tx_clip, color=:black)
+lines!(ax, tx_clip; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
-Legend(f[2,1], ax, framevisible=false, nbanks=2, tellwidth=false, tellheight=false)
+Legend(f[2, 1], ax; framevisible = false, nbanks = 2, tellwidth = false, tellheight = false)
 rowsize!(f.layout, 2, Relative(0.2))
 current_figure() #hide
 

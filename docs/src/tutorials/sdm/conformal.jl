@@ -1,6 +1,9 @@
 # # Conformal prediction of species range
 
-# TODO
+# This tutorial goes through some of the steps outlined in
+# [poisot_conformal_2025](@citet). We will use conformal prediction to identify
+# areas in space in which a SDM is uncertain about the outcome of presence and
+# absence of the species.
 
 using SpeciesDistributionToolkit
 using CairoMakie
@@ -8,14 +11,14 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 import Random #hide
 Random.seed!(123451234123121); #hide
 
-# todo
+# We will work on the distribution of Sasquatch observations in Oregon.
 
 records = OccurrencesInterface.__demodata()
 landmass = getpolygon(PolygonData(OpenStreetMap, Places); place = "Oregon")
 records = Occurrences(mask(records, landmass))
 spatial_extent = SpeciesDistributionToolkit.boundingbox(landmass)
 
-# todo
+# We will train the model will all 19 BioClim variables from CHELSA2:
 
 provider = RasterData(CHELSA2, BioClim)
 L = SDMLayer{Float32}[
@@ -26,39 +29,60 @@ L = SDMLayer{Float32}[
     ) for x in eachindex(layers(provider))
 ];
 
-# todo
-
 mask!(L, landmass)
 
-# todo
+# We will generate pseudo-absences at random in a radius around each known
+# observations. The distance between an observation and a pseudo-absence is
+# between 40 and 130 km.
 
 presencelayer = mask(first(L), records)
 absencemask =
-    pseudoabsencemask(BetweenRadius, presencelayer; closer = 40.0, further = 120.0)
-absencelayer = backgroundpoints(absencemask, 4sum(presencelayer))
+    pseudoabsencemask(BetweenRadius, presencelayer; closer = 40.0, further = 130.0)
+absencelayer = backgroundpoints(absencemask, 3sum(presencelayer))
 
-# model
+# ## Training the initial model
+
+# The model for this tutorial is a logistic regression, with a PCA
+# transformation step, and only self-interactions between variables:
 
 model = SDM(PCATransform, Logistic, L, presencelayer, absencelayer)
+hyperparameters!(classifier(model), :interactions, :self)
 variables!(model, ForwardSelection)
 
-# georef?
+# We start by checking that this model is georeferenced. This is something we
+# will rely on when putting the observations on the map near the end of the
+# tutorial.
 
 isgeoreferenced(model)
 
-# train
-
-train!(model)
-
 # ::: warning Model performance
 # 
-# todo
+# Conformal prediction requires a good model - it is important to cross-validate
+# the model before calibrating the conformal predictor.
 # 
 # :::
 
-# make model prediction
+cv = crossvalidate(model, kfold(model))
+println("""
+Validation MCC: $(mcc(cv.validation)) ± $(ci(cv.validation))
+Training MCC:   $(mcc(cv.training)) ± $(ci(cv.training))
+""")
+
+# With a trained model, we can make our first (spatial) prediction
 
 Y = predict(model, L; threshold = false)
+
+#figure regular-range
+f = Figure(; size = (500, 350))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+heatmap!(ax, Y; colormap = Reverse(:navia))
+lines!(ax, landmass; color = :black)
+scatter!(ax, model, color=labels(model), colormap=[:grey80, :orange])
+hidedecorations!(ax)
+hidespines!(ax)
+current_figure() #hide
+
+# ## Calibrating the conformal classifier
 
 # train a conformal with alpha 0.05
 
@@ -71,13 +95,23 @@ present, absent, unsure, undetermined = predict(conformal, Y)
 # note that if we want to get a single outcome, for example only the unsure
 # predictions, we can pass it as a final argument there
 
-predict(conformal, Y, Set([true, false]))
+unsure = predict(conformal, Y, Set([true, false]))
 
-# we turn the prediction for uncertainty into a polygon
+# We will turn this prediction into a polygon, which will help with some of the
+# plotting we will do next:
 
 uns = polygonize(unsure)
 
-# these can then be mapped
+# ::: info Turning layers into polygons is long
+#
+# Not because this is a very hard problem -- simply that because, for now, the
+# code work, and it will faster in a future release.
+#
+# :::
+
+# We can now visualize the part of the landscape where the model is confident
+# about presence (dark green), where the outcome is uncertain (shaded area), and
+# the areas where the model is certain about absence (light grey):
 
 #figure conformal-range
 f = Figure(; size = (500, 350))
@@ -92,22 +126,24 @@ hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
 
-# and we can see what the risk level does to the estimation of range size
-
-A = cellarea(Y)
-
-# loop
+# Because the risk level α is set by the user, it is a good idea to change it,
+# and measure how much of the area ends up associated to different types of
+# predictions:
 
 rls = LinRange(0.01, 0.15, 15)
 rangesize = zeros(Float64, 4, length(rls))
+A = cellarea(Y)
 
 # ::: tip Stability of results
 # 
-# note on keeping same folds / reporting average / variance
+# When looking at the effect of a parameter, it is useful to keep the same split
+# of the data when measuring the response of the model. This ensures that the
+# only thing that varies is the parameter itself.
 # 
 # :::
 
-# loop
+# We will do a simple loop to set the risk level, re-calibrate the conformal
+# classifier, and then measure the range associated to each outcome:
 
 for (i, rl) in enumerate(rls)
     risklevel!(conformal, rl)
@@ -116,31 +152,44 @@ for (i, rl) in enumerate(rls)
     rangesize[1, i] += sum(mask(A, nodata(pr, false)))
     rangesize[2, i] += sum(mask(A, nodata(ab, false)))
     rangesize[3, i] += sum(mask(A, nodata(un, false)))
-    rangesize[4, i] += sum(mask(A, nodata(ud, false)))
 end
 
-# now we turn this into a more reasonable scale
+# Because the surface is large, we will express the range in more reasonable units:
 
 rangesize ./= 1e4
 
-# and we plot
+# And now, we can plot
 
 #figure risklevel-effect
 f = Figure(; size = (500, 350))
 ax = Axis(f[1, 1]; ylabel = "Surface (10⁴ km²)", xlabel = "Risk level α")
-scatter!(ax, rls, rangesize[1, :]; label = "Presence")
-scatter!(ax, rls, rangesize[2, :]; label = "Absence")
-scatter!(ax, rls, rangesize[3, :]; label = "Unsure")
+scatter!(ax, rls, rangesize[1, :]; label = "Presence", color=:darkgreen)
+scatter!(ax, rls, rangesize[2, :]; label = "Absence", color=:grey60)
+scatter!(ax, rls, rangesize[3, :]; label = "Unsure", color=:lime, strokecolor=:darkgreen, strokewidth=1)
 axislegend(ax; position = :lb, nbanks = 3)
 current_figure() #hide
 
-# also can be bootstrapped
+# ## Continuous estimate of uncertainty
+
+# In this section, we will rely on conformal prediction and boostrapping to
+# provide a more quantitative estimate of outcome uncertainty.
+
+# ::: warning This is not best practice
+# 
+# Nothing that follows is a published technique, or even a particularly well
+# tested idea. This section is included for the purpose of (i) notetaking, as
+# this may be an idea worth exploring, and (ii) illustrating how the package can
+# be used to do new things relatively easily.
+# 
+# :::
+
+# We start by wrapping our model into a bagged ensemble of 50 sub-models:
 
 bagged = Bagging(model, 50)
-
 train!(bagged)
 
-# retrain
+# We will re-calibrate the conformal predictor (we previously changed it when
+# estimating the range):
 
 risklevel!(conformal, 0.05)
 train!(conformal, model)
@@ -153,15 +202,6 @@ isunsure = (x) -> count(isequal(Set([true, false])), predict(conformal, x))/leng
 
 B = predict(bagged, L; threshold = false, consensus = isunsure)
 
-
-# ::: warning This is not best practice
-# 
-# not a published technique or particularly well tested idea, but shows how
-# package can be used to do new things relatively easily
-# 
-# :::
-
-
 # now we plot
 
 #figure conformal-bootstrap
@@ -173,3 +213,23 @@ Colorbar(f[1, 1], hm; label = "Fraction of unsure samples", vertical = false)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
+
+# ## Related documentation
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# Conformal
+# risklevel
+# risklevel!
+# cellarea
+# ```
+
+# ## References
+
+# ```@bibliography
+# Pages = [@__FILE__]
+# Style = :authoryear
+# ```

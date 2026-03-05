@@ -73,18 +73,21 @@ present, absent, unsure, undetermined = predict(conformal, Y)
 
 predict(conformal, Y, Set([true, false]))
 
+# we turn the prediction for uncertainty into a polygon
+
+uns = polygonize(unsure)
+
 # these can then be mapped
 
 #figure conformal-range
-uns = polygonize(unsure)
 f = Figure(; size = (500, 350))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, nodata(present, false); colormap = [:darkgreen])
 poly!(ax, uns, color=:darkgreen, alpha=0.2)
 lines!(ax, crosshatch(uns; spacing=0.15, angle=45), color=:darkgreen, alpha=0.5, linestyle=:dashdot)
 lines!(ax, uns, color=:darkgreen, linewidth=0.5)
-scatter!(ax, records; color = :white, strokecolor=:orange, strokewidth=1, markersize = 9)
 lines!(ax, landmass; color = :black)
+scatter!(ax, records; color = :white, strokecolor=:orange, strokewidth=1, markersize = 9)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide

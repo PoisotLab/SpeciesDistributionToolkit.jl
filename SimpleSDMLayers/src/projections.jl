@@ -19,6 +19,10 @@ function _parse_projection_from_string(p::String)
     return AG.importWKT(p)
 end
 
+@testitem "We can parse an ESRI string" begin
+    @test contains(SimpleSDMLayers.("ESRI:54077"), "natearth")
+end
+
 @testitem "We can get the SRS from a string" begin
     from_epsg = SimpleSDMLayers._parse_projection_from_string("EPSG:4326")
     from_proj =

@@ -102,7 +102,7 @@ end
 @testitem "We can interpolate a layer given a new destination crs with arguments" begin
     layer = SimpleSDMLayers.__demodata(; reduced = true)
     dest = interpolate(layer; dest = "+proj=natearth2 +lon_0=25")
-    @test SimpleSDMLayers.AG.toPROJ4(projection(dest)) == SimpleSDMLayers.AG.toPROJ4(SimpleSDMLayers._parse_projection_from_string("+proj=natearth +lon_0=25"))
+    @test SimpleSDMLayers.AG.toPROJ4(projection(dest)) == SimpleSDMLayers.AG.toPROJ4(SimpleSDMLayers._parse_projection_from_string("+proj=natearth2 +lon_0=25"))
 end
 
 @testitem "We can interpolate a layer with a new size" begin

@@ -171,7 +171,7 @@ struct DifferentNorthSouthExtentError <: Exception end
 function _compatible_projections(l1::SDMLayer, l2::SDMLayer)
     if SimpleSDMLayers.AG.toPROJ4(projection(l1)) !=
        SimpleSDMLayers.AG.toPROJ4(projection(l2))
-        throw(IncompatibleProjectionError)
+        throw(IncompatibleProjectionError())
     end
     return nothing
 end
@@ -179,10 +179,10 @@ end
 function _layers_are_compatible(l1::SDMLayer, l2::SDMLayer)
     _compatible_projections(l1, l2)
     if l1.x != l2.x
-        throw(DifferentEastWestExtentError)
+        throw(DifferentEastWestExtentError())
     end
     if l1.y != l2.y
-        throw(DifferentEastWestExtentError)
+        throw(DifferentEastWestExtentError())
     end
     return true
 end

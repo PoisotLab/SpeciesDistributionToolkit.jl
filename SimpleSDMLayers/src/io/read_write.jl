@@ -56,7 +56,7 @@ end
     SimpleSDMLayers.save(f, t)
     k = SDMLayer(f)
     @test extrema(k) == extrema(t)
-    @test SimpleSDMLayers._compatible_projections(t, k)
+    @test isnothing(SimpleSDMLayers._compatible_projections(t, k))
     for ky in keys(k)[1:50]
         @test k[ky] == t[ky]
     end

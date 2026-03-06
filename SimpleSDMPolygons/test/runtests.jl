@@ -23,15 +23,15 @@ end
     poly(d, color=:grey80, strokecolor=:black, strokewidth=1)
 
     # test obviously true statement to count it towards completing in test summary
-    @test 1 == 1 
+    @test 1 == 1
 end
 
 @testitem "We can plot even when there is an empty polygon" begin
     using CairoMakie
     pd = PolygonData(NaturalEarth, Countries)
-    pol = getpolygon(pd)
+    pol = getpolygon(pd)["Region" => "Africa"]
     c1 = pol["Ghana"]
-    c2 = pol["Paraguay"]
+    c2 = pol["Kenya"]
     c3 = intersect(c1, c2)
     @test SimpleSDMPolygons.AG.isempty(c3)
     poly(c3, color=:grey80, strokecolor=:black, strokewidth=1)

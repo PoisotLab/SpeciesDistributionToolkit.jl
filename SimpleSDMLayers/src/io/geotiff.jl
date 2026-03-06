@@ -73,7 +73,6 @@ function _read_geotiff(
         else
             AG.importWKT(thisproj)
         end
-        # wkt = AG.toPROJ4(wkt)
         transform = AG.getgeotransform(dataset)
 
         # The data we need is pretty much always going to be stored in the first

@@ -194,15 +194,21 @@ train!(bagged)
 risklevel!(conformal, 0.05)
 train!(conformal, model)
 
-# custom func
+# Because the `bagged` model is an homogenous ensemble, we can write our own
+# consensus function to aggregate the outcome of each of the models in the
+# ensemble. What we are after is, simply put, the proportion of models that,
+# when passed to the conformal predictor, return a decision of "ambiguous",
+# _i.e._ they can support both the `true` and `false` outcome.
 
 isunsure = (x) -> count(isequal(Set([true, false])), predict(conformal, x))/length(x)
 
-# bootstrapped conformal
+# With this function written, we can get the summary of how many models return
+# the unsure decision, for each point in the layer:
 
 B = predict(bagged, L; threshold = false, consensus = isunsure)
 
-# now we plot
+# And we can finally plot this model, in order to identify areas where most of
+# the predictions are uncertain:
 
 #figure conformal-bootstrap
 f = Figure(; size = (500, 350))

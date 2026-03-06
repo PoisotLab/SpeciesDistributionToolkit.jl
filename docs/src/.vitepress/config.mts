@@ -208,11 +208,11 @@ export default defineConfig({
                             text: "General use",
                             collapsed: false,
                             items: [
-                                { text: "Calculating climate novelty", link: "/tutorials/usage/climatenovelty/" },
-                                { text: "Generating a landcover consensus", link: "/tutorials/usage/consensus/" },
-                                { text: "Generating fauxcurrences", link: "/tutorials/usage/fauxcurrences/" },
-                                { text: "Generating virtual species", link: "/tutorials/usage/virtual-species/" },
-                                { text: "Identifying spatial boundaries", link: "/tutorials/usage/spatial-boundaries/" },
+                                { text: "Climate novelty", link: "/tutorials/usage/climatenovelty/" },
+                                { text: "Landcover consensus", link: "/tutorials/usage/consensus/" },
+                                { text: "Fauxcurrences", link: "/tutorials/usage/fauxcurrences/" },
+                                { text: "Virtual species", link: "/tutorials/usage/virtual-species/" },
+                                { text: "Spatial boundaries", link: "/tutorials/usage/spatial-boundaries/" },
                             ]
                         }
                     ]

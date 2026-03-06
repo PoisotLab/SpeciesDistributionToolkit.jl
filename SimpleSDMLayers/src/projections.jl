@@ -20,7 +20,8 @@ function _parse_projection_from_string(p::String)
 end
 
 @testitem "We can parse an ESRI string" begin
-    @test contains(SimpleSDMLayers.("ESRI:54077"), "natearth")
+    srs = SimpleSDMLayers._parse_projection_from_string("ESRI:54077")
+    @test contains(SimpleSDMLayers.AG.toPROJ4(srs), "natearth")
 end
 
 @testitem "We can get the SRS from a string" begin

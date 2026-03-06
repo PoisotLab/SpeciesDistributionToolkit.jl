@@ -5,17 +5,17 @@ layout: home
 
 hero:
   name: "Species Distribution Toolkit"
-  tagline: An ecosystem of Julia packages for species distribution modeling and biodiversity research
+  tagline: Species distribution modeling and biodiversity research in Julia
   image:
     src: /logo.svg
     alt: SpeciesDistributionToolkit
   actions:
     - theme: brand
-      text: Read the manual
-      link: /manual
+      text: Read the tutorials
+      link: /tutorials
     - theme: alt
-      text: View on Github
-      link: https://github.com/PoisotLab/SpeciesDistributionToolkit.jl
+      text: Read the vignettes
+      link: /howto
     - theme: alt
       text: Reach out!
       link: https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions

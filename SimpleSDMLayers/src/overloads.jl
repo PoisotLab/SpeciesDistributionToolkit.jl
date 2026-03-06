@@ -111,12 +111,23 @@ function Base.convert(::Type{SDMLayer{T}}, layer::SDMLayer{N}) where {T, N}
     )
 end
 
+"""
+    Base.stride(layer::SDMLayer)
+
+Return the stride (the length of half a cell) for a layer. The result is given
+as northing, easting stride.
+"""
 function Base.stride(layer::SDMLayer)
     Δx = (layer.x[2] - layer.x[1]) / (2size(layer, 2))
     Δy = (layer.y[2] - layer.y[1]) / (2size(layer, 1))
     return (Δy, Δx)
 end
 
+"""
+    Base.stride(layer::SDMLayer)
+
+Return the stride for a single dimension, where 1 is northing and 2 is easting
+"""
 function Base.stride(layer::SDMLayer, i)
     return Base.stride(layer)[i]
 end

@@ -41,14 +41,8 @@ export default defineConfig({
         },
         nav: [
             { text: 'Index', link: '/index' },
-            {
-                text: 'Manual',
-                items: [
-                    { text: "Tutorials", link: "/tutorials" },
-                    { text: "How-to", link: "/howto" },
-                    { text: "Reference", link: "/reference" }
-                ]
-            },
+            { text: "Tutorials", link: "/tutorials" },
+            { text: "How-to", link: "/howto" },
             {
                 text: 'Datasets',
                 items: [
@@ -81,6 +75,7 @@ export default defineConfig({
             {
                 text: "Ecosystem",
                 items: [
+                    { text: "Internals", link: "/internals/" },
                     {
                         text: "Core packages",
                         items: [
@@ -116,55 +111,80 @@ export default defineConfig({
                     text: "How-to",
                     items: [
                         {
-                            text: "Basic layer operations",
+                            text: "Data retrieval",
                             collapsed: true,
                             items: [
-                                { text: "Masking layers", link: "/howto/mask-layer/" },
-                                { text: "Masking layers with polygons", link: "/howto/mask-polygons/" },
-                                { text: "Arithmetic on layers", link: "/howto/layer-arithmetic/" },
-                                { text: "Statistics on layers", link: "/howto/layer-statistics/" },
-                                { text: "Zonal statistics on layers", link: "/howto/zonal-statistics/" },
-                                { text: "Neutral landscapes", link: "/howto/neutral-landscapes/" },
-                                { text: "Splitting layers in tiles", link: "/howto/split-layer/" },
-                                { text: "Clustering layers", link: "/howto/cluster-layers/" },
-                                { text: "Multivariate transformations", link: "/howto/multivariate-stats/" },
+                                { text: "GBIF API", link: "/howto/retrieval/gbif-api/" },
+                                { text: "GBIF downloads", link: "/howto/retrieval/gbif-download/" },
+                                { text: "STAC catalogues", link: "/howto/retrieval/stac/" },
+                                { text: "List raster layers", link: "/howto/retrieval/list-raster-layers/" },
+                                { text: "List polygon information", link: "/howto/retrieval/list-polygon-information/" },
                             ]
                         },
                         {
-                            text: "Data preparation",
+                            text: "Operations on layers",
                             collapsed: true,
                             items: [
-                                { text: "Getting GBIF data", link: "/howto/get-gbif-data/" },
-                                { text: "Downloading GBIF data", link: "/howto/download-gbif-data/" },
-                                { text: "Getting STAC data", link: "/howto/stac/" },
-                                { text: "Reading part of a layer", link: "/howto/read-part-layer/" },
-                                { text: "Listing provided layers", link: "/howto/list-provided-layers/" },
-                                { text: "Data interpolation", link: "/howto/interpolate/" },
-                                { text: "Operations on polygons", link: "/howto/polygon-operations/" },
+                                { text: "Arithmetic", link: "/howto/layers/layer-arithmetic/" },
+                                { text: "Statistics", link: "/howto/layers/layer-statistics/" },
+                                { text: "Multivariate transformations", link: "/howto/layers/multivariate/" },
+                                { text: "Clustering", link: "/howto/layers/clustering/" },
                             ]
                         },
                         {
-                            text: "Working with occurrence data",
+                            text: "Polygons and masking",
                             collapsed: true,
                             items: [
-                                { text: "Bounding boxes", link: "/howto/get-boundingbox/" },
-                                { text: "Access layers at occurrences positions", link: "/howto/layer-occurrences/" },
-                                { text: "Pseudo-absences", link: "/howto/pseudoabsences/" },
-                                { text: "Makie integration", link: "/howto/makie/" },
+                                { text: "Masking layers", link: "/howto/polygons/masking-a-layer/" },
+                                { text: "Masking with polygons", link: "/howto/polygons/masking-with-polygons/" },
+                                { text: "Polygon operations", link: "/howto/polygons/operations/" },
+                                { text: "Zonal statistics", link: "/howto/polygons/zonal-statistics/" },
                             ]
                         },
                         {
-                            text: "Species Distribution Models",
+                            text: "Data generation",
                             collapsed: true,
                             items: [
-                                { text: "Cross-validation", link: "/howto/sdm-crossvalidation/" },
-                                { text: "Variable selection", link: "/howto/sdm-variableselection/" },
-                                { text: "Hyper-parameters", link: "/howto/sdm-hyperparameters/" },
-                                { text: "PR and ROC curves", link: "/howto/sdm-pr-roc/" },
-                                { text: "Interpretability", link: "/howto/sdm-interpretability/" },
-                                { text: "Counterfactuals", link: "/howto/sdm-counterfactuals/" },
-                                { text: "Calibration", link: "/howto/sdm-calibration/" },
-                                { text: "Conformal", link: "/howto/sdm-conformal/" },
+                                { text: "Neutral landscapes", link: "/howto/generation/neutral-landscapes/" },
+                                { text: "Pseudo-absences", link: "/howto/generation/pseudoabsences/" },
+                            ]
+                        },
+                        {
+                            text: "Data usage",
+                            collapsed: true,
+                            items: [
+                                { text: "Bounding boxes", link: "/howto/usage/boundingbox/" },
+                                { text: "Reading part of a layer", link: "/howto/usage/read-part-layer/" },
+                                { text: "Splitting and tiling", link: "/howto/usage/tiling/" },
+                                { text: "Coarsening layers", link: "/howto/usage/coarsening/" },
+                                { text: "Sliding windows", link: "/howto/usage/sliding-windows/" },
+                                { text: "Projection", link: "/howto/usage/projection/" },
+                                { text: "Layers and occurrences", link: "/howto/usage/layers-occurrences/" },
+                            ]
+                        },
+                        {
+                            text: "Distribution models",
+                            collapsed: true,
+                            items: [
+                                { text: "Cross-validation", link: "/howto/sdm/crossvalidation/" },
+                                { text: "Variable selection", link: "/howto/sdm/variableselection/" },
+                                { text: "Hyper-parameters", link: "/howto/sdm/hyperparameters/" },
+                                { text: "PR and ROC curves", link: "/howto/sdm/pr-roc/" },
+                                { text: "Interpretability", link: "/howto/sdm/interpretability/" },
+                                { text: "Counterfactuals", link: "/howto/sdm/counterfactuals/" },
+                                { text: "Calibration", link: "/howto/sdm/calibration/" },
+                                { text: "Conformal", link: "/howto/sdm/conformal/" },
+                            ]
+                        },
+                        {
+                            text: "Data visualization",
+                            collapsed: true,
+                            items: [
+                                { text: "Layers", link: "/howto/dataviz/layers/" },
+                                { text: "Occurrences", link: "/howto/dataviz/occurrences/" },
+                                { text: "Polygons", link: "/howto/dataviz/polygons/" },
+                                { text: "Models", link: "/howto/dataviz/models/" },
+                                { text: "Projections", link: "/howto/dataviz/projections/" },
                             ]
                         }
                     ]
@@ -174,130 +194,68 @@ export default defineConfig({
                 {
                     text: "Tutorials",
                     items: [
-                        { text: "Calculating climate novelty", link: "/tutorials/climatenovelty/" },
-                        { text: "Generating a landcover consensus", link: "/tutorials/consensus/" },
-                        { text: "Generating fauxcurrences", link: "/tutorials/fauxcurrences/" },
-                        { text: "Generating virtual species", link: "/tutorials/virtual-species/" },
-                        { text: "Identifying spatial boundaries", link: "/tutorials/spatial-boundaries/" },
-                        { text: "Building a species distribution model", link: "/tutorials/sdm-training/" },
-                        { text: "Ensemble models", link: "/tutorials/sdm-ensembles/" },
-                        { text: "SDM with AdaBoost", link: "/tutorials/sdm-boosting/" },
+                        {
+                            text: "Distribution models",
+                            collapsed: false,
+                            items: [
+                                { text: "Building a model", link: "/tutorials/sdm/training/" },
+                                { text: "Bagging", link: "/tutorials/sdm/bagging/" },
+                                { text: "Boosting", link: "/tutorials/sdm/adaboost/" },
+                                { text: "Conformal prediction", link: "/tutorials/sdm/conformal/" },
+                            ]
+                        },
+                        {
+                            text: "General use",
+                            collapsed: false,
+                            items: [
+                                { text: "Climate novelty", link: "/tutorials/usage/climatenovelty/" },
+                                { text: "Landcover consensus", link: "/tutorials/usage/consensus/" },
+                                { text: "Fauxcurrences", link: "/tutorials/usage/fauxcurrences/" },
+                                { text: "Virtual species", link: "/tutorials/usage/virtual-species/" },
+                                { text: "Spatial boundaries", link: "/tutorials/usage/spatial-boundaries/" },
+                            ]
+                        }
                     ]
                 }
             ],
-            "/reference/": [
+            "/internals/": [
                 {
                     text: "SpeciesDistributionToolkit",
                     collapsed: true,
                     items: [
-                        { text: "Documentation", link: "/reference/" },
-                        { text: "GADM", link: "/reference/sdt/gadm/" },
-                        { text: "Polygons", link: "/reference/sdt/gadm/" },
-                        { text: "GBIF", link: "/reference/sdt/gbif/" },
+                        { text: "Documentation", link: "/internals/" },
+                        { text: "Utilities", link: "/internals/integration/utilities/" },
+                        { text: "GBIF extension", link: "/internals/integration/gbif/" },
                     ]
                 },
                 {
-                    text: "GBIF",
+                    text: "Interfaces",
                     collapsed: true,
                     items: [
-                        { text: "Documentation", link: "/reference/gbif/" },
-                        { text: "Types", link: "/reference/gbif/types/" },
-                        { text: "Data", link: "/reference/gbif/data/" },
-                        { text: "Enumerated values", link: "/reference/gbif/enumerated/" },
-                        { text: "Internals", link: "/reference/gbif/internals/" },
-                    ]
-                },
-                {
-                    text: "OccurrencesInterface",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/occint/" },
-                    ]
-                },
-                {
-                    text: "PseudoAbsences",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/pseudo/" },
-                    ]
-                },
-                {
-                    text: "Phylopic",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/phylopic/" },
-                    ]
-                },
-                {
-                    text: "Fauxcurrences",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/fauxcurrences/" },
-                    ]
-                },
-                {
-                    text: "SDeMo",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/sdemo/" },
-                        { text: "Models", link: "/reference/sdemo/models/" },
-                        { text: "Ensembles", link: "/reference/sdemo/ensembles/" },
-                        { text: "Saving", link: "/reference/sdemo/saving/" },
-                        { text: "Cross-validation", link: "/reference/sdemo/crossvalidation/" },
-                        { text: "Feature selection", link: "/reference/sdemo/features/" },
-                        { text: "Explanations", link: "/reference/sdemo/explanations/" },
-                        { text: "Conformal predictions", link: "/reference/sdemo/conformal/" },
-                    ]
-                },
-                {
-                    text: "SimpleSDMDatasets",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/datasets/" },
-                        { text: "Interface", link: "/reference/datasets/interface/" },
-                        { text: "Types", link: "/reference/datasets/types/" },
-                        { text: "Internal", link: "/reference/datasets/internals/" },
-                    ]
-                },
-                {
-                    text: "SimpleSDMPolygons",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/polygons/" },
-                        { text: "Interface", link: "/reference/polygons/interface/" },
-                        { text: "Types", link: "/reference/polygons/types/" },
-                        { text: "Internal", link: "/reference/polygons/internals/" },
-                    ]
-                },
-                {
-                    text: "SimpleSDMLayers",
-                    collapsed: true,
-                    items: [
-                        { text: "Documentation", link: "/reference/layers/" },
-                        { text: "Types", link: "/reference/layers/types/" },
-                        { text: "Operations", link: "/reference/layers/operations/" },
+                        { text: "Datasets", link: "/internals/interfaces/datasets/" },
+                        { text: "Occurrences", link: "/internals/interfaces/occurrences/" },
                     ]
                 },
                 {
                     text: "Changelogs",
                     collapsed: true,
                     items: [
-                        { text: "SpeciesDistributionToolkit", link: "/reference/changelog/SpeciesDistributionToolkit/" },
-                        { text: "Fauxcurrences", link: "/reference/changelog/Fauxcurrences/" },
-                        { text: "GBIF", link: "/reference/changelog/GBIF/" },
-                        { text: "OccurrencesInterfaces", link: "/reference/changelog/OccurrencesInterface/" },
-                        { text: "Phylopic", link: "/reference/changelog/Phylopic/" },
-                        { text: "PseudoAbsences", link: "/reference/changelog/PseudoAbsences/" },
-                        { text: "SDeMo", link: "/reference/changelog/SDeMo/" },
-                        { text: "SimpleSDMDatasets", link: "/reference/changelog/SimpleSDMDatasets/" },
-                        { text: "SimpleSDMLayers", link: "/reference/changelog/SimpleSDMLayers/" },
+                        { text: "SpeciesDistributionToolkit", link: "/internals/changelog/SpeciesDistributionToolkit/" },
+                        { text: "Fauxcurrences", link: "/internals/changelog/Fauxcurrences/" },
+                        { text: "GBIF", link: "/internals/changelog/GBIF/" },
+                        { text: "OccurrencesInterfaces", link: "/internals/changelog/OccurrencesInterface/" },
+                        { text: "Phylopic", link: "/internals/changelog/Phylopic/" },
+                        { text: "PseudoAbsences", link: "/internals/changelog/PseudoAbsences/" },
+                        { text: "SDeMo", link: "/internals/changelog/SDeMo/" },
+                        { text: "SimpleSDMDatasets", link: "/internals/changelog/SimpleSDMDatasets/" },
+                        { text: "SimpleSDMLayers", link: "/internals/changelog/SimpleSDMLayers/" },
                     ]
                 },
                 {
                     text: "Contribute",
                     items: [
-                        { text: "Code of Conduct", link: "/reference/code-of-conduct/" },
-                        { text: "Contribution guidelines", link: "/reference/contributing/" },
+                        { text: "Code of Conduct", link: "/internals/code-of-conduct/" },
+                        { text: "Contribution guidelines", link: "/internals/contributing/" },
                         { text: "Roadmap", link: "https://github.com/orgs/PoisotLab/projects/3" },
                         { text: "Discussions", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions" },
                         { text: "Good first issues", link: "https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/issues?q=is%3Aopen%20is%3Aissue%20label%3A%22%F0%9F%A4%97%20good%20first%20PR%22" },

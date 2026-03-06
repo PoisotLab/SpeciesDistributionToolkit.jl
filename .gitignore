@@ -3,6 +3,7 @@ docs/src/tutorials/*.md
 docs/src/howto/*.md
 !docs/src/tutorials/index.md
 !docs/src/howto/index.md
+docs/src/references.bib
 docs/src/tutorials/*.png
 docs/src/howto/*.png
 docs/src/SimpleSDMDatasets/catalogue/*.md

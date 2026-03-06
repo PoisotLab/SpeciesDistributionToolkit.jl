@@ -18,7 +18,7 @@ end
 
 function _showstring_sdm(sdm, full)
     _tr_string = istrained(sdm) ? "☑️ " : "❎ "
-    _gr_string = isgeoreferenced(sdm) ? "" : "🗺️ "
+    _gr_string = isgeoreferenced(sdm) ? "🗺️ " : ""
     strs = [
         "$(typeof(sdm.transformer))",
         "$(typeof(sdm.classifier))",

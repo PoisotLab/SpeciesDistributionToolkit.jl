@@ -59,6 +59,14 @@ export zone, byzone
 include("utilities.jl")
 export gainloss
 
+# Reprojection
+include("reproject.jl")
+export reproject
+
+# Hatching
+include("crosshatch.jl")
+export crosshatch, polygonize
+
 # Get the boundingbox tuple
 include("boundingbox.jl")
 export boundingbox

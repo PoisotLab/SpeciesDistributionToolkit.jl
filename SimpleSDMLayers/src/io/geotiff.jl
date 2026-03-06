@@ -11,7 +11,7 @@ function _project_bbox_to_crs(
 )
     wgs2proj = Proj.Transformation(
         "+proj=longlat +datum=WGS84 +no_defs +type=crs",
-        proj;
+        SimpleSDMLayers.AG.toPROJ4(proj);
         always_xy = true,
     )
     pts = [(e, n) for e in (left, right) for n in (bottom, top)]

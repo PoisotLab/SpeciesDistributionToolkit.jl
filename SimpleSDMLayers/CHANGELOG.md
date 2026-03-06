@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.4.0`
 
+- **added** errors when layers are not compatible (as opposed to failing an
+  assertion)
 - **added** support for smarter handling of projection data [#555]
 - **fixed** a bug with the strides being sometimes used in the wrong order (extremely low severity)
 

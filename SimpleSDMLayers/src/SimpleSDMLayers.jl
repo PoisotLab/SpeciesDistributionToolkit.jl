@@ -22,6 +22,7 @@ include("types.jl")
 export SDMLayer
 export nodata!, nodata
 export eastings, northings
+export IncompatibleProjectionError, DifferentEastWestExtentError, DifferentNorthSouthExtentError
 
 # Functions for IO
 include("io/read_write.jl")

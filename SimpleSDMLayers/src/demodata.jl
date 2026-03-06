@@ -49,3 +49,22 @@ end
     @test ur_ll[1] ≈ -39.18 atol = 0.01
     @test ur_ll[2] ≈ 63.32 atol = 0.01
 end
+
+function __temperature(; kwargs...)
+    _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
+    L = SDMLayer(joinpath(_data_path, "temperature.tif"); bandnumber = 1, kwargs...)
+    return L
+end
+
+@testitem "We can read the demo data" begin
+    temperature = SimpleSDMLayers.__temperature()
+    @test length(temperature) == prod(size(temperature))
+    @test first(temperature.x) < 67.51653
+    @test last(temperature.x) > 73.11652
+end
+
+@testitem "We can read the demo data with a bounding box" begin
+    temperature = SimpleSDMLayers.__temperature(; left=70.0)
+    @test length(temperature) == prod(size(temperature))
+    @test first(temperature.x) <= 70.0 <= last(temperature.x)
+end

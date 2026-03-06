@@ -241,9 +241,8 @@ end
 end
 
 @testitem "We can read a layer with scale and offset info" begin
-    _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
-    k = SDMLayer(joinpath(_data_path, "temperature.tif"); bandnumber = 1)
-    @test typeof(k) <: SDMLayer
-    @test minimum(k) <= -25.0f0
-    @test maximum(k) >= 19.0f0
+    L = SimpleSDMLayers.__temperature()
+    @test typeof(L) <: SDMLayer
+    @test minimum(L) <= -25.0f0
+    @test maximum(L) >= 19.0f0
 end

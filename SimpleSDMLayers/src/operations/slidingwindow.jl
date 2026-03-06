@@ -116,32 +116,24 @@ function slidingwindow(f::Function, layer::SDMLayer; centervalue::Bool = false, 
 end
 
 @testitem "We can perform a slidingwindow analysis" begin
-    _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
-    L = SDMLayer(
-        joinpath(_data_path, "temperature.tif");
-        bandnumber = 1,
+    L = SimpleSDMLayers.__temperature(;
         left = 69.0,
         right = 71.0,
         bottom = 38.0,
         top = 40.0,
     )
-
     C = slidingwindow(x -> sum(x) / length(x), L; radius = 10.0)
     @test C isa typeof(L)
     @test size(C) == size(L)
 end
 
-@testitem "We can perform a slidingwindow analysis" begin
-    _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
-    L = SDMLayer(
-        joinpath(_data_path, "temperature.tif");
-        bandnumber = 1,
+@testitem "We can perform a slidingwindow analysis with a type conversion" begin
+    L = SimpleSDMLayers.__temperature(;
         left = 69.0,
         right = 71.0,
         bottom = 38.0,
         top = 40.0,
     )
-
     C = slidingwindow(x -> one(Float16), L; radius = 10.0)
     @test C isa SDMLayer{Float16}
     @test size(C) == size(L)
@@ -150,10 +142,7 @@ end
 end
 
 @testitem "We can perform a slidingwindow analysis with centervalue" begin
-    _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
-    L = SDMLayer(
-        joinpath(_data_path, "temperature.tif");
-        bandnumber = 1,
+    L = SimpleSDMLayers.__temperature(;
         left = 69.0,
         right = 71.0,
         bottom = 38.0,

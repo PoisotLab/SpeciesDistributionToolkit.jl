@@ -192,24 +192,30 @@ function _layers_are_compatible(layers::Vector{T}) where {T <: SDMLayer}
 end
 
 @testitem "We get an incompatible projection error" begin
-    l1 = SimpleSDMLayers.__demodata(; reduced=true)
-    l2 = SimpleSDMLayers.__demodata(; reduced=true)
-    l2 = interpolate(l2; dest="+proj=natearth +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs")
+    l1 = SimpleSDMLayers.__demodata(; reduced = true)
+    l2 = SimpleSDMLayers.__demodata(; reduced = true)
+    l2 = interpolate(
+        l2;
+        dest = "+proj=natearth +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs",
+    )
     @test_throws IncompatibleProjectionError SimpleSDMLayers._layers_are_compatible(l1, l2)
 end
 
 @testitem "We get an incompatible E/W error" begin
-    l1 = SimpleSDMLayers.__demodata(; reduced=true)
-    l2 = SimpleSDMLayers.__demodata(; reduced=true)
+    l1 = SimpleSDMLayers.__demodata(; reduced = true)
+    l2 = SimpleSDMLayers.__demodata(; reduced = true)
     l2.x .+= (-1, -1)
     @test_throws DifferentEastWestExtentError SimpleSDMLayers._layers_are_compatible(l1, l2)
 end
 
 @testitem "We get an incompatible N/S error" begin
-    l1 = SimpleSDMLayers.__demodata(; reduced=true)
-    l2 = SimpleSDMLayers.__demodata(; reduced=true)
+    l1 = SimpleSDMLayers.__demodata(; reduced = true)
+    l2 = SimpleSDMLayers.__demodata(; reduced = true)
     l2.y .+= (-1, -1)
-    @test_throws DifferentNorthSouthExtentError SimpleSDMLayers._layers_are_compatible(l1, l2)
+    @test_throws DifferentNorthSouthExtentError SimpleSDMLayers._layers_are_compatible(
+        l1,
+        l2,
+    )
 end
 
 function eastings(layer::SDMLayer)
@@ -236,4 +242,24 @@ end
     @test n[10] ≈ 0.0
     @test n[1] ≈ -90.0 atol = 5.0
     @test n[19] ≈ 90.0 atol = 5.0
+end
+
+@testitem "We can manually get the boundingbox for a layer" begin
+    layer = SimpleSDMLayers.__demodata(; reduced = true)
+    EL = eastings(layer)
+    NL = northings(layer)
+    prj = SimpleSDMLayers.Proj.Transformation(
+        SimpleSDMLayers.AG.toPROJ4(layer.crs),
+        "+proj=longlat +datum=WGS84 +no_defs";
+        always_xy = true,
+    )
+
+    b1 = [prj(EL[1], n) for n in NL]
+    b2 = [prj(EL[end], n) for n in NL]
+    b3 = [prj(e, NL[1]) for e in EL]
+    b4 = [prj(e, NL[end]) for e in EL]
+    bands = vcat(b1, b2, b3, b4)
+
+    left, right = extrema(first.(bands))
+    bottom, top = extrema(last.(bands))
 end

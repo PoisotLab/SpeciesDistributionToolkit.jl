@@ -37,16 +37,17 @@ mask!(L, landmass)
 
 presencelayer = mask(first(L), records)
 absencemask =
-    pseudoabsencemask(BetweenRadius, presencelayer; closer = 40.0, further = 130.0)
-absencelayer = backgroundpoints(absencemask, 3sum(presencelayer))
+    pseudoabsencemask(BetweenRadius, presencelayer; closer = 40.0, further = 120.0)
+absencelayer = backgroundpoints(absencemask, 2sum(presencelayer))
 
 # ## Training the initial model
 
-# The model for this tutorial is a logistic regression, with a PCA
-# transformation step, and only self-interactions between variables:
+# The model for this tutorial is a logistic regression, with self-interactions
+# between variables, but no other interactive effects:
 
-model = SDM(PCATransform, Logistic, L, presencelayer, absencelayer)
+model = SDM(RawData, Logistic, L, presencelayer, absencelayer)
 hyperparameters!(classifier(model), :interactions, :self)
+variables!(model, BackwardSelection)
 variables!(model, ForwardSelection)
 
 # We start by checking that this model is georeferenced. This is something we
@@ -74,12 +75,13 @@ Y = predict(model, L; threshold = false)
 
 #figure regular-range
 f = Figure(; size = (500, 350))
-ax = Axis(f[1, 1]; aspect = DataAspect())
-heatmap!(ax, Y; colormap = Reverse(:navia))
+ax = Axis(f[2, 1]; aspect = DataAspect())
+hm = heatmap!(ax, Y; colormap = Reverse(:navia))
 lines!(ax, landmass; color = :black)
-scatter!(ax, model, color=labels(model), colormap=[:grey80, :orange])
+scatter!(ax, model, color=labels(model), marker=[l ? :cross : :hline for l in labels(model)], colormap=[:red, :orange])
 hidedecorations!(ax)
 hidespines!(ax)
+Colorbar(f[1, 1], hm; label = "Model score", vertical = false)
 current_figure() #hide
 
 # ## Calibrating the conformal classifier
@@ -105,7 +107,7 @@ uns = polygonize(unsure)
 # ::: info Turning layers into polygons is long
 #
 # Not because this is a very hard problem -- simply that because, for now, the
-# code work, and it will faster in a future release.
+# code works, and it will work faster in a future release.
 #
 # :::
 
@@ -138,7 +140,9 @@ A = cellarea(Y)
 # 
 # When looking at the effect of a parameter, it is useful to keep the same split
 # of the data when measuring the response of the model. This ensures that the
-# only thing that varies is the parameter itself.
+# only thing that varies is the parameter itself. It is, similarly, a good idea
+# to perform several replicates. Because we do none of these things here, the
+# next figure will not display a smooth tendency.
 # 
 # :::
 
@@ -158,14 +162,14 @@ end
 
 rangesize ./= 1e4
 
-# And now, we can plot
+# And now, we can plot:
 
 #figure risklevel-effect
 f = Figure(; size = (500, 350))
 ax = Axis(f[1, 1]; ylabel = "Surface (10⁴ km²)", xlabel = "Risk level α")
-scatter!(ax, rls, rangesize[1, :]; label = "Presence", color=:darkgreen)
-scatter!(ax, rls, rangesize[2, :]; label = "Absence", color=:grey60)
-scatter!(ax, rls, rangesize[3, :]; label = "Unsure", color=:lime, strokecolor=:darkgreen, strokewidth=1)
+scatter!(ax, rls, rangesize[2, :]; label = "Absence", color=:white, strokecolor=:grey20, strokewidth=1)
+scatter!(ax, rls, rangesize[3, :]; label = "Unsure", color=:lime, strokecolor=:darkgreen, strokewidth=1, marker=:diamond)
+scatter!(ax, rls, rangesize[1, :]; label = "Presence", color=:darkgreen, marker=:rect, markersize=12)
 axislegend(ax; position = :lb, nbanks = 3)
 current_figure() #hide
 

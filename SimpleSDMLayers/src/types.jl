@@ -249,7 +249,7 @@ end
     EL = eastings(layer)
     NL = northings(layer)
     prj = SimpleSDMLayers.Proj.Transformation(
-        SimpleSDMLayers.AG.toPROJ4(layer.crs),
+        SimpleSDMLayers.AG.toPROJ4(projection(layer)),
         "+proj=longlat +datum=WGS84 +no_defs";
         always_xy = true,
     )

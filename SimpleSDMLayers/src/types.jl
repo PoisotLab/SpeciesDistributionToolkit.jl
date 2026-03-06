@@ -19,15 +19,20 @@ The geospatial information is represented by three positional fields:
   values are `(-180., 180.)` and `(-90., 90.)`, which represents the entire
   surface of the globe in WGS84
 - **crs**: any `String` representation of the CRS which can be handled by
-  `Proj.jl` - the default is  `"+proj=longlat +datum=WGS84 +no_defs"`, which represents a
-  latitude/longitude coordinate system
+  `Proj.jl` - the default is EPSG:4326
+
+Note that we recommend that the SRS be represented as WKT, then as the
+"EPSG:xxx" format, and then as a a PROJ4 string, by order of decreasing
+preference. An `ArchGDAL` representation is always accessible through the
+`projection` method. Note that the functions will, internally, convert the
+projection to different formats in order to achieve specific tasks.
 """
 Base.@kwdef mutable struct SDMLayer{T}
     grid::Matrix{T}
     indices::BitMatrix
     x::Tuple = (-180.0, 180.0)
     y::Tuple = (-90.0, 90.0)
-    crs::String = "+proj=longlat +datum=WGS84 +no_defs"
+    crs::String = """GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AXIS["Latitude",NORTH],AXIS["Longitude",EAST],AUTHORITY["EPSG","4326"]]"""
 end
 
 function SDMLayer(grid::Matrix; kwargs...)

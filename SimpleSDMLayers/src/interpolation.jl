@@ -5,7 +5,7 @@ function interpolate!(destination::SDMLayer, source::SDMLayer)
     NI = northings(destination)
 
     # Functions for projection
-    dest, src = SimpleSDMLayers.AG.toWKT(projection(destination)), SimpleSDMLayers.AG.toWKT(projection(source))
+    dest, src = SimpleSDMLayers.AG.toPROJ4(projection(destination)), SimpleSDMLayers.AG.toPROJ4(projection(source))
     revprj =
         SimpleSDMLayers.Proj.Transformation(dest, src; always_xy = true)
 
@@ -53,8 +53,8 @@ end
 function _create_destination_layer(source::SDMLayer, dest, newsize)
     EL = eastings(source)
     NL = northings(source)
-    src = SimpleSDMLayers.AG.toWKT(projection(source))
-    dst = SimpleSDMLayers.AG.toWKT(_parse_projection_from_string(dest))
+    src = SimpleSDMLayers.AG.toPROJ4(projection(source))
+    dst = SimpleSDMLayers.AG.toPROJ4(_parse_projection_from_string(dest))
     prj = SimpleSDMLayers.Proj.Transformation(src, dst; always_xy = true)
 
     b1 = [prj(EL[1], n) for n in NL]

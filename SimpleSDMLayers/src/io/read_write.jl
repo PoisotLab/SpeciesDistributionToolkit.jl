@@ -70,7 +70,7 @@ end
     bbox = (left=-79., right=-75., bottom=47., top=49.)
     k = SDMLayer(f; bandnumber=1, bbox...)
     @test all(size(k) .< size(t))
-    @test k.crs == t.crs
+    @test isnothing(SimpleSDMLayers._compatible_projections(k, t))
     @test k.x[1] > t.x[1]
     @test k.x[2] < t.x[2]
     @test k.y[1] > t.y[1]

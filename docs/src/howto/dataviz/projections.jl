@@ -1,6 +1,6 @@
 # # Working with projections
 
-# This page shows how to work with projected data.
+# This page shows how to work with projected data when preparing figures.
 
 using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit

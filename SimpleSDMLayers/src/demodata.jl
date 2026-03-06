@@ -1,7 +1,7 @@
 function __demodata(; reduced::Bool = false)
     dpath = joinpath(@__DIR__, "..", "..", "data")
     grd = parse.(UInt16, hcat(split.(readlines(joinpath(dpath, "grid.dat")), '\t')...))
-    crs = only(readlines(joinpath(dpath, "grid.crs")))
+    crs = SimpleSDMLayers.AG.toWKT(_parse_projection_from_string(only(readlines(joinpath(dpath, "grid.crs")))))
     metadata = readlines(joinpath(dpath, "grid.info"))
     x = tuple(parse.(Float64, metadata[1:2])...)
     y = tuple(parse.(Float64, metadata[3:4])...)
@@ -20,18 +20,18 @@ end
 
 @testitem "We can load the demo layer" begin
     layer = SimpleSDMLayers.__demodata()
-    @test layer.crs == "+proj=aea +lat_0=44 +lon_0=-68.5 +lat_1=60 +lat_2=46 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) == "+proj=aea +lat_0=44 +lon_0=-68.5 +lat_1=60 +lat_2=46 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
 end
 
 @testitem "We can load the reduced demo layer" begin
     layer = SimpleSDMLayers.__demodata(reduced=true)
-    @test layer.crs == "+proj=aea +lat_0=44 +lon_0=-68.5 +lat_1=60 +lat_2=46 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) == "+proj=aea +lat_0=44 +lon_0=-68.5 +lat_1=60 +lat_2=46 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
     @test size(layer) == (400, 400)
 end
 
 @testitem "We read the correct WGS84 bounds for the demo layer" begin
     layer = SimpleSDMLayers.__demodata()
-    prj = SimpleSDMLayers.Proj.Transformation(layer.crs, "+proj=longlat +datum=WGS84 +no_defs"; always_xy=true)
+    prj = SimpleSDMLayers.Proj.Transformation(SimpleSDMLayers.AG.toPROJ4(projection(layer)), "EPSG:4326"; always_xy=true)
     
     ll_ll = prj(layer.x[1], layer.y[1])
     @test ll_ll[1] ≈ -80.00 atol = 0.01
@@ -48,4 +48,23 @@ end
     ur_ll = prj(layer.x[2], layer.y[2])
     @test ur_ll[1] ≈ -39.18 atol = 0.01
     @test ur_ll[2] ≈ 63.32 atol = 0.01
+end
+
+function __temperature(; kwargs...)
+    _data_path = joinpath(dirname(dirname(pathof(SimpleSDMLayers))), "data")
+    L = SDMLayer(joinpath(_data_path, "temperature.tif"); bandnumber = 1, kwargs...)
+    return L
+end
+
+@testitem "We can read the demo data" begin
+    temperature = SimpleSDMLayers.__temperature()
+    @test length(temperature) == prod(size(temperature))
+    @test first(temperature.x) < 67.51653
+    @test last(temperature.x) > 73.11652
+end
+
+@testitem "We can read the demo data with a bounding box" begin
+    temperature = SimpleSDMLayers.__temperature(; left=70.0)
+    @test length(temperature) == prod(size(temperature))
+    @test first(temperature.x) <= 70.0 <= last(temperature.x)
 end

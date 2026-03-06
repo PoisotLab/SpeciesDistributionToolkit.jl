@@ -2,7 +2,7 @@ _centers(layer::SDMLayer) = _centers(layer, "+proj=longlat +datum=WGS84 +no_defs
 
 function _centers(layer::SDMLayer, prj)
     # Projection function
-    prfunc = Proj.Transformation(layer.crs, prj; always_xy=true)
+    prfunc = Proj.Transformation(SimpleSDMLayers.AG.toWKT(projection(layer)), prj; always_xy=true)
 
     # Northings and eastings for the layer
     nrt, est = northings(layer), eastings(layer)
@@ -56,7 +56,7 @@ end
     SimpleSDMLayers.save(f, t)
     k = SDMLayer(f)
     @test extrema(k) == extrema(t)
-    @test t.crs == k.crs
+    @test isnothing(SimpleSDMLayers._compatible_projections(t, k))
     for ky in keys(k)[1:50]
         @test k[ky] == t[ky]
     end
@@ -70,7 +70,7 @@ end
     bbox = (left=-79., right=-75., bottom=47., top=49.)
     k = SDMLayer(f; bandnumber=1, bbox...)
     @test all(size(k) .< size(t))
-    @test k.crs == t.crs
+    @test isnothing(SimpleSDMLayers._compatible_projections(k, t))
     @test k.x[1] > t.x[1]
     @test k.x[2] < t.x[2]
     @test k.y[1] > t.y[1]

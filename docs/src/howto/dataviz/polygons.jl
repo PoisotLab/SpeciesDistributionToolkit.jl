@@ -1,6 +1,6 @@
 # # Plotting polygons
 
-# The layers are integrated with the [Makie](https://docs.makie.org/stable/)
+# The polygons are integrated with the [Makie](https://docs.makie.org/stable/)
 # plotting package.
 
 using SpeciesDistributionToolkit
@@ -78,8 +78,8 @@ current_figure()
 # ## Generating polygons from layers
 
 # There is a function to generate a polygon (or a multi-polygon) from a boolean
-# layer. We will use it to highlight which area are in the top and bottom decile
-# of precipitation:
+# layer. We will use it to highlight which area are in the top and bottom 15% of
+# total annual precipitation:
 
 camf = regions["Name" => "Central American Mixed Forests"]
 precipitation = SDMLayer(RasterData(CHELSA2, Precipitation); SpeciesDistributionToolkit.boundingbox(camf)...)
@@ -88,25 +88,27 @@ mask!(precipitation, camf)
 # This new layer is a Boolean layer with `true` corresponding to the area of interest.
 
 import Statistics
-dry = precipitation .<= Statistics.quantile(precipitation, 0.1)
-wet = precipitation .>= Statistics.quantile(precipitation, 0.9)
+dry = precipitation .<= Statistics.quantile(precipitation, 0.15)
+wet = precipitation .>= Statistics.quantile(precipitation, 0.85)
 
 # We generate the polygon through a call to `polygonize`:
 
 dry_poly = polygonize(dry)
 wet_poly = polygonize(wet)
 
-# And we can finally plot
+# And we can finally plot. Note that the crosshatching is returned as a
+# _striped_ polygon, so if you want to get bolder hatches, using `poly` is a
+# decent solution.
 
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 poly!(ax, camf, color=:grey94, label="Central American Mixed Forests")
-poly!(ax, dry_poly, color=:red, label="Low precipitation", alpha=0.2)
-poly!(ax, wet_poly, color=:darkblue, label="High precipitation", alpha=0.2)
-lines!(ax, crosshatch(dry_poly, spacing=0.2, angle=40); color = :red, linewidth=0.5)
-lines!(ax, crosshatch(wet_poly, spacing=0.2, angle=40); color = :darkblue, linewidth=0.5)
-lines!(ax, dry_poly; color = :red, label="Low precipitation")
-lines!(ax, wet_poly; color = :darkblue, label="High precipitation")
+poly!(ax, dry_poly, color=:orange, label="Low precipitation", alpha=0.2)
+poly!(ax, wet_poly, color=:skyblue, label="High precipitation", alpha=0.2)
+poly!(ax, crosshatch(dry_poly, spacing=0.3, angle=40); color = :orange, alpha=0.7)
+poly!(ax, crosshatch(wet_poly, spacing=0.3, angle=40); color = :skyblue, alpha=0.7)
+lines!(ax, dry_poly; color = :orange, label="Low precipitation")
+lines!(ax, wet_poly; color = :skyblue, label="High precipitation")
 lines!(ax, camf; color = :black, linewidth=2)
 axislegend(; unique = true, merge = true, position = :lb, framevisible=false)
 hidedecorations!(ax)

@@ -6,7 +6,7 @@ km). This is only returned for layers in WGS84, which can be forced with
 `interpolate`.
 """
 function cellarea(layer::T; R = 6371.0) where {T <: SDMLayer}
-    @assert isequal("+proj=longlat +datum=WGS84 +no_defs")(layer.crs)
+    @assert isequal("+proj=longlat +datum=WGS84 +no_defs")(SimpleSDMLayers.AG.toPROJ4(projection(layer)))
     latstride, lonstride = 2.0 .* stride(layer)
     cells_per_ribbon = 360.0 / lonstride
     latitudes_ranges = LinRange(layer.y..., length(northings(layer))+1)

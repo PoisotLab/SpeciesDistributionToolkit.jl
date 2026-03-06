@@ -12,6 +12,18 @@ spatial_extent = (; left = -4.87, right = 9.63, bottom = 41.31, top = 51.14)
 dataprovider = RasterData(BiodiversityMapping, BirdRichness)
 layer = SDMLayer(dataprovider; layer = "Birds", spatial_extent...)
 
+# The projection of a layer can be seen with:
+
+projection(layer)
+
+# ::: info Re-projecting other objects 
+# 
+# Objects that are not layers can be projected for data visualization with
+# `reproject` -- there is a [manual entry](/howto/dataviz/projections) for this
+# use-case.
+#
+# :::
+
 # We can check out the original data:
 
 #figure initial
@@ -26,8 +38,13 @@ current_figure() #hide
 
 # And project them to the more locally appropriate [EPSG:27574](https://epsg.io/27574):
 
-proj_string = "+proj=lcc +lat_1=42.165 +lat_0=42.165 +lon_0=0 +k_0=0.99994471 +x_0=234.358 +y_0=4185861.369 +ellps=clrk80ign +pm=paris +towgs84=-168,-60,320,0,0,0,0 +units=m +no_defs"
-ws = interpolate(layer; dest = proj_string)
+ws = interpolate(layer; dest = "EPSG:27574")
+
+# Note that we are specifying the projection as an EPSG code, but the package is
+# agnostic as to the way to specify it. Using a WKT or a PROJ4 string would work
+# just as well. This is because, internally, the projection string will be
+# parsed and converted to an appropriate representation. This is generally the
+# PROJ4 string for coordinates projection, and the WKT for export.
 
 # By default, this produces a layer with the same dimension as the input, and
 # uses bilinear interpolation:
@@ -50,6 +67,22 @@ current_figure() #hide
 #
 # :::
 
+# We can also pass a custom PROJ string if we want. For example, we will use an
+# orthoraphic projection, centered around a point within the layer:
+
+ws2 = interpolate(layer; dest = "+proj=ortho +lon_0=1.0859 +lat_0=45.6429")
+
+# We can plot the outcome to see that it was correctly applied:
+
+#figure orthoprojection
+fig, ax, hm = heatmap(
+    ws2;
+    colormap = :navia,
+    figure = (; size = (800, 400)),
+    axis = (; aspect = DataAspect()),
+)
+Colorbar(fig[:, end + 1], hm)
+current_figure() #hide
 
 # ```@meta
 # CollapsedDocStrings = true
@@ -60,4 +93,6 @@ current_figure() #hide
 # ```@docs; canonical=false
 # SpeciesDistributionToolkit.interpolate
 # SpeciesDistributionToolkit.interpolate!
+# projection
+# reproject
 # ```

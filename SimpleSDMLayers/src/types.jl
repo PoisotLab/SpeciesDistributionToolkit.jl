@@ -191,6 +191,27 @@ function _layers_are_compatible(layers::Vector{T}) where {T <: SDMLayer}
     return all(l -> _layers_are_compatible(l, layers[1]), layers)
 end
 
+@testitem "We get an incompatible projection error" begin
+    l1 = SimpleSDMLayers.__demodata(; reduced=true)
+    l2 = SimpleSDMLayers.__demodata(; reduced=true)
+    l2 = interpolate(l2; dest="+proj=natearth +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs")
+    @test_throws IncompatibleProjectionError SimpleSDMLayers._layers_are_compatible(l1, l2)
+end
+
+@testitem "We get an incompatible E/W error" begin
+    l1 = SimpleSDMLayers.__demodata(; reduced=true)
+    l2 = SimpleSDMLayers.__demodata(; reduced=true)
+    l2.x .+= (-1, -1)
+    @test_throws DifferentEastWestExtentError SimpleSDMLayers._layers_are_compatible(l1, l2)
+end
+
+@testitem "We get an incompatible N/S error" begin
+    l1 = SimpleSDMLayers.__demodata(; reduced=true)
+    l2 = SimpleSDMLayers.__demodata(; reduced=true)
+    l2.y .+= (-1, -1)
+    @test_throws DifferentNorthSouthExtentError SimpleSDMLayers._layers_are_compatible(l1, l2)
+end
+
 function eastings(layer::SDMLayer)
     Δx = (layer.x[2] - layer.x[1]) / (2size(layer, 2))
     return LinRange(layer.x[1] + Δx, layer.x[2] - Δx, size(layer, 2))

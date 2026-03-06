@@ -182,7 +182,7 @@ function _layers_are_compatible(l1::SDMLayer, l2::SDMLayer)
         throw(DifferentEastWestExtentError())
     end
     if l1.y != l2.y
-        throw(DifferentEastWestExtentError())
+        throw(DifferentNorthSouthExtentError())
     end
     return true
 end

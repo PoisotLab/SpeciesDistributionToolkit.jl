@@ -1,6 +1,6 @@
 # # Plotting polygons
 
-# The layers are integrated with the [Makie](https://docs.makie.org/stable/)
+# The polygons are integrated with the [Makie](https://docs.makie.org/stable/)
 # plotting package.
 
 using SpeciesDistributionToolkit

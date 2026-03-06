@@ -17,7 +17,7 @@ MakieExtension = "Makie"
 
 [compat]
 Dates = "1"
-JSON = "0.21"
+JSON = "0.21, 1"
 Makie = "0.21 - 0.24"
 Tables = "1"
 TestItems = "1"

@@ -100,10 +100,15 @@ end
     @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
 end
 
+"""
+    nodata!(layer::SDMLayer, v)
+
+Turns off all cells containing the value `v`. This is an overload only applied
+when `v` is not of the correct type for `layer`.
+"""
 function nodata!(layer::SDMLayer, v)
     return nodata!(layer, convert(eltype(layer), v))
 end
-
 
 """
     nodata(layer::SDMLayer, args...)

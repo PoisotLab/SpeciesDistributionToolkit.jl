@@ -72,7 +72,7 @@ end
 function Base.show(io::IO, ::MIME"text/plain", layer::SDMLayer)
     info_str = [
         "🗺️  A $(size(layer, 1)) × $(size(layer, 2)) layer with $(count(layer)) $(eltype(layer)) cells",
-        "   Projection: $(layer.crs)",
+        "   $(projection(layer))",
     ]
     return print(io, join(info_str, "\n"))
 end

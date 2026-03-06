@@ -60,32 +60,32 @@ function _read_geotiff(
     top = 90.0,
     driver::String = "GTiff",
 )
-    @assert driver ∈ keys(ArchGDAL.listdrivers()) ||
+    @assert driver ∈ keys(AG.listdrivers()) ||
             throw(ArgumentError("Not a valid driver."))
 
     # This next block is reading the geotiff file, but also making sure that we
     # clip the file correctly to avoid reading more than we need.
-    layer = ArchGDAL.read(file) do dataset
-        thisproj = ArchGDAL.getproj(dataset)
+    layer = AG.read(file) do dataset
+        thisproj = AG.getproj(dataset)
         default = """GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AXIS["Latitude",NORTH],AXIS["Longitude",EAST],AUTHORITY["EPSG","4326"]]"""
         wkt = if isempty(thisproj)
-            ArchGDAL.importWKT(default)
+            AG.importWKT(default)
         else
-            ArchGDAL.importWKT(thisproj)
+            AG.importWKT(thisproj)
         end
-        wkt = ArchGDAL.toPROJ4(wkt)
-        transform = ArchGDAL.getgeotransform(dataset)
+        # wkt = AG.toPROJ4(wkt)
+        transform = AG.getgeotransform(dataset)
 
         # The data we need is pretty much always going to be stored in the first
         # band, but this is not the case for the future WorldClim data.
-        band = ArchGDAL.getband(dataset, bandnumber)
-        T = ArchGDAL.pixeltype(band)
+        band = AG.getband(dataset, bandnumber)
+        T = AG.pixeltype(band)
 
         # We need to check that the nodatavalue is represented in the correct pixeltype,
         # which is not always the case (cough CHELSA2 cough). If this is the case, trying to
         # convert the nodata value will throw an InexactError, so we can catch it and to
         # something about it.
-        nodata = ArchGDAL.getnodatavalue(band)
+        nodata = AG.getnodatavalue(band)
         nodata = isnothing(nodata) ? typemin(T) : nodata
 
         # Get the correct latitudes
@@ -116,8 +116,8 @@ function _read_geotiff(
 
         lon_stride, lat_stride = transform[2], transform[6]
 
-        width = ArchGDAL.width(dataset)
-        height = ArchGDAL.height(dataset)
+        width = AG.width(dataset)
+        height = AG.height(dataset)
 
         lon_stride, left_pos, min_width = _find_span(width, minlon, maxlon, left, :left)
         _, right_pos, max_width = _find_span(width, minlon, maxlon, right, :right)
@@ -127,8 +127,8 @@ function _read_geotiff(
         max_height, min_height = height .- (min_height, max_height) .+ 1
 
         # Get the scale and offset value
-        scale = ArchGDAL.getscale(band)
-        offset = ArchGDAL.getoffset(band)
+        scale = AG.getscale(band)
+        offset = AG.getoffset(band)
 
         # If the scale and offset are set, we will need the data in a different type
         if !(isone(scale) & iszero(offset))
@@ -138,7 +138,7 @@ function _read_geotiff(
         # We are now ready to initialize a matrix of the correct type.
         buffer =
             Matrix{T}(undef, length(min_width:max_width), length(min_height:max_height))
-        ArchGDAL.read!(
+        AG.read!(
             dataset,
             buffer,
             bandnumber,
@@ -163,7 +163,7 @@ function _read_geotiff(
             valued,
             (left_pos - 0.5lon_stride, right_pos + 0.5lon_stride),
             (bottom_pos - 0.5lat_stride, top_pos + 0.5lat_stride),
-            replace(string(wkt), "Spatial Reference System: " => ""),
+            AG.toWKT(wkt)
         )
     end
 
@@ -190,10 +190,10 @@ function _write_geotiff(
     driver::String = "GTiff",
     compress::String = "LZW",
 ) where {T <: Number}
-    @assert driver ∈ keys(ArchGDAL.listdrivers()) ||
+    @assert driver ∈ keys(AG.listdrivers()) ||
             throw(ArgumentError("Not a valid driver."))
     # to be uncommented once ths getcompressions fcn exists
-    #@assert compress ∈ keys(ArchGDAL.listcompress()) || throw(ArgumentError("Not a valid compression."))
+    #@assert compress ∈ keys(AG.listcompress()) || throw(ArgumentError("Not a valid compression."))
 
     bands = 1:length(layers)
     SimpleSDMLayers._layers_are_compatible(layers)
@@ -209,18 +209,18 @@ function _write_geotiff(
     gt[6] = -2stride(layers[1], 1)
 
     # Write
-    ArchGDAL.create(file;
-        driver = ArchGDAL.getdriver(driver),
+    AG.create(file;
+        driver = AG.getdriver(driver),
         width = width, height = height,
         nbands = length(layers), dtype = T,
         options = ["COMPRESS=$compress"]) do dataset
         for i in 1:length(bands)
-            band = ArchGDAL.getband(dataset, i)
-            ArchGDAL.write!(band, _prepare_layer_for_burnin(layers[i], nodata))
-            ArchGDAL.setnodatavalue!(band, nodata)
+            band = AG.getband(dataset, i)
+            AG.write!(band, _prepare_layer_for_burnin(layers[i], nodata))
+            AG.setnodatavalue!(band, nodata)
         end
-        ArchGDAL.setgeotransform!(dataset, gt)
-        ArchGDAL.setproj!(dataset, layers[1].crs)
+        AG.setgeotransform!(dataset, gt)
+        AG.setproj!(dataset, layers[1].crs)
     end
     return file
 end

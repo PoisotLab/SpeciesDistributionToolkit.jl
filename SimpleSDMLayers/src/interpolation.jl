@@ -5,8 +5,9 @@ function interpolate!(destination::SDMLayer, source::SDMLayer)
     NI = northings(destination)
 
     # Functions for projection
+    dest, src = SimpleSDMLayers.AG.toWKT(projection(destination)), SimpleSDMLayers.AG.toWKT(projection(source))
     revprj =
-        SimpleSDMLayers.Proj.Transformation(destination.crs, source.crs; always_xy = true)
+        SimpleSDMLayers.Proj.Transformation(dest, src; always_xy = true)
 
     Threads.@threads for i in axes(destination, 2)
         dx = EI[i]
@@ -52,7 +53,9 @@ end
 function _create_destination_layer(source::SDMLayer, dest, newsize)
     EL = eastings(source)
     NL = northings(source)
-    prj = SimpleSDMLayers.Proj.Transformation(source.crs, dest; always_xy = true)
+    src = SimpleSDMLayers.AG.toWKT(projection(source))
+    dst = SimpleSDMLayers.AG.toWKT(_parse_projection_from_string(dest))
+    prj = SimpleSDMLayers.Proj.Transformation(src, dst; always_xy = true)
 
     b1 = [prj(EL[1], n) for n in NL]
     b2 = [prj(EL[end], n) for n in NL]
@@ -63,7 +66,7 @@ function _create_destination_layer(source::SDMLayer, dest, newsize)
     nx = extrema(first.(bands))
     ny = extrema(last.(bands))
 
-    destination = SDMLayer(zeros(Float32, newsize); crs = dest, x = nx, y = ny)
+    destination = SDMLayer(zeros(Float32, newsize); crs = dst, x = nx, y = ny)
     nodata!(destination, zero(eltype(destination)))
     return destination
 end
@@ -93,7 +96,14 @@ interpolate(layer::SDMLayer, destination::SDMLayer) =
 @testitem "We can interpolate a layer given a new destination crs" begin
     layer = SimpleSDMLayers.__demodata(; reduced = true)
     dest = interpolate(layer; dest = "+proj=natearth2")
-    @test dest.crs == "+proj=natearth2"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(dest)) == SimpleSDMLayers.AG.toPROJ4(SimpleSDMLayers._parse_projection_from_string("+proj=natearth"))
+end
+
+
+@testitem "We can interpolate a layer given a new destination crs with arguments" begin
+    layer = SimpleSDMLayers.__demodata(; reduced = true)
+    dest = interpolate(layer; dest = "+proj=natearth2 +lon_0=25")
+    @test SimpleSDMLayers.AG.toPROJ4(projection(dest)) == SimpleSDMLayers.AG.toPROJ4(SimpleSDMLayers._parse_projection_from_string("+proj=natearth +lon_0=25"))
 end
 
 @testitem "We can interpolate a layer with a new size" begin
@@ -106,7 +116,13 @@ end
     layer = SimpleSDMLayers.__demodata(; reduced = true)
     dest = interpolate(layer; newsize = (120, 120), dest = "+proj=natearth")
     @test size(dest) == (120, 120)
-    @test dest.crs == "+proj=natearth"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(dest)) == SimpleSDMLayers.AG.toPROJ4(SimpleSDMLayers._parse_projection_from_string("+proj=natearth"))
+end
+
+@testitem "We can interpolate a layer given a new destination crs as an EPSG string" begin
+    layer = SimpleSDMLayers.__demodata(; reduced = true)
+    dest = interpolate(layer; dest = "EPSG:3857")
+    @test SimpleSDMLayers.AG.toPROJ4(projection(dest)) == SimpleSDMLayers.AG.toPROJ4(SimpleSDMLayers._parse_projection_from_string("EPSG:3857"))
 end
 
 function polynomialinterpolation(x1, x, x2, y1, y, y2, Q11, Q12, Q21, Q22)

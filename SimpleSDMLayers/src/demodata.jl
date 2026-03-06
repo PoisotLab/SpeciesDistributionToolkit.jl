@@ -1,7 +1,7 @@
 function __demodata(; reduced::Bool = false)
     dpath = joinpath(@__DIR__, "..", "..", "data")
     grd = parse.(UInt16, hcat(split.(readlines(joinpath(dpath, "grid.dat")), '\t')...))
-    crs = only(readlines(joinpath(dpath, "grid.crs")))
+    crs = SimpleSDMLayers.AG.toWKT(_parse_projection_from_string(only(readlines(joinpath(dpath, "grid.crs")))))
     metadata = readlines(joinpath(dpath, "grid.info"))
     x = tuple(parse.(Float64, metadata[1:2])...)
     y = tuple(parse.(Float64, metadata[3:4])...)

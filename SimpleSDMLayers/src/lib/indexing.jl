@@ -35,12 +35,12 @@ function __get_grid_coordinate_by_latlon(
     longitude::AbstractFloat,
     latitude::AbstractFloat,
 )
-    if isequal("+proj=longlat +datum=WGS84 +no_defs")(layer.crs)
+    if isequal("+proj=longlat +datum=WGS84 +no_defs")(SimpleSDMLayers.AG.toPROJ4(projection(layer)))
         return __get_grid_coordinate_by_crs(layer, longitude, latitude)
     else
         prj = Proj.Transformation(
             "+proj=longlat +datum=WGS84 +no_defs",
-            layer.crs;
+            SimpleSDMLayers.AG.toPROJ4(projection(layer));
             always_xy = true,
         )
         return __get_grid_coordinate_by_crs(layer, prj(longitude, latitude)...)
@@ -84,7 +84,7 @@ end
 @testitem "We get the correct cell when indexing the ends of the bounding box" begin
     layer = SimpleSDMLayers.__demodata()
     prj = SimpleSDMLayers.Proj.Transformation(
-        layer.crs,
+        SimpleSDMLayers.AG.toWKT(projection(layer)),
         "+proj=longlat +datum=WGS84 +no_defs";
         always_xy = true,
     )

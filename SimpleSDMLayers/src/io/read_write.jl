@@ -2,7 +2,7 @@ _centers(layer::SDMLayer) = _centers(layer, "+proj=longlat +datum=WGS84 +no_defs
 
 function _centers(layer::SDMLayer, prj)
     # Projection function
-    prfunc = Proj.Transformation(layer.crs, prj; always_xy=true)
+    prfunc = Proj.Transformation(SimpleSDMLayers.AG.toWKT(projection(layer)), prj; always_xy=true)
 
     # Northings and eastings for the layer
     nrt, est = northings(layer), eastings(layer)

@@ -48,7 +48,7 @@ end
     m = rand(0x00:0x02, (10, 20))
     layer = SDMLayer(m)
     @test typeof(layer.grid) == Matrix{eltype(m)}
-    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) == "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 @testitem "We can construct a SDMLayer the grid of values and kwargs" begin
@@ -56,7 +56,7 @@ end
     layer = SDMLayer(m; nodata=0x01)
     @test count(layer) < prod(size(m))
     @test typeof(layer.grid) == Matrix{eltype(m)}
-    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) == "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 """
@@ -77,7 +77,7 @@ end
     ol = count(layer)
     nodata!(layer, 0x00)
     @test length(layer) < ol
-    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) == "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 """
@@ -97,7 +97,7 @@ end
     ol = length(layer)
     nodata!(layer, ==(0x01))
     @test length(layer) < ol
-    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) == "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 """
@@ -126,7 +126,7 @@ end
     ol = length(layer)
     nodata!(layer, 1)
     @test length(layer) < ol
-    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) == "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 @testitem "We can do nodata with a copy" begin
@@ -135,7 +135,7 @@ end
     ol = length(layer)
     nl = nodata(layer, 1)
     @test length(nl) < length(layer)
-    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) == "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 function _layers_are_compatible(l1::SDMLayer, l2::SDMLayer)

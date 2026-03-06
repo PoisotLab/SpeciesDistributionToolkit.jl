@@ -1,3 +1,9 @@
+"""
+    interpolate!(destination::SDMLayer, source::SDMLayer)
+
+Interpolates the data from the source layer into the destination layer. This is
+useful when the two layers have different resolutions, or different projections.
+"""
 function interpolate!(destination::SDMLayer, source::SDMLayer)
     EL = eastings(source)
     NL = northings(source)

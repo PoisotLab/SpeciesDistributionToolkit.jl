@@ -3,7 +3,7 @@ using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
 using CairoMakie
 
-pol = getpolygon(PolygonData(ESRI, Places))["Place name" => "Quebec"]
+pol = getpolygon(PolygonData(ESRI, Places))["Place name" => "Ontario"]
 proj = "EPSG:2138"
 
 temp =
@@ -182,14 +182,43 @@ function enlargelimits!(ax::Axis; x::Float64=0.07, y::Float64=0.07)
     return nothing
 end
 
-f = Figure()
+# Let's figure out the land lines as background
+
+land = getpolygon(PolygonData(NaturalEarth, Land))
+# We need to get the graticule box, move it to lon/lat
+
+function _graticule_box_from_object(object; padding=0.0)
+    prj = SpeciesDistributionToolkit._projector(
+        "EPSG:4326",
+        SimpleSDMLayers.AG.toPROJ4(projection(object)),
+    )
+    box = SpeciesDistributionToolkit.boundingbox(object; padding=padding)
+    bottom = prj.([(p, box.bottom) for p in LinRange(box.left, box.right, 20)])
+    right = prj.([(box.right, p) for p in LinRange(box.bottom, box.top, 20)])
+    top = prj.([(p, box.top) for p in LinRange(box.right, box.left, 20)])
+    left = prj.([(box.left, p) for p in LinRange(box.top, box.bottom, 20)])
+    cycle = Polygon(vcat(bottom, right, top, left))
+    SimpleSDMPolygons._add_crs(cycle.geometry, projection(object))
+    return cycle
+end
+
+f = Figure(; size=(600, 600))
 ax = Axis(f[1,1]; aspect=DataAspect())
-graticule!(ax, itemp; gridlinestyle = :dash, boxlinewidth = 2)
-poly!(reproject(pol, proj); color = :grey80)
-hm = heatmap!(itemp; colormap = Reverse(:navia), colorrange=(0, 1200))
+#graticule!(ax, itemp; gridlinestyle = :dash, boxlinewidth = 2)
+gbox = _graticule_box_from_object(temp; padding=1.5)
+poly!(ax, reproject(intersect(gbox, land), proj), color=:grey95)
+lines!(ax, reproject(intersect(gbox, land), proj), color=:grey10)
+lines!(ax, reproject(gbox, proj), color=:grey10)
+hm = heatmap!(itemp; colormap = :linear_gow_65_90_c35_n256)
 lines!(reproject(pol, proj); color = :grey10)
 hidespines!(ax)
 hidedecorations!(ax)
-enlargelimits!(ax)
-Colorbar(f[2,1], hm, width=Relative(0.5), label="Elevation", vertical=false)
+enlargelimits!(ax; x=0.05)
+Colorbar(f[1,2], hm, height=Relative(0.5), label="Elevation", vertical=true)
 current_figure()
+
+# TODO
+# - [ ] fix the example above
+# - [ ] split the graticule and graticule grid functions
+# - [ ] figure out API for clipping polygons
+# - [ ] make graticule* dispatch on polygons as well

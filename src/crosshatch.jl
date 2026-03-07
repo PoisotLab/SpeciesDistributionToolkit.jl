@@ -48,7 +48,7 @@ function polygonize(L::SDMLayer{Bool})
     nodata!(layer, false)
     pols = Polygon[]
 
-    layer_crs = SimpleSDMPolygons.AG.importPROJ4(layer.crs)
+    layer_crs = SimpleSDMPolygons.AG.toPROJ4(projection(layer))
     if layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
         layer_crs = SimpleSDMPolygons.AG.importEPSG(4326)
     end

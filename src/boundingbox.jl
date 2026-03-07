@@ -6,8 +6,8 @@ used to decide which part of a raster should be loaded.
 """
 boundingbox() = nothing
 
-_padbbox(l, r, b, t, p) = (left=l-p, right=r+p, bottom=b-p, top=t+p)
-_padbbox(l, r, b, t; padding=0.0) = _padbbox(l, r, b, t, padding)
+_padbbox(l, r, b, t, p) = (left = l - p, right = r + p, bottom = b - p, top = t + p)
+_padbbox(l, r, b, t; padding = 0.0) = _padbbox(l, r, b, t, padding)
 
 """
     boundingbox(occ::AbstractOccurrenceCollection; padding=0.0)
@@ -15,7 +15,7 @@ _padbbox(l, r, b, t; padding=0.0) = _padbbox(l, r, b, t, padding)
 Returns the bounding box for a collection of occurrences, with an additional
 padding.
 """
-function boundingbox(occ::AbstractOccurrenceCollection; padding=0.0)
+function boundingbox(occ::AbstractOccurrenceCollection; padding = 0.0)
     left, right = extrema(skipmissing(longitudes(occ)))
     bottom, top = extrema(skipmissing(latitudes(occ)))
     return _padbbox(left, right, bottom, top, padding)
@@ -37,7 +37,7 @@ end
 Returns the bounding box for a vector of abstract occurrences, with an
 additional padding.
 """
-function boundingbox(occ::Vector{<:AbstractOccurrence}; padding=0.0)
+function boundingbox(occ::Vector{<:AbstractOccurrence}; padding = 0.0)
     left, right = extrema(skipmissing(longitudes(occ)))
     bottom, top = extrema(skipmissing(latitudes(occ)))
     return _padbbox(left, right, bottom, top, padding)
@@ -48,10 +48,14 @@ end
 
 Returns the bounding box for a layer, with an additional padding.
 """
-function boundingbox(layer::SDMLayer; padding=0.0)
+function boundingbox(layer::SDMLayer; padding = 0.0)
     EL = eastings(layer)
     NL = northings(layer)
-    prj = SimpleSDMLayers.Proj.Transformation(layer.crs, "+proj=longlat +datum=WGS84 +no_defs"; always_xy = true)
+    prj = SimpleSDMLayers.Proj.Transformation(
+        SimpleSDMLayers.AG.toPROJ4(projection(layer)),
+        "+proj=longlat +datum=WGS84 +no_defs";
+        always_xy = true,
+    )
 
     b1 = [prj(EL[1], n) for n in NL]
     b2 = [prj(EL[end], n) for n in NL]
@@ -90,7 +94,7 @@ end
 
 # Vector of points
 
-function boundingbox(fc::Vector{Tuple{F,F}}; kwargs...) where {F <: AbstractFloat}
+function boundingbox(fc::Vector{Tuple{F, F}}; kwargs...) where {F <: AbstractFloat}
     lons = [c[1] for c in fc]
     lats = [c[2] for c in fc]
     return _padbbox(extrema(lons)..., extrema(lats)...; kwargs...)
@@ -98,9 +102,14 @@ end
 
 # SimpleSDMPolygons
 
-const _SDMPOLY_TYPES = Union{SimpleSDMPolygons.FeatureCollection, SimpleSDMPolygons.Feature, SimpleSDMPolygons.Polygon, SimpleSDMPolygons.MultiPolygon}
+const _SDMPOLY_TYPES = Union{
+    SimpleSDMPolygons.FeatureCollection,
+    SimpleSDMPolygons.Feature,
+    SimpleSDMPolygons.Polygon,
+    SimpleSDMPolygons.MultiPolygon,
+}
 
-function boundingbox(fc::T; kwargs...) where T<:_SDMPOLY_TYPES
+function boundingbox(fc::T; kwargs...) where {T <: _SDMPOLY_TYPES}
     return SimpleSDMPolygons.boundingbox(fc.geometry; kwargs...)
 end
 
@@ -108,18 +117,16 @@ function boundingbox(fc::SimpleSDMPolygons.FeatureCollection; kwargs...)
     return _reconcile([SimpleSDMPolygons.boundingbox(ft; kwargs...) for ft in fc.features])
 end
 
-
-@testitem "We can apply boundingbox to each type of Polygon" begin 
-    
-    fc = getpolygon(PolygonData(OpenStreetMap, Places), place="Switzerland")
+@testitem "We can apply boundingbox to each type of Polygon" begin
+    fc = getpolygon(PolygonData(OpenStreetMap, Places); place = "Switzerland")
     feat = fc[1]
     mp = feat.geometry
-    pol = SpeciesDistributionToolkit.SimpleSDMPolygons.Polygon(SpeciesDistributionToolkit.SimpleSDMPolygons.AG.getgeom(mp.geometry, 1))
-
+    pol = SpeciesDistributionToolkit.SimpleSDMPolygons.Polygon(
+        SpeciesDistributionToolkit.SimpleSDMPolygons.AG.getgeom(mp.geometry, 1),
+    )
 
     @test SimpleSDMPolygons.boundingbox(fc) isa NamedTuple
     @test SimpleSDMPolygons.boundingbox(feat) isa NamedTuple
     @test SimpleSDMPolygons.boundingbox(mp) isa NamedTuple
     @test SimpleSDMPolygons.boundingbox(pol) isa NamedTuple
-
-end 
+end

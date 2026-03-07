@@ -66,13 +66,13 @@ for plot_type in (:lines, :poly)
 
         function Makie.$mutating_plot(ax, g::GEOM_TYPES; kwargs...)
             if _nonempty_geometry(g)
-                $mutating_plot(ax, g; kwargs...)
+                $mutating_plot(ax, g.geometry; kwargs...)
             end
         end
 
         function Makie.$mutating_plot(g::GEOM_TYPES; kwargs...)
             if _nonempty_geometry(g)
-                $mutating_plot(g; kwargs...)
+                $mutating_plot(g.geometry; kwargs...)
             end
         end
 

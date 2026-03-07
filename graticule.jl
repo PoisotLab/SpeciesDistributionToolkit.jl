@@ -3,33 +3,46 @@ using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
 using CairoMakie
 
-pol = getpolygon(PolygonData(ESRI, Places))["Place name" => "Ontario"]
-proj = "EPSG:2138"
+pol =
+    getpolygon(PolygonData(ESRI, Places))["Country of affiliation" => "Finland"]["Land type" => "Primary land"]
+proj = "EPSG:3387"
 
 temp =
-    SDMLayer(RasterData(WorldClim2, Elevation); SDT.boundingbox(pol)..., resolution = 2.5)
+    SDMLayer(
+        RasterData(WorldClim2, AverageTemperature);
+        SDT.boundingbox(pol)...,
+        resolution = 5.0,
+    )
 mask!(temp, pol)
 itemp = interpolate(temp; dest = proj)
 
-heatmap(itemp)
-lines!(reproject(pol, proj))
-current_figure()
-
-@recipe Graticule (layer,) begin
+@recipe GraticuleGrid (box, projection) begin
     """
     grid color
     """
-    gridcolor = :grey80
+    color = :grey80
 
     """
-    box color
+    linewidth
     """
-    boxcolor = :grey10
+    linewidth = 1
 
     """
-    padding
+    linestyle
     """
-    padding = 0.0
+    linestyle = :solid
+
+    """
+    npoints
+    """
+    npoints = 20
+end
+
+@recipe GraticuleBox (box, projection) begin
+    """
+    color
+    """
+    color = :grey10
 
     """
     number of points in graticule
@@ -39,17 +52,12 @@ current_figure()
     """
     style for the grid line
     """
-    gridlinestyle = :solid
+    linestyle = :solid
 
     """
     grid line width
     """
-    gridlinewidth = 1.0
-
-    """
-    box line width
-    """
-    boxlinewidth = 1.2
+    linewidth = 1.0
 
     """
     text label positions
@@ -62,7 +70,8 @@ current_figure()
     offset = 8
 end
 
-Makie.convert_arguments(::Type{Graticule}, layer::SDMLayer) = (layer,)
+Makie.convert_arguments(::Type{GraticuleBox}, layer::SDMLayer) = (SpeciesDistributionToolkit.boundingbox(layer), projection(layer), )
+Makie.convert_arguments(::Type{GraticuleGrid}, layer::SDMLayer) = (SpeciesDistributionToolkit.boundingbox(layer), projection(layer), )
 
 function Makie.plot!(graticule::Graticule)
     # We start by getting the bounding box in latitude/longitude
@@ -153,26 +162,53 @@ function Makie.plot!(graticule::Graticule)
     if !isnothing(graticule.labels[])
         if occursin('t', String(graticule.labels[]))
             points = prj.([(p, box.top) for p in ew_ticks])
-            text!(graticule, points; text=string.(ew_ticks), align=(:center, :bottom), offset=(0, graticule.offset[]))
+            text!(
+                graticule,
+                points;
+                text = string.(ew_ticks),
+                align = (:center, :bottom),
+                offset = (0, graticule.offset[]),
+            )
         end
         if occursin('b', String(graticule.labels[]))
             points = prj.([(p, box.bottom) for p in ew_ticks])
-            text!(graticule, points; text=string.(ew_ticks), align=(:center, :top), offset=(0, -graticule.offset[]))
+            text!(
+                graticule,
+                points;
+                text = string.(ew_ticks),
+                align = (:center, :top),
+                offset = (0, -graticule.offset[]),
+            )
         end
         if occursin('l', String(graticule.labels[]))
             points = prj.([(box.left, p) for p in ns_ticks])
-            text!(graticule, points; text=string.(ns_ticks), align=(:right, :center), offset=(-graticule.offset[], 0))
+            text!(
+                graticule,
+                points;
+                text = string.(ns_ticks),
+                align = (:right, :center),
+                offset = (-graticule.offset[], 0),
+            )
         end
         if occursin('r', String(graticule.labels[]))
             points = prj.([(box.right, p) for p in ns_ticks])
-            text!(graticule, points; text=string.(ns_ticks), align=(:left, :center), offset=(graticule.offset[], 0))
+            text!(
+                graticule,
+                points;
+                text = string.(ns_ticks),
+                align = (:left, :center),
+                offset = (graticule.offset[], 0),
+            )
         end
     end
     # We return the plot now
     return graticule # return type doesn't actually matter
 end
 
-function enlargelimits!(ax::Axis; x::Float64=0.07, y::Float64=0.07)
+function Makie.plot!(gbox::GraticuleBox)
+end
+
+function enlargelimits!(ax::Axis; x::Float64 = 0.07, y::Float64 = 0.07)
     xl = ax.xaxis.attributes.limits[]
     Δ = (xl[2] - xl[1]) .* x
     xlims!(ax, ax.xaxis.attributes.limits[] .+ (-Δ, Δ))
@@ -182,17 +218,12 @@ function enlargelimits!(ax::Axis; x::Float64=0.07, y::Float64=0.07)
     return nothing
 end
 
-# Let's figure out the land lines as background
-
-land = getpolygon(PolygonData(NaturalEarth, Land))
-# We need to get the graticule box, move it to lon/lat
-
-function _graticule_box_from_object(object; padding=0.0)
+function _graticule_box_from_object(object; padding = 0.0)
     prj = SpeciesDistributionToolkit._projector(
         "EPSG:4326",
         SimpleSDMLayers.AG.toPROJ4(projection(object)),
     )
-    box = SpeciesDistributionToolkit.boundingbox(object; padding=padding)
+    box = SpeciesDistributionToolkit.boundingbox(object; padding = padding)
     bottom = prj.([(p, box.bottom) for p in LinRange(box.left, box.right, 20)])
     right = prj.([(box.right, p) for p in LinRange(box.bottom, box.top, 20)])
     top = prj.([(p, box.top) for p in LinRange(box.right, box.left, 20)])
@@ -202,19 +233,24 @@ function _graticule_box_from_object(object; padding=0.0)
     return cycle
 end
 
-f = Figure(; size=(600, 600))
-ax = Axis(f[1,1]; aspect=DataAspect())
+# Let's figure out the land lines as background
+
+land = getpolygon(PolygonData(NaturalEarth, Land))
+# We need to get the graticule box, move it to lon/lat
+
+f = Figure(; size = (500, 600))
+ax = Axis(f[1, 1]; aspect = DataAspect())
 #graticule!(ax, itemp; gridlinestyle = :dash, boxlinewidth = 2)
-gbox = _graticule_box_from_object(temp; padding=1.5)
-poly!(ax, reproject(intersect(gbox, land), proj), color=:grey95)
-lines!(ax, reproject(intersect(gbox, land), proj), color=:grey10)
-lines!(ax, reproject(gbox, proj), color=:grey10)
-hm = heatmap!(itemp; colormap = :linear_gow_65_90_c35_n256)
+gbox = _graticule_box_from_object(temp; padding = 1.5)
+poly!(ax, reproject(intersect(gbox, land), proj); color = :grey95)
+lines!(ax, reproject(intersect(gbox, land), proj); color = :grey10)
+lines!(ax, reproject(gbox, proj); color = :grey10)
+hm = heatmap!(itemp; colormap = :rain)
 lines!(reproject(pol, proj); color = :grey10)
 hidespines!(ax)
 hidedecorations!(ax)
-enlargelimits!(ax; x=0.05)
-Colorbar(f[1,2], hm, height=Relative(0.5), label="Elevation", vertical=true)
+enlargelimits!(ax; x = 0.05)
+Colorbar(f[1, 2], hm; height = Relative(0.5), label = "Temperature", vertical = true)
 current_figure()
 
 # TODO

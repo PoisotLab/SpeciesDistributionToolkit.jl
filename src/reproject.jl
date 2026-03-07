@@ -11,22 +11,24 @@ end
 
 Converts the points in a polygon to a different CRS, defined by its WKT.
 """
-function reproject(pol::SimpleSDMPolygons.FeatureCollection, dest)
-    return FeatureCollection([
-        reproject(pol[i], dest) for i in Base.OneTo(length(pol))
-    ])
+function reproject(fc::SimpleSDMPolygons.FeatureCollection, dest)
+    reprojected_features = [Feature(reproject(ft, dest), ft.properties) for ft in fc.features]
+    return FeatureCollection(reprojected_features)
 end
 
-function reproject(pol::SimpleSDMPolygons.Feature, dest)
-    source = SimpleSDMPolygons.GI.crs(pol).val
-    target = dest
-    return SpeciesDistributionToolkit._reproject(_projector(source, target), pol.geometry)
+function reproject(ft::SimpleSDMPolygons.Feature, dest)
+    source = SimpleSDMPolygons.GI.crs(ft).val
+    return SpeciesDistributionToolkit._reproject(_projector(source, dest), ft.geometry)
 end
 
-function reproject(pol::SimpleSDMPolygons.MultiPolygon, dest)
-    source = SimpleSDMPolygons.GI.crs(pol).val
-    target = dest
-    return SpeciesDistributionToolkit._reproject(_projector(source, target), pol)
+function reproject(mp::SimpleSDMPolygons.MultiPolygon, dest)
+    source = SimpleSDMPolygons.GI.crs(mp).val
+    return SpeciesDistributionToolkit._reproject(_projector(source, dest), mp)
+end
+
+function reproject(p::SimpleSDMPolygons.Polygon, dest)
+    source = SimpleSDMPolygons.GI.crs(p).val
+    return SpeciesDistributionToolkit._reproject(_projector(source, dest), p)
 end
 
 """

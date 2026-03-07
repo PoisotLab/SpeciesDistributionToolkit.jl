@@ -75,6 +75,34 @@ hidedecorations!(current_axis())
 hidespines!(current_axis())
 current_figure()
 
+# In cases where we want to deal with multiple sub-regions within the same
+# polygon, it is a good idea to start by cross-hatching the entire region, and
+# the intersecting this with an area of interest.
+
+hatch = crosshatch(regions; angle=35)
+
+# For example, we will illsutrate this by having the regions of mixed and other
+# forests hatched. Because the hatching is defined for the entire region, the
+# lines flow across the region boundaries, which would not be the case if we had
+# used the `crosshatch` function on all regions.
+
+poly(regions; color = :grey90, label = "Central America region")
+for region in regions
+    region_name = region.properties["Name"]
+    if contains(region_name, "Forests")
+        if contains(region_name, "Mixed")
+            lines!(intersect(region, hatch), color=:forestgreen, label="Mixed forests")
+        else
+            lines!(intersect(region, hatch), color=:orange, label="Other forests")
+        end
+    end
+end
+lines!(regions,color=:grey10)
+axislegend(; unique = true, merge = true, position = :lb, framevisible=false)
+hidedecorations!(current_axis())
+hidespines!(current_axis())
+current_figure()
+
 # ## Generating polygons from layers
 
 # There is a function to generate a polygon (or a multi-polygon) from a boolean

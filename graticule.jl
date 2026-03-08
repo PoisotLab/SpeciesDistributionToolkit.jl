@@ -315,6 +315,8 @@ graticulegrid!(
     backgroundcolor = :skyblue,
     xgridstyle=:dash,
     ygridstyle=:dash,
+    xgridcolor=:grey60,
+    ygridcolor=:grey60,
     alpha = 0.1,
     dms = true
 )

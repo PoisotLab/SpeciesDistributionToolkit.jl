@@ -9,55 +9,58 @@ proj = "EPSG:3387"
 
 temp =
     SDMLayer(
-        RasterData(WorldClim2, AverageTemperature);
+        RasterData(WorldClim2, Elevation);
         SDT.boundingbox(pol)...,
-        resolution = 5.0,
+        resolution = 2.5,
     )
 mask!(temp, pol)
 itemp = interpolate(temp; dest = proj)
 
+function shared_graticule_attributes()
+    Makie.@DocumentedAttributes begin
+        """
+        color for the line
+        """
+        color = :black
+
+        """
+        linestyle for the line
+        """
+        linestyle = :solid
+
+        """
+        width for the line
+        """
+        linewidth = 1
+    end
+end
+
 @recipe GraticuleGrid (box, projection) begin
-    """
-    grid color
-    """
-    color = :grey80
+    shared_graticule_attributes()...
 
     """
-    linewidth
+    draw the north/south lines
     """
-    linewidth = 1
+    north = true
 
     """
-    linestyle
+    draw the east/west lines
     """
-    linestyle = :solid
+    east = true
 
     """
     npoints
     """
     npoints = 20
+
+    """
+    display the labels
+    """
+    labels = :lbrt
 end
 
 @recipe GraticuleBox (box, projection) begin
-    """
-    color
-    """
-    color = :grey10
-
-    """
-    number of points in graticule
-    """
-    npoints = 20
-
-    """
-    style for the grid line
-    """
-    linestyle = :solid
-
-    """
-    grid line width
-    """
-    linewidth = 1.0
+    shared_graticule_attributes()...
 
     """
     text label positions
@@ -70,142 +73,141 @@ end
     offset = 8
 end
 
-Makie.convert_arguments(::Type{GraticuleBox}, layer::SDMLayer) = (SpeciesDistributionToolkit.boundingbox(layer), projection(layer), )
-Makie.convert_arguments(::Type{GraticuleGrid}, layer::SDMLayer) = (SpeciesDistributionToolkit.boundingbox(layer), projection(layer), )
+Makie.convert_arguments(::Type{GraticuleBox}, layer::SDMLayer) =
+    (SpeciesDistributionToolkit.boundingbox(layer), projection(layer))
+Makie.convert_arguments(::Type{GraticuleGrid}, layer::SDMLayer) =
+    (SpeciesDistributionToolkit.boundingbox(layer), projection(layer))
 
-function Makie.plot!(graticule::Graticule)
-    # We start by getting the bounding box in latitude/longitude
-    box = SpeciesDistributionToolkit.boundingbox(
-        graticule.layer[];
-        padding = graticule.padding[],
+function _return_isolines(m, M, nmin, nideal, nmax)
+    return first(
+        Makie.PlotUtils.optimize_ticks(
+            m,
+            M;
+            k_min = nmin,
+            k_max = nmax,
+            k_ideal = nideal,
+        ),
     )
-    ew_ticks, _, _ = Makie.PlotUtils.optimize_ticks(
-        box.left,
-        box.right;
-        k_min = 3,
-        k_max = 10,
-        k_ideal = 6,
-    )
-    ns_ticks, _, _ = Makie.PlotUtils.optimize_ticks(
-        box.bottom,
-        box.top;
-        k_min = 3,
-        k_max = 10,
-        k_ideal = 6,
-    )
+end
+
+function _generate_line(at, from, to, n, flip)
+    return [flip ? (s, at) : (at, s) for s in LinRange(from, to, n)]
+end
+
+function Makie.plot!(gg::GraticuleGrid)
+
+    # We get the ideal ticks
+    ew_ticks = _return_isolines(gg.box[].left, gg.box[].right, 4, 6, 10)
+    ns_ticks = _return_isolines(gg.box[].bottom, gg.box[].top, 4, 6, 10)
+
     # Projection function
     prj = SpeciesDistributionToolkit._projector(
         "EPSG:4326",
-        SimpleSDMLayers.AG.toPROJ4(projection(graticule.layer[])),
+        SimpleSDMLayers.AG.toPROJ4(gg.projection[]),
     )
-    # Then we will do a line with a bunch of points for each of the ticks
-    for i in eachindex(ew_ticks)
-        points =
-            prj.([
-                (ew_ticks[i], p) for p in LinRange(box.bottom, box.top, graticule.npoints[])
-            ])
-        lines!(
-            graticule,
-            points;
-            color = graticule.gridcolor[],
-            linestyle = graticule.gridlinestyle[],
-            linewidth = graticule.gridlinewidth[],
-        )
-    end
-    for i in eachindex(ns_ticks)
-        points =
-            prj.([
-                (p, ns_ticks[i]) for p in LinRange(box.left, box.right, graticule.npoints[])
-            ])
-        lines!(
-            graticule,
-            points;
-            color = graticule.gridcolor[],
-            linestyle = graticule.gridlinestyle[],
-            linewidth = graticule.gridlinewidth[],
-        )
-    end
-    # And then we do the box
-    points =
-        prj.([(p, box.bottom) for p in LinRange(box.left, box.right, graticule.npoints[])])
-    lines!(
-        graticule,
-        points;
-        color = graticule.boxcolor[],
-        linewidth = graticule.boxlinewidth[],
-    )
-    points =
-        prj.([(p, box.top) for p in LinRange(box.left, box.right, graticule.npoints[])])
-    lines!(
-        graticule,
-        points;
-        color = graticule.boxcolor[],
-        linewidth = graticule.boxlinewidth[],
-    )
-    points =
-        prj.([(box.left, p) for p in LinRange(box.bottom, box.top, graticule.npoints[])])
-    lines!(
-        graticule,
-        points;
-        color = graticule.boxcolor[],
-        linewidth = graticule.boxlinewidth[],
-    )
-    points =
-        prj.([(box.right, p) for p in LinRange(box.bottom, box.top, graticule.npoints[])])
-    lines!(
-        graticule,
-        points;
-        color = graticule.boxcolor[],
-        linewidth = graticule.boxlinewidth[],
-    )
-    # Next we add the text
-    if !isnothing(graticule.labels[])
-        if occursin('t', String(graticule.labels[]))
-            points = prj.([(p, box.top) for p in ew_ticks])
-            text!(
-                graticule,
-                points;
-                text = string.(ew_ticks),
-                align = (:center, :bottom),
-                offset = (0, graticule.offset[]),
-            )
-        end
-        if occursin('b', String(graticule.labels[]))
-            points = prj.([(p, box.bottom) for p in ew_ticks])
-            text!(
-                graticule,
-                points;
-                text = string.(ew_ticks),
-                align = (:center, :top),
-                offset = (0, -graticule.offset[]),
-            )
-        end
-        if occursin('l', String(graticule.labels[]))
-            points = prj.([(box.left, p) for p in ns_ticks])
-            text!(
-                graticule,
-                points;
-                text = string.(ns_ticks),
-                align = (:right, :center),
-                offset = (-graticule.offset[], 0),
-            )
-        end
-        if occursin('r', String(graticule.labels[]))
-            points = prj.([(box.right, p) for p in ns_ticks])
-            text!(
-                graticule,
-                points;
-                text = string.(ns_ticks),
-                align = (:left, :center),
-                offset = (graticule.offset[], 0),
+
+    # Lines in the northing direction
+    if gg.north[]
+        for i in eachindex(ew_ticks)
+            if !isnothing(gg.labels[])
+                if occursin('b', String(gg.labels[]))
+                    point = prj((ew_ticks[i], gg.box[].bottom))
+                    text!(gg, [point]; text=[string(ew_ticks[i])], align=(:center, :top), offset=(0, -8))
+                end
+                if occursin('t', String(gg.labels[]))
+                    point = prj((ew_ticks[i], gg.box[].top))
+                    text!(gg, [point]; text=[string(ew_ticks[i])], align=(:center, :bottom), offset=(0, 8))
+                end
+            end
+            points =
+                prj.(
+                    _generate_line(
+                        ew_ticks[i],
+                        gg.box[].bottom,
+                        gg.box[].top,
+                        gg.npoints[],
+                        false,
+                    )
+                )
+            lines!(
+                gg,
+                gg.attributes,
+                points,
             )
         end
     end
-    # We return the plot now
-    return graticule # return type doesn't actually matter
+
+    # Lines in the easting direction
+    if gg.east[]
+        for i in eachindex(ns_ticks)
+            if !isnothing(gg.labels[])
+                if occursin('l', String(gg.labels[]))
+                    point = prj((gg.box[].left, ns_ticks[i]))
+                    text!(gg, [point]; text=[string(ns_ticks[i])], align=(:right, :center), offset=(-8, 0))
+                end
+                if occursin('r', String(gg.labels[]))
+                    point = prj((gg.box[].right, ns_ticks[i]))
+                    text!(gg, [point]; text=[string(ns_ticks[i])], align=(:left, :center), offset=(8, 0))
+                end
+            end
+            points =
+                prj.(
+                    _generate_line(
+                        ns_ticks[i],
+                        gg.box[].left,
+                        gg.box[].right,
+                        gg.npoints[],
+                        true,
+                    )
+                )
+            lines!(
+                gg,
+                gg.attributes,
+                points,
+            )
+        end
+    end
+
+    # We return
+    return gg
 end
 
-function Makie.plot!(gbox::GraticuleBox)
+function _graticule_box_poly(box, projection; n = 50)
+    prj = SpeciesDistributionToolkit._projector(
+        "EPSG:4326",
+        SimpleSDMLayers.AG.toPROJ4(projection),
+    )
+    bottom = prj.([(p, box.bottom) for p in LinRange(box.left, box.right, n)])
+    right = prj.([(box.right, p) for p in LinRange(box.bottom, box.top, n)])
+    top = prj.([(p, box.top) for p in LinRange(box.right, box.left, n)])
+    left = prj.([(box.left, p) for p in LinRange(box.top, box.bottom, n)])
+    cycle = Polygon(vcat(bottom, right, top, left))
+    SimpleSDMPolygons._add_crs(cycle.geometry, projection)
+    return cycle
+end
+
+function Makie.plot!(gb::GraticuleBox)
+    prj = SpeciesDistributionToolkit._projector(
+        "EPSG:4326",
+        SimpleSDMLayers.AG.toPROJ4(gb.projection[]),
+    )
+    p = prj.(
+        _generate_line(gb.box[].left, gb.box[].bottom, gb.box[].top, 20, false)
+    )
+    lines!(gb, gb.attributes, p)
+    p = prj.(
+        _generate_line(gb.box[].right, gb.box[].bottom, gb.box[].top, 20, false)
+    )
+    lines!(gb, gb.attributes, p)
+    p = prj.(
+        _generate_line(gb.box[].top, gb.box[].left, gb.box[].right, 20, true)
+    )
+    lines!(gb, gb.attributes, p)
+    p = prj.(
+        _generate_line(gb.box[].bottom, gb.box[].left, gb.box[].right, 20, true)
+    )
+    lines!(gb, gb.attributes, p)
+    return gb
 end
 
 function enlargelimits!(ax::Axis; x::Float64 = 0.07, y::Float64 = 0.07)
@@ -218,43 +220,19 @@ function enlargelimits!(ax::Axis; x::Float64 = 0.07, y::Float64 = 0.07)
     return nothing
 end
 
-function _graticule_box_from_object(object; padding = 0.0)
-    prj = SpeciesDistributionToolkit._projector(
-        "EPSG:4326",
-        SimpleSDMLayers.AG.toPROJ4(projection(object)),
-    )
-    box = SpeciesDistributionToolkit.boundingbox(object; padding = padding)
-    bottom = prj.([(p, box.bottom) for p in LinRange(box.left, box.right, 20)])
-    right = prj.([(box.right, p) for p in LinRange(box.bottom, box.top, 20)])
-    top = prj.([(p, box.top) for p in LinRange(box.right, box.left, 20)])
-    left = prj.([(box.left, p) for p in LinRange(box.top, box.bottom, 20)])
-    cycle = Polygon(vcat(bottom, right, top, left))
-    SimpleSDMPolygons._add_crs(cycle.geometry, projection(object))
-    return cycle
-end
+land = getpolygon(PolygonData(NaturalEarth, Countries))
 
-# Let's figure out the land lines as background
+gr_params = ((left=12., right=35., bottom=57., top=71.), projection(itemp))
 
-land = getpolygon(PolygonData(NaturalEarth, Land))
-# We need to get the graticule box, move it to lon/lat
-
-f = Figure(; size = (500, 600))
+f = Figure(; size = (500, 400))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-#graticule!(ax, itemp; gridlinestyle = :dash, boxlinewidth = 2)
-gbox = _graticule_box_from_object(temp; padding = 1.5)
-poly!(ax, reproject(intersect(gbox, land), proj); color = :grey95)
-lines!(ax, reproject(intersect(gbox, land), proj); color = :grey10)
-lines!(ax, reproject(gbox, proj); color = :grey10)
-hm = heatmap!(itemp; colormap = :rain)
-lines!(reproject(pol, proj); color = :grey10)
+graticulegrid!(ax, gr_params...; color = :grey80, linestyle = :dash)
+poly!(ax, reproject(clip(land, first(gr_params)), proj); color = :grey90)
+hm = heatmap!(ax, itemp; colormap = :terrain)
+lines!(ax, reproject(clip(land, first(gr_params)), proj); color = :grey40)
+graticulebox!(ax, gr_params...; linewidth = 1.6, color = :black)
 hidespines!(ax)
 hidedecorations!(ax)
-enlargelimits!(ax; x = 0.05)
-Colorbar(f[1, 2], hm; height = Relative(0.5), label = "Temperature", vertical = true)
+enlargelimits!(ax; x=0.2)
+Colorbar(f[1, 2], hm; height = Relative(0.5), label = "Elevation", vertical = true)
 current_figure()
-
-# TODO
-# - [ ] fix the example above
-# - [ ] split the graticule and graticule grid functions
-# - [ ] figure out API for clipping polygons
-# - [ ] make graticule* dispatch on polygons as well

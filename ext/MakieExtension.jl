@@ -1,26 +1,14 @@
-using Revise
+module MakieExtension
+
 using SpeciesDistributionToolkit
-const SDT = SpeciesDistributionToolkit
-using CairoMakie
+import SpeciesDistributionToolkit:
+    graticulebox, graticulebox!, graticulegrid, graticulegrid!, enlargelimits!
+using Makie
 
-pol = getpolygon(PolygonData(OpenStreetMap, Places); place="Alps")
-
-bb = SDT.boundingbox(pol)
-
-temp =
-    SDMLayer(
-        RasterData(CHELSA2, AverageTemperature);
-        SDT.boundingbox(pol)...,
-    )
-mask!(temp, pol)
-
-proj = "+proj=ortho +lon_0=$((bb.right + bb.left)/2) +lat_0=$((bb.top + bb.bottom)/2)"
-itemp = interpolate(temp; dest = proj)
-
-function _to_dms(dec::Float64, north=false)
+function _to_dms(dec::Float64, north = false)
     D = round(Int, trunc(dec))
-    M = round(Int, trunc(60*abs(dec-D)))
-    S = round(Int, 3600*abs(dec-D)-60*M)
+    M = round(Int, trunc(60 * abs(dec - D)))
+    S = round(Int, 3600 * abs(dec - D) - 60 * M)
     str = "$(abs(D))°"
     if M != 0
         str *= " $(M)′"
@@ -44,6 +32,36 @@ function _to_dms(dec::Float64, north=false)
     return str
 end
 
+function _return_isolines(m, M, nmin, nideal, nmax)
+    return first(
+        Makie.PlotUtils.optimize_ticks(
+            m,
+            M;
+            k_min = nmin,
+            k_max = nmax,
+            k_ideal = nideal,
+        ),
+    )
+end
+
+function _generate_line(at, from, to, n, flip)
+    return [flip ? (s, at) : (at, s) for s in LinRange(from, to, n)]
+end
+
+function _graticule_box_poly(box, projection; n = 50)
+    prj = SpeciesDistributionToolkit._projector(
+        "EPSG:4326",
+        SimpleSDMLayers.AG.toPROJ4(projection),
+    )
+    bottom = prj.([(p, box.bottom) for p in LinRange(box.left, box.right, n)])
+    right = prj.([(box.right, p) for p in LinRange(box.bottom, box.top, n)])
+    top = prj.([(p, box.top) for p in LinRange(box.right, box.left, n)])
+    left = prj.([(box.left, p) for p in LinRange(box.top, box.bottom, n)])
+    cycle = Polygon(vcat(bottom, right, top, left))
+    SimpleSDMPolygons._add_crs(cycle.geometry, projection)
+    return cycle
+end
+
 @recipe GraticuleGrid (box, projection) begin
     xgridcolor = @inherit xgridcolor :grey80
     ygridcolor = @inherit ygridcolor :grey80
@@ -63,19 +81,10 @@ end
     xticks = 6
     xmaxticks = 8
 
-    """
-    transparency
-    """
     alpha = 1.0
 
-    """
-    npoints
-    """
     npoints = 20
 
-    """
-    display the labels
-    """
     labels = :lbrt
 
     dms = false
@@ -100,27 +109,23 @@ Makie.convert_arguments(::Type{GraticuleBox}, layer::SDMLayer) =
 Makie.convert_arguments(::Type{GraticuleGrid}, layer::SDMLayer) =
     (SpeciesDistributionToolkit.boundingbox(layer), projection(layer))
 
-function _return_isolines(m, M, nmin, nideal, nmax)
-    return first(
-        Makie.PlotUtils.optimize_ticks(
-            m,
-            M;
-            k_min = nmin,
-            k_max = nmax,
-            k_ideal = nideal,
-        ),
-    )
-end
-
-function _generate_line(at, from, to, n, flip)
-    return [flip ? (s, at) : (at, s) for s in LinRange(from, to, n)]
-end
-
 function Makie.plot!(gg::GraticuleGrid)
 
     # We get the ideal ticks
-    ew_ticks = _return_isolines(gg.box[].left, gg.box[].right, gg.xminticks[], gg.xticks[], gg.xmaxticks[])
-    ns_ticks = _return_isolines(gg.box[].bottom, gg.box[].top, gg.yminticks[], gg.yticks[], gg.ymaxticks[])
+    ew_ticks = _return_isolines(
+        gg.box[].left,
+        gg.box[].right,
+        gg.xminticks[],
+        gg.xticks[],
+        gg.xmaxticks[],
+    )
+    ns_ticks = _return_isolines(
+        gg.box[].bottom,
+        gg.box[].top,
+        gg.yminticks[],
+        gg.yticks[],
+        gg.ymaxticks[],
+    )
 
     # Projection function
     prj = SpeciesDistributionToolkit._projector(
@@ -246,20 +251,6 @@ function Makie.plot!(gg::GraticuleGrid)
     return gg
 end
 
-function _graticule_box_poly(box, projection; n = 50)
-    prj = SpeciesDistributionToolkit._projector(
-        "EPSG:4326",
-        SimpleSDMLayers.AG.toPROJ4(projection),
-    )
-    bottom = prj.([(p, box.bottom) for p in LinRange(box.left, box.right, n)])
-    right = prj.([(box.right, p) for p in LinRange(box.bottom, box.top, n)])
-    top = prj.([(p, box.top) for p in LinRange(box.right, box.left, n)])
-    left = prj.([(box.left, p) for p in LinRange(box.top, box.bottom, n)])
-    cycle = Polygon(vcat(bottom, right, top, left))
-    SimpleSDMPolygons._add_crs(cycle.geometry, projection)
-    return cycle
-end
-
 function Makie.plot!(gb::GraticuleBox)
     prj = SpeciesDistributionToolkit._projector(
         "EPSG:4326",
@@ -299,34 +290,7 @@ function enlargelimits!(ax::Axis; x::Float64 = 0.07, y::Float64 = 0.07)
     yl = ax.yaxis.attributes.limits[]
     Δ = (yl[2] - yl[1]) .* y
     ylims!(ax, ax.yaxis.attributes.limits[] .+ (-Δ, Δ))
-    return nothing
+    return ax
 end
 
-gr_params = ((left= 4., right=19., bottom=35., top=50.), projection(itemp))
-land = getpolygon(PolygonData(NaturalEarth, Countries); resolution = 10)
-clip_land = reproject(clip(land, first(gr_params)), proj)
-
-f = Figure(; size = (650, 600))
-ax = Axis(f[1, 1]; aspect = DataAspect())
-graticulegrid!(
-    ax,
-    gr_params...;
-    labels = :lb,
-    backgroundcolor = :skyblue,
-    xgridstyle=:dash,
-    ygridstyle=:dash,
-    xgridcolor=:grey60,
-    ygridcolor=:grey60,
-    alpha = 0.1,
-    dms = true
-)
-poly!(ax, clip_land; color = :grey95)
-lines!(ax, clip_land; color = :grey40, linewidth = 0.8)
-hm = heatmap!(ax, itemp; colormap = :vik, colorrange=(-15, 15))
-lines!(ax, reproject(pol, proj); color = :grey10, linewidth = 0.8)
-graticulebox!(ax, gr_params...; spinewidth=1.5)
-hidespines!(ax)
-hidedecorations!(ax)
-enlargelimits!(ax; x = 0.2, y = 0.15)
-Colorbar(f[1, 2], hm; height = Relative(0.5), label = "Average Temperature", vertical = true)
-current_figure()
+end

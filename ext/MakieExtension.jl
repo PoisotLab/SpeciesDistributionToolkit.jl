@@ -283,14 +283,14 @@ function Makie.plot!(gb::GraticuleBox)
     return gb
 end
 
-function enlargelimits!(ax::Axis; x::Float64 = 0.07, y::Float64 = 0.07)
+function enlargelimits!(ax::Axis; x::Float64 = 0.08, y::Float64 = 0.08)
+    autolimits!(ax)
     xl = ax.xaxis.attributes.limits[]
-    Δ = (xl[2] - xl[1]) .* x
-    xlims!(ax, ax.xaxis.attributes.limits[] .+ (-Δ, Δ))
+    Δx = (xl[2] - xl[1]) .* x
     yl = ax.yaxis.attributes.limits[]
-    Δ = (yl[2] - yl[1]) .* y
-    ylims!(ax, ax.yaxis.attributes.limits[] .+ (-Δ, Δ))
-    return ax
+    Δy = (yl[2] - yl[1]) .* y
+    xlims!(ax, ax.xaxis.attributes.limits[] .+ (-Δx, Δx))
+    ylims!(ax, ax.yaxis.attributes.limits[] .+ (-Δy, Δy))
 end
 
 end

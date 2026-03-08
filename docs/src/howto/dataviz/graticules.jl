@@ -10,11 +10,10 @@ using CairoMakie
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # We will see how to use these functions to plot a map of the mean annual
-# temperature in Algeria. We will start by getting polygons with the border
-# countries for Africa:
+# temperature in Algeria. We will start by getting polygons for the countries of
+# the world according to NaturalEarth:
 
-land =
-    getpolygon(PolygonData(NaturalEarth, Countries); resolution = 10)["Region" => "Africa"]
+land = getpolygon(PolygonData(NaturalEarth, Countries); resolution = 10)
 
 pol = land["Algeria"]
 bb = SDT.boundingbox(pol)
@@ -137,13 +136,14 @@ current_figure()
 # boundaries of neighboring countries, the mean annual temperature, and the
 # projected coordinates.
 
-# We start by clipping and reprojecting the polygons for countries border:
+# We will update the graticule to have a figure that uses a custom bounding box:
 
+graticule = ((left= -18., right=22., top=45., bottom=15.), projection(itemp))
 clip_land = reproject(clip(land, first(graticule)), proj)
 
 # We will start by setting up a figure with a graticule grid:
 
-f = Figure(; size = (650, 500))
+f = Figure(; size = (650, 430))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 graticulegrid!(
     ax,
@@ -163,13 +163,12 @@ current_figure()
 
 # We enlarge the limits a little to fit the labels:
 
-enlargelimits!(ax; x = 0.2, y = 0.15)
+enlargelimits!(ax; x = 0.12, y = 0.10)
 current_figure()
 
 # Now that this is done, we can color in the landmass:
 
-poly!(ax, clip_land; color = :grey95)
-lines!(ax, clip_land; color = :grey40, linewidth = 0.8)
+poly!(ax, clip_land; color = :grey80)
 current_figure()
 
 # Now we add the raster we want to plot, and highlight its border:

@@ -68,7 +68,7 @@ function polygonize(L::SDMLayer{Bool})
         cellpol = SimpleSDMPolygons.AG.createpolygon(points)
         SimpleSDMPolygons._add_crs(
             cellpol,
-            layer_crs,
+            projection(L),
         )
         push!(pols, Polygon(cellpol))
     end

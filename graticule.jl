@@ -3,50 +3,70 @@ using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
 using CairoMakie
 
-pol =
-    getpolygon(PolygonData(ESRI, Places))["Country of affiliation" => "Canada"]["Place name" => "Quebec"]["Land type" => "Primary land"]
-proj = "EPSG:2138"
+pol = getpolygon(PolygonData(OpenStreetMap, Places); place="Alps")
+
+bb = SDT.boundingbox(pol)
 
 temp =
     SDMLayer(
-        RasterData(WorldClim2, Elevation);
+        RasterData(CHELSA2, AverageTemperature);
         SDT.boundingbox(pol)...,
-        resolution = 2.5,
     )
 mask!(temp, pol)
+
+proj = "+proj=ortho +lon_0=$((bb.right + bb.left)/2) +lat_0=$((bb.top + bb.bottom)/2)"
 itemp = interpolate(temp; dest = proj)
 
-function shared_graticule_attributes()
-    Makie.@DocumentedAttributes begin
-        """
-        color for the line
-        """
-        color = :black
-
-        """
-        linestyle for the line
-        """
-        linestyle = :solid
-
-        """
-        width for the line
-        """
-        linewidth = 1
+function _to_dms(dec::Float64, north=false)
+    D = round(Int, trunc(dec))
+    M = round(Int, trunc(60*abs(dec-D)))
+    S = round(Int, 3600*abs(dec-D)-60*M)
+    str = "$(abs(D))°"
+    if M != 0
+        str *= " $(M)′"
+        if S != 0
+            str *= " $(S)″"
+        end
     end
+    if D >= 0
+        if north
+            str *= " N"
+        else
+            str *= " E"
+        end
+    else
+        if north
+            str *= " S"
+        else
+            str *= " W"
+        end
+    end
+    return str
 end
 
 @recipe GraticuleGrid (box, projection) begin
-    shared_graticule_attributes()...
+    xgridcolor = @inherit xgridcolor :grey80
+    ygridcolor = @inherit ygridcolor :grey80
+    xgridstyle = @inherit xgridstyle :solid
+    ygridstyle = @inherit ygridstyle :solid
+    xgridwidth = @inherit xgridwidth 0.9
+    ygridwidth = @inherit ygridwidth 0.9
+    xgridvisible = @inherit xgridvisible true
+    ygridvisible = @inherit ygridvisible true
+    backgroundcolor = @inherit backgroundcolor :transparent
+
+    yminticks = 3
+    yticks = 6
+    ymaxticks = 8
+
+    xminticks = 3
+    xticks = 6
+    xmaxticks = 8
 
     """
-    draw the north/south lines
+    transparency
     """
-    north = true
-
-    """
-    draw the east/west lines
-    """
-    east = true
+    alpha = 1.0
 
     """
     npoints
@@ -57,20 +77,22 @@ end
     display the labels
     """
     labels = :lbrt
+
+    dms = false
 end
 
 @recipe GraticuleBox (box, projection) begin
-    shared_graticule_attributes()...
+    leftspinevisible = @inherit leftspinevisible true
+    bottomspinevisible = @inherit bottomspinevisible true
+    topspinevisible = @inherit topspinevisible true
+    rightspinevisible = @inherit rightspinevisible true
 
-    """
-    text label positions
-    """
-    labels = :lrtb
+    spinewidth = @inherit spinewidth 1.0
 
-    """
-    text label offset
-    """
-    offset = 8
+    leftspinecolor = @inherit leftspinecolor :black
+    bottomspinecolor = @inherit bottomspinecolor :black
+    topspinecolor = @inherit topspinecolor :black
+    rightspinecolor = @inherit rightspinecolor :black
 end
 
 Makie.convert_arguments(::Type{GraticuleBox}, layer::SDMLayer) =
@@ -97,8 +119,8 @@ end
 function Makie.plot!(gg::GraticuleGrid)
 
     # We get the ideal ticks
-    ew_ticks = _return_isolines(gg.box[].left, gg.box[].right, 4, 6, 10)
-    ns_ticks = _return_isolines(gg.box[].bottom, gg.box[].top, 4, 6, 10)
+    ew_ticks = _return_isolines(gg.box[].left, gg.box[].right, gg.xminticks[], gg.xticks[], gg.xmaxticks[])
+    ns_ticks = _return_isolines(gg.box[].bottom, gg.box[].top, gg.yminticks[], gg.yticks[], gg.ymaxticks[])
 
     # Projection function
     prj = SpeciesDistributionToolkit._projector(
@@ -106,19 +128,54 @@ function Makie.plot!(gg::GraticuleGrid)
         SimpleSDMLayers.AG.toPROJ4(gg.projection[]),
     )
 
+    # Background
+    if gg.backgroundcolor[] != :transparent
+        p1 = prj.(
+            _generate_line(gg.box[].left, gg.box[].bottom, gg.box[].top, 20, false)
+        )
+        p2 = prj.(
+            _generate_line(gg.box[].right, gg.box[].bottom, gg.box[].top, 20, false)
+        )
+        p3 = prj.(
+            _generate_line(gg.box[].top, gg.box[].left, gg.box[].right, 20, true)
+        )
+        p4 = prj.(
+            _generate_line(gg.box[].bottom, gg.box[].left, gg.box[].right, 20, true)
+        )
+        poly!(
+            gg,
+            vcat(p1, p2, reverse(p3), reverse(p4));
+            color = gg.backgroundcolor[],
+            alpha = gg.alpha[],
+        )
+    end
+
     # Lines in the northing direction
-    if gg.north[]
-        for i in eachindex(ew_ticks)
-            if !isnothing(gg.labels[])
-                if occursin('b', String(gg.labels[]))
-                    point = prj((ew_ticks[i], gg.box[].bottom))
-                    text!(gg, [point]; text=[string(ew_ticks[i])], align=(:center, :top), offset=(0, -8))
-                end
-                if occursin('t', String(gg.labels[]))
-                    point = prj((ew_ticks[i], gg.box[].top))
-                    text!(gg, [point]; text=[string(ew_ticks[i])], align=(:center, :bottom), offset=(0, 8))
-                end
+
+    for i in eachindex(ew_ticks)
+        if !isnothing(gg.labels[])
+            if occursin('b', String(gg.labels[]))
+                point = prj((ew_ticks[i], gg.box[].bottom))
+                text!(
+                    gg,
+                    [point];
+                    text = [gg.dms[] ? _to_dms(ew_ticks[i], false) : string(ew_ticks[i])],
+                    align = (:center, :top),
+                    offset = (0, -8),
+                )
             end
+            if occursin('t', String(gg.labels[]))
+                point = prj((ew_ticks[i], gg.box[].top))
+                text!(
+                    gg,
+                    [point];
+                    text = [gg.dms[] ? _to_dms(ew_ticks[i], false) : string(ew_ticks[i])],
+                    align = (:center, :bottom),
+                    offset = (0, 8),
+                )
+            end
+        end
+        if gg.xgridvisible[]
             points =
                 prj.(
                     _generate_line(
@@ -131,25 +188,40 @@ function Makie.plot!(gg::GraticuleGrid)
                 )
             lines!(
                 gg,
-                gg.attributes,
-                points,
+                points;
+                color = gg.xgridcolor[],
+                linestyle = gg.xgridstyle[],
+                linewidth = gg.xgridwidth[],
             )
         end
     end
 
     # Lines in the easting direction
-    if gg.east[]
-        for i in eachindex(ns_ticks)
-            if !isnothing(gg.labels[])
-                if occursin('l', String(gg.labels[]))
-                    point = prj((gg.box[].left, ns_ticks[i]))
-                    text!(gg, [point]; text=[string(ns_ticks[i])], align=(:right, :center), offset=(-8, 0))
-                end
-                if occursin('r', String(gg.labels[]))
-                    point = prj((gg.box[].right, ns_ticks[i]))
-                    text!(gg, [point]; text=[string(ns_ticks[i])], align=(:left, :center), offset=(8, 0))
-                end
+
+    for i in eachindex(ns_ticks)
+        if !isnothing(gg.labels[])
+            if occursin('l', String(gg.labels[]))
+                point = prj((gg.box[].left, ns_ticks[i]))
+                text!(
+                    gg,
+                    [point];
+                    text = [gg.dms[] ? _to_dms(ns_ticks[i], true) : string(ns_ticks[i])],
+                    align = (:right, :center),
+                    offset = (-8, 0),
+                )
             end
+            if occursin('r', String(gg.labels[]))
+                point = prj((gg.box[].right, ns_ticks[i]))
+                text!(
+                    gg,
+                    [point];
+                    text = [gg.dms[] ? _to_dms(ns_ticks[i], true) : string(ns_ticks[i])],
+                    align = (:left, :center),
+                    offset = (8, 0),
+                )
+            end
+        end
+        if gg.ygridvisible[]
             points =
                 prj.(
                     _generate_line(
@@ -162,8 +234,10 @@ function Makie.plot!(gg::GraticuleGrid)
                 )
             lines!(
                 gg,
-                gg.attributes,
-                points,
+                points;
+                color = gg.ygridcolor[],
+                linestyle = gg.ygridstyle[],
+                linewidth = gg.ygridwidth[],
             )
         end
     end
@@ -191,22 +265,30 @@ function Makie.plot!(gb::GraticuleBox)
         "EPSG:4326",
         SimpleSDMLayers.AG.toPROJ4(gb.projection[]),
     )
-    p = prj.(
-        _generate_line(gb.box[].left, gb.box[].bottom, gb.box[].top, 20, false)
-    )
-    lines!(gb, gb.attributes, p)
-    p = prj.(
-        _generate_line(gb.box[].right, gb.box[].bottom, gb.box[].top, 20, false)
-    )
-    lines!(gb, gb.attributes, p)
-    p = prj.(
-        _generate_line(gb.box[].top, gb.box[].left, gb.box[].right, 20, true)
-    )
-    lines!(gb, gb.attributes, p)
-    p = prj.(
-        _generate_line(gb.box[].bottom, gb.box[].left, gb.box[].right, 20, true)
-    )
-    lines!(gb, gb.attributes, p)
+    if gb.leftspinevisible[]
+        p = prj.(
+            _generate_line(gb.box[].left, gb.box[].bottom, gb.box[].top, 20, false)
+        )
+        lines!(gb, p; color = gb.leftspinecolor[], linewidth = gb.spinewidth[])
+    end
+    if gb.rightspinevisible[]
+        p = prj.(
+            _generate_line(gb.box[].right, gb.box[].bottom, gb.box[].top, 20, false)
+        )
+        lines!(gb, p; color = gb.rightspinecolor[], linewidth = gb.spinewidth[])
+    end
+    if gb.topspinevisible[]
+        p = prj.(
+            _generate_line(gb.box[].top, gb.box[].left, gb.box[].right, 20, true)
+        )
+        lines!(gb, p; color = gb.topspinecolor[], linewidth = gb.spinewidth[])
+    end
+    if gb.bottomspinevisible[]
+        p = prj.(
+            _generate_line(gb.box[].bottom, gb.box[].left, gb.box[].right, 20, true)
+        )
+        lines!(gb, p; color = gb.bottomspinecolor[], linewidth = gb.spinewidth[])
+    end
     return gb
 end
 
@@ -220,20 +302,27 @@ function enlargelimits!(ax::Axis; x::Float64 = 0.07, y::Float64 = 0.07)
     return nothing
 end
 
-land = getpolygon(PolygonData(NaturalEarth, Countries); resolution=50)
+gr_params = (SDT.boundingbox(pol; padding=1.0), projection(itemp))
+land = getpolygon(PolygonData(NaturalEarth, Countries); resolution = 10)
+clip_land = reproject(clip(land, first(gr_params)), proj)
 
-gr_params = ((left=-85., right=-55., bottom=42., top=65.), projection(itemp))
-
-f = Figure(; size = (500, 400))
+f = Figure(; size = (700, 400))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-graticulegrid!(ax, gr_params...; color = :grey80, linestyle = :dashdot, labels=:lrb)
-poly!(ax, reproject(clip(land, first(gr_params)), proj); color = :grey90)
-hm = heatmap!(ax, itemp; colormap = :terrain)
-lines!(ax, reproject(clip(land, first(gr_params)), proj); color = :grey40, linewidth=0.8)
-lines!(ax, reproject(pol, proj); color = :grey30, linewidth=1.2)
-graticulebox!(ax, gr_params...; linewidth = 1.6, color = :black)
+graticulegrid!(
+    ax,
+    gr_params...;
+    labels = :lb,
+    backgroundcolor = :skyblue,
+    alpha = 0.1,
+    dms = true
+)
+poly!(ax, clip_land; color = :grey90)
+hm = heatmap!(ax, itemp; colormap = :navia)
+lines!(ax, clip_land; color = :grey40, linewidth = 0.8)
+lines!(ax, reproject(pol, proj); color = :grey10, linewidth = 0.8)
+graticulebox!(ax, gr_params...)
 hidespines!(ax)
 hidedecorations!(ax)
-enlargelimits!(ax; x=0.2, y=0.15)
+enlargelimits!(ax; x = 0.2, y = 0.15)
 Colorbar(f[1, 2], hm; height = Relative(0.5), label = "Elevation", vertical = true)
 current_figure()

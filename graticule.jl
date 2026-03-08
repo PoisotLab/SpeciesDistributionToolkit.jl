@@ -302,27 +302,29 @@ function enlargelimits!(ax::Axis; x::Float64 = 0.07, y::Float64 = 0.07)
     return nothing
 end
 
-gr_params = (SDT.boundingbox(pol; padding=1.0), projection(itemp))
+gr_params = ((left= 4., right=19., bottom=35., top=50.), projection(itemp))
 land = getpolygon(PolygonData(NaturalEarth, Countries); resolution = 10)
 clip_land = reproject(clip(land, first(gr_params)), proj)
 
-f = Figure(; size = (700, 400))
+f = Figure(; size = (650, 600))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 graticulegrid!(
     ax,
     gr_params...;
     labels = :lb,
     backgroundcolor = :skyblue,
+    xgridstyle=:dash,
+    ygridstyle=:dash,
     alpha = 0.1,
     dms = true
 )
-poly!(ax, clip_land; color = :grey90)
-hm = heatmap!(ax, itemp; colormap = :navia)
+poly!(ax, clip_land; color = :grey95)
 lines!(ax, clip_land; color = :grey40, linewidth = 0.8)
+hm = heatmap!(ax, itemp; colormap = :vik, colorrange=(-15, 15))
 lines!(ax, reproject(pol, proj); color = :grey10, linewidth = 0.8)
-graticulebox!(ax, gr_params...)
+graticulebox!(ax, gr_params...; spinewidth=1.5)
 hidespines!(ax)
 hidedecorations!(ax)
 enlargelimits!(ax; x = 0.2, y = 0.15)
-Colorbar(f[1, 2], hm; height = Relative(0.5), label = "Elevation", vertical = true)
+Colorbar(f[1, 2], hm; height = Relative(0.5), label = "Average Temperature", vertical = true)
 current_figure()

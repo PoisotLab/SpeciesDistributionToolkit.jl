@@ -1,5 +1,5 @@
 function pre!(content)
-    return content |> pre_collapse_figure
+    return content |> pre_collapse_figure |> pre_no_revise
 end
 
 function post!(content)
@@ -23,6 +23,12 @@ function pre_collapse_figure(content)
     """
     replacer = SubstitutionString(replace(replacement_template, "HASH" => fig_hash))
     content = replace(content, matcher => replacer)
+    return content
+end
+
+
+function pre_no_revise(content)
+    content = replace(content, "using Revise" => "")
     return content
 end
 

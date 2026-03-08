@@ -71,4 +71,12 @@ export crosshatch, polygonize
 include("boundingbox.jl")
 export boundingbox
 
+# Makie extension (will only be non-empty if makie is loaded)
+function graticulegrid end
+function graticulegrid! end
+function graticulebox end
+function graticulebox! end
+function enlargelimits! end
+export graticulebox, graticulebox!, graticulegrid, graticulegrid!, enlargelimits!
+
 end # module SpeciesDistributionToolkit

@@ -185,6 +185,7 @@ export default defineConfig({
                                 { text: "Polygons", link: "/howto/dataviz/polygons/" },
                                 { text: "Models", link: "/howto/dataviz/models/" },
                                 { text: "Projections", link: "/howto/dataviz/projections/" },
+                                { text: "Graticules", link: "/howto/dataviz/graticules/" },
                             ]
                         }
                     ]

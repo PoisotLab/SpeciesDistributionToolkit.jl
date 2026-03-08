@@ -4,8 +4,8 @@ const SDT = SpeciesDistributionToolkit
 using CairoMakie
 
 pol =
-    getpolygon(PolygonData(ESRI, Places))["Country of affiliation" => "Finland"]["Land type" => "Primary land"]
-proj = "EPSG:3387"
+    getpolygon(PolygonData(ESRI, Places))["Country of affiliation" => "Canada"]["Place name" => "Quebec"]["Land type" => "Primary land"]
+proj = "EPSG:2138"
 
 temp =
     SDMLayer(
@@ -220,19 +220,20 @@ function enlargelimits!(ax::Axis; x::Float64 = 0.07, y::Float64 = 0.07)
     return nothing
 end
 
-land = getpolygon(PolygonData(NaturalEarth, Countries))
+land = getpolygon(PolygonData(NaturalEarth, Countries); resolution=50)
 
-gr_params = ((left=12., right=35., bottom=57., top=71.), projection(itemp))
+gr_params = ((left=-85., right=-55., bottom=42., top=65.), projection(itemp))
 
 f = Figure(; size = (500, 400))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-graticulegrid!(ax, gr_params...; color = :grey80, linestyle = :dash)
+graticulegrid!(ax, gr_params...; color = :grey80, linestyle = :dashdot, labels=:lrb)
 poly!(ax, reproject(clip(land, first(gr_params)), proj); color = :grey90)
 hm = heatmap!(ax, itemp; colormap = :terrain)
-lines!(ax, reproject(clip(land, first(gr_params)), proj); color = :grey40)
+lines!(ax, reproject(clip(land, first(gr_params)), proj); color = :grey40, linewidth=0.8)
+lines!(ax, reproject(pol, proj); color = :grey30, linewidth=1.2)
 graticulebox!(ax, gr_params...; linewidth = 1.6, color = :black)
 hidespines!(ax)
 hidedecorations!(ax)
-enlargelimits!(ax; x=0.2)
+enlargelimits!(ax; x=0.2, y=0.15)
 Colorbar(f[1, 2], hm; height = Relative(0.5), label = "Elevation", vertical = true)
 current_figure()

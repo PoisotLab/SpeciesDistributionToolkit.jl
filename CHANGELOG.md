@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.8.1` 
 
+- **added** a `MakieExtension` for graticules
 - **changed** some internal projection operations to use the new `projection` function in SimpleSDMLayers [#557]
 - **removed** an internal function that was essentially `boundingbox`
 

@@ -3,25 +3,33 @@ using CairoMakie
 using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
 
-pol = getpolygon(PolygonData(NaturalEarth, Countries))["Belgium"];
+pol = getpolygon(PolygonData(OpenStreetMap, Places); place="Corsica");
 spatialextent = SDT.boundingbox(pol; padding = 0.1)
 
 # some layers
 
 provider = RasterData(CHELSA2, BioClim)
-layers = SDMLayer{Float16}[SDMLayer(
+L = SDMLayer{Float16}[SDMLayer(
         provider;
         layer = i,
         spatialextent...,
-    ) for i in [1, 12]]
+    ) for i in layers(provider)]
 
-mask!(layers, pol)
+mask!(L, pol)
+
+# Model
+model = SDM(RawData, Logistic, SDeMo.__demodata()...)
+variables!(model, ForwardSelection)
+predict(model, L; threshold=false) |> heatmap
+
+ens = Bagging(model, 50)
+bagfeatures!(ens)
+train!(ens)
 
 # unpack
 
-val, unc = layers
-val.x = unc.x
-val.y = unc.y
+val = predict(model, L; threshold=false)
+unc = predict(ens, L; threshold=false, consensus=iqr)
 
 # temperature layer
 
@@ -34,7 +42,7 @@ current_figure() #hide
 
 # fig-hm-unc
 heatmap(unc; axis = (aspect = DataAspect(),))
-lines!(pol.geometry; color = :black)
+lines!(pol; color = :black)
 current_figure() #hide
 
 # ## Value-suppressing uncertainty palette
@@ -66,21 +74,21 @@ end
 
 # VSUP test - what are the parameters
 
-ubins = 25
-vbins = 15
+ubins = 7
+vbins = 7
 vbin = discretize(quantize(val, vbins), vbins)
-vbin.x = val.x
-vbin.y = val.y
-ubin = discretize(quantize(unc, ubins), ubins)
-ubin.x = unc.x
-ubin.y = unc.y
+ubin = discretize(quantize(unc, vbins), ubins)
 
-pal = _vsup_grid(vbins, ubins, :managua; k=1.0, s=0.5)
+pal = _vsup_grid(vbins, ubins, :cividis; k=1.2, s=0.5)
 
 # fig-vsup-colorpalette
 f = Figure(; size = (800, 400))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-heatmap!(ax, vbin + (maximum(vbin) - ubin - 1) * maximum(vbin); colormap = vcat(pal...))
+
+# TODO
+# This is not working because the way to get the uncertainty rank is wrong here, high values should lead to more white, and low values to more color
+
+heatmap!(ax, vbin + (maximum(vbin) - ubin + 1) * maximum(vbin); colormap = vcat(pal...))
 hidespines!(ax)
 hidedecorations!(ax)
 lines!(pol; color = :black)
@@ -101,12 +109,12 @@ ax_inset = PolarAxis(f[1, 1];
 
 surface!(
     ax_inset,
-    0 .. π / 2,
+    -π/4 .. π/4,
     0 .. 1,
     zeros(size(pal));
     color = reverse(pal),
     shading = NoShading,
 )
-thetalims!(ax_inset, 0, pi / 2)
-rlims!(ax_inset, 0.3, 1)
+thetalims!(ax_inset, -pi/4, pi / 4)
+rlims!(ax_inset, 0.1, 1)
 current_figure() #hide

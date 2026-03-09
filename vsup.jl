@@ -13,7 +13,7 @@ layers = SDMLayer{Float16}[SDMLayer(
         provider;
         layer = i,
         spatialextent...,
-    ) for i in [1, 3]]
+    ) for i in [1, 12]]
 
 mask!(layers, pol)
 
@@ -41,7 +41,7 @@ current_figure() #hide
 
 # function for VSUP
 
-function _vsup_grid(vbins, ubins, vpal; upal = colorant"#efefef00", s = 0.5, k = 1.0)
+function _vsup_grid(vbins, ubins, vpal; upal = colorant"#ffffff", s = 0.5, k = 1.0)
     pal = fill(upal, (vbins, ubins))
     for i in 1:ubins
         shrkfac = ((i - 1) / (ubins - 1))^k
@@ -66,8 +66,8 @@ end
 
 # VSUP test - what are the parameters
 
-ubins = 11
-vbins = 25
+ubins = 25
+vbins = 15
 vbin = discretize(quantize(val, vbins), vbins)
 vbin.x = val.x
 vbin.y = val.y
@@ -75,12 +75,12 @@ ubin = discretize(quantize(unc, ubins), ubins)
 ubin.x = unc.x
 ubin.y = unc.y
 
-pal = _vsup_grid(vbins, ubins, :managua; k=2.0)
+pal = _vsup_grid(vbins, ubins, :managua; k=1.0, s=0.5)
 
 # fig-vsup-colorpalette
 f = Figure(; size = (800, 400))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-heatmap!(ax, vbin + (ubin - 1) * maximum(vbin); colormap = vcat(pal...))
+heatmap!(ax, vbin + (maximum(vbin) - ubin - 1) * maximum(vbin); colormap = vcat(pal...))
 hidespines!(ax)
 hidedecorations!(ax)
 lines!(pol; color = :black)
@@ -101,12 +101,12 @@ ax_inset = PolarAxis(f[1, 1];
 
 surface!(
     ax_inset,
-    0 .. π / 3,
+    0 .. π / 2,
     0 .. 1,
     zeros(size(pal));
     color = reverse(pal),
     shading = NoShading,
 )
-thetalims!(ax_inset, 0, pi / 3)
-rlims!(ax_inset, 0.1, 1)
+thetalims!(ax_inset, 0, pi / 2)
+rlims!(ax_inset, 0.3, 1)
 current_figure() #hide

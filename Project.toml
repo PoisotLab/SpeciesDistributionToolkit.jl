@@ -29,9 +29,9 @@ STAC = "08e62803-e111-4f53-be9b-274ff296e9da"
 SpatialBoundaries = "8d2ba62a-3d23-4a2b-b692-6b63e9267be2"
 
 [extensions]
-MakieExtension = "Makie"
-STACExt = "STAC"
-SpatialBoundariesExt = "SpatialBoundaries"
+GraticuleExtension = "Makie"
+STACExtension = "STAC"
+SpatialBoundariesExtension = "SpatialBoundaries"
 
 [compat]
 Distances = "0.10"

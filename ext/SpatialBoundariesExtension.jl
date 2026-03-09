@@ -1,4 +1,4 @@
-module SpatialBoundariesExt
+module SpatialBoundariesExtension
 
 using SpeciesDistributionToolkit
 using SpatialBoundaries

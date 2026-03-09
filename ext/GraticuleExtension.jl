@@ -1,4 +1,4 @@
-module MakieExtension
+module GraticuleExtension
 
 using SpeciesDistributionToolkit
 import SpeciesDistributionToolkit:

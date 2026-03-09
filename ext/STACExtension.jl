@@ -1,4 +1,4 @@
-module STACExt
+module STACExtension
 
 using SpeciesDistributionToolkit
 using STAC

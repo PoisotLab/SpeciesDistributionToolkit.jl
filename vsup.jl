@@ -4,7 +4,7 @@ using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
 
 pol = getpolygon(PolygonData(NaturalEarth, Countries))["Belgium"];
-spatialextent = SDT.boundingbox(POL; padding = 0.1)
+spatialextent = SDT.boundingbox(pol; padding = 0.1)
 
 # some layers
 
@@ -41,7 +41,7 @@ current_figure() #hide
 
 # function for VSUP
 
-function _vsup_grid(vbins, ubins, vpal; upal = colorant"#efefef55", s = 0.5, k = 1.0)
+function _vsup_grid(vbins, ubins, vpal; upal = colorant"#efefef00", s = 0.5, k = 1.0)
     pal = fill(upal, (vbins, ubins))
     for i in 1:ubins
         shrkfac = ((i - 1) / (ubins - 1))^k
@@ -67,7 +67,7 @@ end
 # VSUP test - what are the parameters
 
 ubins = 11
-vbins = 11
+vbins = 25
 vbin = discretize(quantize(val, vbins), vbins)
 vbin.x = val.x
 vbin.y = val.y
@@ -75,7 +75,7 @@ ubin = discretize(quantize(unc, ubins), ubins)
 ubin.x = unc.x
 ubin.y = unc.y
 
-pal = _vsup_grid(vbins, ubins, :twelvebitrainbow)
+pal = _vsup_grid(vbins, ubins, :managua; k=2.0)
 
 # fig-vsup-colorpalette
 f = Figure(; size = (800, 400))
@@ -94,7 +94,10 @@ ax_inset = PolarAxis(f[1, 1];
     theta_0 = pi,
     direction = -1,
     tellheight = false,
-    tellwidth = false,)
+    tellwidth = false,
+    rgridvisible=false,
+    thetagridvisible=false
+    )
 
 surface!(
     ax_inset,
@@ -105,4 +108,5 @@ surface!(
     shading = NoShading,
 )
 thetalims!(ax_inset, 0, pi / 3)
+rlims!(ax_inset, 0.1, 1)
 current_figure() #hide

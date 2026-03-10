@@ -69,14 +69,30 @@ export crosshatch, polygonize
 
 # Get the boundingbox tuple
 include("boundingbox.jl")
-export boundingbox
+export boundingbox, discretize
 
-# Graticule extension (will only be non-empty if makie is loaded)
+# Graticule extension
 function graticulegrid end
 function graticulegrid! end
 function graticulebox end
 function graticulebox! end
 function enlargelimits! end
 export graticulebox, graticulebox!, graticulegrid, graticulegrid!, enlargelimits!
+
+# Bivariate extension
+function bivariate end
+function bivariate! end
+function StevensRedBlue end
+function StevensBluePurple end
+function StevensBlueGreen end
+function StevensYellowPurple end
+function ArcMapOrangeBlue end
+export StevensBlueGreen, StevensBluePurple, StevensRedBlue, StevensYellowPurple, ArcMapOrangeBlue
+export bivariate, bivariate!
+
+# VSUP extension
+function vsup end
+function vsup! end
+export vsup, vsup!
 
 end # module SpeciesDistributionToolkit

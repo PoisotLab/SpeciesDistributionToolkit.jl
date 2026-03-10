@@ -30,6 +30,8 @@ SpatialBoundaries = "8d2ba62a-3d23-4a2b-b692-6b63e9267be2"
 
 [extensions]
 GraticuleExtension = "Makie"
+BivariateExtension = "Makie"
+VSUPExtension = "Makie"
 STACExtension = "STAC"
 SpatialBoundariesExtension = "SpatialBoundaries"
 

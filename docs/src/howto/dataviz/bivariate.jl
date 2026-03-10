@@ -35,7 +35,7 @@ train!(model)
 
 # Get the prediction and uncertainty
 val = predict(model, L; threshold = false)
-unc = predict(ens, L; threshold = false, consensus = iqr)
+unc = predict(model, L; threshold = false, consensus = iqr)
 
 
 # ## Bivariate

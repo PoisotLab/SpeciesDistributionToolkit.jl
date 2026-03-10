@@ -22,7 +22,7 @@ function _to_dms(dec::Float64, north = false)
         else
             str *= " E"
         end
-    elseif D > 0
+    elseif D < 0
         if north
             str *= " S"
         else

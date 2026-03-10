@@ -45,6 +45,26 @@ unc = predict(ens, L; threshold = false, consensus = iqr)
 
 bivariate(val, unc)
 
+# 
+
+bivariate(val, unc; StevensRedBlue()...)
+
+#
+
+bivariate(val, unc; ArcMapOrangeBlue()...)
+
+#
+
+bivariate(val, unc; StevensYellowPurple()...)
+
+#
+
+bivariate(val, unc; StevensBluePurple()...)
+
+#
+
+bivariate(val, unc; StevensBlueGreen()...)
+
 # ## VSUP
 
 vsup(val, unc)

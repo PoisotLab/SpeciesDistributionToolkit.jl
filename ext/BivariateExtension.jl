@@ -1,7 +1,7 @@
 module BivariateExtension
 
 using SpeciesDistributionToolkit
-import SpeciesDistributionToolkit: bivariate, bivariate!, ArcMapOrangeBlue, StevensRedVlue, StevensBluePurple, StevensBlueGreen, StevensYellowPurple
+import SpeciesDistributionToolkit: bivariate, bivariate!, ArcMapOrangeBlue, StevensRedBlue, StevensBluePurple, StevensBlueGreen, StevensYellowPurple
 using Makie
 
 StevensRedBlue() = (

@@ -77,13 +77,34 @@ Makie.@recipe VSUPLegend (vs, ) begin
     span = π / 3
 end
 
-const TypedVsup{X} = Plot{SpeciesDistributionToolkit.vsup, Tuple{SDMLayer{X}, SDMLayer{X}}}
-
-Makie.convert_arguments(::Type{VSUPLegend}, pl::Plot) = (pl,)
+Makie.convert_arguments(::Type{VSUPLegend}, value::SDMLayer, uncertainty::SDMLayer) =
+    (value, uncertainty)
 Makie.preferred_axis_type(::VSUPLegend) = Makie.PolarAxis
 
+function _getline(x, θ₀, θ₁)
+    return [
+        (θ₀, 0),
+        [(θ, x) for θ in LinRange(θ₀, θ₁, 60)]...,
+        (θ₀, 0),
+    ]
+end
+
 function Makie.plot!(vl::VSUPLegend)
-    vsup!(vl, vl.vs[])
+    # Value bins
+    valuebins = 2^(vl.bins[] - 1)
+
+    # First, we get the palette with increasing amounts of masking
+    newpal = _vsup_grid(
+        vl.bins[],
+        vl.colormap[],
+        vl.color[],
+    )
+
+    # Now we can assemble the polygons
+    for i in Base.OneTo(vl.bins[])
+        poly!(vl, _getline(i, vl.direction[]-0.5*vl.span[], vl.direction[]+0.5*vl.span[]), color=rand(newpal))
+    end
+
     return vl
 end
 

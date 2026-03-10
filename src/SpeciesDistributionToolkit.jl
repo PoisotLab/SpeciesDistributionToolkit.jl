@@ -82,11 +82,11 @@ export graticulebox, graticulebox!, graticulegrid, graticulegrid!, enlargelimits
 # Bivariate extension
 function bivariate end
 function bivariate! end
-function StevensRedBlue end
-function StevensBluePurple end
-function StevensBlueGreen end
-function StevensYellowPurple end
-function ArcMapOrangeBlue end
+StevensRedBlue(::Number) = nothing
+StevensBluePurple(::Number) = nothing
+StevensBlueGreen(::Number) = nothing
+StevensYellowPurple(::Number) = nothing
+ArcMapOrangeBlue(::Number) = nothing
 export StevensBlueGreen, StevensBluePurple, StevensRedBlue, StevensYellowPurple, ArcMapOrangeBlue
 export bivariate, bivariate!
 

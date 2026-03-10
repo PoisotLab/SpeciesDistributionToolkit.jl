@@ -20,7 +20,6 @@ StevensYellowPurple() = (
     xcolormap = [colorant"#e8e8e8", colorant"#c8b35a"],
     ycolormap = [colorant"#e8e8e8", colorant"#9972af"],
 )
-
 ArcMapOrangeBlue() = (
     xcolormap = [colorant"#f2f2f5", colorant"#f4b303"],
     ycolormap = [colorant"#f2f2f5", colorant"#519cc5"],

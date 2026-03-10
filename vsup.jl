@@ -56,6 +56,110 @@ function _vsup_grid(vbins, ubins, vpal; upal = colorant"#ffffff", s = 0.5, k = 1
     return pal
 end
 
+function _multiply(c1::Makie.ColorTypes.RGB, c2::Makie.ColorTypes.RGB)
+    return Makie.ColorTypes.RGBA(
+        (c1.r * c2.r),
+        (c1.g * c2.g),
+        (c1.b * c2.b),
+        1.0,
+    )
+end
+
+function _multiply(c1::Makie.ColorTypes.RGBA, c2::Makie.ColorTypes.RGBA)
+    return Makie.ColorTypes.RGBA(
+        (c1.r * c2.r),
+        (c1.g * c2.g),
+        (c1.b * c2.b),
+        (c1.alpha + c2.alpha)/2,
+    )
+end
+
+function _multiply(c1::Makie.ColorTypes.RGBA, c2::Makie.ColorTypes.RGB)
+    return Makie.ColorTypes.RGBA(
+        (c1.r * c2.r),
+        (c1.g * c2.g),
+        (c1.b * c2.b),
+        c1.alpha/2,
+    )
+end
+
+_multiply(c1::Makie.ColorTypes.RGB, c2::Makie.ColorTypes.RGBA) = _multiply(c2, c1)
+
+function _bivariate_grid(xbins, ybins, xcm, ycm)
+    cx = Makie.cgrad(xcm, xbins; categorical = true)
+    cy = Makie.cgrad(ycm, ybins; categorical = true)
+    return [_multiply.(x, y) for x in cx, y in cy]
+end
+
+Makie.@recipe Bivariate (x, y) begin
+    xcolormap = [colorant"#e8e8e8", colorant"#73ae80"]
+    ycolormap = [colorant"#e8e8e8", colorant"#6c83b5"]
+    xbins = 3
+    ybins = 3
+end
+
+Makie.plottype(::Bivariate) = CellGrid
+Makie.convert_arguments(::Type{Bivariate}, x::SDMLayer, y::SDMLayer) =
+    (x, y)
+
+function Makie.plot!(bv::Bivariate)
+    # First, we get the palette with increasing amounts of masking
+    newpal = _bivariate_grid(
+        bv.xbins[],
+        bv.ybins[],
+        bv.xcolormap[],
+        bv.ycolormap[],
+    )
+
+    # Next, we turn each layer into a binarized version
+    xbin = discretize(bv.x[], bv.xbins[])
+    ybin = discretize(bv.y[], bv.ybins[])
+
+    # And then we assemble the layer to plot
+    idx = LinearIndices(newpal)
+
+    pal_position = similar(bv.x[], Int)
+    for k in keys(pal_position)
+        pal_position[k] = idx[xbin[k], ybin[k]]
+    end
+
+    # And this makes the plot we need
+    heatmap!(bv, pal_position; colormap = vec(newpal), colorrange = extrema(idx))
+
+    return bv
+end
+
+bivariate(L[1], L[12]; ESRIOrangeBlue()...)
+
+StevensRedBlue() = (
+    xcolormap = [colorant"#e8e8e8", colorant"#c85a5a"],
+    ycolormap = [colorant"#e8e8e8", colorant"#64acbe"],
+)
+StevensBluePurple() = (
+    xcolormap = [colorant"#e8e8e8", colorant"#5ac8c8"],
+    ycolormap = [colorant"#e8e8e8", colorant"#be64ac"],
+)
+StevensBlueGreen() = (
+    xcolormap = [colorant"#e8e8e8", colorant"#6c83b5"],
+    ycolormap = [colorant"#e8e8e8", colorant"#73ae80"],
+)
+StevensYellowPurple() = (
+    xcolormap = [colorant"#e8e8e8", colorant"#c8b35a"],
+    ycolormap = [colorant"#e8e8e8", colorant"#9972af"],
+)
+
+ArcMapOrangeBlue() = (
+    xcolormap = [colorant"#f2f2f5", colorant"#f4b303"],
+    ycolormap = [colorant"#f2f2f5", colorant"#519cc5"],
+)
+
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+vs = bivariate!(ax, val, unc; xbins = 5, ybins = 5, ArcMapOrangeBlue()...)
+current_figure()
+
+# VSUP
+
 Makie.@recipe VSUP (value, uncertainty) begin
     uncertaincolor = colorant"#ffffff"
     colormap = @inherit colormap
@@ -63,30 +167,9 @@ Makie.@recipe VSUP (value, uncertainty) begin
     uncertaintybins = 5
 end
 
-Makie.@recipe Bivariate (x, y) begin
-    xcolormap = @inherit colormap
-    xcolormap = @inherit colormap
-    xbins = 3
-    xbins = 3
-end
-
-Makie.@recipe VSUPLegend (vs::VSUP,) begin
-    span = π / 2
-    orientation = π
-end
-
 Makie.convert_arguments(::Type{VSUP}, value::SDMLayer, uncertainty::SDMLayer) =
     (value, uncertainty)
 Makie.plottype(::VSUP) = CellGrid
-Makie.plottype(::Bivariate) = CellGrid
-Makie.convert_arguments(::Type{Bivariate}, x::SDMLayer, y::SDMLayer) =
-    (x, y)
-
-# We will lift the arguments for the legend
-const VSUPlot{V,U} = Plot{vsup, Tuple{SDMLayer{V}, SDMLayer{U}}}
-Makie.convert_arguments(::Type{VSUPLegend}, vs::VSUPlot{U,V}) where {U,V} = (vs,)
-Makie.preferred_axis_type(::VSUPLegend) = Makie.PolarAxis
-Makie.plottype(::VSUPLegend) = Surface
 
 function Makie.plot!(vs::VSUP)
     # First, we get the palette with increasing amounts of masking
@@ -112,69 +195,3 @@ function Makie.plot!(vs::VSUP)
     heatmap!(vs, pal_position; colormap = vec(newpal), colorrange = extrema(idx))
     return vs
 end
-
-function Makie.plot!(vl::VSUPLegend)
-    @info "lol"
-    @info vl.args[]
-    surface!(vl,
-        -π / 4 .. π / 4,
-        0 .. 1,
-        zeros(Float64, (5, 5));
-        shading = NoShading,
-    )
-    return vl
-end
-
-vsuplegend(vs)
-
-f = Figure()
-ax = Axis(f[1, 1]; aspect = DataAspect())
-vs = vsup!(
-    ax,
-    val,
-    unc;
-    colormap = :thermal,
-    valuebins = 20,
-    uncertaintybins = 15,
-    uncertaincolor = colorant"#f0f0f0",
-)
-current_figure()
-
-# temperature layer
-
-# fig-hm
-heatmap(val; axis = (aspect = DataAspect(),))
-lines!(pol; color = :black)
-current_figure() #hide
-
-# now see the seasonality layer
-
-# fig-hm-unc
-heatmap(unc; axis = (aspect = DataAspect(),))
-lines!(pol; color = :black)
-current_figure() #hide
-
-ax_inset = PolarAxis(f[1, 1];
-    width = Relative(0.25),
-    height = Relative(0.5),
-    halign = 0.0,
-    valign = 0.0,
-    theta_0 = pi,
-    direction = -1,
-    tellheight = false,
-    tellwidth = false,
-    rgridvisible = false,
-    thetagridvisible = false,
-)
-
-surface!(
-    ax_inset,
-    -π / 4 .. π / 4,
-    0 .. 1,
-    zeros(size(pal));
-    color = reverse(pal),
-    shading = NoShading,
-)
-thetalims!(ax_inset, -pi / 4, pi / 4)
-rlims!(ax_inset, 0.1, 1)
-current_figure() #hide

@@ -72,4 +72,4 @@ vsup(val, unc)
 
 #
 
-vsup(val, unc; uncertaintybins=25)
+vsup(val, unc; bins=4, colormap=:cividis)

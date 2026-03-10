@@ -1,7 +1,15 @@
+# # Bivariate and value-suppressing maps
+
+# The package has functions to deal with bivariate maps, as well as
+# value-suppressing uncertainty palettes.
+
 using Revise
-using CairoMakie
 using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
+using CairoMakie
+CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
+
+# ## Getting data
 
 pol = getpolygon(PolygonData(OpenStreetMap, Places); place = "Corsica");
 spatialextent = SDT.boundingbox(pol; padding = 0.1)
@@ -28,15 +36,15 @@ ens = Bagging(model, 50)
 bagfeatures!(ens)
 train!(ens)
 
-# unpack
-
+# Get the prediction and uncertainty
 val = predict(model, L; threshold = false)
 unc = predict(ens, L; threshold = false, consensus = iqr)
 
 
-f = Figure()
-ax_bv = Axis(f[1,1]; aspect=DataAspect())
-ax_vs = Axis(f[1,2]; aspect=DataAspect())
-bivariate!(ax_bv, val, unc)
-vsup!(ax_vs, val, unc)
-current_figure()
+# ## Bivariate
+
+bivariate(val, unc)
+
+# ## VSUP
+
+vsup(val, unc)

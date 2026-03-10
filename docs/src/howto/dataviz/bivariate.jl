@@ -28,13 +28,10 @@ L = SDMLayer{Float16}[
 mask!(L, pol)
 
 # Model
-model = SDM(RawData, Logistic, SDeMo.__demodata()...)
-variables!(model, ForwardSelection)
-predict(model, L; threshold = false) |> heatmap
-
-ens = Bagging(model, 50)
-bagfeatures!(ens)
-train!(ens)
+base_model = SDM(PCATransform, DecisionTree, SDeMo.__demodata()...)
+model = Bagging(base_model, 50)
+bagfeatures!(model)
+train!(model)
 
 # Get the prediction and uncertainty
 val = predict(model, L; threshold = false)
@@ -45,13 +42,13 @@ unc = predict(ens, L; threshold = false, consensus = iqr)
 
 bivariate(val, unc)
 
+# change number of bins
+
+bivariate(val, unc; xbins=25, ybins=25)
+
 # 
 
 bivariate(val, unc; StevensRedBlue()...)
-
-#
-
-bivariate(val, unc; ArcMapOrangeBlue()...)
 
 #
 
@@ -65,6 +62,14 @@ bivariate(val, unc; StevensBluePurple()...)
 
 bivariate(val, unc; StevensBlueGreen()...)
 
+#
+
+bivariate(val, unc; ArcMapOrangeBlue()...)
+
 # ## VSUP
 
 vsup(val, unc)
+
+#
+
+vsup(val, unc; uncertaintybins=25)

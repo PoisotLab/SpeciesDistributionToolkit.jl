@@ -16,13 +16,13 @@ function _to_dms(dec::Float64, north = false)
             str *= " $(S)″"
         end
     end
-    if D >= 0
+    if D > 0
         if north
             str *= " N"
         else
             str *= " E"
         end
-    else
+    elseif D > 0
         if north
             str *= " S"
         else

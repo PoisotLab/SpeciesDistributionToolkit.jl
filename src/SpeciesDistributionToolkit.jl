@@ -93,6 +93,8 @@ export bivariate, bivariate!
 # VSUP extension
 function vsup end
 function vsup! end
-export vsup, vsup!
+function vsuplegend end
+function vsuplegend! end
+export vsup, vsup!, vsuplegend, vsuplegend!
 
 end # module SpeciesDistributionToolkit

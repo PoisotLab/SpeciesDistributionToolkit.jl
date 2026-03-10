@@ -1,7 +1,7 @@
 module VSUPExtension
 
 using SpeciesDistributionToolkit
-import SpeciesDistributionToolkit: vsup, vsup!
+import SpeciesDistributionToolkit: vsup, vsup!, vsuplegend, vsuplegend!
 using Makie
 
 function _merge_by(collection, n)
@@ -69,6 +69,22 @@ function Makie.plot!(vs::VSUP)
     # And this makes the plot we need
     heatmap!(vs, pal_position; colormap = vec(newpal), colorrange = extrema(idx))
     return vs
+end
+
+Makie.@recipe VSUPLegend (vs, ) begin
+    _shared_vsup_attributes()...
+    direction = 0
+    span = π / 3
+end
+
+const TypedVsup{X} = Plot{SpeciesDistributionToolkit.vsup, Tuple{SDMLayer{X}, SDMLayer{X}}}
+
+Makie.convert_arguments(::Type{VSUPLegend}, pl::Plot) = (pl,)
+Makie.preferred_axis_type(::VSUPLegend) = Makie.PolarAxis
+
+function Makie.plot!(vl::VSUPLegend)
+    vsup!(vl, vl.vs[])
+    return vl
 end
 
 end

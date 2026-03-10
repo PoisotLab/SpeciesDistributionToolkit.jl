@@ -63,6 +63,13 @@ Makie.@recipe VSUP (value, uncertainty) begin
     uncertaintybins = 5
 end
 
+Makie.@recipe Bivariate (x, y) begin
+    xcolormap = @inherit colormap
+    xcolormap = @inherit colormap
+    xbins = 3
+    xbins = 3
+end
+
 Makie.@recipe VSUPLegend (vs::VSUP,) begin
     span = π / 2
     orientation = π
@@ -71,6 +78,9 @@ end
 Makie.convert_arguments(::Type{VSUP}, value::SDMLayer, uncertainty::SDMLayer) =
     (value, uncertainty)
 Makie.plottype(::VSUP) = CellGrid
+Makie.plottype(::Bivariate) = CellGrid
+Makie.convert_arguments(::Type{Bivariate}, x::SDMLayer, y::SDMLayer) =
+    (x, y)
 
 # We will lift the arguments for the legend
 const VSUPlot{V,U} = Plot{vsup, Tuple{SDMLayer{V}, SDMLayer{U}}}

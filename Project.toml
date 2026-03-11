@@ -1,6 +1,6 @@
 name = "SpeciesDistributionToolkit"
 uuid = "72b53823-5c0b-4575-ad0e-8e97227ad13b"
-version = "1.8.1"
+version = "1.8.2"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 
 [deps]
@@ -29,9 +29,11 @@ STAC = "08e62803-e111-4f53-be9b-274ff296e9da"
 SpatialBoundaries = "8d2ba62a-3d23-4a2b-b692-6b63e9267be2"
 
 [extensions]
-MakieExtension = "Makie"
-STACExt = "STAC"
-SpatialBoundariesExt = "SpatialBoundaries"
+GraticuleExtension = "Makie"
+BivariateExtension = "Makie"
+VSUPExtension = "Makie"
+STACExtension = "STAC"
+SpatialBoundariesExtension = "SpatialBoundaries"
 
 [compat]
 Distances = "0.10"

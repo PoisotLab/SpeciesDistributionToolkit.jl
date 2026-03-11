@@ -1,3 +1,5 @@
+import Base: clamp, clamp!
+
 """
     gainloss(contemporary::SDMLayer{Bool}, future::SDMLayer{Bool})
 
@@ -9,4 +11,23 @@ is irrelevant as these are ignored internally.
 function gainloss(contemporary::SDMLayer{Bool}, future::SDMLayer{Bool})
     rangemask = nodata((contemporary) | (future), false)
     return mask(Int8.(contemporary) - Int8.(future), rangemask)
+end
+
+function discretize(layer, n::Integer)
+    categories = rescale(layer, 0.0, 1.0)
+    map!(x -> round(x * (n - 1); digits = 0) / (n - 1), categories.grid, categories.grid)
+    map!(x -> x * (n - 1) + 1, categories.grid, categories.grid)
+    map!(x -> isnan(x) ? zero(eltype(categories.grid)) : x, categories.grid)
+    return convert(SDMLayer{Int}, categories)
+end
+
+function Base.clamp!(layer::SDMLayer{T}, lo::L, hi::H) where {T <: Number, L <: Number, H <: Number}
+    clamp!(layer.grid, lo, hi)
+    return layer
+end
+
+function Base.clamp(layer::SDMLayer{T}, lo::L, hi::H) where {T <: Number, L <: Number, H <: Number}
+    cp = copy(layer)
+    clamp!(cp, lo, hi)
+    return cp
 end

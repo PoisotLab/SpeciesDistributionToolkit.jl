@@ -57,7 +57,7 @@ export zone, byzone
 
 # Extra functions
 include("utilities.jl")
-export gainloss
+export gainloss, discretize
 
 # Reprojection
 include("reproject.jl")
@@ -71,12 +71,33 @@ export crosshatch, polygonize
 include("boundingbox.jl")
 export boundingbox
 
-# Makie extension (will only be non-empty if makie is loaded)
+# Graticule extension
 function graticulegrid end
 function graticulegrid! end
 function graticulebox end
 function graticulebox! end
 function enlargelimits! end
 export graticulebox, graticulebox!, graticulegrid, graticulegrid!, enlargelimits!
+
+# Bivariate extension
+function bivariate end
+function bivariate! end
+function bivariatelegend end
+function bivariatelegend! end
+StevensRedBlue(::Number) = nothing
+StevensBluePurple(::Number) = nothing
+StevensBlueGreen(::Number) = nothing
+StevensYellowPurple(::Number) = nothing
+ArcMapOrangeBlue(::Number) = nothing
+export StevensBlueGreen, StevensBluePurple, StevensRedBlue, StevensYellowPurple, ArcMapOrangeBlue
+export bivariate, bivariate!, bivariatelegend, bivariatelegend!
+
+# VSUP extension
+function vsup end
+function vsup! end
+function vsuplegend end
+function vsuplegend! end
+function vsuplegendticks end
+export vsup, vsup!, vsuplegend, vsuplegend!, vsuplegendticks
 
 end # module SpeciesDistributionToolkit

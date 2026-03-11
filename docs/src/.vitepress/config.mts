@@ -186,6 +186,7 @@ export default defineConfig({
                                 { text: "Models", link: "/howto/dataviz/models/" },
                                 { text: "Projections", link: "/howto/dataviz/projections/" },
                                 { text: "Graticules", link: "/howto/dataviz/graticules/" },
+                                { text: "Bivariate", link: "/howto/dataviz/bivariate/" },
                             ]
                         }
                     ]

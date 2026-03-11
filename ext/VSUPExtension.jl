@@ -56,7 +56,7 @@ end
 function _shared_vsup_attributes()
     Makie.@DocumentedAttributes begin
         color = colorant"#e8e8e8"
-        colormap = [:mediumseagreen, :darkorange2]
+        colormap = [:cadetblue, :tan3]
         bins = 4
     end
 end

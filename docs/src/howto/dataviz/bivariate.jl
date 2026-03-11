@@ -157,7 +157,11 @@ unc = predict(model, L; threshold = false, consensus = iqr)
 
 vsup(val, unc; axis=(; aspect=DataAspect()))
 
-# Because VSUP are binary partitions, the number of uncertainty bins n will determine the number of value bins:
+# Because VSUP are binary partitions, the number of uncertainty bins n will
+# determine the number of value bins. In our experience, a number of bins
+# between 4 (8 classes for value) and 5 (16 classes for values) is ideal. Larger
+# number of bins give a smoother output, but can make interpretation less
+# obvious:
 
 vsup(val, unc; axis=(; aspect=DataAspect()), bins=10)
 
@@ -167,14 +171,14 @@ vsup(val, unc; axis=(; aspect=DataAspect()), color=colorant"#ff0000")
 
 # We can also change the color map used to display the value:
 
-vsup(val, unc; axis=(; aspect=DataAspect()), colormap=[:skyblue, :orange], color=colorant"#d0d0d0")
+vsup(val, unc; axis=(; aspect=DataAspect()), colormap=[:cadetblue, :tan3], color=colorant"#d0d0d0")
 
 # The legend of a VSUP is presented as a wedge, where increasingly uncertain
 # cells are merged together, and averaged towards the color for uncertain
 # values. It must be added to a _polar_ axis, which has two key parameters: the
 # direction towards which it points, and the angle covered by the values:
 
-kwargs = (bins = 5, colormap = [:mediumseagreen, :darkorange2], color = colorant"#f0f0f0")
+kwargs = (bins = 4, colormap = [:purple, :skyblue], color = colorant"#f0f0f0")
 vsuplegend(val, unc; kwargs..., direction = π/4, span = π/2)
 
 # Note that this is returned as a default polar axis, and so needs a little bit
@@ -189,9 +193,10 @@ f
 
 # We also need to change the ticks for the uncertainty dimension. The order of
 # arguments for the `vsuplegendticks` function is the layer, the desired number
-# of ticks, and then the axis limits (for the uncertainty, this goes from 0 to the number of bins):
+# of ticks, and then the axis limits (for the uncertainty, this goes _from_ the
+# number of bins _to_ 0):
 
-ax.rticks = vsuplegendticks(unc, 7, 0, 5)
+ax.rticks = vsuplegendticks(unc, 7, 5, 0)
 f
 
 # We can do the same thing for the value ticks
@@ -210,7 +215,7 @@ le = PolarAxis(f[1, 1];
     halign = 0.0,
     valign = 1.0,
     thetaticks = vsuplegendticks(val, 5, direction - angle / 2, direction + angle / 2),
-    rticks = vsuplegendticks(unc, 3, 0, 5),
+    rticks = vsuplegendticks(unc, 3, 5, 0),
     rticklabelrotation = pi / 2,
 )
 

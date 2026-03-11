@@ -85,7 +85,7 @@ ticks, m, M = Makie.PlotUtils.optimize_ticks(
             k_max = 5,
         )
 
-direction, angle = 0, π/7
+direction, angle = π/2, π
 rticks = (ticks .- m) ./ (M - m)
 base = direction - angle/2
 tticks = base .+ rticks .* angle

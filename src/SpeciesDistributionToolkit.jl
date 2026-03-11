@@ -82,13 +82,15 @@ export graticulebox, graticulebox!, graticulegrid, graticulegrid!, enlargelimits
 # Bivariate extension
 function bivariate end
 function bivariate! end
+function bivariatelegend end
+function bivariatelegend! end
 StevensRedBlue(::Number) = nothing
 StevensBluePurple(::Number) = nothing
 StevensBlueGreen(::Number) = nothing
 StevensYellowPurple(::Number) = nothing
 ArcMapOrangeBlue(::Number) = nothing
 export StevensBlueGreen, StevensBluePurple, StevensRedBlue, StevensYellowPurple, ArcMapOrangeBlue
-export bivariate, bivariate!
+export bivariate, bivariate!, bivariatelegend, bivariatelegend!
 
 # VSUP extension
 function vsup end

@@ -14,7 +14,9 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 #  
 # Makie does not currently make it easy (possible?) to define custom legends
 # from recipes. For this reason, the legends for bivariate and VSUP plots are
-# provided as plots,
+# provided as plots. Note that Makie recipes also (as far as we can tell) do not
+# set default axis properties, so getting the legends is a little more awkward
+# than we'd like.
 #
 # :::
 
@@ -68,27 +70,71 @@ bivariate(L[1], L[12]; StevensBlueGreen()..., axis = (aspect = DataAspect(),))
 
 bivariate(L[1], L[12]; ArcMapOrangeBlue()..., axis = (aspect = DataAspect(),))
 
+# The legend of a bivariate colormap is simply a heatmap.
+
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+le = Axis(f[1, 2]; aspect = 1, xlabel = "Temperature", ylabel = "Precipitation")
+
+bivariate!(ax, L[1], L[12]; ArcMapOrangeBlue()..., xbins = 3, ybins = 3)
+
+bivariatelegend!(le, L[1], L[12];
+    ArcMapOrangeBlue()...,
+    xbins = 3,
+    ybins = 3)
+
+tightlimits!(ax)
+hidespines!(ax)
+hidedecorations!(ax)
+tightlimits!(le)
+scatter!(le, L[1], L[12]; color = :grey30, markersize = 1)
+
+current_figure()
+
 # The color palette can be set for each axis separately, for example to use a
 # diverging colormap. We get the z-scores of precipitation and temperature, and
 # clamp them to the -1, 1 interval:
 
 z(layer::SDMLayer) = (layer - Statistics.mean(layer)) / Statistics.std(layer)
 
-z1 = clamp(z(L[1]), -1, 1)
-z2 = clamp(z(L[12]), -1, 1)
+z1 = clamp(z(L[1]), -1.5, 1.5)
+z2 = clamp(z(L[12]), -1.5, 1.5)
 
 # The two color maps use complementary colors, the same midpoints, and the
 # resulting figure is, to use a technical term, an absolute abomination.
 
-bivariate(
-    z1,
-    z2;
+palettes = (
     xcolormap = [:gold, :seashell, :darkorchid2],
     ycolormap = [:skyblue, :seashell, :darkorange],
-    xbins = 25,
-    ybins = 25,
-    axis = (aspect = DataAspect(),)
 )
+
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+le = Axis(
+    f[1, 2];
+    aspect = 1,
+    xlabel = "Normalized temperature",
+    ylabel = "Normalized precipitation",
+)
+bivariate!(
+    ax,
+    z1,
+    z2;
+    palettes...,
+    xbins = 7,
+    ybins = 7)
+
+bivariatelegend!(le, z1, z2;
+    palettes...,
+    xbins = 7,
+    ybins = 7)
+
+tightlimits!(ax)
+hidespines!(ax)
+hidedecorations!(ax)
+tightlimits!(le)
+
+current_figure()
 
 # ## VSUP
 

@@ -1,7 +1,8 @@
 module BivariateExtension
 
 using SpeciesDistributionToolkit
-import SpeciesDistributionToolkit: bivariate, bivariate!, ArcMapOrangeBlue, StevensRedBlue, StevensBluePurple, StevensBlueGreen, StevensYellowPurple
+import SpeciesDistributionToolkit: bivariate, bivariate!, bivariatelegend, bivariatelegend!, ArcMapOrangeBlue, StevensRedBlue,
+    StevensBluePurple, StevensBlueGreen, StevensYellowPurple
 using Makie
 
 StevensRedBlue() = (
@@ -39,7 +40,7 @@ function _multiply(c1::Makie.ColorTypes.RGBA, c2::Makie.ColorTypes.RGBA)
         (c1.r * c2.r),
         (c1.g * c2.g),
         (c1.b * c2.b),
-        (c1.alpha + c2.alpha)/2,
+        (c1.alpha + c2.alpha) / 2,
     )
 end
 
@@ -48,7 +49,7 @@ function _multiply(c1::Makie.ColorTypes.RGBA, c2::Makie.ColorTypes.RGB)
         (c1.r * c2.r),
         (c1.g * c2.g),
         (c1.b * c2.b),
-        c1.alpha/2,
+        c1.alpha / 2,
     )
 end
 
@@ -60,11 +61,17 @@ function _bivariate_grid(xbins, ybins, xcm, ycm)
     return [_multiply.(x, y) for x in cx, y in cy]
 end
 
+function _shared_bivariate_attributes()
+    Makie.@DocumentedAttributes begin
+        xcolormap = StevensBlueGreen().xcolormap
+        ycolormap = StevensBlueGreen().ycolormap
+        xbins = 3
+        ybins = 3
+    end
+end
+
 Makie.@recipe Bivariate (x, y) begin
-    xcolormap = StevensBlueGreen().xcolormap
-    ycolormap = StevensBlueGreen().ycolormap
-    xbins = 3
-    ybins = 3
+    _shared_bivariate_attributes()...
 end
 
 Makie.plottype(::Bivariate) = CellGrid
@@ -96,6 +103,37 @@ function Makie.plot!(bv::Bivariate)
     heatmap!(bv, pal_position; colormap = vec(newpal), colorrange = extrema(idx))
 
     return bv
+end
+
+
+
+
+
+
+
+Makie.@recipe BivariateLegend (x, y) begin
+    _shared_bivariate_attributes()...
+end
+
+Makie.plottype(::BivariateLegend) = CellGrid
+Makie.convert_arguments(::Type{BivariateLegend}, x::SDMLayer, y::SDMLayer) =
+    (x, y)
+
+function Makie.plot!(bl::BivariateLegend)
+    # First, we get the palette with increasing amounts of masking
+    newpal = _bivariate_grid(
+        bl.xbins[],
+        bl.ybins[],
+        bl.xcolormap[],
+        bl.ycolormap[],
+    )
+
+    idx = LinearIndices(newpal)
+   
+    # And this makes the plot we need
+    heatmap!(bl, LinRange(extrema(bl.x[])..., bl.xbins[]), LinRange(extrema(bl.y[])..., bl.ybins[]), idx; colormap = vec(newpal), colorrange = extrema(idx))
+
+    return bl
 end
 
 end

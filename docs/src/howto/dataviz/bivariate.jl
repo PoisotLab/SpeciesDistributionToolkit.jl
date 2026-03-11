@@ -138,41 +138,79 @@ current_figure()
 
 # ## VSUP
 
-# Model
-base_model = SDM(PCATransform, Logistic, SDeMo.__demodata()...)
-variables!(base_model, BackwardSelection)
-variables!(base_model, ForwardSelection)
+# Value Suppressing Uncertainty Palettes (VSUPs) are a way to downgrade a color
+# palette towards a specific color in order to mask values that are increasingly
+# uncertain. We will illustrate this by showing the prediction of an SDM, but
+# also convey some information about uncertainty (through bootstrap).
 
-# Bootstrapped model
+base_model = SDM(RawData, Logistic, SDeMo.__demodata()...)
+variables!(base_model, ForwardSelection)
 model = Bagging(base_model, 20)
 train!(model)
 
-# Get the prediction and uncertainty
+# We get two layers: one for the prediction, and one for the uncertainty.
+
 val = predict(base_model, L; threshold = false)
 unc = predict(model, L; threshold = false, consensus = iqr)
 
-# ## VSUP
+# This is the default output of a VSUP:
 
-vsup(val, unc)
+vsup(val, unc; axis=(; aspect=DataAspect()))
 
-# this needs to be ported
+# Because VSUP are binary partitions, the number of uncertainty bins n will determine the number of value bins:
 
-direction, angle = π / 2, -π
+vsup(val, unc; axis=(; aspect=DataAspect()), bins=10)
 
-kwargs = (bins = 3, colormap = [:mediumseagreen, :darkorange2], color = colorant"#f0f0f0")
+# We can change the color associated to uncertain areas:
 
-# full example with legend
+vsup(val, unc; axis=(; aspect=DataAspect()), color=colorant"#ff0000")
+
+# We can also change the color map used to display the value:
+
+vsup(val, unc; axis=(; aspect=DataAspect()), colormap=[:skyblue, :orange], color=colorant"#d0d0d0")
+
+# The legend of a VSUP is presented as a wedge, where increasingly uncertain
+# cells are merged together, and averaged towards the color for uncertain
+# values. It must be added to a _polar_ axis, which has two key parameters: the
+# direction towards which it points, and the angle covered by the values:
+
+kwargs = (bins = 5, colormap = [:mediumseagreen, :darkorange2], color = colorant"#f0f0f0")
+vsuplegend(val, unc; kwargs..., direction = π/4, span = π/2)
+
+# Note that this is returned as a default polar axis, and so needs a little bit
+# of work. We can start by setting the correct limits:
+
+direction, angle = π/5, π/2.5
+
+f, ax, pl = vsuplegend(val, unc; kwargs..., direction = direction, span = angle)
+autolimits!(ax)
+tightlimits!(ax)
+f
+
+# We also need to change the ticks for the uncertainty dimension. The order of
+# arguments for the `vsuplegendticks` function is the layer, the desired number
+# of ticks, and then the axis limits (for the uncertainty, this goes from 0 to the number of bins):
+
+ax.rticks = vsuplegendticks(unc, 7, 0, 5)
+f
+
+# We can do the same thing for the value ticks
+
+ax.thetaticks = vsuplegendticks(val, 10, direction - angle / 2, direction + angle / 2)
+f
+
+# Putting everyhing together, we can get to a fairly good result:
 
 f = Figure(; size = (400, 600))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 
 le = PolarAxis(f[1, 1];
     width = Relative(0.69),
-    height = Relative(0.23),
+    height = Relative(0.235),
     halign = 0.0,
     valign = 1.0,
-    thetaticks = vsuplegendticks(val, 4, direction - angle / 2, direction + angle / 2),
-    rticks = vsuplegendticks(unc, 2, direction - angle / 2, direction + angle / 2),
+    thetaticks = vsuplegendticks(val, 5, direction - angle / 2, direction + angle / 2),
+    rticks = vsuplegendticks(unc, 3, 0, 5),
     rticklabelrotation = pi / 2,
 )
 
@@ -183,12 +221,4 @@ autolimits!(le)
 tightlimits!(le)
 hidespines!(ax)
 hidedecorations!(ax)
-scatter!(
-    le,
-    rescale(val, direction - angle / 2, direction + angle / 2),
-    rescale(unc, 3, 0);
-    color = :grey20,
-    markersize = 1,
-    alpha = 0.5,
-)
 current_figure()

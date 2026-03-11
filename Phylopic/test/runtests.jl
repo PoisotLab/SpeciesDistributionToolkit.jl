@@ -41,3 +41,9 @@ end
     silhouetteplot(0., 0., PhylopicSilhouette("Sicus ferrugineus"), markersize=200, color=0.4)
     @test true
 end
+
+@testitem "We can plot a silhouette from a string" begin
+    using CairoMakie
+    silhouetteplot(0., 0., "Orthobunyavirus oropoucheense", markersize=200, color=:orange)
+    @test true
+end

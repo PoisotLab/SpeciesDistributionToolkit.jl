@@ -148,4 +148,9 @@ export writesdm, loadsdm
 include("utilities/varia.jl")
 export iqr
 
+# Figures
+function ceterisparibus end
+function ceterisparibus! end
+export ceterisparibus, ceterisparibus!
+
 end # module SDeMo

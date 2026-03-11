@@ -85,7 +85,7 @@ ticks, m, M = Makie.PlotUtils.optimize_ticks(
             k_max = 5,
         )
 
-direction, angle = 0, π/3
+direction, angle = 0, π/7
 rticks = (ticks .- m) ./ (M - m)
 base = direction - angle/2
 tticks = base .+ rticks .* angle
@@ -93,9 +93,16 @@ kwargs = (bins = 4, colormap = [:teal, :orange], color = colorant"#d0d0d0")
 
 # full example with legend
 
-f = Figure()
+f = Figure(; size=(400, 600))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-le = PolarAxis(f[1, 2]; thetaticks = (tticks, string.(round.(ticks; digits=2))))
+
+le = PolarAxis(f[1, 1];
+    width = Relative(0.65),
+    height = Relative(0.23),
+    halign = 0.0,
+    valign = 1.0,
+    thetaticks = (tticks, string.(round.(ticks; digits=2))))
+
 vsup!(ax, val, unc; kwargs...)
 lines!(ax, pol, color=:black)
 vsuplegend!(le, val, unc; kwargs..., direction = direction, span = angle)

@@ -4,6 +4,20 @@ using SpeciesDistributionToolkit
 import SpeciesDistributionToolkit: vsup, vsup!, vsuplegend, vsuplegend!, vsuplegendticks
 using Makie
 
+function _color_merger(colr)
+    R = sum([col.r for col in colr])/length(colr)
+    G = sum([col.g for col in colr])/length(colr)
+    B = sum([col.b for col in colr])/length(colr)
+    return Makie.ColorTypes.RGB(R, G, B)
+end
+
+function _color_mixer(w, c1, c2)
+    R = w*c1.r + (1-w)*c2.r
+    G = w*c1.g + (1-w)*c2.g
+    B = w*c1.b + (1-w)*c2.b
+    return Makie.ColorTypes.RGB(R, G, B)
+end
+
 function vsuplegendticks(layer, n, r, R)
     ticks, m, M = Makie.PlotUtils.optimize_ticks(
         extrema(layer)...;
@@ -19,7 +33,7 @@ end
 function _merge_by(collection, n)
     collection = convert(Vector{typeof(first(collection))}, collect(collection))
     groups = Base.Iterators.partition(collection, n)
-    grouped = map(x -> Makie.ColorSchemes.weighted_color_mean(ones(n) / n, x), collect(groups))
+    grouped = map(_color_merger, collect(groups))
     return repeat(grouped; inner = n)
 end
 
@@ -31,8 +45,7 @@ function _vsup_grid(bins, colormap, color)
         row_pal = _merge_by(Makie.cgrad(colormap, vbins; categorical = true), 2^(i - 1))
         pal[:, i] .= row_pal
         for j in 1:vbins
-            pal[j, i] =
-                Makie.ColorSchemes.weighted_color_mean(1 - shrkfac, pal[j, i], color)
+            pal[j, i] = _color_mixer(1-shrkfac, pal[j, i], color)
         end
     end
     return pal

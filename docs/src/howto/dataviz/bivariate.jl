@@ -6,8 +6,17 @@
 using Revise
 using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
+import Statistics
 using CairoMakie
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
+
+# ::: warning A note about legends
+#  
+# Makie does not currently make it easy (possible?) to define custom legends
+# from recipes. For this reason, the legends for bivariate and VSUP plots are
+# provided as plots,
+#
+# :::
 
 # ## Getting data
 
@@ -27,16 +36,19 @@ L = SDMLayer{Float32}[
 
 mask!(L, pol)
 
-
 # ## Bivariate
+
+# Bivariate maps encode two dimensions of information in a single palette. They
+# take two layers as arguments.
 
 bivariate(L[1], L[12]; axis = (aspect = DataAspect(),))
 
-# change number of bins
+# The number of bins for each dimension can be changed.
 
 bivariate(L[1], L[12]; xbins = 25, ybins = 25, axis = (aspect = DataAspect(),))
 
-# 
+# The extension comes with a handful of robust color choices, which need to be
+# called and then splatted.
 
 bivariate(L[1], L[12]; StevensRedBlue()..., axis = (aspect = DataAspect(),))
 
@@ -55,6 +67,30 @@ bivariate(L[1], L[12]; StevensBlueGreen()..., axis = (aspect = DataAspect(),))
 #
 
 bivariate(L[1], L[12]; ArcMapOrangeBlue()..., axis = (aspect = DataAspect(),))
+
+# The color palette can be set for each axis separately, for example to use a
+# diverging colormap. We get the z-scores of precipitation and temperature, and
+# clamp them to the -1, 1 interval:
+
+z(layer::SDMLayer) = (layer - Statistics.mean(layer)) / Statistics.std(layer)
+
+z1 = clamp(z(L[1]), -1, 1)
+z2 = clamp(z(L[12]), -1, 1)
+
+# The two color maps use complementary colors, the same midpoints, and the
+# resulting figure is, to use a technical term, an absolute abomination.
+
+bivariate(
+    z1,
+    z2;
+    xcolormap = [:gold, :seashell, :darkorchid2],
+    ycolormap = [:skyblue, :seashell, :darkorange],
+    xbins = 25,
+    ybins = 25,
+    axis = (aspect = DataAspect(),)
+)
+
+# ## VSUP
 
 # Model
 base_model = SDM(PCATransform, Logistic, SDeMo.__demodata()...)
@@ -75,18 +111,6 @@ vsup(val, unc)
 
 # this needs to be ported
 
-function maketicks(layer, n, r, R)
-    ticks, m, M = Makie.PlotUtils.optimize_ticks(
-        extrema(layer)...;
-        k_min = n - 2,
-        k_ideal = n,
-        k_max = n + 2,
-    )
-    rticks = (ticks .- m) ./ (M - m)
-    tticks = rticks .* (R - r) .+ r
-    return (tticks, string.(round.(ticks; digits = 2)))
-end
-
 direction, angle = π / 2, -π
 
 kwargs = (bins = 3, colormap = [:mediumseagreen, :darkorange2], color = colorant"#f0f0f0")
@@ -101,9 +125,9 @@ le = PolarAxis(f[1, 1];
     height = Relative(0.23),
     halign = 0.0,
     valign = 1.0,
-    thetaticks = maketicks(val, 4, direction-angle/2, direction+angle/2),
-    rticks = maketicks(unc, 2, direction-angle/2, direction+angle/2),
-    rticklabelrotation=pi/2
+    thetaticks = vsuplegendticks(val, 4, direction - angle / 2, direction + angle / 2),
+    rticks = vsuplegendticks(unc, 2, direction - angle / 2, direction + angle / 2),
+    rticklabelrotation = pi / 2,
 )
 
 vsup!(ax, val, unc; kwargs...)

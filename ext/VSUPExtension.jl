@@ -1,8 +1,20 @@
 module VSUPExtension
 
 using SpeciesDistributionToolkit
-import SpeciesDistributionToolkit: vsup, vsup!, vsuplegend, vsuplegend!
+import SpeciesDistributionToolkit: vsup, vsup!, vsuplegend, vsuplegend!, vsuplegendticks
 using Makie
+
+function vsuplegendticks(layer, n, r, R)
+    ticks, m, M = Makie.PlotUtils.optimize_ticks(
+        extrema(layer)...;
+        k_min = n - 2,
+        k_ideal = n,
+        k_max = n + 2,
+    )
+    rticks = (ticks .- m) ./ (M - m)
+    tticks = rticks .* (R - r) .+ r
+    return (tticks, string.(round.(ticks; digits = 2)))
+end
 
 function _merge_by(collection, n)
     groups = Base.Iterators.partition(collection, n)
@@ -30,8 +42,8 @@ end
 function _shared_vsup_attributes()
     Makie.@DocumentedAttributes begin
         color = colorant"#e8e8e8"
-        colormap = @inherit colormap
-        bins = 5
+        colormap = [:mediumseagreen, :darkorange2]
+        bins = 4
     end
 end
 

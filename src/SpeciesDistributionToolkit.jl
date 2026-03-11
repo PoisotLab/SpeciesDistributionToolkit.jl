@@ -57,7 +57,7 @@ export zone, byzone
 
 # Extra functions
 include("utilities.jl")
-export gainloss
+export gainloss, discretize
 
 # Reprojection
 include("reproject.jl")
@@ -69,7 +69,7 @@ export crosshatch, polygonize
 
 # Get the boundingbox tuple
 include("boundingbox.jl")
-export boundingbox, discretize
+export boundingbox
 
 # Graticule extension
 function graticulegrid end
@@ -95,6 +95,7 @@ function vsup end
 function vsup! end
 function vsuplegend end
 function vsuplegend! end
-export vsup, vsup!, vsuplegend, vsuplegend!
+function vsuplegendticks end
+export vsup, vsup!, vsuplegend, vsuplegend!, vsuplegendticks
 
 end # module SpeciesDistributionToolkit

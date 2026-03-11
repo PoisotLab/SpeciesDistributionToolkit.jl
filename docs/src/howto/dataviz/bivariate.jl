@@ -28,8 +28,9 @@ L = SDMLayer{Float16}[
 mask!(L, pol)
 
 # Model
-base_model = SDM(PCATransform, DecisionTree, SDeMo.__demodata()...)
-model = Bagging(base_model, 50)
+base_model = SDM(RawData, Logistic, SDeMo.__demodata()...)
+variables!(base_model, ForwardSelection)
+model = Bagging(base_model, 10)
 bagfeatures!(model)
 train!(model)
 
@@ -37,39 +38,69 @@ train!(model)
 val = predict(model, L; threshold = false)
 unc = predict(model, L; threshold = false, consensus = iqr)
 
-
 # ## Bivariate
 
-bivariate(val, unc)
+bivariate(val, unc; axis=(aspect=DataAspect(),))
 
 # change number of bins
 
-bivariate(val, unc; xbins=25, ybins=25)
+bivariate(val, unc; xbins = 25, ybins = 25, axis=(aspect=DataAspect(),))
 
 # 
 
-bivariate(val, unc; StevensRedBlue()...)
+bivariate(val, unc; StevensRedBlue()..., axis=(aspect=DataAspect(),))
 
 #
 
-bivariate(val, unc; StevensYellowPurple()...)
+bivariate(val, unc; StevensYellowPurple()..., axis=(aspect=DataAspect(),))
 
 #
 
-bivariate(val, unc; StevensBluePurple()...)
+bivariate(val, unc; StevensBluePurple()..., axis=(aspect=DataAspect(),))
 
 #
 
-bivariate(val, unc; StevensBlueGreen()...)
+bivariate(val, unc; StevensBlueGreen()..., axis=(aspect=DataAspect(),))
 
 #
 
-bivariate(val, unc; ArcMapOrangeBlue()...)
+bivariate(val, unc; ArcMapOrangeBlue()..., axis=(aspect=DataAspect(),))
 
 # ## VSUP
 
 vsup(val, unc)
 
-#
+# this needs to be ported
 
-vsup(val, unc; bins=4, colormap=:cividis)
+function angular_ticks(layer, direction, span, n)
+    ticks = collect(range(direction-span/2, direction+span/2, n))
+    labels = collect(range(extrema(layer)..., n))
+    return (ticks, string.(labels))
+end
+
+ticks, m, M = Makie.PlotUtils.optimize_ticks(
+            extrema(val)...;
+            k_min = 5,
+            k_ideal = 5,
+            k_max = 5,
+        )
+
+direction, angle = 0, π/3
+rticks = (ticks .- m) ./ (M - m)
+base = direction - angle/2
+tticks = base .+ rticks .* angle
+kwargs = (bins = 4, colormap = [:teal, :orange], color = colorant"#d0d0d0")
+
+# full example with legend
+
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+le = PolarAxis(f[1, 2]; thetaticks = (tticks, string.(round.(ticks; digits=2))))
+vsup!(ax, val, unc; kwargs...)
+lines!(ax, pol, color=:black)
+vsuplegend!(le, val, unc; kwargs..., direction = direction, span = angle)
+autolimits!(le)
+tightlimits!(le)
+hidespines!(ax)
+hidedecorations!(ax)
+current_figure()

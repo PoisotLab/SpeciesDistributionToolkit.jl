@@ -101,8 +101,11 @@ function Makie.plot!(vl::VSUPLegend)
     )
 
     # Now we can assemble the polygons
-    for i in Base.OneTo(vl.bins[])
-        poly!(vl, _getline(i, vl.direction[]-0.5*vl.span[], vl.direction[]+0.5*vl.span[]), color=rand(newpal))
+    Θ = LinRange(vl.direction[]-0.5*vl.span[], vl.direction[]+0.5*vl.span[], size(newpal, 1)+1)
+    for i in axes(newpal, 2)
+        for j in axes(newpal, 1)
+            poly!(vl, _getline(vl.bins[] - i + 1, Θ[j], Θ[j+1]), color=newpal[j,i])
+        end
     end
 
     return vl

@@ -61,8 +61,8 @@ function _bivariate_grid(xbins, ybins, xcm, ycm)
 end
 
 Makie.@recipe Bivariate (x, y) begin
-    xcolormap = [colorant"#e8e8e8", colorant"#73ae80"]
-    ycolormap = [colorant"#e8e8e8", colorant"#6c83b5"]
+    xcolormap = StevensBlueGreen().xcolormap
+    ycolormap = StevensBlueGreen().ycolormap
     xbins = 3
     ybins = 3
 end

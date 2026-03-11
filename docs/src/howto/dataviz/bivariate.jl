@@ -17,7 +17,7 @@ spatialextent = SDT.boundingbox(pol; padding = 0.1)
 # some layers
 
 provider = RasterData(CHELSA2, BioClim)
-L = SDMLayer{Float16}[
+L = SDMLayer{Float32}[
     SDMLayer(
         provider;
         layer = i,
@@ -27,44 +27,47 @@ L = SDMLayer{Float16}[
 
 mask!(L, pol)
 
-# Model
-base_model = SDM(RawData, Logistic, SDeMo.__demodata()...)
-variables!(base_model, ForwardSelection)
-model = Bagging(base_model, 10)
-bagfeatures!(model)
-train!(model)
-
-# Get the prediction and uncertainty
-val = predict(model, L; threshold = false)
-unc = predict(model, L; threshold = false, consensus = iqr)
 
 # ## Bivariate
 
-bivariate(val, unc; axis=(aspect=DataAspect(),))
+bivariate(L[1], L[12]; axis = (aspect = DataAspect(),))
 
 # change number of bins
 
-bivariate(val, unc; xbins = 25, ybins = 25, axis=(aspect=DataAspect(),))
+bivariate(L[1], L[12]; xbins = 25, ybins = 25, axis = (aspect = DataAspect(),))
 
 # 
 
-bivariate(val, unc; StevensRedBlue()..., axis=(aspect=DataAspect(),))
+bivariate(L[1], L[12]; StevensRedBlue()..., axis = (aspect = DataAspect(),))
 
 #
 
-bivariate(val, unc; StevensYellowPurple()..., axis=(aspect=DataAspect(),))
+bivariate(L[1], L[12]; StevensYellowPurple()..., axis = (aspect = DataAspect(),))
 
 #
 
-bivariate(val, unc; StevensBluePurple()..., axis=(aspect=DataAspect(),))
+bivariate(L[1], L[12]; StevensBluePurple()..., axis = (aspect = DataAspect(),))
 
 #
 
-bivariate(val, unc; StevensBlueGreen()..., axis=(aspect=DataAspect(),))
+bivariate(L[1], L[12]; StevensBlueGreen()..., axis = (aspect = DataAspect(),))
 
 #
 
-bivariate(val, unc; ArcMapOrangeBlue()..., axis=(aspect=DataAspect(),))
+bivariate(L[1], L[12]; ArcMapOrangeBlue()..., axis = (aspect = DataAspect(),))
+
+# Model
+base_model = SDM(PCATransform, Logistic, SDeMo.__demodata()...)
+variables!(base_model, BackwardSelection)
+variables!(base_model, ForwardSelection)
+
+# Bootstrapped model
+model = Bagging(base_model, 20)
+train!(model)
+
+# Get the prediction and uncertainty
+val = predict(base_model, L; threshold = false)
+unc = predict(model, L; threshold = false, consensus = iqr)
 
 # ## VSUP
 
@@ -72,43 +75,50 @@ vsup(val, unc)
 
 # this needs to be ported
 
-function angular_ticks(layer, direction, span, n)
-    ticks = collect(range(direction-span/2, direction+span/2, n))
-    labels = collect(range(extrema(layer)..., n))
-    return (ticks, string.(labels))
+function maketicks(layer, n, r, R)
+    ticks, m, M = Makie.PlotUtils.optimize_ticks(
+        extrema(layer)...;
+        k_min = n - 2,
+        k_ideal = n,
+        k_max = n + 2,
+    )
+    rticks = (ticks .- m) ./ (M - m)
+    tticks = rticks .* (R - r) .+ r
+    return (tticks, string.(round.(ticks; digits = 2)))
 end
 
-ticks, m, M = Makie.PlotUtils.optimize_ticks(
-            extrema(val)...;
-            k_min = 5,
-            k_ideal = 5,
-            k_max = 5,
-        )
+direction, angle = π / 2, -π
 
-direction, angle = π/2, -π
-rticks = (ticks .- m) ./ (M - m)
-base = direction - angle/2
-tticks = base .+ rticks .* angle
-kwargs = (bins = 3, colormap = [:teal, :orange], color = colorant"#d0d0d0")
+kwargs = (bins = 3, colormap = [:mediumseagreen, :darkorange2], color = colorant"#f0f0f0")
 
 # full example with legend
 
-f = Figure(; size=(400, 600))
+f = Figure(; size = (400, 600))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 
 le = PolarAxis(f[1, 1];
-    width = Relative(0.65),
+    width = Relative(0.69),
     height = Relative(0.23),
     halign = 0.0,
     valign = 1.0,
-    thetaticks = (tticks, string.(round.(ticks; digits=2))))
+    thetaticks = maketicks(val, 4, direction-angle/2, direction+angle/2),
+    rticks = maketicks(unc, 2, direction-angle/2, direction+angle/2),
+    rticklabelrotation=pi/2
+)
 
 vsup!(ax, val, unc; kwargs...)
-lines!(ax, pol, color=:black)
+lines!(ax, pol; color = :black)
 vsuplegend!(le, val, unc; kwargs..., direction = direction, span = angle)
 autolimits!(le)
 tightlimits!(le)
 hidespines!(ax)
 hidedecorations!(ax)
-scatter!(le, rescale(val, direction-angle/2, direction+angle/2), rescale(unc, 3, 0), color=:black, markersize=1, alpha=0.5)
+scatter!(
+    le,
+    rescale(val, direction - angle / 2, direction + angle / 2),
+    rescale(unc, 3, 0);
+    color = :grey20,
+    markersize = 1,
+    alpha = 0.5,
+)
 current_figure()

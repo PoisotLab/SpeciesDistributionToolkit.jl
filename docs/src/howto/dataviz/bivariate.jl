@@ -89,7 +89,7 @@ direction, angle = 0, π/7
 rticks = (ticks .- m) ./ (M - m)
 base = direction - angle/2
 tticks = base .+ rticks .* angle
-kwargs = (bins = 4, colormap = [:teal, :orange], color = colorant"#d0d0d0")
+kwargs = (bins = 3, colormap = [:teal, :orange], color = colorant"#d0d0d0")
 
 # full example with legend
 

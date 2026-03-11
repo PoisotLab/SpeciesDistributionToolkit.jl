@@ -17,6 +17,7 @@ function vsuplegendticks(layer, n, r, R)
 end
 
 function _merge_by(collection, n)
+    collection = convert(Vector{typeof(first(collection))}, collect(collection))
     groups = Base.Iterators.partition(collection, n)
     grouped = map(x -> Makie.ColorSchemes.weighted_color_mean(ones(n) / n, x), groups)
     return repeat(grouped; inner = n)

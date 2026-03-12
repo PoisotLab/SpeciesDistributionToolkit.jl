@@ -68,6 +68,8 @@ Makie.convert_arguments(::Type{ICEPlot}, sdm::AbstractSDM, x::AbstractRange, y::
     (sdm, collect(x), y)
 Makie.convert_arguments(::Type{ICEPlot}, sdm::AbstractSDM, x::Vector{Int}, y::Int) =
     (sdm, x, y)
+Makie.convert_arguments(::Type{ICEPlot}, sdm::AbstractSDM, y::Int) =
+    (sdm, eachindex(labels(sdm)), y)
 
 function Makie.plot!(ice::ICEPlot)
     for i in ice.instances[]
@@ -99,6 +101,11 @@ Makie.convert_arguments(
     x::Vector{Int},
     y::Int,
 ) = (sdm, x, y)
+Makie.convert_arguments(
+    ::Type{PartialDependencePlot},
+    sdm::AbstractSDM,
+    y::Int,
+) = (sdm, eachindex(labels(sdm)), y)
 
 function Makie.plot!(pdp::PartialDependencePlot)
     x, _ = _cpplot_data(pdp.sdm[], 1, pdp.feature[], pdp.bins[])

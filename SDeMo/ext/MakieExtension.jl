@@ -1,6 +1,6 @@
 module MakieExtension
 
-import Makie
+using Makie
 using SDeMo
 import SDeMo: ceterisparibus, ceterisparibus!
 
@@ -9,25 +9,26 @@ function Makie.convert_arguments(P::Makie.PointBased, model::T) where {T <: Abst
     return Makie.convert_arguments(P, model.coordinates)
 end
 
-@recipe CeterisParibus (model, instance, feature) begin
-    Makie.@DocumentedAttributes begin
-        """
-        Number of bins in which the range of the value is divided
-        """
-        bins = 30
-    end
+Makie.@recipe CeterisParibus (sdm, instance, feature) begin
+    bins = 30
+    color = @inherit color :black
+    linestyle = @inherit linestyle :solid
+    linewidth = @inherit linewidth 1
+    alpha = @inherit alpha 1.0
+    stairs = true
 end
 
-Makie.plottype(::CeterisParibus) = PointBased
-Makie.convert_arguments(::Type{CeterisParibus}, model::AbstractSDM, x::Int, y::Int) =
-    (model, x, y)
+Makie.plottype(::CeterisParibus) = Lines
+Makie.convert_arguments(::Type{CeterisParibus}, sdm::AbstractSDM, x::Int, y::Int) =
+    (sdm, x, y)
 
 function Makie.plot!(cp::CeterisParibus)
-    X = instance(cp.model[], cp.instance[]; strict=false)
-    x = LinRange(extrema(features(cp.model[], cp.feature[]))..., cp.bins[])
+    X = instance(cp.sdm[], cp.instance[]; strict = false)
+    x = LinRange(extrema(features(cp.sdm[], cp.feature[]))..., cp.bins[])
     Y = permutedims(repeat(X', length(x)))
-    Y[j, :] .= x
-    stairs!(cp, x, predict(model, Y; threshold=false))
+    Y[cp.feature[], :] .= x
+    plfunc! = cp.stairs[] ? stairs! : lines!
+    plfunc!(cp, cp.attributes, x, predict(cp.sdm[], Y; threshold = false))
     return cp
 end
 

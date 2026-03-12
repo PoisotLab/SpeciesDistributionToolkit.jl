@@ -20,6 +20,8 @@ function _shared_argument_cp_plots()
         alpha = @inherit alpha 1.0
         stairs = true
         center = :none # Alt values :midpoint, :value
+        colormap = @inherit colormap :viridis
+        colorrange = @inherit colorrange (0, 1)
     end
 end
 
@@ -33,6 +35,7 @@ function _check_trained(model)
 end
 
 function _cpplot_data(model, inst, feat, bins)
+    _check_trained(model)
     X = instance(model, inst; strict = false)
     x = collect(LinRange(extrema(features(model, feat))..., bins))
     Y = permutedims(repeat(X', length(x)))
@@ -41,16 +44,33 @@ function _cpplot_data(model, inst, feat, bins)
     return (x, y)
 end
 
+function _cpplot_data(model, inst, f1, f2, bins)
+    _check_trained(model)
+    x1 = collect(LinRange(extrema(features(model, f1))..., bins))
+    x2 = collect(LinRange(extrema(features(model, f2))..., bins))
+    Y = zeros(bins, bins)
+    X = instance(model, inst; strict = false)
+    for i in eachindex(x1)
+        X[f1] = x1[i]
+        for j in eachindex(x2)
+            X[f2] = x2[j]
+            Y[i,j] = predict(model, X; threshold=false)
+        end
+    end
+    return (x1, x2, Y)
+end
+
 Makie.@recipe CPPlot (sdm, instance, feature) begin
     _shared_argument_cp_plots()...
 end
 
-Makie.plottype(::CPPlot) = Lines
-Makie.convert_arguments(::Type{CPPlot}, sdm::AbstractSDM, x::Int, y::Int) =
-    (sdm, x, y)
+const OneDimCP = CPPlot{<:Tuple{AbstractSDM, Integer, Integer}}
+const TwoDimCP = CPPlot{<:Tuple{AbstractSDM, <:Integer, <:Integer, <:Integer}}
 
-function Makie.plot!(cp::CPPlot)
-    _check_trained(cp.sdm[])
+Makie.convert_arguments(::Type{OneDimCP}, sdm::AbstractSDM, inst::Integer, feat::Integer) = (sdm, inst, feat)
+Makie.convert_arguments(::Type{TwoDimCP}, sdm::AbstractSDM, inst::Integer, f1::Integer, f2::Integer) = (sdm, inst, [f1, f2])
+
+function Makie.plot!(cp::OneDimCP)
     x, y = _cpplot_data(cp.sdm[], cp.instance[], cp.feature[], cp.bins[])
     if cp.center[] == :midpoint
         x .-= (x[end] + x[begin]) / 2
@@ -60,6 +80,24 @@ function Makie.plot!(cp::CPPlot)
     end
     plfunc! = cp.stairs[] ? stairs! : lines!
     plfunc!(cp, cp.attributes, x, y)
+    return cp
+end
+
+function Makie.plot!(cp::TwoDimCP)
+    model = cp.arg1[]
+    inst = cp.arg2[]
+    f1 = cp.arg3[]
+    f2 = cp.arg4[]
+    x1, x2, y = _cpplot_data(model, inst, f1, f2, cp.bins[])
+    if cp.center[] == :midpoint
+        x1 .-= (x1[end] + x1[begin]) / 2
+        x2 .-= (x2[end] + x2[begin]) / 2
+    end
+    if cp.center[] == :value
+        x1 .-= instance(model, inst; strict = false)[f1]
+        x2 .-= instance(model, inst; strict = false)[f2]
+    end
+    heatmap!(cp, cp.attributes, x1, x2, y)
     return cp
 end
 
@@ -80,7 +118,6 @@ Makie.convert_arguments(::Type{ICEPlot}, sdm::AbstractSDM, y::Int) =
     (sdm, eachindex(labels(sdm)), y)
 
 function Makie.plot!(ice::ICEPlot)
-    _check_trained(ice.sdm[])
     for i in ice.instances[]
         cpplot!(ice, ice.attributes, ice.sdm[], i, ice.feature[])
     end
@@ -117,7 +154,6 @@ Makie.convert_arguments(
 ) = (sdm, eachindex(labels(sdm)), y)
 
 function Makie.plot!(pdp::PartialDependencePlot)
-    _check_trained(pdp.sdm[])
     x, _ = _cpplot_data(pdp.sdm[], 1, pdp.feature[], pdp.bins[])
     Y = zeros(Float64, pdp.bins[], length(pdp.instances[]))
     for (i, inst) in enumerate(pdp.instances[])

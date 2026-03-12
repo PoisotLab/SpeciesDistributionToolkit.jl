@@ -16,6 +16,7 @@ Makie.@recipe CPPlot (sdm, instance, feature) begin
     linewidth = @inherit linewidth 1
     alpha = @inherit alpha 1.0
     stairs = true
+    center = :none # Alt values :midpoint, :value
 end
 
 Makie.plottype(::CPPlot) = Lines
@@ -24,9 +25,15 @@ Makie.convert_arguments(::Type{CPPlot}, sdm::AbstractSDM, x::Int, y::Int) =
 
 function Makie.plot!(cp::CPPlot)
     X = instance(cp.sdm[], cp.instance[]; strict = false)
-    x = LinRange(extrema(features(cp.sdm[], cp.feature[]))..., cp.bins[])
+    x = collect(LinRange(extrema(features(cp.sdm[], cp.feature[]))..., cp.bins[]))
     Y = permutedims(repeat(X', length(x)))
     Y[cp.feature[], :] .= x
+    if cp.center[] == :midpoint
+        x .-= (x[end]-x[begin])/2
+    end
+    if cp.center[] == :value
+        x .-= X[cp.feature[]]
+    end
     plfunc! = cp.stairs[] ? stairs! : lines!
     plfunc!(cp, cp.attributes, x, predict(cp.sdm[], Y; threshold = false))
     return cp

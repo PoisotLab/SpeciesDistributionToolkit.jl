@@ -45,7 +45,7 @@ Makie.convert_arguments(::Type{CPPlot}, sdm::AbstractSDM, x::Int, y::Int) =
 function Makie.plot!(cp::CPPlot)
     x, y = _cpplot_data(cp.sdm[], cp.instance[], cp.feature[], cp.bins[])
     if cp.center[] == :midpoint
-        x .-= (x[end] - x[begin]) / 2
+        x .-= (x[end] + x[begin]) / 2
     end
     if cp.center[] == :value
         x .-= instance(cp.sdm[], cp.instance[]; strict = false)[cp.feature[]]
@@ -106,6 +106,12 @@ function Makie.plot!(pdp::PartialDependencePlot)
     for (i, inst) in enumerate(pdp.instances[])
         xᵢ, yᵢ = _cpplot_data(pdp.sdm[], inst, pdp.feature[], pdp.bins[])
         Y[:, i] = yᵢ
+    end
+    if pdp.center[] == :midpoint
+        x .-= (x[end] + x[begin]) / 2
+    end
+    if pdp.center[] == :value
+        @warn "Using center = :value has no effect on a partial dependence plot"
     end
     μ = dropdims(mapslices(Statistics.mean, Y; dims = 2); dims = 2)
     if !isnothing(pdp.ribbon[])

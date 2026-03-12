@@ -25,6 +25,13 @@ end
 
 # CP plot
 
+function _check_trained(model)
+    if !istrained(model)
+        throw(UntrainedModelError())
+    end
+    return nothing
+end
+
 function _cpplot_data(model, inst, feat, bins)
     X = instance(model, inst; strict = false)
     x = collect(LinRange(extrema(features(model, feat))..., bins))
@@ -43,6 +50,7 @@ Makie.convert_arguments(::Type{CPPlot}, sdm::AbstractSDM, x::Int, y::Int) =
     (sdm, x, y)
 
 function Makie.plot!(cp::CPPlot)
+    _check_trained(cp.sdm[])
     x, y = _cpplot_data(cp.sdm[], cp.instance[], cp.feature[], cp.bins[])
     if cp.center[] == :midpoint
         x .-= (x[end] + x[begin]) / 2
@@ -72,6 +80,7 @@ Makie.convert_arguments(::Type{ICEPlot}, sdm::AbstractSDM, y::Int) =
     (sdm, eachindex(labels(sdm)), y)
 
 function Makie.plot!(ice::ICEPlot)
+    _check_trained(ice.sdm[])
     for i in ice.instances[]
         cpplot!(ice, ice.attributes, ice.sdm[], i, ice.feature[])
     end
@@ -108,6 +117,7 @@ Makie.convert_arguments(
 ) = (sdm, eachindex(labels(sdm)), y)
 
 function Makie.plot!(pdp::PartialDependencePlot)
+    _check_trained(pdp.sdm[])
     x, _ = _cpplot_data(pdp.sdm[], 1, pdp.feature[], pdp.bins[])
     Y = zeros(Float64, pdp.bins[], length(pdp.instances[]))
     for (i, inst) in enumerate(pdp.instances[])

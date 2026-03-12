@@ -13,12 +13,12 @@ model = SDM(RawData, Logistic, SDeMo.__demodata()...)
 
 # ## Plotting instances
 
-scatter(model)
+scatter(model; axis=(; aspect=DataAspect()))
 
 # This can be coupled with information about the model itself, to provide more
 # interesting visualisations:
 
-scatter(model, color=labels(model))
+scatter(model; color=labels(model), axis=(; aspect=DataAspect()))
 
 # ## Model diagnostic plots
 
@@ -29,9 +29,12 @@ train!(model)
 # ### Ceteris paribus
 
 # The _ceteris paribus_ plot allows seeing the effect of all possible values of
-# a feature on a specific instance. For exemple, this is how the prediction for
+# a feature on a specific instance. For example, this is how the prediction for
 # instance 4 is affected by a change in the BIO1 variable (mean annual
-# temperature):
+# temperature).
+
+# All of these plots have a feature (values of) in the x axis, and the resulting
+# prediction on the y axis.
 
 cpplot(model, 4, 1)
 
@@ -84,6 +87,6 @@ partialdependenceplot(model, 1)
 import Statistics
 partialdependenceplot(model, 1; ribbon=Statistics.std, stairs=false, background=:skyblue, color=:darkblue)
 
-# We can also only specify only some instances:
+# We can also specify to only run the plot for some instances:
 
 partialdependenceplot(model, findall(labels(model)), 1; ribbon=Statistics.std, stairs=false, background=:grey95, color=:orange)

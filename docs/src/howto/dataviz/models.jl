@@ -54,6 +54,10 @@ cpplot(model, 4, 1; center=:midpoint)
 
 cpplot(model, 4, 1; center=:value)
 
+# CP plots can also be produced for two variables:
+
+cpplot(model, 4, 4, 6; colormap=:YlGnBu)
+
 # ### Individual conditional expectations
 
 # The ICE plot is the superposition of multiple CP plots. It uses the same

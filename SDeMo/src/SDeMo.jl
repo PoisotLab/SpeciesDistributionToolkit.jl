@@ -151,6 +151,8 @@ export iqr
 # Figures
 function cpplot end
 function cpplot! end
-export cpplot, cpplot!
+function iceplot end
+function iceplot! end
+export cpplot, cpplot!, iceplot, iceplot!
 
 end # module SDeMo

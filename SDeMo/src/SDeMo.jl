@@ -153,6 +153,8 @@ function cpplot end
 function cpplot! end
 function iceplot end
 function iceplot! end
-export cpplot, cpplot!, iceplot, iceplot!
+function partialdependenceplot end
+function partialdependenceplot! end
+export cpplot, cpplot!, iceplot, iceplot!, partialdependenceplot, partialdependenceplot!
 
 end # module SDeMo

@@ -53,6 +53,37 @@ cpplot(model, 4, 1; center=:value)
 
 # ### Individual conditional expectations
 
+# The ICE plot is the superposition of multiple CP plots. It uses the same
+# arguments, but the instances are given as a range or collection.
 
+# To plot all the instances, we can use:
+
+iceplot(model, 1)
+
+# Because this creates a lot of overplotting, it is a good idea to tweak the
+# transparency:
+
+iceplot(model, 1; alpha=0.2, center=:midpoint, stairs=false)
+
+# The list of instances to use can also be given as a collection:
+
+iceplot(model, findall(labels(model)), 1; alpha=0.2, stairs=false, color=:darkgreen, label="Presence")
+iceplot!(model, findall(!, labels(model)), 1; alpha=0.2, stairs=false, color=:grey50, label="Absence")
+axislegend(current_axis())
+current_figure()
 
 # ### Partial dependence
+
+# The partial dependence plot is the average of all CP plots. The instances to
+# use in it are specified like in the ICE plots.
+
+partialdependenceplot(model, 1)
+
+# We can also pass a `ribbon` function to draw a band around the line:
+
+import Statistics
+partialdependenceplot(model, 1; ribbon=Statistics.std, stairs=false, background=:skyblue, color=:darkblue)
+
+# We can also only specify only some instances:
+
+partialdependenceplot(model, findall(labels(model)), 1; ribbon=Statistics.std, stairs=false, background=:grey95, color=:orange)

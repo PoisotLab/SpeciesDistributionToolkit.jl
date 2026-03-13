@@ -29,7 +29,7 @@ function _fill_partialresponse_data!(nx, model::T, variable, inflated) where {T 
 end
 
 """
-    partialresponse(model::T, i::Integer, args...; inflated::Bool, kwargs...)
+    partialresponse(model::T, i::Integer; bins=50, inflated::Bool, kwargs...)
 
 This method returns the partial response of applying the trained model to a
 simulated dataset where all variables *except* `i` are set to their mean value.
@@ -45,14 +45,14 @@ The different arguments that can follow the variable position are
 
 All keyword arguments are passed to `predict`.
 """
-function partialresponse(model::T, i::Integer, args...; inflated::Bool=false, kwargs...) where {T <: AbstractSDM}
-    nx = SDeMo._make_partialresponse_data(model, i, args...)
+function partialresponse(model::T, i::Integer, args...; bins::Integer=50, inflated::Bool=false, kwargs...) where {T <: AbstractSDM}
+    nx = SDeMo._make_partialresponse_data(model, i, bins)
     SDeMo._fill_partialresponse_data!(nx, model, i, inflated)
     return (nx[i,:], predict(model, nx; kwargs...))
 end
 
 """
-    partialresponse(model::T, i::Integer, j::Integer, s::Tuple=(50, 50); inflated::Bool, kwargs...)
+    partialresponse(model::T, i::Integer, j::Integer; bins=50, inflated::Bool, kwargs...)
 
 This method returns the partial response of applying the trained model to a
 simulated dataset where all variables *except* `i` and `j` are set to their mean
@@ -64,9 +64,9 @@ and `j`, the size of which is given by the last argument `s` (defaults to 50 ×
 
 All keyword arguments are passed to `predict`.
 """
-function partialresponse(model::T, i::Integer, j::Integer, s::Tuple=(50, 50); inflated::Bool=false, kwargs...) where {T <: AbstractSDM}
-    irange = LinRange(extrema(features(model, i))..., s[1])
-    jrange = LinRange(extrema(features(model, j))..., s[2])
+function partialresponse(model::T, i::Integer, j::Integer, s::Tuple=(50, 50); bins::Integer=50, inflated::Bool=false, kwargs...) where {T <: AbstractSDM}
+    irange = LinRange(extrema(features(model, i))..., bins)
+    jrange = LinRange(extrema(features(model, j))..., bins)
 
     nx = zeros(eltype(features(model)), size(features(model), 1), length(irange)*length(jrange))
 

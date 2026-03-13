@@ -137,6 +137,9 @@ export counterfactual
 include("explanations/partialresponse.jl")
 export partialresponse
 
+include("explanations/ceterisparibus.jl")
+export ceterisparibus
+
 include("explanations/shapley.jl")
 export explain
 
@@ -147,5 +150,14 @@ export writesdm, loadsdm
 
 include("utilities/varia.jl")
 export iqr
+
+# Figures
+function cpplot end
+function cpplot! end
+function iceplot end
+function iceplot! end
+function partialdependenceplot end
+function partialdependenceplot! end
+export cpplot, cpplot!, iceplot, iceplot!, partialdependenceplot, partialdependenceplot!
 
 end # module SDeMo

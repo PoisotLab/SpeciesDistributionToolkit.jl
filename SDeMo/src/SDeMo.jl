@@ -137,6 +137,9 @@ export counterfactual
 include("explanations/partialresponse.jl")
 export partialresponse
 
+include("explanations/ceterisparibus.jl")
+export ceterisparibus
+
 include("explanations/shapley.jl")
 export explain
 

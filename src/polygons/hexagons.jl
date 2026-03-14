@@ -48,8 +48,8 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0))
     # Now we generate the grid of hexagons
     grid = Tuple{Float64, Float64}[]
 
-    for row in 1:h
-        for col in 1:w
+    for row in 1:h+1
+        for col in 1:w+1
             # Note that here col is the column number, but we need to generate
             # two cells: the one at the coordinates, and the one horizontally on
             # the inter-column

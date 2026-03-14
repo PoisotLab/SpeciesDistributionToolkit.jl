@@ -55,6 +55,9 @@ include("polygons/simplify.jl")
 export trim
 export zone, byzone
 
+include("polygons/hexagons.jl")
+export hexagons
+
 # Extra functions
 include("utilities.jl")
 export gainloss, discretize

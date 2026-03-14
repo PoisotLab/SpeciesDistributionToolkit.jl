@@ -73,3 +73,15 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0))
 
     return FeatureCollection(polys)
 end
+
+function hexagons(sdm::AbstractSDM, args...; kwargs...)
+    return hexagons(boundingbox(sdm), args...; kwargs...)
+end
+
+function hexagons(layer::SDMLayer, args...; kwargs...)
+    return hexagons(boundingbox(layer), args...; kwargs...)
+end
+
+function hexagons(geom::SimpleSDMPolygons.AbstractGeometry, args...; kwargs...)
+    return hexagons(boundingbox(geom), args...; kwargs...)
+end

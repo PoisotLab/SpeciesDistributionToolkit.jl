@@ -130,3 +130,36 @@ end
     @test SimpleSDMPolygons.boundingbox(mp) isa NamedTuple
     @test SimpleSDMPolygons.boundingbox(pol) isa NamedTuple
 end
+
+# Models
+"""
+    boundingbox(sdm::AbstractSDM; padding=0.0)
+
+Returns the bounding box for a georeferenced model, with an additional padding.
+"""
+function boundingbox(sdm::AbstractSDM; padding = 0.0)
+    if isgeoreferenced(sdm)
+        left, right = extrema(first.(sdm.coordinates))
+        bottom, top = extrema(last.(sdm.coordinates))
+        return _padbbox(left, right, bottom, top, padding)
+    else
+        return nothing
+    end
+end
+
+@testitem "We can get the boundingbox for a model" begin
+    sdm = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
+    bb = SpeciesDistributionToolkit.boundingbox(sdm)
+    @test bb.left < 8.6 
+    @test bb.right > 9.5
+    @test bb.bottom < 41.4
+    @test bb.top > 42.9
+end
+
+@testitem "We cannot get a boundingbox for a non-georeferenced model" begin
+    X, y, C = SDeMo.__demodata()
+    sdm = SDM(RawData, NaiveBayes, X, y)
+    @test !isgeoreferenced(sdm)
+    bb = SpeciesDistributionToolkit.boundingbox(sdm)
+    @test isnothing(bb)
+end

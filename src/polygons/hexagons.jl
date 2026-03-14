@@ -6,77 +6,67 @@ function _hexagon(p, s = 1.0)
     return pts
 end
 
-function hexagons(layer::SDMLayer, d::Float64; padding = 1.0)
-    bb = boundingbox(layer; padding = padding)
+function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0))
+    all(haskey(bbox, k) for k in [:left, :bottom, :right, :top]) || throw(
+        ArgumentError(
+            "Bounding box tuple doesn't have correct keys. It must contain :top, :bottom, :left, and :right",
+        ),
+    )
+
+    # This is the first center
+    origin = (bbox.left - offset[1], bbox.top + offset[2])
 
     # We estimate the span at the middle of the latitude
-    middle_latitude = (bb.top + bb.bottom) / 2
-    middle_longitude = (bb.left + bb.right) / 2
+    middle_latitude = (bbox.top + bbox.bottom) / 2
+    middle_longitude = (bbox.left + bbox.right) / 2
 
-    # This gives the layer dimensions (approximate)
-    W = SpeciesDistributionToolkit.Fauxcurrences._distancefunction(
-        (bb.left, middle_latitude),
-        (bb.right, middle_latitude),
-    )
-    H = SpeciesDistributionToolkit.Fauxcurrences._distancefunction(
-        (middle_longitude, bb.bottom),
-        (middle_longitude, bb.top),
-    )
+    # We start by estimating the size of the circumradius at the middle latitude
+    # of the boundingbox
+    km_per_deg = cos(middle_latitude * π / 180) * 111325.0 / 1000.0
 
-    # We want d to be the circumradius of the hexagon
-    R = d
+    # We want to get the circumradius in units of degrees
+    R = d / km_per_deg
+
+    # Then we get the inradius from this value
     r = (sqrt(3.0) / 2) * R
 
-    # We want our hexagons to be flat side up, so we need to first divide the
-    # layer height by the indiameter
-    h = ceil(Int, H / 2r)
+    # Now we measure the distance from the origin to the right / bottom of the
+    # bounding box - these distances are measured in degree
+    W = abs(bbox.right - origin[1])
+    H = abs(bbox.bottom - origin[2])
+    
+    # Now we want to know how many hexagons we must add. The first one starts at
+    # the origin point, so to cover the full width, we need
+    w = ceil(Int, W / (3R))
 
-    # Next we do the same thing for the width of the layer with the outdiameter
-    w = ceil(Int, W / 2R)
+    # And for the full height, we need
+    h = ceil(Int, H / (2r))
+
+    # Note that these WILL overflow the boundingbox but it's not a problem as we
+    # can intersect everything later on.
 
     # Now we generate the grid of hexagons
     grid = Tuple{Float64, Float64}[]
 
-    for y in 1:ceil(Int, h)
-        for x in 1:2ceil(Int, w)+1
-            # Given a pair of integers x, y, we generate two points: (3y, x√3)
-            # and (3y+3/2, (x+1/2)√3)
-            p1 = (3 * y, x * sqrt(3))
-            p2 = (3 * y + 3 / 2, (x + 1 / 2) * sqrt(3))
+    for row in 1:h
+        for col in 1:w
+            # Note that here col is the column number, but we need to generate
+            # two cells: the one at the coordinates, and the one horizontally on
+            # the inter-column
 
-            # We now need to re-calculate everything in order to bring the
-            # centers to the correct layer space. By convention, we will ensure
-            # that the width of the space covered by the hexagons goes from 0 to
-            # 1.
+            # The position for the cell on the column is easy to get
+            px = origin[1] + 3 * R * (col - 1)
+            py = origin[2] - 2 * r * (row - 1)
+            
+            # The position for the other cell is not terribly difficult either
+            p2x = px + (3/2)*R
+            p2y = py - r
 
-            # These is the correct way to range the values in the width unit space
-            m, M = 3, 3h + 3/2            
-            px = [tuple([(c - m)/(M - m) for c in p]...) for p in [p1, p2]]
-
-            # To bring these to the space of the layer, we then need to rescale
-            # by the length of the layer, but we know this one in units of
-            # lat/lon
-            px = [
-                (p[1]*(bb.right-bb.left)+bb.left, p[2]*(bb.right-bb.left)+bb.bottom)
-                for p in px
-            ]
-
-            # Next we add these two points to the grid
-            append!(grid, px)
+            append!(grid, [(px, py), (p2x, p2y)])
         end
     end
 
-    # Now the centers are correct, so we can work on getting the true radius - we get this from the circumradius,
-    ref = rand(grid)
-    sur = filter(r -> (r[2] == ref[2]), grid)
-    sur = filter(r -> r != ref, sur)
-    _, ix = findmin([abs(ref[1] - s[1]) for s in sur])
-
-    D = abs(sur[ix][1] - ref[1])
-
-    # This is the distance between two centers, which is equal to 3R
-    R = D / 3
-
+    # Now we can return the polygons
     polys = [
         Feature(Polygon(_hexagon(g, R)), Dict()) for g in grid
     ]

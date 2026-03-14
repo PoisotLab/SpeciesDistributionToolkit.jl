@@ -51,14 +51,4 @@ function Makie.plot!(sp::SilhouettePlot{<:Tuple{AbstractVector{<:Real},AbstractV
     end
 end
 
-
-function Makie.plot!(sp::SilhouettePlot{<:Tuple{AbstractVector{<:Real},AbstractVector{<:Real},AbstractVector{<:PhylopicSilhouette}}})
-    img = Phylopic._download_silhouette.(sp.silhouette[])
-    for i in eachindex(img)
-        c = sp.color[] isa Vector ? sp.color[][i] : sp.color[]
-        nimg = _recolor(img[i], c, sp.colormap[], sp.colorrange[])
-        scatter!(sp, [sp.x[][i]], [sp.y[][i]], marker=nimg, markersize=sp.markersize[])
-    end
-end
-
 end

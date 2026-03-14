@@ -25,6 +25,7 @@ import GeoJSON
 import PolygonOps
 import ZipArchives
 import Downloads
+import Statistics
 import HTTP
 
 # Functions to get latitudes/longitudes
@@ -55,12 +56,17 @@ include("polygons/simplify.jl")
 export trim
 export zone, byzone
 
+# Generation of hexagons
 include("polygons/hexagons.jl")
 export hexagons
 
 # Extra functions
 include("utilities.jl")
 export gainloss, discretize
+
+# Variograms
+include("variogram.jl")
+export variogram
 
 # Reprojection
 include("reproject.jl")

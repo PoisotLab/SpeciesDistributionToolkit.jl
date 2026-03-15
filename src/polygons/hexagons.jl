@@ -1,12 +1,13 @@
-function _hexagon(p, s = 1.0)
+function _hexagon(p, s = 1.0; pointy::Bool=false)
+    offset = pointy ? 0 : π/6
     pts = [
-        (p[1] + s * sin(k * π / 3 + π / 6), p[2] + s * cos(k * π / 3 + π / 6)) for k in 1:6
+        (p[1] + s * sin(k * π / 3 + offset), p[2] + s * cos(k * π / 3 + offset)) for k in 1:6
     ]
     push!(pts, first(pts))
     return pts
 end
 
-function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0))
+function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Bool=false)
     all(haskey(bbox, k) for k in [:left, :bottom, :right, :top]) || throw(
         ArgumentError(
             "Bounding box tuple doesn't have correct keys. It must contain :top, :bottom, :left, and :right",
@@ -37,30 +38,49 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0))
     
     # Now we want to know how many hexagons we must add. The first one starts at
     # the origin point, so to cover the full width, we need
-    w = ceil(Int, W / (3R))
 
-    # And for the full height, we need
+    w = ceil(Int, W / (3R))
     h = ceil(Int, H / (2r))
 
-    # Note that these WILL overflow the boundingbox but it's not a problem as we
-    # can intersect everything later on.
+    # If this is a pointy side up tiling, we need to accurately reflect this
+    if pointy
+        w = ceil(Int, W / (2r))
+        h = ceil(Int, H / (3R))
+    end
 
     # Now we generate the grid of hexagons
     grid = Tuple{Float64, Float64}[]
 
-    for row in 1:h+1
-        for col in 1:w+1
+    # We always do one more bin than required just in case I guess? Anyway it
+    # will be intersected after this is done, so it doesn't matter.
+    for row in 0:(h+1)
+        for col in 0:(w+1)
             # Note that here col is the column number, but we need to generate
             # two cells: the one at the coordinates, and the one horizontally on
             # the inter-column
 
-            # The position for the cell on the column is easy to get
-            px = origin[1] + 3 * R * (col - 1)
-            py = origin[2] - 2 * r * (row - 1)
-            
-            # The position for the other cell is not terribly difficult either
-            p2x = px + (3/2)*R
-            p2y = py - r
+            if pointy
+                # This is a pointy side up tiling, where the rows are continuous
+                # along the width
+                px = origin[1] + 2r * (col - 1)
+                py = origin[2] - 3R * (row - 1)
+
+                # Now we create the shifted polygon
+                p2x = px - r
+                p2y = py - (3/2)R 
+
+            else
+                # This is the flat side up tiling, where the columns are
+                # continuous along the height
+
+                # The position for the cell on the column is easy to get
+                px = origin[1] + 3 * R * (col - 1)
+                py = origin[2] - 2 * r * (row - 1)
+                
+                # The position for the other cell is not terribly difficult either
+                p2x = px + (3/2)*R
+                p2y = py - r
+            end
 
             append!(grid, [(px, py), (p2x, p2y)])
         end
@@ -68,7 +88,7 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0))
 
     # Now we can return the polygons
     polys = [
-        Feature(Polygon(_hexagon(g, R)), Dict()) for g in grid
+        Feature(Polygon(_hexagon(g, R; pointy=pointy)), Dict()) for g in grid
     ]
 
     return FeatureCollection(polys)

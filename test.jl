@@ -5,50 +5,20 @@ const SDT = SpeciesDistributionToolkit
 
 # Get data
 pol = getpolygon(PolygonData(ESRI, Places))["Place name" => "Corse"]
-
-bb = SDT.boundingbox(pol; padding=0.0)
+bb = SDT.boundingbox(pol; padding=0.1)
 
 model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
 
-L = [SDMLayer(RasterData(CHELSA2, BioClim); bb..., layer=l) for l in 1:19]
-mask!(L, pol)
+h = hexagons(bb, 12.; offset=(0, 0))
 
-x, y, n = variogram(L[2], 8000, 120)
-
-scatter(x, y, color=n)
-vlines!([40.])
-current_figure()
-
-function occ(sdm::AbstractSDM; name="[UNNAMED SPECIES]")
-    if ~isgeoreferenced(sdm)
-        return nothing
-    else
-        return SDT.OccurrencesInterface.Occurrences([SDT.OccurrencesInterface.Occurrence(name, labels(sdm)[i], sdm.coordinates[i], missing) for i in eachindex(labels(sdm))]...)
-    end
-end
-
-h = hexagons(bb, 15.; offset=(0, 0))
-mocc = occ(model; name="Sitta whiteheadi")
+pointy = hexagons(bb, 12.; pointy=true)
+flat = hexagons(bb, 8.; pointy=false)
 
 f = Figure()
-ax = Axis(f[1,1])
-
-for f in intersect(h, pol).features
-    oi = SDT.OccurrencesInterface.Occurrences(mask(mocc, f))
-    if ~isempty(oi)
-        poly!(ax, f, color=length(presences(oi)) / length(oi), colorrange=(0, 1))
-    end
-end
-
-f
-
-
-mask(mocc, h.features[4])
-
-f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-poly!(ax, pol, color=:grey90)
-scatter!(ax, model, color=labels(model), colormap=[:black, :orange], markersize=4)
-lines!(ax, intersect(h, pol), color=:red)
-lines!(ax, pol, color=:grey20)
+ax1 = Axis(f[1,1], aspect=DataAspect(), title="Flat side up")
+ax2 = Axis(f[1,2], aspect=DataAspect(), title="Pointy side up")
+poly!(ax1, pol, color=:grey95)
+poly!(ax2, pol, color=:grey95)
+lines!(ax1, intersect(pol, flat), color=:black)
+lines!(ax2, intersect(pol, pointy), color=:black)
 current_figure()

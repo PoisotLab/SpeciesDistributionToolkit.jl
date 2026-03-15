@@ -11,7 +11,7 @@ using Random
 using Statistics
 using StatsBase
 
-using OccurrencesInterface
+import OccurrencesInterface
 
 # Demo data
 include("utilities/demodata.jl")

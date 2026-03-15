@@ -1,13 +1,14 @@
-function _hexagon(p, s = 1.0; pointy::Bool=false)
-    offset = pointy ? 0 : π/6
+function _hexagon(p, s = 1.0; pointy::Bool = false)
+    offset = pointy ? 0 : π / 6
     pts = [
-        (p[1] + s * sin(k * π / 3 + offset), p[2] + s * cos(k * π / 3 + offset)) for k in 1:6
+        (p[1] + s * sin(k * π / 3 + offset), p[2] + s * cos(k * π / 3 + offset)) for
+        k in 1:6
     ]
     push!(pts, first(pts))
     return pts
 end
 
-function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Bool=false)
+function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Bool = false)
     all(haskey(bbox, k) for k in [:left, :bottom, :right, :top]) || throw(
         ArgumentError(
             "Bounding box tuple doesn't have correct keys. It must contain :top, :bottom, :left, and :right",
@@ -35,7 +36,7 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Boo
     # bounding box - these distances are measured in degree
     W = abs(bbox.right - origin[1])
     H = abs(bbox.bottom - origin[2])
-    
+
     # Now we want to know how many hexagons we must add. The first one starts at
     # the origin point, so to cover the full width, we need
 
@@ -53,8 +54,8 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Boo
 
     # We always do one more bin than required just in case I guess? Anyway it
     # will be intersected after this is done, so it doesn't matter.
-    for row in 0:(h+1)
-        for col in 0:(w+1)
+    for row in 0:(h + 1)
+        for col in 0:(w + 1)
             # Note that here col is the column number, but we need to generate
             # two cells: the one at the coordinates, and the one horizontally on
             # the inter-column
@@ -67,7 +68,7 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Boo
 
                 # Now we create the shifted polygon
                 p2x = px - r
-                p2y = py - (3/2)R 
+                p2y = py - (3 / 2)R
 
             else
                 # This is the flat side up tiling, where the columns are
@@ -76,9 +77,9 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Boo
                 # The position for the cell on the column is easy to get
                 px = origin[1] + 3 * R * (col - 1)
                 py = origin[2] - 2 * r * (row - 1)
-                
+
                 # The position for the other cell is not terribly difficult either
-                p2x = px + (3/2)*R
+                p2x = px + (3 / 2) * R
                 p2y = py - r
             end
 
@@ -88,20 +89,75 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Boo
 
     # Now we can return the polygons
     polys = [
-        Feature(Polygon(_hexagon(g, R; pointy=pointy)), Dict()) for g in grid
+        Feature(Polygon(_hexagon(g, R; pointy = pointy)), Dict()) for g in grid
     ]
 
     return FeatureCollection(polys)
 end
 
-function hexagons(sdm::AbstractSDM, args...; kwargs...)
-    return hexagons(boundingbox(sdm), args...; kwargs...)
+function hexagons(
+    sdm::AbstractSDM,
+    args...;
+    clean::Bool = true,
+    padding::Number = 0.0,
+    kwargs...,
+)
+    H = hexagons(boundingbox(sdm; padding = padding), args...; kwargs...)
+    # Remove the hexagons that have no occurrences
+    if clean
+        return H
+    else
+        return H
+    end
 end
 
-function hexagons(layer::SDMLayer, args...; kwargs...)
-    return hexagons(boundingbox(layer), args...; kwargs...)
+function hexagons(
+    layer::SDMLayer,
+    args...;
+    clean::Bool = true,
+    padding::Number = 0.0,
+    kwargs...,
+)
+    H = hexagons(boundingbox(layer; padding = padding), args...; kwargs...)
+    # Remove the hexagons that have no cells in the layer
+    if clean
+        keep = Feature[]
+        for f in H.features
+            n = length(mask(layer, f))
+            if n > 0
+                f.properties["cells"] = n
+                push!(keep, f)
+            end
+        end
+        return FeatureCollection(keep)
+    else
+        return H
+    end
 end
 
-function hexagons(geom::SimpleSDMPolygons.AbstractGeometry, args...; kwargs...)
-    return hexagons(boundingbox(geom), args...; kwargs...)
+function hexagons(
+    geom::SimpleSDMPolygons.AbstractGeometry,
+    args...;
+    clean::Bool = true,
+    padding::Number = 0.0,
+    kwargs...,
+)
+    H = hexagons(boundingbox(geom; padding = padding), args...; kwargs...)
+    # Remove the hexagons that have no intersection with the geometry
+    if clean
+        keep = Feature[]
+        for f in H.features
+            try
+                cut = intersect(geom, f).features[1].geometry.geometry
+                if !SimpleSDMPolygons.AG.isempty(cut)
+                    push!(keep, f)
+                end
+            catch err
+                continue
+            end
+        end
+        return FeatureCollection(keep)
+    else
+        return H
+    end
 end

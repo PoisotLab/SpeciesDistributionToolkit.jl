@@ -26,16 +26,19 @@ ax = Axis(f[1,1], aspect=DataAspect())
 scatter!(ax, model, color=labels(model))
 current_figure()
 
-# Note that models also implement the occurences interface, so this is also
-# valid:
+# Note that models also implement the occurences interface, so we can easily
+# split presence and absences from the model.
 
-import OccurrencesInterface as OI
 f = Figure()
 ax = Axis(f[1,1], aspect=DataAspect())
-scatter!(ax, OI.presences(model), color=:white, strokecolor=:red, strokewidth=1, label="Presences")
-scatter!(ax, OI.absences(model), color=:white, strokecolor=:pink, strokewidth=0.5, markersize=3, label="Absences")
+scatter!(ax, presences(model), color=:white, strokecolor=:red, strokewidth=1, label="Presences")
+scatter!(ax, absences(model), color=:white, strokecolor=:pink, strokewidth=0.5, markersize=3, label="Absences")
 axislegend(ax)
 current_figure()
+
+# The models currently do _not_ have a field for the species name, but this will
+# be part of a future release. If you need to specify the species name from a
+# model, for now you need to use `Occurrences(model; name="Sitta whiteheadi")`.
 
 # ## Model diagnostic plots
 

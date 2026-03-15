@@ -31,7 +31,7 @@ OccurrencesInterface.elements(model::AbstractSDM) = OccurrencesInterface.element
 end
 
 @testitem "We can use the absences function on an SDM" begin
-    import SDeMo.OccurrencesInterface
+    using SDeMo.OccurrencesInterface
     model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     train!(model)
     @test length(absences(model)) == length(labels(model)) - sum(labels(model))

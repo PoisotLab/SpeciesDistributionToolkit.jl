@@ -11,6 +11,14 @@ function OccurrencesInterface.Occurrences(model::AbstractSDM; name="NONAME")
     return OccurrencesInterface.Occurrences(records...)
 end
 
+function OccurrencesInterface.Occurrences(model::AbstractBoostedSDM; kwargs...)
+    return OccurrencesInterface.Occurrences(model.model; kwargs...)
+end
+
+function OccurrencesInterface.Occurrences(model::Bagging; kwargs...)
+    return OccurrencesInterface.Occurrences(model.model; kwargs...)
+end
+
 @testitem "We can turn an SDM into a collection of Occurrences" begin
     model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     train!(model)

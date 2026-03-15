@@ -31,9 +31,11 @@ current_figure()
 
 f = Figure()
 ax = Axis(f[1,1], aspect=DataAspect())
-scatter!(ax, presences(model), color=:white, strokecolor=:red, strokewidth=1, label="Presences")
-scatter!(ax, absences(model), color=:white, strokecolor=:pink, strokewidth=0.5, markersize=3, label="Absences")
-axislegend(ax)
+scatter!(ax, presences(model), color=:white, strokecolor=:orange, strokewidth=1, label="Presences")
+scatter!(ax, absences(model), color=:white, strokecolor=:teal, strokewidth=0.5, markersize=5, label="Absences")
+axislegend(ax, position=:lt)
+hidespines!(ax)
+hidedecorations!(ax)
 current_figure()
 
 # The models currently do _not_ have a field for the species name, but this will

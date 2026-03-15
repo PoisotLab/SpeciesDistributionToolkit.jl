@@ -13,12 +13,29 @@ model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
 
 # ## Plotting instances
 
-scatter(model)
+f = Figure()
+ax = Axis(f[1,1], aspect=DataAspect())
+scatter!(ax, model)
+current_figure()
 
 # This can be coupled with information about the model itself, to provide more
 # interesting visualisations:
 
-scatter(model, color=labels(model))
+f = Figure()
+ax = Axis(f[1,1], aspect=DataAspect())
+scatter!(ax, model, color=labels(model))
+current_figure()
+
+# Note that models also implement the occurences interface, so this is also
+# valid:
+
+import OccurrencesInterface as OI
+f = Figure()
+ax = Axis(f[1,1], aspect=DataAspect())
+scatter!(ax, OI.presences(model), color=:white, strokecolor=:red, strokewidth=1, label="Presences")
+scatter!(ax, OI.absences(model), color=:white, strokecolor=:pink, strokewidth=0.5, markersize=3, label="Absences")
+axislegend(ax)
+current_figure()
 
 # ## Model diagnostic plots
 

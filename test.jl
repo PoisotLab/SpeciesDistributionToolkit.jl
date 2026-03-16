@@ -57,13 +57,17 @@ lines!(h, color=:grey10, linewidth=0.5)
 current_figure()
 
 
-h = hexagons(model, 5.; pointy=true)
-SDT.cvlabel!(h; n=3)
+h = hexagons(model, 10.; pointy=true)
+SDT.cvlabel!(h; n=4)
 
 f = Figure()
 ax = Axis(f[1,1], aspect=DataAspect())
-for ft in h.features
-    poly!(ax, ft, color=ft.properties["CV"], colorrange=(1, 3), colormap=:Spectral)
+for k in uniqueproperties(h)["__fold"]
+    poly!(ax, h["__fold" => k], color = Makie.wong_colors()[k], alpha=0.1)
 end
+for ft in h.features
+    text!(ax, ft.properties["__centroid"], text = string(ft.properties["__fold"]), align = (:center, :center), color=Makie.wong_colors()[ft.properties["__fold"]])
+end
+lines!(ax, h, color=:grey20)
 current_figure()
 

@@ -56,18 +56,23 @@ poly!(ax, ab, color=(:skyblue, 0.4))
 lines!(h, color=:grey10, linewidth=0.5)
 current_figure()
 
+h = hexagons(model, 8.; pointy=true)
+SDT.cvlabel!(h; n=7, order=:NE)
 
-h = hexagons(model, 10.; pointy=true)
-SDT.cvlabel!(h; n=4)
+colpal = cgrad(:Spectral, maximum(uniqueproperties(h)["__fold"]), categorical=true)
 
 f = Figure()
 ax = Axis(f[1,1], aspect=DataAspect())
 for k in uniqueproperties(h)["__fold"]
-    poly!(ax, h["__fold" => k], color = Makie.wong_colors()[k], alpha=0.1)
+    poly!(ax, h["__fold" => k], color = colpal[k], alpha=0.2)
 end
 for ft in h.features
-    text!(ax, ft.properties["__centroid"], text = string(ft.properties["__fold"]), align = (:center, :center), color=Makie.wong_colors()[ft.properties["__fold"]])
+    text!(ax, ft.properties["__centroid"], text = string(ft.properties["__fold"]), align = (:center, :center), color=:black)
 end
 lines!(ax, h, color=:grey20)
 current_figure()
 
+for k in uniqueproperties(h)["__fold"]
+    o = Occurrences(mask(model, h["__fold" => k]))
+    @info length(presences(o))/length(o) 
+end

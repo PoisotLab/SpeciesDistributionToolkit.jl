@@ -56,8 +56,8 @@ poly!(ax, ab, color=(:skyblue, 0.4))
 lines!(h, color=:grey10, linewidth=0.5)
 current_figure()
 
-h = hexagons(model, 8.; pointy=true)
-SDT.cvlabel!(h; n=7, order=:NE)
+h = hexagons(model, 7.; pointy=true)
+SDT.cvlabel!(h; n=7, order=:balanced)
 
 colpal = cgrad(:Spectral, maximum(uniqueproperties(h)["__fold"]), categorical=true)
 
@@ -71,8 +71,3 @@ for ft in h.features
 end
 lines!(ax, h, color=:grey20)
 current_figure()
-
-for k in uniqueproperties(h)["__fold"]
-    o = Occurrences(mask(model, h["__fold" => k]))
-    @info length(presences(o))/length(o) 
-end

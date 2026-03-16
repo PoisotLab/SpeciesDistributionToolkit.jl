@@ -1,3 +1,14 @@
+function _square(p, s = 1.0)
+    pts = [
+        (p[1] - s / 2, p[2] + s / 2),
+        (p[1] + s / 2, p[2] + s / 2),
+        (p[1] + s / 2, p[2] - s / 2),
+        (p[1] - s / 2, p[2] - s / 2),
+    ]
+    push!(pts, first(pts))
+    return pts
+end
+
 function _hexagon(p, s = 1.0; pointy::Bool = false)
     offset = pointy ? 0 : π / 6
     pts = [
@@ -27,7 +38,7 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Boo
     km_per_deg = cos(middle_latitude * π / 180) * 111325.0 / 1000.0
 
     # We want to get the circumradius in units of degrees
-    R = d / km_per_deg
+    R = (d/2) / km_per_deg
 
     # Then we get the inradius from this value
     r = (sqrt(3.0) / 2) * R
@@ -89,21 +100,87 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Boo
 
     # Now we can return the polygons
     polys = [
-        Feature(Polygon(_hexagon(g, R; pointy = pointy)), Dict{String, Any}("__centroid" => g)) for g in grid
+        Feature(
+            Polygon(_hexagon(g, R; pointy = pointy)),
+            Dict{String, Any}("__centroid" => g),
+        ) for g in grid
     ]
 
     return FeatureCollection(polys)
 end
 
-const TypesForHexagons = Union{AbstractSDM, SimpleSDMPolygons.AbstractGeometry, SDMLayer, AbstractOccurrenceCollection}
+function squares(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0))
+    all(haskey(bbox, k) for k in [:left, :bottom, :right, :top]) || throw(
+        ArgumentError(
+            "Bounding box tuple doesn't have correct keys. It must contain :top, :bottom, :left, and :right",
+        ),
+    )
 
-function hexagons(
+    # This is the first center
+    origin = (bbox.left - offset[1], bbox.top + offset[2])
+
+    # We estimate the span at the middle of the latitude
+    middle_latitude = (bbox.top + bbox.bottom) / 2
+
+    # We start by estimating the size of the circumradius at the middle latitude
+    # of the boundingbox
+    km_per_deg = cos(middle_latitude * π / 180) * 111325.0 / 1000.0
+
+    # We want to get the size of the square in units of degrees
+    s = d / km_per_deg
+
+    # Now we measure the distance from the origin to the right / bottom of the
+    # bounding box - these distances are measured in degree
+    W = abs(bbox.right - origin[1])
+    H = abs(bbox.bottom - origin[2])
+
+    # Now we want to know how many hexagons we must add. The first one starts at
+    # the origin point, so to cover the full width, we need
+
+    w = ceil(Int, W / s)
+    h = ceil(Int, H / s)
+
+    # Now we generate the grid of squares
+    grid = Tuple{Float64, Float64}[]
+
+    # We always do one more bin than required just in case I guess? Anyway it
+    # will be intersected after this is done, so it doesn't matter.
+    for row in 0:(h + 1)
+        for col in 0:(w + 1)
+            px = origin[1] + s * (col - 1)
+            py = origin[2] - s * (row - 1)
+
+            push!(grid, (px, py))
+        end
+    end
+
+    # Now we can return the polygons
+    polys = [
+        Feature(
+            Polygon(_square(g, s)),
+            Dict{String, Any}("__centroid" => g),
+        ) for g in grid
+    ]
+    
+    return FeatureCollection(polys)
+end
+
+const TessellateTypes = Union{
+    AbstractSDM,
+    SimpleSDMPolygons.AbstractGeometry,
+    SDMLayer,
+    AbstractOccurrenceCollection,
+}
+
+function tessellate(
     obj::T,
-    args...;
+    d::Float64;
+    tile::Symbol = :hexagons,
     padding::Number = 0.0,
     kwargs...,
-) where {T <: TypesForHexagons}
-    H = hexagons(boundingbox(obj; padding = padding), args...; kwargs...)
+) where {T <: TessellateTypes}
+    _tfunc = Dict(:hexagons => hexagons, :squares => squares)[tile]
+    H = _tfunc(boundingbox(obj; padding = padding), d; kwargs...)
     keeprelevant!(H, obj)
     return H
 end
@@ -153,15 +230,20 @@ function keeprelevant!(H::FeatureCollection, occ::AbstractOccurrenceCollection)
     return H
 end
 
-function keeprelevant(H::FeatureCollection, obj::T) where {T <: TypesForHexagons}
+function keeprelevant(H::FeatureCollection, obj::T) where {T <: TessellateTypes}
     J = deepcopy(H)
     keeprelevant!(J, obj)
     return J
 end
 
-function cvlabel!(H::FeatureCollection; n::Integer=10, order::Symbol=:random, maxiter::Integer=1000)
+function cvlabel!(
+    H::FeatureCollection;
+    n::Integer = 10,
+    order::Symbol = :random,
+    maxiter::Integer = 1000,
+)
     k = length(H.features)
-    fold = repeat(1:n, outer=ceil(Int, k/n))[1:k]
+    fold = repeat(1:n; outer = ceil(Int, k / n))[1:k]
 
     # Get the centers
     centers = [f.properties["__centroid"] for f in H.features]
@@ -182,8 +264,8 @@ function cvlabel!(H::FeatureCollection; n::Integer=10, order::Symbol=:random, ma
     if order == :V
         sortfunc = (x) -> x[2]
     end
-    
-    feature_rank = sortperm(centers, by = sortfunc)
+
+    feature_rank = sortperm(centers; by = sortfunc)
 
     # For balanced layout, we need to do something a little more consuming in resources
     if order == :balanced
@@ -196,19 +278,19 @@ function cvlabel!(H::FeatureCollection; n::Integer=10, order::Symbol=:random, ma
         # We want to map the features to folds- and for this we need to figure
         # out a way to do this that maintains balance. The challenge is that we
         # also want to ensure that the folds have approximately the same membership.
-        
+
         # We start from the initial situation, and we generate a vector of idx
         # for each fold
         feature_rank = collect(1:k)
-        
+
         # The score of this assignment is given by:
-        
+
         PRs = [sum(pr[findall(==(f), fold[feature_rank])]) for f in 1:n]
         ABs = [sum(ab[findall(==(f), fold[feature_rank])]) for f in 1:n]
         BA = PRs ./ (PRs .+ ABs)
 
         # Current error
-        ε₀ = sqrt(sum((BA .- ba).^2.0))
+        ε₀ = sqrt(sum((BA .- ba) .^ 2.0))
 
         # Iterate
         for _ in Base.OneTo(maxiter)
@@ -218,7 +300,7 @@ function cvlabel!(H::FeatureCollection; n::Integer=10, order::Symbol=:random, ma
             cPRs = [sum(pr[findall(==(f), fold[candidate])]) for f in 1:n]
             cABs = [sum(ab[findall(==(f), fold[candidate])]) for f in 1:n]
             cBA = cPRs ./ (cPRs .+ cABs)
-            εₜ = sqrt(sum((cBA .- ba).^2.0))
+            εₜ = sqrt(sum((cBA .- ba) .^ 2.0))
             if εₜ < ε₀
                 feature_rank[:] .= candidate[:]
                 ε₀ = εₜ
@@ -231,6 +313,23 @@ function cvlabel!(H::FeatureCollection; n::Integer=10, order::Symbol=:random, ma
         H.features[r].properties["__fold"] = fold[i]
         H.features[r].properties["__order"] = i
     end
-    
+
     return H
+end
+
+function spatialfold(model::SDM, blocks::FeatureCollection)
+    @assert "__fold" in keys(uniqueproperties(blocks))
+    folds = Tuple{Vector{Int64}, Vector{Int64}}[]
+
+    for fold in Base.OneTo(maximum(uniqueproperties(blocks)["__fold"]))
+        occ = mask(model, blocks["__fold" => fold])
+        test = sort(indexin(place(occ), place(model)))
+        train = setdiff(eachindex(labels(model)), test)
+        push!(folds, (train, test))
+    end
+    return folds
+end
+
+function spatialfold(blocks::FeatureCollection)
+    return (model::SDM) -> spatialfold(model, blocks)
 end

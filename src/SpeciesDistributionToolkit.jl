@@ -57,8 +57,8 @@ export trim
 export zone, byzone
 
 # Generation of hexagons
-include("polygons/hexagons.jl")
-export hexagons
+include("polygons/tessellate.jl")
+export tessellate
 
 # Extra functions
 include("utilities.jl")

@@ -89,7 +89,7 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Boo
 
     # Now we can return the polygons
     polys = [
-        Feature(Polygon(_hexagon(g, R; pointy = pointy)), Dict()) for g in grid
+        Feature(Polygon(_hexagon(g, R; pointy = pointy)), Dict{String, Any}("__centroid" => g)) for g in grid
     ]
 
     return FeatureCollection(polys)
@@ -116,7 +116,7 @@ function keeprelevant!(H::FeatureCollection, L::SDMLayer)
     for (i, f) in enumerate(H.features)
         n = length(mask(L, f))
         if n > 0
-            f.properties["Layer cells included"] = n
+            f.properties["__cells"] = n
         else
             push!(idx_to_delete, i)
         end
@@ -148,8 +148,8 @@ function keeprelevant!(H::FeatureCollection, occ::AbstractOccurrenceCollection)
         if isempty(incl)
             push!(idx_to_delete, i)
         else
-            f.properties["Presences"] = length(presences(Occurrences(incl)))
-            f.properties["Absences"] = length(absences(Occurrences(incl)))
+            f.properties["__presences"] = length(presences(Occurrences(incl)))
+            f.properties["__absences"] = length(absences(Occurrences(incl)))
         end
     end
     deleteat!(H.features, idx_to_delete)
@@ -165,22 +165,15 @@ end
 function cvlabel!(H::FeatureCollection; n::Integer=10, random::Bool=false)
     k = length(H.features)
     fold = repeat(1:n, outer=ceil(Int, k/n))[1:k]
+    @info length(fold)
 
     # Get the centers
-    centers = Array{Tuple{Float64, Float64}}(undef, k)
-    for i in eachindex(H.features)
-        cntr = SimpleSDMPolygons.AG.centroid(H.features[i].geometry.geometry)
-        js = SimpleSDMPolygons.AG.toJSON(cntr)
-        slon, slat = split(first(split(last(split(js, "[")), "]")), ", ")
-        lon = parse(Float64, slon)
-        lat = parse(Float64, slat)
-        centers[i] = (lon, lat)
-    end
+    centers = [f.properties["__centroid"] for f in H.features]
 
     # Sort the centers
     order = sortperm(centers)
-    for (i, f) in enumerate(H.features)
-        f.properties["CV"] = fold[order[i]]
+    for (i, o) in enumerate(order)
+        H.features[o].properties["__fold"] = fold[i]
     end
     
     return H

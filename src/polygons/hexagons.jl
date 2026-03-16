@@ -161,3 +161,27 @@ function keeprelevant(H::FeatureCollection, obj::T) where {T <: TypesForHexagons
     keeprelevant!(J, obj)
     return J
 end
+
+function cvlabel!(H::FeatureCollection; n::Integer=10, random::Bool=false)
+    k = length(H.features)
+    fold = repeat(1:n, outer=ceil(Int, k/n))[1:k]
+
+    # Get the centers
+    centers = Array{Tuple{Float64, Float64}}(undef, k)
+    for i in eachindex(H.features)
+        cntr = SimpleSDMPolygons.AG.centroid(H.features[i].geometry.geometry)
+        js = SimpleSDMPolygons.AG.toJSON(cntr)
+        slon, slat = split(first(split(last(split(js, "[")), "]")), ", ")
+        lon = parse(Float64, slon)
+        lat = parse(Float64, slat)
+        centers[i] = (lon, lat)
+    end
+
+    # Sort the centers
+    order = sortperm(centers)
+    for (i, f) in enumerate(H.features)
+        f.properties["CV"] = fold[order[i]]
+    end
+    
+    return H
+end

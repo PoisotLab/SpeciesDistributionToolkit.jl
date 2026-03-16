@@ -44,6 +44,7 @@ lines!(ax, hexagons(pol, 12.; pointy=false), color=:grey60)
 scatter!(ax, model, color=labels(model), colormap=:Purples, strokecolor=:black, strokewidth=0.4, markersize=4)
 current_figure()
 
+
 h = hexagons(pol, 5.; pointy=true)
 ab = SDT.keeprelevant(h, absences(model))
 pr = SDT.keeprelevant(h, presences(model))
@@ -53,5 +54,16 @@ ax = Axis(f[1,1], aspect=DataAspect())
 poly!(ax, pr, color=(:red, 0.5))
 poly!(ax, ab, color=(:skyblue, 0.4))
 lines!(h, color=:grey10, linewidth=0.5)
+current_figure()
+
+
+h = hexagons(model, 5.; pointy=true)
+SDT.cvlabel!(h; n=3)
+
+f = Figure()
+ax = Axis(f[1,1], aspect=DataAspect())
+for ft in h.features
+    poly!(ax, ft, color=ft.properties["CV"], colorrange=(1, 3), colormap=:Spectral)
+end
 current_figure()
 

@@ -37,3 +37,21 @@ ax = Axis(f[1,1]; aspect=DataAspect())
 heatmap!(ax, L, colormap=:navia)
 lines!(ax, hexagons(L, 12.; pointy=false), color=:grey60)
 current_figure()
+
+f = Figure()
+ax = Axis(f[1,1]; aspect=DataAspect())
+lines!(ax, hexagons(pol, 12.; pointy=false), color=:grey60)
+scatter!(ax, model, color=labels(model), colormap=:Purples, strokecolor=:black, strokewidth=0.4, markersize=4)
+current_figure()
+
+h = hexagons(pol, 3.; pointy=true)
+ab = SDT.keeprelevant(h, absences(model))
+pr = SDT.keeprelevant(h, presences(model))
+
+f = Figure()
+ax = Axis(f[1,1], aspect=DataAspect())
+poly!(ax, pr, color=(:orange, 0.4))
+poly!(ax, ab, color=(:grey, 0.4))
+lines!(h, color=:grey10, linewidth=0.5)
+current_figure()
+

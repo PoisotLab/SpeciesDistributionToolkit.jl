@@ -100,14 +100,11 @@ const TypesForHexagons = Union{AbstractSDM, SimpleSDMPolygons.AbstractGeometry, 
 function hexagons(
     obj::T,
     args...;
-    clean::Bool = true,
     padding::Number = 0.0,
     kwargs...,
 ) where {T <: TypesForHexagons}
     H = hexagons(boundingbox(obj; padding = padding), args...; kwargs...)
-    if clean
-        keeprelevant!(H, obj)
-    end
+    keeprelevant!(H, obj)
     return H
 end
 

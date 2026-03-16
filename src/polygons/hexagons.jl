@@ -162,18 +162,43 @@ function keeprelevant(H::FeatureCollection, obj::T) where {T <: TypesForHexagons
     return J
 end
 
-function cvlabel!(H::FeatureCollection; n::Integer=10, random::Bool=false)
+function cvlabel!(H::FeatureCollection; n::Integer=10, order::Symbol=:HV)
     k = length(H.features)
     fold = repeat(1:n, outer=ceil(Int, k/n))[1:k]
-    @info length(fold)
 
     # Get the centers
     centers = [f.properties["__centroid"] for f in H.features]
 
     # Sort the centers
-    order = sortperm(centers)
-    for (i, o) in enumerate(order)
-        H.features[o].properties["__fold"] = fold[i]
+    sortfunc = (x) -> (x[2], x[1])
+    if order == :VH
+        sortfunc = (x) -> (x[1], x[2])
+    end
+    if order == :random
+        sortfunc = (x) -> rand()
+    end
+    if order == :H
+        sortfunc = (x) -> x[1]
+    end
+    if order == :V
+        sortfunc = (x) -> x[2]
+    end
+    
+    feature_rank = sortperm(centers, by = sortfunc)
+
+    if order == :balanced
+        @assert "__presences" in keys(uniqueproperties(H))
+        @assert "__absences" in keys(uniqueproperties(H))
+        pr = [f.properties["__presences"] for f in H.features]
+        ab = [f.properties["__absences"] for f in H.features]
+        @info "Balance = $(sum(pr)/(sum(pr)+sum(ab)))"
+        @info pr ./ (pr .+ ab)
+        feature_rank = sortperm(pr ./ (pr .+ ab))
+    end
+
+    for (i, r) in enumerate(feature_rank)
+        H.features[r].properties["__fold"] = fold[i]
+        H.features[r].properties["__order"] = i
     end
     
     return H

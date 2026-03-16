@@ -95,69 +95,69 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Boo
     return FeatureCollection(polys)
 end
 
-function hexagons(
-    sdm::AbstractSDM,
-    args...;
-    clean::Bool = true,
-    padding::Number = 0.0,
-    kwargs...,
-)
-    H = hexagons(boundingbox(sdm; padding = padding), args...; kwargs...)
-    # Remove the hexagons that have no occurrences
-    if clean
-        return H
-    else
-        return H
-    end
-end
+const TypesForHexagons = Union{AbstractSDM, SimpleSDMPolygons.AbstractGeometry, SDMLayer, AbstractOccurrenceCollection}
 
 function hexagons(
-    layer::SDMLayer,
+    obj::T,
     args...;
     clean::Bool = true,
     padding::Number = 0.0,
     kwargs...,
-)
-    H = hexagons(boundingbox(layer; padding = padding), args...; kwargs...)
-    # Remove the hexagons that have no cells in the layer
+) where {T <: TypesForHexagons}
+    H = hexagons(boundingbox(obj; padding = padding), args...; kwargs...)
     if clean
-        keep = Feature[]
-        for f in H.features
-            n = length(mask(layer, f))
-            if n > 0
-                f.properties["cells"] = n
-                push!(keep, f)
-            end
-        end
-        return FeatureCollection(keep)
-    else
-        return H
+        keeprelevant!(H, obj)
     end
+    return H
 end
 
-function hexagons(
-    geom::SimpleSDMPolygons.AbstractGeometry,
-    args...;
-    clean::Bool = true,
-    padding::Number = 0.0,
-    kwargs...,
-)
-    H = hexagons(boundingbox(geom; padding = padding), args...; kwargs...)
-    # Remove the hexagons that have no intersection with the geometry
-    if clean
-        keep = Feature[]
-        for f in H.features
-            try
-                cut = intersect(geom, f).features[1].geometry.geometry
-                if !SimpleSDMPolygons.AG.isempty(cut)
-                    push!(keep, f)
-                end
-            catch err
-                continue
-            end
+function keeprelevant!(H::FeatureCollection, L::SDMLayer)
+    idx_to_delete = Integer[]
+    for (i, f) in enumerate(H.features)
+        n = length(mask(L, f))
+        if n > 0
+            f.properties["Layer cells included"] = n
+        else
+            push!(idx_to_delete, i)
         end
-        return FeatureCollection(keep)
-    else
-        return H
     end
+    deleteat!(H.features, idx_to_delete)
+    return H
+end
+
+function keeprelevant!(H::FeatureCollection, G::SimpleSDMPolygons.AbstractGeometry)
+    idx_to_delete = Integer[]
+    for (i, f) in enumerate(H.features)
+        try
+            cut = intersect(G, f).features[1].geometry.geometry
+            if SimpleSDMPolygons.AG.isempty(cut)
+                push!(idx_to_delete, i)
+            end
+        catch err
+            continue
+        end
+    end
+    deleteat!(H.features, idx_to_delete)
+    return H
+end
+
+function keeprelevant!(H::FeatureCollection, occ::AbstractOccurrenceCollection)
+    idx_to_delete = Integer[]
+    for (i, f) in enumerate(H.features)
+        incl = mask(occ, f)
+        if isempty(incl)
+            push!(idx_to_delete, i)
+        else
+            f.properties["Presences"] = length(presences(Occurrences(incl)))
+            f.properties["Absences"] = length(absences(Occurrences(incl)))
+        end
+    end
+    deleteat!(H.features, idx_to_delete)
+    return H
+end
+
+function keeprelevant(H::FeatureCollection, obj::T) where {T <: TypesForHexagons}
+    J = deepcopy(H)
+    keeprelevant!(J, obj)
+    return J
 end

@@ -71,7 +71,7 @@ poly!(ax, ab; color = (:skyblue, 0.4))
 lines!(h; color = :grey10, linewidth = 0.5)
 current_figure()
 
-h = hexagons(model, 12.5; pointy = false)
+h = hexagons(model, 5.; pointy = true)
 SDT.cvlabel!(h; n = 10, order = :balanced)
 
 colpal = cgrad(:Set1, maximum(uniqueproperties(h)["__fold"]); categorical = true)
@@ -122,17 +122,8 @@ cv = crossvalidate(model, folds)
 
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
-heatmap!(ax, predict(model, L; threshold=false))
-for ft in h.features
-    text!(
-        ax,
-        ft.properties["__centroid"];
-        text = string(ft.properties["__fold"]),
-        align = (:center, :center),
-        color = :black,
-    )
-end
-lines!(ax, h; color = :grey20)
+heatmap!(ax, predict(model, L; threshold=false), colormap=:coffee)
+scatter!(ax, presences(model))
 current_figure()
 
 x, y, n = SDT.variogram(L[1], 1000, 60)

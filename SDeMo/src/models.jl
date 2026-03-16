@@ -3,7 +3,7 @@
 
 This abstract type covers the regular, ensemble, and boosted models.
 """
-abstract type AbstractSDM end
+abstract type AbstractSDM <: OccurrencesInterface.AbstractOccurrenceCollection end
 
 """
     AbstractEnsembleSDM

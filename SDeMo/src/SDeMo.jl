@@ -11,6 +11,8 @@ using Random
 using Statistics
 using StatsBase
 
+import OccurrencesInterface
+
 # Demo data
 include("utilities/demodata.jl")
 
@@ -147,5 +149,8 @@ export writesdm, loadsdm
 
 include("utilities/varia.jl")
 export iqr
+
+# Occurrences Interface support
+include("interfaces/OccurrencesInterface.jl")
 
 end # module SDeMo

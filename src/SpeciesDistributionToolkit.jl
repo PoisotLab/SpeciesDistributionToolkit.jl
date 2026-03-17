@@ -56,9 +56,14 @@ include("polygons/simplify.jl")
 export trim
 export zone, byzone
 
-# Generation of hexagons
-include("polygons/tessellate.jl")
+# Tessellation
+include("tessellation/squares.jl")
+include("tessellation/hexagons.jl")
+include("tessellation/triangles.jl")
+include("tessellation/tessellate.jl")
 export tessellate
+
+include("tessellation/spatialfold.jl")
 
 # Extra functions
 include("utilities.jl")

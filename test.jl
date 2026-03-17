@@ -18,10 +18,10 @@ mask!(L, pol)
 
 # Get 
 
-pointyhex = tessellate(model, 10.; tile=:hexagons, pointy=true)
-flathex = tessellate(model, 10.; tile=:hexagons, pointy=false)
-square = tessellate(model, 10.; tile=:squares)
-triangle = tessellate(model, 10.; tile=:triangles)
+pointyhex = tessellate(model, 15.; tile=:hexagons, pointy=true)
+flathex = tessellate(model, 15.; tile=:hexagons, pointy=false)
+square = tessellate(model, 15.; tile=:squares)
+triangle = tessellate(model, 15.; tile=:triangles)
 
 tess = [pointyhex, flathex, square, triangle]
 

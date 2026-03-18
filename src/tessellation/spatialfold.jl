@@ -2,9 +2,18 @@ function cvlabel!(
     H::FeatureCollection;
     n::Integer = 10,
     order::Symbol = :random,
-    maxiter::Integer = 1000,
+    maxiter::Integer = 2000
 )
     k = length(H.features)
+
+    if k < n
+        throw(
+            ArgumentError(
+                "There are more folds to allocated ($n) than there are available features ($k)",
+            ),
+        )
+    end
+
     fold = repeat(1:n; outer = ceil(Int, k / n))[1:k]
 
     # Get the centers

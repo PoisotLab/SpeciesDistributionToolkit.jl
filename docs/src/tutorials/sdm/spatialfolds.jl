@@ -48,7 +48,7 @@ hyperparameters!(classifier(model), :interactions, :all)
 Lᵢ = L[1]
 x, y, n = variogram(Lᵢ; samples = 5000)
 
-#figure variogram-first-variable
+#figure variogram-first
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "Distance (km)", ylabel = "Semivariance")
 hlines!(ax, [var(Lᵢ)]; color = :grey40, linestyle = :dash)

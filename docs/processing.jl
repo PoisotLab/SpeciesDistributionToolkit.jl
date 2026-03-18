@@ -10,7 +10,7 @@ function pre_collapse_figure(content)
     fig_hash = string(hash(rand(100)))
 
     matcher = r"""^#figure (?<title>[\w-]+)$
-    (?<code>(?>^[^#].*$\n){1,})^current_figure\(\) #hide$"""m
+    (?<code>(?>^[^#].*$\n)+?)^current_figure\(\) #hide$"""m
 
     replacement_template = """
     # ![](HASH-\\g<title>.png)

@@ -253,3 +253,19 @@ scatter!(
     strokewidth = 1,
 )
 current_figure() #hide
+
+# fit variogram
+# {\displaystyle \gamma (h)=(s-n)(1-\exp(-h/(ra)))+n1_{(0,\infty )}(h).}
+
+# sill, nugget, range
+function expovar(a, v, n)
+    __mod(h) = (1 - exp(-(3*h*h)/(a*a))) * (v - n) + n
+    return __mod
+end
+
+f = expovar(550., 0.27, 0.002)
+
+scatter(x, y)
+vx = LinRange(0, 1.2*maximum(x), 50)
+lines!(vx, f.(vx))
+current_figure()

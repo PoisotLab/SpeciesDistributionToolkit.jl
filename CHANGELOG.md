@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **added** a `boundingbox` method for SDMs
 - **added** `Statistics` as a dependency
 - **added** `variogram` for quick inspection of spatial auto-correlation [#566]
-- **added** `hexagons` to generate an hexagonal tiling
+- **added** `tessellate` to generate a tiling
+- **added** `mosaic` and `byzone` support for feature collection key aggregation
 
 ## `v1.8.2`
 

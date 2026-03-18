@@ -33,7 +33,17 @@ function variogram(pairs::Vector{Tuple{Float64, Float64}}, n::Integer; α::Float
     return X[val], Y[val], N[val]
 end
 
-function variogram(L::SDMLayer, samples::Integer, bins::Integer; kwargs...)
+"""
+    variogram(L::SDMLayer; samples::Integer=2000, bins::Integer=100; kwargs...)
+
+Generates the raw data to look at an empirical semivariogram from a layer. This
+method will draw `samples` pairs of points at random, then aggregate them in
+`bins` bins.
+
+This returns three vectors: the empirical center of the bin, the semivariance
+within this bin, and the number of samples that compose this bin.
+"""
+function variogram(L::SDMLayer; samples::Integer=2000, bins::Integer=100; kwargs...)
     Z = _generate_point_pairs(L, samples)
     return variogram(Z, bins; kwargs...)
 end

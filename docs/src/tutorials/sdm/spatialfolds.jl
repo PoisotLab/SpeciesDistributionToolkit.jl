@@ -40,8 +40,8 @@ absencelayer = backgroundpoints(absencemask, 2sum(presencelayer))
 
 # Training on model v1
 
-model = SDM(RawData, Logistic, L, presencelayer, absencelayer)
-hyperparameters!(classifier(model), :interactions, :all)
+model = SDM(PCATransform, Logistic, L, presencelayer, absencelayer)
+hyperparameters!(classifier(model), :interactions, :self)
 
 # variogram for temperature
 
@@ -50,7 +50,7 @@ x, y, n = variogram(Lᵢ; samples = 5000)
 
 #figure variogram-first
 f = Figure()
-ax = Axis(f[1, 1]; xlabel = "Distance (km)", ylabel = "Semivariance")
+ax = Axis(f[1, 1]; xlabel = "Distance (km)", ylabel = "Semivariogram")
 hlines!(ax, [var(Lᵢ)]; color = :grey40, linestyle = :dash)
 scatter!(
     ax,
@@ -63,9 +63,22 @@ scatter!(
 )
 current_figure() #hide
 
+# note that with an unexported function, we can also estimate the parameters
+
+vario = SpeciesDistributionToolkit.fitvariogram(x, y, n; family=:gaussian);
+
+#figure variogram-first
+vx = LinRange(extrema(x)..., 100)
+lines!(ax, vx, vario.model.(vx), color=:purple, linestyle=:dot)
+current_figure() #hide
+
+# this gives a range of approx (in km)
+
+vario.range
+
 # we tile the model observations
 
-tiles = tessellate(model, 25.0; tile = :hexagons, pointy = true)
+tiles = tessellate(model, 50.; tile = :hexagons, pointy = true)
 
 #figure initial-tiling
 f = Figure()
@@ -80,7 +93,7 @@ current_figure() #hide
 
 # we now assign the folds for cross validation
 
-assignfolds!(tiles; n = 6, order = :balanced)
+assignfolds!(tiles; n = 4, order = :balanced)
 
 # check what the folds look like
 
@@ -235,37 +248,14 @@ heatmap!(
 scatter!(ax, presences(model), color=:transparent, strokecolor=:orange, strokewidth=2)
 current_figure() #hide
 
-# look at prediction variogram
-
-x, y, n = variogram(P; samples = 5000)
-
-#figure variogram-output
+#figure spatial-range
 f = Figure()
-ax = Axis(f[1, 1]; xlabel = "Distance (km)", ylabel = "Semivariance")
-hlines!(ax, [var(P)]; color = :grey40, linestyle = :dash)
-scatter!(
+ax = Axis(f[1, 1]; aspect = DataAspect())
+heatmap!(
     ax,
-    x,
-    y;
-    markersize = n ./ maximum(n) .* 8 .+ 2,
-    strokecolor = :black,
-    color = :grey98,
-    strokewidth = 1,
+    predict(model, L; threshold = true);
+    colormap = Reverse(:navia),
+    colorrange = (0, 1),
 )
+scatter!(ax, presences(model), color=:transparent, strokecolor=:orange, strokewidth=2)
 current_figure() #hide
-
-# fit variogram
-# {\displaystyle \gamma (h)=(s-n)(1-\exp(-h/(ra)))+n1_{(0,\infty )}(h).}
-
-# sill, nugget, range
-function expovar(a, v, n)
-    __mod(h) = (1 - exp(-(3*h*h)/(a*a))) * (v - n) + n
-    return __mod
-end
-
-f = expovar(550., 0.27, 0.002)
-
-scatter(x, y)
-vx = LinRange(0, 1.2*maximum(x), 50)
-lines!(vx, f.(vx))
-current_figure()

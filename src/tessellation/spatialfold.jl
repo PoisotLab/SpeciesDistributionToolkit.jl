@@ -1,3 +1,25 @@
+"""
+    cvlabel!(H::FeatureCollection; n::Integer=10, order::Symbol=:balanced, maxiter::Integer = 2000)
+
+Assigns the features in a tiling (or any other `FeatureCollection`) to `n`
+blocks for spatial cross-validation.
+    
+The `order` keyword will determine how the tiles are assigned. When using `:N`,
+`:E`, `:EN`, or `:NE`, the tile will be first sorted by (resp.) northing,
+easting, easting then northing, and northing then easting, then assigned to the
+folds. Note that the features in `H` _must_ have a `__centroid` property.
+
+When `order` is `:balanced`, the tiles _must_ have both `__presences` and
+`__absences` properties. The assignment of a tile to folds is done by using a
+greedy algorithm (for up to `maxiter` rounds) which will swap tiles across folds
+until all folds are as close as possible to reaching the class imbalance of the
+entire dataset. This is the default ordering of tiles.
+
+When `order` is `:random`, the tiles are assigned fully at random.
+
+This method changes the feature collection by adding a `__fold` property to each
+tiles, which can be used in conjunction with `spatialfold`.
+"""
 function cvlabel!(
     H::FeatureCollection;
     n::Integer = 10,
@@ -15,7 +37,7 @@ function cvlabel!(
     end
 
     fold = repeat(1:n; outer = ceil(Int, k / n))[1:k]
-
+    
     # Get the centers
     centers = [f.properties["__centroid"] for f in H.features]
 

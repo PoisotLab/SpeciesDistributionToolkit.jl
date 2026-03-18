@@ -31,7 +31,7 @@ lay = [1 2; 3 4]
 
 nfolds = 5
 for t in tess
-    SDT.cvlabel!(t; n = nfolds, order = :balanced)
+    SDT.cvlabel!(t; n = nfolds, order = :NE, group=false)
 end
 
 colpal = cgrad(:jet, nfolds; categorical = true)

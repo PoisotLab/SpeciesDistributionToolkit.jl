@@ -43,7 +43,7 @@ method will draw `samples` pairs of points at random, then aggregate them in
 This returns three vectors: the empirical center of the bin, the semivariance
 within this bin, and the number of samples that compose this bin.
 """
-function variogram(L::SDMLayer; samples::Integer=2000, bins::Integer=100; kwargs...)
+function variogram(L::SDMLayer; samples::Integer=2000, bins::Integer=100, kwargs...)
     Z = _generate_point_pairs(L, samples)
     return variogram(Z, bins; kwargs...)
 end

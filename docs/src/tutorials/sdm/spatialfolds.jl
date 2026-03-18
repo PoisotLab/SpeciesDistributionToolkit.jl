@@ -46,7 +46,7 @@ hyperparameters!(classifier(model), :interactions, :self)
 # variogram for temperature
 
 Lᵢ = L[1]
-x, y, n = variogram(Lᵢ; samples = 5000)
+x, y, n = variogram(Lᵢ; samples = 8000, bins=200)
 
 #figure variogram-first
 f = Figure()
@@ -57,28 +57,43 @@ scatter!(
     x,
     y;
     markersize = n ./ maximum(n) .* 8 .+ 2,
-    strokecolor = :black,
-    color = :grey98,
-    strokewidth = 1,
+    color = :grey55,
 )
 current_figure() #hide
 
-# note that with an unexported function, we can also estimate the parameters
+# note that with an unexported function, we can also estimate the parameters -
+# other type of model to fit are exponential and gaussian
 
-vario = SpeciesDistributionToolkit.fitvariogram(x, y, n; family=:gaussian);
+vario = SpeciesDistributionToolkit.fitvariogram(x, y, n; family=:spherical);
 
 #figure variogram-first
 vx = LinRange(extrema(x)..., 100)
-lines!(ax, vx, vario.model.(vx), color=:purple, linestyle=:dot)
+lines!(ax, vx, vario.model.(vx), color=:orange, linewidth=2, alpha=0.6)
+xlims!(ax, low=0.0)
+ylims!(ax, low=0.0)
+ylims!(ax, high=quantile(y, 0.95))
 current_figure() #hide
 
 # this gives a range of approx (in km)
 
 vario.range
 
-# we tile the model observations
+# we can also check the sill
 
-tiles = tessellate(model, 50.; tile = :hexagons, pointy = true)
+vario.sill
+
+# and compare to layer variance
+
+var(Lᵢ)
+
+# and check the base amount of autocorrelation for close points
+
+vario.nugget
+
+# we tile the model observations - ideally would be done for a surface
+# corresponding to the range in the variogram but here, too large
+
+tiles = tessellate(model, 40.; tile = :hexagons, pointy = true)
 
 #figure initial-tiling
 f = Figure()
@@ -100,7 +115,6 @@ assignfolds!(tiles; n = 4, order = :balanced)
 #figure check-folds
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
-poly!(ax, landmass; color = :grey90)
 colpal = Makie.wong_colors()[1:maximum(uniqueproperties(tiles)["__fold"])]
 for k in uniqueproperties(tiles)["__fold"]
     poly!(ax, tiles["__fold" => k]; color = colpal[k], alpha = 0.3)
@@ -248,14 +262,18 @@ heatmap!(
 scatter!(ax, presences(model), color=:transparent, strokecolor=:orange, strokewidth=2)
 current_figure() #hide
 
-#figure spatial-range
+# tile by any shape we want, for example this is prediction aggregated in
+# triangular cells
+
+#figure spatial-prediction
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
+newtiles = tessellate(P, 20.0, tile=:triangles)
 heatmap!(
     ax,
-    predict(model, L; threshold = true);
+    mosaic(mean, P, newtiles, "__centroid"),
     colormap = Reverse(:navia),
     colorrange = (0, 1),
 )
-scatter!(ax, presences(model), color=:transparent, strokecolor=:orange, strokewidth=2)
+lines!(ax, landmass; color = :black)
 current_figure() #hide

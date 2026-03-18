@@ -35,8 +35,15 @@ function triangles(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0))
     # of the boundingbox
     km_per_deg = cos(middle_latitude * π / 180) * 111325.0 / 1000.0
 
+    # Equivalent circle area
+    𝑨 = π * d * d
+    
+    # Equivalent base length and altitude
+    bl = sqrt(4𝑨/sqrt(3))
+    alt = (sqrt(3)/2)*bl
+
     # We want to get the triangle height from this value
-    altitude = d / km_per_deg
+    altitude = alt / km_per_deg
 
     # The triangle base therefore
     base = (2altitude / sqrt(3))
@@ -73,7 +80,7 @@ function triangles(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0))
                 polys,
                 Feature(
                     Polygon(_triangle((px, py), altitude; pointy = orig_point)),
-                    Dict{String, Any}("__centroid" => (px, py))),
+                    Dict{String, Any}("__centroid" => (px, py), "__tile" => true)),
             )
 
             # The position for the other cell is not terribly difficult either
@@ -84,7 +91,7 @@ function triangles(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0))
                 polys,
                 Feature(
                     Polygon(_triangle((p2x, p2y), altitude; pointy = !orig_point)),
-                    Dict{String, Any}("__centroid" => (p2x, p2y))),
+                    Dict{String, Any}("__centroid" => (p2x, p2y), "__tile" => true)),
             )
         end
     end

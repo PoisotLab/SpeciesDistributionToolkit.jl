@@ -26,8 +26,14 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Boo
     # of the boundingbox
     km_per_deg = cos(middle_latitude * π / 180) * 111325.0 / 1000.0
 
+    # Equivalent circle area
+    𝑨 = π * d * d
+    
+    # Equivalent circumradius
+    circum = sqrt(2𝑨/(3*sqrt(3)))
+
     # We want to get the circumradius in units of degrees
-    R = (d/2) / km_per_deg
+    R = circum / km_per_deg
 
     # Then we get the inradius from this value
     r = (sqrt(3.0) / 2) * R
@@ -91,7 +97,7 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Boo
     polys = [
         Feature(
             Polygon(_hexagon(g, R; pointy = pointy)),
-            Dict{String, Any}("__centroid" => g),
+            Dict{String, Any}("__centroid" => g, "__tile" => true),
         ) for g in grid
     ]
 

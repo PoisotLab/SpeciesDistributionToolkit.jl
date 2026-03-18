@@ -26,8 +26,14 @@ function squares(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0))
     # of the boundingbox
     km_per_deg = cos(middle_latitude * π / 180) * 111325.0 / 1000.0
 
+    # Equivalent circle area
+    𝑨 = π * d * d
+    
+    # Equivalent side length
+    side = sqrt(𝑨)
+
     # We want to get the size of the square in units of degrees
-    s = d / km_per_deg
+    s = side / km_per_deg
 
     # Now we measure the distance from the origin to the right / bottom of the
     # bounding box - these distances are measured in degree
@@ -58,7 +64,7 @@ function squares(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0))
     polys = [
         Feature(
             Polygon(_square(g, s)),
-            Dict{String, Any}("__centroid" => g),
+            Dict{String, Any}("__centroid" => g, "__tile" => true),
         ) for g in grid
     ]
     

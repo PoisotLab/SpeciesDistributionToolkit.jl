@@ -201,6 +201,7 @@ export default defineConfig({
                             collapsed: false,
                             items: [
                                 { text: "Building a model", link: "/tutorials/sdm/training/" },
+                                { text: "Spatial CV", link: "/tutorials/sdm/spatialfolds/" },
                                 { text: "Bagging", link: "/tutorials/sdm/bagging/" },
                                 { text: "Boosting", link: "/tutorials/sdm/adaboost/" },
                                 { text: "Conformal prediction", link: "/tutorials/sdm/conformal/" },

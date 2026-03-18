@@ -2,14 +2,14 @@ function cvlabel!(
     H::FeatureCollection;
     n::Integer = 10,
     order::Symbol = :random,
-    maxiter::Integer = 2000
+    maxiter::Integer = 2000,
 )
     k = length(H.features)
 
     if k < n
         throw(
             ArgumentError(
-                "There are more folds to allocated ($n) than there are available features ($k)",
+                "There are more folds to be allocated ($n) than there are available features ($k)",
             ),
         )
     end
@@ -68,6 +68,7 @@ function cvlabel!(
             i, j = rand(eachindex(feature_rank), 2)
             candidate = copy(feature_rank)
             candidate[i], candidate[j] = candidate[j], candidate[i]
+            # Error on balance
             cPRs = [sum(pr[findall(==(f), fold[candidate])]) for f in 1:n]
             cABs = [sum(ab[findall(==(f), fold[candidate])]) for f in 1:n]
             cBA = cPRs ./ (cPRs .+ cABs)

@@ -62,6 +62,7 @@ include("tessellation/hexagons.jl")
 include("tessellation/triangles.jl")
 include("tessellation/tessellate.jl")
 export tessellate
+export assignfolds!, spatialfold
 
 include("tessellation/spatialfold.jl")
 

@@ -1,5 +1,5 @@
 """
-    cvlabel!(H::FeatureCollection; n::Integer=10, order::Symbol=:balanced, maxiter::Integer = 2000)
+    assignfolds!(H::FeatureCollection; n::Integer=10, order::Symbol=:balanced, maxiter::Integer = 2000)
 
 Assigns the features in a tiling (or any other `FeatureCollection`) to `n`
 blocks for spatial cross-validation.
@@ -20,7 +20,7 @@ When `order` is `:random`, the tiles are assigned fully at random.
 This method changes the feature collection by adding a `__fold` property to each
 tiles, which can be used in conjunction with `spatialfold`.
 """
-function cvlabel!(
+function assignfolds!(
     H::FeatureCollection;
     n::Integer = 10,
     order::Symbol = :random,

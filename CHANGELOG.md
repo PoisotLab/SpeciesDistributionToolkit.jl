@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **added** `variogram` for quick inspection of spatial auto-correlation [#566]
 - **added** `tessellate` to generate a tiling
 - **added** `mosaic` and `byzone` support for feature collection key aggregation
+- **added** `spatialfold` to generate spatial validation folds based on a tiling [#548]
 
 ## `v1.8.2`
 

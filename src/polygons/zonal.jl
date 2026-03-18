@@ -3,7 +3,10 @@
 
 Returns a layer in which the value of each pixel is set to the index of the polygon to which it belongs. Initially valued cells that are not part of a polygon are turned off.
 """
-function zone(layer::SDMLayer, polygons::Vector{T}) where {T <: Union{Polygon,MultiPolygon,Feature,FeatureCollection}}
+function zone(
+    layer::SDMLayer,
+    polygons::Vector{T},
+) where {T <: Union{Polygon, MultiPolygon, Feature, FeatureCollection}}
     out = similar(layer, Int16) # This should be enough
     fill!(out, zero(eltype(out)))
     zones = [mask!(copy(layer), poly) for poly in polygons]
@@ -28,10 +31,35 @@ function byzone(
     polygonsnames = 1:length(polygons),
     args...;
     kwargs...,
-) where {T <: Union{Polygon,MultiPolygon,Feature,FeatureCollection}}
+) where {T <: Union{Polygon, MultiPolygon, Feature, FeatureCollection}}
     z = zone(layer, polygons)
     return [
         (polygonsnames[i] => f(layer.grid[findall(z.grid .== i)], args...; kwargs...)) for
         i in unique(z)
     ]
+end
+
+"""
+    byzone(f, layer::SDMLayer, fc::FeatureCollection, key)
+
+Applies the function `f` to all cells that belong to the same polygon, and
+returns the output as a dictionary by value of `key`. The function given as an
+argument can take both positional and keyword arguments.
+"""
+function byzone(
+    f,
+    layer::SDMLayer,
+    fc::FeatureCollection,
+    key,
+    args...;
+    kwargs...,
+)
+    otype =
+        SimpleSDMLayers._sliding_return_type(u -> f(u, args...; kwargs...), layer, false)
+        ktype = eltype(uniqueproperties(fc)[key])
+    output = Dict{ktype,otype}()
+    for feature in uniqueproperties(fc)[key]
+        output[feature] = f(mask(layer, fc[key => feature]), args...; kwargs...)
+    end
+    return output
 end

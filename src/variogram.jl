@@ -92,9 +92,9 @@ Possible values of `family` are `:gaussian` (default), `:spherical`, and
 function fitvariogram(x, y, n; family = :gaussian)
 
     # Parameters to check (this is a reasonable heuristic)
-    range_sill = LinRange(0.0, 1.4, 40) .* maximum(y)
-    range_nugget = LinRange(extrema(y[1:5])..., 40)
-    range_range = LinRange(extrema(x)..., 40)
+    range_sill = LinRange(0.0, 1.4, 60) .* maximum(y)
+    range_nugget = LinRange(Statistics.quantile(y, [0.0, 0.05])..., 60)
+    range_range = LinRange(extrema(x)..., 60)
 
     error = Inf
     gen = __variogram_gaussian
@@ -106,12 +106,13 @@ function fitvariogram(x, y, n; family = :gaussian)
     end
 
     best = (first(range_sill), first(range_nugget), first(range_range))
+    
+    w = n ./ maximum(n)
 
     for S in range_sill
         for N in range_nugget
             for R in range_range
                 f = gen(S, N, R)
-                w = n ./ sum(n)
                 test_error = sqrt(sum(w .* (f.(x) .- y) .^ 2.0))
                 if test_error < error
                     error = test_error
@@ -130,8 +131,7 @@ end
 
 Fits the variogram based on a layer. The `kwargs...` are passed to `variogram`.
 """
-function fitvariogram(L::SDMLayer; family::Symbol=:gaussian, kwargs...)
+function fitvariogram(L::SDMLayer; family::Symbol = :gaussian, kwargs...)
     vario = variogram(L; kwargs...)
-    return fitvariogram(vario...; family=family)
-    
+    return fitvariogram(vario...; family = family)
 end

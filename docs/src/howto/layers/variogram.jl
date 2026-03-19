@@ -8,13 +8,13 @@ using CairoMakie
 
 # Get some info on temperature
 
-polygon = getpolygon(PolygonData(NaturalEarth, Countries))["Japan"]
+polygon = getpolygon(PolygonData(NaturalEarth, Countries))["Austria"]
 temperature = SDMLayer(RasterData(CHELSA2, AverageTemperature); SDT.boundingbox(polygon)...)
 mask!(temperature, polygon)
 
 # get variogram
 
-x, y, n = variogram(temperature; samples=2000, bins=100)
+x, y, n = variogram(temperature; samples=5000, bins=100)
 
 #figure variogram-temp
 f = Figure()

@@ -69,7 +69,7 @@ current_figure() #hide
 
 vario = SpeciesDistributionToolkit.fitvariogram(x, y, n; family = :gaussian)
 
-#figure variogram-first
+#figure variogram-first-with-fit
 vx = LinRange(extrema(x)..., 100)
 lines!(ax, vx, vario.model.(vx); color = :orange, linewidth = 2, alpha = 0.6)
 current_figure() #hide

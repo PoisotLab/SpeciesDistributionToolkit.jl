@@ -77,6 +77,18 @@ function __variogram_exponential(sill, nugget, range)
     return __mod
 end
 
+"""
+    fitvariogram(x, y, n; family = :gaussian)
+
+Fits a variogram of the given `family` based on data representing the central
+bin distance `x`, the semivariogram `y`, and the sample size `n`. The data are
+returned as a named tuple containing the `range`, the `sill`, the `nugget`, the
+`error`, and the `model`. The model is a function that can be called on a given
+distance to obtained the best fit variogram.
+
+Possible values of `family` are `:gaussian` (default), `:spherical`, and
+`:exponential`.
+"""
 function fitvariogram(x, y, n; family = :gaussian)
 
     # Parameters to check (this is a reasonable heuristic)
@@ -111,4 +123,15 @@ function fitvariogram(x, y, n; family = :gaussian)
 
     S, N, R = best
     return (sill = S, nugget = N, range = R, error = error, model = gen(S, N, R))
+end
+
+"""
+    fitvariogram(L::SDMLayer; family::Symbol=:gaussian, kwargs...)
+
+Fits the variogram based on a layer. The `kwargs...` are passed to `variogram`.
+"""
+function fitvariogram(L::SDMLayer; family::Symbol=:gaussian, kwargs...)
+    vario = variogram(L; kwargs...)
+    return fitvariogram(vario...; family=family)
+    
 end

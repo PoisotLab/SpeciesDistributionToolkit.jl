@@ -263,10 +263,6 @@ pretty_table(
     formatters = [fmt__printf("%5.3f", [2, 3, 4, 5])],
 )
 
-for i in eachindex(folds)
-    @info i, mcc(spatial_cv.validation[i]), mcc(selection_cv.validation[i])
-end
-
 # make spatial prediction
 
 P = predict(model, L; threshold = false)

@@ -1,13 +1,16 @@
 """
-    assignfolds!(H::FeatureCollection; n::Integer=10, order::Symbol=:balanced, maxiter::Integer = 2000)
+    assignfolds!(H::FeatureCollection; n::Integer=10, order::Symbol=:balanced, group::Bool=true, maxiter::Integer = 2000)
 
 Assigns the features in a tiling (or any other `FeatureCollection`) to `n`
-blocks for spatial cross-validation.
+blocks for spatial cross-validation. Note that the features in `H` _must_ have a
+`__centroid` property which indicates where the _center_ of each cell is.
     
-The `order` keyword will determine how the tiles are assigned. When using `:N`,
-`:E`, `:EN`, or `:NE`, the tile will be first sorted by (resp.) northing,
-easting, easting then northing, and northing then easting, then assigned to the
-folds. Note that the features in `H` _must_ have a `__centroid` property.
+The `order` keyword will determine how the tiles are assigned. When using `:H`,
+`:V`, `:VH`, or `:HV`, the tiles will be assigned either horizontally,
+vertically, or a combination of both. In this case, the keyword `group` will
+determine how the folds are assigned. When `group` is `true` (the default),
+folds are _spatially contiguous_. When `group` is `false`, folds are _spatially
+alternating_.
 
 When `order` is `:balanced`, the tiles _must_ have both `__presences` and
 `__absences` properties. The assignment of a tile to folds is done by using a
@@ -24,6 +27,7 @@ function assignfolds!(
     H::FeatureCollection;
     n::Integer = 10,
     order::Symbol = :random,
+    group::Bool = true,
     maxiter::Integer = 2000,
 )
     k = length(H.features)
@@ -37,6 +41,10 @@ function assignfolds!(
     end
 
     fold = repeat(1:n; outer = ceil(Int, k / n))[1:k]
+
+    if group
+        sort!(fold)
+    end
     
     # Get the centers
     centers = [f.properties["__centroid"] for f in H.features]

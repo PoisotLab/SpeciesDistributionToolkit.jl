@@ -129,6 +129,7 @@ export default defineConfig({
                                 { text: "Statistics", link: "/howto/layers/layer-statistics/" },
                                 { text: "Multivariate transformations", link: "/howto/layers/multivariate/" },
                                 { text: "Clustering", link: "/howto/layers/clustering/" },
+                                { text: "Variograms", link: "/howto/layers/variogram/" },
                             ]
                         },
                         {
@@ -139,6 +140,7 @@ export default defineConfig({
                                 { text: "Masking with polygons", link: "/howto/polygons/masking-with-polygons/" },
                                 { text: "Polygon operations", link: "/howto/polygons/operations/" },
                                 { text: "Zonal statistics", link: "/howto/polygons/zonal-statistics/" },
+                                { text: "Tessellation", link: "/howto/polygons/tessellation/" },
                             ]
                         },
                         {

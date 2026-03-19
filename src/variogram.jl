@@ -88,13 +88,17 @@ distance to obtained the best fit variogram.
 
 Possible values of `family` are `:gaussian` (default), `:spherical`, and
 `:exponential`.
-"""
-function fitvariogram(x, y, n; family = :gaussian)
 
-    # Parameters to check (this is a reasonable heuristic)
-    range_sill = LinRange(0.0, 1.4, 60) .* maximum(y)
-    range_nugget = LinRange(Statistics.quantile(y, [0.0, 0.05])..., 60)
-    range_range = LinRange(extrema(x)..., 60)
+Values are optimized using the Nelder-Mead algorithm with `samples` samples and
+`maxiter` iterations.
+"""
+function fitvariogram(x, y, n; family = :gaussian, samples=300, maxiter=1200)
+
+    # Generate some random parameters
+    _samples = samples
+    ranges = rand(_samples) .* maximum(x)
+    sills = rand(_samples) .* maximum(y)
+    nuggets = rand(_samples) .* maximum(y) / 10
 
     error = Inf
     gen = __variogram_gaussian
@@ -105,25 +109,18 @@ function fitvariogram(x, y, n; family = :gaussian)
         gen = __variogram_spherical
     end
 
-    best = (first(range_sill), first(range_nugget), first(range_range))
-    
     w = n ./ maximum(n)
 
-    for S in range_sill
-        for N in range_nugget
-            for R in range_range
-                f = gen(S, N, R)
-                test_error = sqrt(sum(w .* (f.(x) .- y) .^ 2.0))
-                if test_error < error
-                    error = test_error
-                    best = (S, N, R)
-                end
-            end
-        end
+    xn = [(sills[i], nuggets[i], ranges[i]) for i in Base.OneTo(_samples)]
+
+    for _ in Base.OneTo(maxiter)
+        __nm!(xn, x, y, n, gen)
     end
 
-    S, N, R = best
-    return (sill = S, nugget = N, range = R, error = error, model = gen(S, N, R))
+    L = [sqrt(sum(w .* (gen(xn[i]...).(x) .- y) .^ 2.0)) for i in Base.OneTo(length(xn))]
+    best = xn[last(findmin(L))]
+    S, N, R = abs.(best)
+    return (sill = S, nugget = N, range = R, error = minimum(L), model = gen(S, N, R))
 end
 
 """
@@ -134,4 +131,83 @@ Fits the variogram based on a layer. The `kwargs...` are passed to `variogram`.
 function fitvariogram(L::SDMLayer; family::Symbol = :gaussian, kwargs...)
     vario = variogram(L; kwargs...)
     return fitvariogram(vario...; family = family)
+end
+
+function shrink!(xn, xl; α = 1.0, β = 0.5, γ = 2.0, δ = 0.5)
+    for i in eachindex(xn)
+        xn[i] = xl .+ δ .* (xn[i] .- xl)
+    end
+    return xn
+end
+
+function __nm!(
+    xn, x, y, n, f;
+    α = 1.0,
+    β = 0.5,
+    γ = 2.0,
+    δ = 0.5,
+    kwargs...,
+)
+
+    # Weights
+    w = n ./ maximum(n)
+
+    # What is their loss?
+    L = [sqrt(sum(w .* (f(xn[i]...).(x) .- y) .^ 2.0)) for i in Base.OneTo(length(xn))]
+
+    # Proposals
+    best = partialsortperm(L, 1)
+    second = partialsortperm(L, length(L) - 1)
+    worst = partialsortperm(L, length(L))
+
+    xh, xs, xl = xn[worst], xn[second], xn[best]
+    fh, fs, fl = L[worst], L[second], L[best]
+
+    bestside = filter(!isequal(worst), eachindex(xn))
+    centroid = reduce(.+, xn[bestside]) ./ length(bestside)
+
+    # Reflection
+    xr = centroid .+ α .* (centroid .- xh)
+    fr = sqrt(sum(w .* (f(xr...).(x) .- y) .^ 2.0))
+    if fl <= fr < fs
+        xn[worst] = xr
+        return xn
+    end
+
+    # Expansion
+    if fr < fl
+        xe = centroid .+ γ .* (xr .- centroid)
+        fe = sqrt(sum(w .* (f(xe...).(x) .- y) .^ 2.0))
+        if fe < fr
+            xn[worst] = xe
+            return xn
+        else
+            xn[worst] = xr
+            return xn
+        end
+    end
+
+    # Contraction
+    if fr >= fs
+        if fs <= fr < fh
+            xc = centroid .+ β .* (xr .- centroid)
+            fc = sqrt(sum(w .* (f(xc...).(x) .- y) .^ 2.0))
+            if fc <= fr
+                xn[worst] = xc
+                return xn
+            else
+                return shrink!(xn, xl)
+            end
+        end
+        if fr >= fh
+            xc = centroid .+ β .* (xr .- centroid)
+            fc = sqrt(sum(w .* (f(xc...).(x) .- y) .^ 2.0))
+            if fc < fh
+                xn[worst] = xc
+                return xn
+            else
+                return shrink!(xn, xl)
+            end
+        end
+    end
 end

@@ -4,6 +4,7 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
+using PrettyTables
 using Statistics
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 import Random #hide
@@ -46,7 +47,7 @@ hyperparameters!(classifier(model), :interactions, :self)
 # variogram for temperature
 
 Lᵢ = L[1]
-x, y, n = variogram(Lᵢ; samples = 8000, bins=200)
+x, y, n = variogram(Lᵢ; samples = 8000, bins = 200)
 
 #figure variogram-first
 f = Figure()
@@ -59,19 +60,18 @@ scatter!(
     markersize = n ./ maximum(n) .* 8 .+ 2,
     color = :grey55,
 )
+xlims!(ax; low = 0.0)
+ylims!(ax; low = 0.0)
+ylims!(ax; high = quantile(y, 0.95))
 current_figure() #hide
 
-# note that with an unexported function, we can also estimate the parameters -
-# other type of model to fit are exponential and gaussian
+# note that with an unexported function
 
-vario = SpeciesDistributionToolkit.fitvariogram(x, y, n; family=:spherical);
+vario = SpeciesDistributionToolkit.fitvariogram(x, y, n; family = :gaussian)
 
 #figure variogram-first
 vx = LinRange(extrema(x)..., 100)
-lines!(ax, vx, vario.model.(vx), color=:orange, linewidth=2, alpha=0.6)
-xlims!(ax, low=0.0)
-ylims!(ax, low=0.0)
-ylims!(ax, high=quantile(y, 0.95))
+lines!(ax, vx, vario.model.(vx); color = :orange, linewidth = 2, alpha = 0.6)
 current_figure() #hide
 
 # this gives a range of approx (in km)
@@ -93,7 +93,7 @@ vario.nugget
 # we tile the model observations - ideally would be done for a surface
 # corresponding to the range in the variogram but here, too large
 
-tiles = tessellate(model, 40.; tile = :hexagons, pointy = true)
+tiles = tessellate(model, 40.0; tile = :hexagons, pointy = true)
 
 #figure initial-tiling
 f = Figure()
@@ -242,6 +242,27 @@ current_figure() #hide
 
 # todo turn into PrettyTables
 
+cv_res = [
+    [
+        i,
+        mcc(spatial_cv.training[i]),
+        mcc(spatial_cv.validation[i]),
+        mcc(selection_cv.training[i]),
+        mcc(selection_cv.validation[i]),
+        mcc(selection_cv.validation[i]) > mcc(spatial_cv.validation[i]) ? "↑" : "↓",
+    ] for i in 1:length(spatial_cv.validation)
+];
+
+# this is the result as a table - see that variable selection makes cross-validation better
+
+pretty_table(
+    permutedims(hcat(cv_res...));
+    alignment = [:l, :c, :c, :c, :c, :c],
+    backend = :markdown,
+    column_labels = ["Fold", "Train.", "Val.", "Train. + sel.", "Val. + sel.", "Trend"],
+    formatters = [fmt__printf("%5.3f", [2, 3, 4, 5])],
+)
+
 for i in eachindex(folds)
     @info i, mcc(spatial_cv.validation[i]), mcc(selection_cv.validation[i])
 end
@@ -259,19 +280,19 @@ heatmap!(
     colormap = Reverse(:navia),
     colorrange = (0, 1),
 )
-scatter!(ax, presences(model), color=:transparent, strokecolor=:orange, strokewidth=2)
+scatter!(ax, presences(model); color = :transparent, strokecolor = :orange, strokewidth = 2)
 current_figure() #hide
 
 # tile by any shape we want, for example this is prediction aggregated in
 # triangular cells
 
-#figure spatial-prediction
+#figure tessellated-prediction
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
-newtiles = tessellate(P, 20.0, tile=:triangles)
+newtiles = tessellate(P, 20.0; tile = :triangles)
 heatmap!(
     ax,
-    mosaic(mean, P, newtiles, "__centroid"),
+    mosaic(mean, P, newtiles, "__centroid");
     colormap = Reverse(:navia),
     colorrange = (0, 1),
 )

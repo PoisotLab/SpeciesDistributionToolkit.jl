@@ -11,11 +11,11 @@ using CairoMakie
 
 polygon = getpolygon(PolygonData(NaturalEarth, Countries))["Venezuela"]
 temperature = SDMLayer(RasterData(CHELSA2, AverageTemperature); SDT.boundingbox(polygon)...)
-mask!(temperature, polygon)
+mask!(temperature, polygon);
 
 # get variogram
 
-x, y, n = variogram(temperature; samples=4000, bins=70)
+x, y, n = variogram(temperature; samples=4000, bins=70);
 
 #figure variogram-temp
 f = Figure()
@@ -33,9 +33,9 @@ current_figure() #hide
 #
 # :::
 
-G = SDT.fitvariogram(x, y, n; family=:gaussian)
-E = SDT.fitvariogram(x, y, n; family=:exponential)
-S = SDT.fitvariogram(x, y, n; family=:spherical)
+G = SDT.fitvariogram(x, y, n; family=:gaussian);
+E = SDT.fitvariogram(x, y, n; family=:exponential);
+S = SDT.fitvariogram(x, y, n; family=:spherical);
 
 #figure vario-fit
 f = Figure()
@@ -50,8 +50,10 @@ current_figure() #hide
 
 # check which are better
 
-M = permutedims(hcat([[m.range, m.sill, m.nugget, m.error] for m in [G, E, S]]...))
-M = hcat(["Gaussian", "Exponential", "Spherical"], M)
+M = permutedims(hcat([[m.range, m.sill, m.nugget, m.error] for m in [G, E, S]]...));
+M = hcat(["Gaussian", "Exponential", "Spherical"], M);
+
+#-
 
 pretty_table(
     M;

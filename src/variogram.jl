@@ -12,21 +12,25 @@ function _generate_point_pairs(L::SDMLayer, n::Integer)
     return z
 end
 
-function variogram(pairs::Vector{Tuple{Float64, Float64}}, n::Integer; α::Float64 = 2.0)
+function variogram(
+    pairs::Vector{Tuple{Float64, Float64}},
+    h::Float64,
+    w::Float64;
+    α::Float64 = 2.0,
+)
     x = first.(pairs)
     y = last.(pairs)
-    bins = LinRange(extrema(x)..., n + 1)
-    X = zeros(n + 1)
-    Y = zeros(n + 1)
-    N = zeros(n + 1)
+    bins = collect((minimum(x) + h / 2):w:(maximum(x) - h / 2))
+    
+    X = zeros(length(bins))
+    Y = zeros(length(bins))
+    N = zeros(length(bins))
     for i in eachindex(bins)
-        if i > 1
-            vx = findall(s -> bins[i - 1] <= s <= bins[i], x)
-            if !isnothing(vx)
-                X[i - 1] = Statistics.mean(x[vx])
-                Y[i - 1] = Statistics.mean(y[vx] .^ α) / 2
-                N[i - 1] = length(vx)
-            end
+        vx = findall(s -> bins[i]-h/2 <= s <= bins[i]+h/2, x)
+        if !isnothing(vx)
+            X[i] = Statistics.mean(x[vx])
+            Y[i] = Statistics.mean(y[vx] .^ α) / 2
+            N[i] = length(vx)
         end
     end
     val = findall(!iszero, N)
@@ -43,9 +47,19 @@ method will draw `samples` pairs of points at random, then aggregate them in
 This returns three vectors: the empirical center of the bin, the semivariance
 within this bin, and the number of samples that compose this bin.
 """
-function variogram(L::SDMLayer; samples::Integer = 2000, bins::Integer = 100, kwargs...)
+function variogram(L::SDMLayer; width::Float64 = 10., shift::Float64=1.0, kwargs...)
+    bb = boundingbox(L)
+    # Estimate of the distance for the number of samples is the largest of height/width
+
+    Lh = Fauxcurrences._distancefunction((bb.left, bb.bottom), (bb.left, bb.top))
+    Lw = Fauxcurrences._distancefunction((bb.left, bb.bottom), (bb.right, bb.bottom))
+    Ls = max(Lh, Lw)
+
+    # We would like to get 30 samples per bin if possible, but if not that's cool too
+    samples = ceil(Int, (Ls / width) * 30)
+
     Z = _generate_point_pairs(L, samples)
-    return variogram(Z, bins; kwargs...)
+    return variogram(Z, width, shift; kwargs...)
 end
 
 # Functions to fit
@@ -92,11 +106,11 @@ Possible values of `family` are `:gaussian` (default), `:spherical`, and
 Values are optimized using the Nelder-Mead algorithm with `samples` samples and
 `maxiter` iterations.
 """
-function fitvariogram(x, y, n; family = :gaussian, samples=300, maxiter=1200)
+function fitvariogram(x, y, n; family = :gaussian, samples = 300, maxiter = 1200)
 
     # Generate some random parameters
     _samples = samples
-    ranges = rand(_samples) .* maximum(x)
+    ranges = rand(_samples) .* 0.75 * maximum(x)
     sills = rand(_samples) .* maximum(y)
     nuggets = rand(_samples) .* maximum(y) / 10
 
@@ -109,7 +123,7 @@ function fitvariogram(x, y, n; family = :gaussian, samples=300, maxiter=1200)
         gen = __variogram_spherical
     end
 
-    w = n ./ maximum(n)
+    w = n ./ sum(n)
 
     xn = [(sills[i], nuggets[i], ranges[i]) for i in Base.OneTo(_samples)]
 

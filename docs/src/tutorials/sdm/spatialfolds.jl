@@ -107,7 +107,7 @@ current_figure() #hide
 
 # we now assign the folds for cross validation
 
-assignfolds!(tiles; n = 5, order = :random)
+assignfolds!(tiles; n = 6, order = :balanced)
 
 # check what the folds look like
 

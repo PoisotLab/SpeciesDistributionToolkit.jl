@@ -42,11 +42,11 @@ presence/absences in each tile.
 
 **Keyword arguments:**
 
-- `tile`: the shape of tiles (as explained above, defaults to `:hexagons`)
-- `padding`: a padding to be added to the boundingbox of the object to
-  tessellate; this defaults to `0`
-- `pointy`: for `:hexagons` tiles, whether they are draw pointy side or flat
-  side up
+  - `tile`: the shape of tiles (as explained above, defaults to `:hexagons`)
+  - `padding`: a padding to be added to the boundingbox of the object to
+    tessellate; this defaults to `0`
+  - `pointy`: for `:hexagons` tiles, whether they are draw pointy side or flat
+    side up
 """
 function tessellate(
     obj::T,
@@ -64,7 +64,15 @@ function tessellate(
         )
     end
     _tfunc = tilers[tile]
-    H = _tfunc(boundingbox(obj; padding = padding), d; kwargs...)
+
+    # TODO: update the function so that we deal with radius conversion here, and
+    # then the tiling happens on any grid regardless of the SRS, etc
+
+    H = _tfunc(
+        boundingbox(obj; padding = padding),
+        d;
+        kwargs...,
+    )
     keeprelevant!(H, obj)
     return H
 end
@@ -87,7 +95,7 @@ function keeprelevant!(H::FeatureCollection, G::SimpleSDMPolygons.AbstractGeomet
     idx_to_delete = Integer[]
     for (i, f) in enumerate(H.features)
         try
-            cut = intersect(G, f).features[1].geometry.geometry
+            cut = intersect(G, f).geometry
             if SimpleSDMPolygons.AG.isempty(cut)
                 push!(idx_to_delete, i)
             end

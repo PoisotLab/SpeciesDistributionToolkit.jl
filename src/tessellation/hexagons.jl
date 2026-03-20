@@ -8,7 +8,12 @@ function _hexagon(p, s = 1.0; pointy::Bool = false)
     return pts
 end
 
-function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Bool = false)
+function hexagons(
+    bbox::NamedTuple,
+    d::Float64;
+    offset = (0.0, 0.0),
+    pointy::Bool = false,
+)
     all(haskey(bbox, k) for k in [:left, :bottom, :right, :top]) || throw(
         ArgumentError(
             "Bounding box tuple doesn't have correct keys. It must contain :top, :bottom, :left, and :right",
@@ -28,9 +33,9 @@ function hexagons(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0), pointy::Boo
 
     # Equivalent circle area
     𝑨 = π * d * d
-    
+
     # Equivalent circumradius
-    circum = sqrt(2𝑨/(3*sqrt(3)))
+    circum = sqrt(2𝑨 / (3 * sqrt(3)))
 
     # We want to get the circumradius in units of degrees
     R = circum / km_per_deg

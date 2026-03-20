@@ -41,13 +41,13 @@ absencelayer = backgroundpoints(absencemask, 2sum(presencelayer))
 
 # Training on model v1
 
-model = SDM(PCATransform, Logistic, L, presencelayer, absencelayer)
-hyperparameters!(classifier(model), :interactions, :self)
+model = SDM(PCATransform, Logistic, L, presencelayer, absencelayer);
+hyperparameters!(classifier(model), :interactions, :self);
 
 # variogram for temperature
 
 Lᵢ = L[1]
-x, y, n = variogram(Lᵢ; samples = 8000, bins = 200)
+x, y, n = variogram(Lᵢ; width=15., shift=3.)
 
 #figure variogram-first
 f = Figure()
@@ -61,8 +61,7 @@ scatter!(
     color = :grey55,
 )
 xlims!(ax; low = 0.0)
-ylims!(ax; low = 0.0)
-ylims!(ax; high = quantile(y, 0.95))
+ylims!(ax, 0.0, quantile(y, 0.95))
 current_figure() #hide
 
 # note that with an unexported function
@@ -93,7 +92,7 @@ vario.nugget
 # we tile the model observations - ideally would be done for a surface
 # corresponding to the range in the variogram but here, too large
 
-tiles = tessellate(model, 40.0; tile = :hexagons, pointy = true)
+tiles = tessellate(model, 20.0; tile = :hexagons, pointy = true)
 
 #figure initial-tiling
 f = Figure()
@@ -108,7 +107,7 @@ current_figure() #hide
 
 # we now assign the folds for cross validation
 
-assignfolds!(tiles; n = 4, order = :balanced)
+assignfolds!(tiles; n = 5, order = :random)
 
 # check what the folds look like
 

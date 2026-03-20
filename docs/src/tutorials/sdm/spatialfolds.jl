@@ -248,7 +248,7 @@ cv_res = [
         mcc(spatial_cv.validation[i]),
         mcc(selection_cv.training[i]),
         mcc(selection_cv.validation[i]),
-        mcc(selection_cv.validation[i]) > mcc(spatial_cv.validation[i]) ? "↑" : "↓",
+        mcc(selection_cv.validation[i]) >= mcc(spatial_cv.validation[i]) ? "↑" : "↓",
     ] for i in 1:length(spatial_cv.validation)
 ];
 

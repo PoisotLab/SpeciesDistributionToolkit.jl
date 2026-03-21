@@ -10,37 +10,17 @@ end
 
 function hexagons(
     bbox::NamedTuple,
-    d::Float64;
+    R::Float64;
     offset = (0.0, 0.0),
     pointy::Bool = false,
 )
-    all(haskey(bbox, k) for k in [:left, :bottom, :right, :top]) || throw(
-        ArgumentError(
-            "Bounding box tuple doesn't have correct keys. It must contain :top, :bottom, :left, and :right",
-        ),
-    )
+    
+    __validate_bbox(bbox)
 
     # This is the first center
     origin = (bbox.left - offset[1], bbox.top + offset[2])
 
-    # We estimate the span at the middle of the latitude
-    middle_latitude = (bbox.top + bbox.bottom) / 2
-    middle_longitude = (bbox.left + bbox.right) / 2
-
-    # We start by estimating the size of the circumradius at the middle latitude
-    # of the boundingbox
-    km_per_deg = cos(middle_latitude * π / 180) * 111325.0 / 1000.0
-
-    # Equivalent circle area
-    𝑨 = π * d * d
-
-    # Equivalent circumradius
-    circum = sqrt(2𝑨 / (3 * sqrt(3)))
-
-    # We want to get the circumradius in units of degrees
-    R = circum / km_per_deg
-
-    # Then we get the inradius from this value
+    # Then we get the inradius from the circumradius
     r = (sqrt(3.0) / 2) * R
 
     # Now we measure the distance from the origin to the right / bottom of the

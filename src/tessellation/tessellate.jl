@@ -53,26 +53,54 @@ function tessellate(
     d::Float64;
     tile::Symbol = :hexagons,
     padding::Number = 0.0,
+    proj::SimpleSDMPolygons.AG.ISpatialRef = SimpleSDMLayers._parse_projection_from_string(
+        "EPSG:4326",
+    ),
     kwargs...,
 ) where {T <: TessellateTypes}
-    tilers = Dict(:hexagons => hexagons, :squares => squares, :triangles => triangles)
-    if !(tile in keys(tilers))
-        throw(
-            ArgumentError(
-                "The tile $(tile) is invalid -- correct options are hexagons, squares, and triangles",
-            ),
-        )
+
+    # Get the boundingbox
+    bbox = boundingbox(obj; padding = padding)
+
+    # Units of the CRS
+    unit = SimpleSDMPolygons.AG.getattrvalue(proj, "UNIT", 0)
+
+    @info unit, d
+    if unit == "metre"
+        # We get the distance in meters
+        d = d * 1000.0
+    elseif unit == "degree"
+        # We get the distance in degrees at the median latitude
+        middle_latitude = (bbox.top + bbox.bottom) / 2
+        km_per_deg = cos(middle_latitude * π / 180) * 111325.0 / 1000.0
+        d = d / km_per_deg
+    elseif unit == "foot"
+        d = d * 3280.84
+    else
+        @error "Unuspported units ($unit) found"
     end
-    _tfunc = tilers[tile]
+    @info unit, d
 
-    # TODO: update the function so that we deal with radius conversion here, and
-    # then the tiling happens on any grid regardless of the SRS, etc
+    chara_distance = __equivalent_area(d, tile)
 
-    H = _tfunc(
-        boundingbox(obj; padding = padding),
+    @info unit, d, chara_distance
+
+    throw(ErrorException("STOP"))
+
+    # TODO get the upper left and lower right corners here and update the tilers prototype
+
+    # This returns a tiling function
+    tiler = __tiling_function(tile)
+
+    # This will create the tile based on the arguments checked before
+    H = tiler(
+        bbox,
         d;
         kwargs...,
     )
+
+    # TODO Return everything in lat/lon at this point
+
     keeprelevant!(H, obj)
     return H
 end
@@ -126,4 +154,40 @@ function keeprelevant(H::FeatureCollection, obj::T) where {T <: TessellateTypes}
     J = deepcopy(H)
     keeprelevant!(J, obj)
     return J
+end
+
+function __validate_bbox(bbox::NamedTuple)
+    return all(haskey(bbox, k) for k in [:left, :bottom, :right, :top]) || throw(
+        ArgumentError(
+            "Bounding box tuple doesn't have correct keys. It must contain :top, :bottom, :left, and :right",
+        ),
+    )
+end
+
+function __tiling_function(tile::Symbol)
+    tilers = Dict(:hexagons => hexagons, :squares => squares, :triangles => triangles)
+    if !(tile in keys(tilers))
+        throw(
+            ArgumentError(
+                "The tile $(tile) is invalid -- correct options are hexagons, squares, and triangles",
+            ),
+        )
+    end
+    return tilers[tile]
+end
+
+function __equivalent_area(d::Float64, shape::Symbol)
+    𝑨 = π * d * d
+    if shape == :squares
+        return sqrt(𝑨)
+    end
+    if shape == :triangles
+        bl = sqrt(4𝑨 / sqrt(3))
+        alt = (sqrt(3) / 2) * bl
+        return alt
+    end
+    if shape == :hexagons
+        return sqrt(2𝑨 / (3 * sqrt(3)))
+    end
+    return nothing
 end

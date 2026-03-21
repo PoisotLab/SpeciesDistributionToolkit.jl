@@ -17,33 +17,12 @@ function _triangle(p, s = 1.0; pointy::Bool = false)
     return pts
 end
 
-function triangles(bbox::NamedTuple, d::Float64; offset = (0.0, 0.0))
-    all(haskey(bbox, k) for k in [:left, :bottom, :right, :top]) || throw(
-        ArgumentError(
-            "Bounding box tuple doesn't have correct keys. It must contain :top, :bottom, :left, and :right",
-        ),
-    )
+function triangles(bbox::NamedTuple, altitude::Float64; offset = (0.0, 0.0))
+   
+    __validate_bbox(bbox)
 
     # This is the first center
     origin = (bbox.left - offset[1], bbox.top + offset[2])
-
-    # We estimate the span at the middle of the latitude
-    middle_latitude = (bbox.top + bbox.bottom) / 2
-    middle_longitude = (bbox.left + bbox.right) / 2
-
-    # We start by estimating the size of the circumradius at the middle latitude
-    # of the boundingbox
-    km_per_deg = cos(middle_latitude * π / 180) * 111325.0 / 1000.0
-
-    # Equivalent circle area
-    𝑨 = π * d * d
-    
-    # Equivalent base length and altitude
-    bl = sqrt(4𝑨/sqrt(3))
-    alt = (sqrt(3)/2)*bl
-
-    # We want to get the triangle height from this value
-    altitude = alt / km_per_deg
 
     # The triangle base therefore
     base = (2altitude / sqrt(3))

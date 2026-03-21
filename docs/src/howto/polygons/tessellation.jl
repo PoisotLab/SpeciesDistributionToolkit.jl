@@ -1,6 +1,7 @@
 # # Tessellation
 
 using SpeciesDistributionToolkit
+const SDT = SpeciesDistributionToolkit
 using CairoMakie
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
@@ -8,29 +9,35 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 pol = getpolygon(PolygonData(NaturalEarth, Countries))["Austria"]
 
-# up
+# bbox
 
-tiles = tessellate(pol, 10.)
+bb = SDT.boundingbox(pol)
+
+# layer
+
+#
+
+layer = SDMLayer(RasterData(EarthEnv, LandCover); layer=1, bb...)
+mask!(layer, pol)
 
 # proj
 
 proj = "EPSG:3416"
 
-#figure fig-tess
-f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-poly!(ax, pol, color=:grey80)
-lines!(ax, tiles, color=:grey20)
-current_figure() #hide
+# second layer
 
-#figure fig-projection
-f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-poly!(ax, reproject(pol, proj), color=:grey80)
-lines!(ax, reproject(tiles, proj), color=:grey20)
-current_figure() #hide
+L = interpolate(layer; dest=proj)
 
-# check
+heatmap(L)
+lines!(reproject(pol, proj))
+current_figure()
+
+# units
+
+const AG = SDT.SimpleSDMPolygons.AG
+
+tessellate(L, 10.; proj=projection(L))
+
 
 # ```@meta
 # CollapsedDocStrings = true

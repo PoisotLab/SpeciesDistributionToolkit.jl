@@ -76,7 +76,7 @@ current_figure()
 # mosaic
 
 using Statistics
-T = tessellate(layer, 15.; tile=:hexagons, pointy=true, proj=proj)
+T = tessellate(layer, 10.; tile=:triangles, proj=proj)
 M = mosaic(mean, layer, T, "__centroid")
 
 # figure
@@ -86,7 +86,7 @@ ax = Axis(f[1,1]; aspect=DataAspect())
 poly!(ax, EUR, color=:grey80)
 heatmap!(ax, M, colormap=:Greens)
 lines!(ax, EUR, color=:black)
-lines!(ax, T, color=:orange, linewidth=2)
+lines!(ax, T, color=:orange, linewidth=0.5)
 current_figure()
 
 # next with occurrences

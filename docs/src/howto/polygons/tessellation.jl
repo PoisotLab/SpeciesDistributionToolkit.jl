@@ -34,8 +34,6 @@ current_figure()
 
 # units
 
-const AG = SDT.SimpleSDMPolygons.AG
-
 tessellate(L, 10.; proj=projection(L))
 
 

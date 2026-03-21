@@ -85,23 +85,37 @@ function tessellate(
 
     @info unit, d, chara_distance
 
-    throw(ErrorException("STOP"))
+    # Get the upper left and lower right corners here, with the correct projection
+    origin, destination = __corners_from_bbox(bbox, proj)
 
-    # TODO get the upper left and lower right corners here and update the tilers prototype
+    @info origin, destination
 
-    # This returns a tiling function
+    # This picks the correct tiling function
     tiler = __tiling_function(tile)
 
     # This will create the tile based on the arguments checked before
     H = tiler(
-        bbox,
+        origin,
+        destination,
         d;
         kwargs...,
     )
 
-    # TODO Return everything in lat/lon at this point
+    # At this point we need to ensure that the crs for the polygon matches its
+    # destination
+    prj = SpeciesDistributionToolkit._projector(
+        "EPSG:4326",
+        SimpleSDMLayers.AG.toPROJ4(proj),
+    )
+    for f in H.features
+        SimpleSDMPolygons.AG.createcoordtrans(proj, SimpleSDMPolygons.AG.importEPSG(4326)) do transform
+            return SimpleSDMPolygons.AG.transform!(f.geometry.geometry, transform)
+        end
+        f.properties["__centroid"] = inv(prj)(f.properties["__centroid"])
+    end
 
     keeprelevant!(H, obj)
+
     return H
 end
 
@@ -190,4 +204,27 @@ function __equivalent_area(d::Float64, shape::Symbol)
         return sqrt(2𝑨 / (3 * sqrt(3)))
     end
     return nothing
+end
+
+function __corners_from_bbox(bbox::NamedTuple, proj)
+    # Step 1 - make the bbox denser
+    L, B, R, T = bbox[:left], bbox[:bottom], bbox[:right], bbox[:top]
+    side1 = [(L, i) for i in LinRange(B, T, 70)]
+    side2 = [(i, T) for i in LinRange(L, R, 70)]
+    side3 = [(R, i) for i in LinRange(T, B, 70)]
+    side4 = [(i, B) for i in LinRange(R, L, 70)]
+    cycle = vcat(side1, side2, side3, side4)
+
+    # Step 2 - convert all points
+    prj = SpeciesDistributionToolkit._projector(
+        "EPSG:4326",
+        SimpleSDMLayers.AG.toPROJ4(proj),
+    )
+    projected_cycle = prj.(cycle)
+
+    # Step 3 - get the two corners we care about
+    origin = (minimum(first.(projected_cycle)), maximum(last.(projected_cycle)))
+    destination = (maximum(first.(projected_cycle)), minimum(last.(projected_cycle)))
+
+    return origin, destination
 end

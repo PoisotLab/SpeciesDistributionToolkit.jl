@@ -9,28 +9,23 @@ function _hexagon(p, s = 1.0; pointy::Bool = false)
 end
 
 function hexagons(
-    bbox::NamedTuple,
+    origin::Tuple{Float64, Float64},
+    destination::Tuple{Float64, Float64},
     R::Float64;
     offset = (0.0, 0.0),
     pointy::Bool = false,
 )
-    
-    __validate_bbox(bbox)
 
-    # This is the first center
-    origin = (bbox.left - offset[1], bbox.top + offset[2])
-
-    # Then we get the inradius from the circumradius
+    # We get the inradius from the circumradius
     r = (sqrt(3.0) / 2) * R
 
-    # Now we measure the distance from the origin to the right / bottom of the
+    # We measure the distance from the origin to the right / bottom of the
     # bounding box - these distances are measured in degree
-    W = abs(bbox.right - origin[1])
-    H = abs(bbox.bottom - origin[2])
+    W = abs(destination[1] - origin[1])
+    H = abs(destination[2] - origin[2])
 
     # Now we want to know how many hexagons we must add. The first one starts at
     # the origin point, so to cover the full width, we need
-
     w = ceil(Int, W / (3R))
     h = ceil(Int, H / (2r))
 

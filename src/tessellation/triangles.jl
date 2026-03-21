@@ -17,26 +17,22 @@ function _triangle(p, s = 1.0; pointy::Bool = false)
     return pts
 end
 
-function triangles(bbox::NamedTuple, altitude::Float64; offset = (0.0, 0.0))
-   
-    __validate_bbox(bbox)
+function triangles(
+    origin::Tuple{Float64, Float64},
+    destination::Tuple{Float64, Float64},
+    altitude::Float64;
+    offset = (0.0, 0.0),
+)
 
-    # This is the first center
-    origin = (bbox.left - offset[1], bbox.top + offset[2])
-
-    # The triangle base therefore
-    base = (2altitude / sqrt(3))
-
-    # Now we measure the distance from the origin to the right / bottom of the
+    # We measure the distance from the origin to the right / bottom of the
     # bounding box - these distances are measured in degree
-    W = abs(bbox.right - origin[1])
-    H = abs(bbox.bottom - origin[2])
+    W = abs(destination[1] - origin[1])
+    H = abs(destination[2] - origin[2])
 
     # Now we want to know how many hexagons we must add. The first one starts at
     # the origin point, so to cover the full width, we need
-
-    w = ceil(Int, W / base)
-    h = ceil(Int, H / altitude)
+    w = ceil(Int, W / (3R))
+    h = ceil(Int, H / (2r))
 
     # Now we generate the triangles
     polys = Feature[]
@@ -51,7 +47,7 @@ function triangles(bbox::NamedTuple, altitude::Float64; offset = (0.0, 0.0))
 
             # The position for the cell on the column is easy to get
             px = origin[1] + base * (col - 1)
-            py = origin[2] - altitude * (row - 1) - altitude/2
+            py = origin[2] - altitude * (row - 1) - altitude / 2
 
             orig_point = iszero(row % 2)
 
@@ -63,7 +59,7 @@ function triangles(bbox::NamedTuple, altitude::Float64; offset = (0.0, 0.0))
             )
 
             # The position for the other cell is not terribly difficult either
-            p2x = px + base/2
+            p2x = px + base / 2
             p2y = py
 
             push!(

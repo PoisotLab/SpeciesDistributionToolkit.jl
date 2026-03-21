@@ -9,23 +9,22 @@ function _square(p, s = 1.0)
     return pts
 end
 
-function squares(bbox::NamedTuple, s::Float64; offset = (0.0, 0.0))
-    
-    __validate_bbox(bbox)
+function squares(
+    origin::Tuple{Float64, Float64},
+    destination::Tuple{Float64, Float64},
+    s::Float64;
+    offset = (0.0, 0.0),
+)
 
-    # This is the first center
-    origin = (bbox.left - offset[1], bbox.top + offset[2])
-
-    # Now we measure the distance from the origin to the right / bottom of the
+    # We measure the distance from the origin to the right / bottom of the
     # bounding box - these distances are measured in degree
-    W = abs(bbox.right - origin[1])
-    H = abs(bbox.bottom - origin[2])
+    W = abs(destination[1] - origin[1])
+    H = abs(destination[2] - origin[2])
 
     # Now we want to know how many hexagons we must add. The first one starts at
     # the origin point, so to cover the full width, we need
-
-    w = ceil(Int, W / s)
-    h = ceil(Int, H / s)
+    w = ceil(Int, W / (3R))
+    h = ceil(Int, H / (2r))
 
     # Now we generate the grid of squares
     grid = Tuple{Float64, Float64}[]
@@ -48,6 +47,6 @@ function squares(bbox::NamedTuple, s::Float64; offset = (0.0, 0.0))
             Dict{String, Any}("__centroid" => g, "__tile" => true),
         ) for g in grid
     ]
-    
+
     return FeatureCollection(polys)
 end

@@ -53,19 +53,20 @@ function tessellate(
     d::Float64;
     tile::Symbol = :hexagons,
     padding::Number = 0.0,
-    proj::SimpleSDMPolygons.AG.ISpatialRef = SimpleSDMLayers._parse_projection_from_string(
-        "EPSG:4326",
-    ),
+    proj = "EPSG:4326",
     kwargs...,
 ) where {T <: TessellateTypes}
 
     # Get the boundingbox
     bbox = boundingbox(obj; padding = padding)
 
+    if proj isa String
+        proj = SimpleSDMLayers._parse_projection_from_string(proj)
+    end
+
     # Units of the CRS
     unit = SimpleSDMPolygons.AG.getattrvalue(proj, "UNIT", 0)
 
-    @info unit, d
     if unit == "metre"
         # We get the distance in meters
         d = d * 1000.0
@@ -79,16 +80,13 @@ function tessellate(
     else
         @error "Unuspported units ($unit) found"
     end
-    @info unit, d
 
+    # We conver the distance so that the surface of each tile is equal to the
+    # surface of a circle of radius d
     chara_distance = __equivalent_area(d, tile)
-
-    @info unit, d, chara_distance
 
     # Get the upper left and lower right corners here, with the correct projection
     origin, destination = __corners_from_bbox(bbox, proj)
-
-    @info origin, destination
 
     # This picks the correct tiling function
     tiler = __tiling_function(tile)
@@ -97,26 +95,24 @@ function tessellate(
     H = tiler(
         origin,
         destination,
-        d;
+        chara_distance;
         kwargs...,
     )
 
-    # At this point we need to ensure that the crs for the polygon matches its
-    # destination
+    # Now we bring this to lon/lat
     prj = SpeciesDistributionToolkit._projector(
-        "EPSG:4326",
         SimpleSDMLayers.AG.toPROJ4(proj),
+        "EPSG:4326",
     )
-    for f in H.features
-        SimpleSDMPolygons.AG.createcoordtrans(proj, SimpleSDMPolygons.AG.importEPSG(4326)) do transform
-            return SimpleSDMPolygons.AG.transform!(f.geometry.geometry, transform)
-        end
-        f.properties["__centroid"] = inv(prj)(f.properties["__centroid"])
-    end
 
-    keeprelevant!(H, obj)
+    out = [
+        Feature(Polygon(prj.(h.cycle)), Dict{String, Any}("__centroid" => prj(h.centroid))) for h in H
+    ]
+    F = FeatureCollection(out)
 
-    return H
+    keeprelevant!(F, obj)
+
+    return F
 end
 
 function keeprelevant!(H::FeatureCollection, L::SDMLayer)
@@ -168,14 +164,6 @@ function keeprelevant(H::FeatureCollection, obj::T) where {T <: TessellateTypes}
     J = deepcopy(H)
     keeprelevant!(J, obj)
     return J
-end
-
-function __validate_bbox(bbox::NamedTuple)
-    return all(haskey(bbox, k) for k in [:left, :bottom, :right, :top]) || throw(
-        ArgumentError(
-            "Bounding box tuple doesn't have correct keys. It must contain :top, :bottom, :left, and :right",
-        ),
-    )
 end
 
 function __tiling_function(tile::Symbol)

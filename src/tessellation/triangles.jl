@@ -31,11 +31,12 @@ function triangles(
 
     # Now we want to know how many hexagons we must add. The first one starts at
     # the origin point, so to cover the full width, we need
-    w = ceil(Int, W / (3R))
-    h = ceil(Int, H / (2r))
+    base = (2altitude / sqrt(3))
+    w = ceil(Int, W / base)
+    h = ceil(Int, H / altitude)
 
     # Now we generate the triangles
-    polys = Feature[]
+    grid = []
 
     # We always do one more bin than required just in case I guess? Anyway it
     # will be intersected after this is done, so it doesn't matter.
@@ -52,24 +53,25 @@ function triangles(
             orig_point = iszero(row % 2)
 
             push!(
-                polys,
-                Feature(
-                    Polygon(_triangle((px, py), altitude; pointy = orig_point)),
-                    Dict{String, Any}("__centroid" => (px, py), "__tile" => true)),
+                grid,
+                (
+                    centroid = (px, py),
+                    cycle = _triangle((px, py), altitude; pointy = orig_point),
+                ),
             )
 
             # The position for the other cell is not terribly difficult either
             p2x = px + base / 2
             p2y = py
-
             push!(
-                polys,
-                Feature(
-                    Polygon(_triangle((p2x, p2y), altitude; pointy = !orig_point)),
-                    Dict{String, Any}("__centroid" => (p2x, p2y), "__tile" => true)),
+                grid,
+                (
+                    centroid = (p2x, p2y),
+                    cycle = _triangle((p2x, p2y), altitude; pointy = !orig_point),
+                ),
             )
         end
     end
 
-    return FeatureCollection(polys)
+    return grid
 end

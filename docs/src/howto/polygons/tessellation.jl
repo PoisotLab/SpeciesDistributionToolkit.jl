@@ -7,35 +7,50 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # tessellate
 
-pol = getpolygon(PolygonData(NaturalEarth, Countries))["Austria"]
+EUR = getpolygon(PolygonData(NaturalEarth, Countries))["Region" => "Europe"]
+pol = EUR["Austria"]
+
 
 # bbox
 
-bb = SDT.boundingbox(pol)
+bb = SDT.boundingbox(pol; padding=2.5)
+EUR = clip(EUR, bb)
 
-# layer
+proj = "EPSG:4096"
+
+# from a polygon
+
+f = Figure()
+ax = Axis(f[1,1]; aspect=DataAspect())
+poly!(ax, EUR, color=:grey80)
+poly!(ax, pol, color=:grey60)
+lines!(ax, EUR, color=:black)
+lines!(ax, tessellate(pol, 25.; proj=proj), color=:orange, linewidth=2)
+current_figure()
+
+# 
+
+f = Figure()
+ax = Axis(f[1,1]; aspect=DataAspect())
+poly!(ax, EUR, color=:grey80)
+poly!(ax, pol, color=:grey60)
+lines!(ax, EUR, color=:black)
+lines!(ax, tessellate(pol, 25.; proj=proj, tile=:squares), color=:orange, linewidth=2)
+current_figure()
 
 #
 
-layer = SDMLayer(RasterData(EarthEnv, LandCover); layer=1, bb...)
-mask!(layer, pol)
-
-# proj
-
-proj = "EPSG:3416"
-
-# second layer
-
-L = interpolate(layer; dest=proj)
-
-heatmap(L)
-lines!(reproject(pol, proj))
+f = Figure()
+ax = Axis(f[1,1]; aspect=DataAspect())
+poly!(ax, EUR, color=:grey80)
+poly!(ax, pol, color=:grey60)
+lines!(ax, EUR, color=:black)
+lines!(ax, tessellate(pol, 25.; proj=proj, tile=:triangles), color=:orange, linewidth=2)
 current_figure()
 
-# units
+# next with a layer
 
-tessellate(L, 10.; proj=projection(L))
-
+# next with occurrences
 
 # ```@meta
 # CollapsedDocStrings = true

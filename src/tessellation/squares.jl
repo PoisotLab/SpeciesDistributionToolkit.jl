@@ -23,8 +23,8 @@ function squares(
 
     # Now we want to know how many hexagons we must add. The first one starts at
     # the origin point, so to cover the full width, we need
-    w = ceil(Int, W / (3R))
-    h = ceil(Int, H / (2r))
+    w = ceil(Int, W / s)
+    h = ceil(Int, H / s)
 
     # Now we generate the grid of squares
     grid = Tuple{Float64, Float64}[]
@@ -41,12 +41,5 @@ function squares(
     end
 
     # Now we can return the polygons
-    polys = [
-        Feature(
-            Polygon(_square(g, s)),
-            Dict{String, Any}("__centroid" => g, "__tile" => true),
-        ) for g in grid
-    ]
-
-    return FeatureCollection(polys)
+    return [(centroid = g, cycle = _square(g, s)) for g in grid]
 end

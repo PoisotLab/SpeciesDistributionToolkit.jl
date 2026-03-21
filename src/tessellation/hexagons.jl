@@ -21,8 +21,8 @@ function hexagons(
 
     # We measure the distance from the origin to the right / bottom of the
     # bounding box - these distances are measured in degree
-    W = abs(destination[1] - origin[1])
-    H = abs(destination[2] - origin[2])
+    W = destination[1] - origin[1]
+    H = origin[2] - destination[2]
 
     # Now we want to know how many hexagons we must add. The first one starts at
     # the origin point, so to cover the full width, we need
@@ -74,12 +74,5 @@ function hexagons(
     end
 
     # Now we can return the polygons
-    polys = [
-        Feature(
-            Polygon(_hexagon(g, R; pointy = pointy)),
-            Dict{String, Any}("__centroid" => g, "__tile" => true),
-        ) for g in grid
-    ]
-
-    return FeatureCollection(polys)
+    return [(centroid=g, cycle=_hexagon(g, R; pointy = pointy)) for g in grid]
 end

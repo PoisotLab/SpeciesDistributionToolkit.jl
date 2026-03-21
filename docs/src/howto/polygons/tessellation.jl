@@ -1,95 +1,208 @@
 # # Tessellation
 
+# It is possible to generate tessellations (homogenous tilings of a surface)
+# from several type of objects.
+
 using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
 using CairoMakie
 CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
-# tessellate
+# We will start by getting the different type of data that can be used to
+# generate a tessellation, starting with polygons:
 
 EUR = getpolygon(PolygonData(NaturalEarth, Countries))["Region" => "Europe"]
-pol = EUR["Austria"]
-
-
-# bbox
-
-bb = SDT.boundingbox(pol; padding=1.0)
+pol = EUR["Switzerland"]
+bb = SDT.boundingbox(pol; padding = 0.5)
 EUR = clip(EUR, bb)
 
-proj = "EPSG:4096"
+# We will also grab some occurrences:
 
-# from a polygon
+records = GBIF.download("10.15468/dl.wye52h");
 
-f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-poly!(ax, EUR, color=:grey80)
-poly!(ax, pol, color=:grey60)
-lines!(ax, EUR, color=:black)
-lines!(ax, tessellate(pol, 25.; proj=proj), color=:orange, linewidth=2)
-current_figure()
-
-# 
-
-f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-poly!(ax, EUR, color=:grey80)
-poly!(ax, pol, color=:grey60)
-lines!(ax, EUR, color=:black)
-lines!(ax, tessellate(pol, 25.; proj=proj, tile=:squares), color=:orange, linewidth=2)
-current_figure()
-
-#
-
-f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-poly!(ax, EUR, color=:grey80)
-poly!(ax, pol, color=:grey60)
-lines!(ax, EUR, color=:black)
-lines!(ax, tessellate(pol, 25.; proj=proj, tile=:triangles), color=:orange, linewidth=2)
-current_figure()
-
-# compare to no projection
-
-f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-poly!(ax, EUR, color=:grey80)
-poly!(ax, pol, color=:grey60)
-lines!(ax, EUR, color=:black)
-lines!(ax, tessellate(pol, 25.; tile=:squares), color=:orange, linewidth=2)
-current_figure()
-
-# next with a layer
+# And we will also get a layer:
 
 layer = SDMLayer(RasterData(CHELSA2, AverageTemperature); bb...)
 mask!(layer, pol)
 
-# fig
+# Finally, we will show how the tessellation can be generated in a
+# projection-aware way, so we'll also define a correct projection for this area.
 
+proj = "EPSG:2056"
+
+# ## Generating a tessellation
+
+# The `tessellate` function has method for layers, occurrences (including SDMs),
+# and polygons. They all share the same options.
+
+T = tessellate(pol, 20.0)
+
+# This will generate a tessellation where each division of the space has a
+# radius equivalent to 20km.
+
+#figure tess-basic
 f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-poly!(ax, EUR, color=:grey80)
-heatmap!(ax, layer, colormap=:Greens)
-lines!(ax, EUR, color=:black)
-lines!(ax, tessellate(layer, 25.; tile=:hexagons, pointy=true, proj=proj), color=:orange, linewidth=2)
-current_figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+lines!(ax, EUR; color = :grey40)
+poly!(ax, pol; color = :grey85)
+lines!(ax, pol; color = :black)
+poly!(ax, T; color = (:green, 0.2))
+lines!(ax, T; color = :green)
+tightlimits!(ax)
+current_figure() #hide
 
-# mosaic
+# ## Changing the type of tiling
+
+# The `tile` argument determines which type of tiling is created, and the
+# different options are `:hexagons`, `:squares`, and `:triangles`. When using
+# `:hexagons`, the `pointy` (boolean) keyword can be used to have the hexagons
+# pointy side up.
+
+# The distance given as the second argument to `tessellate` is handled in the
+# same way for all type of tiles. fFirst, the function calculates the area that
+# would be covered by a circle with this radius. Second, the function generates
+# the characteristic length of each tiling shape (side for a square,
+# circumradius for an hexagons, altitude for a triangle) that gives it the same
+# surface as this circle.
+
+T = tessellate(pol, 25.0; tile = :squares)
+
+#figure tess-squares
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+lines!(ax, EUR; color = :grey40)
+poly!(ax, pol; color = :grey85)
+lines!(ax, pol; color = :black)
+poly!(ax, T; color = (:green, 0.2))
+lines!(ax, T; color = :green)
+tightlimits!(ax)
+current_figure() #hide
+
+T = tessellate(pol, 25.0; tile = :triangles)
+
+#figure tess-squares
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+lines!(ax, EUR; color = :grey40)
+poly!(ax, pol; color = :grey85)
+lines!(ax, pol; color = :black)
+poly!(ax, T; color = (:green, 0.2))
+lines!(ax, T; color = :green)
+tightlimits!(ax)
+current_figure() #hide
+
+# ## Changing the projection
+
+# The tiling will by default be generated using long./lat., but it is possible
+# to use any different projection. When generating a tiling in long./lat., the
+# distance is converted to a number of degrees _at the median latitude_.
+
+T = tessellate(pol, 10.0; tile = :squares, proj = proj)
+
+#figure tess-projected
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+lines!(ax, EUR; color = :grey40)
+poly!(ax, pol; color = :grey85)
+lines!(ax, pol; color = :black)
+poly!(ax, T; color = (:green, 0.2))
+lines!(ax, T; color = :green)
+tightlimits!(ax)
+current_figure() #hide
+
+# Note that the tessellation is always returned in long./lat., but the
+# `reproject` function can be used when plotting.
+
+# ## Properties of tessellations
+
+# All tessellations are returned as a `FeatureCollection` with different
+# properties. By default, they will only get a `"__centroid"` property giving
+# the center of mass of each polygon in the tiling.
+
+#figure scatter-centroid
+centroids = uniqueproperties(T)["__centroid"]
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+lines!(ax, EUR; color = :grey40)
+poly!(ax, pol; color = :grey85)
+lines!(ax, pol; color = :black)
+scatter!(ax, centroids; color = :green)
+tightlimits!(ax)
+current_figure() #hide
+
+# When the tiling is generated from a layer, each polygon will get the number of
+# cells within it:
+
+T = tessellate(layer, 12.0; tile = :hexagons, pointy = true, proj = proj)
+
+# This value is stored in the `"__cells"` property.
+
+#figure tess-numbercells
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+lines!(ax, EUR; color = :grey40)
+poly!(ax, pol; color = :grey85)
+lines!(ax, pol; color = :black)
+for f in T.features
+    poly!(
+        ax,
+        f;
+        color = f.properties["__cells"],
+        colorrange = extrema(uniqueproperties(T)["__cells"]),
+        colormap = :Greens
+    )
+end
+lines!(ax, T; color = :green)
+tightlimits!(ax)
+current_figure() #hide
+
+# When generated from a collection of occurrences, the tiles wil get a
+# `"__presences"` and `"__absences"` property, with the number of presences and
+# absences. Note that this also works with `AbstractSDM` models, as they can
+# supporting the occurrences interface.
+
+T = tessellate(records, 6.; tile=:hexagons, proj=proj)
+
+#figure tess-numberocc
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+lines!(ax, EUR; color = :grey40)
+poly!(ax, pol; color = :grey85)
+lines!(ax, pol; color = :black)
+for f in T.features
+    poly!(
+        ax,
+        f;
+        color = f.properties["__presences"],
+        colorrange = extrema(uniqueproperties(T)["__presences"]),
+        colormap = :Greens
+    )
+end
+lines!(ax, T; color = :green)
+tightlimits!(ax)
+current_figure() #hide
+
+# Note a very important feature of tessellations here -- they are _sparse_, and
+# will only return polygons that are relevant to the object we are interested
+# in.
+
+# ## Zonal statistics
+
+# The tessellations can be used for zonal statistics:
 
 using Statistics
-T = tessellate(layer, 10.; tile=:triangles, proj=proj)
+T = tessellate(layer, 10.0; tile = :squares, proj = proj)
 M = mosaic(mean, layer, T, "__centroid")
 
-# figure
-
+#figure tess-zonal
 f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-poly!(ax, EUR, color=:grey80)
+ax = Axis(f[1, 1]; aspect = DataAspect())
+lines!(ax, EUR; color = :grey40)
+poly!(ax, pol; color = :grey85)
 heatmap!(ax, M, colormap=:Greens)
-lines!(ax, EUR, color=:black)
-lines!(ax, T, color=:orange, linewidth=0.5)
-current_figure()
-
-# next with occurrences
+lines!(ax, pol; color = :black)
+tightlimits!(ax)
+current_figure() #hide
 
 # ```@meta
 # CollapsedDocStrings = true

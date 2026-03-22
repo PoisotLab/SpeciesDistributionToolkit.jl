@@ -129,7 +129,6 @@ export default defineConfig({
                                 { text: "Statistics", link: "/howto/layers/layer-statistics/" },
                                 { text: "Multivariate transformations", link: "/howto/layers/multivariate/" },
                                 { text: "Clustering", link: "/howto/layers/clustering/" },
-                                { text: "Variograms", link: "/howto/layers/variogram/" },
                             ]
                         },
                         {
@@ -162,6 +161,7 @@ export default defineConfig({
                                 { text: "Sliding windows", link: "/howto/usage/sliding-windows/" },
                                 { text: "Projection", link: "/howto/usage/projection/" },
                                 { text: "Layers and occurrences", link: "/howto/usage/layers-occurrences/" },
+                                { text: "Variograms", link: "/howto/usage/variogram/" },
                             ]
                         },
                         {

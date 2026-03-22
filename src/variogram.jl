@@ -1,3 +1,35 @@
+function _generate_point_pairs(occ::AbstractOccurrenceCollection, n::Integer)
+    z = Tuple{Float64, Float64}[]
+
+    xy = place(occ)
+    for _ in Base.OneTo(n)
+        s = rand(eachindex(xy), 2)
+        sᵢ = xy[s[1]]
+        sⱼ = xy[s[2]]
+        Lᵢ = presence(occ)[s[1]]
+        Lⱼ = presence(occ)[s[2]]
+        δ = Fauxcurrences._distancefunction(sᵢ, sⱼ)
+        push!(z, (δ, abs(Lᵢ - Lⱼ)))
+    end
+    return z
+end
+
+function _generate_point_pairs(model::AbstractSDM, n::Integer, v::Integer)
+    z = Tuple{Float64, Float64}[]
+
+    xy = place(model)
+    for _ in Base.OneTo(n)
+        s = rand(eachindex(xy), 2)
+        sᵢ = xy[s[1]]
+        sⱼ = xy[s[2]]
+        Lᵢ = features(model, v)[s[1]]
+        Lⱼ = features(model, v)[s[2]]
+        δ = Fauxcurrences._distancefunction(sᵢ, sⱼ)
+        push!(z, (δ, abs(Lᵢ - Lⱼ)))
+    end
+    return z
+end
+
 function _generate_point_pairs(L::SDMLayer, n::Integer)
     Es, Ns = eastings(L), northings(L)
     z = Tuple{Float64, Float64}[]
@@ -59,6 +91,60 @@ function variogram(L::SDMLayer; width::Float64 = 10., shift::Float64=1.0, kwargs
     samples = ceil(Int, (Ls / width) * 30)
 
     Z = _generate_point_pairs(L, samples)
+    return variogram(Z, width, shift; kwargs...)
+end
+
+"""
+    variogram(model::AbstractSDM; variable::Int, samples::Integer=2000, bins::Integer=100; kwargs...)
+
+Generates the raw data to look at an empirical semivariogram from a model, for a
+given `variable` (keyword, defaults to the first variable in the model). This
+method will draw `samples` pairs of points at random, then aggregate them in
+`bins` bins.
+
+This returns three vectors: the empirical center of the bin, the semivariance
+within this bin, and the number of samples that compose this bin.
+"""
+function variogram(model::AbstractSDM; variable::Int=first(variables(model)), width::Float64 = 10., shift::Float64=1.0, kwargs...)
+    @assert isgeoreferenced(model)
+    bb = boundingbox(elements(model))
+    # Estimate of the distance for the number of samples is the largest of height/width
+
+    Lh = Fauxcurrences._distancefunction((bb.left, bb.bottom), (bb.left, bb.top))
+    Lw = Fauxcurrences._distancefunction((bb.left, bb.bottom), (bb.right, bb.bottom))
+    Ls = max(Lh, Lw)
+
+    # We would like to get 30 samples per bin if possible, but if not that's cool too
+    samples = ceil(Int, (Ls / width) * 30)
+
+    Z = _generate_point_pairs(model, samples, variable)
+    return variogram(Z, width, shift; kwargs...)
+end
+
+
+"""
+    variogram(occ::AbstractOccurrenceCollection; samples::Integer=2000, bins::Integer=100; kwargs...)
+
+Generates the raw data to look at an empirical semivariogram from a model, for a
+given `variable` (keyword, defaults to the first variable in the model). This
+method will draw `samples` pairs of points at random, then aggregate them in
+`bins` bins.
+
+This returns three vectors: the empirical center of the bin, the semivariance
+within this bin, and the number of samples that compose this bin.
+"""
+function variogram(occ::AbstractOccurrenceCollection; width::Float64 = 10., shift::Float64=1.0, kwargs...)
+    bb = boundingbox(occ)
+
+    # Estimate of the distance for the number of samples is the largest of height/width
+    Lh = Fauxcurrences._distancefunction((bb.left, bb.bottom), (bb.left, bb.top))
+    Lw = Fauxcurrences._distancefunction((bb.left, bb.bottom), (bb.right, bb.bottom))
+    Ls = max(Lh, Lw)
+
+    # We would like to get 30 samples per bin if possible, but if not that's cool too
+    samples = ceil(Int, (Ls / width) * 30)
+
+    Z = _generate_point_pairs(occ, samples)
     return variogram(Z, width, shift; kwargs...)
 end
 

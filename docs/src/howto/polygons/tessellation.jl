@@ -113,6 +113,11 @@ current_figure() #hide
 # Note that the tessellation is always returned in long./lat., but the
 # `reproject` function can be used when plotting.
 
+# In cases where the projection distorts the geometry of the tiles a lot, it is
+# advised to use the `densify` keyword argument to specify a number of
+# additional points to draw on each side of the tile. This will mostly be useful
+# at very high (in absolute values) latitudes.
+
 # ## Properties of tessellations
 
 # All tessellations are returned as a `FeatureCollection` with different

@@ -167,7 +167,7 @@ current_figure() #hide
 
 x, y, n = variogram(Occurrences(model))
 
-#figure vario-on-sdm
+#figure vario-on-occurrences
 f = Figure()
 ax = Axis(f[1,1]; xlabel="Distance", ylabel="Variogram")
 scatter!(ax, x, y, markersize=n ./ maximum(n) .* 8 .+ 4, color=:teal)

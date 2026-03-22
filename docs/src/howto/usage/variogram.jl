@@ -26,7 +26,7 @@ current_figure() #hide
 
 # get variogram
 
-x, y, n = variogram(temperature; width=10., shift=5.);
+x, y, n = variogram(temperature; width=5., shift=2.);
 
 #figure variogram-temp
 f = Figure()

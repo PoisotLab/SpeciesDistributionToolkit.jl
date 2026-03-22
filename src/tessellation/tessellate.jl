@@ -137,7 +137,7 @@ function __densify(cycle::Vector{Tuple{Float64, Float64}}, n = 0)
             p2, p1 = cycle[i], cycle[i - 1]
             Δx = p1[1] .+ (p2[1] .- p2[1]) .* progress
             Δy = p1[2] .+ (p2[2] .- p2[2]) .* progress
-            append!(newcycle, [(Δx[j], Δy[j]) for j in 1:n])
+            append!(newcycle, [(Δx[j], Δy[j]) for j in eachindex(progress)])
         end
     end
     return newcycle

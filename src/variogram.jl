@@ -72,9 +72,10 @@ end
 """
     variogram(L::SDMLayer; samples::Integer=2000, bins::Integer=100; kwargs...)
 
-Generates the raw data to look at an empirical semivariogram from a layer. This
-method will draw `samples` pairs of points at random, then aggregate them in
-`bins` bins.
+Generates the raw data to look at an empirical semivariogram from a layer with
+numerical values. This method will generate bins that are `width` kilometers
+wide by drawing pairs of points at random, and each bin will be shifted by
+`shift` kilometers.
 
 This returns three vectors: the empirical center of the bin, the semivariance
 within this bin, and the number of samples that compose this bin.
@@ -99,8 +100,8 @@ end
 
 Generates the raw data to look at an empirical semivariogram from a model, for a
 given `variable` (keyword, defaults to the first variable in the model). This
-method will draw `samples` pairs of points at random, then aggregate them in
-`bins` bins.
+method will generate bins that are `width` kilometers wide by drawing pairs of
+points at random, and each bin will be shifted by `shift` kilometers.
 
 This returns three vectors: the empirical center of the bin, the semivariance
 within this bin, and the number of samples that compose this bin.
@@ -123,12 +124,12 @@ end
 
 
 """
-    variogram(occ::AbstractOccurrenceCollection; samples::Integer=2000, bins::Integer=100; kwargs...)
+    variogram(occ::AbstractOccurrenceCollection; width::Float64 = 10., shift::Float64=1.0, kwargs...)
 
-Generates the raw data to look at an empirical semivariogram from a model, for a
-given `variable` (keyword, defaults to the first variable in the model). This
-method will draw `samples` pairs of points at random, then aggregate them in
-`bins` bins.
+Generates the raw data to look at an empirical semivariogram from a collection
+of occurrences. This method will generate bins that are `width` kilometers wide
+by drawing pairs of points at random, and each bin will be shifted by `shift`
+kilometers.
 
 This returns three vectors: the empirical center of the bin, the semivariance
 within this bin, and the number of samples that compose this bin.
@@ -184,7 +185,7 @@ Fits a variogram of the given `family` based on data representing the central
 bin distance `x`, the semivariogram `y`, and the sample size `n`. The data are
 returned as a named tuple containing the `range`, the `sill`, the `nugget`, the
 `error`, and the `model`. The model is a function that can be called on a given
-distance to obtained the best fit variogram.
+distance to obtain the best fit variogram.
 
 Possible values of `family` are `:gaussian` (default), `:spherical`, and
 `:exponential`.

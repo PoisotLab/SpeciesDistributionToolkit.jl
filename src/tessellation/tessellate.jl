@@ -47,6 +47,9 @@ presence/absences in each tile.
     tessellate; this defaults to `0`
   - `pointy`: for `:hexagons` tiles, whether they are draw pointy side or flat
     side up
+  - `densify`: defaults to `0`, the number of additional points to draw along
+    each segment of the polygon; this may help to increase it when the polygons
+    are large, and the projection distorts them
 """
 function tessellate(
     obj::T,
@@ -54,6 +57,7 @@ function tessellate(
     tile::Symbol = :hexagons,
     padding::Number = 0.0,
     proj = "EPSG:4326",
+    densify::Integer = 0,
     kwargs...,
 ) where {T <: TessellateTypes}
 
@@ -105,8 +109,16 @@ function tessellate(
         "EPSG:4326",
     )
 
+    # Now we need to densify the projection a little, so that each polygon
+    # receives intermediate points. This will make the projected data smoother
+    # when at high latitudes.
+
+    # We return everything now
     out = [
-        Feature(Polygon(prj.(h.cycle)), Dict{String, Any}("__centroid" => prj(h.centroid))) for h in H
+        Feature(
+            Polygon(prj.(__densify(h.cycle, densify))),
+            Dict{String, Any}("__centroid" => prj(h.centroid)),
+        ) for h in H
     ]
     F = FeatureCollection(out)
 
@@ -115,6 +127,26 @@ function tessellate(
     return F
 end
 
+function __densify(cycle::Vector{Tuple{Float64, Float64}}, n = 0)
+    progress = LinRange(0.0, 1.0, n + 2)
+    newcycle = Tuple{Float64, Float64}[]
+    for i in eachindex(cycle)
+        if i > 1
+            p2, p1 = cycle[i], cycle[i - 1]
+            Δx = p1[1] .+ (p2[1] .- p2[1]) .* progress
+            Δy = p1[2] .+ (p2[2] .- p2[2]) .* progress
+            append!(newcycle, [(Δx[j], Δy[j]) for j in 1:n])
+        end
+    end
+    return newcycle
+end
+
+"""
+    keeprelevant!(H::FeatureCollection, L::SDMLayer)
+
+Removes the tiles from a feature collection that do not have at least one cell
+of the layer given as second argument.
+"""
 function keeprelevant!(H::FeatureCollection, L::SDMLayer)
     idx_to_delete = Integer[]
     for (i, f) in enumerate(H.features)
@@ -129,6 +161,12 @@ function keeprelevant!(H::FeatureCollection, L::SDMLayer)
     return H
 end
 
+"""
+    keeprelevant!(H::FeatureCollection, G::SimpleSDMPolygons.AbstractGeometry)
+
+Removes the tiles from a feature collection that do not have a non-empty
+intersect with the geometry given as second argument.
+"""
 function keeprelevant!(H::FeatureCollection, G::SimpleSDMPolygons.AbstractGeometry)
     idx_to_delete = Integer[]
     for (i, f) in enumerate(H.features)
@@ -145,6 +183,12 @@ function keeprelevant!(H::FeatureCollection, G::SimpleSDMPolygons.AbstractGeomet
     return H
 end
 
+"""
+    keeprelevant!(H::FeatureCollection, occ::AbstractOccurrenceCollection)
+
+Removes the tiles from a feature collection that do not contain at least one
+occurrence (presence or absence) from the collection given as second argument.
+"""
 function keeprelevant!(H::FeatureCollection, occ::AbstractOccurrenceCollection)
     idx_to_delete = Integer[]
     for (i, f) in enumerate(H.features)
@@ -160,6 +204,11 @@ function keeprelevant!(H::FeatureCollection, occ::AbstractOccurrenceCollection)
     return H
 end
 
+"""
+    keeprelevant(H::FeatureCollection, obj::T) where {T <: TessellateTypes}
+
+Apply `keeprelevant!` on a copy of the feature collection.
+"""
 function keeprelevant(H::FeatureCollection, obj::T) where {T <: TessellateTypes}
     J = deepcopy(H)
     keeprelevant!(J, obj)

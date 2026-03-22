@@ -18,7 +18,7 @@ EUR = clip(EUR, bb)
 
 # We will also grab some occurrences:
 
-records = GBIF.download("10.15468/dl.wye52h");
+records = GBIF.download("10.15468/dl.wye52h")
 
 # And we will also get a layer:
 
@@ -186,6 +186,42 @@ current_figure() #hide
 # will only return polygons that are relevant to the object we are interested
 # in.
 
+# ## Selection of tiles
+
+# The (unexported) `keeprelevant` and `keeprelevant!` method can be used to
+# filter _any_ tiling. For example, we can generate a tiling from a layer, then
+# refine it so it only covers a given occurrence dataset:
+
+T = tessellate(layer, 8.; tile=:squares, proj=proj)
+P = SDT.keeprelevant(T, records)
+
+# Note that this will result in a tessellation with the properties gained from
+# the layer _and_ the occurrences:
+
+keys(uniqueproperties(P))
+
+# Note also that we used `keeprelevant` in order to return a copy of the initial
+# tessellation.
+
+#figure tess-keeprelevant
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+lines!(ax, EUR; color = :grey40)
+poly!(ax, pol; color = :grey85)
+lines!(ax, pol; color = :black)
+for f in P.features
+    poly!(
+        ax,
+        f;
+        color = f.properties["__presences"],
+        colorrange = extrema(uniqueproperties(P)["__presences"]),
+        colormap = :Greens
+    )
+end
+lines!(ax, T; color = :green)
+tightlimits!(ax)
+current_figure() #hide
+
 # ## Zonal statistics
 
 # The tessellations can be used for zonal statistics:
@@ -213,4 +249,5 @@ current_figure() #hide
 # ```@docs; canonical=false
 # tessellate
 # SpeciesDistributionToolkit.keeprelevant!
+# SpeciesDistributionToolkit.keeprelevant
 # ```

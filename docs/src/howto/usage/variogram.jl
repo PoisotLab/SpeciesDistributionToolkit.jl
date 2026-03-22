@@ -59,21 +59,6 @@ scatter!(ax, x, y, markersize=n ./ maximum(n) .* 8 .+ 4, color=:grey50)
 ylims!(ax, quantile(y, [0.0, 0.9])...)
 current_figure() #hide
 
-# ## Variogram on occurrences
-
-# We can also generate the variogram on a collection of occurrences, which is
-# primarily useful to check the distance at which two observations are likely to
-# be different.
-
-x, y, n = variogram(Occurrences(model))
-
-#figure vario-on-sdm
-f = Figure()
-ax = Axis(f[1,1]; xlabel="Distance", ylabel="Variogram")
-scatter!(ax, x, y, markersize=n ./ maximum(n) .* 8 .+ 4, color=:teal)
-ylims!(ax, quantile(y, [0.0, 0.9])...)
-current_figure() #hide
-
 # ## Fitting a model to the variogram
 
 # We'll start by getting a variogram from a layer:
@@ -172,6 +157,21 @@ ax = Axis(f[1, 1]; ylabel="Range (km)", xticks=xticks, xticklabelrotation=π/2)
 hlines!(ax, [median(ranges)], color=:grey50, linestyle=:dash)
 stem!(ax, ranges, trunkcolor=:transparent, color=:black, stemcolor=:black, stemwidth=2, markersize=15, marker=:hline)
 ylims!(ax, low=0.0)
+current_figure() #hide
+
+# ## Variogram on occurrences
+
+# We can also generate the variogram on a collection of occurrences, which is
+# primarily useful to check the distance at which two observations are likely to
+# be different.
+
+x, y, n = variogram(Occurrences(model))
+
+#figure vario-on-sdm
+f = Figure()
+ax = Axis(f[1,1]; xlabel="Distance", ylabel="Variogram")
+scatter!(ax, x, y, markersize=n ./ maximum(n) .* 8 .+ 4, color=:teal)
+ylims!(ax, quantile(y, [0.0, 0.9])...)
 current_figure() #hide
 
 # ```@meta

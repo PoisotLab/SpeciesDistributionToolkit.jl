@@ -50,6 +50,8 @@ presence/absences in each tile.
   - `densify`: defaults to `0`, the number of additional points to draw along
     each segment of the polygon; this may help to increase it when the polygons
     are large, and the projection distorts them
+  - `proj`: defaults to `"EPSG:4326"`, the projection in which the tiles will be
+    generated; note that the tiles are *always* returned as long./lat.
 """
 function tessellate(
     obj::T,

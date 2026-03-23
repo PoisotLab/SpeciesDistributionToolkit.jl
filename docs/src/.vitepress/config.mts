@@ -21,8 +21,8 @@ export default defineConfig({
                 md.use(footnote)
         },
         theme: {
-            light: "min-light",
-            dark: "min-dark"
+            light: "catppuccin-latte",
+            dark: "catppuccin-macchiato"
         }
     },
     themeConfig: {

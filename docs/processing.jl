@@ -8,11 +8,11 @@ function post!(content)
 end
 
 function pre_collapse_figure(content)
-    matcher = r"""^#figure (?<title>[\w-]+)$
+    matcher = r"""^#figure\s?(?<title>.+)$
         (?<code>(?>^[^#].*$\n)+?)^current_figure\(\) #hide$"""m
 
     replacement_template = """
-        # ![](HASH.png)
+        # ![\\g<title>](HASH.png)
 
         # ::: details Code for the figure
 

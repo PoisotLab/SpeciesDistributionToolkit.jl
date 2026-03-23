@@ -32,7 +32,7 @@ mask!(L, pol)
 
 T = tessellate(pol, 30.0; tile = :hexagons, pointy = true, proj = proj, densify = 5)
 
-#figure tile1
+#figure Hexagonal tiling over the polygon
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 lines!(ax, pol)
@@ -47,7 +47,7 @@ n = 4
 
 SDT.assignfolds!(T; n = n, group = true, order = :horizontal)
 
-#figure tile1
+#figure Tiling colored by the folds assigned horizontal
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 for i in 1:n
@@ -73,7 +73,7 @@ current_figure() #hide
 
 SDT.assignfolds!(T; n = n, group = true, order = :vertical)
 
-#figure tile1
+#figure Tiling colored by the folds assigned vertically
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 for i in 1:n

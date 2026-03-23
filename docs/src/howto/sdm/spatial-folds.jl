@@ -45,7 +45,11 @@ n = 4
 
 # this is the code
 
-SDT.assignfolds!(T; n = n, group = true, order = :horizontal)
+SDT.assignfolds!(
+    T;
+    n = n, group = true,
+    order = :horizontal # [!code highlight]
+)
 
 #figure Tiling colored by the folds assigned horizontal
 f = Figure()
@@ -71,7 +75,11 @@ current_figure() #hide
 
 # this is the code
 
-SDT.assignfolds!(T; n = n, group = true, order = :vertical)
+SDT.assignfolds!(
+    T;
+    n = n, group = true,
+    order = :vertical # [!code highlight]
+)
 
 #figure Tiling colored by the folds assigned vertically
 f = Figure()

@@ -106,6 +106,40 @@ for i in 1:n
 end
 current_figure() #hide
 
+# ## Grouped and alternating splits
+
+# By defaults splits are assigned in a way that alternates sequentially, in
+# order to distribute the splits more evenly across space
+
+SDT.assignfolds!(
+    T;
+    n = n,
+    group = false, # [!code highlight]
+    order = :vertical
+)
+
+#figure Tiling colored by the folds assigned vertically, alternating
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+for i in 1:n
+    poly!(
+        ax,
+        T["__fold" => i];
+        alpha = 0.2,
+        color = i,
+        colorrange = (1, n),
+        colormap = cgrad(:Set1, n; categorical = true),
+    )
+    lines!(
+        ax,
+        T["__fold" => i];
+        color = i,
+        colorrange = (1, n),
+        colormap = cgrad(:Set1, n; categorical = true),
+    )
+end
+current_figure() #hide
+
 # ## Generating a model
 
 L₊ = mask(L[1], records)

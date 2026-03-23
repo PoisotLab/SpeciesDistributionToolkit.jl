@@ -17,7 +17,6 @@ using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
 using PrettyTables
 using CairoMakie
-
 using Statistics
 
 # ## Variograms on layers
@@ -25,7 +24,7 @@ using Statistics
 # We will start by grabbing some information on temperature over the island of
 # Corsica.
 
-polygon = getpolygon(PolygonData(ESRI, Places))["Place name" => "Corse"]
+polygon = getpolygon(PolygonData(OpenStreetMap, Places); place="Corse")
 temperature = SDMLayer(RasterData(CHELSA2, AverageTemperature); SDT.boundingbox(polygon)...)
 mask!(temperature, polygon);
 

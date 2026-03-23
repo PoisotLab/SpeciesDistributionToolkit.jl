@@ -173,17 +173,20 @@ function keeprelevant!(H::FeatureCollection, G::SimpleSDMPolygons.AbstractGeomet
     idx_to_delete = Integer[]
     for (i, f) in enumerate(H.features)
         try
-            cut = intersect(G, f).geometry
-            if SimpleSDMPolygons.AG.isempty(cut)
+            cut = intersect(f, G)
+            if _mt_pol(cut)
                 push!(idx_to_delete, i)
             end
         catch err
-            continue
         end
     end
     deleteat!(H.features, idx_to_delete)
     return H
 end
+
+_mt_pol(f::FeatureCollection) = any(_mt_pol.(f.features))
+_mt_pol(f::Feature) = _mt_pol(f.geometry)
+_mt_pol(f::SimpleSDMPolygons.AbstractGeometry) = SimpleSDMPolygons.AG.isempty(f.geometry)
 
 """
     keeprelevant!(H::FeatureCollection, occ::AbstractOccurrenceCollection)

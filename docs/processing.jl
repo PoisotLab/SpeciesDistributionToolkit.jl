@@ -51,7 +51,7 @@ end
 function pre_add_random(content)
     content = """
     import Random #hide
-    Random.seed!(12345) #hide
+    Random.seed!(12345); #hide
     """ * content
     return content
 end

@@ -10,32 +10,47 @@ using CairoMakie
 # We will start by getting the different type of data that can be used to
 # generate a tessellation, starting with polygons:
 
-EUR = getpolygon(PolygonData(NaturalEarth, Countries))["Region" => "Europe"]
-pol = EUR["Switzerland"]
-bb = SDT.boundingbox(pol; padding = 0.5)
-EUR = clip(EUR, bb)
+pol = getpolygon(PolygonData(OpenStreetMap, Places); place = "California")
+bb = SDT.boundingbox(pol)
+
+# Get an orthoprojection
+
+proj = "+proj=ortho +lon_0=$((bb.right + bb.left)/2) +lat_0=$((bb.top + bb.bottom)/2)"
 
 # We will also grab some occurrences:
 
-records = OccurrencesInterface.__demodata()
+records = Occurrences(mask(OccurrencesInterface.__demodata(), pol))
 
 # And we will also get a layer:
 
-layer = SDMLayer(RasterData(CHELSA2, AverageTemperature); bb...)
-mask!(layer, pol)
+L = [SDMLayer(RasterData(CHELSA2, BioClim); bb..., layer=i) for i in [1,12]]
+mask!(L, pol)
 
-# Finally, we will show how the tessellation can be generated in a
-# projection-aware way, so we'll also define a correct projection for this area.
+# ## Creating the tiles
 
-proj = "EPSG:2056"
+# get tiles
 
-# ## Generating a tessellation
+T = tessellate(pol, 60.0; tile=:hexagons, proj=proj, densify=5)
+SDT.keeprelevant!(T, L[1])
 
-# The `tessellate` function has method for layers, occurrences (including SDMs),
-# and polygons. They all share the same options.
+#figure tile1
+f = Figure()
+ax = Axis(f[1,1]; aspect=DataAspect())
+lines!(ax, pol)
+lines!(ax, T, color=:orange)
+current_figure() #hide
 
-T = tessellate(pol, 20.0)
+# ## assign by latitude
 
-# This will generate a tessellation where each division of the space has a
-# surface that is equivalent to a circle with a radius of 20km. In this case,
-# each tile will have a surface that is (in km²) approx.
+n = 5
+SDT.assignfolds!(T; n=n, group=true)
+
+#figure tile1
+f = Figure()
+ax = Axis(f[1,1]; aspect=DataAspect())
+for i in 1:n
+    poly!(ax, T["__fold" => i], alpha=0.2, color=i, colorrange=(1, n), colormap=cgrad(:twelvebitrainbow, n, categorical=true))
+    lines!(ax, T["__fold" => i], color=i, colorrange=(1, n), colormap=cgrad(:twelvebitrainbow, n, categorical=true))
+end
+#lines!(ax, T, color=:black)
+current_figure() #hide

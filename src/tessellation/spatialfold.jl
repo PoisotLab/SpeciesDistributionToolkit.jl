@@ -48,6 +48,11 @@ function assignfolds!(
     
     # Get the centers
     centers = [f.properties["__centroid"] for f in H.features]
+    x = first.(centers)
+    y = last.(centers)
+
+    x = (x .- minimum(x)) ./(maximum(x) - minimum(x))
+    y = (y .- minimum(y)) ./(maximum(y) - minimum(y))
 
     # Sort the centers randomly by default
     sortfunc = (x) -> rand()
@@ -67,6 +72,7 @@ function assignfolds!(
     end
 
     feature_rank = sortperm(centers; by = sortfunc)
+    feature_rank = sortperm(x .+ y .* 2)
 
     # For balanced layout, we need to do something a little more consuming in resources
     if order == :balanced

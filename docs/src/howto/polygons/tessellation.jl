@@ -38,7 +38,17 @@ proj = "EPSG:2056"
 T = tessellate(pol, 20.0)
 
 # This will generate a tessellation where each division of the space has a
-# radius equivalent to 20km.
+# surface that is equivalent to a circle with a radius of 20km. In this case,
+# each tile will have a surface that is (in km²) approx.
+
+π * 20^2
+
+# In cases where it is easier to think about the surface that we want each tile
+# to cover, the transformation is simple:
+
+area = 300.
+r = sqrt(area/π) # [!code highlight]
+T = tessellate(pol, r)
 
 #figure tess-basic
 f = Figure()
@@ -65,7 +75,7 @@ current_figure() #hide
 # circumradius for an hexagons, altitude for a triangle) that gives it the same
 # surface as this circle.
 
-T = tessellate(pol, 25.0; tile = :squares)
+T = tessellate(pol, r; tile = :squares)
 
 #figure tess-squares
 f = Figure()
@@ -78,9 +88,9 @@ lines!(ax, T; color = :green)
 tightlimits!(ax)
 current_figure() #hide
 
-T = tessellate(pol, 25.0; tile = :triangles)
+T = tessellate(pol, r; tile = :triangles)
 
-#figure tess-squares
+#figure tess-triangles
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 lines!(ax, EUR; color = :grey40)
@@ -97,7 +107,7 @@ current_figure() #hide
 # to use any different projection. When generating a tiling in long./lat., the
 # distance is converted to a number of degrees _at the median latitude_.
 
-T = tessellate(pol, 10.0; tile = :squares, proj = proj)
+T = tessellate(pol, r; tile = :squares, proj = proj)
 
 #figure tess-projected
 f = Figure()
@@ -138,7 +148,7 @@ current_figure() #hide
 # When the tiling is generated from a layer, each polygon will get the number of
 # cells within it:
 
-T = tessellate(layer, 12.0; tile = :hexagons, pointy = true, proj = proj)
+T = tessellate(layer, r; tile = :hexagons, pointy = true, proj = proj)
 
 # This value is stored in the `"__cells"` property.
 
@@ -166,7 +176,7 @@ current_figure() #hide
 # absences. Note that this also works with `AbstractSDM` models, as they can
 # supporting the occurrences interface.
 
-T = tessellate(records, 6.; tile=:hexagons, proj=proj)
+T = tessellate(records, r; tile=:hexagons, proj=proj)
 
 #figure tess-numberocc
 f = Figure()
@@ -197,8 +207,8 @@ current_figure() #hide
 # filter _any_ tiling. For example, we can generate a tiling from a layer, then
 # refine it so it only covers a given occurrence dataset:
 
-T = tessellate(layer, 8.; tile=:squares, proj=proj)
-P = SDT.keeprelevant(T, records)
+T = tessellate(layer, r; tile=:squares, proj=proj)
+P = SDT.keeprelevant(T, records) # [!code highlight]
 
 # Note that this will result in a tessellation with the properties gained from
 # the layer _and_ the occurrences:
@@ -232,7 +242,7 @@ current_figure() #hide
 # The tessellations can be used for zonal statistics:
 
 using Statistics
-T = tessellate(layer, 10.0; tile = :squares, proj = proj)
+T = tessellate(layer, r; tile = :squares, proj = proj)
 M = mosaic(mean, layer, T, "__centroid")
 
 #figure tess-zonal

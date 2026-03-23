@@ -1,10 +1,13 @@
-# # Tessellation
+# # Spatial cross-validation
 
 # It is possible to generate tessellations (homogenous tilings of a surface)
 # from several type of objects.
 
+# through the [tessellation functions](/howto/polygons/tessellation/)
+
 using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
+using PrettyTables
 using CairoMakie
 
 # We will start by getting the different type of data that can be used to
@@ -23,7 +26,7 @@ records = Occurrences(mask(OccurrencesInterface.__demodata(), pol))
 
 # And we will also get a layer:
 
-L = [SDMLayer(RasterData(CHELSA2, BioClim); bb..., layer = i) for i in [1, 12]]
+L = SDMLayer{Float32}[SDMLayer(RasterData(CHELSA2, BioClim); bb..., layer = i) for i in [1, 12]]
 mask!(L, pol)
 
 # ## Creating the tiles
@@ -41,7 +44,7 @@ current_figure() #hide
 
 # ## assign by latitude
 
-n = 4
+n = 5
 
 # this is the code
 
@@ -61,14 +64,14 @@ for i in 1:n
         alpha = 0.2,
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:twelvebitrainbow, n; categorical = true),
+        colormap = cgrad(:Set1, n; categorical = true),
     )
     lines!(
         ax,
         T["__fold" => i];
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:twelvebitrainbow, n; categorical = true),
+        colormap = cgrad(:Set1, n; categorical = true),
     )
 end
 current_figure() #hide
@@ -91,14 +94,144 @@ for i in 1:n
         alpha = 0.2,
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:twelvebitrainbow, n; categorical = true),
+        colormap = cgrad(:Set1, n; categorical = true),
     )
     lines!(
         ax,
         T["__fold" => i];
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:twelvebitrainbow, n; categorical = true),
+        colormap = cgrad(:Set1, n; categorical = true),
     )
 end
 current_figure() #hide
+
+# ## Generating a model
+
+L₊ = mask(L[1], records)
+P₋ = pseudoabsencemask(BetweenRadius, L₊; closer = 40.0, further = 120.0)
+L₋ = backgroundpoints(P₋, 2sum(L₊))
+
+# Now we get this as a series of occurrences
+
+O = Occurrences(L₊, L₋)
+
+# We will only keep the part of the tiling that covers at least one point
+
+SDT.keeprelevant!(T, O)
+
+#figure Tile filtered by occurrences
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+for i in 1:n
+    poly!(
+        ax,
+        T["__fold" => i];
+        alpha = 0.2,
+        color = i,
+        colorrange = (1, n),
+        colormap = cgrad(:Set1, n; categorical = true),
+    )
+    lines!(
+        ax,
+        T["__fold" => i];
+        color = i,
+        colorrange = (1, n),
+        colormap = cgrad(:Set1, n; categorical = true),
+    )
+end
+scatter!(ax, presences(O), color=:black)
+scatter!(ax, absences(O), color=:grey50, marker=:cross)
+current_figure() #hide
+
+# This can be assigned to folds by creating a function first
+
+spatialfolder = SDT.spatialfold(T)
+
+# we need a model at this point
+
+model = SDM(RawData, NaiveBayes, L, O)
+
+# now we can cross-validate
+
+folds = spatialfolder(model)
+
+# cross-validation
+
+cv = crossvalidate(model, folds)
+
+#
+
+measures = [mcc, SDeMo.specificity, SDeMo.sensitivity, balancedaccuracy]
+cvresult = [measure(set) for measure in measures, set in cv]
+nullresult = [measure(null(model)) for measure in measures, null in [coinflip, noskill]]
+pretty_table(
+    hcat(string.(measures), hcat(cvresult, nullresult));
+    alignment = [:l, :c, :c, :c, :c],
+    backend = :markdown,
+    column_labels = ["Measure", "Validation", "Training", "Coin-flip", "No-skill"],
+    formatters = [fmt__printf("%5.3f", [2, 3, 4, 5])],
+)
+
+# ## Creating folds with balance
+
+SDT.assignfolds!(
+    T;
+    n = n, group = true,
+    order = :balanced # [!code highlight]
+)
+
+# new folding
+
+folds = SDT.spatialfold(model, T)
+cv = crossvalidate(model, folds)
+
+#
+
+measures = [mcc, SDeMo.specificity, SDeMo.sensitivity, balancedaccuracy]
+cvresult = [measure(set) for measure in measures, set in cv]
+nullresult = [measure(null(model)) for measure in measures, null in [coinflip, noskill]]
+pretty_table(
+    hcat(string.(measures), hcat(cvresult, nullresult));
+    alignment = [:l, :c, :c, :c, :c],
+    backend = :markdown,
+    column_labels = ["Measure", "Validation", "Training", "Coin-flip", "No-skill"],
+    formatters = [fmt__printf("%5.3f", [2, 3, 4, 5])],
+)
+
+# fold for balanced
+
+#figure Tile filtered by occurrences
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+for i in 1:n
+    poly!(
+        ax,
+        T["__fold" => i];
+        alpha = 0.2,
+        color = i,
+        colorrange = (1, n),
+        colormap = cgrad(:Set1, n; categorical = true),
+    )
+    lines!(
+        ax,
+        T["__fold" => i];
+        color = i,
+        colorrange = (1, n),
+        colormap = cgrad(:Set1, n; categorical = true),
+    )
+end
+scatter!(ax, presences(O), color=:black)
+scatter!(ax, absences(O), color=:grey50, marker=:cross)
+current_figure() #hide
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ## Related documentation
+# 
+# ```@docs; canonical=false
+# SpeciesDistributionToolkit.assignfolds!
+# SpeciesDistributionToolkit.spatialfold
+# ```

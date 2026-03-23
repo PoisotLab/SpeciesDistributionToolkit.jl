@@ -1,6 +1,7 @@
 import Base: getindex
 import Base: setindex!
 import SimpleSDMLayers: mask!, mask
+import OccurrencesInterface: Occurrences
 
 """
     Base.getindex(p::T, occ::AbstractOccurrence)
@@ -48,10 +49,11 @@ end
 function SimpleSDMLayers.mask(
     layer::SDMLayer,
     occ::T,
+    f=presences
 ) where {T <: AbstractOccurrenceCollection}
     out = zeros(layer, Bool)
-    for record in elements(occ)
-        out[record] = presence(record)
+    for record in f(occ)
+        out[record] = true
     end
     return out
 end
@@ -66,4 +68,37 @@ function SimpleSDMLayers.mask(
         out[record] += one(T)
     end
     return out
+end
+
+function OccurrencesInterface.Occurrences(L::SDMLayer{Bool}; entity::String = "")
+    E, N = eastings(L), northings(L)
+    prj = SpeciesDistributionToolkit._projector(
+        SimpleSDMLayers.AG.toPROJ4(projection(L)),
+        "EPSG:4326",
+    )
+    occ = Occurrence[]
+    for k in keys(L)
+        coord = prj(E[k[2]], N[k[1]])
+        push!(occ,
+            Occurrence(; what = entity, where = coord, presence = L[k]),
+        )
+    end
+    return Occurrences(occ)
+end
+
+function OccurrencesInterface.Occurrences(
+    L₊::SDMLayer{Bool},
+    L₋::SDMLayer{Bool};
+    entity::String = "",
+)
+    # Check layer compatibility
+    @assert SimpleSDMLayers._layers_are_compatible([L₊, L₋])
+    
+    A₊ = nodata(L₊, false)
+    A₋ = !nodata(L₋, false)
+
+    A₊.grid[findall(A₋.indices)] .= false
+    A₊.indices[findall(A₋.indices)] .= true
+
+    return Occurrences(A₊; entity=entity)
 end

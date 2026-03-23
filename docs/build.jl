@@ -25,6 +25,7 @@ using Markdown
 using InteractiveUtils
 using Dates
 using PrettyTables
+import UUIDs
 import Downloads
 
 # Additional functions to process the text when handled by Literate

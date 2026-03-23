@@ -1,5 +1,6 @@
 function pre!(content)
-    return content |> pre_collapse_figure |> pre_no_revise |> pre_makie_hidpi |> pre_add_random
+    return content |> pre_collapse_figure |> pre_no_revise |> pre_makie_hidpi |>
+           pre_add_random
 end
 
 function post!(content)
@@ -7,22 +8,30 @@ function post!(content)
 end
 
 function pre_collapse_figure(content)
-    fig_hash = string(hash(rand(100)))
-
     matcher = r"""^#figure (?<title>[\w-]+)$
-    (?<code>(?>^[^#].*$\n)+?)^current_figure\(\) #hide$"""m
+        (?<code>(?>^[^#].*$\n)+?)^current_figure\(\) #hide$"""m
 
     replacement_template = """
-    # ![](HASH-\\g<title>.png)
+        # ![](HASH.png)
 
-    # ::: details Code for the figure
+        # ::: details Code for the figure
 
-    \\g<code>save("HASH-\\g<title>.png", current_figure()); #hide
+        \\g<code>save("HASH.png", current_figure()); #hide
 
-    # :::
-    """
-    replacer = SubstitutionString(replace(replacement_template, "HASH" => fig_hash))
-    content = replace(content, matcher => replacer)
+        # :::
+        """
+
+    i = 1
+    m = findnext(matcher, content, i)
+    while !isnothing(m)
+        i = m[1] + 1
+        replacer = SubstitutionString(
+            replace(replacement_template, "HASH" => string(UUIDs.uuid4())),
+        )
+        content = replace(content, content[m] => replace(content[m], matcher => replacer))
+        m = findnext(matcher, content, i)
+    end
+    
     return content
 end
 

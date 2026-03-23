@@ -6,11 +6,10 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 #-
 
-POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Alps")
+POL = getpolygon(PolygonData(OpenStreetMap, Places); place = "Alps")
 spatial_extent = SpeciesDistributionToolkit.boundingbox(POL)
 
 # Defining a bounding box is important because, although we can clip any layer,
@@ -87,10 +86,13 @@ heatmap!(
     consensus;
     colormap = landcover_colors[repr],
 )
-lines!(panel, POL, color=:black)
+lines!(panel, POL; color = :black)
 Legend(
     fig[2, 1],
-    [PolyElement(; color = landcover_colors[repr][i]) for i in eachindex(landcover_colors[repr])],
+    [
+        PolyElement(; color = landcover_colors[repr][i]) for
+        i in eachindex(landcover_colors[repr])
+    ],
     landcover_types[repr];
     orientation = :horizontal,
     nbanks = 4,

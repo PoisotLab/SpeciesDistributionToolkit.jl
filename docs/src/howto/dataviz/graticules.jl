@@ -7,7 +7,6 @@ using Revise
 using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # We will see how to use these functions to plot a map of the mean annual
 # temperature in Algeria. We will start by getting polygons for the countries of
@@ -138,7 +137,7 @@ current_figure()
 
 # We will update the graticule to have a figure that uses a custom bounding box:
 
-graticule = ((left= -18., right=22., top=45., bottom=15.), projection(itemp))
+graticule = ((left = -18.0, right = 22.0, top = 45.0, bottom = 15.0), projection(itemp))
 clip_land = reproject(clip(land, first(graticule)), proj)
 
 # We will start by setting up a figure with a graticule grid:

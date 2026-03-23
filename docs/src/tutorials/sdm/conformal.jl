@@ -7,9 +7,6 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
-import Random #hide
-Random.seed!(123451234123121); #hide
 
 # We will work on the distribution of Sasquatch observations in Oregon.
 
@@ -78,7 +75,13 @@ f = Figure(; size = (500, 350))
 ax = Axis(f[2, 1]; aspect = DataAspect())
 hm = heatmap!(ax, Y; colormap = Reverse(:navia))
 lines!(ax, landmass; color = :black)
-scatter!(ax, model, color=labels(model), marker=[l ? :cross : :hline for l in labels(model)], colormap=[:red, :orange])
+scatter!(
+    ax,
+    model;
+    color = labels(model),
+    marker = [l ? :cross : :hline for l in labels(model)],
+    colormap = [:red, :orange],
+)
 hidedecorations!(ax)
 hidespines!(ax)
 Colorbar(f[1, 1], hm; label = "Model score", vertical = false)
@@ -119,11 +122,24 @@ uns = polygonize(unsure)
 f = Figure(; size = (500, 350))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, nodata(present, false); colormap = [:darkgreen])
-poly!(ax, uns, color=:darkgreen, alpha=0.2)
-lines!(ax, crosshatch(uns; spacing=0.15, angle=45), color=:darkgreen, alpha=0.5, linestyle=:dashdot)
-lines!(ax, uns, color=:darkgreen, linewidth=0.5)
+poly!(ax, uns; color = :darkgreen, alpha = 0.2)
+lines!(
+    ax,
+    crosshatch(uns; spacing = 0.15, angle = 45);
+    color = :darkgreen,
+    alpha = 0.5,
+    linestyle = :dashdot,
+)
+lines!(ax, uns; color = :darkgreen, linewidth = 0.5)
 lines!(ax, landmass; color = :black)
-scatter!(ax, records; color = :white, strokecolor=:orange, strokewidth=1, markersize = 9)
+scatter!(
+    ax,
+    records;
+    color = :white,
+    strokecolor = :orange,
+    strokewidth = 1,
+    markersize = 9,
+)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
@@ -167,9 +183,34 @@ rangesize ./= 1e4
 #figure risklevel-effect
 f = Figure(; size = (500, 350))
 ax = Axis(f[1, 1]; ylabel = "Surface (10⁴ km²)", xlabel = "Risk level α")
-scatter!(ax, rls, rangesize[2, :]; label = "Absence", color=:white, strokecolor=:grey20, strokewidth=1)
-scatter!(ax, rls, rangesize[3, :]; label = "Unsure", color=:lime, strokecolor=:darkgreen, strokewidth=1, marker=:diamond)
-scatter!(ax, rls, rangesize[1, :]; label = "Presence", color=:darkgreen, marker=:rect, markersize=12)
+scatter!(
+    ax,
+    rls,
+    rangesize[2, :];
+    label = "Absence",
+    color = :white,
+    strokecolor = :grey20,
+    strokewidth = 1,
+)
+scatter!(
+    ax,
+    rls,
+    rangesize[3, :];
+    label = "Unsure",
+    color = :lime,
+    strokecolor = :darkgreen,
+    strokewidth = 1,
+    marker = :diamond,
+)
+scatter!(
+    ax,
+    rls,
+    rangesize[1, :];
+    label = "Presence",
+    color = :darkgreen,
+    marker = :rect,
+    markersize = 12,
+)
 axislegend(ax; position = :lb, nbanks = 3)
 current_figure() #hide
 
@@ -204,7 +245,7 @@ train!(conformal, model)
 # when passed to the conformal predictor, return a decision of "ambiguous",
 # _i.e._ they can support both the `true` and `false` outcome.
 
-isunsure = (x) -> count(isequal(Set([true, false])), predict(conformal, x))/length(x)
+isunsure = (x) -> count(isequal(Set([true, false])), predict(conformal, x)) / length(x)
 
 # With this function written, we can get the summary of how many models return
 # the unsure decision, for each point in the layer:

@@ -12,7 +12,6 @@
 using SpeciesDistributionToolkit
 using Dates, Statistics
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # We will illustrate both approaches using the CHELSA2 temperature data for the
 # month of September.
@@ -28,7 +27,7 @@ temp2 =
 #-
 
 #figure origin
-heatmap(temp2, colormap=:navia, axis=(;aspect=DataAspect())) # hide
+heatmap(temp2; colormap = :navia, axis = (; aspect = DataAspect())) # hide
 current_figure() #hide
 
 # ## Using `nodata!`
@@ -43,7 +42,11 @@ nodata(temp2, v -> !(m <= v <= M))
 #-
 
 #figure mask-interval
-heatmap(nodata(temp2, v -> !(m <= v <= M)), colormap=:navia, axis=(;aspect=DataAspect())) # hide
+heatmap(
+    nodata(temp2, v -> !(m <= v <= M));
+    colormap = :navia,
+    axis = (; aspect = DataAspect()),
+) # hide
 current_figure() #hide
 
 # The function given as the second argument must return `true` for a point that
@@ -79,7 +82,7 @@ mask(temp2, temp1)
 #-
 
 #figure mask-layer
-heatmap(mask(temp2, temp1), colormap=:navia, axis=(;aspect=DataAspect())) # hide
+heatmap(mask(temp2, temp1); colormap = :navia, axis = (; aspect = DataAspect())) # hide
 current_figure() #hide
 
 # ```@meta

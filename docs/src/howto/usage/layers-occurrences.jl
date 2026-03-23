@@ -8,7 +8,6 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # This sets up a bounding box for the region of interest:
 
@@ -46,7 +45,13 @@ end
 figure = Figure(; size = (800, 400))
 envirovars =
     Axis(figure[1, 1]; xlabel = "Temperature (°C)", ylabel = "Precipitation (kg×m⁻²)")
-scatter!(envirovars, temperature[observations], precipitation[observations], markersize=6, color=:black)
+scatter!(
+    envirovars,
+    temperature[observations],
+    precipitation[observations];
+    markersize = 6,
+    color = :black,
+)
 current_figure() #hide
 
 # In order to also show these on the map, we will add a simple heatmap to the left of the
@@ -57,7 +62,7 @@ spmap = Axis(figure[1, 2]; aspect = DataAspect())
 hidedecorations!(spmap)
 hidespines!(spmap)
 heatmap!(spmap, temperature; colormap = :heat)
-scatter!(spmap, observations; color = :black, markersize=6)
+scatter!(spmap, observations; color = :black, markersize = 6)
 current_figure() #hide
 
 # We can now add a silhouette of the species using Phylopic. We only want a single item here, and

@@ -3,8 +3,6 @@
 using SpeciesDistributionToolkit
 import Random
 using CairoMakie
-Random.seed!(1234567890); #hide
-CairoMakie.activate!(; px_per_unit = 3) #hide
 
 # The methodology to generate fauxcurrences comes from
 # [osborne_fauxcurrence_2022](@citet).
@@ -187,7 +185,7 @@ for i in axes(progress, 1)[2:end]
         end
     end
     if iszero(i % 10_000)
-        prct = lpad(round(Int64, 100*(i/length(progress))), 3)
+        prct = lpad(round(Int64, 100 * (i / length(progress))), 3)
         jsdiv = lpad(round(progress[i]; digits = 3), 5)
         impr = lpad(round(progress[begin] / progress[i]; digits = 3), 6)
         println(

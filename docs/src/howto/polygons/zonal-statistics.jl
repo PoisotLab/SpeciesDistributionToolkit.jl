@@ -6,13 +6,12 @@
 using SpeciesDistributionToolkit
 using Statistics
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # We can get polygon data from Open Street Map:
 
-BZH = getpolygon(PolygonData(OpenStreetMap, Places), place="Bretagne")
+BZH = getpolygon(PolygonData(OpenStreetMap, Places); place = "Bretagne")
 departements = ["Ille-et-Vilaine", "Morbihan", "Côtes-d'Armor", "Finistère"]
-DPTs = map(dpt->getpolygon(PolygonData(OpenStreetMap, Places), place = dpt), departements)
+DPTs = map(dpt -> getpolygon(PolygonData(OpenStreetMap, Places); place = dpt), departements)
 
 # We will get the BIO1 layer from CHELSA2 (average annual temperature):
 
@@ -75,8 +74,8 @@ i = findfirst(isequal(depts_ranked[1].first), departements)
 #figure highlight-areas
 fig, ax, plt =
     heatmap(layer; axis = (; aspect = DataAspect()), colormap = [:grey80, :grey20])
-lines!(ax, DPTs[i]; label = departements[i], linewidth = 2, color=:red)
-axislegend(; position = (0, 0.1), nbanks = 1, framevisible=false)
+lines!(ax, DPTs[i]; label = departements[i], linewidth = 2, color = :red)
+axislegend(; position = (0, 0.1), nbanks = 1, framevisible = false)
 hidedecorations!(ax) #hide
 hidespines!(ax) #hide
 current_figure() #hide

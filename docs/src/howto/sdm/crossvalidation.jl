@@ -6,9 +6,6 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 using PrettyTables
-CairoMakie.activate!(; px_per_unit = 3) #hide
-import Random #hide
-Random.seed!(123451234123121); #hide
 
 # We will work on the demo data:
 
@@ -86,7 +83,7 @@ train!(sdm)
 # If you want to optimize the threshold using cross-validation, there is a
 # specific method for that:
 
-threshold!(sdm, folds; optimality=mcc)
+threshold!(sdm, folds; optimality = mcc)
 
 # It works by finding the value of the threshold that optimizes the average
 # performance across folds, and can be used with any measure of performance you

@@ -2,14 +2,13 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 import Statistics
 
 # We will use the `coarsen` function to decrease the size of a layer while also
 # applying an operation on the cells that are merged. Note that this is an
 # operation similar to `interpolate`.
 
-region = getpolygon(PolygonData(NaturalEarth, Countries); resolution=10)["Panama"]
+region = getpolygon(PolygonData(NaturalEarth, Countries); resolution = 10)["Panama"]
 extent = SpeciesDistributionToolkit.boundingbox(region)
 temperature = SDMLayer(RasterData(CHELSA2, AverageTemperature); extent...)
 mask!(temperature, region)
@@ -47,9 +46,9 @@ coarse_temperature = coarsen(Statistics.mean, temperature, (4, 4))
 
 #figure data-coarsen
 f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-hm = heatmap!(ax, coarse_temperature, colormap=:magma, colorrange=extrema(temperature))
-lines!(ax, region, color=:grey10)
+ax = Axis(f[1, 1]; aspect = DataAspect())
+hm = heatmap!(ax, coarse_temperature; colormap = :magma, colorrange = extrema(temperature))
+lines!(ax, region; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)
 Colorbar(f[1, 2], hm; label = "Average temperature in jan. (°C)")

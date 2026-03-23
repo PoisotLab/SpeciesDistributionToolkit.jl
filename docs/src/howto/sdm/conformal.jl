@@ -4,8 +4,6 @@
 # are uncertain, using conformal prediction.
 
 using SpeciesDistributionToolkit
-import Random #hide
-Random.seed!(123451234123121); #hide
 
 # We will work on the demo data:
 
@@ -19,11 +17,11 @@ cp = Conformal(0.05)
 
 # We now train this conformal predictor:
 
-train!(cp, sdm; mondrian=true)
+train!(cp, sdm; mondrian = true)
 
 # We can now identify which proportion of the model predictions are uncertain:
 
-pred = predict(sdm; threshold=false)
+pred = predict(sdm; threshold = false)
 sets = predict(cp, pred)
 n_uncertain = count(isequal(Set([true, false])), sets)
 n_uncertain / length(pred)
@@ -38,7 +36,7 @@ predict(cp, pred[10])
 # Note that we can also perform the non-Mondrian version of conformal
 # prediction, with the appropriate keyword:
 
-train!(cp, sdm; mondrian=false)
+train!(cp, sdm; mondrian = false)
 
 # ::: info Why is Mondrian-CP the default?
 # 

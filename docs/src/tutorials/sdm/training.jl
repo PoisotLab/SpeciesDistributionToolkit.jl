@@ -9,16 +9,13 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
-import Random #hide
-Random.seed!(123451234123121); #hide
 
 # Note that there are several sections about the `SDeMo` package in the "How-to"
 # section of the manual.
 
 # ## Getting the data
 
-CHE = getpolygon(PolygonData(OpenStreetMap, Places), place="Switzerland") 
+CHE = getpolygon(PolygonData(OpenStreetMap, Places); place = "Switzerland")
 
 # In order to simplify the code, we will start from a list of bioclim variables
 # that have been picked to optimize the model - `SDeMo` offers many functions
@@ -114,7 +111,13 @@ contour!(ax, predict(sdm, L); color = :black, linewidth = 0.5)
 Colorbar(f[1, 2], hm)
 lines!(ax, CHE; color = :black)
 bbox = SpeciesDistributionToolkit.boundingbox(CHE)
-silhouetteplot!(ax, bbox.left+0.3, bbox.top-0.2, Phylopic.imagesof(ouzel; items=1), markersize=70)
+silhouetteplot!(
+    ax,
+    bbox.left + 0.3,
+    bbox.top - 0.2,
+    Phylopic.imagesof(ouzel; items = 1);
+    markersize = 70,
+)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
@@ -122,7 +125,7 @@ current_figure() #hide
 # As a rule, most relevant function in `SDeMo` will, when given layers as an
 # argument, return the output as layers:
 
-partial1 = partialresponse(sdm, L, 1; threshold=false)
+partial1 = partialresponse(sdm, L, 1; threshold = false)
 
 # The output can be visualised as well. Partial responses are given in the same
 # units as the prediction.
@@ -140,7 +143,7 @@ current_figure() #hide
 
 # This, naturally, is also true for Shapley values:
 
-shapley1 = explain(sdm, L, 1; threshold=false)
+shapley1 = explain(sdm, L, 1; threshold = false)
 
 # Note that the Shapley values are expressed as a deviation from the average
 # prediction, and so positive values correspond to the presence class being more
@@ -153,7 +156,7 @@ shapley1 = explain(sdm, L, 1; threshold=false)
 # informative).
 
 #figure shapley-resp
-col_lims = maximum(abs.(quantile(shapley1, [0.1, 0.9]))).*(-1, 1)
+col_lims = maximum(abs.(quantile(shapley1, [0.1, 0.9]))) .* (-1, 1)
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, shapley1; colormap = :roma, colorrange = col_lims)
@@ -167,7 +170,7 @@ current_figure() #hide
 # When given a vector of layers, the `explain` function will return a layer with
 # the explanation for each input variable:
 
-S = explain(sdm, L; threshold=false)
+S = explain(sdm, L; threshold = false)
 
 # We can then put this object into the `mosaic` function to get the index of
 # which variable is the most important for each pixel:
@@ -175,7 +178,13 @@ S = explain(sdm, L; threshold=false)
 #figure sdm-mosaicplot
 f = Figure(; size = (600, 300))
 mostimp = mosaic(argmax, map(x -> abs.(x), S))
-colmap = [colorant"#E69F00", colorant"#56B4E9", colorant"#009E73", colorant"#D55E00", colorant"#CC79A7"]
+colmap = [
+    colorant"#E69F00",
+    colorant"#56B4E9",
+    colorant"#009E73",
+    colorant"#D55E00",
+    colorant"#CC79A7",
+]
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, mostimp; colormap = colmap)
 contour!(

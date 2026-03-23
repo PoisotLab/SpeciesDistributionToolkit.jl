@@ -2,7 +2,6 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # To illustrate the process, we will load the demo dataset:
 
@@ -51,7 +50,11 @@ poly = [
 
 #figure with-box
 heatmap(
-    interpolate(k; dest = "+proj=longlat +datum=WGS84 +no_defs +type=crs", newsize=(500, 500));
+    interpolate(
+        k;
+        dest = "+proj=longlat +datum=WGS84 +no_defs +type=crs",
+        newsize = (500, 500),
+    );
     colormap = :navia,
 )
 lines!(poly; color = :black, linewidth = 2, linestyle = :dash)
@@ -64,4 +67,3 @@ current_figure() #hide
 # ```@meta
 # CollapsedDocStrings = true
 # ```
-

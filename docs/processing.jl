@@ -1,5 +1,5 @@
 function pre!(content)
-    return content |> pre_collapse_figure |> pre_no_revise
+    return content |> pre_collapse_figure |> pre_no_revise |> pre_makie_hidpi |> pre_add_random
 end
 
 function post!(content)
@@ -26,12 +26,26 @@ function pre_collapse_figure(content)
     return content
 end
 
-
 function pre_no_revise(content)
     content = replace(content, "using Revise" => "")
     return content
 end
 
+function pre_makie_hidpi(content)
+    content = replace(content, "using CairoMakie" => """
+    using CairoMakie
+    CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
+    """)
+    return content
+end
+
+function pre_add_random(content)
+    content = """
+    import Random #hide
+    Random.seed!(12345) #hide
+    """ * content
+    return content
+end
 function post_extract_table(content)
     matcher = r"^`+$\n(?<table>(^\|.+\|$\n)+)\n`+$"m
     replacer = """

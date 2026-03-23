@@ -6,7 +6,6 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # To illustrate the tiling, we will grab the tree cover as given in the *EarthEnv*
 # dataset, for a small spatial extent.
@@ -49,4 +48,3 @@ current_figure() #hide
 # ```@meta
 # CollapsedDocStrings = true
 # ```
-

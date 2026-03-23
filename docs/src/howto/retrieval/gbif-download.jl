@@ -2,7 +2,6 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # The correct way to consume a large amount of GBIF data is to get them through
 # the download mechanism, in particular to ensure that the data contributors can
@@ -23,14 +22,20 @@ tax = unique(entity(occ));
 
 #figure map
 coast = getpolygon(PolygonData(NaturalEarth, Land))
-bbox = SpeciesDistributionToolkit.boundingbox(occ; padding=3.0)
+bbox = SpeciesDistributionToolkit.boundingbox(occ; padding = 3.0)
 fig = Figure()
-ax = Axis(fig[1,1], aspect=DataAspect())
-poly!(ax, coast, color=:lightgrey)
+ax = Axis(fig[1, 1]; aspect = DataAspect())
+poly!(ax, coast; color = :lightgrey)
 xlims!(ax, bbox.left, bbox.right)
 ylims!(ax, bbox.bottom, bbox.top)
-hexbin!(ax, filter(o -> startswith("Procyon lotor")(entity(o)), elements(occ)), bins=300, colormap=:linear_worb_100_25_c53_n256, colorscale=log10)
-lines!(ax, coast, color=:grey)
+hexbin!(
+    ax,
+    filter(o -> startswith("Procyon lotor")(entity(o)), elements(occ));
+    bins = 300,
+    colormap = :linear_worb_100_25_c53_n256,
+    colorscale = log10,
+)
+lines!(ax, coast; color = :grey)
 current_figure() #hide
 
 # ## Related documentation

@@ -2,7 +2,6 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 import Statistics
 
 # Sliding windows analyses allow to aggregate data within a set distance from a
@@ -64,15 +63,15 @@ current_figure() #hide
 R = LinRange(1.0, 20.0, 12)
 T = zeros(length(R))
 destination = copy(temperature)
-for (i,r) in enumerate(R)
+for (i, r) in enumerate(R)
     started = time()
-    slidingwindow!(destination, Statistics.mean, temperature; radius=r)
+    slidingwindow!(destination, Statistics.mean, temperature; radius = r)
     finished = time()
-    T[i] = finished-started
+    T[i] = finished - started
 end
 f = Figure()
-ax = Axis(f[1, 1]; xlabel="Window area (km²)", ylabel="Runtime (s)")
-scatter!(ax, π.*R.^2.0, T, color=:white, strokecolor=:black, strokewidth=2)
+ax = Axis(f[1, 1]; xlabel = "Window area (km²)", ylabel = "Runtime (s)")
+scatter!(ax, π .* R .^ 2.0, T; color = :white, strokecolor = :black, strokewidth = 2)
 xlims!(ax, 0, 1500)
 ylims!(ax, 0, 30)
 tightlimits!(ax)

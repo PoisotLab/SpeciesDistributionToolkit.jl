@@ -11,7 +11,6 @@ using CairoMakie
 using Statistics
 import StatsBase
 using MultivariateStats # [!code highlight]
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # The support is currently limited to PCA
 
@@ -21,7 +20,7 @@ L = [SDMLayer(dataprovider; layer = i, spatial_extent...) for i in [1, 3, 8, 12]
 
 # We can fit a PCA the "normal" way:
 
-M = fit(PCA, L; maxoutdim=2)
+M = fit(PCA, L; maxoutdim = 2)
 
 # Note that this will return a `PCA` result object. We can use it to project a
 # vector of layers:
@@ -43,7 +42,7 @@ X = predict(M, L)
 
 #figure pca
 fig, ax, hm = heatmap(
-    X[1],
+    X[1];
     colormap = :Spectral,
     figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),

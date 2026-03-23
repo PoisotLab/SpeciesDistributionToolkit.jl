@@ -6,7 +6,6 @@
 using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # We will start by getting the different type of data that can be used to
 # generate a tessellation, starting with polygons:
@@ -46,8 +45,8 @@ T = tessellate(pol, 20.0)
 # In cases where it is easier to think about the surface that we want each tile
 # to cover, the transformation is simple:
 
-area = 300.
-r = sqrt(area/π) # [!code highlight]
+area = 300.0
+r = sqrt(area / π) # [!code highlight]
 T = tessellate(pol, r)
 
 #figure tess-basic
@@ -69,7 +68,7 @@ current_figure() #hide
 # pointy side up.
 
 # The distance given as the second argument to `tessellate` is handled in the
-# same way for all type of tiles. fFirst, the function calculates the area that
+# same way for all type of tiles. First, the function calculates the area that
 # would be covered by a circle with this radius. Second, the function generates
 # the characteristic length of each tiling shape (side for a square,
 # circumradius for an hexagons, altitude for a triangle) that gives it the same
@@ -164,7 +163,7 @@ for f in T.features
         f;
         color = f.properties["__cells"],
         colorrange = extrema(uniqueproperties(T)["__cells"]),
-        colormap = :Greens
+        colormap = :Greens,
     )
 end
 lines!(ax, T; color = :green)
@@ -176,7 +175,7 @@ current_figure() #hide
 # absences. Note that this also works with `AbstractSDM` models, as they can
 # supporting the occurrences interface.
 
-T = tessellate(records, r; tile=:hexagons, proj=proj)
+T = tessellate(records, r; tile = :hexagons, proj = proj)
 
 #figure tess-numberocc
 f = Figure()
@@ -190,7 +189,7 @@ for f in T.features
         f;
         color = f.properties["__presences"],
         colorrange = extrema(uniqueproperties(T)["__presences"]),
-        colormap = :Greens
+        colormap = :Greens,
     )
 end
 lines!(ax, T; color = :green)
@@ -207,7 +206,7 @@ current_figure() #hide
 # filter _any_ tiling. For example, we can generate a tiling from a layer, then
 # refine it so it only covers a given occurrence dataset:
 
-T = tessellate(layer, r; tile=:squares, proj=proj)
+T = tessellate(layer, r; tile = :squares, proj = proj)
 P = SDT.keeprelevant(T, records) # [!code highlight]
 
 # Note that this will result in a tessellation with the properties gained from
@@ -230,7 +229,7 @@ for f in P.features
         f;
         color = f.properties["__presences"],
         colorrange = extrema(uniqueproperties(P)["__presences"]),
-        colormap = :Greens
+        colormap = :Greens,
     )
 end
 lines!(ax, T; color = :green)
@@ -250,7 +249,7 @@ f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 lines!(ax, EUR; color = :grey40)
 poly!(ax, pol; color = :grey85)
-heatmap!(ax, M, colormap=:Greens)
+heatmap!(ax, M; colormap = :Greens)
 lines!(ax, pol; color = :black)
 tightlimits!(ax)
 current_figure() #hide

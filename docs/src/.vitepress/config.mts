@@ -169,6 +169,7 @@ export default defineConfig({
                             collapsed: true,
                             items: [
                                 { text: "Cross-validation", link: "/howto/sdm/crossvalidation/" },
+                                { text: "Spatial folds", link: "/howto/sdm/spatial-folds/" },
                                 { text: "Variable selection", link: "/howto/sdm/variableselection/" },
                                 { text: "Hyper-parameters", link: "/howto/sdm/hyperparameters/" },
                                 { text: "PR and ROC curves", link: "/howto/sdm/pr-roc/" },

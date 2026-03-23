@@ -6,9 +6,6 @@ using SpeciesDistributionToolkit
 using CairoMakie
 using PrettyTables
 using Statistics
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
-import Random #hide
-Random.seed!(123451234123121); #hide
 
 # ## Getting the data
 
@@ -47,7 +44,7 @@ hyperparameters!(classifier(model), :interactions, :self);
 # variogram for temperature
 
 Lᵢ = L[1]
-x, y, n = variogram(Lᵢ; width=15., shift=3.)
+x, y, n = variogram(Lᵢ; width = 15.0, shift = 3.0)
 
 #figure variogram-first
 f = Figure()

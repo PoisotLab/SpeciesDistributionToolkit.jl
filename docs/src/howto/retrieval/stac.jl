@@ -9,7 +9,6 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 using STAC # [!code highlight]
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # The support is currently very bare-bones, and can return a layer when given an
 # asset. To demonstrate, we will get the time to the nearest city (in minutes)
@@ -17,7 +16,7 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 biab = STAC.Catalog("https://stac.geobon.org/")
 access = biab["accessibility_to_cities"].items["accessibility"].assets["data"]
-L = SDMLayer(access; left=-76.0, right=-72.0, bottom=45.1, top=47.5)
+L = SDMLayer(access; left = -76.0, right = -72.0, bottom = 45.1, top = 47.5)
 
 # Note that the first argument is a STAC asset, but the usual keywords arguments
 # to crop a layer apply here. The ability to crop is important, because the STAC
@@ -30,5 +29,5 @@ L = SDMLayer(access; left=-76.0, right=-72.0, bottom=45.1, top=47.5)
 # We can visualize the resulting layer:
 
 #figure ghmts
-heatmap(L; colormap=:tempo)
+heatmap(L; colormap = :tempo)
 current_figure() #hide

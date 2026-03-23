@@ -5,7 +5,6 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # We start by getting a number of polygons to show how they can be plotted:
 
@@ -79,7 +78,7 @@ current_figure()
 # polygon, it is a good idea to start by cross-hatching the entire region, and
 # the intersecting this with an area of interest.
 
-hatch = crosshatch(regions; angle=35)
+hatch = crosshatch(regions; angle = 35)
 
 # For example, we will illsutrate this by having the regions of mixed and other
 # forests hatched. Because the hatching is defined for the entire region, the
@@ -91,14 +90,14 @@ for region in regions
     region_name = region.properties["Name"]
     if contains(region_name, "Forests")
         if contains(region_name, "Mixed")
-            lines!(intersect(region, hatch), color=:forestgreen, label="Mixed forests")
+            lines!(intersect(region, hatch); color = :forestgreen, label = "Mixed forests")
         else
-            lines!(intersect(region, hatch), color=:orange, label="Other forests")
+            lines!(intersect(region, hatch); color = :orange, label = "Other forests")
         end
     end
 end
-lines!(regions,color=:grey10)
-axislegend(; unique = true, merge = true, position = :lb, framevisible=false)
+lines!(regions; color = :grey10)
+axislegend(; unique = true, merge = true, position = :lb, framevisible = false)
 hidedecorations!(current_axis())
 hidespines!(current_axis())
 current_figure()
@@ -110,7 +109,10 @@ current_figure()
 # total annual precipitation:
 
 camf = regions["Name" => "Central American Mixed Forests"]
-precipitation = SDMLayer(RasterData(CHELSA2, Precipitation); SpeciesDistributionToolkit.boundingbox(camf)...)
+precipitation = SDMLayer(
+    RasterData(CHELSA2, Precipitation);
+    SpeciesDistributionToolkit.boundingbox(camf)...,
+)
 mask!(precipitation, camf)
 
 # This new layer is a Boolean layer with `true` corresponding to the area of interest.
@@ -130,15 +132,15 @@ wet_poly = polygonize(wet)
 
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
-poly!(ax, camf, color=:grey94, label="Central American Mixed Forests")
-poly!(ax, dry_poly, color=:orange, label="Low precipitation", alpha=0.2)
-poly!(ax, wet_poly, color=:skyblue, label="High precipitation", alpha=0.2)
-poly!(ax, crosshatch(dry_poly, spacing=0.3, angle=40); color = :orange, alpha=0.7)
-poly!(ax, crosshatch(wet_poly, spacing=0.3, angle=40); color = :skyblue, alpha=0.7)
-lines!(ax, dry_poly; color = :orange, label="Low precipitation")
-lines!(ax, wet_poly; color = :skyblue, label="High precipitation")
-lines!(ax, camf; color = :black, linewidth=2)
-axislegend(; unique = true, merge = true, position = :lb, framevisible=false)
+poly!(ax, camf; color = :grey94, label = "Central American Mixed Forests")
+poly!(ax, dry_poly; color = :orange, label = "Low precipitation", alpha = 0.2)
+poly!(ax, wet_poly; color = :skyblue, label = "High precipitation", alpha = 0.2)
+poly!(ax, crosshatch(dry_poly; spacing = 0.3, angle = 40); color = :orange, alpha = 0.7)
+poly!(ax, crosshatch(wet_poly; spacing = 0.3, angle = 40); color = :skyblue, alpha = 0.7)
+lines!(ax, dry_poly; color = :orange, label = "Low precipitation")
+lines!(ax, wet_poly; color = :skyblue, label = "High precipitation")
+lines!(ax, camf; color = :black, linewidth = 2)
+axislegend(; unique = true, merge = true, position = :lb, framevisible = false)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure()

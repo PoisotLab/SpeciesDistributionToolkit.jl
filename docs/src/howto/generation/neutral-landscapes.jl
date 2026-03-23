@@ -9,7 +9,6 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 using NeutralLandscapes # [!code highlight]
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # This is simply achieved through an overload of the `SDMLayer` constructor,
 # taking a neutral landscape maker, and a size:

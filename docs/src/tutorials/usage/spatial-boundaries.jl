@@ -13,7 +13,6 @@ using SpatialBoundaries # [!code highlight]
 using CairoMakie
 using StatsBase
 using Statistics
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # Because there are four different layers in the EarthEnv database that
 # represent different types of woody cover, we will use the overall mean wombling
@@ -26,7 +25,10 @@ CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 hawaii = (left = -160.2, right = -154.5, bottom = 18.6, top = 22.5)
 dataprovider = RasterData(EarthEnv, LandCover)
 landcover_classes = layers(dataprovider)
-landcover = [SDMLayer(dataprovider; layer=class, full=true, hawaii...) for class in landcover_classes]
+landcover = [
+    SDMLayer(dataprovider; layer = class, full = true, hawaii...) for
+    class in landcover_classes
+]
 
 # We can remove all the areas that contain 100% water from the landcover data as
 # our question of interest is restricted to the terrestrial realm. We do this by
@@ -51,7 +53,7 @@ tree_lc = convert(SDMLayer{Float64}, reduce(+, landcover[classes_with_trees]))
 # Let's check that the layer looks correct:
 
 #figure boundaries-tree
-heatmap(tree_lc; colormap=:Greens)
+heatmap(tree_lc; colormap = :Greens)
 current_figure() #hide
 
 # Because there are several layers, we can pass them to the wombling function
@@ -63,13 +65,13 @@ W = wombling(landcover[classes_with_trees]);
 # 15%:
 
 cutoff = quantile(W.rate, 0.85)
-candidates = (W.rate.>=cutoff)
+candidates = (W.rate .>= cutoff)
 
 # We can plot these candidate points identified this way - these correspond to
 # potential boundaries between low and high value area:
 
 #figure spbnd-candidate
-heatmap(candidates, colormap=[:grey85, :black])
+heatmap(candidates; colormap = [:grey85, :black])
 current_figure() #hide
 
 # We can also look at the (log of the) rate of change - this is useful to
@@ -92,9 +94,15 @@ direction = mask(W.direction, nodata(W.rate, 0.0))
 
 #figure boundaries-polar
 f = Figure()
-ax = PolarAxis(f[1, 1], theta_0 = -pi/2, direction = -1)
+ax = PolarAxis(f[1, 1]; theta_0 = -pi / 2, direction = -1)
 h = fit(Histogram, deg2rad.(values(direction)); nbins = 100)
-stairs!(ax, h.edges[1], h.weights[[axes(h.weights, 1)..., 1]]; color = :purple, linewidth = 2)
+stairs!(
+    ax,
+    h.edges[1],
+    h.weights[[axes(h.weights, 1)..., 1]];
+    color = :purple,
+    linewidth = 2,
+)
 current_figure() #hide
 
 # ## References

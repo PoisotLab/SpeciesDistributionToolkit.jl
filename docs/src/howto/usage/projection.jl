@@ -2,7 +2,6 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # The `interpolate` method can be used to project data into another coordinate
 # system. For example, we can get bird richness data for metropolitan France and

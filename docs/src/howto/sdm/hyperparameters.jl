@@ -5,9 +5,6 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; px_per_unit = 3) #hide
-import Random #hide
-Random.seed!(123451234123121); #hide
 
 # We will work on the demo data, using Logistic regression.
 
@@ -48,7 +45,6 @@ SDeMo.__equation(sdm) #hide
 
 # Note that logistic regression has a `:verbose` hyper-parameter to turn output
 # on training epochs on and off.
-
 
 # ## Related documentation
 

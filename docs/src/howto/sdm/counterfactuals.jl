@@ -5,8 +5,6 @@
 
 using SpeciesDistributionToolkit
 using PrettyTables
-import Random #hide
-Random.seed!(123451234123121); #hide
 
 # We will work on the demo data:
 

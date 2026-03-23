@@ -6,13 +6,12 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # Pseudo-absence generation requires occurrences super-imposed on a layer, so we
 # will collect a few occurrences:
 
 records = OccurrencesInterface.__demodata()
-landmass = getpolygon(PolygonData(OpenStreetMap, Places); place="Idaho")
+landmass = getpolygon(PolygonData(OpenStreetMap, Places); place = "Idaho")
 records = Occurrences(mask(records, landmass))
 spatial_extent = SpeciesDistributionToolkit.boundingbox(landmass)
 
@@ -122,7 +121,8 @@ current_figure() #hide
 # tall around each observation. Using `absolute=false` will turn this into a
 # square buffer:
 
-background = pseudoabsencemask(WithoutDegrees, presencelayer; distance = 0.5, absolute=true)
+background =
+    pseudoabsencemask(WithoutDegrees, presencelayer; distance = 0.5, absolute = true)
 
 #-
 

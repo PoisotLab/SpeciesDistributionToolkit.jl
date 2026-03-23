@@ -5,7 +5,6 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # We will use the demonstration data from the `SDeMo` package:
 
@@ -14,7 +13,7 @@ model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
 # ## Plotting instances
 
 f = Figure()
-ax = Axis(f[1,1], aspect=DataAspect())
+ax = Axis(f[1, 1]; aspect = DataAspect())
 scatter!(ax, model)
 current_figure()
 
@@ -22,18 +21,33 @@ current_figure()
 # interesting visualisations:
 
 f = Figure()
-ax = Axis(f[1,1], aspect=DataAspect())
-scatter!(ax, model, color=labels(model))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+scatter!(ax, model; color = labels(model))
 current_figure()
 
 # Note that models also implement the occurences interface, so we can easily
 # split presence and absences from the model.
 
 f = Figure()
-ax = Axis(f[1,1], aspect=DataAspect())
-scatter!(ax, presences(model), color=:white, strokecolor=:orange, strokewidth=1, label="Presences")
-scatter!(ax, absences(model), color=:white, strokecolor=:teal, strokewidth=0.5, markersize=5, label="Absences")
-axislegend(ax, position=:lt)
+ax = Axis(f[1, 1]; aspect = DataAspect())
+scatter!(
+    ax,
+    presences(model);
+    color = :white,
+    strokecolor = :orange,
+    strokewidth = 1,
+    label = "Presences",
+)
+scatter!(
+    ax,
+    absences(model);
+    color = :white,
+    strokecolor = :teal,
+    strokewidth = 0.5,
+    markersize = 5,
+    label = "Absences",
+)
+axislegend(ax; position = :lt)
 hidespines!(ax)
 hidedecorations!(ax)
 current_figure()

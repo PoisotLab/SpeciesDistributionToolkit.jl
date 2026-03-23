@@ -12,9 +12,6 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 using Statistics
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
-import Random #hide
-Random.seed!(1234567); #hide
 
 # ## Data preparation
 

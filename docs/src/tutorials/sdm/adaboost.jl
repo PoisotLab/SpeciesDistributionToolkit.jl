@@ -6,9 +6,6 @@
 using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
-import Random #hide
-Random.seed!(123451234123121); #hide
 
 # We work on the same data as for the previous SDM tutorials:
 
@@ -151,9 +148,9 @@ current_figure() #hide
 # lookin at the histogram of the results:
 
 #figure hist-boostpred
-f = Figure(; size=(600, 300))
-ax = Axis(f[1,1]; xlabel="Predicted score")
-hist!(ax, brd; color = :lightgrey, bins=30)
+f = Figure(; size = (600, 300))
+ax = Axis(f[1, 1]; xlabel = "Predicted score")
+hist!(ax, brd; color = :lightgrey, bins = 30)
 hideydecorations!(ax)
 hidexdecorations!(ax; ticks = false, ticklabels = false)
 hidespines!(ax, :l)

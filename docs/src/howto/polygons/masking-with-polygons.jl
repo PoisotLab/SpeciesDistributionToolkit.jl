@@ -2,7 +2,6 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # In this tutorial, we will mask a layer using information from a polygon, then
 # use the same polygon to mask occurrence records.

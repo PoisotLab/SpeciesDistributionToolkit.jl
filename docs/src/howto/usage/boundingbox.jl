@@ -2,7 +2,6 @@
 
 using SpeciesDistributionToolkit
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # The `boundingbox` method accepts most types that `SpeciesDistributionToolkit`
 # knows about, and returns a tuple:
@@ -38,13 +37,13 @@ L = SDMLayer(
 
 #figure partialload
 heatmap(L; colormap = :tempo)
-scatter!(occ, color=:white, strokecolor=:orange, strokewidth=1.5)
+scatter!(occ; color = :white, strokecolor = :orange, strokewidth = 1.5)
 current_figure() #hide
 
 # The same method also applies to polygons:
 
 cnt = PolygonData(OpenStreetMap, Countries)
-pol = getpolygon(cnt, country="Austria")
+pol = getpolygon(cnt; country = "Austria")
 SpeciesDistributionToolkit.boundingbox(pol; padding = 0.5)
 
 # ```@meta

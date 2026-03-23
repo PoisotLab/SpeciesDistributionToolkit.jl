@@ -10,7 +10,6 @@ using SpeciesDistributionToolkit
 
 using Statistics
 using CairoMakie
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # Accessing future data involves the `Dates` standard library, to make an
 # explicit reference to years in the dataset.
@@ -23,7 +22,7 @@ import Dates
 # box for the area we are interested in (or, in this case, get the boundingbox
 # from the GeoJSON polygon):
 
-POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Laurentides")
+POL = getpolygon(PolygonData(OpenStreetMap, Places); place = "Laurentides")
 spatial_extent = SpeciesDistributionToolkit.boundingbox(POL)
 
 # Note that the bounding box is given in WGS84. Although layers can use any
@@ -173,7 +172,7 @@ fig, ax, hm = heatmap(
     figure = (; size = (600, 400)),
     axis = (; aspect = DataAspect()),
 )
-lines!(ax, POL, color=:black)
+lines!(ax, POL; color = :black)
 hidespines!(ax)
 hidedecorations!(ax)
 Colorbar(

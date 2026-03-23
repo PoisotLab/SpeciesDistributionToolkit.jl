@@ -6,9 +6,6 @@
 using SpeciesDistributionToolkit
 using CairoMakie
 using PrettyTables
-CairoMakie.activate!(; px_per_unit = 3) #hide
-import Random #hide
-Random.seed!(123451234123121); #hide
 
 # We will work on the demo data:
 

@@ -11,7 +11,6 @@ using CairoMakie
 using Statistics
 import StatsBase
 using Clustering # [!code highlight]
-CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
 
 # The support is currently limited to clustering methods that take a matrix of
 # features, as distance matrices for large layers risk getting extremely large.
@@ -69,7 +68,7 @@ clustering_quality(L, K; quality_index = :davies_bouldin)
 
 #figure kmeans
 fig, ax, hm = heatmap(
-    k,
+    k;
     colormap = :Spectral,
     figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
@@ -91,7 +90,7 @@ f = SDMLayer(F, L)
 
 #figure fuzzycmeans
 fig, ax, hm = heatmap(
-    f[1],
+    f[1];
     colormap = :bamako,
     figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),

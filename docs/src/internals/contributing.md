@@ -52,6 +52,39 @@ and the tests can start running. Each pull request is resulting in a new
 documentation build, which takes a lot of time as the vignettes are using almost
 all of the package(s) functionalities.
 
+### Documentation
+
+New functionalities should have an entry in the `howto` or the `tutorial`
+folder, as well as be listed in the sidebar in `config.mts`. The files in these
+sections are all `.jl` files, which will be converted to markdown using the
+Literate package.
+
+It is fine to use `using Revise` in the documentation scripts, this line will be
+removed at build time.
+
+Tables should be generated with `pretty_table` from the `PrettyTables` package,
+using `backend = :markdown,` somewhere in the keywords.
+
+Figures should be generated with `CairoMakie` -- a configuration line with the
+correct format and DPI will be added automatically. 
+
+All figures must be organized in the following way:
+
+~~~ julia
+#figure Short one-line summary
+f = Figure()
+# ...
+current_figure() #hide
+~~~
+
+This will be modified during the build to save the figure as a `.png` file with
+a unique name. The one-line description will become the mouseover/alt text for
+the figure, and the code will be hidden in a _Details_  box in order to not make
+the tutorials and vignettes too long.
+
+You do not need to set a random seed in the files, this will be done for _all_
+vignettes at build time.
+
 ## Repository conventions
 
 ### Naming of branches

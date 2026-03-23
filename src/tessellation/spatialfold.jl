@@ -55,25 +55,19 @@ function assignfolds!(
     y = (y .- minimum(y)) ./(maximum(y) - minimum(y))
 
     # Sort the centers randomly by default
-    sortfunc = (x) -> rand()
+    feature_rank = sortperm(centers; by = (v) -> rand())
 
     # Change the sorting function depending on the type of layout
-    if order == :VH
-        sortfunc = (x) -> (x[1], x[2])
+    if order == :vertical
+        feature_rank = sortperm(x)
     end
-    if order == :HV
-        sortfunc = (x) -> (x[2], x[1])
+    if order == :horizontal
+        feature_rank = sortperm(y)
     end
-    if order == :H
-        sortfunc = (x) -> x[1]
+    if order == :slice
+        feature_rank = sortperm((x .- y)./(x .+ y))
     end
-    if order == :V
-        sortfunc = (x) -> x[2]
-    end
-
-    feature_rank = sortperm(centers; by = sortfunc)
-    feature_rank = sortperm(x .+ y .* 2)
-
+    
     # For balanced layout, we need to do something a little more consuming in resources
     if order == :balanced
         @assert "__presences" in keys(uniqueproperties(H))

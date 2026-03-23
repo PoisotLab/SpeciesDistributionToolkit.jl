@@ -30,8 +30,7 @@ mask!(L, pol)
 
 # get tiles
 
-T = tessellate(pol, 60.0; tile=:hexagons, proj=proj, densify=5)
-SDT.keeprelevant!(T, L[1])
+T = tessellate(pol, 30.0; tile=:hexagons, pointy=true, proj=proj, densify=5)
 
 #figure tile1
 f = Figure()
@@ -42,8 +41,26 @@ current_figure() #hide
 
 # ## assign by latitude
 
-n = 5
-SDT.assignfolds!(T; n=n, group=true)
+n = 4
+
+# this is the code
+
+SDT.assignfolds!(T; n=n, group=true, order=:horizontal)
+
+#figure tile1
+f = Figure()
+ax = Axis(f[1,1]; aspect=DataAspect())
+for i in 1:n
+    poly!(ax, T["__fold" => i], alpha=0.2, color=i, colorrange=(1, n), colormap=cgrad(:twelvebitrainbow, n, categorical=true))
+    lines!(ax, T["__fold" => i], color=i, colorrange=(1, n), colormap=cgrad(:twelvebitrainbow, n, categorical=true))
+end
+#lines!(ax, T, color=:black)
+current_figure() #hide
+
+
+# this is the code
+
+SDT.assignfolds!(T; n=n, group=true, order=:vertical)
 
 #figure tile1
 f = Figure()

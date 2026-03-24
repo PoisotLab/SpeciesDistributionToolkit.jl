@@ -3,6 +3,14 @@
 # It is possible to generate tessellations (homogenous tilings of a surface)
 # from several type of objects.
 
+# ::: danger Unstable part of the API
+#
+# The functions on this page should be considered a work in progress, and their
+# behavior is likely to change in ways that will be documented here. These
+# should be treated primarily as convenience functions.
+#
+# :::
+
 # through the [tessellation functions](/howto/polygons/tessellation/)
 
 using SpeciesDistributionToolkit

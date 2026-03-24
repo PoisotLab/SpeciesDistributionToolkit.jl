@@ -197,6 +197,24 @@ function __variogram_hyperbolic(sill, nugget, range)
     return __mod
 end
 
+function __variogram_cardinalsine(sill, nugget, range)
+    function __mod(h)
+        δ = 20.371
+        unit = 1 - (sin((δ*h)/range))/(δ*h / range)
+        return unit * (sill - nugget) + nugget
+    end
+    return __mod
+end
+
+function __variogram_linear(sill, nugget, range)
+    function __mod(h)
+        unit = h / range
+        return unit * (sill - nugget) + nugget
+    end
+    return __mod
+end
+
+
 """
     fitvariogram(x, y, n; family = :gaussian)
 
@@ -233,6 +251,12 @@ function fitvariogram(x, y, n; family = :gaussian, samples = 300, maxiter = 1200
     end
     if family == :hyperbolic
         gen = __variogram_hyperbolic
+    end
+    if family == :cardinalsine
+        gen = __variogram_cardinalsine
+    end
+    if family == :linear
+        gen = __variogram_linear
     end
 
     w = n ./ sum(n)

@@ -76,6 +76,8 @@ E = SDT.fitvariogram(x, y, n; family = :exponential);
 S = SDT.fitvariogram(x, y, n; family = :spherical);
 C = SDT.fitvariogram(x, y, n; family = :cubic);
 H = SDT.fitvariogram(x, y, n; family = :hyperbolic);
+O = SDT.fitvariogram(x, y, n; family = :cardinalsine);
+N = SDT.fitvariogram(x, y, n; family = :linear);
 
 # This function relies on the Nelder-Mead solver to find an approximate value of
 # the parameters. Note that the error associated to each parameter set accounts
@@ -95,6 +97,8 @@ lines!(ax, vx, E.model.(vx); label = "Exponential", linestyle = :dash)
 lines!(ax, vx, S.model.(vx); label = "Spherical", linestyle = :dot)
 lines!(ax, vx, C.model.(vx); label = "Cubic", linestyle = :dashdot)
 lines!(ax, vx, H.model.(vx); label = "Hyperbolic", linestyle = :dashdotdot)
+lines!(ax, vx, O.model.(vx); label = "Cardinal Sine", linestyle = :dot)
+lines!(ax, vx, N.model.(vx); label = "Linear", linestyle = :dash)
 ylims!(ax, quantile(y, [0.0, 0.9])...)
 axislegend(ax; position = :rb, nbanks=3)
 current_figure() #hide
@@ -102,8 +106,9 @@ current_figure() #hide
 # We can aggregate this information to figure out which model describes the data
 # better:
 
-M = permutedims(hcat([[m.range, m.sill, m.nugget, m.error] for m in [G, E, S, C, H]]...));
-M = hcat(["Gaussian", "Exponential", "Spherical", "Cubic", "Hyperbolic"], M);
+M = permutedims(hcat([[m.range, m.sill, m.nugget, m.error] for m in [G, E, S, H]]...))
+rnk = sortperm(M[:,4])
+M = hcat(["Gaussian", "Exponential", "Spherical", "Hyperbolic"], M)[rnk,:];
 
 #-
 

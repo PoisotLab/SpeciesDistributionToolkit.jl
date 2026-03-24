@@ -151,21 +151,3 @@ training,validation folds.
 function spatialfold(blocks::FeatureCollection)
     return (model::SDM) -> spatialfold(model, blocks)
 end
-
-function __identify_neighbors(T::FeatureCollection)
-    edges = Dict{Integer, Vector{Integer}}([i => Integer[] for i in eachindex(T.features)])
-    for i in eachindex(edges)
-        for j in eachindex(edges)
-            if j >= i
-                if SimpleSDMPolygons.AG.touches(
-                    T.features[i].geometry.geometry,
-                    T.features[j].geometry.geometry,
-                )
-                    push!(edges[i], j)
-                    push!(edges[j], i)
-                end
-            end
-        end
-    end
-    return edges
-end

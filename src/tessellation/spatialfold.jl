@@ -1,5 +1,5 @@
 """
-    assignfolds!(H::FeatureCollection; n::Integer=10, order::Symbol=:balanced, group::Bool=true, maxiter::Integer = 2000)
+    assignfolds!(H::FeatureCollection; n::Integer=10, order::Symbol=:random, group::Bool=true, balanced::Bool=false, maxiter::Integer = 2000)
 
 Assigns the features in a tiling (or any other `FeatureCollection`) to `n`
 blocks for spatial cross-validation. Note that the features in `H` _must_ have a
@@ -11,13 +11,14 @@ vertically. In this case, the keyword `group` will determine how the folds are
 assigned. When `group` is `true` (the default), folds are _spatially
 contiguous_. When `group` is `false`, folds are _spatially alternating_.
 
-When `order` is `:balanced`, the tiles _must_ have both `__presences` and
+When `order` is `:random`, the tiles are assigned fully at random.
+
+When `balanced` is `:true`, the tiles _must_ have both `__presences` and
 `__absences` properties. The assignment of a tile to folds is done by using a
 greedy algorithm (for up to `maxiter` rounds) which will swap tiles across folds
 until all folds are as close as possible to reaching the class imbalance of the
-entire dataset. This is the default ordering of tiles.
-
-When `order` is `:random`, the tiles are assigned fully at random.
+entire dataset. Note that this step is done _after_ the previous steps (`order`
+/ `group`) have been applied.
 
 This method changes the feature collection by adding a `__fold` property to each
 tiles, which can be used in conjunction with `spatialfold`.
@@ -80,12 +81,7 @@ function assignfolds!(
         # out a way to do this that maintains balance. We also would like the
         # folds to remain contiguous in space as much as possible.
 
-        # We start from the initial situation, and we generate a vector of idx
-        # for each fold
-        feature_rank = collect(1:k)
-
         # The score of this assignment is given by:
-
         PRs = [sum(pr[findall(==(f), fold[feature_rank])]) for f in 1:n]
         ABs = [sum(ab[findall(==(f), fold[feature_rank])]) for f in 1:n]
         BA = PRs ./ (PRs .+ ABs)

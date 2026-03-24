@@ -224,8 +224,8 @@ returned as a named tuple containing the `range`, the `sill`, the `nugget`, the
 `error`, and the `model`. The model is a function that can be called on a given
 distance to obtain the best fit variogram.
 
-Possible values of `family` are `:gaussian` (default), `:spherical`, and
-`:exponential`.
+Possible values of `family` are `:gaussian` (default), `:spherical`,
+`:exponential`, `:linear`, `:cubic`, `:hyperbolic`, and `:cardinalsine`.
 
 Values are optimized using the Nelder-Mead algorithm with `samples` samples and
 `maxiter` iterations.

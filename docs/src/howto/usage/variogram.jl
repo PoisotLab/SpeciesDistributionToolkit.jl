@@ -69,15 +69,13 @@ current_figure() #hide
 x, y, n = variogram(temperature; width = 1.0, shift = 0.5)
 
 # The _unexported_ `fitvariogram` method will get the parameters for one of the
-# usual variogram models.
+# usual variogram models (there are other models, see the documentation for this
+# function):
 
 G = SDT.fitvariogram(x, y, n; family = :gaussian);
 E = SDT.fitvariogram(x, y, n; family = :exponential);
 S = SDT.fitvariogram(x, y, n; family = :spherical);
-C = SDT.fitvariogram(x, y, n; family = :cubic);
 H = SDT.fitvariogram(x, y, n; family = :hyperbolic);
-O = SDT.fitvariogram(x, y, n; family = :cardinalsine);
-N = SDT.fitvariogram(x, y, n; family = :linear);
 
 # This function relies on the Nelder-Mead solver to find an approximate value of
 # the parameters. Note that the error associated to each parameter set accounts
@@ -93,12 +91,9 @@ ax = Axis(f[1, 1]; xlabel = "Distance", ylabel = "Variogram")
 scatter!(ax, x, y; markersize = n ./ maximum(n) .* 8 .+ 4, color = :grey50)
 vx = LinRange(extrema(x)..., 100)
 lines!(ax, vx, G.model.(vx); label = "Gaussian")
-lines!(ax, vx, E.model.(vx); label = "Exponential", linestyle = :dash)
-lines!(ax, vx, S.model.(vx); label = "Spherical", linestyle = :dot)
-lines!(ax, vx, C.model.(vx); label = "Cubic", linestyle = :dashdot)
-lines!(ax, vx, H.model.(vx); label = "Hyperbolic", linestyle = :dashdotdot)
-lines!(ax, vx, O.model.(vx); label = "Cardinal Sine", linestyle = :dot)
-lines!(ax, vx, N.model.(vx); label = "Linear", linestyle = :dash)
+lines!(ax, vx, E.model.(vx); label = "Exponential")
+lines!(ax, vx, S.model.(vx); label = "Spherical")
+lines!(ax, vx, H.model.(vx); label = "Hyperbolic")
 ylims!(ax, quantile(y, [0.0, 0.9])...)
 axislegend(ax; position = :rb, nbanks=3)
 current_figure() #hide

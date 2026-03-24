@@ -50,7 +50,7 @@ n = 5
 
 SDT.assignfolds!(
     T;
-    n = n, group = true,
+    n = n,
     order = :horizontal # [!code highlight]
 )
 
@@ -80,7 +80,7 @@ current_figure() #hide
 
 SDT.assignfolds!(
     T;
-    n = n, group = true,
+    n = n,
     order = :vertical # [!code highlight]
 )
 
@@ -211,7 +211,7 @@ pretty_table(
 
 SDT.assignfolds!(
     T;
-    n = n, group = true,
+    n = n,
     order = :balanced # [!code highlight]
 )
 

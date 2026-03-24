@@ -5,12 +5,11 @@ Assigns the features in a tiling (or any other `FeatureCollection`) to `n`
 blocks for spatial cross-validation. Note that the features in `H` _must_ have a
 `__centroid` property which indicates where the _center_ of each cell is.
     
-The `order` keyword will determine how the tiles are assigned. When using `:H`,
-`:V`, `:VH`, or `:HV`, the tiles will be assigned either horizontally,
-vertically, or a combination of both. In this case, the keyword `group` will
-determine how the folds are assigned. When `group` is `true` (the default),
-folds are _spatially contiguous_. When `group` is `false`, folds are _spatially
-alternating_.
+The `order` keyword will determine how the tiles are assigned. When using
+`:horizontal` or `:vertical`, the tiles will be assigned either horizontally, or
+vertically. In this case, the keyword `group` will determine how the folds are
+assigned. When `group` is `true` (the default), folds are _spatially
+contiguous_. When `group` is `false`, folds are _spatially alternating_.
 
 When `order` is `:balanced`, the tiles _must_ have both `__presences` and
 `__absences` properties. The assignment of a tile to folds is done by using a
@@ -119,6 +118,16 @@ function assignfolds!(
     return H
 end
 
+"""
+    spatialfold(model::SDM, blocks::FeatureCollection)
+
+Returns a series of training, validation folds, as a vector of tuple of vectors.
+This is the same output returned by all cross-validation functions such as
+`kfold` and `leaveoneout`.
+
+The folds are assigned by looking at the `"__fold"` property of the feature
+collection. It will likely have been set by `assignfolds!`.
+"""
 function spatialfold(model::SDM, blocks::FeatureCollection)
     @assert "__fold" in keys(uniqueproperties(blocks))
     folds = Tuple{Vector{Int64}, Vector{Int64}}[]
@@ -132,6 +141,12 @@ function spatialfold(model::SDM, blocks::FeatureCollection)
     return folds
 end
 
+"""
+    spatialfold(blocks::FeatureCollection)
+
+Creates a closure which, when applied to a model, will return the
+training,validation folds.
+"""
 function spatialfold(blocks::FeatureCollection)
     return (model::SDM) -> spatialfold(model, blocks)
 end

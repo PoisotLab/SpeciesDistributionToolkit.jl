@@ -58,6 +58,10 @@ scatter!(ax, x, y; markersize = n ./ maximum(n) .* 8 .+ 4, color = :grey50)
 ylims!(ax, quantile(y, [0.0, 0.9])...)
 current_figure() #hide
 
+# Note that the values end up being very correlated at extremely high distances,
+# which makes sense: the climate is similar everywhere on the coasts, and some
+# of the furthest points (in space) are therefore the most similar.
+
 # ## Fitting a model to the variogram
 
 # We'll start by getting a variogram from a layer:
@@ -70,6 +74,8 @@ x, y, n = variogram(temperature; width = 1.0, shift = 0.5)
 G = SDT.fitvariogram(x, y, n; family = :gaussian);
 E = SDT.fitvariogram(x, y, n; family = :exponential);
 S = SDT.fitvariogram(x, y, n; family = :spherical);
+C = SDT.fitvariogram(x, y, n; family = :cubic);
+H = SDT.fitvariogram(x, y, n; family = :hyperbolic);
 
 # This function relies on the Nelder-Mead solver to find an approximate value of
 # the parameters. Note that the error associated to each parameter set accounts
@@ -87,15 +93,17 @@ vx = LinRange(extrema(x)..., 100)
 lines!(ax, vx, G.model.(vx); label = "Gaussian")
 lines!(ax, vx, E.model.(vx); label = "Exponential", linestyle = :dash)
 lines!(ax, vx, S.model.(vx); label = "Spherical", linestyle = :dot)
+lines!(ax, vx, C.model.(vx); label = "Cubic", linestyle = :dashdot)
+lines!(ax, vx, H.model.(vx); label = "Hyperbolic", linestyle = :dashdotdot)
 ylims!(ax, quantile(y, [0.0, 0.9])...)
-axislegend(ax; position = :lt)
+axislegend(ax; position = :rb, nbanks=3)
 current_figure() #hide
 
 # We can aggregate this information to figure out which model describes the data
 # better:
 
-M = permutedims(hcat([[m.range, m.sill, m.nugget, m.error] for m in [G, E, S]]...));
-M = hcat(["Gaussian", "Exponential", "Spherical"], M);
+M = permutedims(hcat([[m.range, m.sill, m.nugget, m.error] for m in [G, E, S, C, H]]...));
+M = hcat(["Gaussian", "Exponential", "Spherical", "Cubic", "Hyperbolic"], M);
 
 #-
 
@@ -103,7 +111,7 @@ pretty_table(
     M;
     alignment = [:l, :c, :c, :c, :c],
     backend = :markdown,
-    column_labels = ["Model", "Range", "Sill", "Nugget", "Error"],
+    column_labels = ["Model", "Range", "Sill", "Nugget", "RMSE"],
     formatters = [fmt__printf("%3.3f", [2, 3, 4, 5])],
 )
 

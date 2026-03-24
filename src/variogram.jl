@@ -178,6 +178,25 @@ function __variogram_exponential(sill, nugget, range)
     return __mod
 end
 
+function __variogram_cubic(sill, nugget, range)
+    function __mod(h)
+        coeffs = [7, -35/4, -7/2, -3/4]
+        expos = [2, 3, 5, 7]
+        unit = sum([coeffs[i]*(h/range)^expos[i] for i in eachindex(coeffs)])
+        return unit * (sill - nugget) + nugget
+    end
+    return __mod
+end
+
+function __variogram_hyperbolic(sill, nugget, range)
+    function __mod(h)
+        δ = sqrt(20) - 1 
+        unit = 1 - 1 / (1 + (δ * h) / range)
+        return unit * (sill - nugget) + nugget
+    end
+    return __mod
+end
+
 """
     fitvariogram(x, y, n; family = :gaussian)
 
@@ -208,6 +227,12 @@ function fitvariogram(x, y, n; family = :gaussian, samples = 300, maxiter = 1200
     end
     if family == :spherical
         gen = __variogram_spherical
+    end
+    if family == :cubic
+        gen = __variogram_cubic
+    end
+    if family == :hyperbolic
+        gen = __variogram_hyperbolic
     end
 
     w = n ./ sum(n)

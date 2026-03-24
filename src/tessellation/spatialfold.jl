@@ -77,7 +77,7 @@ function assignfolds!(
         ab = [f.properties["__absences"] for f in H.features]
         ba = sum(pr) ./ sum(pr .+ ab)
 
-        # We want to map the features to folds- and for this we need to figure
+        # We want to map the features to folds - and for this we need to figure
         # out a way to do this that maintains balance. We also would like the
         # folds to remain contiguous in space as much as possible.
 

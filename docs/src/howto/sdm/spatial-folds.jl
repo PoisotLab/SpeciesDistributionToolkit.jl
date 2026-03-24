@@ -214,7 +214,7 @@ pretty_table(
 
 # ## Creating folds with balance
 
-T = tessellate(pol, 20.0; tile = :hexagons, pointy = true, proj = proj, densify = 5)
+T = tessellate(pol, 50.0; tile = :hexagons, pointy = true, proj = proj, densify = 5)
 S = SDT.keeprelevant(T, O)
 SDT.assignfolds!(
     S;

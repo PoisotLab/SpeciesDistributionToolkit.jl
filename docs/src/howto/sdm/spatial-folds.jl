@@ -26,7 +26,9 @@ records = Occurrences(mask(OccurrencesInterface.__demodata(), pol))
 
 # And we will also get a layer:
 
-L = SDMLayer{Float32}[SDMLayer(RasterData(CHELSA2, BioClim); bb..., layer = i) for i in [1, 12]]
+L = SDMLayer{Float32}[
+    SDMLayer(RasterData(CHELSA2, BioClim); bb..., layer = i) for i in [1, 12]
+]
 mask!(L, pol)
 
 # ## Creating the tiles
@@ -51,7 +53,7 @@ n = 5
 SDT.assignfolds!(
     T;
     n = n,
-    order = :horizontal # [!code highlight]
+    order = :horizontal, # [!code highlight]
 )
 
 #figure Tiling colored by the folds assigned horizontal
@@ -81,7 +83,7 @@ current_figure() #hide
 SDT.assignfolds!(
     T;
     n = n,
-    order = :vertical # [!code highlight]
+    order = :vertical, # [!code highlight]
 )
 
 #figure Tiling colored by the folds assigned vertically
@@ -115,7 +117,7 @@ SDT.assignfolds!(
     T;
     n = n,
     group = false, # [!code highlight]
-    order = :vertical
+    order = :vertical,
 )
 
 #figure Tiling colored by the folds assigned vertically, alternating
@@ -174,8 +176,8 @@ for i in 1:n
         colormap = cgrad(:Set1, n; categorical = true),
     )
 end
-scatter!(ax, presences(O), color=:black)
-scatter!(ax, absences(O), color=:grey50, marker=:cross)
+scatter!(ax, presences(O); color = :black)
+scatter!(ax, absences(O); color = :grey50, marker = :cross)
 current_figure() #hide
 
 # This can be assigned to folds by creating a function first
@@ -212,7 +214,7 @@ pretty_table(
 SDT.assignfolds!(
     T;
     n = n,
-    order = :balanced # [!code highlight]
+    order = :balanced, # [!code highlight]
 )
 
 # new folding
@@ -255,8 +257,8 @@ for i in 1:n
         colormap = cgrad(:Set1, n; categorical = true),
     )
 end
-scatter!(ax, presences(O), color=:black)
-scatter!(ax, absences(O), color=:grey50, marker=:cross)
+scatter!(ax, presences(O); color = :black)
+scatter!(ax, absences(O); color = :grey50, marker = :cross)
 current_figure() #hide
 
 # ```@meta

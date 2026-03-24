@@ -87,7 +87,7 @@ function tessellate(
         @error "Unuspported units ($unit) found"
     end
 
-    # We conver the distance so that the surface of each tile is equal to the
+    # We convert the distance so that the surface of each tile is equal to the
     # surface of a circle of radius d
     chara_distance = __equivalent_area(d, tile)
 

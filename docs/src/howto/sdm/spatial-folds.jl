@@ -155,14 +155,13 @@ O = Occurrences(L₊, L₋)
 
 # We will only keep the part of the tiling that covers at least one point
 
-
 SDT.assignfolds!(T; n = n, order = :horizontal)
 S = SDT.keeprelevant(T, O)
 
 #figure Tile filtered by occurrences
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
-lines!(ax, T, color=:grey70)
+lines!(ax, T; color = :grey70)
 for i in 1:n
     poly!(
         ax,
@@ -181,7 +180,7 @@ for i in 1:n
     )
 end
 scatter!(ax, presences(O); color = :black)
-scatter!(ax, absences(O); color = :grey40, marker = :cross, markersize=8)
+scatter!(ax, absences(O); color = :grey40, marker = :cross, markersize = 8)
 current_figure() #hide
 
 # This can be assigned to folds by creating a function first
@@ -215,11 +214,41 @@ pretty_table(
 
 # ## Creating folds with balance
 
+T = tessellate(pol, 20.0; tile = :hexagons, pointy = true, proj = proj, densify = 5)
+S = SDT.keeprelevant(T, O)
 SDT.assignfolds!(
     S;
     n = n,
-    order = :balanced, # [!code highlight]
+    order = :horizontal, # [!code highlight]
+    balanced = true, # [! code highlight]
 )
+
+# fold for balanced
+
+#figure Tile filtered by occurrences
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+lines!(ax, T; color = :grey70)
+for i in 1:n
+    poly!(
+        ax,
+        S["__fold" => i];
+        alpha = 0.2,
+        color = i,
+        colorrange = (1, n),
+        colormap = folds_colors,
+    )
+    lines!(
+        ax,
+        S["__fold" => i];
+        color = i,
+        colorrange = (1, n),
+        colormap = folds_colors,
+    )
+end
+scatter!(ax, presences(O); color = :black)
+scatter!(ax, absences(O); color = :grey40, marker = :cross, markersize = 8)
+current_figure() #hide
 
 # ::: info Class-balance optimisation
 # 
@@ -244,33 +273,6 @@ pretty_table(
     column_labels = ["Measure", "Validation", "Training", "Coin-flip", "No-skill"],
     formatters = [fmt__printf("%5.3f", [2, 3, 4, 5])],
 )
-
-# fold for balanced
-
-#figure Tile filtered by occurrences
-f = Figure()
-ax = Axis(f[1, 1]; aspect = DataAspect())
-lines!(ax, T, color=:grey70)
-for i in 1:n
-    poly!(
-        ax,
-        S["__fold" => i];
-        alpha = 0.2,
-        color = i,
-        colorrange = (1, n),
-        colormap = folds_colors,
-    )
-    lines!(
-        ax,
-        S["__fold" => i];
-        color = i,
-        colorrange = (1, n),
-        colormap = folds_colors,
-    )
-end
-scatter!(ax, presences(O); color = :black)
-scatter!(ax, absences(O); color = :grey40, marker = :cross, markersize=8)
-current_figure() #hide
 
 # ```@meta
 # CollapsedDocStrings = true

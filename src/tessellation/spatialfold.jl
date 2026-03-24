@@ -26,6 +26,7 @@ function assignfolds!(
     H::FeatureCollection;
     n::Integer = 10,
     order::Symbol = :random,
+    balanced::Bool = false,
     group::Bool = true,
     maxiter::Integer = 2000,
 )
@@ -68,7 +69,7 @@ function assignfolds!(
     end
     
     # For balanced layout, we need to do something a little more consuming in resources
-    if order == :balanced
+    if balanced
         @assert "__presences" in keys(uniqueproperties(H))
         @assert "__absences" in keys(uniqueproperties(H))
         pr = [f.properties["__presences"] for f in H.features]
@@ -76,8 +77,8 @@ function assignfolds!(
         ba = sum(pr) ./ sum(pr .+ ab)
 
         # We want to map the features to folds- and for this we need to figure
-        # out a way to do this that maintains balance. The challenge is that we
-        # also want to ensure that the folds have approximately the same membership.
+        # out a way to do this that maintains balance. We also would like the
+        # folds to remain contiguous in space as much as possible.
 
         # We start from the initial situation, and we generate a vector of idx
         # for each fold
@@ -149,4 +150,22 @@ training,validation folds.
 """
 function spatialfold(blocks::FeatureCollection)
     return (model::SDM) -> spatialfold(model, blocks)
+end
+
+function __identify_neighbors(T::FeatureCollection)
+    edges = Dict{Integer, Vector{Integer}}([i => Integer[] for i in eachindex(T.features)])
+    for i in eachindex(edges)
+        for j in eachindex(edges)
+            if j >= i
+                if SimpleSDMPolygons.AG.touches(
+                    T.features[i].geometry.geometry,
+                    T.features[j].geometry.geometry,
+                )
+                    push!(edges[i], j)
+                    push!(edges[j], i)
+                end
+            end
+        end
+    end
+    return edges
 end

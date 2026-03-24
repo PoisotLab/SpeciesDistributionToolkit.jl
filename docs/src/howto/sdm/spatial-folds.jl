@@ -46,7 +46,8 @@ current_figure() #hide
 
 # ## assign by latitude
 
-n = 5
+n = 4
+folds_colors = cgrad(Makie.wong_colors()[1:n], n; categorical = true);
 
 # this is the code
 
@@ -66,14 +67,14 @@ for i in 1:n
         alpha = 0.2,
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:Set1, n; categorical = true),
+        colormap = folds_colors,
     )
     lines!(
         ax,
         T["__fold" => i];
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:Set1, n; categorical = true),
+        colormap = folds_colors,
     )
 end
 current_figure() #hide
@@ -96,14 +97,14 @@ for i in 1:n
         alpha = 0.2,
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:Set1, n; categorical = true),
+        colormap = folds_colors,
     )
     lines!(
         ax,
         T["__fold" => i];
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:Set1, n; categorical = true),
+        colormap = folds_colors,
     )
 end
 current_figure() #hide
@@ -117,7 +118,7 @@ SDT.assignfolds!(
     T;
     n = n,
     group = false, # [!code highlight]
-    order = :vertical,
+    order = :horizontal,
 )
 
 #figure Tiling colored by the folds assigned vertically, alternating
@@ -130,14 +131,14 @@ for i in 1:n
         alpha = 0.2,
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:Set1, n; categorical = true),
+        colormap = folds_colors,
     )
     lines!(
         ax,
         T["__fold" => i];
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:Set1, n; categorical = true),
+        colormap = folds_colors,
     )
 end
 current_figure() #hide
@@ -154,35 +155,38 @@ O = Occurrences(L₊, L₋)
 
 # We will only keep the part of the tiling that covers at least one point
 
-SDT.keeprelevant!(T, O)
+
+SDT.assignfolds!(T; n = n, order = :horizontal)
+S = SDT.keeprelevant(T, O)
 
 #figure Tile filtered by occurrences
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
+lines!(ax, T, color=:grey70)
 for i in 1:n
     poly!(
         ax,
-        T["__fold" => i];
+        S["__fold" => i];
         alpha = 0.2,
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:Set1, n; categorical = true),
+        colormap = folds_colors,
     )
     lines!(
         ax,
-        T["__fold" => i];
+        S["__fold" => i];
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:Set1, n; categorical = true),
+        colormap = folds_colors,
     )
 end
 scatter!(ax, presences(O); color = :black)
-scatter!(ax, absences(O); color = :grey50, marker = :cross)
+scatter!(ax, absences(O); color = :grey40, marker = :cross, markersize=8)
 current_figure() #hide
 
 # This can be assigned to folds by creating a function first
 
-spatialfolder = SDT.spatialfold(T)
+spatialfolder = SDT.spatialfold(S)
 
 # we need a model at this point
 
@@ -212,14 +216,20 @@ pretty_table(
 # ## Creating folds with balance
 
 SDT.assignfolds!(
-    T;
+    S;
     n = n,
     order = :balanced, # [!code highlight]
 )
 
+# ::: info Class-balance optimisation
+# 
+# algo info go here, will shuffle but all folds will keep same number of tiles
+#
+# :::
+
 # new folding
 
-folds = SDT.spatialfold(model, T)
+folds = SDT.spatialfold(model, S)
 cv = crossvalidate(model, folds)
 
 #
@@ -240,25 +250,26 @@ pretty_table(
 #figure Tile filtered by occurrences
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
+lines!(ax, T, color=:grey70)
 for i in 1:n
     poly!(
         ax,
-        T["__fold" => i];
+        S["__fold" => i];
         alpha = 0.2,
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:Set1, n; categorical = true),
+        colormap = folds_colors,
     )
     lines!(
         ax,
-        T["__fold" => i];
+        S["__fold" => i];
         color = i,
         colorrange = (1, n),
-        colormap = cgrad(:Set1, n; categorical = true),
+        colormap = folds_colors,
     )
 end
 scatter!(ax, presences(O); color = :black)
-scatter!(ax, absences(O); color = :grey50, marker = :cross)
+scatter!(ax, absences(O); color = :grey40, marker = :cross, markersize=8)
 current_figure() #hide
 
 # ```@meta

@@ -1,6 +1,5 @@
 import { defineConfig } from 'vitepress'
 import mathjax3 from "markdown-it-mathjax3";
-import footnote from "markdown-it-footnote";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -15,8 +14,7 @@ export default defineConfig({
     markdown: {
         math: true,
         config: (md) => {
-            md.use(mathjax3),
-            md.use(footnote)
+            md.use(mathjax3)
         },
         image: {
             lazyLoading: true

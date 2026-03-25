@@ -64,22 +64,33 @@ current_figure() #hide
 
 # ## Fitting a model to the variogram
 
-# We'll start by getting a variogram from a layer:
-
-x, y, n = variogram(temperature; width = 1.0, shift = 0.3)
-
 # The _unexported_ `fitvariogram` method will get the parameters for one of the
 # usual variogram models (there are other models, see the documentation for this
 # function):
 
-families = [:gaussian, :spherical, :gamma, :exponential, :stable, :cauchy]
+families = [:gaussian, :spherical, :exponential, :cubic, :stable, :cauchy]
+
+# In order to ensure that the parameters make sense, we will look at the
+# previously generated figure and come up with an estimated range for the
+# parameters:
+
+params = (;
+    sill = (6., 12.),
+    nugget = (1., 4.),
+    range = (20., 70.),
+    parameter = (0.05, 15.5)
+)
+
+# The `parameter` is not used by all methods, but is required to be estimated
+# for `:gamma`, `:cauchy`, and `:stable`. Note that `:hyperbolic` is a specific
+# case of `:gamma` with the parameter fixed to 1.
 
 # We will collect all these models in a dictionary. To gain time, this is
 # multi-threaded:
 
 fits = map(families) do family
     Threads.@spawn begin
-        return family => SDT.fitvariogram(x, y, n; family = family)
+        return family => SDT.fitvariogram(x, y, n; family = family, params...)
     end
 end
 M = fetch.(fits)
@@ -97,11 +108,12 @@ D = Dict(M);
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "Distance", ylabel = "Variogram")
 scatter!(ax, x, y; markersize = n ./ maximum(n) .* 8 .+ 4, color = :grey50)
-vx = LinRange(extrema(x)..., 100)
+vx = LinRange(0.0, 0.7 * maximum(x), 100)
 for (fam, mod) in D
     lines!(ax, vx, mod.model.(vx); label = string(fam))
 end
-ylims!(ax, quantile(y, [0.0, 0.9])...)
+ylims!(ax, 0., only(quantile(y, [0.9])))
+xlims!(ax, low=0.)
 axislegend(ax; position = :rb, nbanks=3)
 current_figure() #hide
 
@@ -121,7 +133,7 @@ pretty_table(
     column_labels = ["Model", "Range", "Nugget", "Sill", "RMSE"],
     formatters = [
         fmt__printf("%5.2f", [2, 3, 4]),
-        fmt__printf("%7.4f", [5]),
+        fmt__printf("%7.3f", [5]),
         ],
 )
 
@@ -166,7 +178,8 @@ scatter!(
     label = "Layer",
 )
 axislegend(ax; position = :rt)
-ylims!(ax, quantile(y, [0.0, 0.9])...)
+ylims!(ax, 0., only(quantile(y, [0.9])))
+xlims!(ax, low=0.)
 current_figure() #hide
 
 # We can measure the range that corresponds to the variation of each variable
@@ -215,7 +228,8 @@ x, y, n = variogram(Occurrences(model))
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "Distance", ylabel = "Variogram")
 scatter!(ax, x, y; markersize = n ./ maximum(n) .* 8 .+ 4, color = :teal)
-ylims!(ax, quantile(y, [0.0, 0.9])...)
+ylims!(ax, 0., only(quantile(y, [0.9])))
+xlims!(ax, low=0.)
 current_figure() #hide
 
 # ```@meta

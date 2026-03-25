@@ -72,7 +72,7 @@ x, y, n = variogram(temperature; width = 1.0, shift = 0.3)
 # usual variogram models (there are other models, see the documentation for this
 # function):
 
-families = [:gaussian, :spherical, :gamma, :exponential, :stable, :cauchy, :gamma]
+families = [:gaussian, :spherical, :gamma, :exponential, :stable, :cauchy]
 
 # We will collect all these models in a dictionary. To gain time, this is
 # multi-threaded:

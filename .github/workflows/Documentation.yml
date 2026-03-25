@@ -90,7 +90,7 @@ jobs:
         uses: actions/upload-artifact/merge@v4
         with:
             name: manual-compiled
-            delete-merged: true
+            delete-merged: false
       - name: "Put the compiled manual in its place"
         uses: actions/download-artifact@v8
         with:

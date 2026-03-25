@@ -24,11 +24,6 @@
     color: var(--vp-c-text-2);
 }
 
-.vp-doc div[class~="language-"] code {
-    padding-left: 0;
-    padding-right: 0;
-}
-
 .vp-doc div[class*="language-julia"] {
     background-color: var(--vp-c-bg-soft);
     border-radius: 0px;

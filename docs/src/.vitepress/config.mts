@@ -20,6 +20,9 @@ export default defineConfig({
                 md.use(mathjax3),
                 md.use(footnote)
         },
+        image: {
+            lazyLoading: true
+        },
         theme: {
             light: "catppuccin-latte",
             dark: "catppuccin-macchiato"

@@ -192,7 +192,7 @@ export default defineConfig({
                             text: "Use-cases (SDM)",
                             collapsed: true,
                             items: [
-                                { text: "Occurrences from layers", link: "manual/distributions/occurrences-from-layer/"},
+                                { text: "Occurrences from layers", link: "/manual/distributions/occurrences-from-layer/"},
                                 { text: "Building a model", link: "/manual/distributions/training/" },
                                 { text: "Bagging", link: "/manual/distributions/bagging/" },
                                 { text: "Boosting", link: "/manual/distributions/adaboost/" },

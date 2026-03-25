@@ -24,7 +24,7 @@ using Statistics
 # We will start by grabbing some information on temperature over the island of
 # Corsica.
 
-polygon = getpolygon(PolygonData(OpenStreetMap, Places); place="Corse")
+polygon = getpolygon(PolygonData(OpenStreetMap, Places); place = "Corse")
 temperature = SDMLayer(RasterData(CHELSA2, AverageTemperature); SDT.boundingbox(polygon)...)
 mask!(temperature, polygon);
 
@@ -51,12 +51,15 @@ x, y, n = variogram(temperature; width = 2.0, shift = 0.5);
 # generate this bin `n`. This last information is important to fit a variogram
 # model (as we will discuss later).
 
-#figure variogram-temp
+#figure Empirical variogram measured on the mean annual temperature
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "Distance", ylabel = "Variogram")
 scatter!(ax, x, y; markersize = n ./ maximum(n) .* 8 .+ 4, color = :grey50)
-ylims!(ax, 0., only(quantile(y, [0.9])))
-xlims!(ax, low=0.)
+bracket!(ax, 10., 5., 50., 5., text="Range", style=:square, orientation=:down)
+bracket!(ax, 5., 0., 5., 2.5, text="Nugget", style=:square, orientation=:down)
+bracket!(ax, 12., 6., 12., 10., text="Sill", style=:square, orientation=:up)
+ylims!(ax, 0.0, 1.1*maximum(y))
+xlims!(ax; low = 0.0)
 current_figure() #hide
 
 # Note that the values end up being very correlated at extremely high distances,
@@ -73,13 +76,14 @@ families = [:gaussian, :spherical, :exponential, :cubic, :stable, :cauchy, :gamm
 
 # In order to ensure that the parameters make sense, we will look at the
 # previously generated figure and come up with an estimated range for the
-# parameters:
+# parameters. These parameters correspond to the annotated rangebars on the
+# previous figure.
 
 params = (;
-    sill = (6., 10.),
-    nugget = (0., 2.5),
-    range = (10., 50.),
-    parameter = (0.05, 2.5)
+    sill = (6.0, 10.0),
+    nugget = (0.0, 2.5),
+    range = (10.0, 50.0),
+    parameter = (0.05, 2.5),
 )
 
 # The `parameter` is not used by all methods, but is required to be estimated
@@ -113,17 +117,19 @@ vx = LinRange(0.0, 0.7 * maximum(x), 100)
 for (fam, mod) in D
     lines!(ax, vx, mod.model.(vx); label = string(fam))
 end
-ylims!(ax, 0., only(quantile(y, [0.9])))
-xlims!(ax, low=0.)
-axislegend(ax; position = :rb, nbanks=3)
+ylims!(ax, 0.0, 1.1*maximum(y))
+xlims!(ax; low = 0.0)
+axislegend(ax; position = :rb, nbanks = 3)
 current_figure() #hide
 
 # We can aggregate this information to figure out which model describes the data
 # better:
 
-M = permutedims(hcat([[fam, mod.range, mod.nugget, mod.sill, mod.error] for(fam,mod) in D]...))
-rnk = sortperm(M[:,5])
-M = M[rnk,:];
+M = permutedims(
+    hcat([[fam, mod.range, mod.nugget, mod.sill, mod.error] for (fam, mod) in D]...),
+)
+rnk = sortperm(M[:, 5])
+M = M[rnk, :];
 
 #-
 
@@ -135,7 +141,7 @@ pretty_table(
     formatters = [
         fmt__printf("%5.2f", [2, 3, 4]),
         fmt__printf("%7.4f", [5]),
-        ],
+    ],
 )
 
 # ## Variogram on SDMs
@@ -156,11 +162,18 @@ variables!(model, ForwardSelection)
 # through the keywword argument of the same name:
 
 x, y, n = variogram(model; variable = 1, width = 2.0, shift = 1.0); # [!code highlight]
+sdm_vario = SDT.fitvariogram(x, y, n; family = :spherical);
+
+# We will also compare this to the variogram that would have been obtained on
+# the layer:
+
 xl, yl, nl = variogram(L[1]; width = 2.0, shift = 1.0);
+layer_vario = SDT.fitvariogram(xl, yl, nl; family = :spherical);
 
 #figure vario-on-sdm
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "Distance", ylabel = "Variogram")
+vx = LinRange(0.0, maximum(x) / 2, 100)
 scatter!(
     ax,
     x,
@@ -169,6 +182,7 @@ scatter!(
     color = :purple,
     label = "Training instances",
 )
+lines!(ax, vx, sdm_vario.model.(vx); color = :purple, linestyle = :dash)
 scatter!(
     ax,
     xl,
@@ -178,16 +192,17 @@ scatter!(
     marker = :rect,
     label = "Layer",
 )
+lines!(ax, vx, layer_vario.model.(vx); color = :forestgreen, linestyle = :dash)
 axislegend(ax; position = :rt)
-ylims!(ax, 0., only(quantile(y, [0.9])))
-xlims!(ax, low=0.)
+ylims!(ax, 0.0, 1.1*maximum(y))
+xlims!(ax; low = 0.0)
 current_figure() #hide
 
 # We can measure the range that corresponds to the variation of each variable
 # selected by the model:
 
 variomodels = [
-    SDT.fitvariogram(variogram(model; variable = i)...; family = :gaussian)
+    SDT.fitvariogram(variogram(model; variable = i)...; family = :spherical)
     for i in variables(model)
 ];
 ranges = [m.range for m in variomodels]
@@ -223,14 +238,20 @@ current_figure() #hide
 # primarily useful to check the distance at which two observations are likely to
 # be different.
 
-x, y, n = variogram(Occurrences(model))
+x, y, n = variogram(Occurrences(model), width = 2.0, shift = 1.0);
+occ_vario = SDT.fitvariogram(
+    x, y, n;
+    family = :stable
+);
 
 #figure vario-on-occurrences
 f = Figure()
+vx = LinRange(0.0, maximum(x) * 0.5, 100)
 ax = Axis(f[1, 1]; xlabel = "Distance", ylabel = "Variogram")
 scatter!(ax, x, y; markersize = n ./ maximum(n) .* 8 .+ 4, color = :teal)
-ylims!(ax, 0., only(quantile(y, [0.9])))
-xlims!(ax, low=0.)
+lines!(ax, vx, occ_vario.model.(vx); color = :teal, linestyle = :dash)
+ylims!(ax, 0.0, only(quantile(y, [0.99])))
+xlims!(ax; low = 0.0)
 current_figure() #hide
 
 # ```@meta

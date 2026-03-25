@@ -17,11 +17,12 @@
     --vp-c-brand-2: var(--pl-green-light);
     --vp-c-brand-3: var(--pl-green-dark);
     --vp-c-brand-soft: var(--vp-c-indigo-soft);
+    --vp-code-font-size: .8em;
 }
 
 .vp-doc div[class~="language-"] {
     background-color: var(--vp-c-bg);
-    color: var(--vp-c-text-2);
+    color: var(--vp-c-text-1);
 }
 
 .vp-doc div[class*="language-julia"] {
@@ -38,6 +39,10 @@
 :root {
     --vp-home-hero-name-color: transparent;
     --vp-home-hero-name-background: -webkit-linear-gradient(120deg, var(--pl-blue), var(--pl-green-light), var(--pl-green-dark));
+}
+
+.VPSidebar {
+    border-right: 1px solid var(--vp-c-gutter);
 }
 
 :root {

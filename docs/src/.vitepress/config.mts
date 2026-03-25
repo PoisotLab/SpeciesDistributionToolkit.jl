@@ -15,10 +15,9 @@ export default defineConfig({
     ignoreDeadLinks: true,
     markdown: {
         math: true,
-        config(md) {
-            md.use(tabsMarkdownPlugin),
-                md.use(mathjax3),
-                md.use(footnote)
+        config: (md) => {
+            md.use(mathjax3),
+            md.use(footnote)
         },
         image: {
             lazyLoading: true

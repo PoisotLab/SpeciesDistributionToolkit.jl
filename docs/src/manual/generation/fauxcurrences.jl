@@ -5,7 +5,7 @@ import Random
 using CairoMakie
 
 # The methodology to generate fauxcurrences comes from
-# [osborne_fauxcurrence_2022](@citet).
+# [osborne2022fauxcurrence](@citet).
 
 # ## Getting observed occurrence data
 

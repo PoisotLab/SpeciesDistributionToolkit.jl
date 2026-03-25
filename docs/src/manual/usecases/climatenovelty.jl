@@ -37,7 +37,7 @@ spatial_extent = SpeciesDistributionToolkit.boundingbox(POL)
 # :::
 
 # We will get the [BioClim data from CHELSA v2](/datasets/CHELSA2/). CHELSA v2
-# [karger_climatologies_2017](@cite) offers access to the 19 original bioclim
+# [karger2017climatologies](@cite) offers access to the 19 original bioclim
 # variable, and their projection under a variety of CMIP6 models/scenarios.
 
 # These are pretty large data (the resolution is 30s of arc), and so this
@@ -142,7 +142,7 @@ cr_projected = (projected .- μ) ./ σ;
 
 # We will use a simple measure of climate novelty, which is defined as the
 # smallest Euclidean distance between a cell in the raster and all the possible
-# cells in the future raster, as in [fitzpatrick_how_2018](@citet).
+# cells in the future raster, as in [fitzpatrick2018how](@citet).
 
 # To have a way to store the results, we will start by making a copy of one of
 # the input rasters:

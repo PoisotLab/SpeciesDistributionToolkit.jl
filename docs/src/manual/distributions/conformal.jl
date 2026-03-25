@@ -1,7 +1,7 @@
 # # Conformal prediction of species range
 
 # This tutorial goes through some of the steps outlined in
-# [poisot_conformal_2025](@citet). We will use conformal prediction to identify
+# [poisot2025conformal](@citet). We will use conformal prediction to identify
 # areas in space in which a SDM is uncertain about the outcome of presence and
 # absence of the species.
 

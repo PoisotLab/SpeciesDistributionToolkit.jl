@@ -6,7 +6,7 @@
 # to the predicted suitability.
 
 # Note that the generation of virtual species is its own domain of research
-# [meynard_using_2013](@cite), and this tutorial is only meant to show how the
+# [meynard2013using](@cite), and this tutorial is only meant to show how the
 # functions in the package can be made to work together.
 
 using SpeciesDistributionToolkit
@@ -159,7 +159,7 @@ hidespines!(ax)
 current_figure() #hide
 
 # We can now transform these data into a partition of the contribution of each
-# species and location to the total beta-diversity [legendre_beta_2013](@cite):
+# species and location to the total beta-diversity [legendre2013beta](@cite):
 
 function LCBD(ranges::Vector{SDMLayer{Bool}}; transformation::Function = identity)
     Y = transformation(hcat(values.(ranges)...))
@@ -192,7 +192,7 @@ end
 
 # We can now plot the various elements (most of the code below is actually
 # laying out the sub-panels for the plot), to identify areas in space that
-# contribute most to ecological uniqueness [dansereau_evaluating_2022](@cite):
+# contribute most to ecological uniqueness [dansereau2022evaluating](@cite):
 
 #figure betadivmap
 f = Figure(; size = (700, 700))

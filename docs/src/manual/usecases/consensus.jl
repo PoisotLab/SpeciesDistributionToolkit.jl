@@ -16,7 +16,7 @@ spatial_extent = SpeciesDistributionToolkit.boundingbox(POL)
 # the package will only *read* what is required. For large data (like landcover
 # data), this is a significant improvement in memory footprint.
 
-# We now define our data provider [tuanmu_global_2014](@citet), composed of a
+# We now define our data provider [tuanmu2014global](@citet), composed of a
 # data source (`EarthEnv`) and a dataset (`LandCover`).
 
 dataprovider = RasterData(EarthEnv, LandCover)

@@ -65,10 +65,10 @@ current_figure() #hide
 
 # Let's now get some occurrences. The demonstration data from
 # `OccurrencesInterface` are records of sightings of bigfoot
-# [lozier_predicting_2009](@cite). These are useful data to think about species
+# [lozier2009predicting](@cite). These are useful data to think about species
 # distribution modeling in slightly more abstract terms than using data on
 # existing species, and slighty less abstract terms than simulated data
-# [foxon_bigfoot_2024](@cite).
+# [foxon2024bigfoot](@cite).
 
 presences = OccurrencesInterface.__demodata()
 

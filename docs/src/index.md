@@ -11,11 +11,8 @@ hero:
     alt: SpeciesDistributionToolkit
   actions:
     - theme: brand
-      text: Read the tutorials
-      link: /tutorials
-    - theme: alt
-      text: Read the vignettes
-      link: /howto
+      text: Read the manual
+      link: /manual
     - theme: alt
       text: Reach out!
       link: https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions

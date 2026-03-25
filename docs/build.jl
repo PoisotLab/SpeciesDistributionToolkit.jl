@@ -1,5 +1,5 @@
 # Select the files that we are rendering - if no argument is given, we do the "how-to" folder
-folders = isempty(ARGS) ? ["howto"] : ARGS
+folders = isempty(ARGS) ? ["manual"] : ARGS
 
 function get_files_from_folder(folder)
     fpath = joinpath(@__DIR__, "src", folder)

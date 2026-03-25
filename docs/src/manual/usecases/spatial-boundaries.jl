@@ -1,7 +1,7 @@
 # # Integration with SpatialBoundaries
 
 # In this tutorial, we will use methods from `SpatialBoundaries`
-# [strydom_spatialboundariesjl_2023](@cite) to estimate boundaries for (*i.e.*
+# [strydom2023spatialboundariesjl](@cite) to estimate boundaries for (*i.e.*
 # patches of) wooded areas on the Southwestern islands of the Hawaiian Islands
 # using landcover data from the EarthEnv project. The `SpatialBoundaries`
 # package works with `SpeciesDistributionToolkit` through an extension, so that

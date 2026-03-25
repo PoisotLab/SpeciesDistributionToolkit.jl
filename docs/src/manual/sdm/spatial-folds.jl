@@ -65,7 +65,7 @@ SDT.assignfolds!(
     order = :horizontal, # [!code highlight]
 )
 
-#figure Tiling colored by the folds assigned horizontal
+#figure Tiling colored by the folds assigned horizontally
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 for i in 1:n
@@ -233,7 +233,7 @@ SDT.assignfolds!(
 
 # fold for balanced
 
-#figure Tile filtered by occurrences
+#figure Tiles filtered by occurrences
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 lines!(ax, T; color = :grey70)

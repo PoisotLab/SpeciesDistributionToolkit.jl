@@ -25,9 +25,9 @@ L₊ = nodata(mask(L, Occurrences(model), presences), false)
 O₊ = Occurrences(L₊; entity="Sitta whiteheadi")
 O₋ = Occurrences(L₋; entity="Sitta whiteheadi")
 
-#  then sum
+#  alternatively
 
-O = Occurrences(vcat(elements(O₊), elements(O₋)))
+O = Occurrences(L₊, L₋)
 
 # check
 

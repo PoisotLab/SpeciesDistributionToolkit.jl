@@ -257,14 +257,28 @@ Fits a variogram of the given `family` based on data representing the central
 bin distance `x`, the semivariogram `y`, and the sample size `n`. The data are
 returned as a named tuple containing the `range`, the `sill`, the `nugget`, the
 `parameter`, the `error` (RMSE), and the `model`. The model is a function that
-can be called on a given distance to obtain the best fit variogram.
+can be called on a given distance to obtain the best fit variogram (see the
+details below).
 
-Possible values of `family` are `:gaussian` (default), `:spherical`,
-`:exponential`, `:linear`, `:cubic`, `:hyperbolic`, `:gamma`, `:stable`,
-`:cauchy`, and `:cardinalsine`.
+The `family` keyword (defaults to `:gaussian`) selects the type of variogram
+model to fit. Families of `:gaussian`, `:spherical`, `:exponential`, `:linear`,
+`:cubic`, and `:hyperbolic` only fit the range, nugget, and sill. Families of
+`:gamma`, `:stable`, `:cauchy` also fit a free parameter. Finally,
+`:cardinalsine` can be used to fit periodic variograms.
 
-Values are optimized using the Nelder-Mead algorithm with `samples` samples and
-`maxiter` iterations.
+Values are optimized using the Nelder-Mead algorithm with `samples` samples
+(300) and `maxiter` iterations (1200). The `tol` criteria (10⁻⁴) is the
+threshold under which the variance of the RMSE is assumed to indicate that the
+algorithm has converged and should return early. After the algorithm has
+concluded, the best candidate parameter set is returned.
+
+To help the optimisation process, it is a good idea to provide some guidance to
+the algorithm in the form of boundaries for the various parameters, as tuple of
+floats. By default, the `range` boundary is from the shortest distance to 3/4th
+of the maximum distance; the `sill` is within the extrema of the observed
+variances; the `nugget` boundary is between the smallest variance observed and
+half of the max; the `parameter` boundary is between 0.1 and 2. Visual
+inspection of the empirical data will help set realistic values.
 """
 function fitvariogram(
     x,

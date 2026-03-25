@@ -44,7 +44,7 @@ current_figure() #hide
 # measure in order to ensure that the average coverage of each bin is around 30
 # samples.
 
-x, y, n = variogram(temperature; width = 5.0, shift = 2.0);
+x, y, n = variogram(temperature; width = 2.0, shift = 0.5);
 
 # The `variogram` function will return the average distance within the bin `x`,
 # the variance within this bin `y`, and the number of point pairs used to
@@ -55,7 +55,8 @@ x, y, n = variogram(temperature; width = 5.0, shift = 2.0);
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "Distance", ylabel = "Variogram")
 scatter!(ax, x, y; markersize = n ./ maximum(n) .* 8 .+ 4, color = :grey50)
-ylims!(ax, quantile(y, [0.0, 0.9])...)
+ylims!(ax, 0., only(quantile(y, [0.9])))
+xlims!(ax, low=0.)
 current_figure() #hide
 
 # Note that the values end up being very correlated at extremely high distances,
@@ -68,17 +69,17 @@ current_figure() #hide
 # usual variogram models (there are other models, see the documentation for this
 # function):
 
-families = [:gaussian, :spherical, :exponential, :cubic, :stable, :cauchy]
+families = [:gaussian, :spherical, :exponential, :cubic, :stable, :cauchy, :gamma]
 
 # In order to ensure that the parameters make sense, we will look at the
 # previously generated figure and come up with an estimated range for the
 # parameters:
 
 params = (;
-    sill = (6., 12.),
-    nugget = (1., 4.),
-    range = (20., 70.),
-    parameter = (0.05, 15.5)
+    sill = (6., 10.),
+    nugget = (0., 2.5),
+    range = (10., 50.),
+    parameter = (0.05, 2.5)
 )
 
 # The `parameter` is not used by all methods, but is required to be estimated
@@ -133,7 +134,7 @@ pretty_table(
     column_labels = ["Model", "Range", "Nugget", "Sill", "RMSE"],
     formatters = [
         fmt__printf("%5.2f", [2, 3, 4]),
-        fmt__printf("%7.3f", [5]),
+        fmt__printf("%7.4f", [5]),
         ],
 )
 

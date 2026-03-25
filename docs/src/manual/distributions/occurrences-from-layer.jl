@@ -27,7 +27,9 @@ O₋ = Occurrences(L₋; entity="Sitta whiteheadi")
 
 #  alternatively
 
-O = Occurrences(L₊, L₋)
+O = Occurrences(L₊, !L₋)
+
+# not that the second layer must have `true` to indicate that there is an absence here
 
 # check
 

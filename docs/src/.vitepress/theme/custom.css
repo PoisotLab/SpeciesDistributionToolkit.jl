@@ -11,27 +11,23 @@
 }
 
 :root {
+    --vp-sidebar-bg-color: var(--vp-c-bg);
+    --vp-nav-bg-color: var(--vp-c-bg);
     --vp-c-brand-1: var(--pl-blue);
     --vp-c-brand-2: var(--pl-green-light);
     --vp-c-brand-3: var(--pl-green-dark);
     --vp-c-brand-soft: var(--vp-c-indigo-soft);
 }
 
-:not(.dark) > :root {
-    --vp-sidebar-bg-color: transparent;
+.vp-doc div[class*="language-"] {
+    background-color: var(--vp-c-bg);
+    color: var(--vp-c-text-2)
 }
 
-:not(.dark) > .language- {
-    background-color: var(--vp-sidebar-bg-color);
-}
-
-:not(.dark) > .language-julia {
+.vp-doc div[class*="language-julia"] {
+    background-color: var(--vp-c-bg-soft);
     border-radius: 0px;
-    border-left: 2px solid var(--vp-c-brand-1);
-}
-
-:not(.dark) > .details > .language-julia {
-    background-color: transparent;
+    border: 1px solid var(--vp-c-gutter)
 }
 
 :root {

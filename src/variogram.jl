@@ -193,7 +193,7 @@ function __variogram_cubic(sill, nugget, range, alpha)
         if h > range
             return sill
         else
-            coeffs = [7, -35 / 4, -7 / 2, -3 / 4]
+            coeffs = [7, -35 / 4, 7 / 2, -3 / 4]
             expos = [2, 3, 5, 7]
             unit = sum([coeffs[i] * (h / range)^expos[i] for i in eachindex(coeffs)])
             return unit * (sill - nugget) + nugget
@@ -205,7 +205,7 @@ end
 function __variogram_gamma(sill, nugget, range, alpha)
     function __mod(h)
         δ = 20^(1 / alpha) - 1
-        unit = 1 - 1 / (1 + (δ * h) / range)
+        unit = 1 - 1 / ((1 + (δ * h) / range) ^ alpha)
         return unit * (sill - nugget) + nugget
     end
     return __mod
@@ -266,14 +266,25 @@ Possible values of `family` are `:gaussian` (default), `:spherical`,
 Values are optimized using the Nelder-Mead algorithm with `samples` samples and
 `maxiter` iterations.
 """
-function fitvariogram(x, y, n; family = :gaussian, samples = 300, maxiter = 1200)
+function fitvariogram(
+    x,
+    y,
+    n;
+    family = :gaussian,
+    range = extrema(x),
+    nugget = extrema(x),
+    sill = extrema(y),
+    parameter = (0.1, 2.0),
+    samples = 300,
+    maxiter = 1200,
+)
 
     # Generate some random parameters
     _samples = samples
-    ranges = rand(_samples) .* 0.25 * maximum(x)
-    sills = rand(_samples) .* maximum(y)
-    nuggets = rand(_samples) .* maximum(y) / 10
-    alpha = rand(_samples) .* 1.5 .+ 0.5
+    ranges = rand(_samples) .* (range[2] - range[1]) .+ range[1]
+    sills = rand(_samples) .* (sill[2] - sill[1]) .+ sill[1]
+    nuggets = rand(_samples) .* (nugget[2] - nugget[1]) .+ nugget[1]
+    alpha = rand(_samples) .* (parameter[2] - parameter[1]) .+ parameter[1]
 
     error = Inf
     gen = __variogram_gaussian
@@ -310,7 +321,7 @@ function fitvariogram(x, y, n; family = :gaussian, samples = 300, maxiter = 1200
     xn = [(sills[i], nuggets[i], ranges[i], alpha[i]) for i in Base.OneTo(_samples)]
 
     for _ in Base.OneTo(maxiter)
-        __nm!(xn, x, y, n, gen)
+        __nm!(xn, x, y, n, gen, [sill, nugget, range, parameter])
     end
 
     L = [sqrt(sum(w .* (gen(xn[i]...).(x) .- y) .^ 2.0)) for i in Base.OneTo(length(xn))]
@@ -344,7 +355,7 @@ function shrink!(xn, xl; α = 1.0, β = 0.5, γ = 2.0, δ = 0.5)
 end
 
 function __nm!(
-    xn, x, y, n, f;
+    xn, x, y, n, f, ranges;
     α = 1.0,
     β = 0.5,
     γ = 2.0,
@@ -352,21 +363,14 @@ function __nm!(
     kwargs...,
 )
 
-    # Weights
-    w = n ./ maximum(n)
-
-    # Did we lose some solutions?
-    nsol = length(xn)
-    xn = filter(x -> !any(x .< 0), xn)
-    # If so we recombine parameters at random
-    if length(xn) <= nsol
-        append!(xn,
-            [
-                [rand(xn)[i] for i in eachindex(xn[1])] for
-                _ in Base.OneTo(nsol - length(xn))
-            ],
+    function paramclamp(N)
+        return Tuple(
+            clamp(N[i], ranges[i]...) for i in eachindex(N)
         )
     end
+
+    # Weights
+    w = n ./ maximum(n)
 
     # What is their loss?
     L = [sqrt(sum(w .* (f(xn[i]...).(x) .- y) .^ 2.0)) for i in Base.OneTo(length(xn))]
@@ -383,7 +387,7 @@ function __nm!(
     centroid = reduce(.+, xn[bestside]) ./ length(bestside)
 
     # Reflection
-    xr = centroid .+ α .* (centroid .- xh)
+    xr = paramclamp(centroid .+ α .* (centroid .- xh))
     fr = sqrt(sum(w .* (f(xr...).(x) .- y) .^ 2.0))
     if fl <= fr < fs
         xn[worst] = xr
@@ -392,7 +396,7 @@ function __nm!(
 
     # Expansion
     if fr < fl
-        xe = centroid .+ γ .* (xr .- centroid)
+        xe = paramclamp(centroid .+ γ .* (xr .- centroid))
         fe = sqrt(sum(w .* (f(xe...).(x) .- y) .^ 2.0))
         if fe < fr
             xn[worst] = xe
@@ -406,7 +410,7 @@ function __nm!(
     # Contraction
     if fr >= fs
         if fs <= fr < fh
-            xc = centroid .+ β .* (xr .- centroid)
+            xc = paramclamp(centroid .+ β .* (xr .- centroid))
             fc = sqrt(sum(w .* (f(xc...).(x) .- y) .^ 2.0))
             if fc <= fr
                 xn[worst] = xc
@@ -416,7 +420,7 @@ function __nm!(
             end
         end
         if fr >= fh
-            xc = centroid .+ β .* (xr .- centroid)
+            xc = paramclamp(centroid .+ β .* (xr .- centroid))
             fc = sqrt(sum(w .* (f(xc...).(x) .- y) .^ 2.0))
             if fc < fh
                 xn[worst] = xc

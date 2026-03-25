@@ -18,8 +18,7 @@
 }
 
 :not(.dark) > :root {
-    --vp-sidebar-bg-color: #ffffff;
-    --vp-sidebar-bg-color: #fefeff;
+    --vp-sidebar-bg-color: transparent;
 }
 
 :not(.dark) > .language- {

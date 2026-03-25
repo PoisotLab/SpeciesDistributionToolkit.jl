@@ -72,7 +72,7 @@ x, y, n = variogram(temperature; width = 1.0, shift = 0.3)
 # usual variogram models (there are other models, see the documentation for this
 # function):
 
-families = [:gaussian, :spherical, :gamma, :exponential, :stable, :cauchy, :gamma, :cubic]
+families = [:gaussian, :spherical, :gamma, :exponential, :stable, :cauchy, :gamma]
 
 # We will collect all these models in a dictionary. To gain time, this is
 # multi-threaded:
@@ -119,7 +119,10 @@ pretty_table(
     alignment = [:l, :c, :c, :c, :c],
     backend = :markdown,
     column_labels = ["Model", "Range", "Nugget", "Sill", "RMSE"],
-    formatters = [fmt__printf("%3.3f", [2, 3, 4, 5])],
+    formatters = [
+        fmt__printf("%5.2f", [2, 3, 4]),
+        fmt__printf("%7.4f", [5]),
+        ],
 )
 
 # ## Variogram on SDMs

@@ -46,8 +46,7 @@ jobs:
       - name: "Upload the folder ${{ matrix.folder }}"
         uses: actions/upload-artifact@v4
         with:
-          path: |
-            docs/src/manual
+          path: docs/src/manual
           name: build-${{ env.ARTIFACT_NAME }}
   BuildDocumentation:
     permissions:
@@ -95,7 +94,7 @@ jobs:
         uses: actions/download-artifact@v8
         with:
             name: manual-compiled
-            path: docs/src
+            path: docs/src/manual
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1'

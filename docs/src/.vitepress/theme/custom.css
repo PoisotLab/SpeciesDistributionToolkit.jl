@@ -17,6 +17,24 @@
     --vp-c-brand-soft: var(--vp-c-indigo-soft);
 }
 
+:not(.dark) > :root {
+    --vp-sidebar-bg-color: #ffffff;
+    --vp-sidebar-bg-color: #fefeff;
+}
+
+:not(.dark) > .language- {
+    background-color: var(--vp-sidebar-bg-color);
+}
+
+:not(.dark) > .language-julia {
+    border-radius: 0px;
+    border-left: 2px solid var(--vp-c-brand-1);
+}
+
+:not(.dark) > .details > .language-julia {
+    background-color: transparent;
+}
+
 :root {
     --vp-home-hero-name-color: transparent;
     --vp-home-hero-name-background: -webkit-linear-gradient(120deg, var(--pl-blue), var(--pl-green-light), var(--pl-green-dark));

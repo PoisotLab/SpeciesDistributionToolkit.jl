@@ -166,12 +166,12 @@ export default defineConfig({
                             ]
                         },
                         {
-                            text: "Use cases",
+                            text: "Use cases (general)",
                             collapsed: true,
                             items: [
-                                { text: "Climate novelty", link: "/manual/usage/climatenovelty/" },
-                                { text: "Landcover consensus", link: "/manual/usage/consensus/" },
-                                { text: "Spatial boundaries", link: "/manual/usage/spatial-boundaries/" },
+                                { text: "Climate novelty", link: "/manual/usecases/climatenovelty/" },
+                                { text: "Landcover consensus", link: "/manual/usecases/consensus/" },
+                                { text: "Spatial boundaries", link: "/manual/usecases/spatial-boundaries/" },
                             ]
                         },
                         {
@@ -190,13 +190,14 @@ export default defineConfig({
                             ]
                         },
                         {
-                            text: "Mapping distributions",
+                            text: "Use-cases (SDM)",
                             collapsed: true,
                             items: [
-                                { text: "Building a model", link: "/manual/sdm/training/" },
-                                { text: "Bagging", link: "/manual/sdm/bagging/" },
-                                { text: "Boosting", link: "/manual/sdm/adaboost/" },
-                                { text: "Conformal prediction", link: "/manual/sdm/conformal/" },
+                                { text: "Occurrences from layers", link: "manual/distributions/occurrences-from-layer/"},
+                                { text: "Building a model", link: "/manual/distributions/training/" },
+                                { text: "Bagging", link: "/manual/distributions/bagging/" },
+                                { text: "Boosting", link: "/manual/distributions/adaboost/" },
+                                { text: "Conformal prediction", link: "/manual/distributions/conformal/" },
                             ]
                         },
                         {

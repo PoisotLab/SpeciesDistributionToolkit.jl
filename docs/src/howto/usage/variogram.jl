@@ -66,16 +66,24 @@ current_figure() #hide
 
 # We'll start by getting a variogram from a layer:
 
-x, y, n = variogram(temperature; width = 1.0, shift = 0.5)
+x, y, n = variogram(temperature; width = 1.0, shift = 0.3)
 
 # The _unexported_ `fitvariogram` method will get the parameters for one of the
 # usual variogram models (there are other models, see the documentation for this
 # function):
 
-G = SDT.fitvariogram(x, y, n; family = :gaussian);
-E = SDT.fitvariogram(x, y, n; family = :exponential);
-S = SDT.fitvariogram(x, y, n; family = :spherical);
-H = SDT.fitvariogram(x, y, n; family = :hyperbolic);
+families = [:gaussian, :spherical, :gamma, :exponential, :stable, :cauchy, :gamma, :cubic]
+
+# We will collect all these models in a dictionary. To gain time, this is
+# multi-threaded:
+
+fits = map(families) do family
+    Threads.@spawn begin
+        return family => SDT.fitvariogram(x, y, n; family = family)
+    end
+end
+M = fetch.(fits)
+D = Dict(M);
 
 # This function relies on the Nelder-Mead solver to find an approximate value of
 # the parameters. Note that the error associated to each parameter set accounts
@@ -90,10 +98,9 @@ f = Figure()
 ax = Axis(f[1, 1]; xlabel = "Distance", ylabel = "Variogram")
 scatter!(ax, x, y; markersize = n ./ maximum(n) .* 8 .+ 4, color = :grey50)
 vx = LinRange(extrema(x)..., 100)
-lines!(ax, vx, G.model.(vx); label = "Gaussian")
-lines!(ax, vx, E.model.(vx); label = "Exponential")
-lines!(ax, vx, S.model.(vx); label = "Spherical")
-lines!(ax, vx, H.model.(vx); label = "Hyperbolic")
+for (fam, mod) in D
+    lines!(ax, vx, mod.model.(vx); label = string(fam))
+end
 ylims!(ax, quantile(y, [0.0, 0.9])...)
 axislegend(ax; position = :rb, nbanks=3)
 current_figure() #hide
@@ -101,9 +108,9 @@ current_figure() #hide
 # We can aggregate this information to figure out which model describes the data
 # better:
 
-M = permutedims(hcat([[m.range, m.sill, m.nugget, m.error] for m in [G, E, S, H]]...))
-rnk = sortperm(M[:,4])
-M = hcat(["Gaussian", "Exponential", "Spherical", "Hyperbolic"], M)[rnk,:];
+M = permutedims(hcat([[fam, mod.range, mod.nugget, mod.sill, mod.error] for(fam,mod) in D]...))
+rnk = sortperm(M[:,5])
+M = M[rnk,:];
 
 #-
 
@@ -111,7 +118,7 @@ pretty_table(
     M;
     alignment = [:l, :c, :c, :c, :c],
     backend = :markdown,
-    column_labels = ["Model", "Range", "Sill", "Nugget", "RMSE"],
+    column_labels = ["Model", "Range", "Nugget", "Sill", "RMSE"],
     formatters = [fmt__printf("%3.3f", [2, 3, 4, 5])],
 )
 

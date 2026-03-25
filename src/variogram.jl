@@ -89,7 +89,7 @@ function variogram(L::SDMLayer; width::Float64 = 10.0, shift::Float64 = 1.0, kwa
     Ls = max(Lh, Lw)
 
     # We would like to get 30 samples per bin if possible, but if not that's cool too
-    samples = ceil(Int, (Ls / width) * 30)
+    samples = ceil(Int, (Ls / width) * 40)
 
     Z = _generate_point_pairs(L, samples)
     return variogram(Z, width, shift; kwargs...)
@@ -122,7 +122,7 @@ function variogram(
     Ls = max(Lh, Lw)
 
     # We would like to get 30 samples per bin if possible, but if not that's cool too
-    samples = ceil(Int, (Ls / width) * 30)
+    samples = ceil(Int, (Ls / width) * 40)
 
     Z = _generate_point_pairs(model, samples, variable)
     return variogram(Z, width, shift; kwargs...)
@@ -153,7 +153,7 @@ function variogram(
     Ls = max(Lh, Lw)
 
     # We would like to get 30 samples per bin if possible, but if not that's cool too
-    samples = ceil(Int, (Ls / width) * 30)
+    samples = ceil(Int, (Ls / width) * 40)
 
     Z = _generate_point_pairs(occ, samples)
     return variogram(Z, width, shift; kwargs...)
@@ -205,7 +205,7 @@ end
 function __variogram_gamma(sill, nugget, range, alpha)
     function __mod(h)
         δ = 20^(1 / alpha) - 1
-        unit = 1 - 1 / ((1 + (δ * h) / range) ^ alpha)
+        unit = 1 - 1 / ((1 + (δ * h) / range)^alpha)
         return unit * (sill - nugget) + nugget
     end
     return __mod
@@ -256,8 +256,8 @@ end
 Fits a variogram of the given `family` based on data representing the central
 bin distance `x`, the semivariogram `y`, and the sample size `n`. The data are
 returned as a named tuple containing the `range`, the `sill`, the `nugget`, the
-`error`, and the `model`. The model is a function that can be called on a given
-distance to obtain the best fit variogram.
+`parameter`, the `error` (RMSE), and the `model`. The model is a function that
+can be called on a given distance to obtain the best fit variogram.
 
 Possible values of `family` are `:gaussian` (default), `:spherical`,
 `:exponential`, `:linear`, `:cubic`, `:hyperbolic`, `:gamma`, `:stable`,
@@ -271,12 +271,13 @@ function fitvariogram(
     y,
     n;
     family = :gaussian,
-    range = extrema(x),
-    nugget = extrema(x),
+    range = (minimum(x), 0.75 * maximum(x)),
+    nugget = (minimum(y), 0.5 * maximum(y)),
     sill = extrema(y),
     parameter = (0.1, 2.0),
     samples = 300,
     maxiter = 1200,
+    tol = 1e-4,
 )
 
     # Generate some random parameters
@@ -287,9 +288,12 @@ function fitvariogram(
     alpha = rand(_samples) .* (parameter[2] - parameter[1]) .+ parameter[1]
 
     error = Inf
-    gen = __variogram_gaussian
+    gen = nothing
     if family == :exponential
         gen = __variogram_exponential
+    end
+    if family == :gaussian
+        gen = __variogram_gaussian
     end
     if family == :spherical
         gen = __variogram_spherical
@@ -316,15 +320,22 @@ function fitvariogram(
         gen = __variogram_cauchy
     end
 
+    if isnothing(gen)
+        throw(ErrorException("The variogram model $(family) does not exist"))
+    end
+
     w = n ./ sum(n)
 
     xn = [(sills[i], nuggets[i], ranges[i], alpha[i]) for i in Base.OneTo(_samples)]
+    L = [sqrt(sum(w .* (gen(xn[i]...).(x) .- y) .^ 2.0) / sum(w)) for i in Base.OneTo(length(xn))]
 
-    for _ in Base.OneTo(maxiter)
-        __nm!(xn, x, y, n, gen, [sill, nugget, range, parameter])
+    for iter in Base.OneTo(maxiter)
+        __nm!(xn, L, x, y, n, gen, [sill, nugget, range, parameter])
+        if Statistics.var(L) <= tol
+            break
+        end
     end
 
-    L = [sqrt(sum(w .* (gen(xn[i]...).(x) .- y) .^ 2.0)) for i in Base.OneTo(length(xn))]
     best = xn[last(findmin(L))]
     S, N, R, A = abs.(best)
     return (
@@ -347,22 +358,14 @@ function fitvariogram(L::SDMLayer; family::Symbol = :gaussian, kwargs...)
     return fitvariogram(vario...; family = family)
 end
 
-function shrink!(xn, xl; α = 1.0, β = 0.5, γ = 2.0, δ = 0.5)
-    for i in eachindex(xn)
-        xn[i] = xl .+ δ .* (xn[i] .- xl)
-    end
-    return xn
-end
-
 function __nm!(
-    xn, x, y, n, f, ranges;
+    xn, L, x, y, n, f, ranges;
     α = 1.0,
     β = 0.5,
     γ = 2.0,
     δ = 0.5,
     kwargs...,
 )
-
     function paramclamp(N)
         return Tuple(
             clamp(N[i], ranges[i]...) for i in eachindex(N)
@@ -370,10 +373,7 @@ function __nm!(
     end
 
     # Weights
-    w = n ./ maximum(n)
-
-    # What is their loss?
-    L = [sqrt(sum(w .* (f(xn[i]...).(x) .- y) .^ 2.0)) for i in Base.OneTo(length(xn))]
+    w = n ./ sum(n)
 
     # Proposals
     best = partialsortperm(L, 1)
@@ -388,8 +388,9 @@ function __nm!(
 
     # Reflection
     xr = paramclamp(centroid .+ α .* (centroid .- xh))
-    fr = sqrt(sum(w .* (f(xr...).(x) .- y) .^ 2.0))
+    fr = sqrt(sum(w .* (f(xr...).(x) .- y) .^ 2.0) / sum(w))
     if fl <= fr < fs
+        L[worst] = fr
         xn[worst] = xr
         return xn
     end
@@ -397,11 +398,13 @@ function __nm!(
     # Expansion
     if fr < fl
         xe = paramclamp(centroid .+ γ .* (xr .- centroid))
-        fe = sqrt(sum(w .* (f(xe...).(x) .- y) .^ 2.0))
+        fe = sqrt(sum(w .* (f(xe...).(x) .- y) .^ 2.0) / sum(w))
         if fe < fr
+            L[worst] = fe
             xn[worst] = xe
             return xn
         else
+            L[worst] = fr
             xn[worst] = xr
             return xn
         end
@@ -411,22 +414,32 @@ function __nm!(
     if fr >= fs
         if fs <= fr < fh
             xc = paramclamp(centroid .+ β .* (xr .- centroid))
-            fc = sqrt(sum(w .* (f(xc...).(x) .- y) .^ 2.0))
+            fc = sqrt(sum(w .* (f(xc...).(x) .- y) .^ 2.0) / sum(w))
             if fc <= fr
+                L[worst] = fc
                 xn[worst] = xc
                 return xn
             else
-                return shrink!(xn, xl)
+                for i in eachindex(xn)
+                    xn[i] = paramclamp(xl .+ δ .* (xn[i] .- xl))
+                    L[i] = sqrt(sum(w .* (f(xn[i]...).(x) .- y) .^ 2.0) / sum(w))
+                end
+                return xn
             end
         end
         if fr >= fh
             xc = paramclamp(centroid .+ β .* (xr .- centroid))
-            fc = sqrt(sum(w .* (f(xc...).(x) .- y) .^ 2.0))
+            fc = sqrt(sum(w .* (f(xc...).(x) .- y) .^ 2.0) / sum(w))
             if fc < fh
+                L[worst] = fc
                 xn[worst] = xc
                 return xn
             else
-                return shrink!(xn, xl)
+                for i in eachindex(xn)
+                    xn[i] = paramclamp(xl .+ δ .* (xn[i] .- xl))
+                    L[i] = sqrt(sum(w .* (f(xn[i]...).(x) .- y) .^ 2.0) / sum(w))
+                end
+                return xn
             end
         end
     end

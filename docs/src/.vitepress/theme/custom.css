@@ -19,15 +19,25 @@
     --vp-c-brand-soft: var(--vp-c-indigo-soft);
 }
 
-.vp-doc div[class*="language-"] {
+.vp-doc div[class~="language-"] {
     background-color: var(--vp-c-bg);
-    color: var(--vp-c-text-2)
+    color: var(--vp-c-text-2);
+}
+
+.vp-doc div[class~="language-"] code {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .vp-doc div[class*="language-julia"] {
     background-color: var(--vp-c-bg-soft);
     border-radius: 0px;
     border: 1px solid var(--vp-c-gutter)
+}
+
+.details .vp-doc div[class*="language-julia"] code {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 :root {

@@ -39,7 +39,6 @@ export default defineConfig({
             }
         },
         nav: [
-            { text: 'Index', link: '/index' },
             { text: "Manual", link: "/manual" },
             {
                 text: 'Datasets',

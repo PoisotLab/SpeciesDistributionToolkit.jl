@@ -178,7 +178,6 @@ export default defineConfig({
                             collapsed: true,
                             items: [
                                 { text: "Cross-validation", link: "/manual/sdm/crossvalidation/" },
-                                { text: "Spatial folds", link: "/manual/sdm/spatial-folds/" },
                                 { text: "Variable selection", link: "/manual/sdm/variableselection/" },
                                 { text: "Hyper-parameters", link: "/manual/sdm/hyperparameters/" },
                                 { text: "PR and ROC curves", link: "/manual/sdm/pr-roc/" },
@@ -193,6 +192,7 @@ export default defineConfig({
                             collapsed: true,
                             items: [
                                 { text: "Occurrences from layers", link: "/manual/distributions/occurrences-from-layer/"},
+                                { text: "Spatial cross-validation", link: "/manual/sdm/spatial-crossvalidation/" },
                                 { text: "Building a model", link: "/manual/distributions/training/" },
                                 { text: "Bagging", link: "/manual/distributions/bagging/" },
                                 { text: "Boosting", link: "/manual/distributions/adaboost/" },

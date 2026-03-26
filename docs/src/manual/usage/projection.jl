@@ -18,7 +18,7 @@ projection(layer)
 # ::: info Re-projecting other objects 
 # 
 # Objects that are not layers can be projected for data visualization with
-# `reproject` -- there is a [manual entry](/howto/dataviz/projections) for this
+# `reproject` -- there is a [manual entry](/manual/dataviz/projections) for this
 # use-case.
 #
 # :::

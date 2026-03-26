@@ -11,7 +11,7 @@
 #
 # :::
 
-# through the [tessellation functions](/howto/polygons/tessellation/)
+# through the [tessellation functions](/manual/polygons/tessellation/)
 
 using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit

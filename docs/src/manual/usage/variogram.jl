@@ -2,7 +2,7 @@
 
 # The package has _limited_ functionalities to generate and fit empirical
 # variograms. These are intended as companion functions to the
-# [tessellation](/howto/polygons/tessellation) feature, in order to approximate
+# [tessellation](/manual/polygons/tessellation) feature, in order to approximate
 # a relevant size for the tiling.
 
 # ::: danger Unstable part of the API

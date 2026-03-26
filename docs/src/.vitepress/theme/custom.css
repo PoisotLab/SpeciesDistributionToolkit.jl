@@ -49,6 +49,10 @@
     border-radius: 0px;
 }
 
+.vp-doc h2 {
+    margin: 98px 0 16px;
+}
+
 .vp-doc div[class~="language-"] {
     background-color: var(--vp-c-bg);
     color: var(--vp-c-text-1);

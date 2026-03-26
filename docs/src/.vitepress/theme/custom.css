@@ -18,6 +18,35 @@
     --vp-c-brand-3: var(--pl-green-dark);
     --vp-c-brand-soft: var(--vp-c-indigo-soft);
     --vp-code-font-size: .8em;
+
+    --vp-custom-block-info-border: var(--vp-c-important-2);
+    --vp-custom-block-info-text: var(--vp-c-text-1);
+    --vp-custom-block-info-bg: transparent;
+    --vp-custom-block-info-code-bg: transparent;
+
+    --vp-custom-block-tip-border: var(--vp-c-tip-2);
+    --vp-custom-block-tip-text: var(--vp-c-text-1);
+    --vp-custom-block-tip-bg: transparent;
+    --vp-custom-block-tip-code-bg: transparent;
+
+    --vp-custom-block-warning-border: var(--vp-c-warning-2);
+    --vp-custom-block-warning-text: var(--vp-c-text-1);
+    --vp-custom-block-warning-bg: transparent;
+    --vp-custom-block-warning-code-bg: transparent;
+
+    --vp-custom-block-danger-border: var(--vp-c-danger-2);
+    --vp-custom-block-danger-text: var(--vp-c-text-1);
+    --vp-custom-block-danger-bg: transparent;
+    --vp-custom-block-danger-code-bg: transparent;
+
+    --vp-custom-block-details-border: var(--vp-c-gutter);
+    --vp-custom-block-details-text: var(--vp-c-text-2);
+    --vp-custom-block-details-bg: var(--vp-c-bg);
+    --vp-custom-block-details-code-bg: transparent;
+}
+
+.custom-block {
+    border-radius: 0px;
 }
 
 .vp-doc div[class~="language-"] {
@@ -28,12 +57,6 @@
 .vp-doc div[class*="language-julia"] {
     background-color: var(--vp-c-bg-soft);
     border-radius: 0px;
-    border: 1px solid var(--vp-c-gutter)
-}
-
-.details .vp-doc div[class*="language-julia"] code {
-    padding-left: 0;
-    padding-right: 0;
 }
 
 :root {

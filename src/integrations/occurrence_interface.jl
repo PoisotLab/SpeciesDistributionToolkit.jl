@@ -96,9 +96,13 @@ function OccurrencesInterface.Occurrences(
     
     A₊ = nodata(L₊, false)
 
-    # Correct nodata for the second layer?
-    _nd = only(unique(L₋)) == false ? true : false
-    A₋ = nodata(L₋, _nd)
+    if lenght(unique(L₋)) == 2
+        A₋ = nodata(L₋, false)
+    else
+        # Correct nodata for the second layer?
+        _nd = only(unique(L₋)) == false ? true : false
+        A₋ = nodata(L₋, _nd)
+    end
 
     A₊.grid[findall(A₋.indices)] .= false
     A₊.indices[findall(A₋.indices)] .= true

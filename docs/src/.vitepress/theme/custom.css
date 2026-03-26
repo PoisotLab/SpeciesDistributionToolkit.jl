@@ -4,6 +4,7 @@
     --pl-green-light: rgba(29, 130, 101, 1);
     --pl-blue: rgba(46, 83, 133, 1);
     --pl-soft-light: rgba(29, 130, 101, 0.24);
+    --vp-c-bg-soft: #f8f8fa;
 }
 
 .dark {
@@ -56,11 +57,34 @@
 .vp-doc div[class~="language-"] {
     background-color: var(--vp-c-bg);
     color: var(--vp-c-text-1);
+    border-left: 1px solid var(--vp-c-gray-3);
+    border-radius: 0px;
 }
 
 .vp-doc div[class*="language-julia"] {
     background-color: var(--vp-c-bg-soft);
+    border-left: 1px solid var(--vp-c-gray-2);
     border-radius: 0px;
+}
+
+.info .custom-block-title::before {
+    content: "Information: ";
+    color: var(--vp-custom-block-info-border);
+}
+
+.tip .custom-block-title::before {
+    content: "Tip: ";
+    color: var(--vp-custom-block-tip-border);
+}
+
+.warning .custom-block-title::before {
+    content: "Warning: ";
+    color: var(--vp-custom-block-warning-border);
+}
+
+.danger .custom-block-title::before {
+    content: "Danger: ";
+    color: var(--vp-custom-block-danger-border);
 }
 
 :root {

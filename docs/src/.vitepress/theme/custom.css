@@ -72,6 +72,27 @@
     border-radius: 0px;
 }
 
+details.details.custom-block div.language-julia.vp-adaptive-theme {
+    background-color: transparent;
+    padding-left: 0px;
+    padding-right: 0px;
+    border-left: 0px;
+}
+
+details.details.custom-block div.language-.vp-adaptive-theme {
+    background-color: transparent;
+    padding-left: 0px;
+    padding-right: 0px;
+    border-left: 0px;
+}
+
+details.details.custom-block div.language-toml.vp-adaptive-theme {
+    background-color: transparent;
+    padding-left: 0px;
+    padding-right: 0px;
+    border-left: 0px;
+}
+
 .info .custom-block-title::before {
     content: "Information: ";
     color: var(--vp-custom-block-info-border);

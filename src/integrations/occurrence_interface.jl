@@ -96,7 +96,7 @@ function OccurrencesInterface.Occurrences(
     
     A₊ = nodata(L₊, false)
 
-    if lenght(unique(L₋)) == 2
+    if length(unique(L₋)) == 2
         A₋ = nodata(L₋, false)
     else
         # Correct nodata for the second layer?

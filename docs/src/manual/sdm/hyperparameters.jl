@@ -29,7 +29,6 @@ hyperparameters(classifier(sdm))
 
 hyperparameters!(classifier(sdm), :interactions, :self)
 train!(sdm)
-SDeMo.__equation(sdm) #hide
 
 # We can similarly tweak the learning rate η (lower is slower but more stable),
 # the regularization parameter λ, and the number of epochs used for training.
@@ -41,7 +40,6 @@ hyperparameters!(classifier(sdm), :η, 1e-4)
 hyperparameters!(classifier(sdm), :λ, 0.2)
 hyperparameters!(classifier(sdm), :epochs, 10_000)
 train!(sdm)
-SDeMo.__equation(sdm) #hide
 
 # Note that logistic regression has a `:verbose` hyper-parameter to turn output
 # on training epochs on and off.

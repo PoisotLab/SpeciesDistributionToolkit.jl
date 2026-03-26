@@ -9,8 +9,7 @@ using PrettyTables
 
 # We will work on the demo data:
 
-X, y, C = SDeMo.__demodata()
-sdm = SDM(PCATransform, DecisionTree, X, y)
+sdm = SDM(PCATransform, DecisionTree, SDeMo.__demodata()...)
 
 # We can now set a series of points at which to evaluate the threshold. Because
 # we are calling the cross-validation function, this will not retrain our model,

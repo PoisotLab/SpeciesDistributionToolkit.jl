@@ -10,7 +10,7 @@ import Statistics
 # average temperature in january for the country of Uruguay, and identifying
 # places that are coldspots, _i.e._ colder than their surroundings.
 
-# ::: warning Sliding windows can take time
+# ::: tip Sliding windows can take time
 #
 # This analysis requires to identify the pixels around a point that are a set
 # distance from the centerpoint. Internally, the function does some half-smart

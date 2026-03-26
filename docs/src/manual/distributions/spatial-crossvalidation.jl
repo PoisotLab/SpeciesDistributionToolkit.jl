@@ -1,47 +1,51 @@
 # # Spatial cross-validation
 
-# It is possible to generate tessellations (homogenous tilings of a surface)
-# from several type of objects.
+# The purpose of this vignette is to show how, with tiles that are generated
+# through the [tessellation functions](/manual/polygons/tessellation/), we can
+# split a dataset into multiple spatial groups, and use this to cross-validate
+# the model.
 
 # ::: danger Unstable part of the API
 #
 # The functions on this page should be considered a work in progress, and their
 # behavior is likely to change in ways that will be documented here. These
-# should be treated primarily as convenience functions.
+# should be treated as highly experimental.
 #
 # :::
-
-# through the [tessellation functions](/manual/polygons/tessellation/)
 
 using SpeciesDistributionToolkit
 const SDT = SpeciesDistributionToolkit
 using PrettyTables
 using CairoMakie
 
-# We will start by getting the different type of data that can be used to
-# generate a tessellation, starting with polygons:
+# ## Assembling a dataset
+
+# We will work on the state of California:
 
 pol = getpolygon(PolygonData(OpenStreetMap, Places); place = "California")
 bb = SDT.boundingbox(pol)
 
-# Get an orthoprojection
+# To ensure the correct representation of distances, we will generate an orthoprojection:
 
 proj = "+proj=ortho +lon_0=$((bb.right + bb.left)/2) +lat_0=$((bb.top + bb.bottom)/2)"
 
-# We will also grab some occurrences:
+# And we will finally get the list of Sasquatch sightings from the
+# `OccurrencesInterface` package:
 
 records = Occurrences(mask(OccurrencesInterface.__demodata(), pol))
 
-# And we will also get a layer:
+# We will also grab some landcover variables over this area to train the model on:
 
 L = SDMLayer{Float32}[
-    SDMLayer(RasterData(CHELSA2, BioClim); bb..., layer = i) for i in [1, 12]
+    SDMLayer(RasterData(EarthEnv, LandCover); bb..., layer = i) for i in 1:12
 ]
 mask!(L, pol)
 
 # ## Creating the tiles
 
-# get tiles
+# At this point, we can follow the steps from the vignette on
+# [tessellation](/manual/polygons/tessellation/), and generate an hexagonal
+# tiling under the projection we specified, with an equivalent radius of 30km.
 
 T = tessellate(pol, 30.0; tile = :hexagons, pointy = true, proj = proj, densify = 5)
 
@@ -50,14 +54,22 @@ f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 lines!(ax, pol)
 lines!(ax, T; color = :orange)
+hidespines!(ax)
+hidedecorations!(ax)
 current_figure() #hide
 
-# ## assign by latitude
+# We need to decide on a number of folds, _i.e._ how many splits of the data we
+# want to get:
 
-n = 4
+n = 5
+
+# To facilitate the visualisation, we will generate a color palette:
+
 folds_colors = cgrad(Makie.wong_colors()[1:n], n; categorical = true);
 
-# this is the code
+# ## Assigning the tiles to folds
+
+# We can start by splitting the landscape in horizontal bands:
 
 SDT.assignfolds!(
     T;
@@ -85,9 +97,15 @@ for i in 1:n
         colormap = folds_colors,
     )
 end
+hidespines!(ax)
+hidedecorations!(ax)
 current_figure() #hide
 
-# this is the code
+# Wherever possible, every split has the same number of cells, and so assuming
+# that the tiling was generated using an equal-area projection, they will cover
+# an equivalent surface.
+
+# We can also split the landscape vertically:
 
 SDT.assignfolds!(
     T;
@@ -115,12 +133,15 @@ for i in 1:n
         colormap = folds_colors,
     )
 end
+hidespines!(ax)
+hidedecorations!(ax)
 current_figure() #hide
 
 # ## Grouped and alternating splits
 
-# By defaults splits are assigned in a way that alternates sequentially, in
-# order to distribute the splits more evenly across space
+# By defaults splits are contiguous in space. This behavior can be changed, by
+# making them sequential (_i.e._ cycling over 1 to `n`), in order to more evenly
+# distribute them in space:
 
 SDT.assignfolds!(
     T;
@@ -149,16 +170,19 @@ for i in 1:n
         colormap = folds_colors,
     )
 end
+hidespines!(ax)
+hidedecorations!(ax)
 current_figure() #hide
 
-# ## Generating a model
+# ## Using spatial splits for cross-validation
+
+# We will generate a layer of pseudo-absences, then extract the two layers as a
+# series of occurrences, as per [a previous
+# vignette](/manual/generation/occurrences-from-layer/).
 
 L₊ = mask(L[1], records)
 P₋ = pseudoabsencemask(BetweenRadius, L₊; closer = 40.0, further = 120.0)
 L₋ = backgroundpoints(P₋, 2sum(L₊))
-
-# Now we get this as a series of occurrences
-
 O = Occurrences(L₊, L₋)
 
 # We will only keep the part of the tiling that covers at least one point
@@ -208,6 +232,15 @@ folds = spatialfolder(model)
 cv = crossvalidate(model, folds)
 
 #
+
+# ::: tip Cross-validation
+#
+# There is an entire vignette on
+# [cross-validation](/manual/sdm/crossvalidation/), which covers the important
+# ways to interact with the cross-validation outputs, as well as non-spatial
+# methods to split data.
+#
+# :::
 
 measures = [mcc, SDeMo.specificity, SDeMo.sensitivity, balancedaccuracy]
 cvresult = [measure(set) for measure in measures, set in cv]

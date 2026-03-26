@@ -4,8 +4,8 @@
 # `SDeMo` models, using partial responses and Shapley values.
 
 using SpeciesDistributionToolkit
-using CairoMakie
 using PrettyTables
+using CairoMakie
 
 # We will work on the demo data:
 

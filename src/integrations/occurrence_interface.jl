@@ -95,7 +95,10 @@ function OccurrencesInterface.Occurrences(
     @assert SimpleSDMLayers._layers_are_compatible([L₊, L₋])
     
     A₊ = nodata(L₊, false)
-    A₋ = !nodata(L₋, false)
+
+    # Correct nodata for the second layer?
+    _nd = only(unique(L₋)) == false ? true : false
+    A₋ = nodata(L₋, _nd)
 
     A₊.grid[findall(A₋.indices)] .= false
     A₊.indices[findall(A₋.indices)] .= true

@@ -147,6 +147,7 @@ export default defineConfig({
                                 { text: "Pseudo-absences", link: "/manual/generation/pseudoabsences/" },
                                 { text: "Fauxcurrences", link: "/manual/generation/fauxcurrences/" },
                                 { text: "Virtual species", link: "/manual/generation/virtual-species/" },
+                                { text: "Occurrences from layers", link: "/manual/generation/occurrences-from-layer/"},
                             ]
                         },
                         {
@@ -190,7 +191,6 @@ export default defineConfig({
                             text: "Use-cases (SDM)",
                             collapsed: true,
                             items: [
-                                { text: "Occurrences from layers", link: "/manual/distributions/occurrences-from-layer/"},
                                 { text: "Spatial cross-validation", link: "/manual/distributions/spatial-crossvalidation/" },
                                 { text: "Building a model", link: "/manual/distributions/training/" },
                                 { text: "Bagging", link: "/manual/distributions/bagging/" },

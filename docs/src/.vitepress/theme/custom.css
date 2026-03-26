@@ -62,6 +62,10 @@
     border-radius: 0px;
 }
 
+.vp-doc div[class*="language-julia"] ~ div[class~="language-"] {
+    margin-top: -16px;
+}
+
 .vp-doc div[class*="language-julia"] {
     background-color: var(--vp-c-bg-soft);
     border-left: 1px solid var(--vp-c-gray-2);

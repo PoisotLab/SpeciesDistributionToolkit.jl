@@ -99,7 +99,7 @@ hidespines!(ax)
 hidedecorations!(ax)
 current_figure() #hide
 
-# ::: details A note about vectors of occurrences
+# ::: info A note about vectors of occurrences
 # 
 # The reason why `mask` called on a GBIF result is not mutating the result is
 # that GBIF results also store the query that was used. For this reason, it

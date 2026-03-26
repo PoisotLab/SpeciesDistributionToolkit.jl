@@ -37,7 +37,7 @@ K = kmeans(L, 3)
 # package is converting the stack of layers into a matrix, which is what
 # `Clustering` handles.
 
-# ::: details But what if I want to work on a very large layer?
+# ::: tip But what if I want to work on a very large layer?
 # 
 # You can absolutely decide to extract the data from your layers, work with them
 # in `Clustering`, then write them back in. In our experience, the limitation of

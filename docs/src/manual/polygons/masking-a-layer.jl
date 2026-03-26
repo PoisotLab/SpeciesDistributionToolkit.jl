@@ -55,7 +55,7 @@ current_figure() #hide
 
 # ## Using `mask!`
 
-# ::: details A note about how this works
+# ::: info A note about how this works
 #
 # The `SDMLayer` type stores a `BitMatrix` (in the `indices` field) that tracks
 # which cells in the raster are visible. This costs a little more memory, but

@@ -6,7 +6,7 @@ using CairoMakie
 # In this tutorial, we will mask a layer using information from a polygon, then
 # use the same polygon to mask occurrence records.
 
-# ::: warning About coordinates
+# ::: warning Coordinates are in long./lat.
 # 
 # [GeoJSON](https://geojson.org/) coordinates are expressed in WGS84. For this
 # reason, *any* polygon is assumed to be in this CRS, and all operations will be

@@ -13,7 +13,7 @@ data_prov = RasterData(CHELSA1, BioClim)
 temperature = 0.1SDMLayer(data_prov; layer = "BIO1", spatial_extent...)
 precipitation = SDMLayer(data_prov; layer = "BIO8", spatial_extent...)
 
-# ::: info Additional arguments
+# ::: tip Additional arguments
 # 
 # All of these plots can be further customized by passing the usual arguments to
 # Makie plots.

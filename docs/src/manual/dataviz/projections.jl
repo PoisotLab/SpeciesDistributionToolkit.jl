@@ -3,8 +3,17 @@
 # This page shows how to work with projected data when preparing figures.
 
 using SpeciesDistributionToolkit
-const SDT = SpeciesDistributionToolkit
 using CairoMakie
+
+# ::: tip Use a shortcut!
+# 
+# A module can be refered to by any alias defined as a `const` without
+# performance cost. In many vignettes, we will use this to simplify the
+# notation.
+#
+# :::
+
+const SDT = SpeciesDistributionToolkit
 
 # We get the polygon for Alaska:
 

@@ -9,7 +9,7 @@ const SDT = SpeciesDistributionToolkit
 import Statistics
 using CairoMakie
 
-# ::: warning A note about legends
+# ::: info A note about legends
 #  
 # Makie does not currently make it easy (possible?) to define custom legends
 # from recipes. For this reason, the legends for bivariate and VSUP plots are

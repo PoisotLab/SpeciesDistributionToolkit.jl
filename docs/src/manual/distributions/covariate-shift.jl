@@ -76,21 +76,26 @@ M = fit(PCA, X)
 
 K = (L[variables(model)] .- μ)./σ
 
-# Our measure of covariate fshit will be as follow
+# Our measure of covariate shift will be as follow
 
-Y = reconstruct(M,  SpeciesDistributionToolkit._X_from_layers(predict(M, K)))
+Y = reconstruct(M,  SpeciesDistributionToolkit._X_from_layers(predict(M, K)));
 
 # matrix we should get
 
-N = SpeciesDistributionToolkit._X_from_layers(K)
+N = SpeciesDistributionToolkit._X_from_layers(K);
 
 # proportional error for each variable
 
-P = sqrt.((Y .- N).^2.0)
+P = sqrt.((Y .- N).^2.0);
+
+# total error (Frobenius norm)
+
+import LinearAlgebra
+LinearAlgebra.norm(P)
 
 # where is this error distributed
 
-E = dropdims(mean(P, dims=1), dims=1)
+E = dropdims(sum(P, dims=1), dims=1);
 
 #figure Mapping of covariate shift across the different pixels
 f = Figure()

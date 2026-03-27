@@ -1,4 +1,4 @@
-# # Measuring and mapping covariate shift
+# # Measuring covariate shift
 
 # In this vignette, we will measure the reconstruction error of a PCA, in order
 # to measure the amount of covariate shift between the training data and the
@@ -76,7 +76,7 @@ M = fit(PCA, X)
 
 K = (L[variables(model)] .- μ)./σ
 
-# Our measure of covariate shit will be as follow
+# Our measure of covariate fshit will be as follow
 
 Y = reconstruct(M,  SpeciesDistributionToolkit._X_from_layers(predict(M, K)))
 

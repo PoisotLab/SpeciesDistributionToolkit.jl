@@ -93,7 +93,7 @@ N = SpeciesDistributionToolkit._X_from_layers(K);
 # We will now get the total reconstruction error for this matrix. Note that we
 # are converting the vector of layers into a `Matrix` here:
 
-P = Matrix(Y .- N) # [! code highlight]
+P = Matrix(Y .- K) # [! code highlight]
 import LinearAlgebra
 LinearAlgebra.norm(P)
 
@@ -102,15 +102,20 @@ LinearAlgebra.norm(P)
 # We will now look at the distance between the actual value and the
 # reconstructed value, for each cell in the layer. 
 
-D = mosaic(x -> sqrt(sum(x)), (Y .- N) .^ 2.0)
+D = mosaic(x -> sqrt(sum(x.^2)), (Y .- K))
 
 # ::: tip When should layers become matrices?
 #
 # Never? A lot of operations that would work on matrices will also work on
 # layers. Our suggestion is to only rely on the conversion to matrices when
-# required to interact with other packages.
+# required to interact with other packages. When the layers are converted to a
+# matrix, the `reconcile` function will be applied if necessary.
 #
 # :::
+
+# This layer measures the per-pixel error in the reconstruction, based on a PCA
+# fitted on the training data. It can be used to map the areas where the extant
+# predictions are further away from the training data.
 
 #figure Mapping of covariate shift across the different pixels
 f = Figure()

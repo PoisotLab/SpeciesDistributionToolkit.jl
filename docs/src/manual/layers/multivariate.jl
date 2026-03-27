@@ -48,3 +48,20 @@ fig, ax, hm = heatmap(
     axis = (; aspect = DataAspect()),
 )
 current_figure() #hide
+
+# Note that the `reconstruct` operation, which works _from_ the projected data
+# and attemps to reconstruct the original data, is also supported:
+
+R = reconstruct(M, X)
+
+#figure Original and reconstructed first layer
+f = Figure()
+ao = Axis(f[1,1]; aspect=DataAspect(), title="Original")
+ar = Axis(f[1,2]; aspect=DataAspect(), title="Reconstructed")
+heatmap!(ao, L[1], colormap=Reverse(:navia), colorrange=extrema(L[1]))
+heatmap!(ar, R[1], colormap=Reverse(:navia), colorrange=extrema(L[1]))
+for a in [ar, ao]
+    hidespines!(a)
+    hidedecorations!(a)
+end
+current_figure() #hide

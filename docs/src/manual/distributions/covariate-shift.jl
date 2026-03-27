@@ -76,31 +76,46 @@ M = fit(PCA, X)
 
 K = (L[variables(model)] .- μ)./σ
 
-# Our measure of covariate shift will be as follow
+# To measure the covariate shift, we are going to take the layers, project them
+# using the PCA we trained on the model training data; we will then attempt to
+# reconstruct the original data from their projection:
 
-Y = reconstruct(M,  SpeciesDistributionToolkit._X_from_layers(predict(M, K)));
+Y = reconstruct(M,  predict(M, K));
 
-# matrix we should get
+# Note that this is returned as a series of layers.
+
+# In order to measure the difference between the original layers and their
+# reconstruction, we will take the Frobenius norm of the difference between the
+# two matrices.
 
 N = SpeciesDistributionToolkit._X_from_layers(K);
 
-# proportional error for each variable
+# We will now get the total reconstruction error for this matrix. Note that we
+# are converting the vector of layers into a `Matrix` here:
 
-P = sqrt.((Y .- N).^2.0);
-
-# total error (Frobenius norm)
-
+P = Matrix(Y .- N) # [! code highlight]
 import LinearAlgebra
 LinearAlgebra.norm(P)
 
-# where is this error distributed
+# ## Mapping the reconstruction error
 
-E = dropdims(sum(P, dims=1), dims=1);
+# We will now look at the distance between the actual value and the
+# reconstructed value, for each cell in the layer. 
+
+D = mosaic(x -> sqrt(sum(x)), (Y .- N) .^ 2.0)
+
+# ::: tip When should layers become matrices?
+#
+# Never? A lot of operations that would work on matrices will also work on
+# layers. Our suggestion is to only rely on the conversion to matrices when
+# required to interact with other packages.
+#
+# :::
 
 #figure Mapping of covariate shift across the different pixels
 f = Figure()
 ax = Axis(f[1,1]; aspect=DataAspect())
-hm = heatmap!(ax, SimpleSDMLayers.burnin(L[1], E), colormap=Reverse(:navia))
+hm = heatmap!(ax, D, colormap=Reverse(:navia))
 Colorbar(f[1,2], hm)
 current_figure() #hide
 

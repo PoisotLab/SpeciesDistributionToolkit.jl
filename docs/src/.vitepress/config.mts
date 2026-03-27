@@ -196,6 +196,7 @@ export default defineConfig({
                                 { text: "Bagging", link: "/manual/distributions/bagging/" },
                                 { text: "Boosting", link: "/manual/distributions/adaboost/" },
                                 { text: "Conformal prediction", link: "/manual/distributions/conformal/" },
+                                { text: "Covariate shift", link: "/manual/distributions/covariate-shift/" },
                             ]
                         },
                         {

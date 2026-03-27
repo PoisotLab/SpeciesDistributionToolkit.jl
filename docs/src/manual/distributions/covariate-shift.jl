@@ -28,7 +28,7 @@ using MultivariateStats # [!code highlight]
 # joint distribution of variables shifts from the training data to the
 # prediction data. In order to do this, we first need a model:
 
-model = SDM(ZScore, Logistic, SDeMo.__demodata()...)
+model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
 variables!(model, ForwardSelection)
 
 # We then collect the data from the CHELSA2 BioClim on which this model was

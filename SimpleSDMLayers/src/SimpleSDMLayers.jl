@@ -87,6 +87,10 @@ export burnin, burnin!
 include("utilities/cellarea.jl")
 export cellarea
 
+# Reconcile
+include("utilities/reconcile.jl")
+export reconcile!, reconcile
+
 # Reclassify
 include("operations/reclassify.jl")
 export reclassify

@@ -68,7 +68,7 @@ include("tessellation/spatialfold.jl")
 
 # Extra functions
 include("utilities.jl")
-export gainloss, discretize
+export gainloss, discretize, reconcile!, reconcile
 
 # Variograms
 include("variogram.jl")

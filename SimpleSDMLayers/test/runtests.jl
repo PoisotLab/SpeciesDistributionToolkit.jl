@@ -56,9 +56,11 @@ end
     L = [SDMLayer(DiamondSquare(), (30, 50)) for _ in 1:8]
     P = fit(PCA, L; maxoutdim=3)
     M = predict(P, L)
-    R = reconstruct(P, M)
     @test M isa Vector{<:SDMLayer}
-    @test length(M) <= length(L)
+    @test length(M) <= 3
+    R = reconstruct(P, M)
+    @test R isa Vector{<:SDMLayer}
+    @test length(R) <= length(L)
 end
 
 

@@ -88,3 +88,14 @@ threshold!(sdm, folds; optimality = mcc)
 # It works by finding the value of the threshold that optimizes the average
 # performance across folds, and can be used with any measure of performance you
 # want to optimize.
+
+
+# ## Related documentation
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# SDeMo.crossvalidate
+# ```

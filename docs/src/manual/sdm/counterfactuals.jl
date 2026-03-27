@@ -59,3 +59,14 @@ pretty_table(
 # We can check the prediction that would be made on all the counterfactuals:
 
 predict(sdm, cf)
+
+
+# ## Related documentation
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# SDeMo.counterfactual
+# ```

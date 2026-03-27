@@ -75,3 +75,13 @@ f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Effect on the average prediction")
 scatter!(ax, features(sdm, 1), explain(sdm, 1; threshold = false))
 current_figure() #hide
+
+# ## Related documentation
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# SDeMo.explain
+# ```

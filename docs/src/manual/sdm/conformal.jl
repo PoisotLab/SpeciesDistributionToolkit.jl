@@ -64,4 +64,6 @@ count(isequal(Set([true, false])), sets_2) / length(pred)
 
 # ```@docs; canonical=false
 # SDeMo.Conformal
+# SDeMo.risklevel
+# SDeMo.risklevel!
 # ```

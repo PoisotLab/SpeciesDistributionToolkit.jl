@@ -51,3 +51,14 @@ ax = Axis(f[1, 1]; xlabel = "True class", ylabel = "Prediction")
 boxplot!(ax, labels(sdm), predict(sdm; threshold = false))
 hlines!(ax, [threshold(sdm)]; color = :red)
 current_figure() #hide
+
+
+# ## Related documentation
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# SDeMo.crossvalidate
+# ```

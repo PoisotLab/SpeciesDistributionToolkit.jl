@@ -54,7 +54,7 @@ P = sqrt.((Y .- N).^2.0)
 
 E = dropdims(mean(P, dims=1), dims=1)
 
-#figure
+#figure Mapping of covariate shift across the different pixels
 f = Figure()
 ax = Axis(f[1,1]; aspect=DataAspect())
 hm = heatmap!(ax, SimpleSDMLayers.burnin(L[1], E), colormap=Reverse(:navia))

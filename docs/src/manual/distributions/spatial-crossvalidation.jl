@@ -52,14 +52,14 @@ T = tessellate(pol, 30.0; tile = :hexagons, pointy = true, proj = proj, densify 
 #figure Hexagonal tiling over the polygon
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
-lines!(ax, pol)
-lines!(ax, T; color = :orange)
+lines!(ax, pol, color=:grey30)
+lines!(ax, T; color = :teal)
 hidespines!(ax)
 hidedecorations!(ax)
 current_figure() #hide
 
 # We need to decide on a number of folds, _i.e._ how many splits of the data we
-# want to get:
+# want to get. We will use five here.
 
 n = 5
 
@@ -140,8 +140,8 @@ current_figure() #hide
 # ## Grouped and alternating splits
 
 # By defaults splits are contiguous in space. This behavior can be changed, by
-# making them sequential (_i.e._ cycling over 1 to `n`), in order to more evenly
-# distribute them in space:
+# making them sequential (_i.e._ cycling over 1 to `n`, and then re-starting),
+# in order to more evenly distribute the points in space:
 
 SDT.assignfolds!(
     T;
@@ -181,14 +181,23 @@ current_figure() #hide
 # vignette](/manual/generation/occurrences-from-layer/).
 
 L₊ = mask(L[1], records)
-P₋ = pseudoabsencemask(BetweenRadius, L₊; closer = 40.0, further = 120.0)
+P₋ = pseudoabsencemask(BetweenRadius, L₊; closer = 50.0, further = 140.0)
 L₋ = backgroundpoints(P₋, 2sum(L₊))
 O = Occurrences(L₊, L₋)
 
-# We will only keep the part of the tiling that covers at least one point
+# We will only keep the part of the tiling that covers at least one presence or
+# absence point:
 
 SDT.assignfolds!(T; n = n, order = :horizontal)
 S = SDT.keeprelevant(T, O)
+
+# ::: info Generation of tiles
+#
+# It is also possible to generate the tiles directly from the model. We are
+# using the `keeprelevant` approach here in order to highlight the position of
+# species data within the entire region.
+#
+# :::
 
 #figure Tile filtered by occurrences
 f = Figure()
@@ -213,27 +222,34 @@ for i in 1:n
 end
 scatter!(ax, presences(O); color = :black)
 scatter!(ax, absences(O); color = :grey40, marker = :cross, markersize = 8)
+hidedecorations!(ax)
+hidespines!(ax)
 current_figure() #hide
 
-# This can be assigned to folds by creating a function first
-
-spatialfolder = SDT.spatialfold(S)
-
-# we need a model at this point
+# Before moving on, we will assemble the actual model we will use here:
 
 model = SDM(RawData, NaiveBayes, L, O)
 
-# now we can cross-validate
+# We generate
 
-folds = spatialfolder(model)
+folds = spatialfold(model, S); 
 
-# cross-validation
+# ::: tip Spatial fold function
+#
+# The `spatialfold` function can also be called with a single argument (a
+# `FeatureCollection` of tiles), in which case it will return a closure that can
+# be called directly on a model like any other function to generate dataset
+# splits.
+#
+# :::
+
+# Because the `spatialfold` function returns a correct division of samples
+# between training and validation, we can use it as the second argument to
+# `crossvalidate`:
 
 cv = crossvalidate(model, folds)
 
-#
-
-# ::: tip Cross-validation
+# ::: info Cross-validation
 #
 # There is an entire vignette on
 # [cross-validation](/manual/sdm/crossvalidation/), which covers the important
@@ -253,10 +269,24 @@ pretty_table(
     formatters = [fmt__printf("%5.3f", [2, 3, 4, 5])],
 )
 
+# This is not a very good model. There are a few reasons for this. First, we
+# have not done any variable selection. Second, the splits are likely to have
+# very different class balance, which can bias the model performance.
+
+pr_by_fold = [sum(uniqueproperties(S["__fold" => i])["__presences"]) for i in 1:n]
+ab_by_fold = [sum(uniqueproperties(S["__fold" => i])["__absences"]) for i in 1:n]
+extrema(pr_by_fold ./ (pr_by_fold .+ ab_by_fold))
+
+# The splits we have used cover a large range of balances, which means that the
+# model will be both trained and evaluated on very different balances when
+# compared to the actual dataset.
+
+
 # ## Creating folds with balance
 
-T = tessellate(pol, 50.0; tile = :hexagons, pointy = true, proj = proj, densify = 5)
-S = SDT.keeprelevant(T, O)
+# We can instead assign the observations to spatially stratified folds that are
+# optimized to have the same (approx.) class balance as the entire dataset.
+
 SDT.assignfolds!(
     S;
     n = n,
@@ -264,7 +294,22 @@ SDT.assignfolds!(
     balanced = true, # [! code highlight]
 )
 
-# fold for balanced
+# The class balancing approach works by starting from an initial position (here,
+# horizontally stratified bands), and then switching tiles between folds until
+# the distance between the balance of each fold and the balance of the dataset
+# is minimized. Internally this is done using a greedy but fast algorithm.
+
+# ::: warning The spatial structure is lost
+#
+# The currently implemented version of the class balance algorithm will not
+# attempt to maintain the spatial structure of the blocks, nor will it ensure
+# that the folds end up with similar numbers of instances. The number of tiles
+# that constitutes each fold will be maintained.
+#
+# :::
+
+# After performing the optimisation of splits for class balance, we obtained a
+# new division of the landscape:
 
 #figure Tiles filtered by occurrences
 f = Figure()
@@ -289,20 +334,21 @@ for i in 1:n
 end
 scatter!(ax, presences(O); color = :black)
 scatter!(ax, absences(O); color = :grey40, marker = :cross, markersize = 8)
+hidedecorations!(ax)
+hidespines!(ax)
 current_figure() #hide
 
-# ::: info Class-balance optimisation
-# 
-# algo info go here, will shuffle but all folds will keep same number of tiles
-#
-# :::
-
-# new folding
+# Based on this new split, we can select the variables:
 
 folds = SDT.spatialfold(model, S)
-cv = crossvalidate(model, folds)
+variables!(model, ForwardSelection, folds)
+layers(RasterData(EarthEnv, LandCover))[variables(model)]
 
-#
+# As before, this model can be cross-validated:
+
+cv = crossvalidate(model, folds);
+
+# We can measure the expected performance:
 
 measures = [mcc, SDeMo.specificity, SDeMo.sensitivity, balancedaccuracy]
 cvresult = [measure(set) for measure in measures, set in cv]

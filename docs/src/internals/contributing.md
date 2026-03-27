@@ -59,6 +59,11 @@ folder, as well as be listed in the sidebar in `config.mts`. The files in these
 sections are all `.jl` files, which will be converted to markdown using the
 Literate package.
 
+New features **must** come with either a new vignette or a modification to an
+existing one. New vignettes **must** be listed in the
+`docs/src/.vitepress/config.mts` file; specifically, they must be in the
+`"sidebar"` array, grouped together with the other vignettes in the section.
+
 It is fine to use `using Revise` in the documentation scripts, this line will be
 removed at build time.
 
@@ -179,15 +184,18 @@ given *after* the links to issues.
 
 ### Pull requests and merging
 
-The commits in a pull request *may* be squashed before merging, and the list of
-commit messages will be kept in the body of the closing commit. The merge commit
-*must* follow the commit convention. The branches are automatically deleted when
-a pull request is merged. The commits that result from
-pulling/rebasing/conflicts operations *do not need* to follow the commit naming
-convention.
+The commits in a pull request **must** be squashed before merging, and the list
+of commit messages will be kept in the body of the closing commit. The merge
+commit **may not** follow the commit convention, and it is acceptable to use the
+title of the pull request in its place. The branches are automatically deleted
+when a pull request is merged.
+
+The commits that result from pulling/rebasing/conflicts operations **may not**
+to follow the commit naming convention, especially when done in branches that
+are not `main`.
 
 Changes in a single pull request should never affect more than a single package.
-Semantic versioning allows rapid releases, and the changes must always be
+Semantic versioning allows rapid releases, and the changes **must** always be
 limited to a single package.
 
 ## Releases

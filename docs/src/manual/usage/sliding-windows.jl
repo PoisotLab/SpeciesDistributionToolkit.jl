@@ -10,7 +10,7 @@ import Statistics
 # average temperature in january for the country of Uruguay, and identifying
 # places that are coldspots, _i.e._ colder than their surroundings.
 
-# ::: warning Sliding windows can take time
+# ::: tip Sliding windows can take time
 #
 # This analysis requires to identify the pixels around a point that are a set
 # distance from the centerpoint. Internally, the function does some half-smart
@@ -48,7 +48,7 @@ avg_12km = slidingwindow(Statistics.mean, temperature; radius = 12.0)
 #figure avg-12k
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
-hm = heatmap!(ax, temperature; colormap = :magma, colorrange = extrema(temperature))
+hm = heatmap!(ax, avg_12km; colormap = :magma, colorrange = extrema(temperature))
 lines!(ax, region; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)

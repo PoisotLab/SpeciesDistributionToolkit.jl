@@ -48,12 +48,13 @@ train!(cp, sdm; mondrian = false)
 # 
 # :::
 
-# We can now identify which of the model predictions are uncertain:
+# We can now identify which proportion of the model predictions are uncertain:
 
 sets_2 = predict(cp, pred)
 count(isequal(Set([true, false])), sets_2) / length(pred)
 
-# 
+# There is a use-case on [conformal prediction in
+# space](/manual/distributions/conformal/) later on in this manual.
 
 # ## Related documentation
 

@@ -7,10 +7,10 @@
 # when the `MultivariateStats` package is loaded.
 
 using SpeciesDistributionToolkit
-using CairoMakie
 using Statistics
 import StatsBase
 using MultivariateStats # [!code highlight]
+using CairoMakie
 
 # The support is currently limited to PCA
 

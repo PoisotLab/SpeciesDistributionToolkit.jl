@@ -48,7 +48,7 @@ avg_12km = slidingwindow(Statistics.mean, temperature; radius = 12.0)
 #figure avg-12k
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
-hm = heatmap!(ax, temperature; colormap = :magma, colorrange = extrema(temperature))
+hm = heatmap!(ax, avg_12km; colormap = :magma, colorrange = extrema(temperature))
 lines!(ax, region; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)

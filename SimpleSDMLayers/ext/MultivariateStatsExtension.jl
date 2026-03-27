@@ -15,7 +15,7 @@ end
 
 function MultivariateStats.reconstruct(M::MultivariateStats.PCA, X::Vector{<:SimpleSDMLayers.SDMLayer}; kwargs...)
     Y = MultivariateStats.reconstruct(M, Matrix(X); kwargs...)
-    L = [burnin(X[i], Y[i,:]) for i in axes(Y, 1)]
+    L = [burnin(X[1], Y[i,:]) for i in axes(Y, 1)]
     return L
 end
 

@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.4.1`
 
+- **added** an overload for `reconstruct` to the `MultivariateStats` extension [#574]
 - **added** overloads for `clamp` and `clamp!`
 - **added** an overload for the `÷` operator
+- **added** an overload for `Matrix` on a vector of layers
 - **added** `reconcile` and `reconcile!` [#528]
 
 ## `v1.4.0`

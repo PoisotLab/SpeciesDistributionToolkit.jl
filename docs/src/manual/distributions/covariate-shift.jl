@@ -93,7 +93,7 @@ N = SpeciesDistributionToolkit._X_from_layers(K);
 # We will now get the total reconstruction error for this matrix. Note that we
 # are converting the vector of layers into a `Matrix` here:
 
-P = Matrix(Y .- K) # [! code highlight]
+P = Matrix(Y .- K) # [!code highlight]
 import LinearAlgebra
 LinearAlgebra.norm(P)
 

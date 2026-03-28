@@ -291,7 +291,7 @@ SDT.assignfolds!(
     S;
     n = n,
     order = :horizontal, # [!code highlight]
-    balanced = true, # [! code highlight]
+    balanced = true, # [!code highlight]
 )
 
 # The class balancing approach works by starting from an initial position (here,

@@ -63,6 +63,11 @@ current_figure() #hide
 
 W = wombling(landcover);
 
+# In this case, because we are interested in all the trees, we will work
+# directly on the summed layers:
+
+W = wombling(trees);
+
 # We start by looking at the rate of change - this is useful to pinpoint which
 # area are likely to be identified as zones of transition. The rate of change is
 # in units of the measurement, which in this case is percentages. Larger values

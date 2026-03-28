@@ -43,10 +43,12 @@ X = predict(M, L)
 #figure pca
 fig, ax, hm = heatmap(
     X[1];
-    colormap = :Spectral,
+    colormap = Reverse(:navia),
     figure = (; size = (800, 400)),
     axis = (; aspect = DataAspect()),
 )
+hidespines!(ax)
+hidedecorations!(ax)
 current_figure() #hide
 
 # Note that the `reconstruct` operation, which works _from_ the projected data

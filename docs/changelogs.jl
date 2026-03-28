@@ -1,4 +1,4 @@
-chg_path = joinpath(dirname(dirname(@__FILE__)), "docs", "src", "reference", "changelog")
+chg_path = joinpath(dirname(dirname(@__FILE__)), "docs", "src", "internals", "changelog")
 
 if !ispath(chg_path)
     mkpath(chg_path)
@@ -25,7 +25,9 @@ cp(
     joinpath(chg_path, "SpeciesDistributionToolkit.md");
     force = true,
 )
+_issue_number_updater!(joinpath(chg_path, "SpeciesDistributionToolkit.md"))
 
+# All other packages
 for pkg in [
     "GBIF",
     "SDeMo",

@@ -1,10 +1,8 @@
 Manifest.toml
-docs/src/tutorials/*.md
-docs/src/howto/*.md
-!docs/src/tutorials/index.md
-!docs/src/howto/index.md
-docs/src/tutorials/*.png
-docs/src/howto/*.png
+docs/src/manual/*.md
+!docs/src/manual/index.md
+docs/src/references.bib
+docs/src/manual/*.png
 docs/src/SimpleSDMDatasets/catalogue/*.md
 docs/src/reference/changelog/*.md
 docs/build

@@ -16,7 +16,8 @@ function SDeMo.SDM(
     ks = [keys(pr)..., keys(ab)...]
     X = Float32.([predictors[i][k] for i in eachindex(predictors), k in ks])
     y = [ones(Bool, sum(pr))..., zeros(Bool, sum(ab))...]
-    return SDM(TF, CF, X, y)
+    coords = vcat(coordinates(pr), coordinates(ab))
+    return SDM(TF, CF, X, y, coords)
 end
 
 """
@@ -27,16 +28,16 @@ Same as above but with a collection
 function SDeMo.SDM(
     ::Type{TF}, ::Type{CF},
     predictors::Vector{SDMLayer{T}},
-    occurrences::OT,
+    records::OT,
 ) where {
     TF <: Transformer,
     CF <: Classifier,
     T <: Number,
     OT <: AbstractOccurrenceCollection,
 }
-    pr = nodata(mask(first(predictors), presences(occurrences)), false)
-    ab = nodata(mask(first(predictors), absences(occurrences)), false)
-    return SDM(TF, CF, predictpors, pr, ab)
+    pr = nodata(mask(first(predictors), records, presences), false)
+    ab = nodata(mask(last(predictors), records, absences), false)
+    return SDM(TF, CF, predictors, pr, ab)
 end
 
 function _X_from_layers(layers::Vector{T}) where {T <: SDMLayer}
@@ -90,6 +91,33 @@ function SDeMo.explain(
     kwargs...,
 ) where {ST <: AbstractSDM, T <: SDMLayer}
     return [explain(sdm, layers, v; kwargs...) for v in variables(sdm)]
+end
+
+function SDeMo.predict(
+    cp::Conformal,
+    layer::SDMLayer{T};
+    outcomes::Vector{Set{Bool}} = [
+        Set([true]),
+        Set([false]),
+        Set([true, false]),
+        Set{Bool}(),
+    ],
+) where {T <: Number}
+    output = [similar(layer, Bool) for _ in eachindex(outcomes)]
+    store = Dict(zip(outcomes, output))
+    cpred = predict(cp, collect(layer))
+    for o in outcomes
+        burnin!(store[o], convert(Vector{Bool}, isequal(o).(cpred)))
+    end
+    return (store[o] for o in outcomes)
+end
+
+function SDeMo.predict(
+    cp::Conformal,
+    layer::SDMLayer{T},
+    outcome::Set{Bool},
+) where {T <: Number}
+    return only(predict(cp, layer; outcomes = [outcome]))
 end
 
 # @testitem "We can get Shapley values on a different layer than was used for training" begin

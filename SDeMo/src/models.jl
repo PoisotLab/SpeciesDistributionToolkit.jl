@@ -3,7 +3,7 @@
 
 This abstract type covers the regular, ensemble, and boosted models.
 """
-abstract type AbstractSDM end
+abstract type AbstractSDM <: OccurrencesInterface.AbstractOccurrenceCollection end
 
 """
     AbstractEnsembleSDM
@@ -48,14 +48,55 @@ prediction of a presence).
 In addition, the SDM carries with it the training features and labels, as well
 as a vector of indices indicating which variables are actually used by the
 model.
+
+The coordinates for each observation that is used to train the model are given
+in the `coordinates` field, and as with `OccurrencesInterface`, they must be
+given as longitude,latitude. If there are no known coordinates for the
+observations, this field must be an empty vector of the correct type. As of now,
+there is no plan to support datasets that only have some coordinates known.
 """
-mutable struct SDM{F, L} <: AbstractSDM
+Base.@kwdef mutable struct SDM{F, L} <: AbstractSDM
     transformer::Transformer
     classifier::Classifier
     τ::Number # Threshold
     X::Matrix{F} # Features
     y::Vector{L} # Labels
-    v::AbstractVector # Variables
+    v::Vector{Int} # Variables
+    coordinates::Vector{Tuple{Float64, Float64}}
+    trained::Bool = false
+end
+
+function SDM(
+    ::Type{TF},
+    ::Type{CF},
+    X::Matrix{T},
+    y::Vector{Bool},
+    coordinates::Vector{Tuple{F, F}},
+) where {TF <: Transformer, CF <: Classifier, T <: Number, F <: AbstractFloat}
+    if size(X, 2) != length(y)
+        throw(
+            DimensionMismatch(
+                "The number of instances ($(size(X, 2))) and the number of labels ($(length(y))) do not match",
+            ),
+        )
+    end
+    if length(coordinates) != length(y)
+        throw(
+            DimensionMismatch(
+                "The number of coordinates ($(length(coordinates))) and the number of labels ($(length(y))) do not match",
+            ),
+        )
+    end
+    return SDM(
+        TF(),
+        CF(),
+        zero(CF),
+        X,
+        y,
+        collect(1:size(X, 1)),
+        coordinates,
+        false,
+    )
 end
 
 function SDM(
@@ -64,6 +105,13 @@ function SDM(
     X::Matrix{T},
     y::Vector{Bool},
 ) where {TF <: Transformer, CF <: Classifier, T <: Number}
+    if size(X, 2) != length(y)
+        throw(
+            DimensionMismatch(
+                "The number of instances ($(size(X, 2))) and the number of labels ($(length(y))) do not match",
+            ),
+        )
+    end
     return SDM(
         TF(),
         CF(),
@@ -71,7 +119,59 @@ function SDM(
         X,
         y,
         collect(1:size(X, 1)),
+        Tuple{Float64, Float64}[],
+        false,
     )
+end
+
+"""
+    isgeoreferenced(sdm::SDM)
+
+Returns `true` if an SDM is georeferenced, _i.e._ if the `coordinates` field is
+not empty.
+"""
+function isgeoreferenced(sdm::SDM)
+    return !isempty(sdm.coordinates)
+end
+
+"""
+    istrained(sdm::SDM)
+
+Returns `true` if the SDM has been trained. Attempting to predict on an
+un-trained SDM will result in an error.
+"""
+function istrained(sdm::SDM)
+    return sdm.trained
+end
+
+@testitem "We can create a SDM without geospatial references" begin
+    X, y, C = SDeMo.__demodata()
+    model = SDM(RawData, NaiveBayes, X, y)
+    @test !isgeoreferenced(model)
+end
+
+@testitem "We can create a SDM with geospatial references" begin
+    X, y, C = SDeMo.__demodata()
+    model = SDM(RawData, NaiveBayes, X, y, C)
+    @test isgeoreferenced(model)
+end
+
+@testitem "We get an error if the number of observations and labels do not match" begin
+    X, y, C = SDeMo.__demodata()
+    push!(y, true)
+    @test_throws DimensionMismatch SDM(RawData, NaiveBayes, X, y, C)
+end
+
+@testitem "We get an error if the number of labels and coordinates do not match" begin
+    X, y, C = SDeMo.__demodata()
+    popfirst!(C)
+    @test_throws DimensionMismatch SDM(RawData, NaiveBayes, X, y, C)
+end
+
+@testitem "We have untrained SDMs when created" begin
+    X, y, C = SDeMo.__demodata()
+    model = SDM(RawData, NaiveBayes, X, y, C)
+    @test !istrained(model)
 end
 
 """
@@ -157,3 +257,47 @@ transformer(model::SDM) = model.transformer
 Returns the classifier used by the model
 """
 classifier(model::SDM) = model.classifier
+
+"""
+    transformer!(model::SDM, ::Type{Transformer})
+
+Update the model to use a different transformer. This (obviously) marks the
+model as untrained.
+"""
+function transformer!(model::SDM, ::Type{T}) where {T <: Transformer}
+    model.trained = false
+    model.transformer = T()
+    return model
+end
+
+"""
+    classifier!(model::SDM, ::Type{Classifier})
+
+Update the model to use a different classifier. This (obviously) marks the
+model as untrained.
+"""
+function classifier!(model::SDM, ::Type{T}) where {T <: Classifier}
+    model.trained = false
+    model.classifier = T()
+    return model
+end
+
+@testitem "We can replace the classifier in a model" begin
+    X, y, C = SDeMo.__demodata()
+    model = SDM(RawData, NaiveBayes, X, y, C)
+    train!(model)
+    @test istrained(model)
+    classifier!(model, Logistic)
+    @test !istrained(model)
+    @test classifier(model) isa Logistic
+end
+
+@testitem "We can replace the transformer in a model" begin
+    X, y, C = SDeMo.__demodata()
+    model = SDM(RawData, NaiveBayes, X, y, C)
+    train!(model)
+    @test istrained(model)
+    transformer!(model, PCATransform)
+    @test !istrained(model)
+    @test transformer(model) isa PCATransform
+end

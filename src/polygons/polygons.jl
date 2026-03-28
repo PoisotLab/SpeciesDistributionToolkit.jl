@@ -50,7 +50,7 @@ end
 
 function _match_crs(layer, polygon)
     poly_wkt = SimpleSDMPolygons.GI.crs(polygon).val
-    layer_wkt = SimpleSDMPolygons.AG.toWKT(SimpleSDMPolygons.AG.importPROJ4(layer.crs))
+    layer_wkt = SimpleSDMPolygons.AG.toWKT(projection(layer))
 
     poly_wkt == layer_wkt && return polygon
     xytrans = SimpleSDMLayers.Proj.Transformation(

@@ -1,6 +1,6 @@
 name = "SDeMo"
 uuid = "3e5feb82-bcca-434d-9cd5-c11731a21467"
-version = "1.7.1"
+version = "1.8.0"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 
 [deps]
@@ -8,17 +8,26 @@ Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MultivariateStats = "6f286f6a-111f-5878-ab1e-185364afe411"
+OccurrencesInterface = "ee6415c8-122a-4855-89a1-90f4bac06ba6"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 StatsAPI = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 
+[weakdeps]
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+
+[extensions]
+MakieExtension = "Makie"
+
 [compat]
 Distributions = "0.25"
 JSON = "0.21, 1"
 LinearAlgebra = "1"
+Makie = "0.21 - 0.24"
 MultivariateStats = "0.10"
+OccurrencesInterface = "1"
 Random = "1"
 Statistics = "1"
 StatsAPI = "1.7"

@@ -5,8 +5,8 @@ Defines a layer of geospatial information.
 
 The type has two data fields:
 
-- **grid**: a `Matrix` of type `T`
-- **indices**: a `BitMatrix` to see which positions are valued
+  - **grid**: a `Matrix` of type `T`
+  - **indices**: a `BitMatrix` to see which positions are valued
 
 Each *row* in the `grid` field represents a slice of the raster of equal
 *northing*, *i.e.* the information is laid out in the matrix as it would be
@@ -14,26 +14,39 @@ represented on a map once displayed. Similarly, columns have the same *easting*.
 
 The geospatial information is represented by three positional fields:
 
-- **x** and **y**: two tuples, indicating the coordinates of the *corners*
-  alongside the *x* and *y* dimensions (e.g. easting/northing) - the default
-  values are `(-180., 180.)` and `(-90., 90.)`, which represents the entire
-  surface of the globe in WGS84
-- **crs**: any `String` representation of the CRS which can be handled by
-  `Proj.jl` - the default is  `"+proj=longlat +datum=WGS84 +no_defs"`, which represents a
-  latitude/longitude coordinate system
+  - **x** and **y**: two tuples, indicating the coordinates of the *corners*
+    alongside the *x* and *y* dimensions (e.g. easting/northing) - the default
+    values are `(-180., 180.)` and `(-90., 90.)`, which represents the entire
+    surface of the globe in WGS84
+  - **crs**: any `String` representation of the CRS which can be handled by
+    `Proj.jl` - the default is EPSG:4326
+
+Note that we recommend that the SRS be represented as WKT, then as the
+"EPSG:xxx" format, and then as a a PROJ4 string, by order of decreasing
+preference. An `ArchGDAL` representation is always accessible through the
+`projection` method. Note that the functions will, internally, convert the
+projection to different formats in order to achieve specific tasks.
 """
 Base.@kwdef mutable struct SDMLayer{T}
     grid::Matrix{T}
     indices::BitMatrix
     x::Tuple = (-180.0, 180.0)
     y::Tuple = (-90.0, 90.0)
-    crs::String = "+proj=longlat +datum=WGS84 +no_defs"
+    crs::String = """GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AXIS["Latitude",NORTH],AXIS["Longitude",EAST],AUTHORITY["EPSG","4326"]]"""
 end
 
 function SDMLayer(grid::Matrix; kwargs...)
     T = eltype(grid)
-    idx = :nodata in keys(kwargs) ? (grid .!= values(kwargs).nodata) : BitArray(ones(size(grid)))
-    return SDMLayer{T}(; grid=grid, indices=idx, Base.tail((nodata=nothing, kwargs...))...)
+    idx = if :nodata in keys(kwargs)
+        (grid .!= values(kwargs).nodata)
+    else
+        BitArray(ones(size(grid)))
+    end
+    return SDMLayer{T}(;
+        grid = grid,
+        indices = idx,
+        Base.tail((nodata = nothing, kwargs...))...,
+    )
 end
 
 @testitem "We can construct a SDMLayer with all data" begin
@@ -48,15 +61,17 @@ end
     m = rand(0x00:0x02, (10, 20))
     layer = SDMLayer(m)
     @test typeof(layer.grid) == Matrix{eltype(m)}
-    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) ==
+          "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 @testitem "We can construct a SDMLayer the grid of values and kwargs" begin
     m = rand(0x00:0x02, (10, 20))
-    layer = SDMLayer(m; nodata=0x01)
+    layer = SDMLayer(m; nodata = 0x01)
     @test count(layer) < prod(size(m))
     @test typeof(layer.grid) == Matrix{eltype(m)}
-    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) ==
+          "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 """
@@ -67,17 +82,18 @@ passed as its first argument.
 """
 function nodata!(layer::SDMLayer{T}, nodata::T) where {T}
     new_nodata = layer.grid .== nodata
-    layer.indices = layer.indices .& (.! new_nodata)
+    layer.indices = layer.indices .& (.!new_nodata)
     return layer
 end
 
 @testitem "We can change the nodata value of a layer with a value" begin
     m = rand(0x00:0x02, (10, 20))
-    layer = SDMLayer(m; nodata=0x01)
+    layer = SDMLayer(m; nodata = 0x01)
     ol = count(layer)
     nodata!(layer, 0x00)
     @test length(layer) < ol
-    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) ==
+          "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 """
@@ -87,7 +103,7 @@ Removes the data matching a function
 """
 function nodata!(layer::SDMLayer, f::T) where {T <: Function}
     new_nodata = f.(layer.grid)
-    layer.indices = layer.indices .& (.! new_nodata)
+    layer.indices = layer.indices .& (.!new_nodata)
     return layer
 end
 
@@ -97,13 +113,19 @@ end
     ol = length(layer)
     nodata!(layer, ==(0x01))
     @test length(layer) < ol
-    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) ==
+          "+proj=longlat +datum=WGS84 +no_defs"
 end
 
+"""
+    nodata!(layer::SDMLayer, v)
+
+Turns off all cells containing the value `v`. This is an overload only applied
+when `v` is not of the correct type for `layer`.
+"""
 function nodata!(layer::SDMLayer, v)
     return nodata!(layer, convert(eltype(layer), v))
 end
-
 
 """
     nodata(layer::SDMLayer, args...)
@@ -121,7 +143,8 @@ end
     ol = length(layer)
     nodata!(layer, 1)
     @test length(layer) < ol
-    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) ==
+          "+proj=longlat +datum=WGS84 +no_defs"
 end
 
 @testitem "We can do nodata with a copy" begin
@@ -130,13 +153,37 @@ end
     ol = length(layer)
     nl = nodata(layer, 1)
     @test length(nl) < length(layer)
-    @test layer.crs == "+proj=longlat +datum=WGS84 +no_defs"
+    @test SimpleSDMLayers.AG.toPROJ4(projection(layer)) ==
+          "+proj=longlat +datum=WGS84 +no_defs"
+end
+
+"""
+    IncompatibleProjectionError
+
+An error returned when two layers do not have compatible projections.
+Compatibility is evaluated by converting the SRS of layers to their proj4 string
+and then testing for string equality.
+"""
+struct IncompatibleProjectionError <: Exception end
+struct DifferentEastWestExtentError <: Exception end
+struct DifferentNorthSouthExtentError <: Exception end
+
+function _compatible_projections(l1::SDMLayer, l2::SDMLayer)
+    if SimpleSDMLayers.AG.toPROJ4(projection(l1)) !=
+       SimpleSDMLayers.AG.toPROJ4(projection(l2))
+        throw(IncompatibleProjectionError())
+    end
+    return nothing
 end
 
 function _layers_are_compatible(l1::SDMLayer, l2::SDMLayer)
-    l1.crs == l2.crs || return false
-    l1.x == l2.x || return false
-    l1.y == l2.y || return false
+    _compatible_projections(l1, l2)
+    if l1.x != l2.x
+        throw(DifferentEastWestExtentError())
+    end
+    if l1.y != l2.y
+        throw(DifferentNorthSouthExtentError())
+    end
     return true
 end
 
@@ -144,28 +191,74 @@ function _layers_are_compatible(layers::Vector{T}) where {T <: SDMLayer}
     return all(l -> _layers_are_compatible(l, layers[1]), layers)
 end
 
+@testitem "We get an incompatible projection error" begin
+    l1 = SimpleSDMLayers.__demodata(; reduced = true)
+    l2 = interpolate(
+        l1;
+        dest = "+proj=natearth +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs",
+    )
+    @test_throws IncompatibleProjectionError SimpleSDMLayers._layers_are_compatible(l1, l2)
+end
+
+@testitem "We get an incompatible E/W error" begin
+    l1 = SimpleSDMLayers.__demodata(; reduced = true)
+    l2 = SimpleSDMLayers.__demodata(; reduced = true)
+    l2.x = l2.x .+ (-1, -1)
+    @test_throws DifferentEastWestExtentError SimpleSDMLayers._layers_are_compatible(l1, l2)
+end
+
+@testitem "We get an incompatible N/S error" begin
+    l1 = SimpleSDMLayers.__demodata(; reduced = true)
+    l2 = SimpleSDMLayers.__demodata(; reduced = true)
+    l2.y = l2.y .+ (-1, -1)
+    @test_throws DifferentNorthSouthExtentError SimpleSDMLayers._layers_are_compatible(
+        l1,
+        l2,
+    )
+end
+
 function eastings(layer::SDMLayer)
-    Δx = (layer.x[2]-layer.x[1])/(2size(layer, 2))
-    return LinRange(layer.x[1]+Δx, layer.x[2]-Δx, size(layer, 2))
+    Δx = (layer.x[2] - layer.x[1]) / (2size(layer, 2))
+    return LinRange(layer.x[1] + Δx, layer.x[2] - Δx, size(layer, 2))
 end
 
 @testitem "We get the correct eastings from a layer" begin
     l = SDMLayer(rand(0x00:0x02, (19, 37)))
     e = eastings(l)
     @test e[19] ≈ 0.0
-    @test e[1] ≈ -175.0 atol=0.2
-    @test e[37] ≈ 175.0 atol=0.2
+    @test e[1] ≈ -175.0 atol = 0.2
+    @test e[37] ≈ 175.0 atol = 0.2
 end
 
 function northings(layer::SDMLayer)
-    Δy = (layer.y[2]-layer.y[1])/(2size(layer, 1))
-    return LinRange(layer.y[1]+Δy, layer.y[2]-Δy, size(layer, 1))
+    Δy = (layer.y[2] - layer.y[1]) / (2size(layer, 1))
+    return LinRange(layer.y[1] + Δy, layer.y[2] - Δy, size(layer, 1))
 end
 
 @testitem "We get the correct northings from a layer" begin
     l = SDMLayer(rand(0x00:0x02, (19, 37)))
     n = northings(l)
     @test n[10] ≈ 0.0
-    @test n[1] ≈ -90.0 atol=5.0
-    @test n[19] ≈ 90.0 atol=5.0
+    @test n[1] ≈ -90.0 atol = 5.0
+    @test n[19] ≈ 90.0 atol = 5.0
+end
+
+@testitem "We can manually get the boundingbox for a layer" begin
+    layer = SimpleSDMLayers.__demodata(; reduced = true)
+    EL = eastings(layer)
+    NL = northings(layer)
+    prj = SimpleSDMLayers.Proj.Transformation(
+        SimpleSDMLayers.AG.toPROJ4(projection(layer)),
+        "+proj=longlat +datum=WGS84 +no_defs";
+        always_xy = true,
+    )
+
+    b1 = [prj(EL[1], n) for n in NL]
+    b2 = [prj(EL[end], n) for n in NL]
+    b3 = [prj(e, NL[1]) for e in EL]
+    b4 = [prj(e, NL[end]) for e in EL]
+    bands = vcat(b1, b2, b3, b4)
+
+    left, right = extrema(first.(bands))
+    bottom, top = extrema(last.(bands))
 end

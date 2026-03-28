@@ -86,7 +86,7 @@ function train!(dn::DecisionNode, X, y; kwargs...)
 end
 
 @testitem "We can train a decision stump" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     stump = DecisionTree()
     # Turn the tree into a stump - a single depth and two nodes
     hyperparameters!(stump, :maxdepth, 1)
@@ -285,7 +285,7 @@ function StatsAPI.predict(dt::DecisionTree, X::Matrix{T}) where {T <: Number}
 end
 
 @testitem "We can train a decison tree" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, DecisionTree, X, y)
     hyperparameters!(classifier(model), :maxdepth, 3)
     train!(model)
@@ -295,7 +295,7 @@ end
 end
 
 @testitem "We can train a decison tree and make a prediction with it" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, DecisionTree, X, y)
     hyperparameters!(classifier(model), :maxdepth, 5)
     train!(model)

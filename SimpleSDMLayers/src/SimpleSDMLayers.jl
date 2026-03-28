@@ -13,7 +13,7 @@ using LinearAlgebra
 using Statistics
 using TestItems
 
-import ArchGDAL
+import ArchGDAL as AG
 import Proj
 import Tables
 import Distances
@@ -24,6 +24,7 @@ include("types.jl")
 export SDMLayer
 export nodata!, nodata
 export eastings, northings
+export IncompatibleProjectionError, DifferentEastWestExtentError, DifferentNorthSouthExtentError
 
 # Functions for IO
 include("io/read_write.jl")
@@ -33,43 +34,47 @@ include("io/geotiff.jl")
 include("demodata.jl")
 
 # Useful overloads for the rest of the package
-include("overloads.jl")
+include("lib/overloads.jl")
 
 # getindex and setindex for layers
-include("indexing.jl")
+include("lib/indexing.jl")
 
 # Iteration interface
-include("iterate.jl")
+include("lib/iterate.jl")
 
 # Tables interface
-include("tables.jl")
+include("lib/tables.jl")
 
 # Broadcasting interface
-include("broadcasting.jl")
+include("lib/broadcasting.jl")
+
+# Projection utilities
+include("projections.jl")
+export projection
 
 # Mask layers
-include("mask.jl")
+include("operations/mask.jl")
 export mask, mask!
 
 # Sliding window
-include("slidingwindow.jl")
-export slidingwindow
+include("operations/slidingwindow.jl")
+export slidingwindow, slidingwindow!
 
 # Tiling
-include("tiling.jl")
+include("operations/tiling.jl")
 export tiles
 
 # Quantiles, etc
-include("quantize.jl")
+include("operations/quantize.jl")
 export rescale!, rescale
 export quantize!, quantize
 
 # Mosaic
-include("mosaic.jl")
+include("operations/mosaic.jl")
 export mosaic
 
 # Caorsen
-include("coarsen.jl")
+include("operations/coarsen.jl")
 export coarsen
 
 # Interpolation
@@ -77,15 +82,19 @@ include("interpolation.jl")
 export interpolate, interpolate!
 
 # Burn values in layers
-include("burnin.jl")
+include("operations/burnin.jl")
 export burnin, burnin!
 
 # Cell area
-include("cellarea.jl")
+include("utilities/cellarea.jl")
 export cellarea
 
+# Reconcile
+include("utilities/reconcile.jl")
+export reconcile!, reconcile
+
 # Reclassify
-include("reclassify.jl")
+include("operations/reclassify.jl")
 export reclassify
 
 # Quantile transfer

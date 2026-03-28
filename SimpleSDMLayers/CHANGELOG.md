@@ -5,10 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## `v1.4.0`
+## Unreleased
 
 - **added** functions to support shift and rotate
 - **added** a function for quantile transfer
+
+## `v1.4.1`
+
+- **added** an overload for `reconstruct` to the `MultivariateStats` extension [#574]
+- **added** overloads for `clamp` and `clamp!`
+- **added** an overload for the `÷` operator
+- **added** an overload for `Matrix` on a vector of layers
+- **added** `reconcile` and `reconcile!` [#528]
+
+## `v1.4.0`
+
+- **added** errors when layers are not compatible (as opposed to failing an
+  assertion)
+- **added** support for smarter handling of projection data [#555]
+- **fixed** a bug with the strides being sometimes used in the wrong order (extremely low severity)
+
+## `v1.3.5`
+
+- **added** the `centervalue` keyword argument to `slidingwindow` to pass the center value as a first argument to the function
+
+## `v1.3.4`
+
+- **improved** the performance of `slidingwindow`/`slidingwindow!`
+
+## `v1.3.3`
+
+- **added** a demonstration dataset with temperature
+- **added** the correct handling of scale and offset data [#540]
 
 ## `v1.3.2`
 
@@ -36,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.2.0`
 
-- **added** support for the `NeutralLandcapes` package through an extension (not currently supporting updaters) [#368]
+- **added** support for the `NeutralLandscapes` package through an extension (not currently supporting updaters) [#368]
 - **removed** `Requires` as a dependency
 - **changed** the Julia version to LTS (1.10)
 

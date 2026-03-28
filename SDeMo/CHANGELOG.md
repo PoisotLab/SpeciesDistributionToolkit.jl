@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.8.1`
+
+- **added** support for `OccurrencesInterface` [#569]
+
+## `v1.8.0`
+
+- **added** an overload of `copy` for SDMs
+- **added** `Conformal` and related functions for conformal prediction [#538]
+- **added** `transformer!` and `classifier!` to switch models [#539]
+- **added** `istrained` to check that the model is trained [#513]
+- **added** support for training point coordinates to `SDM`
+- **added** a Makie extension for georeferenced SDMs [#545]
+- **changed** the syntax to declare SDMs in most tests to streamline it (this is not a breaking, user-facing change)
+- **fixed** a bug where calling `reset!` would use a magic number threshold instead of the correct `zero`
+- **fixed** a bug where the `gmean` mesure of model performance had no method for vectors of confusion matrices
+
 ## `v1.7.1`
 
 - **added** support for rebalanced leave one out, with `rebalanced` keyword argument [#529]

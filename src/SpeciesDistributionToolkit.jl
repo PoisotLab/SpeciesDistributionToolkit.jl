@@ -25,6 +25,7 @@ import GeoJSON
 import PolygonOps
 import ZipArchives
 import Downloads
+import Statistics
 import HTTP
 
 # Functions to get latitudes/longitudes
@@ -55,12 +56,63 @@ include("polygons/simplify.jl")
 export trim
 export zone, byzone
 
+# Tessellation
+include("tessellation/squares.jl")
+include("tessellation/hexagons.jl")
+include("tessellation/triangles.jl")
+include("tessellation/tessellate.jl")
+export tessellate
+export assignfolds!, spatialfold
+
+include("tessellation/spatialfold.jl")
+
 # Extra functions
 include("utilities.jl")
-export gainloss
+export gainloss, discretize
+
+# Variograms
+include("variogram.jl")
+export variogram
+
+# Reprojection
+include("reproject.jl")
+export reproject
+
+# Hatching
+include("crosshatch.jl")
+export crosshatch, polygonize
 
 # Get the boundingbox tuple
 include("boundingbox.jl")
 export boundingbox
+
+# Graticule extension
+function graticulegrid end
+function graticulegrid! end
+function graticulebox end
+function graticulebox! end
+function enlargelimits! end
+export graticulebox, graticulebox!, graticulegrid, graticulegrid!, enlargelimits!
+
+# Bivariate extension
+function bivariate end
+function bivariate! end
+function bivariatelegend end
+function bivariatelegend! end
+StevensRedBlue(::Number) = nothing
+StevensBluePurple(::Number) = nothing
+StevensBlueGreen(::Number) = nothing
+StevensYellowPurple(::Number) = nothing
+ArcMapOrangeBlue(::Number) = nothing
+export StevensBlueGreen, StevensBluePurple, StevensRedBlue, StevensYellowPurple, ArcMapOrangeBlue
+export bivariate, bivariate!, bivariatelegend, bivariatelegend!
+
+# VSUP extension
+function vsup end
+function vsup! end
+function vsuplegend end
+function vsuplegend! end
+function vsuplegendticks end
+export vsup, vsup!, vsuplegend, vsuplegend!, vsuplegendticks
 
 end # module SpeciesDistributionToolkit

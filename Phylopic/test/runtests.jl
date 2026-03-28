@@ -23,3 +23,27 @@ end
     silhouetteplot(x, y, s, color=z, colorrange=(-1, 1), colormap=:curl, markersize=20)
     @test true
 end
+
+@testitem "We can recolor a silhouette with grey levels with a colorant string" begin
+    using CairoMakie
+    silhouetteplot(0., 0., PhylopicSilhouette("Sicus ferrugineus"), markersize=200, color=colorant"#e8c45d")
+    @test true
+end
+
+@testitem "We can recolor a silhouette with grey levels with a named color" begin
+    using CairoMakie
+    silhouetteplot(0., 0., PhylopicSilhouette("Sicus ferrugineus"), markersize=200, color=:teal)
+    @test true
+end
+
+@testitem "We can recolor a silhouette with grey levels with a number" begin
+    using CairoMakie
+    silhouetteplot(0., 0., PhylopicSilhouette("Sicus ferrugineus"), markersize=200, color=0.4)
+    @test true
+end
+
+@testitem "We can plot a silhouette from a string" begin
+    using CairoMakie
+    silhouetteplot(0., 0., "Orthobunyavirus oropoucheense", markersize=200, color=:orange)
+    @test true
+end

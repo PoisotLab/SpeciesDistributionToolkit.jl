@@ -10,7 +10,7 @@ The keywords are passed to `ConfusionMatrix`.
 function variableimportance(model::T, folds, variable; samples=10, optimality=mcc, kwargs...) where {T <: AbstractSDM}
     O = zeros(length(folds), samples)
     for (i, fold) in enumerate(folds)
-        cm = deepcopy(model)
+        cm = copy(model)
         train!(cm; training=fold[2])
         X = copy(features(model)[:, fold[1]])
         orig = ConfusionMatrix(predict(cm, X; kwargs...), labels(model)[fold[1]])

@@ -95,7 +95,7 @@ end
 correct(is::IsotonicCalibration, y) = is.calibrator(y)
 
 @testitem "We can do Isotonic calibration" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(PCATransform, NaiveBayes, X, y)
     train!(model)
     C = calibrate(IsotonicCalibration, model; bins=12)

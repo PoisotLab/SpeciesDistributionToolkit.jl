@@ -194,7 +194,6 @@ function variables!(
         # If there are no combinations of variable to evaluate based on the
         # VariableSelectionStrategy, we want to break out of the loop!
         if isempty(combination_todo)
-            stil_looking = false # This isn't particularly required but it's free. Good value.
             break
         end
 
@@ -301,8 +300,7 @@ function variables!(
 end
 
 @testitem "We can do forward variable selection" begin
-    X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore, DecisionTree, X, y)
+    sdm = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     f = kfold(sdm)
     variables!(sdm, ForwardSelection, f; included = [1, 12])
     @test 1 in variables(sdm)
@@ -311,8 +309,7 @@ end
 end
 
 @testitem "We can do backward variable selection" begin
-    X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore, DecisionTree, X, y)
+    sdm = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     f = kfold(sdm)
     variables!(sdm, BackwardSelection, f; included = [1, 12])
     @test 1 in variables(sdm)
@@ -321,9 +318,7 @@ end
 end
 
 @testitem "The default folds are used in variable selection if not specified" begin
-    X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore, DecisionTree, X, y)
-    f = kfold(sdm)
+    sdm = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     variables!(sdm, ForwardSelection; included = [1, 12])
     @test 1 in variables(sdm)
     @test 12 in variables(sdm)
@@ -331,29 +326,25 @@ end
 end
 
 @testitem "All variables are used if no pool is given" begin
-    X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore, DecisionTree, X, y)
+    sdm = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     variables!(sdm, ForwardSelection, kfold(sdm))
     @test length(variables(sdm)) < 19
 end
 
 @testitem "We can do variable selection without any arguments" begin
-    X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore, DecisionTree, X, y)
+    sdm = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     variables!(sdm, ForwardSelection)
     @test length(variables(sdm)) < 19
 end
 
 @testitem "We can do variable selection with a different measure" begin
-    X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore, DecisionTree, X, y)
+    sdm = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     variables!(sdm, ForwardSelection; optimality = κ)
     @test length(variables(sdm)) < 19
 end
 
 @testitem "We can reset variables" begin
-    X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore, DecisionTree, X, y)
+    sdm = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     variables!(sdm, ForwardSelection)
     @test length(variables(sdm)) < 19
     variables!(sdm, AllVariables)
@@ -361,8 +352,7 @@ end
 end
 
 @testitem "We can do VIF selection" begin
-    X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore, DecisionTree, X, y)
+    sdm = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     f = kfold(sdm)
     variables!(sdm, VarianceInflationFactor{10.0}, f; included = [1, 12])
     @test 1 in variables(sdm)
@@ -371,8 +361,7 @@ end
 end
 
 @testitem "We can do selection on a bagged ensemble" begin
-    X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore, DecisionTree, X, y)
+    sdm = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     f = kfold(sdm)
     ensemble = Bagging(sdm, 10)
     variables!(ensemble, ForwardSelection, f; included = [1, 12])
@@ -387,8 +376,7 @@ end
 end
 
 @testitem "We can do selection on a bagged ensemble with bagged features" begin
-    X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore, DecisionTree, X, y)
+    sdm = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     f = kfold(sdm)
     ensemble = Bagging(sdm, 10)
     variables!(ensemble, ForwardSelection, f; bagfeatures = true, included = [1, 12])
@@ -446,8 +434,8 @@ function variables!(
 end
 
 @testitem "We can do strict VIF selection" begin
-    X, y = SDeMo.__demodata()
-    sdm = SDM(ZScore, DecisionTree, X, y)
+    X, y, C = SDeMo.__demodata()
+    sdm = SDM(RawData, NaiveBayes, X, y)
     variables!(sdm, StrictVarianceInflationFactor{50.0}; included = [1, 12])
     @test 1 in variables(sdm)
     @test 12 in variables(sdm)

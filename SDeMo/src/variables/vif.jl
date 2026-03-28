@@ -33,7 +33,7 @@ function stepwisevif!(model::SDM, limit, tr = :; kwargs...)
 end
 
 @testitem "We can select variables using the VIF" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     model = SDM(RawData, NaiveBayes, X, y)
     stepwisevif!(model, 10.0)
     @test length(variables(model)) < size(X, 1)

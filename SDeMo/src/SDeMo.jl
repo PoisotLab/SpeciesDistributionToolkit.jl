@@ -11,17 +11,24 @@ using Random
 using Statistics
 using StatsBase
 
+import OccurrencesInterface
+
 # Demo data
 include("utilities/demodata.jl")
 
+# Error handling
+include("errors.jl")
+export UntrainedModelError
 # Types
 include("models.jl")
 export AbstractSDM, AbstractEnsembleSDM, AbstractBoostedSDM
 export Transformer, Classifier
 export SDM
+export isgeoreferenced, istrained
 export threshold, features, labels, variables, instance
 export threshold!, variables!
 export classifier, transformer
+export classifier!, transformer!
 
 # Hyper-parameters
 include("hyperparameters.jl")
@@ -121,6 +128,10 @@ export stepwisevif!, vif
 include("variables/importance.jl")
 export variableimportance
 
+# Conformal prediction
+include("conformal.jl")
+export risklevel, risklevel!, Conformal
+
 # Explanations, etc
 include("explanations/counterfactual.jl")
 export counterfactual
@@ -132,10 +143,14 @@ include("explanations/shapley.jl")
 export explain
 
 include("utilities/show.jl")
+include("utilities/copy.jl")
 include("utilities/io.jl")
 export writesdm, loadsdm
 
 include("utilities/varia.jl")
 export iqr
+
+# Occurrences Interface support
+include("interfaces/OccurrencesInterface.jl")
 
 end # module SDeMo

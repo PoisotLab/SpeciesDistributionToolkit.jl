@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+- **added** a `boundingbox` method for SDMs
+- **added** `Statistics` as a dependency
+- **added** `variogram` for quick inspection of spatial auto-correlation [#566]
+- **added** `tessellate` to generate a tiling
+- **added** `mosaic` and `byzone` support for feature collection key aggregation
+- **added** `spatialfold` to generate spatial validation folds based on a tiling [#548]
+
 ## `v1.8.2`
 
 - **added** Makie extensions for bivariate and VSUP figures [#124]

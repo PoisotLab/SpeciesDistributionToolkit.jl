@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         matrix:
-            folder: [howto/dataviz, howto/generation, howto/layers, howto/polygons, howto/retrieval, howto/sdm, howto/usage, tutorials/sdm, tutorials/usage]
+            folder: [manual/dataviz, manual/distributions, manual/generation, manual/layers, manual/polygons, manual/retrieval, manual/sdm, manual/usage, manual/usecases]
     steps:
       - uses: actions/checkout@v4
       - name: Prepare the artifact name
@@ -46,9 +46,7 @@ jobs:
       - name: "Upload the folder ${{ matrix.folder }}"
         uses: actions/upload-artifact@v4
         with:
-          path: |
-            docs/src/howto
-            docs/src/tutorials
+          path: docs/src/manual
           name: build-${{ env.ARTIFACT_NAME }}
   BuildDocumentation:
     permissions:
@@ -91,12 +89,12 @@ jobs:
         uses: actions/upload-artifact/merge@v4
         with:
             name: manual-compiled
-            delete-merged: true
+            delete-merged: false
       - name: "Put the compiled manual in its place"
         uses: actions/download-artifact@v8
         with:
             name: manual-compiled
-            path: docs/src
+            path: docs/src/manual
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1'

@@ -114,6 +114,7 @@ export default defineConfig({
                                 { text: "Climate novelty", link: "/manual/usecases/climatenovelty/" },
                                 { text: "Landcover consensus", link: "/manual/usecases/consensus/" },
                                 { text: "Spatial boundaries", link: "/manual/usecases/spatial-boundaries/" },
+                                { text: "Shift and rotate", link: "/manual/usecases/shift-and-rotate/" },
                             ]
                         },
                         {

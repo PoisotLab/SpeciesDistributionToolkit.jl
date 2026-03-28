@@ -82,7 +82,7 @@ rotator function (see the documentation for `rotator`).
 Note that it is almost always a valid strategy to look for shifts and rotations
 on a raster at a coarser resolution.
 """
-function findrotation(L::SDMLayer, P::SDMLayer; longitudes=-10:0.1:10, latitudes=-10:0.1:10, rotations=-10:0.1:10, maxiter=10_000)
+function findrotation(L::SDMLayer, P::SDMLayer; longitudes=-10:0.05:10, latitudes=-10:0.05:10, rotations=-10:0.1:10, maxiter=10_000)
     iter = 1
     r = (rand(longitudes), rand(latitudes), rand(rotations))
     ll = lonlat(L)
@@ -92,7 +92,7 @@ function findrotation(L::SDMLayer, P::SDMLayer; longitudes=-10:0.1:10, latitudes
         trf = rotator(r...)
         u = [P[c...] for c in trf(ll)]
         if !any(isnothing, u)
-            trf
+            return trf
         end
     end
     return nothing

@@ -8,7 +8,8 @@ value for the same quantile in the reference layer.
 """
 function quantiletransfer!(target::SDMLayer{T}, reference::SDMLayer{T}) where {T <: Real}
     Qt = quantize(target)
-    target.grid = quantile(reference, Qt.grid)
+    out = quantile(reference, values(Qt))
+    burnin!(target, out)
     return target
 end
 

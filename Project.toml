@@ -1,6 +1,6 @@
 name = "SpeciesDistributionToolkit"
 uuid = "72b53823-5c0b-4575-ad0e-8e97227ad13b"
-version = "1.8.2"
+version = "1.9.0"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 
 [deps]

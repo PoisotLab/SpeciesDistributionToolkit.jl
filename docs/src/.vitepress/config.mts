@@ -210,6 +210,7 @@ export default defineConfig({
                                 { text: "Projections", link: "/manual/dataviz/projections/" },
                                 { text: "Graticules", link: "/manual/dataviz/graticules/" },
                                 { text: "Bivariate", link: "/manual/dataviz/bivariate/" },
+                                { text: "VSUP", link: "/manual/dataviz/vsup/" },
                             ]
                         }
                     ]

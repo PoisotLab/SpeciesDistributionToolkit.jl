@@ -5,7 +5,7 @@ layout: home
 
 hero:
   name: "Species Distribution Toolkit"
-  tagline: Species distribution modeling and biodiversity research in Julia
+  tagline: Species distribution modelling and biodiversity research in Julia
   image:
     src: /logo.svg
     alt: SpeciesDistributionToolkit

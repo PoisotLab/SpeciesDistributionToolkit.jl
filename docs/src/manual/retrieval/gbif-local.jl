@@ -36,7 +36,7 @@ borders = getpolygon(PolygonData(NaturalEarth, Countries))
 bbox = SpeciesDistributionToolkit.boundingbox(records; padding = 2.0)
 fig = Figure()
 ax = Axis(fig[1, 1]; aspect = DataAspect())
-poly!(ax, coast; color = :lightgrey)
+poly!(ax, borders; color = :lightgrey)
 xlims!(ax, bbox.left, bbox.right)
 ylims!(ax, bbox.bottom, bbox.top)
 hexbin!(

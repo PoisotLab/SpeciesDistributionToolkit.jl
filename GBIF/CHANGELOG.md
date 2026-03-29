@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## `v1.2.0`
 
 - **added** support to read from a local GBIF archive (h/t @jeetsukumaran) [#504]
+- **changed** the compat entry of `JSON` from `0.21` to `0.21, 1` [508]
 
 ## `v1.1.1`
 

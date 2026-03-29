@@ -179,7 +179,7 @@ function mydownloads(;
 end
 
 """
-doi(doi::String)
+    doi(doi::String)
 
 Returns the information of a download request by its DOI.
 """

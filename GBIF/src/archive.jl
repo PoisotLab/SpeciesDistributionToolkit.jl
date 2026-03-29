@@ -1,98 +1,46 @@
-using DataFrames: DataFrame
-
-
 """
-    gbifarchive_io(path::AbstractString) -> IOBuffer
+    _io_from_archive(path::AbstractString)
 
 Open a compressed GBIF occurrence archive and return an `IOBuffer` for the
-occurrence table.
+occurrence table. Supports both the GBIF "Simple" archive format and the "Darwin
+Core" (DwC) archive download layout.
 
-Supports both the GBIF "Simple" archive format and the "Darwin Core"
-(DwC) archive download layout.
-
-# Arguments
-- `path`: Filesystem path to a `.zip` GBIF archive file.
-
-# Returns
-- `IOBuffer`: In-memory byte stream of the selected occurrence table.
-
-# See also
-[`gbifarchive_csv`](@ref), [`gbifarchive_df`](@ref), Darwin Core: <https://dwc.tdwg.org/>
+The `path` argument points to a (`.zip`) file. This function returns an
+`IOBuffer`, an in-memory byte stream of the selected occurrence table.
 """
-function gbifarchive_io(path::AbstractString)::IOBuffer
-    return (
-            path
-            |> read
-            |> ZipReader
-            |> za -> (za, "occurrence.txt" in  zip_names(za) ? "occurrence.txt" : zip_names(za)[1])
-            |> za_entry -> zip_readentry(za_entry[1], za_entry[2])
-            |> source -> IOBuffer(source)
-    )
+function _io_from_archive(path::AbstractString)::IOBuffer
+    if ~isfile(path)
+        throw(ArgumentError("The file $path does not exist"))
+    end
+    zip_archive = ZipRead(read(path))
+    filenames = zip_names(zip_archive)
+    entry_name = "occurrence.txt" in filenames ? "occurrence.txt" : filenames[1]
+    entry = zip_readentry(zip_archive, entry_name)
+    return IOBuffer(entry)
 end
 
 """
     gbifarchive_csv(path::AbstractString) -> CSV.File
 
-Parse a GBIF occurrence archive at `path` into a `CSV.File`.
+Parse a GBIF occurrence archive at `path` into a `CSV.File`. Internally, this
+calls `_io_from_archive` to get the occurrences table from a "Simple" or "DwC"
+archive.
 
-# Arguments
-- `path`: Path to a GBIF `.zip` archive.
-
-# Returns
-- `CSV.File`: Streamable, table-compatible view of the occurrence data.
-
-# See also
-- [`gbifarchive_df`](@ref) for an eager `DataFrame`.
+This output can be passed to `DataFrame` if the package is loaded by the user.
 """
-function gbifarchive_csv(path::AbstractString)::CSV.File
-    return (
-        path
-        |> gbifarchive_io
-        |> source_io -> CSV.File(source_io; delim = '\t')
-    )
+function _csv_from_archive(path::AbstractString)
+    content = _io_from_archive(path)
+    return CSV.File(content; delim = '\t')
 end
 
 """
-    gbifarchive_df(path::AbstractString) -> DataFrame
+    localarchive(path::AbstractString)
 
-Read a GBIF occurrence archive at `path` into a `DataFrame`.
-
-# Arguments
-- `path`: Path to a GBIF `.zip` archive.
-
-# Returns
-- `DataFrame`: Eager tabular data of the occurrences.
-
-# See also
-- [`gbifarchive_csv`](@ref)
+Convert a GBIF occurrence archive into an `Occurrences` object. This function is
+equivalent to `GBIF.download` but works from a _local_ copy of any archive.
 """
-function gbifarchive_df(path::AbstractString)::DataFrame
-    path |> gbifarchive_csv |> DataFrame
-end
-
-"""
-    gbifarchive_sdmt(path::AbstractString)
-        -> OccurrencesInterface.Occurrences
-
-Convert a GBIF occurrence archive into `OccurrencesInterface.Occurrences`
-records suitable for use with
-[SpeciesDistributionToolkit.jl](https://github.com/EcoJulia/SpeciesDistributionToolkit.jl).
-
-# Arguments
-- `path`: Path to a GBIF `.zip` archive.
-
-# Returns
-- `OccurrencesInterface.Occurrences`: A collection of occurrence records as
-  materialized by `SpeciesDistributionToolkit.GBIF._materialize`.
-
-# See also
-- SpeciesDistributionToolkit.jl: <https://github.com/EcoJulia/SpeciesDistributionToolkit.jl>
-"""
-function gbifarchive_sdmt(path::AbstractString)::OccurrencesInterface.Occurrences
-    return (
-        path
-        |> gbifarchive_csv
-        |> csv -> SpeciesDistributionToolkit.GBIF._materialize.(OccurrencesInterface.Occurrence, csv)
-        |> OccurrencesInterface.Occurrences
-    )
+function localarchive(path::AbstractString)
+    csv = _csv_from_archive(path)
+    records = GBIF._materialize.(OccurrencesInterface.Occurrence, csv)
+    return records
 end

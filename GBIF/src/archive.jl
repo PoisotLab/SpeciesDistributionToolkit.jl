@@ -96,33 +96,3 @@ function gbifarchive_sdmt(path::AbstractString)::OccurrencesInterface.Occurrence
         |> OccurrencesInterface.Occurrences
     )
 end
-
-"""
-    gbifarchive_locations(path::AbstractString)
-        -> Vector{Tuple{Float64, Float64}}
-
-    gbifarchive_locations(csv_file::CSV.File)
-        -> Vector{Tuple{Float64, Float64}}
-
-Extract `(lon, lat)` coordinate pairs from a GBIF archive or from a `CSV.File`.
-
-# Arguments
-- `path`: Path to a GBIF `.zip` archive; the occurrence table is parsed internally.
-- `csv_file`: A `CSV.File` already pointing at occurrence rows.
-
-# Returns
-- `Vector{Tuple{Float64,Float64}}`: Longitude–latitude pairs.
-
-# Interoperability
-The returned vector is a drop-in replacement for a table of coordinates accepted
-by [SpeciesDistributionModels.jl](https://github.com/tiemvanderdeure/SpeciesDistributionModels.jl).
-"""
-function gbifarchive_locations(path::AbstractString)::Vector{Tuple{Float64, Float64}}
-    path |> gbifarchive_csv |> gbifarchive_locations
-end
-
-function gbifarchive_locations(csv_file::CSV.File)::Vector{Tuple{Float64, Float64}}
-    map(csv_file) do csv_row
-        return (csv_row.decimalLongitude, csv_row.decimalLatitude)
-    end
-end

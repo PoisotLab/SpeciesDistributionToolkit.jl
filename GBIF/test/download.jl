@@ -37,6 +37,7 @@ from_gbif = GBIF.download(doi)
 @test isfile("$(id).zip")
 from_local = GBIF.localarchive("$(id).zip")
 
+using GBIF.OccurrencesInterface
 for i in eachindex(elements(from_local))
     @test from_local[i] == from_gbif[i]
 end

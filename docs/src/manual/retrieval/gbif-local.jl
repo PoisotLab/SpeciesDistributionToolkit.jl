@@ -7,7 +7,7 @@ using CairoMakie
 # can work with locally downloaded GBIF files in either Darwin Core or Simple
 # formats. 
 
-GBIF.download("0069567-260226173443078") #hide
+GBIF.download("0069567-260226173443078"); #hide
 
 # In this example, we will get data from a local copy of [this GBIF data
 # download](https://doi.org/10.15468/dl.y8d8yb ), which aggregates known
@@ -33,7 +33,7 @@ records = GBIF.localarchive("0069567-260226173443078.zip")
 
 #figure map
 borders = getpolygon(PolygonData(NaturalEarth, Countries))
-bbox = SpeciesDistributionToolkit.boundingbox(records; padding = 2.0)
+bbox = SpeciesDistributionToolkit.boundingbox(records; padding = 0.6)
 fig = Figure()
 ax = Axis(fig[1, 1]; aspect = DataAspect())
 poly!(ax, borders; color = :lightgrey)
@@ -42,7 +42,7 @@ ylims!(ax, bbox.bottom, bbox.top)
 hexbin!(
     ax,
     presences(records),
-    bins = 300,
+    bins = 200,
     colormap = :lipari,
     colorscale = log10,
 )

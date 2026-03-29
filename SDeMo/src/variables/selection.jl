@@ -142,17 +142,16 @@ function backwardselection!(model, folds; kwargs...)
     return backwardselection!(model, folds, pool; kwargs...)
 end
 
-
-@testitem "We can do forward selection with no included features" begin
-    X, y = SDeMo.__demodata()
+@testitem "We can do forward selection with no included features" tags=[:deprecated] begin
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     forwardselection!(model, folds)
     @test length(variables(model)) < size(X, 1)
 end
 
-@testitem "We can do forward selection with included features" begin
-    X, y = SDeMo.__demodata()
+@testitem "We can do forward selection with included features" tags=[:deprecated] begin
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     forwardselection!(model, folds, [1,12]; verbose=true)
@@ -161,16 +160,16 @@ end
     @test 12 in variables(model)
 end
 
-@testitem "We can do backward selection with no included features" begin
-    X, y = SDeMo.__demodata()
+@testitem "We can do backward selection with no included features" tags=[:deprecated] begin
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     backwardselection!(model, folds)
     @test length(variables(model)) < size(X, 1)
 end
 
-@testitem "We can do backward selection with included features" begin
-    X, y = SDeMo.__demodata()
+@testitem "We can do backward selection with included features" tags=[:deprecated] begin
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     backwardselection!(model, folds, [1,12])
@@ -179,24 +178,24 @@ end
     @test 12 in variables(model)
 end
 
-@testitem "We can do verbose forward selection" begin
-    X, y = SDeMo.__demodata()
+@testitem "We can do verbose forward selection" tags=[:deprecated] begin
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     forwardselection!(model, folds; verbose=true)
     @test length(variables(model)) < size(X, 1)
 end
 
-@testitem "We can do verbose backward selection" begin
-    X, y = SDeMo.__demodata()
+@testitem "We can do verbose backward selection" tags=[:deprecated] begin
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     backwardselection!(model, folds; verbose=true)
     @test length(variables(model)) < size(X, 1)
 end
 
-@testitem "Variable selection does not reset the model" begin
-    X, y = SDeMo.__demodata()
+@testitem "Variable selection does not reset the model" tags=[:deprecated] begin
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     pool = [1,2,3,4,5,6,7,8,9]
@@ -208,8 +207,8 @@ end
     @test length(variables(model)) <= length(pool)
 end
 
-@testitem "Variable selection with non-model variables forced works" begin
-    X, y = SDeMo.__demodata()
+@testitem "Variable selection with non-model variables forced works" tags=[:deprecated] begin
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     folds = [holdout(model)]
     pool = [1,2,3,4,5,6,7,8,9]
@@ -227,8 +226,8 @@ end
 end
 
 
-@testitem "Variable selection methods can be chained" begin
-    X, y = SDeMo.__demodata()
+@testitem "Variable selection methods can be chained" tags=[:deprecated] begin
+    X, y, C = SDeMo.__demodata()
     model = SDM(MultivariateTransform{PCA}, NaiveBayes, X, y)
     n0 = length(variables(model))
     stepwisevif!(model, 50.0)

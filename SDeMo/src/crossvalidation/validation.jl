@@ -269,6 +269,7 @@ for op in (
     :sensitivity,
     :recall,
     :precision,
+    :gmean
 )
     eval(
         quote

@@ -11,7 +11,7 @@ train!(::RawData, args...) = nothing
 StatsAPI.predict(::RawData, X) = X
 
 @testitem "We can train a raw data transformer" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     rd = RawData()
     train!(rd, X)
     px = predict(rd, X)
@@ -47,7 +47,7 @@ end
 
 @testitem "We can train a z-score transformer" begin
     using SDeMo.Statistics
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     zs = ZScore()
     train!(zs, X)
     @test length(zs.μ) == size(X, 1)

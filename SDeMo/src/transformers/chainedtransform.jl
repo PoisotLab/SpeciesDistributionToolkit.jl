@@ -35,7 +35,7 @@ function StatsAPI.predict(chain::ChainedTransform, X::AbstractArray; kwdef...)
 end
 
 @testitem "We can train a chained transform" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     c1 = ChainedTransform{RawData, ZScore}
     c2 = ChainedTransform{ZScore, RawData}
     S0 = SDM(ZScore, NaiveBayes, X, y)
@@ -50,7 +50,7 @@ end
 end
 
 @testitem "We can train a Logistic after a PCA using a chained transform" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     chain = ChainedTransform{PCATransform, ZScore}
     model = SDM(chain, Logistic, X, y)
     hyperparameters!(classifier(model), :η, 1e-3)
@@ -60,7 +60,7 @@ end
 end
 
 @testitem "Variable selection works on a chained transformation" begin
-    X, y = SDeMo.__demodata()
+    X, y, C = SDeMo.__demodata()
     chain = ChainedTransform{PCATransform, ZScore}
     model = SDM(chain, DecisionTree, X, y)
     variables!(model, ForwardSelection, kfold(model); verbose=true)

@@ -6,236 +6,28 @@ on:
       - main
     tags: '*'
   pull_request:
+  release:
 
 concurrency:
     group: doc-build-pipeline
     cancel-in-progress: ${{ !contains(github.ref, 'main')}}
 
 jobs:
-  OccurrencesInterface:
-    permissions:
-      actions: write
-      contents: write
-      pull-requests: read
-      statuses: write
+  BuildManual:
     runs-on: ubuntu-latest
+    strategy:
+        matrix:
+            folder: [manual/dataviz, manual/distributions, manual/generation, manual/layers, manual/polygons, manual/retrieval, manual/sdm, manual/usage, manual/usecases]
     steps:
       - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v2
-        with:
-          version: '1'
-      - name: "Bootstrap the package"
-        run: julia --project=./OccurrencesInterface OccurrencesInterface/bootstrap.jl
-      - uses: julia-actions/cache@v2
-      - name: Install dependencies
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-        working-directory: OccurrencesInterface/
-      - name: Build and deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-        run: julia --project=OccurrencesInterface/docs/ OccurrencesInterface/docs/make.jl
-  GBIF:
-    needs: [OccurrencesInterface]
-    permissions:
-      actions: write
-      contents: write
-      pull-requests: read
-      statuses: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v2
-        with:
-          version: '1'
-      - name: "Bootstrap the package"
-        run: julia --project=./GBIF GBIF/bootstrap.jl
-      - uses: julia-actions/cache@v2
-      - name: Install dependencies
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-        working-directory: GBIF/
-      - name: Build and deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-        run: julia --project=GBIF/docs/ GBIF/docs/make.jl
-  Phylopic:
-    needs: [GBIF]
-    permissions:
-      actions: write
-      contents: write
-      pull-requests: read
-      statuses: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v2
-        with:
-          version: '1'
-      - name: "Bootstrap the package"
-        run: julia --project=./Phylopic Phylopic/bootstrap.jl
-      - uses: julia-actions/cache@v2
-      - name: Install dependencies
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-        working-directory: Phylopic/
-      - name: Build and deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-        run: julia --project=Phylopic/docs/ Phylopic/docs/make.jl
-  Fauxcurrences:
-    needs: [Phylopic]
-    permissions:
-      actions: write
-      contents: write
-      pull-requests: read
-      statuses: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v2
-        with:
-          version: '1'
-      - name: "Bootstrap the package"
-        run: julia --project=./Fauxcurrences Fauxcurrences/bootstrap.jl
-      - uses: julia-actions/cache@v2
-      - name: Install dependencies
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-        working-directory: Fauxcurrences/
-      - name: Build and deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-        run: julia --project=Fauxcurrences/docs/ Fauxcurrences/docs/make.jl
-  PseudoAbsences:
-    needs: [Fauxcurrences]
-    permissions:
-      actions: write
-      contents: write
-      pull-requests: read
-      statuses: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v2
-        with:
-          version: '1'
-      - name: "Bootstrap the package"
-        run: julia --project=./PseudoAbsences PseudoAbsences/bootstrap.jl
-      - uses: julia-actions/cache@v2
-      - name: Install dependencies
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-        working-directory: PseudoAbsences/
-      - name: Build and deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-        run: julia --project=PseudoAbsences/docs/ PseudoAbsences/docs/make.jl
-  SimpleSDMLayers:
-    needs: [PseudoAbsences]
-    permissions:
-      actions: write
-      contents: write
-      pull-requests: read
-      statuses: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v2
-        with:
-          version: '1'
-      - name: "Bootstrap the package"
-        run: julia --project=./SimpleSDMLayers SimpleSDMLayers/bootstrap.jl
-      - uses: julia-actions/cache@v2
-      - name: Install dependencies
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-        working-directory: SimpleSDMLayers/
-      - name: Build and deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-        run: julia --project=SimpleSDMLayers/docs/ SimpleSDMLayers/docs/make.jl
-  SimpleSDMDatasets:
-    needs: [SimpleSDMLayers]
-    permissions:
-      actions: write
-      contents: write
-      pull-requests: read
-      statuses: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v2
-        with:
-          version: '1'
-      - name: "Bootstrap the package"
-        run: julia --project=./SimpleSDMDatasets SimpleSDMDatasets/bootstrap.jl
-      - uses: julia-actions/cache@v2
-      - name: Install dependencies
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-        working-directory: SimpleSDMDatasets/
-      - name: Build and deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-        run: julia --project=SimpleSDMDatasets/docs/ SimpleSDMDatasets/docs/make.jl
-  SDeMo:
-    needs: [SimpleSDMDatasets]
-    permissions:
-      actions: write
-      contents: write
-      pull-requests: read
-      statuses: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v2
-        with:
-          version: '1'
-      - name: "Bootstrap the package"
-        run: julia --project=./SDeMo SDeMo/bootstrap.jl
-      - uses: julia-actions/cache@v2
-      - name: Install dependencies
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-        working-directory: SDeMo/
-      - name: Build and deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-        run: julia --project=SDeMo/docs/ SDeMo/docs/make.jl
-  SimpleSDMPolygons:
-    needs: [SDeMo]
-    permissions:
-      actions: write
-      contents: write
-      pull-requests: read
-      statuses: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v2
-        with:
-          version: '1'
-      - name: "Bootstrap the package"
-        run: julia --project=./SimpleSDMPolygons SimpleSDMPolygons/bootstrap.jl
-      - uses: julia-actions/cache@v2
-      - name: Install dependencies
-        run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-        working-directory: SimpleSDMPolygons/
-      - name: Build and deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-        run: julia --project=SimpleSDMPolygons/docs/ SimpleSDMPolygons/docs/make.jl
-  HowTo:
-    permissions:
-      actions: write
-      contents: write
-      pull-requests: read
-      statuses: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+      - name: Prepare the artifact name
+        id: prep_artifact_name
+        run: |
+            if [ "${{ matrix.folder }}" != "" ] ; then
+                name="${{ matrix.folder }}"
+            fi
+            name=$(echo -n "$name" | sed -e 's/[ \t:\/\\"<>|*?]/-/g' -e 's/--*/-/g')
+            echo "ARTIFACT_NAME=$name" >> $GITHUB_ENV
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1'
@@ -250,43 +42,41 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
           DATADEPS_ALWAYS_ACCEPT: true
-        run: julia --project=docs/ --threads=auto docs/build-howto.jl
-      - name: "Upload the howto folder"
+        run: julia --project=docs/ --threads=auto docs/build.jl ${{ matrix.folder }}
+      - name: "Upload the folder ${{ matrix.folder }}"
         uses: actions/upload-artifact@v4
         with:
-          path: "docs/src/howto"
-          name: howto-folder
-  Tutorials:
+          path: docs/src/manual
+          name: build-${{ env.ARTIFACT_NAME }}
+  BuildDocumentation:
     permissions:
       actions: write
       contents: write
       pull-requests: read
       statuses: write
     runs-on: ubuntu-latest
+    strategy:
+        max-parallel: 1
+        matrix:
+            pkg: [OccurrencesInterface, GBIF, PseudoAbsences, SDeMo, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, SimpleSDMPolygons, Phylopic]
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1'
       - name: "Bootstrap the package"
-        run: julia --project=. bootstrap.jl
+        run: julia --project=./${{ matrix.pkg }} ${{ matrix.pkg }}/bootstrap.jl
       - uses: julia-actions/cache@v2
       - name: Install dependencies
         run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+        working-directory: ${{ matrix.pkg }}/
       - name: Build and deploy
         env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
-          DATADEPS_ALWAYS_ACCEPT: true
-        run: julia --project=docs/ --threads=auto docs/build-tutorials.jl
-      - name: "Upload the tutorials folder"
-        uses: actions/upload-artifact@v4
-        with:
-          path: "docs/src/tutorials"
-          name: tutorials-folder
+        run: julia --project=${{ matrix.pkg }}/docs/ ${{ matrix.pkg }}/docs/make.jl
   SpeciesDistributionToolkit:
-    needs: [HowTo, Tutorials, SimpleSDMPolygons]
+    needs: [BuildManual, BuildDocumentation]
     permissions:
       actions: write
       contents: write
@@ -295,16 +85,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: "Download the compiled how-to"
-        uses: actions/download-artifact@v4
+      - name: "Merge the manual artifacts"
+        uses: actions/upload-artifact/merge@v4
         with:
-          name: howto-folder
-          path: docs/src/howto
-      - name: "Download the compiled tutorials"
-        uses: actions/download-artifact@v4
+            name: manual-compiled
+            delete-merged: false
+      - name: "Put the compiled manual in its place"
+        uses: actions/download-artifact@v8
         with:
-          name: tutorials-folder
-          path: docs/src/tutorials
+            name: manual-compiled
+            path: docs/src/manual
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1'

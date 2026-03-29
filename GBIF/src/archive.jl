@@ -34,13 +34,15 @@ function _csv_from_archive(path::AbstractString)
 end
 
 """
-    localarchive(path::AbstractString)
+    localarchive(path::AbstractString, ::Type)
 
-Convert a GBIF occurrence archive into an `Occurrences` object. This function is
-equivalent to `GBIF.download` but works from a _local_ copy of any archive.
+Convert a GBIF occurrence archive into an object. This function is equivalent to
+`GBIF.download` but works from a _local_ copy of any archive. The second
+argument is a type, which defaults to `Occurrences`. Currently, `CSV.File` is
+also supported, to read into a `DataFrame`.
 """
-function localarchive(path::AbstractString)
+function localarchive(path::AbstractString, T::Type=OccurrencesInterface.Occurrences)
     csv = _csv_from_archive(path)
-    records = GBIF._materialize.(OccurrencesInterface.Occurrence, csv)
+    records = GBIF._materialize(T, csv)
     return records
 end

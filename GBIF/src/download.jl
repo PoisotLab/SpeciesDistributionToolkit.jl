@@ -81,19 +81,24 @@ function request(query::Pair...; notification::Bool = false)
 end
 
 """
-    download(key; path=nothing)
+    download(key, ::Type; path=nothing)
 
-Download the GBIF occurrence download archive for the given `key` (or DOI), extract and
-return the parsed records as `Occurrences`. The `key` (`AbstractString`) is a GBIF
-download key such as `"0012345-240613123456789"`, or a DOI such as `"10.15468/dl.abcd12"`.
-If a DOI is provided, it is first resolved to the corresponding GBIF download key.
+Download the GBIF occurrence download archive for the given `key` (or DOI),
+extract and return the parsed records as `Occurrences`. The `key`
+(`AbstractString`) is a GBIF download key such as `"0012345-240613123456789"`,
+or a DOI such as `"10.15468/dl.abcd12"`. If a DOI is provided, it is first
+resolved to the corresponding GBIF download key.
 
 The `path` keyword (defaults to `nothing`) can be used to specify where the
 files will be downloaded. The default is the working directory. If the `path`
 does not exist, it will be created using `mkpath`. The intended use-case is to
 put the downloaded files in a git-ignored folder.
+
+The second positional argument is a type, which defaults to `Occurrences`.
+Currently, `CSV.File` is also supported, to read into a `DataFrame`. Internally,
+this function uses `localarchive` to read the data.
 """
-function download(key::AbstractString; path=nothing)
+function download(key::AbstractString, T::Type=OccurrencesInterface.Occurrences; path=nothing)
     # If this is a DOI, we start by getting the correct key
     if contains(key, "/dl.")
         key = GBIF.doi(key)["key"]
@@ -111,8 +116,16 @@ function download(key::AbstractString; path=nothing)
         open(archive, "w") do f
             return write(f, dl_req.body)
         end
-        return GBIF.localarchive(archive)
+        return GBIF.localarchive(archive, T)
     end
+end
+
+_materialize(::Type{CSV.File}, records::CSV.File) = records
+
+function _materialize(::Type{OccurrencesInterface.Occurrences}, records::CSV.File)
+    return OccurrencesInterface.Occurrences(
+        GBIF._materialize.(OccurrencesInterface.Occurrence, records)
+    )
 end
 
 function _materialize(::Type{OccurrencesInterface.Occurrence}, row::CSV.Row)
@@ -121,7 +134,7 @@ function _materialize(::Type{OccurrencesInterface.Occurrence}, row::CSV.Row)
         try
             date = Dates.DateTime(replace(row.eventDate, "Z" => ""))
         catch
-            @info "Malformed date for record $(row.gbifID) - date will be missing"
+            nothing
         end
     end
     place = if ismissing(row.decimalLatitude) | ismissing(row.decimalLongitude)

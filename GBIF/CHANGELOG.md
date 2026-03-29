@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.2.0`
 
+- **silenced** the info messages for wrongly formatted dates in `_materialize`
+- **added** a `format` keyword to `localarchive` and `download` to return in different types
 - **added** support to read from a local GBIF archive (h/t @jeetsukumaran) [#504]
 - **changed** the compat entry of `JSON` from `0.21` to `0.21, 1` [508]
 

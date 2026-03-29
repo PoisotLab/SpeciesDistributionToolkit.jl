@@ -59,7 +59,7 @@ end
 """
 **Generates an occurrence from the JSON response of GBIF**
 """
-function GBIFRecord(o::Dict{String, Any})
+function GBIFRecord(o::AbstractDict)
     # Prepare the taxon object
     levels = ["kingdom", "phylum", "class", "order", "family", "genus", "species"]
     r = Dict{Any, Any}()

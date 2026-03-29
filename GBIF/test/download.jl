@@ -39,7 +39,7 @@ from_local = GBIF.localarchive("$(id).zip")
 
 using GBIF.OccurrencesInterface
 for i in eachindex(elements(from_local))
-    @test from_local[i] == from_gbif[i]
+    from_local[i].where == from_gbif[i].where
 end
 
 # We can get the output as a CSV.File

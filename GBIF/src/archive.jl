@@ -12,10 +12,10 @@ function _io_from_archive(path::AbstractString)::IOBuffer
     if ~isfile(path)
         throw(ArgumentError("The file $path does not exist"))
     end
-    zip_archive = ZipRead(read(path))
-    filenames = zip_names(zip_archive)
+    zip_archive = ZipArchives.ZipReader(read(path))
+    filenames = ZipArchives.zip_names(zip_archive)
     entry_name = "occurrence.txt" in filenames ? "occurrence.txt" : filenames[1]
-    entry = zip_readentry(zip_archive, entry_name)
+    entry = ZipArchives.zip_readentry(zip_archive, entry_name)
     return IOBuffer(entry)
 end
 

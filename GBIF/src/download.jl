@@ -111,10 +111,7 @@ function download(key::AbstractString; path=nothing)
         open(archive, "w") do f
             return write(f, dl_req.body)
         end
-        csv = CSV.File(GBIF._get_csv_from_zip(archive); delim = '\t')
-        return OccurrencesInterface.Occurrences(
-            GBIF._materialize.(OccurrencesInterface.Occurrence, csv),
-        )
+        return GBIF.localarchive(archive)
     end
 end
 
@@ -190,17 +187,3 @@ function doi(doi::String)
         return JSON.parse(String(request_resp.body))
     end
 end
-
-function _get_csv_from_zip(archive)
-    zip_archive = ZipArchives.ZipReader(read(archive))
-    csvfile = replace(archive, ".zip" => ".csv")
-    for file_in_zip in ZipArchives.zip_names(zip_archive)
-        if file_in_zip == basename(csvfile)
-            out = open(csvfile, "w")
-            write(out, ZipArchives.zip_readentry(zip_archive, file_in_zip, String))
-            close(out)
-        end
-    end
-    return csvfile
-end
-

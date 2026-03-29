@@ -90,9 +90,9 @@ export occurrences!
 
 include("occurrencesinterface.jl")
 
+# Read from a local archive and downloading from GBIF
+include("archive.jl")
 include("download.jl")
 
-# Read from a local archive
-include("archive.jl")
 
 end # module

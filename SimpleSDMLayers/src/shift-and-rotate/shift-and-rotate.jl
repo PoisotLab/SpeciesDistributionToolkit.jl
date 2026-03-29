@@ -8,8 +8,12 @@ use in `burnin!`.
 """
 function lonlat(L::SDMLayer)
     E, N, K = eastings(L), northings(L), keys(L)
-    prj = SimpleSDMLayers.Proj.Transformation(L.crs, "+proj=longlat +datum=WGS84 +no_defs"; always_xy=true)
-    xy = [prj(E[k[2]], N[k[1]]) for k in K]    
+    prj = SimpleSDMLayers.Proj.Transformation(
+        L.crs,
+        "+proj=longlat +datum=WGS84 +no_defs";
+        always_xy = true,
+    )
+    xy = [prj(E[k[2]], N[k[1]]) for k in K]
     return xy
 end
 
@@ -28,7 +32,7 @@ shiftlongitudes(angle) = (xy) -> _spherical_rotation(xy, angle, 3)
 
 """
     shiftlatitudes(angle)
-    
+
 Returns a function to move coordinates up or down in latitudes by a given angle
 in degree. Note that this accounts for the curvature of the Earth, and therefore
 requires three distinct operations. First, the points are moved so that their
@@ -43,7 +47,7 @@ shiftlatitudes(angle) = (xy) -> _rotate_latitudes(xy, -angle)
 
 """
     localrotation(angle)
-    
+
 Returns a function to create a rotation of coordinates around their centroids.
 """
 localrotation(angle) = (xy) -> _centroid_rotation(xy, angle)
@@ -63,12 +67,12 @@ that takes a vector of coordinates to transform. The transformations do account
 for the curvature of the Earth. For this reason, rotations and changes in the
 latitudes will deform the points, but shift in the longitudes will not.
 """
-function rotator(longitude::T, latitude::T, rotation::T) where T <: Number
+function rotator(longitude::T, latitude::T, rotation::T) where {T <: Number}
     return shiftlongitudes(longitude) ∘ shiftlatitudes(latitude) ∘ localrotation(rotation)
 end
 
 """
-    findrotation(L, P; longitudes=-10:0.1:10, latitudes=-10:0.1:10, rotations=-10:0.1:10, maxiter=10_000)
+    findrotation(L, P; longitudes=-10:0.1:10, latitudes=-10:0.1:10, rotations=-10:0.1:10, maxiter=50)
 
 Find a possible rotation for the `shiftandrotate` function, by attempting to
 move a target layer `L` until all of the shifted and rotated coordinates are
@@ -82,13 +86,28 @@ rotator function (see the documentation for `rotator`).
 Note that it is almost always a valid strategy to look for shifts and rotations
 on a raster at a coarser resolution.
 """
-function findrotation(L::SDMLayer, P::SDMLayer; longitudes=-10:0.05:10, latitudes=-10:0.05:10, rotations=-10:0.1:10, maxiter=10_000)
+function findrotation(
+    L::SDMLayer,
+    P::SDMLayer;
+    longitudes = (-10, 10),
+    latitudes = (-10, 10),
+    rotations = (-10, 10),
+    maxiter = 50,
+)
     iter = 1
-    r = (rand(longitudes), rand(latitudes), rand(rotations))
+
+    lon = rand() * (longitudes[2] - longitudes[1]) + longitudes[1]
+    lat = rand() * (latitudes[2] - latitudes[1]) + latitudes[1]
+    rot = rand() * (rotations[2] - rotations[1]) + rotations[1]
+    r = (lon, lat, rot)
+
     ll = lonlat(L)
     while iter < maxiter
         iter += 1
-        r = (rand(longitudes), rand(latitudes), rand(rotations))
+        lon = rand() * (longitudes[2] - longitudes[1]) + longitudes[1]
+        lat = rand() * (latitudes[2] - latitudes[1]) + latitudes[1]
+        rot = rand() * (rotations[2] - rotations[1]) + rotations[1]
+        r = (lon, lat, rot)
         trf = rotator(r...)
         u = [P[c...] for c in trf(ll)]
         if !any(isnothing, u)

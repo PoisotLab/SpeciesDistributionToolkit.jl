@@ -38,7 +38,7 @@ current_figure() #hide
 # We now find a rotation -- we know the extent we added to the bounding box, so
 # we can start by adding this as a constraint
 
-θ = findrotation(C, P; maxiter=100, longitudes=-5:0.1:5, latitudes=-5:0.1:5, rotations=-45:0.5:45)
+θ = findrotation(C, P; maxiter=100, longitudes=(-5, 5), latitudes=(-5, 5), rotations=(-180, 180))
 
 # The rotation is a shift in latitude and longitude, and then a rotation around
 # the axis. It is returned as a tuple, which can be passed to the `roator`,

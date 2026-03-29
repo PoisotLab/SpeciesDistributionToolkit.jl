@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.2.0`
 
-- **added** support to read from a local GBIF archive (h/t @jeetsukumaran)
+- **added** support to read from a local GBIF archive (h/t @jeetsukumaran) [#504]
 
 ## `v1.1.1`
 

@@ -92,4 +92,7 @@ include("occurrencesinterface.jl")
 
 include("download.jl")
 
+# Read from a local archive
+include("archive.jl")
+
 end # module

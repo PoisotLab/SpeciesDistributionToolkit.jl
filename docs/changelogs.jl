@@ -23,7 +23,7 @@ end
 function _github_username_updater!(path)
     lines = readlines(path)
     search_pattern = r" @([a-zA-Z0-9_]+)"
-    replace_pattern = SubstitutionString("[#\\1](https://github.com/\\1)")
+    replace_pattern = SubstitutionString("[@\\1](https://github.com/\\1)")
     open(path, "w") do file
         for line in lines
             if contains(line, search_pattern)

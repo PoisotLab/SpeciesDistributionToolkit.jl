@@ -126,6 +126,7 @@ export default defineConfig({
                                 { text: "Boosting", link: "/manual/distributions/adaboost/" },
                                 { text: "Conformal prediction", link: "/manual/distributions/conformal/" },
                                 { text: "Covariate shift", link: "/manual/distributions/covariate-shift/" },
+                                { text: "Maxent", link: "/manual/distributions/maxent/" },
                             ]
                         },
                         {

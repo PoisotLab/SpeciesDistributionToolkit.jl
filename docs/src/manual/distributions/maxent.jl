@@ -71,5 +71,10 @@ current_figure() #hide
 # gainloss?
 
 #figure gainloss
-heatmap(gainloss(predict(m, L), predict(n, L)))
+f = Figure()
+ax = Axis(f[1,1]; aspect=DataAspect())
+poly!(ax, landmass, color=:grey95)
+heatmap!(gainloss(predict(m, L), predict(n, L)), colormap=[:skyblue, :black, :lime])
+lines!(ax, landmass, color=:black)
+scatter!(ax, records, color=:orange, markersize=6)
 current_figure() #hide

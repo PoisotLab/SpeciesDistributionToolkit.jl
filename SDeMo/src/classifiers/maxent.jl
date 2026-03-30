@@ -19,14 +19,34 @@ hyperparameters(::Type{Maxent}) =
 
 Base.zero(::Type{Maxent}) = 0.5
 
+function _featurevector(me::Maxent)
+    n = Maxnet.AbstractFeatureClass[]
+    if me.linear
+        push!(n, Maxnet.LinearFeature())
+    end
+    if me.categorical
+        push!(n, Maxnet.CategoricalFeature())
+    end
+    if me.hinge
+        push!(n, Maxnet.HingeFeature())
+    end
+    if me.product
+        push!(n, Maxnet.ProductFeature())
+    end
+    return n
+end
+
 function train!(
     me::Maxent,
     y::Vector{Bool},
     X::Matrix{T};
     kwargs...,
 ) where {T <: Number}
-    # TODO set hyper-parameters
-    me.model = Maxnet.maxnet(convert(BitVector, y), Tables.table(permutedims(X)))
+    feat_vec = _featurevector(me)
+    if isempty(feat_vec)
+        feat_vec = Maxnet.default_features(sum(y))
+    end
+    me.model = Maxnet.maxnet(convert(BitVector, y), Tables.table(permutedims(X)); features=feat_vec, regularization_multiplier=me.regularization)
     return me
 end
 

@@ -9,6 +9,8 @@ using CairoMakie
 
 GBIF.download("0069567-260226173443078"); #hide
 
+# ## Getting data from a local file
+
 # In this example, we will get data from a local copy of [this GBIF data
 # download](https://doi.org/10.15468/dl.y8d8yb ), which aggregates known
 # occurrenes of _Cardinalis cardinalis_ in the country of Belize.
@@ -48,6 +50,22 @@ hexbin!(
 )
 lines!(ax, borders; color = :grey)
 current_figure() #hide
+
+# ## Getting data as a data frame
+
+# It is also possible to request the data as a `CSV` file:
+
+using DataFrames
+import CSV
+
+# We can look at the first five rows for this series of records:
+
+first(
+    DataFrame(
+        GBIF.localarchive("0069567-260226173443078.zip", CSV.File)
+    ),
+    5
+)
 
 # ## Related documentation
 

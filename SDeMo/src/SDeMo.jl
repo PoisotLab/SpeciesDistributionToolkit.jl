@@ -13,6 +13,8 @@ using StatsBase
 
 import OccurrencesInterface
 
+import Maxnet
+
 # Demo data
 include("utilities/demodata.jl")
 
@@ -53,14 +55,18 @@ export NaiveBayes
 include("classifiers/bioclim.jl")
 export BIOCLIM
 
-# BIOCLIM
+# Logistic
 include("classifiers/logistic.jl")
 export Logistic
 
-# BIOCLIM
+# Decision tree
 include("classifiers/decisiontree.jl")
 export DecisionTree
 export maxnodes!, maxdepth!
+
+# Maxent
+include("classifiers/maxent.jl")
+export Maxent
 
 # Bagging and ensembles
 include("ensembles/bagging.jl")

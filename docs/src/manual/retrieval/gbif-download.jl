@@ -14,6 +14,13 @@ occ = GBIF.download("10.15468/dl.ttnmj9")
 # the directory from which the script is being called, so you can inspect the
 # raw data.
 
+# ::: tip A note about format
+#
+# The `download` function accepts both the "Simple" and "Darwin Core" formats of
+# datasets.
+#
+# :::
+
 # We will get the list of unique taxa contained within this data download:
 
 tax = unique(entity(occ));
@@ -45,7 +52,5 @@ current_figure() #hide
 # ```
 
 # ```@docs; canonical=false
-# OccurrencesInterface.Occurrence
-# OccurrencesInterface.Occurrences
-# OccurrencesInterface.entity
+# GBIF.download
 # ```

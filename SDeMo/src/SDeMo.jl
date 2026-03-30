@@ -13,6 +13,7 @@ using StatsBase
 
 import OccurrencesInterface
 
+import Tables
 import Maxnet
 
 # Demo data

@@ -9,8 +9,8 @@ Base.@kwdef mutable struct Maxent <: Classifier
     hinge::Bool = false
     product::Bool = false
     regularization::Float64 = 1.0
-    linkfunction::Symbol = :CloglogLink
-    model::Maxnet.MaxnetModel = Maxnet.maxnet([true, false, true], rand(2, 2, 3))
+    linkfunction::Symbol = :default
+    model = nothing
 end
 export Maxent
 
@@ -26,8 +26,25 @@ function train!(
     kwargs...,
 ) where {T <: Number}
     # TODO set hyper-parameters
-    me.model = Maxnet.maxnet(y, X)
+    me.model = Maxnet.maxnet(convert(BitVector, y), Tables.table(permutedims(X)))
     return me
+end
+
+function _maxent_link_function(me::Maxent)
+    fncs = Dict(
+        :default => Maxnet.CloglogLink(),
+        :logit => Maxnet.LogitLink(),
+        :log => Maxnet.LogLink(),
+        :identity => Maxnet.IdentityLink
+    )
+    if !(me.linkfunction in keys(fncs))
+        throw(ArgumentError("""The link function $(me.linkfunction) does not exist
+
+        Possible values are $(join(keys(fncs), ", "))
+        """))
+    else
+        return fncs[me.linkfunction]
+    end
 end
 
 function StatsAPI.predict(me::Maxent, x::Vector{T}) where {T <: Number}
@@ -35,5 +52,5 @@ function StatsAPI.predict(me::Maxent, x::Vector{T}) where {T <: Number}
 end
 
 function StatsAPI.predict(me::Maxent, X::Matrix{T}) where {T <: Number}
-    return predict(me.model, X)
+    return Maxnet.predict(me.model, Tables.table(permutedims(X)); link=_maxent_link_function(me))
 end

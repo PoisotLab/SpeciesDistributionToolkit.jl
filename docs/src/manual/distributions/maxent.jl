@@ -25,7 +25,8 @@ landmass = clip(borders, bb)
 # We finally get the BioClim variables from CHELSA2, and mask them using the
 # area of interest:
 
-L = SDMLayer{Float32}[SDMLayer(RasterData(CHELSA2, BioClim); bb..., layer=i) for i in 1:19]
+provider = RasterData(CHELSA2, BioClim)
+L = SDMLayer{Float32}[SDMLayer(provider; bb..., layer=i) for i in 1:19]
 mask!(L, aoi)
 
 # PseudoAbsences
@@ -39,7 +40,6 @@ absencelayer = backgroundpoints(background, 2sum(presencelayer))
 m = SDM(RawData, Maxent, L, presencelayer, absencelayer)
 variables!(m, ForwardSelection)
 
-
 # 
 
 cv = crossvalidate(m, kfold(m))
@@ -47,8 +47,6 @@ cv = crossvalidate(m, kfold(m))
 # is it good?
 
 mcc(cv.validation)
-
-#
 
 #-
 
@@ -77,16 +75,35 @@ end
 Colorbar(f[1,3], hm)
 current_figure() #hide
 
-#-
+# We can look at the partial response to the variable that was included first in
+# the model:
 
-#figure bivariate
+#figure first var
 f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect(), title="Maxent")
+ax = Axis(f[1,1]; aspect=DataAspect())
 poly!(ax, landmass, color=:grey95)
-bivariate!(ax, predict(m, L; threshold=false), predict(n, L; threshold=false); ArcMapOrangeBlue()..., xbins=5, ybins=5)
+hm = heatmap!(
+    ax,
+    partialresponse(m, L, first(variables(m)); threshold=false);
+    colormap = Reverse(:batlowW),
+    colorrange = (0, 1)
+)
 lines!(ax, landmass, color=:black)
 tightlimits!(ax)
 hidedecorations!(ax)
+Colorbar(f[1,2], hm, label=layers(provider)[first(variables(m))])
 current_figure() #hide
 
-# gainloss?
+# We can also look at the effect of this variable's value on the average model
+# prediction:
+
+#figure Scatter plot SHAP
+f = Figure()
+ax = Axis(f[1,1], xlabel=layers(provider)[first(variables(m))], ylabel="Effect on average prediction")
+scatter!(
+    ax,
+    features(m, first(variables(m))),
+    explain(m, first(variables(m)); threshold=false),
+    color = (:black, 0.5)
+)
+current_figure() #hide

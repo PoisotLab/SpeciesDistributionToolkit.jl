@@ -131,7 +131,7 @@ prefix:
 
 | Prefix         | Explanation                                                                                   |
 |----------------|-----------------------------------------------------------------------------------------------|
-| `fix`          | Solves a bug / closes a PR                                                                    |
+| `fix`          | Solves a bug / closes a PR (`bug` also accepted)                                              |
 | `feat`         | Adds a new feature                                                                            |
 | `semver`       | Commit that will be tagged in a new release -- this should contain a change in `Project.toml` |
 | `dep`          | Changes in `Project.toml` to add or drop a dependency                                         |
@@ -143,7 +143,7 @@ prefix:
 | `style`        | Applies the formatter without modifying the content                                           |
 | `refactor`     | Changes the internals of a function, or changes to methods that are not exported              |
 | `chore`        | General housekeeping                                                                          |
-| `ext`          | Dealing with packages extensions                                                                      |
+| `ext`          | Dealing with packages extensions                                                              |
 
 [convcom]: https://www.conventionalcommits.org/en/v1.0.0/#summary
 [semver]: https://semver.org/

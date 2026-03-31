@@ -72,7 +72,7 @@ function rotator(longitude::T, latitude::T, rotation::T) where {T <: Number}
 end
 
 """
-    findrotation(L, P; longitudes=-10:0.1:10, latitudes=-10:0.1:10, rotations=-10:0.1:10, maxiter=50)
+    findrotation(L, P; rotations=(-180., 180), maxiter=50)
 
 Find a possible rotation for the `shiftandrotate` function, by attempting to
 move a target layer `L` until all of the shifted and rotated coordinates are
@@ -89,23 +89,33 @@ on a raster at a coarser resolution.
 function findrotation(
     L::SDMLayer,
     P::SDMLayer;
-    longitudes = (-10, 10),
-    latitudes = (-10, 10),
-    rotations = (-10, 10),
+    rotations = (-180., 180.),
     maxiter = 50,
 )
     iter = 1
 
-    lon = rand() * (longitudes[2] - longitudes[1]) + longitudes[1]
-    lat = rand() * (latitudes[2] - latitudes[1]) + latitudes[1]
+    prj = SimpleSDMLayers.Proj.Transformation(
+        L.crs,
+        "+proj=longlat +datum=WGS84 +no_defs";
+        always_xy = true,
+    )
+
+    # Range of lon/lat in which we can sample
+    Xl, Xp = prj(L.x), prj(P.x)
+    Yl, Yp = prj(L.y), prj(P.y)
+    ΔX = Xp .- Xl
+    ΔY = Yp .- Yl
+
+    lon = rand() * (ΔX[2] - ΔX[1]) + ΔX[1]
+    lat = rand() * (ΔY[2] - ΔY[1]) + ΔY[1]
     rot = rand() * (rotations[2] - rotations[1]) + rotations[1]
     r = (lon, lat, rot)
 
     ll = lonlat(L)
     while iter < maxiter
         iter += 1
-        lon = rand() * (longitudes[2] - longitudes[1]) + longitudes[1]
-        lat = rand() * (latitudes[2] - latitudes[1]) + latitudes[1]
+        lon = rand() * (ΔX[2] - ΔX[1]) + ΔX[1]
+        lat = rand() * (ΔY[2] - ΔY[1]) + ΔY[1]
         rot = rand() * (rotations[2] - rotations[1]) + rotations[1]
         r = (lon, lat, rot)
         trf = rotator(r...)

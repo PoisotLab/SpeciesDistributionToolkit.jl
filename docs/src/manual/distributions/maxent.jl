@@ -87,8 +87,7 @@ variables!(m, ForwardSelection, folds)
 #
 # :::
 
-# 
-
+# At this point, our Maxent model is entirely trained, and ready to use.
 
 # ## Comparing to another model
 
@@ -106,7 +105,7 @@ folds = kfold(m);
 cv = crossvalidate(m, folds);
 cvl = crossvalidate(n, folds);
 
-# FInally, we can compare the performance of the two models, using a series of
+# Finally, we can compare the performance of the two models, using a series of
 # relevant measures:
 
 ms = [mcc, ppv, npv, f1]

@@ -156,12 +156,20 @@ variables!(null, ForwardSelection)
 cnull = SDM(RawData, NaiveBayes, X2, presencelayer, absencelayer)
 variables!(cnull, ForwardSelection)
 
+# ::: info Variable selection and model performance
+#
+# Note on what is important to test here -- same variables, or best suite of
+# variables -- will give different results, this test is more stringent because
+# performance of each model can be increased as much as possible
+# 
+# :::
+
 # cv
 
 folds = kfold(model)
-cvm = crossvalidate(model, folds)
-cvn = crossvalidate(null, folds)
-cvc = crossvalidate(cnull, folds)
+cvm = crossvalidate(model, folds);
+cvn = crossvalidate(null, folds);
+cvc = crossvalidate(cnull, folds);
 
 # stats
 

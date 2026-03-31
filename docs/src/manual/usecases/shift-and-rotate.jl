@@ -11,40 +11,49 @@ const SDT = SpeciesDistributionToolkit
 using PrettyTables
 using CairoMakie
 
-# We will get some occurrences from .... which we used in the
-# [Maxent](/manual/distributions/maxent/) vignette.
-
+# We will get some occurrences about the observations of _Cardinalis cardinalis_
+# in Belize, which we used in the [Maxent](/manual/distributions/maxent/)
+# vignette.
 
 records = GBIF.download("10.15468/dl.y8d8yb");
-extent = SDT.boundingbox(records; padding = 2.5)
+extent = SDT.boundingbox(records; padding = 3.5)
 
-# We will first grab a series of polygons to define our study area.
+# We will first grab a series of polygons to define our study area. We get a
+# polygon for the country borders, and then a second polygon for the landmass,
+# which we will use as the background of our maps.
 
-borders = getpolygon(PolygonData(NaturalEarth, Countries))
-aoi = borders["Belize"]
-landmass = clip(borders, extent)
+aoi = getpolygon(PolygonData(NaturalEarth, Countries))["Belize"]
+land = getpolygon(PolygonData(NaturalEarth, Land))
+landmass = clip(land, extent)
 
-# We finally get the BioClim variables from CHELSA2, and mask them using the
-# area of interest:
+# To train the model, we will collect all 19 BioClim variables from CHELSA2, and
+# mask them _to the landmass_ we have selected before.
 
 provider = RasterData(CHELSA2, BioClim)
 L = SDMLayer{Float32}[SDMLayer(provider; extent..., layer = i) for i in 1:19]
 mask!(L, landmass)
 
-# Note that are not masking the layer to the area of interest, because we will
-# construct null layers from the value of predictors within the larger region.
-# So we mask to the big region.
+# Note that are not masking the layer to the _area of interest_ (Belize, the
+# country for which we have data), because we will construct null layers from
+# the value of predictors within the larger region. For this reason, it is very
+# important that all the relevant pixels in the larger region have a value.
+
+# ## Layer interpolation
 
 # In order to facilitate the search for rotation parameters, it is a good idea
 # to downscale the layer a little.
 
-# we get just one layer
+# We start by picking the first layer, and make a copy of it.
 
 T = copy(first(L))
 
-# Specifically, we will ensure that the 
+# We will interpolate it so that each cell is about 25 times as large as before
 
-P = interpolate(T, dest=T.crs, newsize=(120, 120))
+NS = ceil.(Int, size(T)./5)
+P = interpolate(T, dest=T.crs, newsize=NS)
+
+# At this point, we can collect the actual area that we want to replace with
+# shifted and rotated values:
 
 C = trim(mask(P, aoi))
 
@@ -58,29 +67,37 @@ lines!(ax, aoi, color=:black)
 Colorbar(f[1,2], hm, label="Average temperature")
 current_figure() #hide
 
-# We now find a rotation -- we know the extent we added to the bounding box, so
-# we can start by adding this as a constraint
+# ## Finding a rotation
 
-θ = findrotation(C, P; maxiter=50, rotations=(-180, 180))
+# With the two layers, we will now attempt to identify a shift and a rotation.
+# Conceputally, we are attempting to figure out how we can rotate the Earth
+# underneath our layer of interest, both across the latitude and longitude axes,
+# and also along the axis that goes through the center of the layer, while
+# keeping all the cells in the layer having a value.
 
-# The rotation is a shift in latitude and longitude, and then a rotation around
-# the axis. It is returned as a tuple, which can be passed to the `roator`,
-# which handles the actual rotation.
+θ = findrotation(C, P)
 
-# We can, for example, shift and rotate the first layer:
+# This output represents the rotation as a shift in latitude and longitude, and
+# then a rotation around the axis. It is returned as a tuple, which can be
+# passed to the `rotator` closure, which handles the actual rotation:
 
-Y = shiftandrotate(C, P, θ)
+𝐑 = rotator(θ...)
 
-# 
+# The next figure shows the original laer, as well as the coordinates of the
+# points from which its replacement values will be drawn. Note that the 
 
 # figure Full area with rotation
 f = Figure()
 ax = Axis(f[1,1]; aspect=DataAspect())
 hm = heatmap!(ax, P, colormap=:batlowW, alpha=0.4)
 lines!(ax, aoi, color=:black)
-scatter!(ax, θ(lonlat(C)), color=:red, markersize=4)
+scatter!(ax, 𝐑(lonlat(C)), color=:red, markersize=4)
 Colorbar(f[1,2], hm, label="Average temperature")
 current_figure() #hide
+
+# We can, for example, shift and rotate the first layer:
+
+Y = shiftandrotate(C, P, 𝐑)
 
 # We can apply this transformation to the original (full resolution) data
 

@@ -121,7 +121,7 @@ function findrotation(
         trf = rotator(r...)
         u = [P[c...] for c in trf(ll)]
         if !any(isnothing, u)
-            return trf
+            return r
         end
     end
     return nothing

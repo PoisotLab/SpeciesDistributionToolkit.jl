@@ -23,3 +23,12 @@ function quantiletransfer(target::SDMLayer{T}, reference::SDMLayer{T}) where {T 
     quantiletransfer!(t, reference)
     return t
 end
+
+function quantiletransfer!(target::Vector{<:SDMLayer}, reference::Vector{<:SDMLayer})
+    @assert length(target) == length(reference)
+    return [quantiletransfer(target[i], reference[i]) for i in eachindex(reference)]
+end
+
+function quantiletransfer(target::Vector{<:SDMLayer}, reference::Vector{<:SDMLayer})
+    return quantiletransfer!(copy.(target), reference)
+end

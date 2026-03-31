@@ -152,8 +152,8 @@ current_figure() #hide
 #figure Density of the two layers
 f = Figure()
 ax = Axis(f[1,1])
-density!(ax, M[1], label="Shift and rotate")
-density!(ax, X[1], label="True values", color=:transparent, strokecolor=:black, linestyle=:dash, strokewidth=1)
+density!(ax, X[1], label="True values", color=:grey80, strokecolor=:black, linestyle=:dash, strokewidth=1)
+density!(ax, M[1], label="Shift and rotate", color=:transparent, strokecolor=:orange, linestyle=:solid, strokewidth=1)
 axislegend(ax, position=:lt)
 ylims!(ax, low=0)
 current_figure() #hide
@@ -162,14 +162,14 @@ current_figure() #hide
 # changed, it should have the same distribution of values as the original layer.
 # This can be done with the quantile transfer function:
 
-X2 = [quantiletransfer(M[i], X[i]) for i in eachindex(X)]
+Q = quantiletransfer(M, X);
 
 #figure Density of the two layers after transfer
 f = Figure()
 ax = Axis(f[1,1])
-density!(ax, M[1], label="Shift and rotate")
-density!(ax, X[1], label="True values", color=:transparent, strokecolor=:black, linestyle=:dash, strokewidth=1)
-density!(ax, X2[1], label="After transfer", color=:transparent, strokecolor=:red, strokewidth=2)
+density!(ax, X[1], label="True values", color=:grey80, strokecolor=:black, linestyle=:dash, strokewidth=1)
+density!(ax, M[1], label="Shift and rotate", color=:transparent, strokecolor=:orange, linestyle=:solid, strokewidth=1)
+density!(ax, Q[1], label="After transfer", color=:transparent, strokecolor=:red, strokewidth=2)
 axislegend(ax, position=:lt)
 ylims!(ax, low=0)
 current_figure() #hide
@@ -181,11 +181,11 @@ f = Figure()
 a1 = Axis(f[1,1]; aspect=DataAspect(), title="True values")
 a2 = Axis(f[1,2]; aspect=DataAspect(), title="Shift, rotate, transfer")
 hm = heatmap!(a1, X[1], colormap=:batlowW, colorrange=extrema(X[1]))
-heatmap!(a2, X2[1], colormap=:batlowW, colorrange=extrema(X[1]))
+heatmap!(a2, Q[1], colormap=:batlowW, colorrange=extrema(X[1]))
 Colorbar(f[1,3], hm, label="Average temperature")
 current_figure() #hide
 
-# ## Train both models
+# ## Comparing model performance
 
 presencelayer = mask(X[1], records)
 background = pseudoabsencemask(BetweenRadius, presencelayer; closer = 10.0, further = 40.0)

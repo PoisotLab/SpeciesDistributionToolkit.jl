@@ -159,5 +159,5 @@ function shiftandrotate!(L::Vector{<:SDMLayer}, P::Vector{<:SDMLayer}, rotator)
 end
 
 function shiftandrotate(L::Vector{<:SDMLayer}, P::Vector{<:SDMLayer}, rotator)
-    return shiftandrotate!(copy(L), copy(P), rotator)
+    return shiftandrotate!(copy.(L), P, rotator)
 end

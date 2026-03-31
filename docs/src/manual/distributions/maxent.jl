@@ -18,7 +18,7 @@ using CairoMakie
 # three-toed sloth or the Eucalyptus, but some variety is good for the soul.
 
 records = GBIF.download("10.15468/dl.y8d8yb");
-bb = SDT.boundingbox(records; padding=0.5)
+bb = SDT.boundingbox(records; padding = 0.5)
 
 # We will first grab a series of polygons to define our study area.
 
@@ -30,7 +30,7 @@ landmass = clip(borders, bb)
 # area of interest:
 
 provider = RasterData(CHELSA2, BioClim)
-L = SDMLayer{Float32}[SDMLayer(provider; bb..., layer=i) for i in 1:19]
+L = SDMLayer{Float32}[SDMLayer(provider; bb..., layer = i) for i in 1:19]
 mask!(L, aoi)
 
 # ## Pseudo-absences
@@ -82,8 +82,9 @@ variables!(m, ForwardSelection, folds)
 
 # ::: tip Variable selection
 #
-# There are additional ways to do variable selection, and they are described in
-# the [relevant vignette](/manual/sdm/variableselection/).
+# There are additional ways to perform variable selection, including by forcing
+# the inclusion of some variables, and they are described in [the relevant
+# vignette](/manual/sdm/variableselection/).
 #
 # :::
 
@@ -109,7 +110,9 @@ cvl = crossvalidate(n, folds);
 # relevant measures:
 
 ms = [mcc, ppv, npv, f1]
-M = permutedims([m(c) for m in ms, c in [cv.training, cv.validation, cvl.training, cvl.validation]]);
+M = permutedims([
+    m(c) for m in ms, c in [cv.training, cv.validation, cvl.training, cvl.validation]
+]);
 M = hcat(["Maxent", "", "Logistic", ""], ["Train.", "Val.", "Train.", "Val."], M);
 
 # These are the results:
@@ -122,62 +125,84 @@ pretty_table(
     formatters = [fmt__printf("%5.3f", [3, 4, 5, 6])],
 )
 
-# Maxent is not as good as logistic regression for this problem. But because
-# this is the Maxent vignette, we will nonetheless keep going with it, for the
-# sake of illustration.
+# Maxent is not as good as logistic regression for this problem (with the
+# exception of the ability to detect positives, which is slightly better). But
+# because this is the Maxent vignette, we will nonetheless keep going with it,
+# for the sake of illustration.
 
 # ## Maxent results
 
+# We will first map the prediction of the maxent model (and compare it to the
+# logistic prediction).
+
 #figure Maxent map
 f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect(), title="Maxent")
-ax2 = Axis(f[1,2]; aspect=DataAspect(), title="Logistic")
+ax = Axis(f[1, 1]; aspect = DataAspect(), title = "Maxent")
+ax2 = Axis(f[1, 2]; aspect = DataAspect(), title = "Logistic")
 for a in [ax, ax2]
-    poly!(a, landmass, color=:grey95)
+    poly!(a, landmass; color = :grey95)
 end
-hm = heatmap!(ax, predict(m, L; threshold=false), colormap=Reverse(:navia), colorrange=(0, 1))
-heatmap!(ax2, predict(n, L; threshold=false), colormap=Reverse(:navia), colorrange=(0, 1))
+hm = heatmap!(
+    ax,
+    predict(m, L; threshold = false);
+    colormap = Reverse(:navia),
+    colorrange = (0, 1),
+)
+heatmap!(
+    ax2,
+    predict(n, L; threshold = false);
+    colormap = Reverse(:navia),
+    colorrange = (0, 1),
+)
 for a in [ax, ax2]
-    lines!(a, landmass, color=:black)
-    scatter!(a, records, color=:orange, markersize=2)
+    lines!(a, landmass; color = :black)
+    scatter!(a, records; color = :orange, markersize = 2)
     tightlimits!(a)
     hidedecorations!(a)
 end
-Colorbar(f[1,3], hm)
+Colorbar(f[1, 3], hm)
 current_figure() #hide
 
 # We can look at the partial response to the variable that was included first in
-# the model:
+# the model, in order to understand how it translates into a high predicted
+# value:
 
 #figure first var
 f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-poly!(ax, landmass, color=:grey95)
+ax = Axis(f[1, 1]; aspect = DataAspect())
+poly!(ax, landmass; color = :grey95)
 hm = heatmap!(
     ax,
-    partialresponse(m, L, first(variables(m)); threshold=false);
+    partialresponse(m, L, first(variables(m)); threshold = false);
     colormap = Reverse(:batlowW),
-    colorrange = (0, 1)
+    colorrange = (0, 1),
 )
-lines!(ax, landmass, color=:black)
+lines!(ax, landmass; color = :black)
 tightlimits!(ax)
 hidedecorations!(ax)
-Colorbar(f[1,2], hm, label=layers(provider)[first(variables(m))])
+Colorbar(f[1, 2], hm; label = layers(provider)[first(variables(m))])
 current_figure() #hide
 
 # We can also look at the effect of this variable's value on the average model
-# prediction:
+# prediction using Shapley Monte-Carlo values.
 
 #figure Scatter plot SHAP
 f = Figure()
-ax = Axis(f[1,1], xlabel=layers(provider)[first(variables(m))], ylabel="Effect on average prediction")
+ax = Axis(
+    f[1, 1];
+    xlabel = layers(provider)[first(variables(m))],
+    ylabel = "Effect on average prediction",
+)
 scatter!(
     ax,
     features(m, first(variables(m))),
-    explain(m, first(variables(m)); threshold=false),
-    color = (:black, 0.5)
+    explain(m, first(variables(m)); threshold = false);
+    color = (:black, 0.5),
 )
 current_figure() #hide
+
+# This shows that the presence of the species becomes more likely to be
+# predicted when the value of this variable is higher.
 
 # ## Related documentation
 
@@ -187,7 +212,6 @@ current_figure() #hide
 
 # ```@docs; canonical=false
 # Maxent
-# hyperparameters
 # hyperparameters!
 # crossvalidate
 # ```

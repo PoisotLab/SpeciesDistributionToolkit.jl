@@ -81,28 +81,59 @@ current_figure() #hide
 # then a rotation around the axis. It is returned as a tuple, which can be
 # passed to the `rotator` closure, which handles the actual rotation:
 
-𝐑 = rotator(θ...)
+𝑹 = rotator(θ...)
 
-# The next figure shows the original laer, as well as the coordinates of the
-# points from which its replacement values will be drawn. Note that the 
+# ::: info Order of operations
+#
+# The shift in latitude and longitude can be done in any order, but the rotation
+# is done last. Internally, the functions will always perform these steps in the
+# same order.
+#
+# :::
+
+# The next figure shows the original layer, as well as the coordinates of the
+# points from which its replacement values will be drawn.
 
 # figure Full area with rotation
 f = Figure()
 ax = Axis(f[1,1]; aspect=DataAspect())
 hm = heatmap!(ax, P, colormap=:batlowW, alpha=0.4)
-lines!(ax, aoi, color=:black)
-scatter!(ax, 𝐑(lonlat(C)), color=:red, markersize=4)
+lines!(ax, landmass, color=:grey50)
+poly!(ax, aoi, color=:orange, alpha=0.5)
+lines!(ax, aoi, color=:orange)
+scatter!(ax, 𝑹(lonlat(C)), color=:black, markersize=4, alpha=0.5)
 Colorbar(f[1,2], hm, label="Average temperature")
 current_figure() #hide
 
-# We can, for example, shift and rotate the first layer:
+# This rotation function can then be applied to the `shiftandrotate` function,
+# in order to create a modified version of the original layer:
 
-Y = shiftandrotate(C, P, 𝐑)
+Y = shiftandrotate(C, P, 𝑹)
 
-# We can apply this transformation to the original (full resolution) data
+#figure Shift and rotated layer
+f = Figure()
+ax = Axis(f[1,1]; aspect=DataAspect())
+heatmap!(ax, P, colormap=:batlowW, alpha=0.4)
+lines!(ax, landmass, color=:grey50)
+hm = heatmap!(ax, Y, colormap=:batlowW, colorrange=extrema(P))
+lines!(ax, aoi, color=:black)
+Colorbar(f[1,2], hm, label="Average temperature")
+current_figure() #hide
 
-X = trim.(mask(copy.(L), aoi))
-M = [shiftandrotate(X[i], L[i], θ) for i in eachindex(X)]
+# ## Shifting and rotating the layers
+
+# We can now apply this transformation to the original (full resolution) data.
+# We will start by trimming the layers to the extent of the area of interest:
+
+X = trim.(mask(copy.(L), aoi));
+
+# We will use these vectors to train the reference species distribution model.
+# We now generate the shifted and rotated version:
+
+M = shiftandrotate(X, L, 𝑹);
+
+# We can check the version of the shifted and rotated layer in its full
+# resolution:
 
 #figure Rotated target landscape
 f = Figure()
@@ -113,6 +144,8 @@ hm = heatmap!(ax, M[1], colormap=:batlowW, colorrange=extrema(P))
 lines!(ax, aoi, color=:black)
 Colorbar(f[1,2], hm, label="Average temperature")
 current_figure() #hide
+
+# ## Dealing with different values distributions
 
 # compare the distributions
 

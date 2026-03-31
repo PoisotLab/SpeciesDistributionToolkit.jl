@@ -151,3 +151,13 @@ function shiftandrotate(L::SDMLayer, P::SDMLayer, rotator)
     shiftandrotate!(Y, P, rotator)
     return Y
 end
+
+function shiftandrotate!(L::Vector{<:SDMLayer}, P::Vector{<:SDMLayer}, rotator)
+    @assert length(L) == length(P)
+    [shiftandrotate!(L[i], P[i], rotator) for i in eachindex(P)]
+    return L
+end
+
+function shiftandrotate(L::Vector{<:SDMLayer}, P::Vector{<:SDMLayer}, rotator)
+    return shiftandrotate!(copy(L), copy(P), rotator)
+end

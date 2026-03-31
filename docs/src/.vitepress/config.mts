@@ -127,6 +127,7 @@ export default defineConfig({
                                 { text: "Boosting", link: "/manual/distributions/adaboost/" },
                                 { text: "Conformal prediction", link: "/manual/distributions/conformal/" },
                                 { text: "Covariate shift", link: "/manual/distributions/covariate-shift/" },
+                                { text: "Maxent", link: "/manual/distributions/maxent/" },
                             ]
                         },
                         {
@@ -135,6 +136,7 @@ export default defineConfig({
                             items: [
                                 { text: "GBIF API", link: "/manual/retrieval/gbif-api/" },
                                 { text: "GBIF downloads", link: "/manual/retrieval/gbif-download/" },
+                                { text: "Local GBIF files", link: "/manual/retrieval/gbif-local/" },
                                 { text: "STAC catalogues", link: "/manual/retrieval/stac/" },
                                 { text: "List raster layers", link: "/manual/retrieval/list-raster-layers/" },
                                 { text: "List polygon information", link: "/manual/retrieval/list-polygon-information/" },

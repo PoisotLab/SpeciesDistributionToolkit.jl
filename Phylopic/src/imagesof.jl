@@ -1,7 +1,9 @@
 """
     _get_uuids_at_page(query, page)
 
-This function is an internal helped function to return an array of pairs, wherein each pair maps a name to a UUID, for a given query and page. These outpurs are collected in a dictionary by `Phylopic.names`.
+This function is an internal helped function to return an array of pairs,
+wherein each pair maps a name to a UUID, for a given query and page. These
+outpurs are collected in a dictionary by `Phylopic.names`.
 """
 function _get_uuids_at_page(query, page)
     page_query = push!(query, "page" => page - 1)
@@ -16,7 +18,10 @@ end
 """
     imagesof(name::AbstractString; items=1, attribution=false, sharealike=false, nocommercial=false)
 
-Returns a mapping between names and UUIDs of images for a given text (see also `Phylopic.autocomplete` to find relevant names). By default, the search will return images that come without BY, SA, and NC clauses (*i.e.* public domain dedication), but this can be changed using the keyword arguments.
+Returns a mapping between names and UUIDs of images for a given text (see also
+`Phylopic.autocomplete` to find relevant names). By default, the search will
+return images that come without BY, SA, and NC clauses (*i.e.* public domain
+dedication), but this can be changed using the keyword arguments.
 
 `items`
 : Default to 1

@@ -30,5 +30,5 @@ function quantiletransfer!(target::Vector{<:SDMLayer}, reference::Vector{<:SDMLa
 end
 
 function quantiletransfer(target::Vector{<:SDMLayer}, reference::Vector{<:SDMLayer})
-    return quantiletransfer!(copy.(target), reference)
+    return quantiletransfer!(copy(target), reference)
 end

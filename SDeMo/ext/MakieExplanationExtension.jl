@@ -6,11 +6,6 @@ using SDeMo
 import SDeMo:
     cpplot, cpplot!, iceplot, iceplot!, partialdependenceplot, partialdependenceplot!
 
-function Makie.convert_arguments(P::Makie.PointBased, model::T) where {T <: AbstractSDM}
-    @assert isgeoreferenced(model)
-    return Makie.convert_arguments(P, model.coordinates)
-end
-
 function _shared_argument_cp_plots()
     return Makie.@DocumentedAttributes begin
         bins = 30

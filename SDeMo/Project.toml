@@ -21,7 +21,8 @@ TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 
 [extensions]
-MakieExtension = "Makie"
+MakieSDMExtension = "Makie"
+MakieExplanationExtension = "Makie"
 
 [compat]
 Distributions = "0.25"

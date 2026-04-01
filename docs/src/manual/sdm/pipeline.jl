@@ -1,9 +1,11 @@
 # # The model training pipeline
 
 # The purpose of this vignette is to present the ways to train and predict with
-# a model.
+# a model. This is not a complete overview of the features of the package, but
+# rather a compendium of the ways to declare, train, and predict with a model.
 
 using SpeciesDistributionToolkit
+import Statistics
 using CairoMakie
 
 # The rest of the vignettes in this section present more advanced
@@ -174,6 +176,13 @@ predict(forest, X[:,1]; threshold=false, consensus=iqr)
 
 # ## Boosting
 
+# We can use the AdaBoost approach to boost a component model. For the sake of
+# argument, let's do a booster BIOCLIM. We only live once, and it's a very
+# confusin experience, so we might as well embrace the weird.
+
+why = AdaBoost(SDM(RawData, BIOCLIM, X, y, c), 50)
+train!(why)
+
 # ::: info More on boosting
 #
 # There is a more complete [vignette on
@@ -181,6 +190,31 @@ predict(forest, X[:,1]; threshold=false, consensus=iqr)
 # of model calibration.
 #
 # :::
+
+# This model can be used just like any other model:
+
+predict(why, X[:,4])
+
+# ## Heterogeneous ensembles
+
+# Several models can be combined into an ensemble, which is done by using an
+# array of models:
+
+ensemble = Ensemble([
+    SDM(RawData, Maxent, X, y, c),
+    SDM(PCATransform, Logistic, X, y, c),
+    SDM(RawData, NaiveBayes, X, y, c),
+    Bagging(
+        SDM(RawData, DecisionTree, X, y, c),
+        50
+    )
+])
+train!(ensemble)
+
+# This model can be predicted just like an homogeneus ensemble, including using
+# `threshold` and `consensus` keywords:
+
+predict(ensemble, X[:,3]; threshold=false, consensus=Statistics.median)
 
 # ## Related documentation
 

@@ -114,13 +114,20 @@ function findrotation(
     ll = lonlat(L)
     while iter < maxiter
         iter += 1
+        failed = false
         lon = rand() * (ΔX[2] - ΔX[1]) + ΔX[1]
         lat = rand() * (ΔY[2] - ΔY[1]) + ΔY[1]
         rot = rand() * (rotations[2] - rotations[1]) + rotations[1]
         r = (lon, lat, rot)
         trf = rotator(r...)
-        u = [P[c...] for c in trf(ll)]
-        if !any(isnothing, u)
+        newcoords = trf(ll)
+        for n in newcoords
+            if isnothing(P[n...])
+                failed = true
+                break
+            end
+        end
+        if !failed
             return r
         end
     end

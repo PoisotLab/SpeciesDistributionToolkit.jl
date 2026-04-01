@@ -105,13 +105,13 @@ end
 
 Base.copy(layers::Vector{<:SDMLayer}) = copy.(layers)
 
-@testitem "We can copy a vector of layer" begin
+@testitem "We can copy a vector of layers" begin
     layer = SimpleSDMLayers.__demodata()
     layers = [layer, layer, layer]
     copied = copy(layers)
     copied[1][1, 1] *= 2
     @test copied[1][1, 1] != layers[1][1, 1]
-    @tets layers[1][1, 1] == layer[1, 1]
+    @test layers[1][1, 1] == layer[1, 1]
 end
 
 function Base.convert(::Type{SDMLayer{T}}, layer::SDMLayer{N}) where {T, N}

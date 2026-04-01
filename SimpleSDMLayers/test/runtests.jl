@@ -50,6 +50,20 @@ end
     @test length(M) <= 3
 end
 
+@testitem "We can reconstruct layers from a PCA" begin
+    using MultivariateStats
+    using NeutralLandscapes
+    L = [SDMLayer(DiamondSquare(), (30, 50)) for _ in 1:8]
+    P = fit(PCA, L; maxoutdim=3)
+    M = predict(P, L)
+    @test M isa Vector{<:SDMLayer}
+    @test length(M) <= 3
+    R = reconstruct(P, M)
+    @test R isa Vector{<:SDMLayer}
+    @test length(R) <= length(L)
+end
+
+
 @testitem "We can run a heatmap for a layer" begin
     using CairoMakie
     using NeutralLandscapes

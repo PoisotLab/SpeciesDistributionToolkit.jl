@@ -25,6 +25,7 @@ import GeoJSON
 import PolygonOps
 import ZipArchives
 import Downloads
+import Statistics
 import HTTP
 
 # Functions to get latitudes/longitudes
@@ -55,9 +56,23 @@ include("polygons/simplify.jl")
 export trim
 export zone, byzone
 
+# Tessellation
+include("tessellation/squares.jl")
+include("tessellation/hexagons.jl")
+include("tessellation/triangles.jl")
+include("tessellation/tessellate.jl")
+export tessellate
+export assignfolds!, spatialfold
+
+include("tessellation/spatialfold.jl")
+
 # Extra functions
 include("utilities.jl")
 export gainloss, discretize
+
+# Variograms
+include("variogram.jl")
+export variogram
 
 # Reprojection
 include("reproject.jl")

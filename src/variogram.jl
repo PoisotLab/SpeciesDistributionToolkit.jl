@@ -1,0 +1,460 @@
+function _generate_point_pairs(occ::AbstractOccurrenceCollection, n::Integer)
+    z = Tuple{Float64, Float64}[]
+
+    xy = place(occ)
+    for _ in Base.OneTo(n)
+        s = rand(eachindex(xy), 2)
+        sᵢ = xy[s[1]]
+        sⱼ = xy[s[2]]
+        Lᵢ = presence(occ)[s[1]]
+        Lⱼ = presence(occ)[s[2]]
+        δ = Fauxcurrences._distancefunction(sᵢ, sⱼ)
+        push!(z, (δ, abs(Lᵢ - Lⱼ)))
+    end
+    return z
+end
+
+function _generate_point_pairs(model::AbstractSDM, n::Integer, v::Integer)
+    z = Tuple{Float64, Float64}[]
+
+    xy = place(model)
+    for _ in Base.OneTo(n)
+        s = rand(eachindex(xy), 2)
+        sᵢ = xy[s[1]]
+        sⱼ = xy[s[2]]
+        Lᵢ = features(model, v)[s[1]]
+        Lⱼ = features(model, v)[s[2]]
+        δ = Fauxcurrences._distancefunction(sᵢ, sⱼ)
+        push!(z, (δ, abs(Lᵢ - Lⱼ)))
+    end
+    return z
+end
+
+function _generate_point_pairs(L::SDMLayer, n::Integer)
+    Es, Ns = eastings(L), northings(L)
+    z = Tuple{Float64, Float64}[]
+
+    for _ in Base.OneTo(n)
+        s = rand(keys(L), 2)
+        sᵢ = (Es[s[1].I[2]], Ns[s[1].I[1]])
+        sⱼ = (Es[s[2].I[2]], Ns[s[2].I[1]])
+        δ = Fauxcurrences._distancefunction(sᵢ, sⱼ)
+        push!(z, (δ, abs(L[sᵢ...] - L[sⱼ...])))
+    end
+    return z
+end
+
+function variogram(
+    pairs::Vector{Tuple{Float64, Float64}},
+    h::Float64,
+    w::Float64;
+    α::Float64 = 2.0,
+)
+    x = first.(pairs)
+    y = last.(pairs)
+    bins = collect((minimum(x) + h / 2):w:(maximum(x) - h / 2))
+
+    X = zeros(length(bins))
+    Y = zeros(length(bins))
+    N = zeros(length(bins))
+    for i in eachindex(bins)
+        vx = findall(s -> bins[i] - h / 2 <= s <= bins[i] + h / 2, x)
+        if !isnothing(vx)
+            X[i] = Statistics.mean(x[vx])
+            Y[i] = Statistics.mean(y[vx] .^ α) / 2
+            N[i] = length(vx)
+        end
+    end
+    val = findall(!iszero, N)
+    return X[val], Y[val], N[val]
+end
+
+"""
+    variogram(L::SDMLayer; samples::Integer=2000, bins::Integer=100; kwargs...)
+
+Generates the raw data to look at an empirical semivariogram from a layer with
+numerical values. This method will generate bins that are `width` kilometers
+wide by drawing pairs of points at random, and each bin will be shifted by
+`shift` kilometers.
+
+This returns three vectors: the empirical center of the bin, the semivariance
+within this bin, and the number of samples that compose this bin.
+"""
+function variogram(L::SDMLayer; width::Float64 = 10.0, shift::Float64 = 1.0, kwargs...)
+    bb = boundingbox(L)
+    # Estimate of the distance for the number of samples is the largest of height/width
+
+    Lh = Fauxcurrences._distancefunction((bb.left, bb.bottom), (bb.left, bb.top))
+    Lw = Fauxcurrences._distancefunction((bb.left, bb.bottom), (bb.right, bb.bottom))
+    Ls = max(Lh, Lw)
+
+    # We would like to get 30 samples per bin if possible, but if not that's cool too
+    samples = ceil(Int, (Ls / width) * 40)
+
+    Z = _generate_point_pairs(L, samples)
+    return variogram(Z, width, shift; kwargs...)
+end
+
+"""
+    variogram(model::AbstractSDM; variable::Int, samples::Integer=2000, bins::Integer=100; kwargs...)
+
+Generates the raw data to look at an empirical semivariogram from a model, for a
+given `variable` (keyword, defaults to the first variable in the model). This
+method will generate bins that are `width` kilometers wide by drawing pairs of
+points at random, and each bin will be shifted by `shift` kilometers.
+
+This returns three vectors: the empirical center of the bin, the semivariance
+within this bin, and the number of samples that compose this bin.
+"""
+function variogram(
+    model::AbstractSDM;
+    variable::Int = first(variables(model)),
+    width::Float64 = 10.0,
+    shift::Float64 = 1.0,
+    kwargs...,
+)
+    @assert isgeoreferenced(model)
+    bb = boundingbox(elements(model))
+    # Estimate of the distance for the number of samples is the largest of height/width
+
+    Lh = Fauxcurrences._distancefunction((bb.left, bb.bottom), (bb.left, bb.top))
+    Lw = Fauxcurrences._distancefunction((bb.left, bb.bottom), (bb.right, bb.bottom))
+    Ls = max(Lh, Lw)
+
+    # We would like to get 30 samples per bin if possible, but if not that's cool too
+    samples = ceil(Int, (Ls / width) * 40)
+
+    Z = _generate_point_pairs(model, samples, variable)
+    return variogram(Z, width, shift; kwargs...)
+end
+
+"""
+    variogram(occ::AbstractOccurrenceCollection; width::Float64 = 10., shift::Float64=1.0, kwargs...)
+
+Generates the raw data to look at an empirical semivariogram from a collection
+of occurrences. This method will generate bins that are `width` kilometers wide
+by drawing pairs of points at random, and each bin will be shifted by `shift`
+kilometers.
+
+This returns three vectors: the empirical center of the bin, the semivariance
+within this bin, and the number of samples that compose this bin.
+"""
+function variogram(
+    occ::AbstractOccurrenceCollection;
+    width::Float64 = 10.0,
+    shift::Float64 = 1.0,
+    kwargs...,
+)
+    bb = boundingbox(occ)
+
+    # Estimate of the distance for the number of samples is the largest of height/width
+    Lh = Fauxcurrences._distancefunction((bb.left, bb.bottom), (bb.left, bb.top))
+    Lw = Fauxcurrences._distancefunction((bb.left, bb.bottom), (bb.right, bb.bottom))
+    Ls = max(Lh, Lw)
+
+    # We would like to get 30 samples per bin if possible, but if not that's cool too
+    samples = ceil(Int, (Ls / width) * 40)
+
+    Z = _generate_point_pairs(occ, samples)
+    return variogram(Z, width, shift; kwargs...)
+end
+
+# Functions to fit
+function __variogram_gaussian(sill, nugget, range, alpha)
+    function __mod(h)
+        unit = (1 - exp(-(3 * h * h) / (range * range)))
+        return unit * (sill - nugget) + nugget
+    end
+    return __mod
+end
+
+function __variogram_spherical(sill, nugget, range, alpha)
+    function __mod(h)
+        if h > range
+            return sill
+        else
+            unit = 1.5 * (h / range) - 0.5 * (h / range)^3
+            return unit * (sill - nugget) + nugget
+        end
+    end
+    return __mod
+end
+
+function __variogram_exponential(sill, nugget, range, alpha)
+    function __mod(h)
+        unit = (1 - exp(-(3 * h) / range))
+        return unit * (sill - nugget) + nugget
+    end
+    return __mod
+end
+
+function __variogram_cubic(sill, nugget, range, alpha)
+    function __mod(h)
+        if h > range
+            return sill
+        else
+            coeffs = [7, -35 / 4, 7 / 2, -3 / 4]
+            expos = [2, 3, 5, 7]
+            unit = sum([coeffs[i] * (h / range)^expos[i] for i in eachindex(coeffs)])
+            return unit * (sill - nugget) + nugget
+        end
+    end
+    return __mod
+end
+
+function __variogram_gamma(sill, nugget, range, alpha)
+    function __mod(h)
+        δ = 20^(1 / alpha) - 1
+        unit = 1 - 1 / ((1 + (δ * h) / range)^alpha)
+        return unit * (sill - nugget) + nugget
+    end
+    return __mod
+end
+
+function __variogram_hyperbolic(sill, nugget, range, alpha)
+    return __variogram_gamma(sill, nugget, range, 1.0)
+end
+
+function __variogram_cardinalsine(sill, nugget, range, alpha)
+    function __mod(h)
+        δ = 20.371
+        unit = 1 - (sin((δ * h) / range)) / (δ * h / range)
+        return unit * (sill - nugget) + nugget
+    end
+    return __mod
+end
+
+function __variogram_linear(sill, nugget, range, alpha)
+    function __mod(h)
+        unit = h / range
+        return unit * (sill - nugget) + nugget
+    end
+    return __mod
+end
+
+function __variogram_stable(sill, nugget, range, alpha)
+    function __mod(h)
+        δ = 3^(1 / alpha)
+        unit = 1 - exp(-((δ * h) / (range))^alpha)
+        return unit * (sill - nugget) + nugget
+    end
+    return __mod
+end
+
+function __variogram_cauchy(sill, nugget, range, alpha)
+    function __mod(h)
+        δ = sqrt(20^(1 / alpha) - 1)
+        unit = 1 - (1 + ((δ * h) / range)^2)^(-alpha)
+        return unit * (sill - nugget) + nugget
+    end
+    return __mod
+end
+
+"""
+    fitvariogram(x, y, n; family = :gaussian)
+
+Fits a variogram of the given `family` based on data representing the central
+bin distance `x`, the semivariogram `y`, and the sample size `n`. The data are
+returned as a named tuple containing the `range`, the `sill`, the `nugget`, the
+`parameter`, the `error` (RMSE), and the `model`. The model is a function that
+can be called on a given distance to obtain the best fit variogram (see the
+details below).
+
+The `family` keyword (defaults to `:gaussian`) selects the type of variogram
+model to fit. Families of `:gaussian`, `:spherical`, `:exponential`, `:linear`,
+`:cubic`, and `:hyperbolic` only fit the range, nugget, and sill. Families of
+`:gamma`, `:stable`, `:cauchy` also fit a free parameter. Finally,
+`:cardinalsine` can be used to fit periodic variograms.
+
+Values are optimized using the Nelder-Mead algorithm with `samples` samples
+(300) and `maxiter` iterations (1200). The `tol` criteria (10⁻⁴) is the
+threshold under which the variance of the RMSE is assumed to indicate that the
+algorithm has converged and should return early. After the algorithm has
+concluded, the best candidate parameter set is returned.
+
+To help the optimisation process, it is a good idea to provide some guidance to
+the algorithm in the form of boundaries for the various parameters, as tuple of
+floats. By default, the `range` boundary is from the shortest distance to 3/4th
+of the maximum distance; the `sill` is within the extrema of the observed
+variances; the `nugget` boundary is between the smallest variance observed and
+half of the max; the `parameter` boundary is between 0.1 and 2. Visual
+inspection of the empirical data will help set realistic values.
+"""
+function fitvariogram(
+    x,
+    y,
+    n;
+    family = :gaussian,
+    range = (minimum(x), 0.75 * maximum(x)),
+    nugget = (minimum(y), 0.5 * maximum(y)),
+    sill = extrema(y),
+    parameter = (0.1, 2.0),
+    samples = 300,
+    maxiter = 1200,
+    tol = 1e-4,
+)
+
+    # Generate some random parameters
+    _samples = samples
+    ranges = rand(_samples) .* (range[2] - range[1]) .+ range[1]
+    sills = rand(_samples) .* (sill[2] - sill[1]) .+ sill[1]
+    nuggets = rand(_samples) .* (nugget[2] - nugget[1]) .+ nugget[1]
+    alpha = rand(_samples) .* (parameter[2] - parameter[1]) .+ parameter[1]
+
+    error = Inf
+    gen = nothing
+    if family == :exponential
+        gen = __variogram_exponential
+    end
+    if family == :gaussian
+        gen = __variogram_gaussian
+    end
+    if family == :spherical
+        gen = __variogram_spherical
+    end
+    if family == :cubic
+        gen = __variogram_cubic
+    end
+    if family == :hyperbolic
+        gen = __variogram_hyperbolic
+    end
+    if family == :cardinalsine
+        gen = __variogram_cardinalsine
+    end
+    if family == :linear
+        gen = __variogram_linear
+    end
+    if family == :gamma
+        gen = __variogram_gamma
+    end
+    if family == :stable
+        gen = __variogram_stable
+    end
+    if family == :cauchy
+        gen = __variogram_cauchy
+    end
+
+    if isnothing(gen)
+        throw(ErrorException("The variogram model $(family) does not exist"))
+    end
+
+    w = n ./ sum(n)
+
+    xn = [(sills[i], nuggets[i], ranges[i], alpha[i]) for i in Base.OneTo(_samples)]
+    L = [sqrt(sum(w .* (gen(xn[i]...).(x) .- y) .^ 2.0) / sum(w)) for i in Base.OneTo(length(xn))]
+
+    for iter in Base.OneTo(maxiter)
+        __nm!(xn, L, x, y, n, gen, [sill, nugget, range, parameter])
+        if Statistics.var(L) <= tol
+            break
+        end
+    end
+
+    best = xn[last(findmin(L))]
+    S, N, R, A = abs.(best)
+    return (
+        sill = S,
+        nugget = N,
+        range = R,
+        parameter = A,
+        error = minimum(L),
+        model = gen(S, N, R, A),
+    )
+end
+
+"""
+    fitvariogram(L::SDMLayer; family::Symbol=:gaussian, kwargs...)
+
+Fits the variogram based on a layer. The `kwargs...` are passed to `variogram`.
+"""
+function fitvariogram(L::SDMLayer; family::Symbol = :gaussian, kwargs...)
+    vario = variogram(L; kwargs...)
+    return fitvariogram(vario...; family = family)
+end
+
+function __nm!(
+    xn, L, x, y, n, f, ranges;
+    α = 1.0,
+    β = 0.5,
+    γ = 2.0,
+    δ = 0.5,
+    kwargs...,
+)
+    function paramclamp(N)
+        return Tuple(
+            clamp(N[i], ranges[i]...) for i in eachindex(N)
+        )
+    end
+
+    # Weights
+    w = n ./ sum(n)
+
+    # Proposals
+    best = partialsortperm(L, 1)
+    second = partialsortperm(L, length(L) - 1)
+    worst = partialsortperm(L, length(L))
+
+    xh, xs, xl = xn[worst], xn[second], xn[best]
+    fh, fs, fl = L[worst], L[second], L[best]
+
+    bestside = filter(!isequal(worst), eachindex(xn))
+    centroid = reduce(.+, xn[bestside]) ./ length(bestside)
+
+    # Reflection
+    xr = paramclamp(centroid .+ α .* (centroid .- xh))
+    fr = sqrt(sum(w .* (f(xr...).(x) .- y) .^ 2.0) / sum(w))
+    if fl <= fr < fs
+        L[worst] = fr
+        xn[worst] = xr
+        return xn
+    end
+
+    # Expansion
+    if fr < fl
+        xe = paramclamp(centroid .+ γ .* (xr .- centroid))
+        fe = sqrt(sum(w .* (f(xe...).(x) .- y) .^ 2.0) / sum(w))
+        if fe < fr
+            L[worst] = fe
+            xn[worst] = xe
+            return xn
+        else
+            L[worst] = fr
+            xn[worst] = xr
+            return xn
+        end
+    end
+
+    # Contraction
+    if fr >= fs
+        if fs <= fr < fh
+            xc = paramclamp(centroid .+ β .* (xr .- centroid))
+            fc = sqrt(sum(w .* (f(xc...).(x) .- y) .^ 2.0) / sum(w))
+            if fc <= fr
+                L[worst] = fc
+                xn[worst] = xc
+                return xn
+            else
+                for i in eachindex(xn)
+                    xn[i] = paramclamp(xl .+ δ .* (xn[i] .- xl))
+                    L[i] = sqrt(sum(w .* (f(xn[i]...).(x) .- y) .^ 2.0) / sum(w))
+                end
+                return xn
+            end
+        end
+        if fr >= fh
+            xc = paramclamp(centroid .+ β .* (xr .- centroid))
+            fc = sqrt(sum(w .* (f(xc...).(x) .- y) .^ 2.0) / sum(w))
+            if fc < fh
+                L[worst] = fc
+                xn[worst] = xc
+                return xn
+            else
+                for i in eachindex(xn)
+                    xn[i] = paramclamp(xl .+ δ .* (xn[i] .- xl))
+                    L[i] = sqrt(sum(w .* (f(xn[i]...).(x) .- y) .^ 2.0) / sum(w))
+                end
+                return xn
+            end
+        end
+    end
+end

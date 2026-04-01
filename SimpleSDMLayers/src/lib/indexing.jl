@@ -12,7 +12,7 @@ function Base.setindex!(layer::SDMLayer, i...)
 end
 
 @testitem "We can index a layer by position" begin
-    layer = SDMLayer(rand(UInt8, (10, 20)); nodata = 0x06)
+    layer = SDMLayer(rand(UInt8, (10, 20)))
     @test layer[1, 1] == layer.grid[1, 1]
 end
 

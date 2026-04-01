@@ -46,7 +46,7 @@ struct GBIFTaxon
    synonym::Bool
 end
 
-function GBIFTaxon(o::Dict{String, Any})
+function GBIFTaxon(o::AbstractDict)
    levels = ["kingdom", "phylum", "class", "order", "family", "genus", "species"]
    r = Dict{Any,Any}()
    for l in levels

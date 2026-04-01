@@ -1,7 +1,5 @@
 import { defineConfig } from 'vitepress'
-import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 import mathjax3 from "markdown-it-mathjax3";
-import footnote from "markdown-it-footnote";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -11,18 +9,19 @@ export default defineConfig({
     lastUpdated: true,
     cleanUrls: true,
     outDir: 'REPLACE_ME_DOCUMENTER_VITEPRESS', // This is required for MarkdownVitepress to work correctly...
-    head: [['link', { rel: 'icon', href: 'REPLACE_ME_DOCUMENTER_VITEPRESS_FAVICON' }]],
+    head: [['link', { rel: 'icon', href: 'favicon.ico' }]],
     ignoreDeadLinks: true,
     markdown: {
         math: true,
-        config(md) {
-            md.use(tabsMarkdownPlugin),
-                md.use(mathjax3),
-                md.use(footnote)
+        config: (md) => {
+            md.use(mathjax3)
+        },
+        image: {
+            lazyLoading: true
         },
         theme: {
-            light: "min-light",
-            dark: "min-dark"
+            light: "catppuccin-latte",
+            dark: "catppuccin-macchiato"
         }
     },
     themeConfig: {
@@ -40,9 +39,7 @@ export default defineConfig({
             }
         },
         nav: [
-            { text: 'Index', link: '/index' },
-            { text: "Tutorials", link: "/tutorials" },
-            { text: "How-to", link: "/howto" },
+            { text: "Manual", link: "/manual" },
             {
                 text: 'Datasets',
                 items: [
@@ -106,115 +103,117 @@ export default defineConfig({
             }
         ],
         sidebar: {
-            "/howto/": [
+            "/manual/": [
                 {
-                    text: "How-to",
+                    text: "Manual",
                     items: [
+                        {
+                            text: "Use cases (general)",
+                            collapsed: true,
+                            items: [
+                                { text: "Climate novelty", link: "/manual/usecases/climatenovelty/" },
+                                { text: "Landcover consensus", link: "/manual/usecases/consensus/" },
+                                { text: "Spatial boundaries", link: "/manual/usecases/spatial-boundaries/" },
+                            ]
+                        },
+                        {
+                            text: "Use-cases (SDM)",
+                            collapsed: true,
+                            items: [
+                                { text: "Building a model", link: "/manual/distributions/training/" },
+                                { text: "Maxent", link: "/manual/distributions/maxent/" },
+                                { text: "Predicting probabilities", link: "/manual/distributions/adaboost/" },
+                                { text: "Shift and rotate", link: "/manual/distributions/shift-and-rotate/" },
+                                { text: "Conformal prediction", link: "/manual/distributions/conformal/" },
+                                { text: "Covariate shift", link: "/manual/distributions/covariate-shift/" },
+                                { text: "Spatial cross-validation", link: "/manual/distributions/spatial-crossvalidation/" },
+                            ]
+                        },
                         {
                             text: "Data retrieval",
                             collapsed: true,
                             items: [
-                                { text: "GBIF API", link: "/howto/retrieval/gbif-api/" },
-                                { text: "GBIF downloads", link: "/howto/retrieval/gbif-download/" },
-                                { text: "STAC catalogues", link: "/howto/retrieval/stac/" },
-                                { text: "List raster layers", link: "/howto/retrieval/list-raster-layers/" },
-                                { text: "List polygon information", link: "/howto/retrieval/list-polygon-information/" },
+                                { text: "GBIF API", link: "/manual/retrieval/gbif-api/" },
+                                { text: "GBIF downloads", link: "/manual/retrieval/gbif-download/" },
+                                { text: "Local GBIF files", link: "/manual/retrieval/gbif-local/" },
+                                { text: "STAC catalogues", link: "/manual/retrieval/stac/" },
+                                { text: "List raster layers", link: "/manual/retrieval/list-raster-layers/" },
+                                { text: "List polygon information", link: "/manual/retrieval/list-polygon-information/" },
                             ]
                         },
                         {
                             text: "Operations on layers",
                             collapsed: true,
                             items: [
-                                { text: "Arithmetic", link: "/howto/layers/layer-arithmetic/" },
-                                { text: "Statistics", link: "/howto/layers/layer-statistics/" },
-                                { text: "Multivariate transformations", link: "/howto/layers/multivariate/" },
-                                { text: "Clustering", link: "/howto/layers/clustering/" },
+                                { text: "Arithmetic", link: "/manual/layers/layer-arithmetic/" },
+                                { text: "Statistics", link: "/manual/layers/layer-statistics/" },
+                                { text: "Multivariate transformations", link: "/manual/layers/multivariate/" },
+                                { text: "Clustering", link: "/manual/layers/clustering/" },
                             ]
                         },
                         {
                             text: "Polygons and masking",
                             collapsed: true,
                             items: [
-                                { text: "Masking layers", link: "/howto/polygons/masking-a-layer/" },
-                                { text: "Masking with polygons", link: "/howto/polygons/masking-with-polygons/" },
-                                { text: "Polygon operations", link: "/howto/polygons/operations/" },
-                                { text: "Zonal statistics", link: "/howto/polygons/zonal-statistics/" },
+                                { text: "Masking layers", link: "/manual/polygons/masking-a-layer/" },
+                                { text: "Masking with polygons", link: "/manual/polygons/masking-with-polygons/" },
+                                { text: "Polygon operations", link: "/manual/polygons/operations/" },
+                                { text: "Zonal statistics", link: "/manual/polygons/zonal-statistics/" },
+                                { text: "Tessellation", link: "/manual/polygons/tessellation/" },
                             ]
                         },
                         {
                             text: "Data generation",
                             collapsed: true,
                             items: [
-                                { text: "Neutral landscapes", link: "/howto/generation/neutral-landscapes/" },
-                                { text: "Pseudo-absences", link: "/howto/generation/pseudoabsences/" },
+                                { text: "Neutral landscapes", link: "/manual/generation/neutral-landscapes/" },
+                                { text: "Pseudo-absences", link: "/manual/generation/pseudoabsences/" },
+                                { text: "Fauxcurrences", link: "/manual/generation/fauxcurrences/" },
+                                { text: "Virtual species", link: "/manual/generation/virtual-species/" },
+                                { text: "Occurrences from layers", link: "/manual/generation/occurrences-from-layer/"},
                             ]
                         },
                         {
                             text: "Data usage",
                             collapsed: true,
                             items: [
-                                { text: "Bounding boxes", link: "/howto/usage/boundingbox/" },
-                                { text: "Reading part of a layer", link: "/howto/usage/read-part-layer/" },
-                                { text: "Splitting and tiling", link: "/howto/usage/tiling/" },
-                                { text: "Coarsening layers", link: "/howto/usage/coarsening/" },
-                                { text: "Sliding windows", link: "/howto/usage/sliding-windows/" },
-                                { text: "Projection", link: "/howto/usage/projection/" },
-                                { text: "Layers and occurrences", link: "/howto/usage/layers-occurrences/" },
+                                { text: "Bounding boxes", link: "/manual/usage/boundingbox/" },
+                                { text: "Reading part of a layer", link: "/manual/usage/read-part-layer/" },
+                                { text: "Splitting and tiling", link: "/manual/usage/tiling/" },
+                                { text: "Coarsening layers", link: "/manual/usage/coarsening/" },
+                                { text: "Sliding windows", link: "/manual/usage/sliding-windows/" },
+                                { text: "Projection", link: "/manual/usage/projection/" },
+                                { text: "Layers and occurrences", link: "/manual/usage/layers-occurrences/" },
+                                { text: "Variograms", link: "/manual/usage/variogram/" },
                             ]
                         },
                         {
                             text: "Distribution models",
                             collapsed: true,
                             items: [
-                                { text: "Cross-validation", link: "/howto/sdm/crossvalidation/" },
-                                { text: "Variable selection", link: "/howto/sdm/variableselection/" },
-                                { text: "Hyper-parameters", link: "/howto/sdm/hyperparameters/" },
-                                { text: "PR and ROC curves", link: "/howto/sdm/pr-roc/" },
-                                { text: "Interpretability", link: "/howto/sdm/interpretability/" },
-                                { text: "Counterfactuals", link: "/howto/sdm/counterfactuals/" },
-                                { text: "Calibration", link: "/howto/sdm/calibration/" },
-                                { text: "Conformal", link: "/howto/sdm/conformal/" },
+                                { text: "Pipeline", link: "/manual/sdm/pipeline/" },
+                                { text: "Cross-validation", link: "/manual/sdm/crossvalidation/" },
+                                { text: "Variable selection", link: "/manual/sdm/variableselection/" },
+                                { text: "Hyper-parameters", link: "/manual/sdm/hyperparameters/" },
+                                { text: "PR and ROC curves", link: "/manual/sdm/pr-roc/" },
+                                { text: "Interpretability", link: "/manual/sdm/interpretability/" },
+                                { text: "Counterfactuals", link: "/manual/sdm/counterfactuals/" },
+                                { text: "Calibration", link: "/manual/sdm/calibration/" },
+                                { text: "Conformal", link: "/manual/sdm/conformal/" },
                             ]
                         },
                         {
                             text: "Data visualization",
                             collapsed: true,
                             items: [
-                                { text: "Layers", link: "/howto/dataviz/layers/" },
-                                { text: "Occurrences", link: "/howto/dataviz/occurrences/" },
-                                { text: "Polygons", link: "/howto/dataviz/polygons/" },
-                                { text: "Models", link: "/howto/dataviz/models/" },
-                                { text: "Projections", link: "/howto/dataviz/projections/" },
-                                { text: "Graticules", link: "/howto/dataviz/graticules/" },
-                                { text: "Bivariate", link: "/howto/dataviz/bivariate/" },
-                            ]
-                        }
-                    ]
-                }
-            ],
-            "/tutorials/": [
-                {
-                    text: "Tutorials",
-                    items: [
-                        {
-                            text: "Distribution models",
-                            collapsed: false,
-                            items: [
-                                { text: "Building a model", link: "/tutorials/sdm/training/" },
-                                { text: "Bagging", link: "/tutorials/sdm/bagging/" },
-                                { text: "Boosting", link: "/tutorials/sdm/adaboost/" },
-                                { text: "Conformal prediction", link: "/tutorials/sdm/conformal/" },
-                            ]
-                        },
-                        {
-                            text: "General use",
-                            collapsed: false,
-                            items: [
-                                { text: "Climate novelty", link: "/tutorials/usage/climatenovelty/" },
-                                { text: "Landcover consensus", link: "/tutorials/usage/consensus/" },
-                                { text: "Fauxcurrences", link: "/tutorials/usage/fauxcurrences/" },
-                                { text: "Virtual species", link: "/tutorials/usage/virtual-species/" },
-                                { text: "Spatial boundaries", link: "/tutorials/usage/spatial-boundaries/" },
+                                { text: "Layers", link: "/manual/dataviz/layers/" },
+                                { text: "Occurrences", link: "/manual/dataviz/occurrences/" },
+                                { text: "Polygons", link: "/manual/dataviz/polygons/" },
+                                { text: "Models", link: "/manual/dataviz/models/" },
+                                { text: "Projections", link: "/manual/dataviz/projections/" },
+                                { text: "Graticules", link: "/manual/dataviz/graticules/" },
+                                { text: "Bivariate", link: "/manual/dataviz/bivariate/" },
+                                { text: "VSUP", link: "/manual/dataviz/vsup/" },
                             ]
                         }
                     ]

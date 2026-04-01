@@ -1,7 +1,8 @@
 """
     Phylopic.vector(uuid::UUIDs.UUID)
 
-Returns the URL (if it exists) to the original vector image for the silhouette. Note that the image must be identified by its UUID, not by a string.
+Returns the URL (if it exists) to the original vector image for the silhouette.
+Note that the image must be identified by its UUID, not by a string.
 """
 function vector(uuid::UUIDs.UUID)
     lnks = Phylopic.images_links(uuid)
@@ -31,7 +32,8 @@ end
 """
     Phylopic.thumbnail(uuid::UUIDs.UUID; resolution=192)
 
-Returns the URL (if it exists) to the thumbnails for the silhouette. The thumbnail `resolution` can be `64`, `128`, or `192` (the default).
+Returns the URL (if it exists) to the thumbnails for the silhouette. The
+thumbnail `resolution` can be `64`, `128`, or `192` (the default).
 """
 function thumbnail(uuid::UUIDs.UUID; resolution=192)
     @assert resolution in [64, 128, 192]
@@ -53,7 +55,10 @@ source(dict::Dict{String,UUIDs.UUID}; kwargs...) = source.(collect(dict); kwargs
 """
     Phylopic.available_resolutions(uuid::UUIDs.UUID)
 
-Returns the available resolutions for a raster image given its UUID. The resolutions are given as a string, and can be passed as a second argument to the `Phylopic.raster` function. As the raster sizes can be different, there is no default argument to Phylopic.raster, and the first image will be used instead.
+Returns the available resolutions for a raster image given its UUID. The
+resolutions are given as a string, and can be passed as a second argument to the
+`Phylopic.raster` function. As the raster sizes can be different, there is no
+default argument to Phylopic.raster, and the first image will be used instead.
 """
 function available_resolutions(uuid::UUIDs.UUID)
     lnk = Phylopic.images_links(uuid)
@@ -72,7 +77,8 @@ end
 """
     Phylopic.raster(uuid::UUIDs.UUID, resl)
 
-Returns the URL to an image in raster format, at the given resolution. Available resolutions for any image can be obtained with `Phylopic.available_resolutions`.
+Returns the URL to an image in raster format, at the given resolution. Available
+resolutions for any image can be obtained with `Phylopic.available_resolutions`.
 """
 function raster(uuid::UUIDs.UUID, resl)
     lnk = Phylopic.images_links(uuid)
@@ -87,7 +93,8 @@ end
 """
     Phylopic.raster(uuid::UUIDs.UUID)
 
-Returns the URL to an image in raster format when no resolution is specified. In this case, the first (usually the largest) image will be returned.
+Returns the URL to an image in raster format when no resolution is specified. In
+this case, the first (usually the largest) image will be returned.
 """
 function raster(uuid::UUIDs.UUID)
     lnk = Phylopic.images_links(uuid)

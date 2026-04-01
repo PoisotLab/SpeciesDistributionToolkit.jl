@@ -52,6 +52,44 @@ and the tests can start running. Each pull request is resulting in a new
 documentation build, which takes a lot of time as the vignettes are using almost
 all of the package(s) functionalities.
 
+### Documentation
+
+New functionalities should have an entry in the `howto` or the `tutorial`
+folder, as well as be listed in the sidebar in `config.mts`. The files in these
+sections are all `.jl` files, which will be converted to markdown using the
+Literate package.
+
+New features **must** come with either a new vignette or a modification to an
+existing one. New vignettes **must** be listed in the
+`docs/src/.vitepress/config.mts` file; specifically, they must be in the
+`"sidebar"` array, grouped together with the other vignettes in the section.
+
+It is fine to use `using Revise` in the documentation scripts, this line will be
+removed at build time.
+
+Tables should be generated with `pretty_table` from the `PrettyTables` package,
+using `backend = :markdown,` somewhere in the keywords.
+
+Figures should be generated with `CairoMakie` -- a configuration line with the
+correct format and DPI will be added automatically. 
+
+All figures must be organized in the following way:
+
+~~~ julia
+#figure Short one-line summary
+f = Figure()
+# ...
+current_figure() #hide
+~~~
+
+This will be modified during the build to save the figure as a `.png` file with
+a unique name. The one-line description will become the mouseover/alt text for
+the figure, and the code will be hidden in a _Details_  box in order to not make
+the tutorials and vignettes too long.
+
+You do not need to set a random seed in the files, this will be done for _all_
+vignettes at build time.
+
 ## Repository conventions
 
 ### Naming of branches
@@ -93,7 +131,7 @@ prefix:
 
 | Prefix         | Explanation                                                                                   |
 |----------------|-----------------------------------------------------------------------------------------------|
-| `fix`          | Solves a bug / closes a PR                                                                    |
+| `fix`          | Solves a bug / closes a PR (`bug` also accepted)                                              |
 | `feat`         | Adds a new feature                                                                            |
 | `semver`       | Commit that will be tagged in a new release -- this should contain a change in `Project.toml` |
 | `dep`          | Changes in `Project.toml` to add or drop a dependency                                         |
@@ -105,7 +143,7 @@ prefix:
 | `style`        | Applies the formatter without modifying the content                                           |
 | `refactor`     | Changes the internals of a function, or changes to methods that are not exported              |
 | `chore`        | General housekeeping                                                                          |
-| `ext`          | Dealing with packages extensions                                                                      |
+| `ext`          | Dealing with packages extensions                                                              |
 
 [convcom]: https://www.conventionalcommits.org/en/v1.0.0/#summary
 [semver]: https://semver.org/
@@ -146,15 +184,18 @@ given *after* the links to issues.
 
 ### Pull requests and merging
 
-The commits in a pull request *may* be squashed before merging, and the list of
-commit messages will be kept in the body of the closing commit. The merge commit
-*must* follow the commit convention. The branches are automatically deleted when
-a pull request is merged. The commits that result from
-pulling/rebasing/conflicts operations *do not need* to follow the commit naming
-convention.
+The commits in a pull request **must** be squashed before merging, and the list
+of commit messages will be kept in the body of the closing commit. The merge
+commit **may not** follow the commit convention, and it is acceptable to use the
+title of the pull request in its place. The branches are automatically deleted
+when a pull request is merged.
+
+The commits that result from pulling/rebasing/conflicts operations **may not**
+to follow the commit naming convention, especially when done in branches that
+are not `main`.
 
 Changes in a single pull request should never affect more than a single package.
-Semantic versioning allows rapid releases, and the changes must always be
+Semantic versioning allows rapid releases, and the changes **must** always be
 limited to a single package.
 
 ## Releases

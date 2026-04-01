@@ -1,5 +1,6 @@
 function pre!(content)
-    return content |> pre_collapse_figure |> pre_no_revise
+    return content |> pre_collapse_figure |> pre_no_revise |> pre_makie_hidpi |>
+           pre_add_random
 end
 
 function post!(content)
@@ -7,31 +8,53 @@ function post!(content)
 end
 
 function pre_collapse_figure(content)
-    fig_hash = string(hash(rand(100)))
-
-    matcher = r"""^#figure (?<title>[\w-]+)$
-    (?<code>(?>^[^#].*$\n){1,})^current_figure\(\) #hide$"""m
+    matcher = r"""^#figure\s?(?<title>.+)$
+        (?<code>(?>^[^#].*$\n)+?)^current_figure\(\) #hide$"""m
 
     replacement_template = """
-    # ![](HASH-\\g<title>.png)
+        # ![\\g<title>](HASH.png)
 
-    # ::: details Code for the figure
+        # ::: details Code for the figure
 
-    \\g<code>save("HASH-\\g<title>.png", current_figure()); #hide
+        \\g<code>save("HASH.png", current_figure()); #hide
 
-    # :::
-    """
-    replacer = SubstitutionString(replace(replacement_template, "HASH" => fig_hash))
-    content = replace(content, matcher => replacer)
+        # :::
+        """
+
+    i = 1
+    m = findnext(matcher, content, i)
+    while !isnothing(m)
+        i = m[1] + 1
+        replacer = SubstitutionString(
+            replace(replacement_template, "HASH" => string(UUIDs.uuid4())),
+        )
+        content = replace(content, content[m] => replace(content[m], matcher => replacer))
+        m = findnext(matcher, content, i)
+    end
+    
     return content
 end
-
 
 function pre_no_revise(content)
     content = replace(content, "using Revise" => "")
     return content
 end
 
+function pre_makie_hidpi(content)
+    content = replace(content, "using CairoMakie" => """
+    using CairoMakie
+    CairoMakie.activate!(; type = "png", px_per_unit = 2) #hide
+    """)
+    return content
+end
+
+function pre_add_random(content)
+    content = """
+    import Random #hide
+    Random.seed!(12345); #hide
+    """ * content
+    return content
+end
 function post_extract_table(content)
     matcher = r"^`+$\n(?<table>(^\|.+\|$\n)+)\n`+$"m
     replacer = """

@@ -28,15 +28,15 @@ Same as above but with a collection
 function SDeMo.SDM(
     ::Type{TF}, ::Type{CF},
     predictors::Vector{SDMLayer{T}},
-    occurrences::OT,
+    records::OT,
 ) where {
     TF <: Transformer,
     CF <: Classifier,
     T <: Number,
     OT <: AbstractOccurrenceCollection,
 }
-    pr = nodata(mask(first(predictors), presences(occurrences)), false)
-    ab = nodata(mask(first(predictors), absences(occurrences)), false)
+    pr = nodata(mask(first(predictors), records, presences), false)
+    ab = nodata(mask(last(predictors), records, absences), false)
     return SDM(TF, CF, predictors, pr, ab)
 end
 

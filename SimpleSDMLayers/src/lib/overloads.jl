@@ -78,7 +78,10 @@ function Base.show(io::IO, ::MIME"text/plain", layer::SDMLayer)
 end
 
 function Base.show(io::IO, layer::SDMLayer)
-    return print(io, "🗺️  A $(size(layer, 1)) × $(size(layer, 2)) layer ($(count(layer)) $(eltype(layer)) cells)")
+    return print(
+        io,
+        "🗺️  A $(size(layer, 1)) × $(size(layer, 2)) layer ($(count(layer)) $(eltype(layer)) cells)",
+    )
 end
 
 function Base.copy(layer::SDMLayer)
@@ -98,6 +101,17 @@ end
     copied = copy(layer)
     copied[1, 1] *= 2
     @test layer[1, 1] != copied[1, 1]
+end
+
+Base.copy(layers::Vector{<:SDMLayer}) = copy.(layers)
+
+@testitem "We can copy a vector of layers" begin
+    layer = SimpleSDMLayers.__demodata()
+    layers = [layer, layer, layer]
+    copied = copy(layers)
+    copied[1][1, 1] *= 2
+    @test copied[1][1, 1] != layers[1][1, 1]
+    @test layers[1][1, 1] == layer[1, 1]
 end
 
 function Base.convert(::Type{SDMLayer{T}}, layer::SDMLayer{N}) where {T, N}
@@ -189,6 +203,8 @@ Base.:/(l::SDMLayer, x) = l ./ x
 Base.:/(x, l::SDMLayer) = x ./ l
 Base.:%(l::SDMLayer, x) = l .% x
 Base.:%(x, l::SDMLayer) = x .% l
+Base.:÷(l::SDMLayer, x) = l .÷ x
+Base.:÷(x, l::SDMLayer) = x .÷ l
 
 @testitem "We can multiply a layer and a number" begin
     l1 = SimpleSDMLayers.__demodata(; reduced = true)
@@ -226,3 +242,45 @@ Base.:&(l1::SDMLayer{Bool}, l2::SDMLayer{Bool}) = l1 .& l2
 Base.:|(l1::SDMLayer{Bool}, l2::SDMLayer{Bool}) = l1 .| l2
 Base.:⊻(l1::SDMLayer{Bool}, l2::SDMLayer{Bool}) = l1 .⊻ l2
 Base.:!(l1::SDMLayer{Bool}) = .!l1
+
+function Base.clamp!(
+    layer::SDMLayer{T},
+    lo::L,
+    hi::H,
+) where {T <: Number, L <: Number, H <: Number}
+    clamp!(layer.grid, lo, hi)
+    return layer
+end
+
+function Base.clamp(
+    layer::SDMLayer{T},
+    lo::L,
+    hi::H,
+) where {T <: Number, L <: Number, H <: Number}
+    cp = copy(layer)
+    clamp!(cp, lo, hi)
+    return cp
+end
+
+@testitem "We can clamp a layer" begin
+    L = SimpleSDMLayers.__temperature()
+    ext = extrema(L)
+    clm = (ext[1] + 2, ext[2] - 2)
+    @test extrema(clamp(L, clm...)) == clm
+    @assert extrema(L) == ext
+    clamp!(L, clm...)
+    @assert extrema(L) == clm
+end
+
+function Base.Matrix(L::Vector{<:SDMLayer})
+    reconcile!(L)
+    return permutedims(hcat(values.(L)...))
+end
+
+@testitem "We can get a matrix from a series of layers" begin
+    L = SimpleSDMLayers.__temperature()
+    M = Matrix([L for _ in 1:4])
+    @test size(M, 2) == length(L)
+    @test size(M, 1) == 4
+    @test allequal(M[:, 1])
+end

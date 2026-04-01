@@ -9,6 +9,15 @@ using CairoMakie
 # predict the distribution of a bird species. Specifically, we rely on the more
 # modern maxnet version [phillips2017opening](@cite).
 
+# ::: tip Model training
+#
+# There is a vignette outlining the [model training
+# pipeline](/manual/sdm/pipeline/), as well as a use-case on building a model
+# specifically on [spatial data](/manual/distributions/training/). They are good
+# companions to this vignette.
+#
+# :::
+
 # ## Observations and environmental data
 
 # We will collect observations of the Northern Cardinal (_Cardinalis

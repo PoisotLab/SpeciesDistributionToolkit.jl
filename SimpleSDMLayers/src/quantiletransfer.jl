@@ -1,0 +1,34 @@
+"""
+    quantiletransfer!(target::SDMLayer{T}, reference::SDMLayer) where {T <: Real}
+
+Replaces the values in the `target` layer so that they follow the distribution
+of the values in the `reference` layer. This works by (i) identifying the
+quantile of each cell in the target layer, then (ii) replacing this with the
+value for the same quantile in the reference layer.
+"""
+function quantiletransfer!(target::SDMLayer{T}, reference::SDMLayer{T}) where {T <: Real}
+    Qt = quantize(target)
+    out = quantile(reference, values(Qt))
+    burnin!(target, out)
+    return target
+end
+
+"""
+    quantiletransfer(target, reference)
+
+Non-mutating version of `quantiletransfer!`
+"""
+function quantiletransfer(target::SDMLayer{T}, reference::SDMLayer{T}) where {T <: Real}
+    t = deepcopy(target)
+    quantiletransfer!(t, reference)
+    return t
+end
+
+function quantiletransfer!(target::Vector{<:SDMLayer}, reference::Vector{<:SDMLayer})
+    @assert length(target) == length(reference)
+    return [quantiletransfer(target[i], reference[i]) for i in eachindex(reference)]
+end
+
+function quantiletransfer(target::Vector{<:SDMLayer}, reference::Vector{<:SDMLayer})
+    return quantiletransfer!(copy(target), reference)
+end

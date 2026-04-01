@@ -49,7 +49,7 @@ function _cpplot_data(model, inst, f1, f2, bins)
         X[f1] = x1[i]
         for j in eachindex(x2)
             X[f2] = x2[j]
-            Y[i,j] = predict(model, X; threshold=false)
+            Y[i, j] = predict(model, X; threshold = false)
         end
     end
     return (x1, x2, Y)
@@ -62,8 +62,15 @@ end
 const OneDimCP = CPPlot{<:Tuple{AbstractSDM, Integer, Integer}}
 const TwoDimCP = CPPlot{<:Tuple{AbstractSDM, <:Integer, <:Integer, <:Integer}}
 
-Makie.convert_arguments(::Type{OneDimCP}, sdm::AbstractSDM, inst::Integer, feat::Integer) = (sdm, inst, feat)
-Makie.convert_arguments(::Type{TwoDimCP}, sdm::AbstractSDM, inst::Integer, f1::Integer, f2::Integer) = (sdm, inst, [f1, f2])
+Makie.convert_arguments(::Type{OneDimCP}, sdm::AbstractSDM, inst::Integer, feat::Integer) =
+    (sdm, inst, feat)
+Makie.convert_arguments(
+    ::Type{TwoDimCP},
+    sdm::AbstractSDM,
+    inst::Integer,
+    f1::Integer,
+    f2::Integer,
+) = (sdm, inst, [f1, f2])
 
 function Makie.plot!(cp::OneDimCP)
     x, y = _cpplot_data(cp.sdm[], cp.instance[], cp.feature[], cp.bins[])

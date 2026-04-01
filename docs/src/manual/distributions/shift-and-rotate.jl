@@ -47,7 +47,8 @@ mask!(L, landmass)
 
 T = copy(first(L))
 
-# We will interpolate it so that each cell is about 25 times as large as before
+# We will interpolate it so that each cell is about 25 times as large as before,
+# and has the same projection as the original layer.
 
 NS = ceil.(Int, size(T) ./ 5)
 P = interpolate(T; dest = T.crs, newsize = NS)
@@ -125,7 +126,7 @@ current_figure() #hide
 # We can now apply this transformation to the original (full resolution) data.
 # We will start by trimming the layers to the extent of the area of interest:
 
-X = trim.(mask(copy.(L), aoi));
+X = trim.(mask(L, aoi));
 
 # We will use these vectors to train the reference species distribution model.
 # We now generate the shifted and rotated version:
@@ -180,6 +181,26 @@ current_figure() #hide
 
 Q = quantiletransfer(M, X);
 
+# This function will first calculate the quantiles of every cell in the first
+# (target) layer, then replace by the value corresponding to this quantile in
+# the second (reference) layer. As a result, the distribution of the target
+# layer is updated to become that of the reference layer.
+
+# ::: tip Uses of quantile transfer
+#
+# This can be used to ask all sorts of very fun questions, like "Where would
+# reindeer live in Malawi if it had the same climate as Norway?". But more
+# importantly, in the context of shift and rotate, this allows us to change the
+# spatial structure of the predictors while keeping their range and distribution
+# identical. Note that this may not keep the _joint_ distribution, and this can
+# be measured as in the [covariate
+# shift](/manual/distributions/covariate-shift/).
+#
+# :::
+
+# We check that the updated layer has the correct distribution, which is to say,
+# the same as the original layer.
+
 #figure Density of the two layers after transfer
 f = Figure()
 ax = Axis(f[1, 1])
@@ -213,54 +234,55 @@ axislegend(ax; position = :lt)
 ylims!(ax; low = 0)
 current_figure() #hide
 
-# now we plot side by side
-
-#figure Side by side
-f = Figure()
-a1 = Axis(f[1, 1]; aspect = DataAspect(), title = "True values")
-a2 = Axis(f[1, 2]; aspect = DataAspect(), title = "Shift, rotate, transfer")
-hm = heatmap!(a1, X[1]; colormap = :batlowW, colorrange = extrema(X[1]))
-heatmap!(a2, Q[1]; colormap = :batlowW, colorrange = extrema(X[1]))
-Colorbar(f[1, 3], hm; label = "Average temperature")
-current_figure() #hide
+# Now that we have generated our null sample, we can move on to comparing the
+# performance of SDMs.
 
 # ## Comparing model performance
+
+# We generate a series of pseudo-absences. Note that which layer we do it on is
+# not really important, because all three (original, shift and rotate, quantile
+# transfer) have the same coverage.
 
 presencelayer = mask(X[1], records)
 background = pseudoabsencemask(BetweenRadius, presencelayer; closer = 10.0, further = 40.0)
 absencelayer = backgroundpoints(background, 2sum(presencelayer))
 
-# true model
+# We start by training the "true" model, on observed data and layers:
 
 model = SDM(RawData, NaiveBayes, X, presencelayer, absencelayer)
 variables!(model, ForwardSelection)
 
-# null model
+# The next model we train is on the shifted layers (but without quantile
+# transfer, meaning that they carry their data distribution from the location
+# they were sampled from):
 
 null = SDM(RawData, NaiveBayes, M, presencelayer, absencelayer)
 variables!(null, ForwardSelection)
 
-# corrected null model
+# Finally, we train the model on the shifted data but with the corrected
+# distribution:
 
 cnull = SDM(RawData, NaiveBayes, Q, presencelayer, absencelayer)
 variables!(cnull, ForwardSelection)
 
 # ::: info Variable selection and model performance
 #
-# Note on what is important to test here -- same variables, or best suite of
-# variables -- will give different results, this test is more stringent because
-# performance of each model can be increased as much as possible
+# Note that we are selecting the variables independently for each model here,
+# which is different than comparing the performance of a model including the
+# selected variables, against randomly shifted predictors. The choice of the
+# null sample must, as always, match the null hypothesis.
 # 
 # :::
 
-# cv
+# We can now proceed to cross-validate these models (using the same folds, so
+# that the performances are directly comparable):
 
 folds = kfold(model)
 cvm = crossvalidate(model, folds);
 cvn = crossvalidate(null, folds);
 cvc = crossvalidate(cnull, folds);
 
-# stats
+# And we massage these data into a table, to print it:
 
 ms = [mcc, ppv, npv, f1]
 CVM = permutedims([
@@ -289,7 +311,8 @@ pretty_table(
     formatters = [fmt__printf("%5.3f", [3, 4, 5, 6])],
 )
 
-# Compare the outputs
+# Finally, we can map the different predictions, that show what the prediction
+# of the species range would be based on the three datasets.
 
 #figure model-comp
 f = Figure()
@@ -321,6 +344,7 @@ heatmap!(
 )
 for i in 1:3
     lines!(axs[i], clip(landmass, SDT.boundingbox(X[1]; padding = 0.5)); color = :black)
+    lines!(axs[i], aoi; color = :black)
     hidedecorations!(axs[i])
 end
 Colorbar(

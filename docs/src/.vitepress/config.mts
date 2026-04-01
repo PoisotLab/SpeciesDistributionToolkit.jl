@@ -114,20 +114,20 @@ export default defineConfig({
                                 { text: "Climate novelty", link: "/manual/usecases/climatenovelty/" },
                                 { text: "Landcover consensus", link: "/manual/usecases/consensus/" },
                                 { text: "Spatial boundaries", link: "/manual/usecases/spatial-boundaries/" },
-                                { text: "Shift and rotate", link: "/manual/usecases/shift-and-rotate/" },
                             ]
                         },
                         {
                             text: "Use-cases (SDM)",
                             collapsed: true,
                             items: [
-                                { text: "Spatial cross-validation", link: "/manual/distributions/spatial-crossvalidation/" },
                                 { text: "Building a model", link: "/manual/distributions/training/" },
-                                { text: "Bagging", link: "/manual/distributions/bagging/" },
-                                { text: "Boosting", link: "/manual/distributions/adaboost/" },
+                                { text: "Spatial cross-validation", link: "/manual/distributions/spatial-crossvalidation/" },
+                                { text: "Maxent", link: "/manual/distributions/maxent/" },
+                                { text: "Shift and rotate", link: "/manual/distributions/shift-and-rotate/" },
                                 { text: "Conformal prediction", link: "/manual/distributions/conformal/" },
                                 { text: "Covariate shift", link: "/manual/distributions/covariate-shift/" },
-                                { text: "Maxent", link: "/manual/distributions/maxent/" },
+                                { text: "Bagging", link: "/manual/distributions/bagging/" },
+                                { text: "Boosting", link: "/manual/distributions/adaboost/" },
                             ]
                         },
                         {

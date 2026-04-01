@@ -176,9 +176,10 @@ predict(forest, X[:,1]; threshold=false, consensus=iqr)
 
 # ## Boosting
 
-# We can use the AdaBoost approach to boost a component model. For the sake of
-# argument, let's do a booster BIOCLIM. We only live once, and it's a very
-# confusin experience, so we might as well embrace the weird.
+# We can use the AdaBoost approach to boost a single model by re-training it
+# sequentially on the least well predicted instances. For the sake of argument,
+# let's do a boosted BIOCLIM. We only live once, and it's a very confusing
+# experience, so we might as well embrace the weird.
 
 why = AdaBoost(SDM(RawData, BIOCLIM, X, y, c), 50)
 train!(why)

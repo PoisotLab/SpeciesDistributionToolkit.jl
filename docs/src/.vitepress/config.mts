@@ -192,6 +192,7 @@ export default defineConfig({
                             text: "Distribution models",
                             collapsed: true,
                             items: [
+                                { text: "Pipeline", link: "/manual/sdm/pipeline/" },
                                 { text: "Cross-validation", link: "/manual/sdm/crossvalidation/" },
                                 { text: "Variable selection", link: "/manual/sdm/variableselection/" },
                                 { text: "Hyper-parameters", link: "/manual/sdm/hyperparameters/" },

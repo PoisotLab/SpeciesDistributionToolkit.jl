@@ -15,6 +15,15 @@ using CairoMakie
 # in Belize, which we used in the [Maxent](/manual/distributions/maxent/)
 # vignette.
 
+# ::: tip Model training
+#
+# There is a vignette outlining the [model training
+# pipeline](/manual/sdm/pipeline/), as well as a use-case on building a model
+# specifically on [spatial data](/manual/distributions/training/). They are good
+# companions to this vignette.
+#
+# :::
+
 records = GBIF.download("10.15468/dl.y8d8yb");
 extent = SDT.boundingbox(records; padding = 3.5)
 
@@ -311,8 +320,10 @@ pretty_table(
     formatters = [fmt__printf("%5.3f", [3, 4, 5, 6])],
 )
 
-# Finally, we can map the different predictions, that show what the prediction
-# of the species range would be based on the three datasets.
+# By repeating this process multiple time, we can get a distribution of the
+# expected performance _after_ the layers have been shifted. Finally, we can map
+# the different predictions, that show what the prediction of the species range
+# would be based on the three datasets.
 
 #figure model-comp
 f = Figure()

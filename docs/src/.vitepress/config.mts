@@ -121,13 +121,12 @@ export default defineConfig({
                             collapsed: true,
                             items: [
                                 { text: "Building a model", link: "/manual/distributions/training/" },
-                                { text: "Spatial cross-validation", link: "/manual/distributions/spatial-crossvalidation/" },
                                 { text: "Maxent", link: "/manual/distributions/maxent/" },
+                                { text: "Predicting probabilities", link: "/manual/distributions/adaboost/" },
                                 { text: "Shift and rotate", link: "/manual/distributions/shift-and-rotate/" },
                                 { text: "Conformal prediction", link: "/manual/distributions/conformal/" },
                                 { text: "Covariate shift", link: "/manual/distributions/covariate-shift/" },
-                                { text: "Bagging", link: "/manual/distributions/bagging/" },
-                                { text: "Boosting", link: "/manual/distributions/adaboost/" },
+                                { text: "Spatial cross-validation", link: "/manual/distributions/spatial-crossvalidation/" },
                             ]
                         },
                         {

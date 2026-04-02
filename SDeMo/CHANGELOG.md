@@ -7,8 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.9.1`
 
-- **added** a `ceterisparibus` explanation function for CP-plots
-- **added** explanatory plots for trained models
+- **added** a `ModelExplanation` struct for model explanations
+- **added** an `explainmodel` function for model explanations
+- **fixed** `partialresponse` to use `explainmodel`
 
 ## `v1.9.0` - 2026-03-31
 

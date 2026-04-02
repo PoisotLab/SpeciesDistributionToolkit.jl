@@ -10,24 +10,26 @@ using CairoMakie
 # We will work on the demo data:
 
 X, y, C = SDeMo.__demodata()
-sdm = SDM(RawData, Logistic, X, y)
-variables!(sdm, [1, 12])
-hyperparameters!(classifier(sdm), :interactions, :self)
-hyperparameters!(classifier(sdm), :η, 1e-4)
-hyperparameters!(classifier(sdm), :epochs, 10_000)
-train!(sdm)
+model = SDM(RawData, Maxent, X, y)
+variables!(model, ForwardSelection; included = [1])
 
-# We start by generating a partial response curve:
+# Model explanations require a trained model, a choice of an explanation method
+# (`PartialResponse` or `CeterisParibus`), and additional arguments to decide
+# where the responses will be predicted. These functions work on either one or
+# two variables.
 
-prx, pry = partialresponse(sdm, 1, LinRange(5.0, 15.0, 100); threshold = false);
+px, py = SDeMo.explainmodel(PartialResponse, model, 1; threshold = false);
+
+# The order of arguments is always the type of response, then the model, then the variable(s). Some methods also have a 
 
 # Note that we use `threshold=false` to make sure that we look at the score that
-# is returned by the classifier, and not the thresholded version (_i.e._ presence/absence).
+# is returned by the classifier, and not the thresholded version (_i.e._
+# presence/absence). When called with no arguments, the `explainmodel` function will evaluate at each unique value
 
 #figure partialrespo-bio1
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Partial response")
-lines!(ax, prx, pry; color = :black)
+lines!(ax, px, py; color = :black)
 current_figure() #hide
 
 # We can also show the response surface using two variables:
@@ -84,4 +86,7 @@ current_figure() #hide
 
 # ```@docs; canonical=false
 # SDeMo.explain
+# SDeMo.explainmodel
+# SDeMo.CeterisParibus
+# SDeMo.PartialResponse
 # ```

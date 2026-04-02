@@ -143,11 +143,13 @@ export risklevel, risklevel!, Conformal
 include("explanations/counterfactual.jl")
 export counterfactual
 
-include("explanations/partialresponse.jl")
+include("explanations/partialresponse.jl") # DEPRECATED DO NOT USE
 export partialresponse
 
-include("explanations/ceterisparibus.jl")
-export ceterisparibus
+include("explanations/modelexplanations.jl")
+export ModelExplanation
+export PartialResponse, CeterisParibus
+export explainmodel
 
 include("explanations/shapley.jl")
 export explain

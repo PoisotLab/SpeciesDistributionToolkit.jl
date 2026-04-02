@@ -1,3 +1,15 @@
+function featureimportance(model::T, variable; samples=10, optimality=mcc, kwargs...) where {T <: AbstractSDM}
+    O₀ = optimality(ConfusionMatrix(predict(model), labels(model)))
+    Oᵢ = zeros(Float64, samples)
+    for i in Base.OneTo(samples)
+        Xₚ = copy(features(model))
+        Xₚ[variable,:] .= Random.shuffle!(Xₚ[variable,:])
+        yₚ = predict(model, Xₚ; kwargs...)
+        Oᵢ[i] = optimality(ConfusionMatrix(yₚ, labels(model)))
+    end
+    O = sum(Oᵢ)/samples
+    return O/O₀
+end
 
 """
     variableimportance(model, folds, variable; reps=10, optimality=mcc, kwargs...)

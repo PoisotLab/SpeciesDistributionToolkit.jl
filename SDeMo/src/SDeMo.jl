@@ -148,7 +148,7 @@ export partialresponse
 
 include("explanations/modelexplanations.jl")
 export ModelExplanation
-export PartialResponse, CeterisParibus
+export PartialResponse, CeterisParibus, PartialDependence
 export explainmodel
 
 include("explanations/shapley.jl")

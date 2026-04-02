@@ -1,6 +1,7 @@
 abstract type ModelExplanation end
 
 struct PartialResponse <: ModelExplanation end
+struct PartialDependence <: ModelExplanation end
 struct CeterisParibus <: ModelExplanation end
 
 # Version with two variables
@@ -65,7 +66,7 @@ function explainmodel(
     μ = vec(mean(features(model); dims = 2))
     for v in axes(X, 1)
         if v != variable
-            X[v, :] .= inflated ? rand(features(model, v), length(x)) : μ[v]
+            X[v, :] .= inflated ? rand(features(model, v)) : μ[v]
         else
             X[v, :] .= x
         end
@@ -76,19 +77,19 @@ end
 function explainmodel(
     ::Type{PartialResponse},
     model::T,
-    variables::Tuple{Integer, Integer},
+    variable::Tuple{Integer, Integer},
     x::Vector{<:Real},
     y::Vector{<:Real};
     inflated::Bool = false,
     kwargs...,
 ) where {T <: AbstractSDM}
     X = zeros(eltype(features(model)), size(features(model), 1), length(x) * length(y))
-    X[variables[1], :] .= repeat(x; outer = length(y))
-    X[variables[2], :] .= repeat(y; inner = length(x))
+    X[variable[1], :] .= repeat(x; outer = length(y))
+    X[variable[2], :] .= repeat(y; inner = length(x))
     μ = vec(mean(features(model); dims = 2))
     for v in axes(X, 1)
-        if !(v in variables)
-            X[v, :] .= inflated ? rand(features(model, v), length(x) * length(y)) : μ[v]
+        if !(v in variable)
+            X[v, :] .= inflated ? rand(features(model, v)) : μ[v]
         end
     end
     return (x, y, reshape(predict(model, X; kwargs...), (length(x), length(y))))
@@ -120,7 +121,7 @@ end
 function explainmodel(
     ::Type{CeterisParibus},
     model::T,
-    variables::Tuple{Integer, Integer},
+    variable::Tuple{Integer, Integer},
     index::Integer,
     x::Vector{<:Real},
     y::Vector{<:Real};
@@ -130,8 +131,8 @@ function explainmodel(
     for v in axes(X, 2)
         X[:, v] .= instance(model, index; strict = false)
     end
-    X[variables[1], :] .= repeat(x; outer = length(y))
-    X[variables[2], :] .= repeat(y; inner = length(x))
+    X[variable[1], :] .= repeat(x; outer = length(y))
+    X[variable[2], :] .= repeat(y; inner = length(x))
     return (x, y, reshape(predict(model, X; kwargs...), (length(x), length(y))))
 end
 
@@ -182,4 +183,43 @@ function explainmodel(
     x = sort(unique(features(model, variable[1])))
     y = sort(unique(features(model, variable[2])))
     return explainmodel(CeterisParibus, model, variable, index, x, y; kwargs...)
+end
+
+
+# Partial dependence
+
+"""
+    explainmodel()
+
+PDP plot with `variable` and `instance`
+"""
+function explainmodel(
+    ::Type{PartialDependence},
+    model::T,
+    variable::Integer,
+    x::Vector{<:Real};
+    kwargs...,
+) where {T <: AbstractSDM}
+    CPs = [
+        last(explainmodel(CeterisParibus, model, variable, i, x; kwargs...))
+        for i in eachindex(labels(model))
+    ]
+    y = reduce(.+, CPs) ./ length(CPs)
+    return (x, y)
+end
+
+function explainmodel(
+    ::Type{PartialDependence},
+    model::T,
+    variable::Tuple{Integer, Integer},
+    x::Vector{<:Real},
+    y::Vector{<:Real};
+    kwargs...,
+) where {T <: AbstractSDM}
+    CPs = [
+        last(explainmodel(CeterisParibus, model, variable, i, x, y; kwargs...))
+        for i in eachindex(labels(model))
+    ]
+    z = reduce(.+, CPs) ./ length(CPs)
+    return (x, y, z)
 end

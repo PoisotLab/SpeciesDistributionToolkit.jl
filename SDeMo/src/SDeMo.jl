@@ -151,6 +151,10 @@ export ModelExplanation
 export PartialResponse, CeterisParibus, PartialDependence
 export explainmodel
 
+include("explanations/featureimportance.jl")
+export PermutationImportance
+export featureimportance
+
 include("explanations/shapley.jl")
 export explain
 

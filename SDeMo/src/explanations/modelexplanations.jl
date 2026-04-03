@@ -223,3 +223,16 @@ function explainmodel(
     z = reduce(.+, CPs) ./ length(CPs)
     return (x, y, z)
 end
+
+
+"""
+    featureimportance(::Type{PartialDependence}, model::T, variable; kwargs...)
+
+TODO
+"""
+function featureimportance(::Type{PartialDependence}, model::T, variable; kwargs...) where {T <: AbstractSDM}
+    x, y = explainmodel(PartialDependence, model, variable; kwargs...)
+    K = length(y)
+    I = sqrt(1/(K-1) * sum((y .- sum(y)/K).^2.0))
+    return I
+end

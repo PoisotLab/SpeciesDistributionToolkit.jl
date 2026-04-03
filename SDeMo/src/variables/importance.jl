@@ -1,4 +1,6 @@
-function featureimportance(model::T, variable; samples=10, optimality=mcc, kwargs...) where {T <: AbstractSDM}
+struct PermutationImportance end
+
+function featureimportance(::Type{PermutationImportance}, model::T, variable::Integer; samples=10, optimality=mcc, kwargs...) where {T <: AbstractSDM}
     O₀ = optimality(ConfusionMatrix(predict(model), labels(model)))
     Oᵢ = zeros(Float64, samples)
     for i in Base.OneTo(samples)

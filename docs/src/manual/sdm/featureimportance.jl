@@ -5,7 +5,6 @@
 
 using SpeciesDistributionToolkit
 using Statistics
-using PrettyTables
 using CairoMakie
 
 # We will train a very simple model using the demonstration dataset:

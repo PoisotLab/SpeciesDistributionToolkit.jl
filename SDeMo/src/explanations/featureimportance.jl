@@ -94,15 +94,78 @@ end
 end
 
 @testitem "We can measure permutation feature importance for a subset of the entire model" begin
-    
     model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
     folds = holdout(model)
-    
-    variables!(model, [1, 12])
-    X, y = features(model)[:,folds[2]], labels(model)[folds[2]]
-    
-    train!(model, training=folds[1])
 
-    @test featureimportance(PermutationImportance, model, 2, X, y; threshold=true, ratio=true, optimality=accuracy) == 1.0
-    @test featureimportance(PermutationImportance, model, 12, X, y; threshold=true, ratio=true, optimality=accuracy) != 1.0
+    variables!(model, [1, 12])
+    X, y = features(model)[:, folds[2]], labels(model)[folds[2]]
+
+    train!(model; training = folds[1])
+
+    @test featureimportance(
+        PermutationImportance,
+        model,
+        2,
+        X,
+        y;
+        threshold = true,
+        ratio = true,
+        optimality = accuracy,
+    ) == 1.0
+    @test featureimportance(
+        PermutationImportance,
+        model,
+        12,
+        X,
+        y;
+        threshold = true,
+        ratio = true,
+        optimality = accuracy,
+    ) != 1.0
+end
+
+function featureimportance(
+    ::Type{PermutationImportance},
+    model::T,
+    variable::Integer,
+    training::Vector{Int64},
+    testing::Vector{Int64};
+    kwargs...,
+) where {T <: AbstractSDM}
+    nm = copy(model)
+    train!(nm; training = training)
+    return featureimportance(
+        PermutationImportance,
+        nm,
+        variable,
+        features(model)[:, testing],
+        labels(model)[testing];
+        kwargs...,
+    )
+end
+
+@testitem "We can measure permutation feature importance with a given fold" begin
+    model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
+    folds = holdout(model)
+
+    variables!(model, [1, 12])
+    
+    @test featureimportance(
+        PermutationImportance,
+        model,
+        2,
+        folds...;
+        threshold = true,
+        ratio = true,
+        optimality = accuracy,
+    ) == 1.0
+    @test featureimportance(
+        PermutationImportance,
+        model,
+        12,
+        folds...;
+        threshold = true,
+        ratio = true,
+        optimality = accuracy,
+    ) != 1.0
 end

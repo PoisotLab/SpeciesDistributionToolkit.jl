@@ -33,6 +33,14 @@ folds = montecarlo(sdm; n = 10)
 variables!(sdm, StrictVarianceInflationFactor{5.0})
 variables(sdm)
 
+# ::: info Feature importance
+#
+# See also the vignette on [measuring feature
+# importance](/manual/sdm/featureimportance/), which introduces different
+# methods to identify the most important features in a model.
+#
+# :::
+
 # There are routines for forward/backward selection. All of them accept a final
 # argument that represents variables which _must_ be included in the model. All
 # variable selection strategies are of the type `VariableSelectionStrategy`.

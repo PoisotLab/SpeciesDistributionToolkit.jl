@@ -194,6 +194,7 @@ export default defineConfig({
                                 { text: "Pipeline", link: "/manual/sdm/pipeline/" },
                                 { text: "Cross-validation", link: "/manual/sdm/crossvalidation/" },
                                 { text: "Variable selection", link: "/manual/sdm/variableselection/" },
+                                { text: "Feature importance", link: "/manual/sdm/featureimportance/" },
                                 { text: "Hyper-parameters", link: "/manual/sdm/hyperparameters/" },
                                 { text: "PR and ROC curves", link: "/manual/sdm/pr-roc/" },
                                 { text: "Interpretability", link: "/manual/sdm/interpretability/" },

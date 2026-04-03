@@ -57,16 +57,16 @@ function featureimportance(
     optimality = mcc,
     kwargs...,
 ) where {T <: AbstractSDM}
-    O₀ = optimality(predict(model, X; kwargs...), y)
-    Oᵢ = zeros(Float64, samples)
+    true_score = optimality(predict(model, X; kwargs...), y)
+    perm_score = zeros(Float64, samples)
     for i in Base.OneTo(samples)
         Xₚ = copy(X)
         Xₚ[variable, :] .= Random.shuffle!(Xₚ[variable, :])
         yₚ = predict(model, Xₚ; kwargs...)
-        Oᵢ[i] = optimality(yₚ, y)
+        perm_score[i] = optimality(yₚ, y)
     end
-    O = sum(Oᵢ) / samples
-    return ratio ? O / O₀ : O - O₀
+    final = sum(perm_score) / samples
+    return ratio ? final / true_score : final - true_score
 end
 
 """

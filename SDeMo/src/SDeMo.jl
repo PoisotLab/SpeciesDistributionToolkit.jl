@@ -122,19 +122,9 @@ export crossentropyloss
 export ci
 
 # Variable selection
-include("variables/varsel.jl")
+include("variables/selection.jl")
 export VariableSelectionStrategy
 export ForwardSelection, BackwardSelection, AllVariables, VarianceInflationFactor, StrictVarianceInflationFactor
-
-# Old variable selection - these now come with deprecation warnings
-include("variables/selection.jl")
-export noselection!, forwardselection!, backwardselection!
-
-include("variables/vif.jl")
-export stepwisevif!, vif
-
-include("variables/importance.jl")
-export variableimportance
 
 # Conformal prediction
 include("conformal.jl")
@@ -170,13 +160,12 @@ export iqr
 # Occurrences Interface support
 include("interfaces/OccurrencesInterface.jl")
 
-# Figures
-function cpplot end
-function cpplot! end
-function iceplot end
-function iceplot! end
-function partialdependenceplot end
-function partialdependenceplot! end
-export cpplot, cpplot!, iceplot, iceplot!, partialdependenceplot, partialdependenceplot!
+# Old variable functions, these have ALL been replaced
+include("deprecated/selection.jl")
+export noselection!, forwardselection!, backwardselection!
+include("deprecated/vif.jl")
+export stepwisevif!, vif
+include("deprecated/importance.jl")
+export variableimportance
 
 end # module SDeMo

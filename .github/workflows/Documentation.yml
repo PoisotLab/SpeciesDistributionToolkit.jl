@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         matrix:
-            folder: [manual/dataviz, manual/distributions, manual/generation, manual/layers, manual/polygons, manual/retrieval, manual/sdm, manual/usage, manual/usecases]
+            folder: [manual/dataviz, manual/generation, manual/layers, manual/polygons, manual/retrieval, manual/sdm, manual/usage, manual/usecases]
     steps:
       - uses: actions/checkout@v4
       - name: Prepare the artifact name

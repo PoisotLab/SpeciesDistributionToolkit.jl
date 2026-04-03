@@ -12,14 +12,14 @@ using PrettyTables
 using CairoMakie
 
 # We will get some occurrences about the observations of _Cardinalis cardinalis_
-# in Belize, which we used in the [Maxent](/manual/distributions/maxent/)
+# in Belize, which we used in the [Maxent](/manual/usecases/maxent/)
 # vignette.
 
 # ::: tip Model training
 #
 # There is a vignette outlining the [model training
 # pipeline](/manual/sdm/pipeline/), as well as a use-case on building a model
-# specifically on [spatial data](/manual/distributions/training/). They are good
+# specifically on [spatial data](/manual/usecases/getting-started/). They are good
 # companions to this vignette.
 #
 # :::
@@ -203,7 +203,7 @@ Q = quantiletransfer(M, X);
 # spatial structure of the predictors while keeping their range and distribution
 # identical. Note that this may not keep the _joint_ distribution, and this can
 # be measured as in the [covariate
-# shift](/manual/distributions/covariate-shift/).
+# shift](/manual/usecases/covariate-shift/).
 #
 # :::
 

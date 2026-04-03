@@ -13,7 +13,7 @@ using CairoMakie
 #
 # There is a vignette outlining the [model training
 # pipeline](/manual/sdm/pipeline/), as well as a use-case on building a model
-# specifically on [spatial data](/manual/distributions/training/). They are good
+# specifically on [spatial data](/manual/usecases/getting-started/). They are good
 # companions to this vignette.
 #
 # :::

@@ -134,9 +134,6 @@ export risklevel, risklevel!, Conformal
 include("explanations/counterfactual.jl")
 export counterfactual
 
-include("explanations/partialresponse.jl") # DEPRECATED DO NOT USE
-export partialresponse
-
 include("explanations/modelexplanations.jl")
 export ModelExplanation
 export PartialResponse, CeterisParibus, PartialDependence
@@ -160,12 +157,14 @@ export iqr
 # Occurrences Interface support
 include("interfaces/OccurrencesInterface.jl")
 
-# Old variable functions, these have ALL been replaced
+# Old variable functions, these have ALL been replaced by better alternatives
 include("deprecated/selection.jl")
 export noselection!, forwardselection!, backwardselection!
 include("deprecated/vif.jl")
 export stepwisevif!, vif
 include("deprecated/importance.jl")
 export variableimportance
+include("deprecated/partialresponse.jl")
+export partialresponse
 
 end # module SDeMo

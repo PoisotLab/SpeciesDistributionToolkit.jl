@@ -118,6 +118,7 @@ export ppv, npv, fdir, fomr, plr, nlr
 export accuracy, balancedaccuracy, f1, fscore
 export trueskill, markedness, dor, κ, mcc
 export gmean
+export crossentropyloss
 export ci
 
 # Variable selection

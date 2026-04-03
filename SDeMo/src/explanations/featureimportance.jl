@@ -109,7 +109,7 @@ end
             2;
             threshold = t,
             ratio = false,
-        ) ≈ 0.0
+        ) < 10eps()
         @test featureimportance(
             PermutationImportance,
             model,

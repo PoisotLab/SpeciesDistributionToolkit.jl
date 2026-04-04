@@ -1,25 +1,54 @@
+"""
+    ModelExplanation
+
+This abstract type collects the various types that can be used to generate model
+explanations. This is currently `PartialResponse`, `CeterisParibus`, and
+`PartialDependence`.
+"""
 abstract type ModelExplanation end
 
 """
     PartialResponse
 
+This type is used as the first argument of `explainmodel` to generate a partial
+response curve. Using the `inflated` Boolean keyword of `explainmodel` will
+generate the inflated partial response.
 """
 struct PartialResponse <: ModelExplanation end
 
 """
     PartialDependence
 
-This type can also be used as the first argument of `featureimportance`.
+This type is used as the first argument of `explainmodel` to generate data for
+the partial dependence plot, which is the mean of all the individual conditional
+expectations, themselves generated with `CeterisParibus`.
+
+This type can also be used as the first argument of `featureimportance`, to
+measure the variation within the partial dependence curve as a proxy for the
+importance of a feature.
 """
 struct PartialDependence <: ModelExplanation end
 
 """
     CeterisParibus
+
+This type is used as the first argument of `explainmodel` to generate data the
+_ceteris paribus_ curve for a single observation. The _ceteris paribus_ response
+is measured by maintaining the value of all other variables, and measuring the
+model prediction on all possible values of the variable of interest. The
+superposition of all _ceteris paribus_ curves is the individual conditional
+expectation plot.
 """
 struct CeterisParibus <: ModelExplanation end
 
-# Version with two variables
+"""
+    explainmodel(ModelExplanation, model, variable::Tuple{Int,Int}, n::Int; kwargs...)
 
+Generates an `n` by `n` grid to measure the _surface_ representing the joint
+explanation for two variables. `ModelExplanation` is any type that can be used
+as the first argument for `explainmodel`. Other `kwargs...` are passed to
+`explainmodel`.
+"""
 function explainmodel(
     ::Type{E},
     model::T,
@@ -32,6 +61,15 @@ function explainmodel(
     return explainmodel(E, model, variable, x, y; kwargs...)
 end
 
+"""
+    explainmodel(ModelExplanation, model, variable::Tuple{Int,Int}, n::Int; kwargs...)
+
+Generates a grid to measure the _surface_ representing the joint explanation for
+two variables, where the entries of the grid are the sorted unique values for
+the pair of variables to consider. `ModelExplanation` is any type that can be
+used as the first argument for `explainmodel`. Other `kwargs...` are passed to
+`explainmodel`.
+"""
 function explainmodel(
     ::Type{E},
     model::T,
@@ -45,6 +83,14 @@ end
 
 # Version with one variable
 
+"""
+    explainmodel(ModelExplanation, model, variable::Int, n::Int; kwargs...)
+
+Generates `n` equally spaced values over the range of values for the variable of
+interest, on which the requested explanation will be measured. `ModelExplanation`
+is any type that can be used as the first argument for `explainmodel`. Other
+`kwargs...` are passed to `explainmodel`.
+"""
 function explainmodel(
     ::Type{E},
     model::T,
@@ -56,6 +102,14 @@ function explainmodel(
     return explainmodel(E, model, variable, x; kwargs...)
 end
 
+"""
+    explainmodel(ModelExplanation, model, variable::Int, n::Int; kwargs...)
+
+Sorts the unique values for the variable of interest, on which the requested
+explanation will be measured. `ModelExplanation` is any type that can be used as
+the first argument for `explainmodel`. Other `kwargs...` are passed to
+`explainmodel`.
+"""
 function explainmodel(
     ::Type{E},
     model::T,

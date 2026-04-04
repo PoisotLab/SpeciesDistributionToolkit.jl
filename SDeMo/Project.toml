@@ -1,6 +1,6 @@
 name = "SDeMo"
 uuid = "3e5feb82-bcca-434d-9cd5-c11731a21467"
-version = "1.9.0"
+version = "1.9.1"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 
 [deps]
@@ -21,7 +21,7 @@ TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 
 [extensions]
-MakieExtension = "Makie"
+MakieSDMExtension = "Makie"
 
 [compat]
 Distributions = "0.25"

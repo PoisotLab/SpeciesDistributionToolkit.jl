@@ -55,15 +55,3 @@ current_figure()
 # The models currently do _not_ have a field for the species name, but this will
 # be part of a future release. If you need to specify the species name from a
 # model, for now you need to use `Occurrences(model; name="Sitta whiteheadi")`.
-
-# ## Model diagnostic plots
-
-# These plots require a trained model:
-
-train!(model)
-
-# ::: info Coming soon
-#
-# These plots will be included in a future release of  `SDeMo`- stay tuned! 
-#
-# :::

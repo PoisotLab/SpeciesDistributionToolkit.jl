@@ -1,6 +1,6 @@
-module MakieExtension
+module MakieSDMExtension
 
-import Makie
+using Makie
 using SDeMo
 
 function Makie.convert_arguments(P::Makie.PointBased, model::T) where {T <: AbstractSDM}

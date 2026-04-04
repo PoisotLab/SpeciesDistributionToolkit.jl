@@ -208,7 +208,8 @@ Applies the MCC (`mcc`) to all confusion matrices in the vector, and returns the
 """
 ci(C::Vector{<:ConfusionMatrix}) = ci(C, mcc)
 
-crossentropyloss(y, p) = mean(.-(y .* log.(p) .+ (1.0 .- y) .* log.(1.0 .- p)))
+crossentropyloss(y::Vector{Bool}, p::Vector{<:Real}) = mean(.-(y .* log.(p) .+ (1.0 .- y) .* log.(1.0 .- p)))
+crossentropyloss(p::Vector{<:Real}, y::Vector{Bool}) = crossentropyloss(y, p)
 
 """
     sensitivity(M::ConfusionMatrix)
@@ -290,6 +291,34 @@ for op in (
                 else
                     return mean(m)
                 end
+            end
+
+            """
+                $($op)( pred::Vector{<:Real}, truth::Vector{Bool},)
+
+            Version of `$($op)` using two vectors: predictions and truth.
+            """
+            function $op(
+                pred::Vector{<:Real},
+                truth::Vector{Bool},
+                args...;
+                kwargs...,
+            )
+                return $op(ConfusionMatrix(pred, truth))
+            end
+
+            """
+                $($op)( pred::Vector{<:Real}, truth::Vector{Bool},)
+
+            Version of `$($op)` using two vectors: predictions and truth.
+            """
+            function $op(
+                pred::BitVector,
+                truth::Vector{Bool},
+                args...;
+                kwargs...,
+            )
+                return $op(ConfusionMatrix(pred, truth))
             end
         end,
     )

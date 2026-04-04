@@ -54,7 +54,7 @@ sets_2 = predict(cp, pred)
 count(isequal(Set([true, false])), sets_2) / length(pred)
 
 # There is a use-case on [conformal prediction in
-# space](/manual/distributions/conformal/) later on in this manual.
+# space](/manual/usecases/conformal/) later on in this manual.
 
 # ## Related documentation
 

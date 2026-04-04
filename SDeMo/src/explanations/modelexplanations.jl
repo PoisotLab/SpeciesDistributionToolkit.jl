@@ -256,3 +256,23 @@ end
     @test first(x) == 10.
     @test last(x) == 14.
 end
+
+@testitem "We can measure inflated partial responses" begin
+    model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
+    variables!(model, [1, 12])
+    train!(model)
+
+    x, y = explainmodel(PartialResponse, model, 1; inflated=true)
+    @test first(x) == minimum(features(model, 1))
+    @test last(x) == maximum(features(model, 1))
+end
+
+@testitem "We can measure partial responses without thresholding" begin
+    model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
+    variables!(model, [1, 12])
+    train!(model)
+
+    x, y = explainmodel(PartialResponse, model, 1; inflated=false, threshold=false)
+    @test first(x) == minimum(features(model, 1))
+    @test last(x) == maximum(features(model, 1))
+end

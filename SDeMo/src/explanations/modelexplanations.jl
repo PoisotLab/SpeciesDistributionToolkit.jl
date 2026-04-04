@@ -81,8 +81,6 @@ function explainmodel(
     return explainmodel(E, model, variable, x, y; kwargs...)
 end
 
-# Version with one variable
-
 """
     explainmodel(ModelExplanation, model, variable::Int, n::Int; kwargs...)
 
@@ -119,8 +117,6 @@ function explainmodel(
     x = sort(unique(features(model, variable)))
     return explainmodel(E, model, variable, x; kwargs...)
 end
-
-# Partial response
 
 """
     explainmodel(PartialResponse, model, variable, x; inflated=false, kwargs...)
@@ -187,12 +183,16 @@ function explainmodel(
     return (x, y, reshape(predict(model, X; kwargs...), (length(x), length(y))))
 end
 
-# Ceteris Paribus
-
 """
-    explainmodel()
+    explainmodel(CeterisParibus, model, variable, index, x; kwargs...)
 
-1D CP plot with `variable` and `instance`
+Returns the _ceteris paribus_ explanation for a given `instance` (given as an
+index: the _n_-th instance of the model) and a given `variable`, whose values
+are evaluated at all positions in the vector `x`.
+
+Additional `kwargs...` are passed to `predict`.
+
+This function returns a tuple `x, response`.
 """
 function explainmodel(
     ::Type{CeterisParibus},
@@ -210,6 +210,17 @@ function explainmodel(
     return (x, predict(model, X; kwargs...))
 end
 
+"""
+    explainmodel(CeterisParibus, model, variable, index, x, y; kwargs...)
+
+Returns the _ceteris paribus_ explanation for a given `instance` (given as an
+index: the _n_-th instance of the model) and a given `variable` pair, whose
+values are evaluated at all positions in the vectors `x` and `y.
+
+Additional `kwargs...` are passed to `predict`.
+
+This function returns a tuple `x, y, response`, where the response is a matrix.
+"""
 function explainmodel(
     ::Type{CeterisParibus},
     model::T,
@@ -228,6 +239,18 @@ function explainmodel(
     return (x, y, reshape(predict(model, X; kwargs...), (length(x), length(y))))
 end
 
+"""
+    explainmodel(CeterisParibus, model, variable, index, n; kwargs...)
+
+Returns the _ceteris paribus_ explanation for a given `instance` (given as an
+index: the _n_-th instance of the model) and a given `variable`, whose values
+are evaluated at `n` equally spaced positions across the range of the variable
+in the training data.
+
+Additional `kwargs...` are passed to `predict`.
+
+This function returns a tuple `x, response`.
+"""
 function explainmodel(
     ::Type{CeterisParibus},
     model::T,
@@ -240,6 +263,18 @@ function explainmodel(
     return explainmodel(CeterisParibus, model, variable, index, x; kwargs...)
 end
 
+"""
+    explainmodel(CeterisParibus, model, variable, index; kwargs...)
+
+Returns the _ceteris paribus_ explanation for a given `instance` (given as an
+index: the _n_-th instance of the model) and a given `variable`, whose values
+are evaluated at all the (sorted) unique values of the variable in the training
+data.
+
+Additional `kwargs...` are passed to `predict`.
+
+This function returns a tuple `x, response`.
+"""
 function explainmodel(
     ::Type{CeterisParibus},
     model::T,
@@ -251,7 +286,18 @@ function explainmodel(
     return explainmodel(CeterisParibus, model, variable, index, x; kwargs...)
 end
 
+"""
+    explainmodel(CeterisParibus, model, variable::Tuple{Int,Int}, index, n; kwargs...)
 
+Returns the _ceteris paribus_ explanation for a given `instance` (given as an
+index: the _n_-th instance of the model) and a given `variable` pair, whose
+values are evaluated at `n` evenly spaced position across the range of both
+variables.
+
+Additional `kwargs...` are passed to `predict`.
+
+This function returns a tuple `x, y, response`, where the response is a matrix.
+"""
 function explainmodel(
     ::Type{CeterisParibus},
     model::T,
@@ -265,6 +311,17 @@ function explainmodel(
     return explainmodel(CeterisParibus, model, variable, index, x, y; kwargs...)
 end
 
+"""
+    explainmodel(CeterisParibus, model, variable::Tuple{Int,Int}, index; kwargs...)
+
+Returns the _ceteris paribus_ explanation for a given `instance` (given as an
+index: the _n_-th instance of the model) and a given `variable` pair, whose
+values are evaluated at the (sorted) unique pairs of both variables.
+
+Additional `kwargs...` are passed to `predict`.
+
+This function returns a tuple `x, y, response`, where the response is a matrix.
+"""
 function explainmodel(
     ::Type{CeterisParibus},
     model::T,
@@ -277,13 +334,15 @@ function explainmodel(
     return explainmodel(CeterisParibus, model, variable, index, x, y; kwargs...)
 end
 
-
-# Partial dependence
-
 """
-    explainmodel()
+    explainmodel(PartialDependence, model, variable, x; kwargs...)
 
-PDP plot with `variable` and `instance`
+Returns the partial dependence curve of the model for a given variable, which is
+evaluated at all values given by `x`.
+
+The result is returned as a tuple `x, response`.
+
+All other `kwargs...` are passed to `predict`.
 """
 function explainmodel(
     ::Type{PartialDependence},
@@ -300,6 +359,16 @@ function explainmodel(
     return (x, y)
 end
 
+"""
+    explainmodel(PartialDependence, model, variable::Tuple{Int, Int}, x, y; kwargs...)
+
+Returns the partial dependence curve of the model for a given pair of variables,
+which is evaluated at all values given by `x` and `y`.
+
+The result is returned as a tuple `x, y, response`.
+
+All other `kwargs...` are passed to `predict`.
+"""
 function explainmodel(
     ::Type{PartialDependence},
     model::T,

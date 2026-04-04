@@ -223,3 +223,36 @@ function explainmodel(
     z = reduce(.+, CPs) ./ length(CPs)
     return (x, y, z)
 end
+
+@testitem "We can do model explanations with a number of points" begin
+    model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
+    variables!(model, [1, 12])
+    train!(model)
+
+    x, y = explainmodel(PartialResponse, model, 1, 10)
+    @test length(x) == 10
+    @test first(x) == minimum(features(model, 1))
+    @test last(x) == maximum(features(model, 1))
+end
+
+@testitem "We can do model explanations with all features sorted" begin
+    model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
+    variables!(model, [1, 12])
+    train!(model)
+
+    x, y = explainmodel(PartialResponse, model, 1)
+    @test length(x) == length(unique(features(model, 1)))
+    @test first(x) == minimum(features(model, 1))
+    @test last(x) == maximum(features(model, 1))
+end
+
+@testitem "We can do model explanations with given points" begin
+    model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
+    variables!(model, [1, 12])
+    train!(model)
+
+    x, y = explainmodel(PartialResponse, model, 1, [10., 12., 14.])
+    @test length(x) == 3
+    @test first(x) == 10.
+    @test last(x) == 14.
+end

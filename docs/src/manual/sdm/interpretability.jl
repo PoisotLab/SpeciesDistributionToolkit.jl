@@ -195,4 +195,5 @@ current_figure() #hide
 # SDeMo.explainmodel
 # SDeMo.CeterisParibus
 # SDeMo.PartialResponse
+# SDeMo.PartialDependence
 # ```

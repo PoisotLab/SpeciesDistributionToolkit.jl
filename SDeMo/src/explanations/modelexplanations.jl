@@ -1,7 +1,21 @@
 abstract type ModelExplanation end
 
+"""
+    PartialResponse
+
+"""
 struct PartialResponse <: ModelExplanation end
+
+"""
+    PartialDependence
+
+This type can also be used as the first argument of `featureimportance`.
+"""
 struct PartialDependence <: ModelExplanation end
+
+"""
+    CeterisParibus
+"""
 struct CeterisParibus <: ModelExplanation end
 
 # Version with two variables
@@ -54,6 +68,20 @@ end
 
 # Partial response
 
+"""
+    explainmodel(PartialResponse, model, variable, x; inflated=false, kwargs...)
+
+Returns the partial response of the model for a given variable, which is
+evaluated at all values given by `x`. The partial response is the prediction
+made using the given value of `variable`, when all other variables take the
+average value. When `inflated` is true, the response is measured against a
+randomly sampled value in the entire range of possible values for the other
+variables.
+
+The result is returned as a tuple `x, response`.
+
+All other `kwargs...` are passed to `predict`.
+"""
 function explainmodel(
     ::Type{PartialResponse},
     model::T,
@@ -74,6 +102,16 @@ function explainmodel(
     return (x, predict(model, X; kwargs...))
 end
 
+"""
+    explainmodel(PartialResponse, model, variable, x, y; inflated=false, kwargs...)
+
+Returns the partial response of the model for a given pair of `variable` given
+as a tuple, which are evaluated at all values given by vectors `x` and `y`.
+
+The result is returned as a tuple `x, y, response`.
+
+All other `kwargs...` are passed to `predict`.
+"""
 function explainmodel(
     ::Type{PartialResponse},
     model::T,

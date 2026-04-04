@@ -11,8 +11,8 @@ using CairoMakie
 # We will work on the demo data:
 
 X, y, C = SDeMo.__demodata()
-model = SDM(RawData, Maxent, X, y)
-hyperparameters!(classifier(model), :product, true)
+model = SDM(RawData, Logistic, X, y)
+hyperparameters!(classifier(model), :interactions, :self)
 variables!(model, StrictVarianceInflationFactor{10.0}; included = [1])
 variables!(model, ForwardSelection; included = [1])
 
@@ -50,24 +50,23 @@ px, py = explainmodel(PartialResponse, model, 1, 15; threshold = false);
 #figure partialrespo-bio1
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Partial response")
-scatterlines!(ax, px, py; color = :black)
+scatter!(ax, px, py; color = :black, marker=:rect)
 current_figure() #hide
 
 # We can also look at a series of user-defined values:
 
-x = quantile(features(model, 1), 0.0:0.05:1.0)
+x = quantile(features(model, 1), 0.0:0.02:1.0)
 px, py = explainmodel(PartialResponse, model, 1, x; threshold = false);
 
-#figure partialrespo-bio1
+#figure partialrespo-bio1-quantiles
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Partial response")
-scatterlines!(ax, px, py; color = :black)
+scatter!(ax, px, py; color = :black, marker=:rect)
 current_figure() #hide
 
 # We can also show the response surface using two variables:
 
 vars = (variables(model)[1], variables(model)[2])
-
 px, py, pz = explainmodel(PartialResponse, model, vars, 20; threshold = false);
 
 # Note that the last element returned in this case is a two-dimensional array,
@@ -103,14 +102,20 @@ current_figure() #hide
 
 px, py = explainmodel(CeterisParibus, model, 1, 1, 50; threshold = false);
 
-# note that the order is variable then instance
+# ::: warning Additional argument
+#
+# The CP plot explanation requires an additional argument, which is the position
+# of the instance at which the response must be evaluated. The order of
+# arguments is model, then variable, then instance.
+#
+# :::
 
 # Note that we use `threshold=false` to make sure that we look at the score that
 # is returned by the classifier, and not the thresholded version (_i.e._
 # presence/absence). When called with no arguments, the `explainmodel` function
 # will evaluate at each unique value of the predictor layer.
 
-#figure partialrespo-bio1
+#figure cp-bio1
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Partial response")
 scatter!(ax, [features(model, 1)[1]], [predict(model; threshold=false)[1]], color=:black)
@@ -119,9 +124,9 @@ current_figure() #hide
 
 # We can also do this for two variables at a time
 
-px, py, pz = explainmodel(CeterisParibus, model, vars, 1, 50; threshold = false);
+px, py, pz = explainmodel(CeterisParibus, model, vars, 1, 20; threshold = false);
 
-#figure partialresp-surface
+#figure cp-twovar-surface
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO$(variables(model)[1])", ylabel = "BIO$(variables(model)[2])")
 cm = heatmap!(px, py, pz; colormap = Reverse(:batlowW), colorrange=(0, 1))
@@ -130,33 +135,38 @@ current_figure() #hide
 
 # ## Individual conditional expectations
 
-# simply all the CP plots put together
+# The ICE plot is quite simply all of the CP plots at the same time. Here,
+# instances that are positive in the training data are in purple.
 
-#figure partialresp-surface
+#figure ice-plot
 f = Figure()
-ax = Axis(f[1, 1]; xlabel = "BIO1 (presences)", ylabel = "Partial response")
-bx = Axis(f[2, 1]; xlabel = "BIO1 (absences)", ylabel = "Partial response")
+ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Partial response")
 for (i, l) in enumerate(labels(model))
-    a = l ? ax : bx
-    lines!(a, explainmodel(CeterisParibus, model, 1, i, 30; threshold = false)..., color=:black, alpha=0.1)
+    col = l ? :purple : :grey50
+    lab = l ? "Presences" : "Absences"
+    lines!(ax, explainmodel(CeterisParibus, model, 1, i, 50; threshold = false)..., color=col, alpha=0.1)
 end
 current_figure() #hide
 
 # ## Partial dependence plot
 
-# Average of the CP plots
+# The partial dependence plot is the average of all CP plots.
 
-px, py = explainmodel(SDeMo.PartialDependence, model, 1, 20; threshold = false);
+px, py = explainmodel(SDeMo.PartialDependence, model, 1, 50; threshold = false);
 
-#figure partialrespo-bio1
+#figure partial-dep-onevar
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Partial response")
 lines!(ax, px, py; color = :black)
 current_figure() #hide
 
-# with two variables
+# We can also produce it for two variables, using the same syntax as before.
+# Note that in this case, we look at the prediction of the model _with_ a
+# threshold, so the resulting plot will indicate how strongly the model would
+# predict the presence of the species for a pair of values of these two
+# variables:
 
-px, py, pz = explainmodel(SDeMo.PartialDependence, model, vars, 50; threshold = false);
+px, py, pz = explainmodel(SDeMo.PartialDependence, model, vars, 100; threshold = true);
 
 #figure partialresp-surface
 f = Figure()
@@ -164,6 +174,14 @@ ax = Axis(f[1, 1]; xlabel = "BIO$(variables(model)[1])", ylabel = "BIO$(variable
 cm = heatmap!(px, py, pz; colormap = Reverse(:batlowW), colorrange=(0, 1))
 Colorbar(f[1, 2], cm)
 current_figure() #hide
+
+# ::: info Feature importance
+#
+# The partial dependence curve also serves as a measure of [feature
+# importance](/manual/sdm/featureimportance/), as explained in the relevant
+# vignette.
+#
+# :::
 
 # ## Shapley values
 

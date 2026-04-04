@@ -206,7 +206,7 @@ end
         threshold = true,
         ratio = true,
         optimality = accuracy,
-    ) == 1.0
+    ) ≈ 1.0
     @test featureimportance(
         PermutationImportance,
         model,

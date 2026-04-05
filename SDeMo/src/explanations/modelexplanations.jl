@@ -448,3 +448,61 @@ end
     @test first(x) == minimum(features(model, 1))
     @test last(x) == maximum(features(model, 1))
 end
+
+"""
+    explainmodel(::Type{ShapleyMC}, model, variable::Int; kwargs...)
+
+Returns the Shapley values (approximation) for the given variable. All other
+arguments are passed to `predict`.
+"""
+function explainmodel(::Type{ShapleyMC}, model::T, variable::Int; kwargs...) where {T <: AbstractSDM}
+    return explain(model, variable; kwargs...)
+end
+
+"""
+    explainmodel(::Type{ShapleyMC}, model, variable::Int, index::Int; kwargs...)
+
+Returns the Shapley values (approximation) for the given variable for the given
+`index` observation. All other arguments are passed to `predict`.
+"""
+function explainmodel(::Type{ShapleyMC}, model::T, variable::Int, index::Integer; kwargs...) where {T <: AbstractSDM}
+    return explain(model, variable; observation=index, kwargs...)
+end
+
+"""
+    explainmodel(::Type{ShapleyMC}, model, variable::Int, X::Matrix; kwargs...)
+
+Returns the Shapley values (approximation) for the given feature matrix `X`.
+"""
+function explainmodel(::Type{ShapleyMC}, model::T, X::Matrix; kwargs...) where {T <: AbstractSDM}
+    return explain(model, variable; instances=X, kwargs...)
+end
+
+@testitem "We can get the Shapley values for a single instance" begin
+    model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
+    variables!(model, [1, 12])
+    train!(model)
+
+    @test explainmodel(ShapleyMC, model, 1, 1) != 0.0
+    @test explainmodel(ShapleyMC, model, 2, 1) ≈ 0.0
+    @test explainmodel(ShapleyMC, model, 12, 1) != 0.0
+end
+
+@testitem "We can get the Shapley values for all training instances" begin
+    model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
+    variables!(model, [1, 12])
+    train!(model)
+
+    @test length(explainmodel(ShapleyMC, model, 1)) == length(labels(model))
+    @test length(explainmodel(ShapleyMC, model, 2)) == length(labels(model))
+end
+
+@testitem "We can get the Shapley values for another instance matrix" begin
+    model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
+    variables!(model, [1, 12])
+    train!(model)
+
+    @test length(explainmodel(ShapleyMC, model, 1, features(model))) == length(labels(model))
+    @test length(explainmodel(ShapleyMC, model, 2, features(model))) == length(labels(model))
+    @test length(explainmodel(ShapleyMC, model, 12, features(model))) == length(labels(model))
+end

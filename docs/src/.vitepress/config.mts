@@ -108,25 +108,18 @@ export default defineConfig({
                     text: "Manual",
                     items: [
                         {
-                            text: "Use cases (general)",
+                            text: "Use-cases",
                             collapsed: true,
                             items: [
+                                { text: "Getting started", link: "/manual/usecases/getting-started/" },
                                 { text: "Climate novelty", link: "/manual/usecases/climatenovelty/" },
                                 { text: "Landcover consensus", link: "/manual/usecases/consensus/" },
                                 { text: "Spatial boundaries", link: "/manual/usecases/spatial-boundaries/" },
-                            ]
-                        },
-                        {
-                            text: "Use-cases (SDM)",
-                            collapsed: true,
-                            items: [
-                                { text: "Building a model", link: "/manual/distributions/training/" },
-                                { text: "Maxent", link: "/manual/distributions/maxent/" },
-                                { text: "Predicting probabilities", link: "/manual/distributions/adaboost/" },
-                                { text: "Shift and rotate", link: "/manual/distributions/shift-and-rotate/" },
-                                { text: "Conformal prediction", link: "/manual/distributions/conformal/" },
-                                { text: "Covariate shift", link: "/manual/distributions/covariate-shift/" },
-                                { text: "Spatial cross-validation", link: "/manual/distributions/spatial-crossvalidation/" },
+                                { text: "Maxent", link: "/manual/usecases/maxent/" },
+                                { text: "Predicting probabilities", link: "/manual/usecases/adaboost/" },
+                                { text: "Shift and rotate", link: "/manual/usecases/shift-and-rotate/" },
+                                { text: "Conformal prediction", link: "/manual/usecases/conformal/" },
+                                { text: "Covariate shift", link: "/manual/usecases/covariate-shift/" },
                             ]
                         },
                         {
@@ -185,15 +178,17 @@ export default defineConfig({
                                 { text: "Projection", link: "/manual/usage/projection/" },
                                 { text: "Layers and occurrences", link: "/manual/usage/layers-occurrences/" },
                                 { text: "Variograms", link: "/manual/usage/variogram/" },
+                                { text: "Spatial cross-validation", link: "/manual/usage/spatial-crossvalidation/" },
                             ]
                         },
                         {
-                            text: "Distribution models",
+                            text: "Building models",
                             collapsed: true,
                             items: [
                                 { text: "Pipeline", link: "/manual/sdm/pipeline/" },
                                 { text: "Cross-validation", link: "/manual/sdm/crossvalidation/" },
                                 { text: "Variable selection", link: "/manual/sdm/variableselection/" },
+                                { text: "Feature importance", link: "/manual/sdm/featureimportance/" },
                                 { text: "Hyper-parameters", link: "/manual/sdm/hyperparameters/" },
                                 { text: "PR and ROC curves", link: "/manual/sdm/pr-roc/" },
                                 { text: "Interpretability", link: "/manual/sdm/interpretability/" },

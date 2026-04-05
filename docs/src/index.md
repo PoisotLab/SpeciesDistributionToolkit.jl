@@ -11,10 +11,20 @@ hero:
     alt: SpeciesDistributionToolkit
   actions:
     - theme: brand
+      text: Getting started
+      link: /manual/usecases/getting-started/
+    - theme: alt
       text: Read the manual
       link: /manual
     - theme: alt
-      text: Reach out!
+      text: Reach out
       link: https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions
+features:
+    - title: Easy data manipulation
+      details: Built-in access to GBIF data, raster layers, and polygon providers
+    - title: Integration with other packages
+      details: Extensions for multivariate statistics, clustering, STAC datasets, and more
+    - title: Simple, documented syntax
+      details: Explicit function names with detailed vignettes and examples
 ---
 ```

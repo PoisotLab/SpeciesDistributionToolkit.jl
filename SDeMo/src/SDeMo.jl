@@ -118,22 +118,14 @@ export ppv, npv, fdir, fomr, plr, nlr
 export accuracy, balancedaccuracy, f1, fscore
 export trueskill, markedness, dor, κ, mcc
 export gmean
+export crossentropyloss
 export ci
 
 # Variable selection
-include("variables/varsel.jl")
-export VariableSelectionStrategy
-export ForwardSelection, BackwardSelection, AllVariables, VarianceInflationFactor, StrictVarianceInflationFactor
-
-# Old variable selection - these now come with deprecation warnings
 include("variables/selection.jl")
-export noselection!, forwardselection!, backwardselection!
-
-include("variables/vif.jl")
-export stepwisevif!, vif
-
-include("variables/importance.jl")
-export variableimportance
+export VariableSelectionStrategy
+export ForwardSelection,
+    BackwardSelection, AllVariables, VarianceInflationFactor, StrictVarianceInflationFactor
 
 # Conformal prediction
 include("conformal.jl")
@@ -143,8 +135,14 @@ export risklevel, risklevel!, Conformal
 include("explanations/counterfactual.jl")
 export counterfactual
 
-include("explanations/partialresponse.jl")
-export partialresponse
+include("explanations/modelexplanations.jl")
+export ModelExplanation
+export PartialResponse, CeterisParibus, PartialDependence, ShapleyMC
+export explainmodel
+
+include("explanations/featureimportance.jl")
+export PermutationImportance
+export featureimportance
 
 include("explanations/shapley.jl")
 export explain
@@ -159,5 +157,15 @@ export iqr
 
 # Occurrences Interface support
 include("interfaces/OccurrencesInterface.jl")
+
+# Old variable functions, these have ALL been replaced by better alternatives
+include("deprecated/selection.jl")
+export noselection!, forwardselection!, backwardselection!
+include("deprecated/vif.jl")
+export stepwisevif!, vif
+include("deprecated/importance.jl")
+export variableimportance
+include("deprecated/partialresponse.jl")
+export partialresponse
 
 end # module SDeMo

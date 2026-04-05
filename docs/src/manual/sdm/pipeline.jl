@@ -93,7 +93,7 @@ sum(predict(model))
 # ::: info Models in space
 #
 # The use of models with spatial information is covered in more depth in the
-# vignette on [training spatial models](/manual/distributions/training/).
+# vignette on [training spatial models](/manual/usecases/getting-started/).
 #
 # :::
 
@@ -108,7 +108,7 @@ predict(model, X[:,2]; threshold=false)
 #
 # There is additional documentation covering the [calibration
 # functions](/manual/sdm/calibration/), as well as an illustrative [vignette on
-# spatial prediction of probabilities](/manual/distributions/adaboost/).
+# spatial prediction of probabilities](/manual/usecases/adaboost/).
 #
 # :::
 
@@ -187,7 +187,7 @@ train!(why)
 # ::: info More on boosting
 #
 # There is a more complete [vignette on
-# AdaBoost](/manual/distributions/adaboost/), which also touches upon the issue
+# AdaBoost](/manual/usecases/adaboost/), which also touches upon the issue
 # of model calibration.
 #
 # :::

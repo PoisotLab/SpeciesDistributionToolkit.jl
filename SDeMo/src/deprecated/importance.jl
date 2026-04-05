@@ -1,4 +1,3 @@
-
 """
     variableimportance(model, folds, variable; reps=10, optimality=mcc, kwargs...)
 

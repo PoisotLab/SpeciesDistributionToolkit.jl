@@ -126,6 +126,25 @@ fi = [
 fi ./= sum(fi)
 Dict(zip("BIO" .* string.(variables(model)), fi))
 
+# ## Shapley values importance
+
+# The `ShapleyMC` explanation can also be used to evaluate the importance of a
+# feature:
+
+featureimportance(ShapleyMC, model, 1; threshold=false)
+
+# This approach to feature importance is useful because it informs on the
+# contribution of each feature to moving the prediction away from the average
+# prediction.
+
+fi = [
+    featureimportance(ShapleyMC, model, v; threshold = false) for
+    v in variables(model)
+]
+fi ./= sum(fi)
+Dict(zip("BIO" .* string.(variables(model)), fi))
+
+
 # ## Related documentation
 
 # ```@meta

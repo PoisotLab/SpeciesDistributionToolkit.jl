@@ -4,7 +4,7 @@
 # features in a model.
 
 using SpeciesDistributionToolkit
-using Statistics
+using PrettyTables
 using CairoMakie
 
 # We will train a very simple model using the demonstration dataset:
@@ -15,6 +15,7 @@ model = SDM(RawData, Logistic, SDeMo.__demodata()...)
 # and 12th variables (mean temperature, total precipitation).
 
 variables!(model, ForwardSelection; included = [1, 12])
+variables(model)
 
 # ::: info Variable selection
 #
@@ -24,6 +25,11 @@ variables!(model, ForwardSelection; included = [1, 12])
 #
 # :::
 
+# We will use three techniques for feature importance: permutation importance,
+# partial dependence, and Shapley importance.
+
+# ## Permutation importance
+
 # We will split the instances into a training and validation group using
 # `holdout` -- this will be useful to illustrate the permutation importance,
 # which works best when applied to a dataset that was not used for model
@@ -31,9 +37,9 @@ variables!(model, ForwardSelection; included = [1, 12])
 
 train, test = holdout(model);
 
-# ## Permutation importance
-
-# We start by measuring the permutation importance of the features.
+# Splitting the dataset is important here, because there is a risk of wrongly
+# evaluating the importance of features if the model overfits. The other two
+# methods can be applied on a trained model without splitting.
 
 # There are several ways to perform this task, the first being by passing an
 # array with the positions of training/testing instances:
@@ -90,9 +96,8 @@ featureimportance(PermutationImportance, model, 1; optimality = mcc)
 # The feature importances are _relative_ values, so it is a good idea to express
 # them as a proportion of all the variables used in the model:
 
-fi = [1 - featureimportance(PermutationImportance, model, v; ratio=false) for v in variables(model)]
-fi ./= sum(fi)
-Dict(zip("BIO" .* string.(variables(model)), fi))
+permfi = [1 - featureimportance(PermutationImportance, model, v; ratio=false, threshold=false) for v in variables(model)]
+permfi ./= sum(permfi)
 
 # ## Partial dependence importance
 
@@ -119,12 +124,11 @@ current_figure() #hide
 # not take additional arguments. It can be applied without model re-training, as
 # it measures importance on the model _response_.
 
-fi = [
+partfi = [
     featureimportance(PartialDependence, model, v; threshold = false) for
     v in variables(model)
 ]
-fi ./= sum(fi)
-Dict(zip("BIO" .* string.(variables(model)), fi))
+partfi ./= sum(partfi)
 
 # ## Shapley values importance
 
@@ -137,13 +141,25 @@ featureimportance(ShapleyMC, model, 1; threshold=false)
 # contribution of each feature to moving the prediction away from the average
 # prediction.
 
-fi = [
+shapfi = [
     featureimportance(ShapleyMC, model, v; threshold = false) for
     v in variables(model)
 ]
-fi ./= sum(fi)
-Dict(zip("BIO" .* string.(variables(model)), fi))
+shapfi ./= sum(shapfi)
 
+# ## Comparison of importance values
+
+# We can finally look at the relative importance of the variables, sorted here
+# by their importance according to the partial dependence curve:
+
+M = hcat("BIO" .* string.(variables(model)), permfi, partfi, shapfi)
+pretty_table(
+    M[sortperm(M[:,3]; rev=true),:],
+    alignment = [:l, :c, :c, :c],
+    backend = :markdown,
+    column_labels = ["Variable", "Permut.", "Part. dep.", "Shapley"],
+    formatters = [fmt__printf("%4.3f", [2, 3, 4])],
+)
 
 # ## Related documentation
 

@@ -84,6 +84,8 @@ explanations must be provided. If `instances` is `nothing`, the explanations
 will be given on the training data.
 
 All other keyword arguments are passed to `predict`.
+
+**This function is called internally by `explainmodel` and should not be called directly by the user**
 """
 function explain(
     model::T,

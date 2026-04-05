@@ -50,7 +50,7 @@ px, py = explainmodel(PartialResponse, model, 1, 15; threshold = false);
 #figure partialrespo-bio1
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Partial response")
-scatter!(ax, px, py; color = :black, marker=:rect)
+scatter!(ax, px, py; color = :black, marker = :rect)
 current_figure() #hide
 
 # We can also look at a series of user-defined values:
@@ -61,7 +61,7 @@ px, py = explainmodel(PartialResponse, model, 1, x; threshold = false);
 #figure partialrespo-bio1-quantiles
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Partial response")
-scatter!(ax, px, py; color = :black, marker=:rect)
+scatter!(ax, px, py; color = :black, marker = :rect)
 current_figure() #hide
 
 # We can also show the response surface using two variables:
@@ -74,15 +74,19 @@ px, py, pz = explainmodel(PartialResponse, model, vars, 20; threshold = false);
 
 #figure partialresp-surface
 f = Figure()
-ax = Axis(f[1, 1]; xlabel = "BIO$(variables(model)[1])", ylabel = "BIO$(variables(model)[2])")
-cm = heatmap!(px, py, pz; colormap = Reverse(:batlowW), colorrange=(0, 1))
+ax = Axis(
+    f[1, 1];
+    xlabel = "BIO$(variables(model)[1])",
+    ylabel = "BIO$(variables(model)[2])",
+)
+cm = heatmap!(px, py, pz; colormap = Reverse(:batlowW), colorrange = (0, 1))
 Colorbar(f[1, 2], cm)
 current_figure() #hide
 
 # Inflated partial responses replace the average value by other values drawn
 # at random from the pool of existing variables:
 
-px, py = explainmodel(PartialResponse, model, vars, 10; inflated=true, threshold = false);
+px, py = explainmodel(PartialResponse, model, vars, 10; inflated = true, threshold = false);
 
 #figure inflated-curve
 f = Figure()
@@ -118,7 +122,12 @@ px, py = explainmodel(CeterisParibus, model, 1, 1, 50; threshold = false);
 #figure cp-bio1
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Partial response")
-scatter!(ax, [features(model, 1)[1]], [predict(model; threshold=false)[1]], color=:black)
+scatter!(
+    ax,
+    [features(model, 1)[1]],
+    [predict(model; threshold = false)[1]];
+    color = :black,
+)
 lines!(ax, px, py; color = :black)
 current_figure() #hide
 
@@ -128,8 +137,12 @@ px, py, pz = explainmodel(CeterisParibus, model, vars, 1, 20; threshold = false)
 
 #figure cp-twovar-surface
 f = Figure()
-ax = Axis(f[1, 1]; xlabel = "BIO$(variables(model)[1])", ylabel = "BIO$(variables(model)[2])")
-cm = heatmap!(px, py, pz; colormap = Reverse(:batlowW), colorrange=(0, 1))
+ax = Axis(
+    f[1, 1];
+    xlabel = "BIO$(variables(model)[1])",
+    ylabel = "BIO$(variables(model)[2])",
+)
+cm = heatmap!(px, py, pz; colormap = Reverse(:batlowW), colorrange = (0, 1))
 Colorbar(f[1, 2], cm)
 current_figure() #hide
 
@@ -144,7 +157,12 @@ ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Partial response")
 for (i, l) in enumerate(labels(model))
     col = l ? :purple : :grey50
     lab = l ? "Presences" : "Absences"
-    lines!(ax, explainmodel(CeterisParibus, model, 1, i, 50; threshold = false)..., color=col, alpha=0.1)
+    lines!(
+        ax,
+        explainmodel(CeterisParibus, model, 1, i, 50; threshold = false)...;
+        color = col,
+        alpha = 0.1,
+    )
 end
 current_figure() #hide
 
@@ -170,8 +188,12 @@ px, py, pz = explainmodel(SDeMo.PartialDependence, model, vars, 100; threshold =
 
 #figure partialresp-surface
 f = Figure()
-ax = Axis(f[1, 1]; xlabel = "BIO$(variables(model)[1])", ylabel = "BIO$(variables(model)[2])")
-cm = heatmap!(px, py, pz; colormap = Reverse(:batlowW), colorrange=(0, 1))
+ax = Axis(
+    f[1, 1];
+    xlabel = "BIO$(variables(model)[1])",
+    ylabel = "BIO$(variables(model)[2])",
+)
+cm = heatmap!(px, py, pz; colormap = Reverse(:batlowW), colorrange = (0, 1))
 Colorbar(f[1, 2], cm)
 current_figure() #hide
 
@@ -210,7 +232,7 @@ explainmodel(ShapleyMC, model, feat, inst)
 #figure bio1-shap-value
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Effect on the average prediction")
-scatter!(ax, explainmodel(ShapleyMC, model, 1; threshold=false)..., color=:black)
+scatter!(ax, explainmodel(ShapleyMC, model, 1; threshold = false)...; color = :black)
 current_figure() #hide
 
 # To facilitate the comparison with other approaches, it may be useful to add
@@ -219,12 +241,22 @@ current_figure() #hide
 #figure bio1-shap-value-corrected
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Effect on the average prediction")
-sx, sy = explainmodel(ShapleyMC, model, 1; threshold=false)
-sy .+= mean(predict(model; threshold=false))
-scatter!(ax, sx, sy, color=:grey80, label="Shapley Monte-Carlo")
-lines!(ax, explainmodel(PartialDependence, model, 1, 50; threshold=false)..., color=:black, label="Partial dependence curve")
+sx, sy = explainmodel(ShapleyMC, model, 1; threshold = false)
+sy .+= mean(predict(model; threshold = false))
+scatter!(ax, sx, sy; color = :grey80, label = "Shapley Monte-Carlo")
+lines!(
+    ax,
+    explainmodel(PartialDependence, model, 1, 50; threshold = false)...;
+    color = :black,
+    label = "Partial dependence curve",
+)
 axislegend(ax)
 current_figure() #hide
+
+# Shapley values are also useful because they can provide an explanation for the
+# actual prediction. For example:
+
+expl = [last(explainmodel(ShapleyMC, model, v, 1)) for v in variables(model)]
 
 # ## Related documentation
 

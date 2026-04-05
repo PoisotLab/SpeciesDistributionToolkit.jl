@@ -47,7 +47,7 @@ current_figure() #hide
 
 px, py = explainmodel(PartialResponse, model, 1, 15; threshold = false);
 
-#figure partialrespo-bio1
+#figure partialrespo-bio1-equallyspaced
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Partial response")
 scatter!(ax, px, py; color = :black, marker = :rect)

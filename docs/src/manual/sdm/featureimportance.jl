@@ -4,6 +4,7 @@
 # features in a model.
 
 using SpeciesDistributionToolkit
+using Statistics
 using PrettyTables
 using CairoMakie
 

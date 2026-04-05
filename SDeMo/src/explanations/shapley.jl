@@ -75,7 +75,7 @@ end
 """
     explain(model::AbstractSDM, j; observation = nothing, instances = nothing, samples = 100, kwargs..., )
 
-Uses the MCMC approximation of Shapley values to provide explanations to
+Uses the Monte-Carlo approximation of Shapley values to provide explanations to
 specific predictions. The second argument `j` is the variable for which the
 explanation should be provided.
 

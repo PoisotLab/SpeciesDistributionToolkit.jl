@@ -234,6 +234,11 @@ Changes in a single pull request should never affect more than a single package.
 Semantic versioning allows rapid releases, and the changes **must** always be
 limited to a single package.
 
+### CHANGELOG
+
+Each package has a `CHANGELOG.md` file, which lists the changed made for each
+version. The format of each entry is explained in the changelog file directly.
+
 ## Releases
 
 Releases are handled by @tpoisot - we use the [Julia

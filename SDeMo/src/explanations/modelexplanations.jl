@@ -45,7 +45,7 @@ struct CeterisParibus <: ModelExplanation end
     ShapleyMC
 
 This type is used as the first argument of `explainmodel` to generate an
-explanation based on the Monte-Carlon approximation of Shapley values.
+explanation based on the Monte-Carlo approximation of Shapley values.
 
 This type can also be used as the first argument of `featureimportance`, to
 measure the variation based on the absolute change created by each variable.

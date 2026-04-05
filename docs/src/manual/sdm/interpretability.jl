@@ -213,6 +213,19 @@ ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Effect on the average prediction")
 scatter!(ax, explainmodel(ShapleyMC, model, 1; threshold=false)..., color=:black)
 current_figure() #hide
 
+# To facilitate the comparison with other approaches, it may be useful to add
+# the average prediction of the model (on the training dataset):
+
+#figure bio1-shap-value-corrected
+f = Figure()
+ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Effect on the average prediction")
+sx, sy = explainmodel(ShapleyMC, model, 1; threshold=false)
+sy .+= mean(predict(model; threshold=false))
+scatter!(ax, sx, sy, color=:grey80, label="Shapley Monte-Carlo")
+lines!(ax, explainmodel(PartialDependence, model, 1, 50; threshold=false)..., color=:black, label="Partial dependence curve")
+axislegend(ax)
+current_figure() #hide
+
 # ## Related documentation
 
 # ```@meta
@@ -224,6 +237,7 @@ current_figure() #hide
 # SDeMo.explainmodel
 # SDeMo.CeterisParibus
 # SDeMo.PartialResponse
+# SDeMo.ShapleyMC
 # SDeMo.PartialDependence
 # SDeMo.ModelExplanation
 # ```

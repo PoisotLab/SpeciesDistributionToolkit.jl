@@ -2,8 +2,8 @@
     ModelExplanation
 
 This abstract type collects the various types that can be used to generate model
-explanations. This is currently `PartialResponse`, `CeterisParibus`, and
-`PartialDependence`.
+explanations. This is currently `PartialResponse`, `CeterisParibus`,
+`ShapleyMC`, and `PartialDependence`.
 """
 abstract type ModelExplanation end
 

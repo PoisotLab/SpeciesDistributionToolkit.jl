@@ -240,7 +240,7 @@ current_figure() #hide
 
 #figure bio1-shap-value-corrected
 f = Figure()
-ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Effect on the average prediction")
+ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Response")
 sx, sy = explainmodel(ShapleyMC, model, 1; threshold = false)
 sy .+= mean(predict(model; threshold = false))
 scatter!(ax, sx, sy; color = :grey80, label = "Shapley Monte-Carlo")

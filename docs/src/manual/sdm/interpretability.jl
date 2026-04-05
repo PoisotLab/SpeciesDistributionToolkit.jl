@@ -265,7 +265,6 @@ expl = [last(explainmodel(ShapleyMC, model, v, 1)) for v in variables(model)]
 # ```
 
 # ```@docs; canonical=false
-# SDeMo.explain
 # SDeMo.explainmodel
 # SDeMo.CeterisParibus
 # SDeMo.PartialResponse

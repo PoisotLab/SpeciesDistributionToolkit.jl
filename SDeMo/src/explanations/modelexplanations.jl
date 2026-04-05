@@ -42,6 +42,17 @@ expectation plot.
 struct CeterisParibus <: ModelExplanation end
 
 """
+    ShapleyMC
+
+This type is used as the first argument of `explainmodel` to generate an
+explanation based on the Monte-Carlon approximation of Shapley values.
+
+This type can also be used as the first argument of `featureimportance`, to
+measure the variation based on the absolute change created by each variable.
+"""
+struct ShapleyMC <: ModelExplanation end
+
+"""
     explainmodel(ModelExplanation, model, variable::Tuple{Int,Int}, n::Int; kwargs...)
 
 Generates an `n` by `n` grid to measure the _surface_ representing the joint

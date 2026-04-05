@@ -450,32 +450,36 @@ end
 end
 
 """
-    explainmodel(::Type{ShapleyMC}, model, variable::Int; kwargs...)
+    explainmodel(ShapleyMC, model, variable::Int; kwargs...)
 
 Returns the Shapley values (approximation) for the given variable. All other
 arguments are passed to `predict`.
+
+The result is returned as a tuple `feature, explanation`.
 """
 function explainmodel(::Type{ShapleyMC}, model::T, variable::Int; kwargs...) where {T <: AbstractSDM}
-    return explain(model, variable; kwargs...)
+    return (features(model, variable), explain(model, variable; kwargs...))
 end
 
 """
-    explainmodel(::Type{ShapleyMC}, model, variable::Int, index::Int; kwargs...)
+    explainmodel(ShapleyMC, model, variable::Int, index::Int; kwargs...)
 
 Returns the Shapley values (approximation) for the given variable for the given
 `index` observation. All other arguments are passed to `predict`.
+
+The result is returned as a tuple `feature, explanation`.
 """
 function explainmodel(::Type{ShapleyMC}, model::T, variable::Int, index::Integer; kwargs...) where {T <: AbstractSDM}
-    return explain(model, variable; observation=index, kwargs...)
+    return (features(model, variable)[index], explain(model, variable; observation=index, kwargs...))
 end
 
 """
-    explainmodel(::Type{ShapleyMC}, model, variable::Int, X::Matrix; kwargs...)
+    explainmodel(ShapleyMC, model, variable::Int, X::Matrix; kwargs...)
 
 Returns the Shapley values (approximation) for the given feature matrix `X`.
 """
-function explainmodel(::Type{ShapleyMC}, model::T, X::Matrix; kwargs...) where {T <: AbstractSDM}
-    return explain(model, variable; instances=X, kwargs...)
+function explainmodel(::Type{ShapleyMC}, model::T, variable::Int, X::Matrix; kwargs...) where {T <: AbstractSDM}
+    return (X[variable, :], explain(model, variable; instances=X, kwargs...))
 end
 
 @testitem "We can get the Shapley values for a single instance" begin
@@ -483,9 +487,11 @@ end
     variables!(model, [1, 12])
     train!(model)
 
-    @test explainmodel(ShapleyMC, model, 1, 1) != 0.0
-    @test explainmodel(ShapleyMC, model, 2, 1) ≈ 0.0
-    @test explainmodel(ShapleyMC, model, 12, 1) != 0.0
+    @test first(explainmodel(ShapleyMC, model, 1, 1)) == features(model, 1)[1]
+
+    @test last(explainmodel(ShapleyMC, model, 1, 1)) != 0.0
+    @test last(explainmodel(ShapleyMC, model, 2, 1)) ≈ 0.0
+    @test last(explainmodel(ShapleyMC, model, 12, 1)) != 0.0
 end
 
 @testitem "We can get the Shapley values for all training instances" begin
@@ -493,8 +499,8 @@ end
     variables!(model, [1, 12])
     train!(model)
 
-    @test length(explainmodel(ShapleyMC, model, 1)) == length(labels(model))
-    @test length(explainmodel(ShapleyMC, model, 2)) == length(labels(model))
+    @test length(last(explainmodel(ShapleyMC, model, 1))) == length(labels(model))
+    @test length(last(explainmodel(ShapleyMC, model, 2))) == length(labels(model))
 end
 
 @testitem "We can get the Shapley values for another instance matrix" begin
@@ -502,7 +508,11 @@ end
     variables!(model, [1, 12])
     train!(model)
 
-    @test length(explainmodel(ShapleyMC, model, 1, features(model))) == length(labels(model))
-    @test length(explainmodel(ShapleyMC, model, 2, features(model))) == length(labels(model))
-    @test length(explainmodel(ShapleyMC, model, 12, features(model))) == length(labels(model))
+    n = 15
+    v, e = explainmodel(ShapleyMC, model, 1, features(model)[:, 1:n])
+
+    @test v[1] == features(model, 1)[1]
+    @test v[n] == features(model, 1)[n]
+    @test length(v) == length(e)
+    @test length(e) == n
 end

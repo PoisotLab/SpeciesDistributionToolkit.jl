@@ -185,21 +185,32 @@ current_figure() #hide
 
 # ## Shapley values
 
-# We can perform the (MCMC version of) Shapley values measurement, using the
-# `explain` method:
+# We can perform the (MCMC version of) Shapley values measurement, using
+# `ShapleyMC` as the first argument to `explainmodel`. For example, we can check
+# how much the prediction for the third instance was shifted by the value of the
+# first variable:
 
-[explain(model, v; observation = 3, threshold = false) for v in variables(model)]
+feat, inst = 1, 3
+explainmodel(ShapleyMC, model, feat, inst)
 
-# These values are returned as the effect of this variable's value on the
-# average prediction for this observation.
+# As for all other `explainmodel` methods, the results are returned as a tuple
+# with the feature value, and the response.
+
+# ::: tip Interpretation of Shapley values
+#
+# The Shapley values measure the _difference to the average prediction_, and so
+# they exist on a different scale compared to the other responses we have seen
+# in this vignette.
+#
+# :::
 
 # We can also produce a figure that looks like the partial response curve, by
-# showing the effect on a variable on each training instance:
+# showing the effect of a variable on each training instance:
 
-#figure bio1-effect-map
+#figure bio1-shap-value
 f = Figure()
 ax = Axis(f[1, 1]; xlabel = "BIO1", ylabel = "Effect on the average prediction")
-scatter!(ax, features(model, 1), explain(model, 1; threshold = false))
+scatter!(ax, explainmodel(ShapleyMC, model, 1; threshold=false)..., color=:black)
 current_figure() #hide
 
 # ## Related documentation

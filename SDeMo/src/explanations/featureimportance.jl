@@ -233,3 +233,57 @@ end
         threshold = false, optimality = crossentropyloss
     ) > 1.0
 end
+
+"""
+    featureimportance(ShapleyMC, model, variable; kwargs...)
+
+Returns the importance of a feature according to Shapley values; this is the
+average of the absolute values of this feature on the average prediction (and
+therefore, this is conceptually very close to the `PartialDependence` measure of
+feature importance).
+
+Other `kwargs...` are passed to `predict`.
+"""
+function featureimportance(
+    ::Type{ShapleyMC},
+    model::T,
+    variable;
+    kwargs...,
+) where {T <: AbstractSDM}
+    x, y = explainmodel(ShapleyMC, model, variable; kwargs...)
+    return mean(abs.(y))
+end
+
+"""
+    featureimportance(ShapleyMC, model, variable, X::Matrix; kwargs...)
+
+Returns the importance of a feature according to Shapley values; this is the
+average of the absolute values of this feature on the average prediction (and
+therefore, this is conceptually very close to the `PartialDependence` measure of
+feature importance). The Shapley values are measured on the matrix of instances
+`X`.
+
+Other `kwargs...` are passed to `predict`.
+"""
+function featureimportance(
+    ::Type{ShapleyMC},
+    model::T,
+    variable,
+    X::Matrix;
+    kwargs...,
+) where {T <: AbstractSDM}
+    x, y = explainmodel(ShapleyMC, model, variable, X; kwargs...)
+    return mean(abs.(y))
+end
+
+@testitem "We can measure the importance of features using ShapleyMC" begin
+    model = SDM(RawData, NaiveBayes, SDeMo.__demodata()...)
+    variables!(model, [1, 3, 5])
+    train!(model)
+
+    fimp = [featureimportance(ShapleyMC, model, v) for v in variables(model)]
+    @test length(fimp) == length(variables(model))
+    @test all(fimp .>= 0.0)
+
+    @test featureimportance(ShapleyMC, model, 12) ≈ 0.0
+end

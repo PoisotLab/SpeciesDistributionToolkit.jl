@@ -65,7 +65,7 @@ depts_ranked = sort(
     rev = true,
 )
 
-# The index of the department with the highets value is
+# The index of the department with the highest value is
 
 i = findfirst(isequal(depts_ranked[1].first), departements)
 

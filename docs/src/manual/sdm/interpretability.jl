@@ -72,7 +72,7 @@ px, py, pz = explainmodel(PartialResponse, model, vars, 20; threshold = false);
 # Note that the last element returned in this case is a two-dimensional array,
 # as it makes sense to visualize the result as a surface.
 
-#figure partialresp-surface
+#figure partialresp-20-surface
 f = Figure()
 ax = Axis(
     f[1, 1];
@@ -186,7 +186,7 @@ current_figure() #hide
 
 px, py, pz = explainmodel(SDeMo.PartialDependence, model, vars, 100; threshold = true);
 
-#figure partialresp-surface
+#figure partial-dep-100-surface
 f = Figure()
 ax = Axis(
     f[1, 1];

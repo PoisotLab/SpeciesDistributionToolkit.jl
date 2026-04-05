@@ -54,15 +54,49 @@ all of the package(s) functionalities.
 
 ### Documentation
 
-New functionalities should have an entry in the `howto` or the `tutorial`
-folder, as well as be listed in the sidebar in `config.mts`. The files in these
-sections are all `.jl` files, which will be converted to markdown using the
-Literate package.
+New functionalities should have an entry in the `manual` folder, as well as be
+listed in the sidebar in `config.mts`. The files in these sections are all `.jl`
+files, which will be converted to markdown using the Literate package.
 
 New features **must** come with either a new vignette or a modification to an
 existing one. New vignettes **must** be listed in the
 `docs/src/.vitepress/config.mts` file; specifically, they must be in the
 `"sidebar"` array, grouped together with the other vignettes in the section.
+
+Documentation pages **should** include links to other parts of the
+documentation, which can be found in the `config.mts` file. When the link
+between the two notions is important, this link **should** generally be in a
+callout box.
+
+There are four types of callout boxes: `tip`, `info`, `warning`, and `danger`.
+The code block below provides an example of the `tip` callout. All callout boxes
+**must** have a short and descriptive title.
+
+~~~ julia
+
+# ::: tip Callout boxes have a title
+#
+# This is the content of the callout box.
+#
+# :::
+
+~~~
+
+The `tip` callout **must** be used to communication information that is useful
+to know, but not essential. It **shlould** be used to help users draw
+connections between parts of the package / documentation. The `warning` callout
+**must** be used to indicate important information to the user; for example,
+drawing attention to operations that are longer or need more resources. The
+`danger` callout **must** be used when the analysis of the user is _at risk_ if
+something is not done properly, **or** to indentify sections of the
+documentation that are likely to change in the future.
+
+The `info` callout is the most generic one, and **should** be used when none of
+the other callout types are more appropriate.
+
+The documentation **must** be treated as part of the tests for the package. It
+**must** build before a pull request is merged. Ideally, every _central_ feature
+of a new function should be documented.
 
 It is fine to use `using Revise` in the documentation scripts, this line will be
 removed at build time.
@@ -71,9 +105,10 @@ Tables should be generated with `pretty_table` from the `PrettyTables` package,
 using `backend = :markdown,` somewhere in the keywords.
 
 Figures should be generated with `CairoMakie` -- a configuration line with the
-correct format and DPI will be added automatically. 
+correct output format (`.png`) and DPI (2x) will be added automatically. 
 
-All figures must be organized in the following way:
+All figures must be organized in the following way, and **cannot** have lines
+with comments.
 
 ~~~ julia
 #figure Short one-line summary
@@ -85,7 +120,8 @@ current_figure() #hide
 This will be modified during the build to save the figure as a `.png` file with
 a unique name. The one-line description will become the mouseover/alt text for
 the figure, and the code will be hidden in a _Details_  box in order to not make
-the tutorials and vignettes too long.
+the tutorials and vignettes too long. Note that the text after `#figure`
+**must** be unique within a vignette.
 
 You do not need to set a random seed in the files, this will be done for _all_
 vignettes at build time.

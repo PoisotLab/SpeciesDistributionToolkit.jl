@@ -124,7 +124,8 @@ export ci
 # Variable selection
 include("variables/selection.jl")
 export VariableSelectionStrategy
-export ForwardSelection, BackwardSelection, AllVariables, VarianceInflationFactor, StrictVarianceInflationFactor
+export ForwardSelection,
+    BackwardSelection, AllVariables, VarianceInflationFactor, StrictVarianceInflationFactor
 
 # Conformal prediction
 include("conformal.jl")
@@ -136,7 +137,7 @@ export counterfactual
 
 include("explanations/modelexplanations.jl")
 export ModelExplanation
-export PartialResponse, CeterisParibus, PartialDependence
+export PartialResponse, CeterisParibus, PartialDependence, ShapleyMC
 export explainmodel
 
 include("explanations/featureimportance.jl")

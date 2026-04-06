@@ -1,8 +1,17 @@
-# # Building a species distribution model
+# # Getting started: our first model
 
-# In this tutorial, we will work on the same species and location as in , to
-# show how `SpeciesDistributionToolkit` integrates prediction to the rest of the
-# workflow.
+# In this tutorial, we will work on a dataset of observations of the Ring Ouzel
+# (_Turdus torquatus_) in Switzerland. The purpose of the tutorial is to
+# introduce most of the concepts that are important when working with
+# `SpeciesDistributionToolkit`, by conducting an analysis from start to finish.
+# We are very much going for breadth, not depth; in particular, this tutorial
+# does not cover any of the theory about species distributions or species
+# distribution models.
+
+# At many points throughout the tutorial, there will be links to other vignettes
+# in this manual. They are not meant to be read immediately when they are
+# mentionned, but rather consulted later on to get access to more options and
+# choices for the analyses that are presented here.
 
 using SpeciesDistributionToolkit
 using Statistics
@@ -25,6 +34,11 @@ using PrettyTables
 
 using CairoMakie
 
+# As in the rest of the manual, the code to produce the figures is hidden at
+# first. This is because figure code is very verbose, and not specific to the
+# package. Feel free to reveal the code for the figure if you want to see
+# exactly how they are produced.
+
 # ## Getting the data
 
 # We start by downloading a polygon that will be used to delineate our area of
@@ -32,8 +46,17 @@ using CairoMakie
 
 aoi = getpolygon(PolygonData(NaturalEarth, Countries); resolution = 10)["Switzerland"]
 
+# There are several polygon providers that come built into the package, and they
+# can be accessed _via_ the "Datasets" menu in the navigation bar at the top of
+# your screen. Some of these polyon providers are about administrative
+# boundaries (GADM, Natural Earth, ESRI), but some others are about
+# eco/bioregions.
+
 # To ensure that we only load the raster data that are within the range of our
-# problem, we will calculate the spatial extent:
+# problem, we will first calculate the spatial extent of the polygon we just
+# downloaded. The `boundingbox` function will work on any object that has
+# spatial coordinates (occurrences, models, layers, etc), and return the
+# bounding box in longitude/latitude.
 
 const SDT = SpeciesDistributionToolkit
 extent = SDT.boundingbox(aoi)
@@ -49,10 +72,23 @@ extent = SDT.boundingbox(aoi)
 # :::
 
 # We will now download the entire suite of 19 BIOCLIM data from the
-# [CHELSA2](/datasets/CHELSA2) database.
+# [CHELSA2](/datasets/CHELSA2) database. Before downloading, we will look at the
+# first five layers.
 
 chelsa_bioclim = RasterData(CHELSA2, BioClim)
-layers(chelsa_bioclim)
+layers(chelsa_bioclim)[1:5]
+
+# We can also get their full-text descriptions:
+
+[
+    layerdescriptions(chelsa_bioclim)[l]
+    for l in layers(chelsa_bioclim)[1:5]
+]
+
+# We have enough information to download these layers, and load them in memory.
+# It is important, whenever possible, to give a spatial extent (boundingbox) to
+# the function to read layers. This avoids loading pretty voluminous data into
+# memory when it is not strictly needed.
 
 # ::: info Data are saved locally
 #
@@ -61,7 +97,10 @@ layers(chelsa_bioclim)
 #
 # :::
 
-# The `SDMLayer` function is the main constructor for
+# The `SDMLayer` function is the main constructor for layers (and can also read
+# from [STAC catalogues](/manual/retrieval/stac/) and [local
+# files](/manual/usage/read-part-layer/)). When given a `RasterProvider`, it
+# will download (or open) the relevant files.
 
 L = SDMLayer{Float32}[
     SDMLayer(
@@ -95,7 +134,7 @@ current_figure() #hide
 # area of interest. This operation will modify the data _in place_, so we do not
 # create additional objects.
 
-mask!(L, aoi)
+mask!(L, aoi);
 
 #figure bio1-masked
 f = Figure(; size = (600, 300))
@@ -104,6 +143,11 @@ heatmap!(ax, L[1]; colormap = :Greys)
 hidespines!(ax)
 hidedecorations!(ax)
 current_figure() #hide
+
+# There is also a `trim` function, which will return a copy of the layers that
+# are re-scaled so that they do not have empty rows/columns on either end. This
+# is not required here, but may come in handy when doing more complex masking
+# operations.
 
 # ::: info Masking layers
 #
@@ -174,26 +218,30 @@ silhouetteplot!(
 )
 current_figure() #hide
 
+# At this point, we have collected all of the _actual_ data we can, and it is
+# time to generate pseudo-absences in order to have all of the material to train
+# our model.
+
 # ## Pseudo-absence generation
 
-# And after this, we prepare a layer with presence data. This operation will
-# ensure that all of the observations that share a raster cell will only be
-# counted once. Note that for now, we will only work on the training records
-# (from *eBird*).
+# We start by preparing a layer with presence data. This operation will ensure
+# that all of the observations that share a raster cell will only be counted
+# once. Note that for now, we will only work on the training records (from
+# *eBird*).
 
 presencelayer = mask(first(L), Occurrences(mask(records, aoi)))
 
-# The next step is to generate a pseudo-absence mask. We will sample within two
-# concentric circles around each observations: no closer than 4km, but no
-# further than 25km.
+# The next step is to generate a pseudo-absence mask. We will sample according
+# to the distance away from a known observation, but never sample a
+# pseudo-absence less than 4km away from an observation.
 
-background = pseudoabsencemask(BetweenRadius, presencelayer; closer = 4.0, further = 25.0)
+background = pseudoabsencemask(DistanceToEvent, presencelayer)
 
 # Within this layer of possible location of absences, we will sample at random
 # twice as many pseudo-absences cells as we have presence cells in the presence
 # layer:
 
-bgpoints = backgroundpoints(background, 2sum(presencelayer))
+bgpoints = backgroundpoints(nodata(background, x -> x <= 4.), 2sum(presencelayer))
 
 # ::: info More on pseudo-absences
 #

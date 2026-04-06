@@ -172,9 +172,12 @@ current_figure() #hide
 
 # ## Pseudo-absence generation
 
-# And after this, we prepare a layer with presence data:
+# And after this, we prepare a layer with presence data. This operation will
+# ensure that all of the observations that share a raster cell will only be
+# counted once. Note that for now, we will only work on the training records
+# (from *eBird*).
 
-presencelayer = mask(first(L), Occurrences(mask(presences, aoi)))
+presencelayer = mask(first(L), Occurrences(mask(records, aoi)))
 
 # The next step is to generate a pseudo-absence mask. We will sample based on
 # the distance to an observation, by also preventing pseudo-absences to be less

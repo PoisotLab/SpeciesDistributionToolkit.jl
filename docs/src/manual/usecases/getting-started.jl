@@ -82,7 +82,7 @@ L = SDMLayer{Float32}[
 # the bounding box:
 
 #figure bio1-full
-f = Figure()
+f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, L[1]; colormap = :Greys)
 hidespines!(ax)
@@ -96,7 +96,7 @@ current_figure() #hide
 mask!(L, aoi)
 
 #figure bio1-masked
-f = Figure()
+f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, L[1]; colormap = :Greys)
 hidespines!(ax)
@@ -142,7 +142,7 @@ Phylopic.attribution(silhouette)
 # silhouette of the species alongside this map.
 
 #figure presence-data
-f = Figure()
+f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 poly!(ax, aoi; color = :grey95)
 scatter!(ax, records; color = :forestgreen, label = "Training")

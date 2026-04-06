@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.10.0` - 2026-04-05
 
-- **added** an `explainmodel` function for model explanations
+- **added** the `explainmodel` function for model explanations
 - **added** a `ModelExplanation` struct for model explanations, with `CeterisParis`, `PartialResponse`, `ShapleyMC`, and `PartialDependence` options
-- **added** a `featureimportance` function for feature importance, supporting `PartialDependence`, `ShapleyMC`, and `PermutationImportance` options
+- **added** the `featureimportance` function for feature importance, supporting `PartialDependence`, `ShapleyMC`, and `PermutationImportance` options
 - **added** a vignette on feature importance
 - **improved** the vignette on model interpretation
 

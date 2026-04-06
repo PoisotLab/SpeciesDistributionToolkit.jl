@@ -400,12 +400,15 @@ varnames = [
 ]
 
 # To start with, we can look at the partial response of the model to the most
-# important variable:
+# important variables (the rugplots for the presences is at the bottom, and the
+# one for the pseudo-absences at the top).
 
 # figure partial-response-figure
 f = Figure()
 ax = Axis(f[1, 1]; xlabel=varnames[1], ylabel="Model response")
 lines!(ax, explainmodel(PartialResponse, model, v1, 100; threshold=false)..., color=:black)
+vlines!(ax, features(model, v1)[findall(labels(model))], ymax=0.025, color=:grey70)
+vlines!(ax, features(model, v1)[findall(.!labels(model))], ymin=1-0.025, color=:red)
 ylims!(ax, 0, 1)
 tightlimits!(ax)
 current_figure() #hide
@@ -431,53 +434,70 @@ colormap=Reverse(:batlowW), colorrange=(0, 1)
 Colorbar(f[1,2], hm, label="Model response")
 current_figure() #hide
 
-# ## Making the first prediction
+# For now, this is enough model explanation, and we will move on to making the
+# first spatial prediction.
+
+# ## Spatial predictions
 
 # We can predict using the model by giving a vector of layers as an input. This
-# will return the output *as a layer* as well:
+# will return the output _as a layer_ as well:
 
-prd = predict(model, L; threshold = false)
+P = predict(model, L; threshold = false)
 
-# Because this prediction is a layer, we can plot it directly:
-
-#figure initial-map
+#figure model-output-map
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-hm = heatmap!(ax, prd; colormap = Reverse(:batlowW), colorrange = (0, 1))
-contour!(ax, predict(model, L); color = :black, linewidth = 0.5)
+hm = heatmap!(ax, P; colormap = Reverse(:batlowW), colorrange = (0, 1))
 Colorbar(f[1, 2], hm)
-lines!(ax, aoi; color = :black)
-bbox = SpeciesDistributionToolkit.boundingbox(aoi)
+lines!(ax, aoi; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
 
-# As a rule, most relevant function in `SDeMo` will, when given layers as an
-# argument, return the output as layers:
+# In the above prediction, we have requested the model _score_, as opposed to
+# the predicted presence. We can get the presence by not changing the
+# `threshold` argument:
 
-partial1 = explainmodel(PartialResponse, model, 1, L; threshold = false)
+R = predict(model, L)
 
-# The output can be visualised as well. Partial responses are given in the same
-# units as the prediction.
+#figure model-range-map-with-presences
+f = Figure(; size = (600, 300))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+poly!(ax, aoi; color = :grey95)
+heatmap!(ax, R; colormap = [:transparent, :forestgreen])
+scatter!(ax, records, color=:black, markersize=4)
+lines!(ax, aoi; color = :grey10)
+hidedecorations!(ax)
+hidespines!(ax)
+current_figure() #hide
 
-#figure partial-resp
+# ## Spatial explanations
+
+# When called with a vector of layers as additional arguments, the methods for
+# model explanation will return a spatial version of the model response. For
+# example, we can look at the effect of the most important variable on the
+# prediction:
+
+partial1 = explainmodel(PartialResponse, model, v1, L; threshold = false)
+
+#figure partial-response-in-space
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, partial1; colormap = Reverse(:batlowW), colorrange = (0, 1))
-contour!(ax, predict(model, L); color = :black, linewidth = 0.5)
-Colorbar(f[1, 2], hm)
-lines!(ax, aoi; color = :black)
+Colorbar(f[1, 2], hm, label="Effect of BIO$(v1)")
+lines!(ax, aoi; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
 
-# This, naturally, is also true for Shapley values:
+# This is particularly important to look at the _local_ effect of the variables
+# on each prediction, for example using Shapley values:
 
-shapley1 = explainmodel(ShapleyMC, model, 1, L; threshold = false)
+shapley1 = explainmodel(ShapleyMC, model, v1, L; threshold = false)
 
 # Note that the Shapley values are expressed as a deviation from the average
 # prediction, and so positive values correspond to the presence class being more
-# likely.
+# likely compared to the baseline.
 
 # Both the `explain` and `partialresponse` functions can accept keywords that
 # are passed to `predict` - in this tutorial, we use `threshold=false` to
@@ -485,54 +505,79 @@ shapley1 = explainmodel(ShapleyMC, model, 1, L; threshold = false)
 # request an explanation of the binary response (this is usually less
 # informative).
 
-#figure shapley-resp
+#figure shapley-response-in-space
 col_lims = maximum(abs.(quantile(shapley1, [0.1, 0.9]))) .* (-1, 1)
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, shapley1; colormap = :managua, colorrange = col_lims)
-contour!(ax, predict(model, L); color = :black, linewidth = 0.5)
-Colorbar(f[1, 2], hm)
+Colorbar(f[1, 2], hm, label="Effect of BIO$(v1)")
 lines!(ax, aoi; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
 
-# When given a vector of layers, the `explain` function will return a layer with
-# the explanation for each input variable:
+# We will now identify which of these variables is the most locally important to
+# make the final prediction:
 
 S = explainmodel(ShapleyMC, model, L; threshold = false)
 
-# We can then put this object into the `mosaic` function to get the index of
-# which variable is the most important for each pixel:
+# We can rely on the `mosaic` function to find the variable that has the largest
+# absolute contribution to moving the prediction away from the average. This
+# serves as a way to identify the most locally important variable:
+
+keyvariable = mosaic(argmax, map(x -> abs.(x), S))
+
+# It is important to notice that, even though our model relies on a PCA to
+# transform the variables, we are looking at the importance of the variables
+# _before_ the transformation. We can, therefore, think biologically about the
+# result of this analysis.
+
+# Because this too is a layer, it can be mapped as well (after a little bit of
+# mischief with the color palette):
 
 #figure model-mosaicplot
 f = Figure(; size = (600, 300))
-mostimp = mosaic(argmax, map(x -> abs.(x), S))
-colmap = [
-    colorant"#E69F00",
-    colorant"#56B4E9",
-    colorant"#009E73",
-    colorant"#D55E00",
-    colorant"#CC79A7",
-]
+colors = Makie.wong_colors()
+n_var = length(variables(model))
+n_col = length(colors)
+if n_var > n_col
+    append!(colors, fill(colorant"#ececec", n_var - n_col))
+end
+palette = cgrad(colors[1:n_var], n_var, categorical=true)
 ax = Axis(f[1, 1]; aspect = DataAspect())
-heatmap!(ax, mostimp; colormap = colmap)
-contour!(
-    ax,
-    predict(model, L);
-    color = :black,
-    linewidth = 0.5,
-)
-lines!(ax, aoi; color = :black)
+heatmap!(ax, keyvariable; colormap = palette)
+lines!(ax, aoi; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)
 Legend(
     f[2, 1],
-    [PolyElement(; color = colmap[i]) for i in 1:length(bio_vars)],
-    ["BIO$(b)" for b in bio_vars];
+    [PolyElement(; color = colors[i]) for i in 1:length(variables(model))],
+    ["BIO$(b)" for b in variables(model)];
     orientation = :horizontal,
     nbanks = 1,
     framevisible = false,
     vertical = false,
 )
 current_figure() #hide
+
+
+# ## Related documentation
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# crossvalidate
+# explainmodel
+# featureimportance
+# pseudoabsencemask
+# backgroundpoints
+# taxon
+# mosaic
+# hyperparameters
+# hyperparameters!
+# SDMLayer
+# Occurrences
+# ```
+

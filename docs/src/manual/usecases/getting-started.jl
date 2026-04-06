@@ -1,58 +1,176 @@
 # # Building a species distribution model
 
-# In this tutorial, we will work on the same species and location as in [the
-# excellent tutorial on SDMs by Damaris
-# Zurell](https://damariszurell.github.io/SDM-Intro/), to show how
-# `SpeciesDistributionToolkit` integrates prediction to the rest of the
+# In this tutorial, we will work on the same species and location as in , to
+# show how `SpeciesDistributionToolkit` integrates prediction to the rest of the
 # workflow.
 
 using SpeciesDistributionToolkit
 using Statistics
-using CairoMakie
 
-# Note that there are several sections about the `SDeMo` package in the "How-to"
-# section of the manual.
+# ::: info About this tutorial
+# 
+# This tutorial is inspired by the [the excellent introduction to SDMs by
+# Damaris Zurell](https://damariszurell.github.io/SDM-Intro/). It uses the same
+# species, but a slightly different dataset.
+#
+# :::
+
+# Most of the data types in `SpeciesDistributionToolkit` can be used with
+# `Makie` for plotting. This is true for [layers](/manual/dataviz/layers/),
+# [polygons](/manual/dataviz/polygons/), and more. These are all documented in
+# the "Manual" section of the documentation, under "Data visualization". To
+# benefit from this integration, we will load the `CairoMakie` backend.
+
+using CairoMakie
 
 # ## Getting the data
 
-aoi = getpolygon(PolygonData(NaturalEarth, Countries))["Switzerland"]
+# We start by downloading a polygon that will be used to delineate our area of
+# interest. For this tutorial, this will be the country of Szwitzerland.
 
-# In order to simplify the code, we will start from a list of bioclim variables
-# that have been picked to optimize the model - `SDeMo` offers many functions
-# for variable selection.
+aoi = getpolygon(PolygonData(NaturalEarth, Countries); resolution = 10)["Switzerland"]
 
-bio_vars = [1, 11, 5, 8, 6]
+# To ensure that we only load the raster data that are within the range of our
+# problem, we will calculate the spatial extent:
 
-# We get the data on these variables from aoiLSA2:
+const SDT = SpeciesDistributionToolkit
+extent = SDT.boundingbox(aoi)
 
-provider = RasterData(aoiLSA2, BioClim)
+# ::: tip Alias for packages
+#
+# Whenever the names of functions in `SpeciesDistributionToolkit` are not
+# distinctive enough, the functions are not exported. In order to simplify the
+# syntax, declaring a `const` with a shorted name (as we did just before) is a
+# valid solution, and also introduces no performance cost. This will happen in
+# almost all vignettes.
+#
+# :::
+
+# We will now download the entire suite of 19 BIOCLIM data from the
+# [CHELSA2](/datasets/CHELSA2) database.
+
+chelsa_bioclim = RasterData(CHELSA2, BioClim)
+layers(chelsa_bioclim)
+
+# ::: info Data are saved locally
+#
+# Both polygons and raster data are saved locally, which means that the first
+# download takes longer, but subsequent reads are much faster.
+#
+# :::
+
+# The `SDMLayer` function is the main constructor for
+
 L = SDMLayer{Float32}[
     SDMLayer(
         provider;
-        layer = x,
-        SpeciesDistributionToolkit.boundingbox(aoi)...,
-    ) for x in bio_vars
+        layer = v,
+        extent...,
+    ) for v in layers(chelsa_bioclim)
 ];
 
-# And we then clip and trim to the polygon describing Switzerland:
+# ::: info Accessing raster data
+#
+# For more information about accessing raster data, refer to [the
+# vignette](/manual/retrieval/list-raster-layers/). All datasets (and the
+# complete set of keyword options) are also listed in the navigation bar at the
+# top of the screen.
+#
+# :::
+
+# When these layers are first downloaded, they will cover the entire extent of
+# the bounding box:
+
+#figure bio1-full
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+heatmap!(ax, L[1]; colormap = :Greys)
+hidespines!(ax)
+hidedecorations!(ax)
+current_figure() #hide
+
+# We can mask the entire vector of layers with the polygon we use to define our
+# area of interest. This operation will modify the data _in place_, so we do not
+# create additional objects.
 
 mask!(L, aoi)
 
-# The next step is to get the data, using the *eBird* dataset:
+#figure bio1-masked
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+heatmap!(ax, L[1]; colormap = :Greys)
+hidespines!(ax)
+hidedecorations!(ax)
+current_figure() #hide
 
-presences = GBIF.download("10.15468/dl.wye52h")
-ouzel = taxon(first(entity(presences)))
-
-# ask on thje [Phylopic](https://www.phylopic.org/) database for a silhoutte,
-# note that it may not be the exact species
-
-sp_uuid = Phylopic.imagesof(ouzel; items = 1)
-
-# ::: info Illustration credit
-# 
-Phylopic.attribution(sp_uuid) #hide
+# ::: info Masking layers
+#
+# [with polygons](/manual/polygons/masking-with-polygons/) and [just masking
+# idk](/manual/polygons/masking-a-layer/)
 #
 # :::
+
+# We will now grab a dataset from GBIF, which is a list of all observations of
+# _Turdus torquatus_ in Switzerland according to *eBird*. We will also grab a
+# second dataset to test the model, which is the same species and country but
+# uses *iNaturalist* data. Finally, we will get a representation of the 
+
+records = GBIF.download("10.15468/dl.wye52h")
+test_records = GBIF.download("10.15468/dl.m6b3wg")
+ouzel = taxon(first(entity(presences)))
+
+# ::: info GBIF data
+#
+# There are additional vignettes about retrieving data from the [GBIF
+# API](/manual/retrieval/gbif-api/), from [GBIF
+# downloads](/manual/retrieval/gbif-download/), or from [local GBIF
+# archives](/manual/retrieval/gbif-local/).
+#
+# :::
+
+# Getting the species as its own variable will allow us, among other things, to
+# retrieve a silhouette from the [Phylopic](https://www.phylopic.org/) database.
+# Note that it may not be the _exact_ species, but Phylopic curates a taxonomy
+# to return the closest matching organism. If your species is not in the
+# Phylopic database, consider drawing the silhouette and contributing!
+
+silhouette = Phylopic.imagesof(ouzel; items = 1)
+Phylopic.attribution(silhouette)
+
+# We can see the result of our data collection work thus far, by plotting the
+# training and testing records on the region of interest, and adding a
+# silhouette of the species alongside this map.
+
+#figure presence-data
+f = Figure()
+ax = Axis(f[1, 1]; aspect = DataAspect())
+poly!(ax, aoi; color = :grey95)
+scatter!(ax, records; color = :forestgreen, label = "Training")
+scatter!(
+    ax,
+    test_records;
+    color = :transparent,
+    strokecolor = :purple,
+    strokewidth = 1,
+    marker = :rect,
+    markersize = 9,
+    label = "Testing",
+)
+hidedecorations!(ax)
+hidespines!(ax)
+lines!(ax, aoi; color = :grey10)
+axislegend(ax; position = :rt, framevisible = false)
+silhouetteplot!(
+    ax,
+    extent.left + 0.3,
+    extent.top - 0.2,
+    silhouette;
+    markersize = 70,
+    color = :black,
+)
+current_figure() #hide
+
+# ## Pseudo-absence generation
 
 # And after this, we prepare a layer with presence data:
 
@@ -62,8 +180,16 @@ presencelayer = mask(first(L), Occurrences(mask(presences, aoi)))
 # the distance to an observation, by also preventing pseudo-absences to be less
 # than 4km from an observation:
 
-background = pseudoabsencemask(WithoutRadius, presencelayer; distance=4.0)
+background = pseudoabsencemask(WithoutRadius, presencelayer; distance = 4.0)
 bgpoints = backgroundpoints(background, 2sum(presencelayer))
+
+# ::: info More on pseudo-absences
+#
+# There is a vignette with all the [pseudo-absence generation
+# methods](/manual/generation/pseudoabsences/). A lot of them are built into the
+# package, and adding custom ones is not very difficult!
+#
+# :::
 
 # We can take a minute to visualize the dataset, as well as the location of
 # presences and pseudo-absences:
@@ -126,13 +252,6 @@ contour!(ax, predict(model, L); color = :black, linewidth = 0.5)
 Colorbar(f[1, 2], hm)
 lines!(ax, aoi; color = :black)
 bbox = SpeciesDistributionToolkit.boundingbox(aoi)
-silhouetteplot!(
-    ax,
-    bbox.left + 0.3,
-    bbox.top - 0.2,
-    Phylopic.imagesof(ouzel; items = 1);
-    markersize = 70,
-)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide

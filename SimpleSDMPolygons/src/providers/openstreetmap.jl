@@ -55,6 +55,7 @@ end
     prov = PolygonData(OpenStreetMap, Places)
     pol = getpolygon(prov; place = "Alps", layer="natural")
     @test uniqueproperties(pol)[:addresstype] == ["mountain_range"]
+    @test uniqueproperties(pol)[:type] == ["mountain_range"]
     @test uniqueproperties(pol)[:category] == ["natural"]
 end
 
@@ -63,4 +64,13 @@ end
     pol = getpolygon(prov; country = "Vatican City State")
     @test uniqueproperties(pol)[:addresstype] == ["country"]
     @test uniqueproperties(pol)[:category] == ["boundary"]
+    @test uniqueproperties(pol)[:type] == ["administrative"]
+end
+
+@testitem "We can get some info about the state of Idaho" begin
+    prov = PolygonData(OpenStreetMap, Places)
+    pol = getpolygon(prov; place = "idaho", type="state")
+    @test uniqueproperties(pol)[:addresstype] == ["state"]
+    @test uniqueproperties(pol)[:category] == ["boundary"]
+    @test uniqueproperties(pol)[:type] == ["administrative"]
 end

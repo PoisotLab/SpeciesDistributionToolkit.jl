@@ -65,7 +65,7 @@ extent = SDT.boundingbox(aoi)
 #
 # Whenever the names of functions in `SpeciesDistributionToolkit` are not
 # distinctive enough, the functions are not exported. In order to simplify the
-# syntax, declaring a `const` with a shorted name (as we did just before) is a
+# syntax, declaring a `const` with a shortened name (as we did just before) is a
 # valid solution, and also introduces no performance cost. This will happen in
 # almost all vignettes.
 #
@@ -232,16 +232,17 @@ current_figure() #hide
 presencelayer = mask(first(L), Occurrences(mask(records, aoi)))
 
 # The next step is to generate a pseudo-absence mask. We will sample according
-# to the distance away from a known observation, but never sample a
-# pseudo-absence less than 4km away from an observation.
+# to the square root of the distance away from a known observation, but never sample a
+# pseudo-absence less than 4km away from an observation, and never further away
+# than 30km..
 
-background = pseudoabsencemask(DistanceToEvent, presencelayer)
+background = sqrt.(pseudoabsencemask(DistanceToEvent, presencelayer))
 
 # Within this layer of possible location of absences, we will sample at random
 # twice as many pseudo-absences cells as we have presence cells in the presence
 # layer:
 
-bgpoints = backgroundpoints(nodata(background, x -> x <= 4.), 2sum(presencelayer))
+bgpoints = backgroundpoints(nodata(background, x -> !(sqrt(4.) <= x <= sqrt(30.))), 2sum(presencelayer))
 
 # ::: info More on pseudo-absences
 #
@@ -277,7 +278,6 @@ current_figure() #hide
 
 model = SDM(PCATransform, Logistic, L, presencelayer, bgpoints)
 
-
 # ::: info More on models
 #
 # There is a vignette on [model training](/manual/sdm/pipeline/) that covers all
@@ -286,8 +286,8 @@ model = SDM(PCATransform, Logistic, L, presencelayer, bgpoints)
 #
 # :::
 
-# We can tweak the hyperparameters of this model. We will can check the default
-# values:
+# We can tweak the hyperparameters of this model. We can check the default
+# values for this classifier:
 
 hyperparameters(classifier(model))
 
@@ -306,7 +306,9 @@ hyperparameters!(classifier(model), :λ, 2e-1);
 hyperparameters!(classifier(model), :epochs, 10_000);
 
 # Note that, because we are generating the SDM from a series of layers, it is
-# georeferenced. We can confirm this with:
+# georeferenced. A georeferenced model can be plotted directly, as well as used
+# to define spatial cross-validation blocks. We can confirm that the model is
+# georeferenced:
 
 isgeoreferenced(model)
 
@@ -327,37 +329,65 @@ isgeoreferenced(model)
 # :::
 
 # We start by splitting the dataset into training and validation data. We will
-# use _k_-fold cross-validation with a default of ten splits. By default, the
-# splits are _always_ balanced, so that the training and validation data have
-# the same prevalence of presences.
+# use _k_-fold cross-validation using five splits (the default is ten). By
+# default, the splits are _always_ balanced, so that the training and validation
+# data have the same prevalence of presences.
 
-folds = kfold(model)
+folds = kfold(model; k=5)
 
 # We will perform variable selection by adding variables one at a time, but we
 # will constrain the model to start with BIO1. 
 
 variables!(model, ForwardSelection, folds; included=[1])
 
-# After this step, we can check that the model is trained:
+# The call to `variables!` will modify the model in two significant ways: it
+# will select a subset of the variables, and then it will train the model using
+# _all_ the data available for training. 
+
+# We can check that the model is trained:
 
 istrained(model)
 
-# And we can also inspect the list of selected variables:
+# We can also inspect the list of selected variables:
 
 variables(model)
+
+# ::: warning Index of variables
+#
+# Models can be reset at any time, which means that dropped variables can be
+# re-included. Therefore, the index of a variable in a model _never_ refers to
+# the list of included variables, but to the entire pool of variables that the
+# model had access to when it was created.
+#
+# :::
+
+# At this point, we have a trained model, that is ready to be used.
 
 # ## Measuring the model performance
 
 # Now that we have identified the optimal set of variables, it is important to
 # report the expected performance of this model. This is done internally when
-# selecting the variables, but it is important to report on multiple measures of
-# model performance.
+# selecting the variables, but it is always a good idea to report on multiple
+# measures of model performance, as they will indicate what type of predictions
+# the model does well.
 
-cval, ctrn = crossvalidate(model)
+cval, ctrn = crossvalidate(model);
 
-# We can look at the average MCC for the training data:
+# This function returns a series of `ConfusionMatrix` vectors, which can be
+# given as arguments to many measures of classifier performance. Different pages
+# in the manual will use different approaches for validation, but the default
+# that is enforced throughout the package is that Matthew's Correlation
+# Coefficient is _the_ best measure of performance. Whenever a function needs to
+# decide on a "best" model, it will likely have a keyword to change this if
+# necessary.
 
-mcc(ctrn)
+# We can look at the first confusion matrix for the first split on the
+# validation data:
+
+cval[1]
+
+# This gives the number of true/false positive/negatives for this specific split
+# of the data.
 
 # ::: info PR and ROC curves
 #
@@ -366,20 +396,28 @@ mcc(ctrn)
 #
 # :::
 
-# We will do a summary table with several
+# The `crossvalidate` method may also take a second argument, which is a split
+# of the dataset according to different criteria. The output of `kfold` we used
+# earlier is one example, and the package offers several more.
 
-ms = [mcc, ppv, npv, f1, balancedaccuracy]
+# To see how the model performs across a variety of measures, we will look at
+# the averaged value of a few of them over the training and validation data.
+
+ms = [mcc, tpr, fpr, fnr, tnr, ppv, npv]
 M = permutedims([
     m(c) for m in ms, c in [cval, ctrn]
 ]);
 M = hcat(["Training", "Validation"], M);
 pretty_table(
     M;
-    alignment = [:l, :c, :c, :c, :c, :c],
+    alignment = [:l, :c, :c, :c, :c, :c, :c, :c],
     backend = :markdown,
-    column_labels = ["Dataset"; string.(ms)],
-    formatters = [fmt__printf("%5.3f", [2, 3, 4, 5, 6])],
+    column_labels = ["Dataset"; uppercase.(string.(ms))],
+    formatters = [fmt__printf("%5.3f", [2, 3, 4, 5, 6, 7, 8])],
 )
+
+# This provides us with an estimate of the performance of our model, which will
+# be useful to guide interpretation.
 
 # ## Prediction on the testing data
 
@@ -387,19 +425,35 @@ pretty_table(
 # we will use them to make predictions on the environmental conditions
 # associated to these observations:
 
-Xₜ = permutedims(hcat([l[test_records] for l in L]...))
+Xₜ = permutedims(hcat([l[test_records] for l in L]...));
 
-# The model predicts the following outcomes here:
+# This matrix can be passed to the model (and the `predict` function) to
+# generate the presence/absence prediction for this testing data:
 
-yₜ = predict(model, Xₜ)
+yₜ = predict(model, Xₜ);
 
-# We can calculate the accuracy of this prediction (which is fine to do since
-# the testing data are presence-only):
+# We can calculate the accuracy of this prediction (which is appropriate to do
+# here since the testing data are presence-only, so we do not really have class
+# balance issues):
 
 accuracy(yₜ, ones(Bool, length(yₜ)))
 
 # This indicates the proportion of presences that our model has correctly
-# predicted.
+# predicted. This model is doing a much better job at predicting the presences
+# from the testing data than we should have expected based on the
+# cross-validation results alone, which is great!
+
+#figure presence-data-train-test
+f = Figure(; size = (600, 300))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+poly!(ax, aoi; color = :grey95)
+scatter!(ax, test_records[findall(yₜ)]; color = :black, label = "Correct prediction")
+scatter!(ax, test_records[findall(!, yₜ)]; color = :red, label = "Error")
+hidedecorations!(ax)
+hidespines!(ax)
+lines!(ax, aoi; color = :grey10)
+axislegend(ax; position = :lt, framevisible = false)
+current_figure() #hide
 
 # ## Understanding the model
 
@@ -423,12 +477,14 @@ accuracy(yₜ, ones(Bool, length(yₜ)))
 
 vimp = [featureimportance(PartialDependence, model, v) for v in variables(model)]
 vimp ./= sum(vimp)
+vord = sortperm(vimp, rev=true)
+Dict(zip(layers(chelsa_bioclim)[variables(model)], vimp))
 
 #figure variable-importance
 f = Figure()
 ax = Axis(f[1,1], ylabel="Relative feature importance")
-lines!(ax, 1:length(vimp), sort(vimp, rev=true), color=:black, linestyle=:dash)
-textlabel!(ax, sortperm(vimp, rev=true), vimp, "BIO".*string.(variables(model)))
+lines!(ax, 1:length(vimp), vimp[vord], color=:black, linestyle=:dash)
+textlabel!(ax, 1:length(vimp), vimp[vord], layers(chelsa_bioclim)[variables(model)[vord]])
 ylims!(ax, low=0.0)
 hidexdecorations!(ax)
 xlims!(ax, 0.5, length(variables(model)) + 0.5)
@@ -436,22 +492,21 @@ current_figure() #hide
 
 # We will limit our analysis to the two most important variables:
 
-mostimp = partialsortperm(vimp, 1:2, rev=true)
-v1, v2 = variables(model)[mostimp]
+v1, v2 = variables(model)[vord[1:2]]
 
 # If we want to get more information about which these two are, we can use the
 # `layerdescriptions` function to get plain-text information:
 
 varnames = [
     layerdescriptions(chelsa_bioclim)[l]
-    for l in layers(chelsa_bioclim)[variables(model)[mostimp]]
+    for l in layers(chelsa_bioclim)[[v1, v2]]
 ]
 
 # To start with, we can look at the partial response of the model to the most
 # important variables (the rugplots for the presences is at the bottom, and the
 # one for the pseudo-absences at the top).
 
-# figure partial-response-figure
+#figure partial-response-figure
 f = Figure()
 ax = Axis(f[1, 1]; xlabel=varnames[1], ylabel="Model response")
 lines!(ax, explainmodel(PartialResponse, model, v1, 100; threshold=false)..., color=:black)
@@ -461,16 +516,11 @@ ylims!(ax, 0, 1)
 tightlimits!(ax)
 current_figure() #hide
 
-# ::: warning Index of variables
-#
-# Models can be reset at any time, which means that dropped variables can be
-# re-included. Therefore, the index of a variable in a model _nevers_ refers to
-# the list of included variables, but to the entire pool of variables that the
-# model had access to when it was created.
-#
-# :::
-
-# We can also look at the combination of the two most important variables:
+# We can also look at the combination of the two most important variables. This
+# is not a statement about their importance as much as it is a statement about
+# the fact that we are limited in the number of dimensions we can examine at
+# once: a single variable is a line, two variables are a surface, and after this
+# it gets complicated.
 
 #figure partial-two-most
 f = Figure()
@@ -482,6 +532,19 @@ colormap=Reverse(:batlowW), colorrange=(0, 1)
 Colorbar(f[1,2], hm, label="Model response")
 current_figure() #hide
 
+# Note that these responses do not provide the full picture of why the model
+# makes a specific prediction. If we are interested in the effect of a variable
+# on a specific prediction, the right tool is to use Shapley values. They link
+# the value of a given variable to a _departure_ from the average prediction.
+
+#figure partial-response-figure
+f = Figure()
+ax = Axis(f[1, 1]; xlabel=varnames[1], ylabel="Model response")
+scatter!(ax, explainmodel(ShapleyMC, model, v1; threshold=false)..., color=:black)
+current_figure() #hide
+
+# Shapley values are a little more informative, because they account for the
+# value of all other variables at the point for which we ask for an explanation.
 # For now, this is enough model explanation, and we will move on to making the
 # first spatial prediction.
 
@@ -496,11 +559,20 @@ P = predict(model, L; threshold = false)
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, P; colormap = Reverse(:batlowW), colorrange = (0, 1))
-Colorbar(f[1, 2], hm)
+Colorbar(f[1, 2], hm, label="Model score")
 lines!(ax, aoi; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
+
+# ::: info Model score and probabilities
+#
+# Whether this model score is an actual probability depends on whether the model
+# is well calibrated. Refer to the [vignette on
+# calibration](/manual/sdm/calibration/) for more. Logistic regression tends to
+# give pretty-well calibrated models.
+#
+# :::
 
 # In the above prediction, we have requested the model _score_, as opposed to
 # the predicted presence. We can get the presence by not changing the
@@ -532,7 +604,7 @@ partial1 = explainmodel(PartialResponse, model, v1, L; threshold = false)
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, partial1; colormap = Reverse(:batlowW), colorrange = (0, 1))
-Colorbar(f[1, 2], hm, label="Effect of BIO$(v1)")
+Colorbar(f[1, 2], hm, label="Effect of $(layers(chelsa_bioclim)[v1])")
 lines!(ax, aoi; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)
@@ -578,10 +650,11 @@ keyvariable = mosaic(argmax, map(x -> abs.(x), S))
 # It is important to notice that, even though our model relies on a PCA to
 # transform the variables, we are looking at the importance of the variables
 # _before_ the transformation. We can, therefore, think biologically about the
-# result of this analysis.
+# result of this analysis, regardless of the optimal way to project these raw
+# covariates into latent variables for the classifier.
 
-# Because this too is a layer, it can be mapped as well (after a little bit of
-# mischief with the color palette):
+# Because this too is returned as a layer, it can be mapped as well (after a
+# little bit of mischief with the color palette):
 
 #figure model-mosaicplot
 f = Figure(; size = (600, 300))
@@ -608,6 +681,68 @@ Legend(
 )
 current_figure() #hide
 
+# ## Bootstrap for uncertainty
+
+# As the last step, we will attempt to quantify the uncertainty of our model
+# using non-parametric bootstrap. This is simply achieved by wrapping our model
+# into a new constructor:
+
+bootstrap = Bagging(model, 100)
+train!(bootstrap)
+
+# All of these models have the same training data, but different training
+# instances. We can measure the balanced out-of-bag error on this model:
+
+outofbag(bootstrap) |> M -> 1 - balancedaccuracy(M) 
+
+# More importantly for this use-case, the bootstrapped model can make
+# predictions using different information to aggregate the results of all
+# models. A good measure of uncertainty is, for example, to use the
+# inter-quartile range:
+
+uncertainty = predict(bootstrap, L; threshold=false, consensus=iqr)
+
+# ::: info Conformal prediction
+#
+# The package offers functions for [conformal
+# prediction](/manual/sdm/conformal/), and a more fully worked-out example of
+# [spatial projection of uncertainty](/manual/usecases/conformal/). This is a
+# more advanced feature, and for now we will be quite happy with good old
+# non-parametric bootstrap. See also the vignette on [covariate
+# shift](/manual/usecases/covariate-shift/) to measure how far away the
+# prediction data are from the training data.
+#
+# :::
+
+# We can now map this uncertainty, to identify where the models in the
+# bootstrapped ensemble disagree the most, and by how much they disagree:
+
+#figure uncertainty-in-space
+f = Figure(; size = (600, 300))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+hm = heatmap!(ax, uncertainty; colormap = Reverse(:lipari))
+Colorbar(f[1, 2], hm, label="IQR")
+lines!(ax, aoi; color = :black)
+hidedecorations!(ax)
+hidespines!(ax)
+current_figure() #hide
+
+# This information can be jointly visualized with the prediction, using the
+# functions for [bivariate maps](/manual/dataviz/bivariate/) or
+# [value-suppressing uncertainty palettes](/manual/dataviz/vsup/).
+
+# ## Conclusion
+
+# This vignette has covered quite a lot of ground, starting from collecting open
+# biodiversity data, and ending at providing interpretable explanations for the
+# output of a species distribution model. There are more functionalities in the
+# package that are not documented here, and notably the integration with other
+# Julia packages.
+
+# If there are elements in this tutorial, or in the rest of the documentation,
+# that are not clear, feel free to [reach
+# out](https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions)
+# using the GitHub discussions!
 
 # ## Related documentation
 
@@ -617,6 +752,7 @@ current_figure() #hide
 
 # ```@docs; canonical=false
 # crossvalidate
+# outofbag
 # explainmodel
 # featureimportance
 # pseudoabsencemask
@@ -626,6 +762,7 @@ current_figure() #hide
 # hyperparameters
 # hyperparameters!
 # SDMLayer
-# Occurrences
+# SDM
+# Bagging
 # ```
 

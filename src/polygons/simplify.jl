@@ -27,7 +27,7 @@ end
     POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Paris")
     L = SDMLayer(RasterData(CHELSA1, MinimumTemperature); SpeciesDistributionToolkit.boundingbox(POL; padding=1.0)...)
     Lc = count(L)
-    SpeciesDistributionToolkit.simplify(POL)
+    POL = SpeciesDistributionToolkit.simplify(POL)
     mask!(L, POL)
     @test typeof(L) <: SDMLayer
     @test count(L) <= Lc

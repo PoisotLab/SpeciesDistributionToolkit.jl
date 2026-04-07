@@ -97,7 +97,6 @@ function change_inclusion!(inclusion, layer, polygon::P) where {P}
                         [PolygonOps.inpolygon(coord, ci) for ci in c] for
                         c in coords
                     ]
-
                 else
                     inpoly = [PolygonOps.inpolygon(coord, c) for c in coords]
                 end
@@ -213,15 +212,18 @@ function SimpleSDMLayers.mask(
     places = place(occ)
     for i in eachindex(elements(occ))
         val = false
-        if poly isa MultiPolygon
-            val = any(
-                isone,
-                vcat(
-                    [[PolygonOps.inpolygon(places[i], ci) for ci in c] for c in coords]...,
-                ),
-            )
+        if polygon isa MultiPolygon
+            inpoly = [
+                [PolygonOps.inpolygon(places[i], ci) for ci in c] for
+                c in coords
+            ]
         else
-            val = any(isone, [PolygonOps.inpolygon(places[i], c) for c in coords]...)
+            inpoly = [PolygonOps.inpolygon(places[i], c) for c in coords]
+        end
+        val = if eltype(inpoly) <: Vector
+            any(isone, vcat(inpoly...))
+        else
+            any(isone, inpoly)
         end
         inclusion[i] = val
     end

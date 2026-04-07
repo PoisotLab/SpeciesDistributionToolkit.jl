@@ -100,13 +100,15 @@ layers(chelsa_bioclim)[1:5]
 # The `SDMLayer` function is the main constructor for layers (and can also read
 # from [STAC catalogues](/manual/retrieval/stac/) and [local
 # files](/manual/usage/read-part-layer/)). When given a `RasterProvider`, it
-# will download (or open) the relevant files.
+# will download (or open) the relevant files. Note that we are passing the area
+# of interest (a polygon) as the second argument, so that the raster will only
+# be returned within the boundingbox of this geometry.
 
 L = SDMLayer{Float32}[
     SDMLayer(
-        chelsa_bioclim;
-        layer = v,
-        extent...,
+        chelsa_bioclim,
+        aoi;
+        layer = v
     ) for v in layers(chelsa_bioclim)
 ];
 
@@ -154,7 +156,9 @@ current_figure() #hide
 # Many objects can be masked [with
 # polygons](/manual/polygons/masking-with-polygons/), and there are additional
 # methods to [mask layers](/manual/polygons/masking-a-layer/) as well. Both are
-# documented in their vignettes.
+# documented in their vignettes. Masking a _vector_ of layers is always faster
+# than masking several layers in a row, because the mask is only calculated once
+# and then re-used.
 #
 # :::
 

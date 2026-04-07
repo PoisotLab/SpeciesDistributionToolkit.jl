@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## `v1.3.3`
 
 - **changed** the internal `OpenStreetMap` code to allow `type` and `layer` parameters
-- **changed** the internal `OpenStreetMap` code to rely on the nominatim API geojson export
+- **changed** the internal `OpenStreetMap` code to rely on the nominatim API geojson export [#589]
 
 ## `v1.3.2`
 

@@ -15,7 +15,7 @@ using Statistics
 
 # ## Getting the data
 
-CHE = getpolygon(PolygonData(OpenStreetMap, Places); place = "Switzerland")
+CHE = getpolygon(PolygonData(OpenStreetMap, Countries); country = "Switzerland")
 
 # In order to simplify the code, we will start from a list of bioclim variables
 # that have been picked to optimize the model - `SDeMo` offers many functions

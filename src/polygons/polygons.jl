@@ -99,11 +99,12 @@ function change_inclusion!(inclusion, layer, polygon::P) where {P}
                             [
                                 [PolygonOps.inpolygon(coord, ci) for ci in c] for
                                 c in coords
-                            ]...,
+                            ],
                         ),
                     )
                 else
-                    val = any(isone, [PolygonOps.inpolygon(coord, c) for c in coords]...)
+                    inpoly = [PolygonOps.inpolygon(coord, c) for c in coords]
+                    val = any(isone, inpoly)
                 end
                 inclusion[position] = val
             end

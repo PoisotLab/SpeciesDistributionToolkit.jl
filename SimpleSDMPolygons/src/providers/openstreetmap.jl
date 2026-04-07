@@ -53,14 +53,14 @@ end
 
 @testitem "We can get some info about the Alps (mountain range)" begin
     prov = PolygonData(OpenStreetMap, Places)
-    poly = getpolygon(prov; place = "Alps")
-    @test uniqueproperties(poly)[:addresstype] == ["mountain_range"]
-    @test uniqueproperties(poly)[:category] == ["natural"]
+    pol = getpolygon(prov; place = "Alps", layer="natural")
+    @test uniqueproperties(pol)[:addresstype] == ["mountain_range"]
+    @test uniqueproperties(pol)[:category] == ["natural"]
 end
 
 @testitem "We can get some info about the Vatican" begin
     prov = PolygonData(OpenStreetMap, Countries)
-    poly = getpolygon(prov; country = "Vatican City State")
-    @test uniqueproperties(poly)[:addresstype] == ["country"]
-    @test uniqueproperties(poly)[:category] == ["boundary"]
+    pol = getpolygon(prov; country = "Vatican City State")
+    @test uniqueproperties(pol)[:addresstype] == ["country"]
+    @test uniqueproperties(pol)[:category] == ["boundary"]
 end

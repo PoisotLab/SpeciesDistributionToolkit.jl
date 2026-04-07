@@ -173,6 +173,7 @@ export default defineConfig({
                                 { text: "Bounding boxes", link: "/manual/usage/boundingbox/" },
                                 { text: "Reading part of a layer", link: "/manual/usage/read-part-layer/" },
                                 { text: "Splitting and tiling", link: "/manual/usage/tiling/" },
+                                { text: "Reclassification", link: "/manual/usage/reclassification/" },
                                 { text: "Coarsening layers", link: "/manual/usage/coarsening/" },
                                 { text: "Sliding windows", link: "/manual/usage/sliding-windows/" },
                                 { text: "Projection", link: "/manual/usage/projection/" },

@@ -16,14 +16,14 @@ GI.getgeom(::GI.PolygonTrait, geom::Polygon, i) = GI.getgeom(geom.geometry, i)
 GI.crs(::GI.PolygonTrait, geom::Polygon) = GI.crs(geom.geometry)
 GI.extent(::GI.PolygonTrait, geom::Polygon)::GI.Extents.Extent = GI.extent(geom.geometry)
 
-Polygon(coords::Vector{<:Tuple{<:Real,<:Real}}) = Polygon(coords...)
-function Polygon(coords::Tuple{<:Real,<:Real}...)
+Polygon(coords::Vector{<:Tuple{<:Real, <:Real}}) = Polygon(coords...)
+function Polygon(coords::Tuple{<:Real, <:Real}...)
     target_crs = AG.importEPSG(4326)
     if coords[begin] != coords[end]
         return Polygon(_add_crs(AG.createpolygon([coords..., coords[begin]]), target_crs))
     else
         return Polygon(_add_crs(AG.createpolygon([coords..., coords[begin]]), target_crs))
-    end 
+    end
 end
 
 """
@@ -42,7 +42,7 @@ GI.crs(::GI.MultiPolygonTrait, geom::MultiPolygon) = GI.crs(geom.geometry)
 GI.extent(::GI.MultiPolygonTrait, geom::MultiPolygon)::GI.Extents.Extent =
     GI.extent(geom.geometry)
 
-const POLY_AND_MP = Union{Polygon,MultiPolygon}
+const POLY_AND_MP = Union{Polygon, MultiPolygon}
 
 """
     Feature
@@ -70,8 +70,8 @@ GI.crs(::GI.FeatureTrait, geom::Feature) = GI.crs(geom.geometry)
 GI.extent(::GI.FeatureTrait, geom::Feature)::GI.Extents.Extent =
     GI.extent(geom.geometry)
 
-
-Base.getproperty(feat::Feature, propname::String) = haskey(feat.properties, propname) ? feat.properties[propname] : nothing 
+Base.getproperty(feat::Feature, propname::String) =
+    haskey(feat.properties, propname) ? feat.properties[propname] : nothing
 
 getname(feat::Feature) = getproperty(feat, "Name")
 
@@ -85,17 +85,19 @@ FeatureCollection(f::Feature) = FeatureCollection([f])
 
 GI.isgeometry(::GI.FeatureCollectionTrait)::Bool = true
 GI.geomtrait(::FeatureCollection) = GI.FeatureCollectionTrait()
-GI.ngeom(::GI.FeatureCollectionTrait, geom::FeatureCollection)::Integer = length(geom.features)
+GI.ngeom(::GI.FeatureCollectionTrait, geom::FeatureCollection)::Integer =
+    length(geom.features)
 GI.getgeom(::GI.FeatureCollectionTrait, geom::FeatureCollection, i) = geom.features[i]
 GI.crs(::GI.FeatureCollectionTrait, geom::FeatureCollection) = GI.crs(first(geom.features))
-GI.extent(::GI.FeatureCollectionTrait, geom::FeatureCollection)::GI.Extents.Extent = reduce(GI.Extents.union, [GI.extent(f) for f in geom.features])
-
+GI.extent(::GI.FeatureCollectionTrait, geom::FeatureCollection)::GI.Extents.Extent =
+    reduce(GI.Extents.union, [GI.extent(f) for f in geom.features])
 
 Base.show(io::IO, fc::FeatureCollection) = print(
     io,
     "FeatureCollection with $(length(fc)) features, each with $(length(first(fc.features).properties)) properties",
 )
-Base.vcat(fcs::FeatureCollection...) = FeatureCollection(vcat([fc.features for fc in fcs]...))
+Base.vcat(fcs::FeatureCollection...) =
+    FeatureCollection(vcat([fc.features for fc in fcs]...))
 
 Base.length(fc::FeatureCollection) = length(fc.features)
 Base.firstindex(::FeatureCollection) = 1
@@ -106,14 +108,14 @@ Base.iterate(fc::FeatureCollection, i) = iterate(fc.features, i)
 
 getname(fc::FeatureCollection) = getname.(fc.features)
 
-function uniqueproperties(fc::FeatureCollection) 
+function uniqueproperties(fc::FeatureCollection)
     propkeys = collect(keys(fc[1].properties))
-    return Dict([k=>unique([f.properties[k] for f in fc]) for k in propkeys])
+    return Dict([k => unique([f.properties[k] for f in fc]) for k in propkeys])
 end
 
 Base.getindex(fc::FeatureCollection, i) = getindex(fc.features, i)
 Base.getindex(fc::FeatureCollection, str::String) = begin
-    names = getname.(fc)    
+    names = getname.(fc)
     idx = findfirst(isequal(str), names)
     isnothing(idx) && return nothing
     return fc[idx]
@@ -123,7 +125,7 @@ Base.getindex(fc::FeatureCollection, pr::Pair) = begin
     idx = findall(isequal(pr[2]), vals)
     isempty(idx) && return nothing
     FeatureCollection(fc[idx])
-end 
+end
 
 # --------------------------------------------------------------
 # boundingbox
@@ -171,4 +173,15 @@ function _polygonize(poly::GJ.Polygon)
     target_crs = AG.importEPSG(4326)
     _add_crs(agdal_poly, target_crs)
     return Polygon(agdal_poly)
+end
+
+function _polygonize(feat::GJ.Feature)
+    return Feature(
+        _polygonize(GJ.geometry(feat)),
+        GJ.properties(feat),
+    )
+end
+
+function _polygonize(collec::GJ.FeatureCollection)
+    return FeatureCollection(_polygonize.(GJ.features(collec)))
 end

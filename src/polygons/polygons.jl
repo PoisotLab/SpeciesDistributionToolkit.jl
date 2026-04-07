@@ -205,10 +205,10 @@ Returns a copy of the occurrences that are within the polygon.
 """
 function SimpleSDMLayers.mask(
     occ::T,
-    poly::P,
+    polygon::P,
 ) where {T <: AbstractOccurrenceCollection, P <: Union{Polygon, MultiPolygon}}
     inclusion = zeros(Bool, length(elements(occ)))
-    coords = SimpleSDMPolygons.GI.coordinates(poly.geometry)
+    coords = SimpleSDMPolygons.GI.coordinates(polygon.geometry)
     places = place(occ)
     for i in eachindex(elements(occ))
         val = false

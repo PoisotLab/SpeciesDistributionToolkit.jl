@@ -42,8 +42,7 @@ current_figure() #hide
 
 # The same method also applies to polygons:
 
-cnt = PolygonData(OpenStreetMap, Countries)
-pol = getpolygon(cnt; country = "Austria")
+pol = getpolygon(PolygonData(NaturalEarth, Countries)["Austria"]
 SpeciesDistributionToolkit.boundingbox(pol; padding = 0.5)
 
 # ```@meta

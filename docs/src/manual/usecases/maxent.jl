@@ -204,7 +204,6 @@ ax = Axis(
 )
 scatter!(
     ax,
-    features(m, first(variables(m))),
     explainmodel(ShapleyMC, m, first(variables(m)); threshold = false)...;
     color = (:black, 0.5),
 )

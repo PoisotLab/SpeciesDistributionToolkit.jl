@@ -93,18 +93,18 @@ function change_inclusion!(inclusion, layer, polygon::P) where {P}
                 coord = (E[position[2]], N[position[1]])
                 val = false
                 if polygon isa MultiPolygon
-                    val = any(
-                        isone,
-                        vcat(
-                            [
-                                [PolygonOps.inpolygon(coord, ci) for ci in c] for
-                                c in coords
-                            ],
-                        ),
-                    )
+                    inpoly = [
+                        [PolygonOps.inpolygon(coord, ci) for ci in c] for
+                        c in coords
+                    ]
+
                 else
                     inpoly = [PolygonOps.inpolygon(coord, c) for c in coords]
-                    val = any(isone, inpoly)
+                end
+                val = if eltype(inpoly) <: Vector
+                    any(isone, vcat(inpoly...))
+                else
+                    any(isone, inpoly)
                 end
                 inclusion[position] = val
             end

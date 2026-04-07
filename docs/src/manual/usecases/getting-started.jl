@@ -592,6 +592,20 @@ current_figure() #hide
 #
 # :::
 
+# We can look at the median suitability using [zonal
+# statistics](/manual/polygons/zonal-statistics/) for this species across the
+# bioregions that are covering this territory, to identify the more favorable
+# region:
+
+bioregions = getpolygon(PolygonData(OneEarth, Bioregions))["Region" => "Western Eurasia"]
+score_by_zone = byzone(
+    x -> isempty(x) ? NaN : median(x),
+    P,
+    bioregions,
+    "Name"
+)
+filter(v -> !isnan(v.second), score_by_zone)
+
 # In the above prediction, we have requested the model _score_, as opposed to
 # the predicted presence. We can get the presence by not changing the
 # `threshold` argument:

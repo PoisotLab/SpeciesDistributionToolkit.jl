@@ -423,14 +423,25 @@ pretty_table(
 
 # Back at the data collection step, we had also downloaded some testing data. We
 # we will use them to make predictions on the environmental conditions
-# associated to these observations:
+# associated to these observations. Note that we are indexing a vector of layers
+# by a vector of occurrences, and this will return a matrix.
 
-Xₜ = permutedims(hcat([l[test_records] for l in L]...));
+Xₜ = L[test_records];
 
 # This matrix can be passed to the model (and the `predict` function) to
 # generate the presence/absence prediction for this testing data:
 
 yₜ = predict(model, Xₜ);
+
+# ::: warning Dimension of input variables
+#
+# Because the model keeps the variables that are not included, it must be given
+# the full list of variables in order to make a prediction. In this case, even
+# though we have selected variables, we are passing _all 19 BioClim_ variables
+# to make the prediction. This allows us to change the list of included
+# variables at any point in the future.
+#
+# :::
 
 # We can calculate the accuracy of this prediction (which is appropriate to do
 # here since the testing data are presence-only, so we do not really have class

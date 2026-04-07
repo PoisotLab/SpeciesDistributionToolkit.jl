@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.9.1` - Unreleased
 
+- **added** a `getindex` method for a vector of layers and a vector of occurrences
 - **improved** the "Getting started" tutorial [#583]
 - **added** an overload for `explainmodel` [#582]
 

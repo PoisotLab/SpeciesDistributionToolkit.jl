@@ -282,7 +282,8 @@ model = SDM(PCATransform, Logistic, L, presencelayer, bgpoints)
 #
 # There is a vignette on [model training](/manual/sdm/pipeline/) that covers all
 # of the options, as well as the method to generate ensemble and boosted models.
-# It is is _strongly advised_ to read it after this one!
+# It is is _strongly advised_ to read it after this one. Or do you prefer to use
+# Maxent? [You can!](/manual/usecases/maxent/).
 #
 # :::
 
@@ -429,7 +430,9 @@ pretty_table(
 Xₜ = L[test_records];
 
 # This matrix can be passed to the model (and the `predict` function) to
-# generate the presence/absence prediction for this testing data:
+# generate the presence/absence prediction for this testing data. Note that the
+# `Xₜ` matrix has the instances on the columns, which is more memory efficient
+# _and_ respect the convention of storing instances as vectors.
 
 yₜ = predict(model, Xₜ);
 

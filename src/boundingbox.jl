@@ -118,7 +118,7 @@ function boundingbox(fc::SimpleSDMPolygons.FeatureCollection; kwargs...)
 end
 
 @testitem "We can apply boundingbox to each type of Polygon" begin
-    fc = getpolygon(PolygonData(OpenStreetMap, Places); place = "Switzerland")
+    fc = getpolygon(PolygonData(OpenStreetMap, Places); place = "Lausanne")
     feat = fc[1]
     mp = feat.geometry
     pol = SpeciesDistributionToolkit.SimpleSDMPolygons.Polygon(

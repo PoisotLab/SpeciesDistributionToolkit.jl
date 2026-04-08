@@ -93,17 +93,17 @@ function change_inclusion!(inclusion, layer, polygon::P) where {P}
                 coord = (E[position[2]], N[position[1]])
                 val = false
                 if polygon isa MultiPolygon
-                    val = any(
-                        isone,
-                        vcat(
-                            [
-                                [PolygonOps.inpolygon(coord, ci) for ci in c] for
-                                c in coords
-                            ]...,
-                        ),
-                    )
+                    inpoly = [
+                        [PolygonOps.inpolygon(coord, ci) for ci in c] for
+                        c in coords
+                    ]
                 else
-                    val = any(isone, [PolygonOps.inpolygon(coord, c) for c in coords]...)
+                    inpoly = [PolygonOps.inpolygon(coord, c) for c in coords]
+                end
+                val = if eltype(inpoly) <: Vector
+                    any(isone, vcat(inpoly...))
+                else
+                    any(isone, inpoly)
                 end
                 inclusion[position] = val
             end
@@ -205,22 +205,25 @@ Returns a copy of the occurrences that are within the polygon.
 """
 function SimpleSDMLayers.mask(
     occ::T,
-    poly::P,
+    polygon::P,
 ) where {T <: AbstractOccurrenceCollection, P <: Union{Polygon, MultiPolygon}}
     inclusion = zeros(Bool, length(elements(occ)))
-    coords = SimpleSDMPolygons.GI.coordinates(poly.geometry)
+    coords = SimpleSDMPolygons.GI.coordinates(polygon.geometry)
     places = place(occ)
     for i in eachindex(elements(occ))
         val = false
-        if poly isa MultiPolygon
-            val = any(
-                isone,
-                vcat(
-                    [[PolygonOps.inpolygon(places[i], ci) for ci in c] for c in coords]...,
-                ),
-            )
+        if polygon isa MultiPolygon
+            inpoly = [
+                [PolygonOps.inpolygon(places[i], ci) for ci in c] for
+                c in coords
+            ]
         else
-            val = any(isone, [PolygonOps.inpolygon(places[i], c) for c in coords]...)
+            inpoly = [PolygonOps.inpolygon(places[i], c) for c in coords]
+        end
+        val = if eltype(inpoly) <: Vector
+            any(isone, vcat(inpoly...))
+        else
+            any(isone, inpoly)
         end
         inclusion[i] = val
     end

@@ -17,8 +17,8 @@ simplify(fc::FeatureCollection; kw...) = FeatureCollection(simplify.(fc.features
 @testitem "We can simplify a polygon" begin
     POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Paris")
     SPOL = SpeciesDistributionToolkit.simplify(POL)
-    prelength = SimpleSDMPolygons.GI.coordinates(POL[1].geometry.geometry)[1][1] |> length
-    postlength = SimpleSDMPolygons.GI.coordinates(SPOL[1].geometry.geometry)[1] |> length
+    prelength = SimpleSDMPolygons.GI.coordinates(POL[1].geometry)[1] |> length
+    postlength = SimpleSDMPolygons.GI.coordinates(SPOL[1].geometry)[1] |> length
 
     @test prelength >= postlength
 end
@@ -27,7 +27,7 @@ end
     POL = getpolygon(PolygonData(OpenStreetMap, Places), place="Paris")
     L = SDMLayer(RasterData(CHELSA1, MinimumTemperature); SpeciesDistributionToolkit.boundingbox(POL; padding=1.0)...)
     Lc = count(L)
-    SpeciesDistributionToolkit.simplify(POL)
+    POL = SpeciesDistributionToolkit.simplify(POL)
     mask!(L, POL)
     @test typeof(L) <: SDMLayer
     @test count(L) <= Lc

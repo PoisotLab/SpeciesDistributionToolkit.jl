@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.3.3`
+
+- **changed** the internal `OpenStreetMap` code to allow `type` and `layer` parameters
+- **changed** the internal `OpenStreetMap` code to rely on the nominatim API geojson export [#589]
+
 ## `v1.3.2`
 
 - **changed** the polygon generation from a boundingbox in order to generate more points when clipping [#567]

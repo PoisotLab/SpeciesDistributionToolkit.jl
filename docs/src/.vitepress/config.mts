@@ -129,6 +129,7 @@ export default defineConfig({
                                 { text: "GBIF API", link: "/manual/retrieval/gbif-api/" },
                                 { text: "GBIF downloads", link: "/manual/retrieval/gbif-download/" },
                                 { text: "Local GBIF files", link: "/manual/retrieval/gbif-local/" },
+                                { text: "Open Street Map", link: "/manual/retrieval/openstreetmap/" },
                                 { text: "STAC catalogues", link: "/manual/retrieval/stac/" },
                                 { text: "List raster layers", link: "/manual/retrieval/list-raster-layers/" },
                                 { text: "List polygon information", link: "/manual/retrieval/list-polygon-information/" },

@@ -27,7 +27,7 @@ ax = Axis(f[1,1]; aspect=DataAspect())
 poly!(ax, clip(lnd, SDT.boundingbox(osmpol; padding=1.0)), color=:grey90)
 lines!(ax, osmpol, color=:red)
 tightlimits!(ax)
-current_figure()
+current_figure() #hide
 
 # Note that the polygons are returned with territorial waters, but [vignette
 # op](/manual/polygons/operations/)
@@ -36,7 +36,7 @@ uniqueproperties(osmpol)
 
 # ## Places
 
-osmpol = getpolygon(PolygonData(OpenStreetMap, Places); place="Occitanie")
+osmpol = getpolygon(PolygonData(OpenStreetMap, Places); place="Alps")
 
 #figure map-alps
 f = Figure()
@@ -44,12 +44,14 @@ ax = Axis(f[1,1]; aspect=DataAspect())
 poly!(ax, clip(lnd, SDT.boundingbox(osmpol; padding=1.0)), color=:grey90)
 lines!(ax, osmpol, color=:red)
 tightlimits!(ax)
-current_figure()
+current_figure() #hide
+
+uniqueproperties(osmpol)
 
 
 # ## Places
 
-osmpol = getpolygon(PolygonData(OpenStreetMap, Places); place="Quebec")
+osmpol = getpolygon(PolygonData(OpenStreetMap, Places); place="Occitanie")
 
 #figure map-qc
 f = Figure()
@@ -57,7 +59,9 @@ ax = Axis(f[1,1]; aspect=DataAspect())
 poly!(ax, clip(lnd, SDT.boundingbox(osmpol; padding=1.0)), color=:grey90)
 lines!(ax, osmpol, color=:red)
 tightlimits!(ax)
-current_figure()
+current_figure() #hide
+
+uniqueproperties(osmpol)
 
 
 # ## Related documentation

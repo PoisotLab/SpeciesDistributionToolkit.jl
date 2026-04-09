@@ -1,4 +1,4 @@
-# # Getting started: our first model
+# # Getting started
 
 # In this tutorial, we will work on a dataset of observations of the Ring Ouzel
 # (_Turdus torquatus_) in Switzerland. The purpose of the tutorial is to

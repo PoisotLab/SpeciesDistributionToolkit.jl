@@ -182,7 +182,7 @@ ax = Axis(f[1, 1]; aspect = DataAspect())
 poly!(ax, landmass; color = :grey95)
 hm = heatmap!(
     ax,
-    partialresponse(m, L, first(variables(m)); threshold = false);
+    explainmodel(PartialResponse, m, first(variables(m)), L; threshold = false);
     colormap = Reverse(:batlowW),
     colorrange = (0, 1),
 )
@@ -204,8 +204,7 @@ ax = Axis(
 )
 scatter!(
     ax,
-    features(m, first(variables(m))),
-    explain(m, first(variables(m)); threshold = false);
+    explainmodel(ShapleyMC, m, first(variables(m)); threshold = false)...;
     color = (:black, 0.5),
 )
 current_figure() #hide

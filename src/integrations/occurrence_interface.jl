@@ -38,6 +38,14 @@ function Base.getindex(layer::SDMLayer, occ::T) where {T <: AbstractOccurrenceCo
     )
 end
 
+function Base.getindex(layer::Vector{<:SDMLayer}, occ::T) where {T <: AbstractOccurrenceCollection}
+    return permutedims(hcat([l[occ] for l in layer]...))
+end
+
+function Base.getindex(layer::Vector{<:SDMLayer}, occ::Vector{<:AbstractOccurrence})
+    return permutedims(hcat([l[occ] for l in layer]...))
+end
+
 function SimpleSDMLayers.quantize(
     layer::SDMLayer,
     occ::T,

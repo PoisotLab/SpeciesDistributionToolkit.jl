@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.9.1` - Unreleased
+
+- **added** a `getindex` method for a vector of layers and a vector of occurrences
+- **improved** the "Getting started" tutorial [#583]
+- **added** an overload for `explainmodel` [#582]
+- **added** a method to get a layer from a polygon [#587]
+- **added** a vignette for `reclassify`[#585]
+
 ## `v1.9.0`
 
 - **added** a `boundingbox` method for SDMs

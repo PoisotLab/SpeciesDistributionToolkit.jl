@@ -60,37 +60,54 @@ function SDeMo.predict(
     return pr
 end
 
-function SDeMo.partialresponse(
-    sdm::ST,
-    layers::Vector{T},
-    idx::Integer;
-    kwargs...,
-) where {ST <: AbstractSDM, T <: SDMLayer}
-    partrep = last(partialresponse(sdm, idx, values(layers[idx]); kwargs...))
-    pr = zeros(layers[1], eltype(partrep))
-    pr.grid[findall(pr.indices)] .= partrep
-    return pr
+const LayerExplanation = Union{PartialResponse, PartialDependence, ShapleyMC}
+
+"""
+    explainmodel(ModelExplanation, model, variable, layers; kwargs...)
+
+Returms a _layer_ with the explanation of the effect of a given `variable`,
+provided by either `PartialDependence`, `PartialResponse`, or `ShapleyMC`.
+
+Note that `PartialDependence` may take longer to run, as it will run the
+`CeterisParibus` explanations for all the training instances at every point in
+the raster.
+
+All other `kwargs...` are passed to `explainmodel`.
+"""
+function SDeMo.explainmodel(::Type{E}, model::M, variable::Int, layers::Vector{<:SDMLayer}; kwargs...) where {E <: LayerExplanation, M <: AbstractSDM}
+    _, explanation = explainmodel(E, model, variable, values(layers[variable]); kwargs...)
+    output = zeros(layers[variable], eltype(explanation))
+    if explanation isa BitVector
+        explanation = convert(Vector{Bool}, explanation)
+    end
+    burnin!(output, explanation)
+    return output
 end
 
-function SDeMo.explain(
-    sdm::ST,
-    layers::Vector{T},
-    idx::Integer;
-    kwargs...,
-) where {ST <: AbstractSDM, T <: SDMLayer}
-    X = _X_from_layers(layers)
-    expln = explain(sdm, idx; instances = X, kwargs...)
-    pr = zeros(layers[1], eltype(expln))
-    pr.grid[findall(pr.indices)] .= expln
-    return pr
+function SDeMo.explainmodel(::Type{ShapleyMC}, model::M, variable::Int, layers::Vector{<:SDMLayer}; kwargs...) where {M <: AbstractSDM}
+    _, explanation = explainmodel(ShapleyMC, model, variable, Matrix(layers); kwargs...)
+    output = zeros(layers[variable], eltype(explanation))
+    burnin!(output, explanation)
+    return output
 end
 
-function SDeMo.explain(
-    sdm::ST,
-    layers::Vector{T};
-    kwargs...,
-) where {ST <: AbstractSDM, T <: SDMLayer}
-    return [explain(sdm, layers, v; kwargs...) for v in variables(sdm)]
+"""
+    explainmodel(ModelExplanation, model, variable, layers; kwargs...)
+
+Returms a _vector of layers_ with the explanations for the effect of all
+variables, provided by either `PartialDependence`, `PartialResponse`, or
+`ShapleyMC`.
+
+Note that `PartialDependence` may take longer to run, as it will run the
+`CeterisParibus` explanations for all the training instances at every point in
+the raster.
+
+All other `kwargs...` are passed to `explainmodel`.
+"""
+function SDeMo.explainmodel(::Type{E}, model::M, layers::Vector{<:SDMLayer}; kwargs...) where {E <: LayerExplanation, M <: AbstractSDM}
+    return [
+        explainmodel(E, model, i, layers; kwargs...) for i in eachindex(layers)
+    ]
 end
 
 function SDeMo.predict(
@@ -142,3 +159,39 @@ end
 #     train!(sdm)
 #     @test explain(sdm, transfer_layers, 1) isa SDMLayer
 # end
+
+function SDeMo.partialresponse(
+    sdm::ST,
+    layers::Vector{T},
+    idx::Integer;
+    kwargs...,
+) where {ST <: AbstractSDM, T <: SDMLayer}
+    @warn "The partialresponse function has been deprecated, used explainmodel instead"
+    partrep = last(partialresponse(sdm, idx, values(layers[idx]); kwargs...))
+    pr = zeros(layers[1], eltype(partrep))
+    pr.grid[findall(pr.indices)] .= partrep
+    return pr
+end
+
+function SDeMo.explain(
+    sdm::ST,
+    layers::Vector{T},
+    idx::Integer;
+    kwargs...,
+) where {ST <: AbstractSDM, T <: SDMLayer}
+    @warn "The explain function has been deprecated, used explainmodel instead"
+    X = _X_from_layers(layers)
+    expln = explain(sdm, idx; instances = X, kwargs...)
+    pr = zeros(layers[1], eltype(expln))
+    pr.grid[findall(pr.indices)] .= expln
+    return pr
+end
+
+function SDeMo.explain(
+    sdm::ST,
+    layers::Vector{T};
+    kwargs...,
+) where {ST <: AbstractSDM, T <: SDMLayer}
+    @warn "The partialresponse function has been deprecated, used explainmodel instead"
+    return [explain(sdm, layers, v; kwargs...) for v in variables(sdm)]
+end

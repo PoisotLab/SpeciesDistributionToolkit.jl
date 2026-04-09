@@ -19,7 +19,7 @@ using Statistics
 # species. For the purpose of this example, we will use the country of Paraguay.
 # Note that the boundingbox function returns the coordinates in WGS84.
 
-place = getpolygon(PolygonData(OpenStreetMap, Places); place = "Paraguay")
+place = getpolygon(PolygonData(NaturalEarth, Countries))["Paraguay"]
 extent = SpeciesDistributionToolkit.boundingbox(place)
 
 # We then download some environmental data. In this example, we use the BioClim

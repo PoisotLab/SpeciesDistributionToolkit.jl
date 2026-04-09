@@ -43,6 +43,29 @@ function SimpleSDMLayers.SDMLayer(
 end
 
 """
+    SimpleSDMLayers.SDMLayer(data::R, geom::G; kwargs...) where {R <: RasterData, G <: SimpleSDMPolygons.AbstractGeometry}
+
+Read a layer as a `SDMLayer` from a `RasterData` and a source of keywords, but
+limited to the boundingbox of a given geometry. The allowed keywords are listed
+for each `RasterData`.
+"""
+function SimpleSDMLayers.SDMLayer(data::R, geom::G; kwargs...) where {R <: RasterData, G <: SimpleSDMPolygons.AbstractGeometry}
+    return SimpleSDMLayers.SDMLayer(data; boundingbox(geom)..., kwargs...)
+end
+
+"""
+    SimpleSDMLayers.SDMLayer(data::R, future::F, geom::G; kwargs...) where {R <: RasterData, G <: SimpleSDMPolygons.AbstractGeometry, F <: Projection}
+
+Read a future projection layer as a `SDMLayer` from a `RasterData` and a source
+of keywords, but limited to the boundingbox of a given geometry. The allowed
+keywords are listed for each `RasterData`.
+"""
+function SimpleSDMLayers.SDMLayer(data::R, future::F, geom::G; kwargs...) where {R <: RasterData, G <: SimpleSDMPolygons.AbstractGeometry, F <: Projection}
+    return SimpleSDMLayers.SDMLayer(data, future; boundingbox(geom)..., kwargs...)
+end
+
+
+"""
     _boundingbox_out_of_kwargs(kwargs)
 
 Takes the input to a function and split the bounding box from the actual arguments

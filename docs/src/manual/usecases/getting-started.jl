@@ -1,58 +1,260 @@
-# # Building a species distribution model
+# # Getting started
 
-# In this tutorial, we will work on the same species and location as in [the
-# excellent tutorial on SDMs by Damaris
-# Zurell](https://damariszurell.github.io/SDM-Intro/), to show how
-# `SpeciesDistributionToolkit` integrates prediction to the rest of the
-# workflow.
+# In this tutorial, we will work on a dataset of observations of the Ring Ouzel
+# (_Turdus torquatus_) in Switzerland. The purpose of the tutorial is to
+# introduce most of the concepts that are important when working with
+# `SpeciesDistributionToolkit`, by conducting an analysis from start to finish.
+# We are very much going for breadth, not depth; in particular, this tutorial
+# does not cover any of the theory about species distributions or species
+# distribution models.
+
+# At many points throughout the tutorial, there will be links to other vignettes
+# in this manual. They are not meant to be read immediately when they are
+# mentionned, but rather consulted later on to get access to more options and
+# choices for the analyses that are presented here.
 
 using SpeciesDistributionToolkit
-using CairoMakie
 using Statistics
+using PrettyTables
 
-# Note that there are several sections about the `SDeMo` package in the "How-to"
-# section of the manual.
+# ::: info About this tutorial
+# 
+# This tutorial is inspired by the [the excellent introduction to SDMs by
+# Damaris Zurell](https://damariszurell.github.io/SDM-Intro/). It uses the same
+# species, but a slightly different dataset.
+#
+# :::
+
+# Most of the data types in `SpeciesDistributionToolkit` can be used with
+# [`Makie`](https://docs.makie.org/stable/) for plotting. This is true for
+# [layers](/manual/dataviz/layers/), [polygons](/manual/dataviz/polygons/), and
+# more. These are all documented in the "Manual" section of the documentation,
+# under "Data visualization". To benefit from this integration, we will load the
+# `CairoMakie` backend.
+
+using CairoMakie
+
+# As in the rest of the manual, the code to produce the figures is hidden at
+# first. This is because figure code is very verbose, and not specific to the
+# package. Feel free to reveal the code for the figure if you want to see
+# exactly how they are produced.
 
 # ## Getting the data
 
-CHE = getpolygon(PolygonData(OpenStreetMap, Countries); country = "Switzerland")
+# We start by downloading a polygon that will be used to delineate our area of
+# interest. For this tutorial, this will be the country of Szwitzerland.
 
-# In order to simplify the code, we will start from a list of bioclim variables
-# that have been picked to optimize the model - `SDeMo` offers many functions
-# for variable selection.
+aoi = getpolygon(PolygonData(NaturalEarth, Countries); resolution = 10)["Switzerland"]
 
-bio_vars = [1, 11, 5, 8, 6]
+# There are several polygon providers that come built into the package, and they
+# can be accessed _via_ the "Datasets" menu in the navigation bar at the top of
+# your screen. Some of these polyon providers are about administrative
+# boundaries (GADM, Natural Earth, ESRI), but some others are about
+# eco/bioregions.
 
-# We get the data on these variables from CHELSA2:
+# To ensure that we only load the raster data that are within the range of our
+# problem, we will first calculate the spatial extent of the polygon we just
+# downloaded. The `boundingbox` function will work on any object that has
+# spatial coordinates (occurrences, models, layers, etc), and return the
+# bounding box in longitude/latitude.
 
-provider = RasterData(CHELSA2, BioClim)
+const SDT = SpeciesDistributionToolkit
+extent = SDT.boundingbox(aoi)
+
+# ::: tip Alias for packages
+#
+# Whenever the names of functions in `SpeciesDistributionToolkit` are not
+# distinctive enough, the functions are not exported. In order to simplify the
+# syntax, declaring a `const` with a shortened name (as we did just before) is a
+# valid solution, and also introduces no performance cost. This will happen in
+# almost all vignettes.
+#
+# :::
+
+# We will now download the entire suite of 19 BIOCLIM data from the
+# [CHELSA2](/datasets/CHELSA2) database. Before downloading, we will look at the
+# first five layers.
+
+chelsa_bioclim = RasterData(CHELSA2, BioClim)
+layers(chelsa_bioclim)[1:5]
+
+# We can also get their full-text descriptions:
+
+[
+    layerdescriptions(chelsa_bioclim)[l]
+    for l in layers(chelsa_bioclim)[1:5]
+]
+
+# We have enough information to download these layers, and load them in memory.
+# It is important, whenever possible, to give a spatial extent (boundingbox) to
+# the function to read layers. This avoids loading pretty voluminous data into
+# memory when it is not strictly needed.
+
+# ::: info Data are saved locally
+#
+# Both polygons and raster data are saved locally, which means that the first
+# download takes longer, but subsequent reads are much faster.
+#
+# :::
+
+# The `SDMLayer` function is the main constructor for layers (and can also read
+# from [STAC catalogues](/manual/retrieval/stac/) and [local
+# files](/manual/usage/read-part-layer/)). When given a `RasterProvider`, it
+# will download (or open) the relevant files. Note that we are passing the area
+# of interest (a polygon) as the second argument, so that the raster will only
+# be returned within the boundingbox of this geometry.
+
 L = SDMLayer{Float32}[
     SDMLayer(
-        provider;
-        layer = x,
-        SpeciesDistributionToolkit.boundingbox(CHE)...,
-    ) for x in bio_vars
+        chelsa_bioclim,
+        aoi;
+        layer = v
+    ) for v in layers(chelsa_bioclim)
 ];
 
-# And we then clip and trim to the polygon describing Switzerland:
+# ::: info Accessing raster data
+#
+# For more information about accessing raster data, refer to [the
+# vignette](/manual/retrieval/list-raster-layers/). All datasets (and the
+# complete set of keyword options) are also listed in the navigation bar at the
+# top of the screen.
+#
+# :::
 
-mask!(L, CHE)
+# When these layers are first downloaded, they will cover the entire extent of
+# the bounding box:
 
-# The next step is to get the data, using the *eBird* dataset:
+#figure bio1-full
+f = Figure(; size = (600, 300))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+heatmap!(ax, L[1]; colormap = :Greys)
+hidespines!(ax)
+hidedecorations!(ax)
+current_figure() #hide
 
-ouzel = taxon("Turdus torquatus")
-presences = GBIF.download("10.15468/dl.wye52h")
+# We can mask the entire vector of layers with the polygon we use to define our
+# area of interest. This operation will modify the data _in place_, so we do not
+# create additional objects.
 
-# And after this, we prepare a layer with presence data:
+mask!(L, aoi);
 
-presencelayer = mask(first(L), Occurrences(mask(presences, CHE)))
+#figure bio1-masked
+f = Figure(; size = (600, 300))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+heatmap!(ax, L[1]; colormap = :Greys)
+hidespines!(ax)
+hidedecorations!(ax)
+current_figure() #hide
 
-# The next step is to generate a pseudo-absence mask. We will sample based on
-# the distance to an observation, by also preventing pseudo-absences to be less
-# than 4km from an observation:
+# There is also a `trim` function, which will return a copy of the layers that
+# are re-scaled so that they do not have empty rows/columns on either end. This
+# is not required here, but may come in handy when doing more complex masking
+# operations.
 
-background = pseudoabsencemask(DistanceToEvent, presencelayer)
-bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
+# ::: info Masking layers
+#
+# Many objects can be masked [with
+# polygons](/manual/polygons/masking-with-polygons/), and there are additional
+# methods to [mask layers](/manual/polygons/masking-a-layer/) as well. Both are
+# documented in their vignettes. Masking a _vector_ of layers is always faster
+# than masking several layers in a row, because the mask is only calculated once
+# and then re-used.
+#
+# :::
+
+# We will now grab a dataset from GBIF, which is a list of all observations of
+# _Turdus torquatus_ in Switzerland according to *eBird*. We will also grab a
+# second dataset to test the model, which is the same species and country but
+# uses *iNaturalist* data. Finally, we will get a representation of the 
+
+records = GBIF.download("10.15468/dl.wye52h")
+test_records = GBIF.download("10.15468/dl.m6b3wg")
+ouzel = taxon(first(entity(records)))
+
+# ::: info GBIF data
+#
+# There are additional vignettes about retrieving data from the [GBIF
+# API](/manual/retrieval/gbif-api/), from [GBIF
+# downloads](/manual/retrieval/gbif-download/), or from [local GBIF
+# archives](/manual/retrieval/gbif-local/).
+#
+# :::
+
+# Getting the species as its own variable will allow us, among other things, to
+# retrieve a silhouette from the [Phylopic](https://www.phylopic.org/) database.
+# Note that it may not be the _exact_ species, but Phylopic curates a taxonomy
+# to return the closest matching organism. If your species is not in the
+# Phylopic database, consider drawing the silhouette and contributing!
+
+silhouette = Phylopic.imagesof(ouzel; items = 1)
+Phylopic.attribution(silhouette)
+
+# We can see the result of our data collection work thus far, by plotting the
+# training and testing records on the region of interest, and adding a
+# silhouette of the species alongside this map.
+
+#figure presence-data-train-test
+f = Figure(; size = (600, 300))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+poly!(ax, aoi; color = :grey95)
+scatter!(ax, records; color = :forestgreen, label = "Training")
+scatter!(
+    ax,
+    test_records;
+    color = (:purple, 0.4),
+    strokecolor = :purple,
+    strokewidth = 1,
+    marker = :rect,
+    markersize = 9,
+    label = "Testing",
+)
+hidedecorations!(ax)
+hidespines!(ax)
+lines!(ax, aoi; color = :grey10)
+axislegend(ax; position = :rt, framevisible = false)
+silhouetteplot!(
+    ax,
+    extent.left + 0.3,
+    extent.top - 0.2,
+    silhouette;
+    markersize = 70,
+    color = :black,
+)
+current_figure() #hide
+
+# At this point, we have collected all of the _actual_ data we can, and it is
+# time to generate pseudo-absences in order to have all of the material to train
+# our model.
+
+# ## Pseudo-absence generation
+
+# We start by preparing a layer with presence data. This operation will ensure
+# that all of the observations that share a raster cell will only be counted
+# once. Note that for now, we will only work on the training records (from
+# *eBird*).
+
+presencelayer = mask(first(L), Occurrences(mask(records, aoi)))
+
+# The next step is to generate a pseudo-absence mask. We will sample according
+# to the square root of the distance away from a known observation, but never sample a
+# pseudo-absence less than 4km away from an observation, and never further away
+# than 30km..
+
+background = sqrt.(pseudoabsencemask(DistanceToEvent, presencelayer))
+
+# Within this layer of possible location of absences, we will sample at random
+# twice as many pseudo-absences cells as we have presence cells in the presence
+# layer:
+
+bgpoints = backgroundpoints(nodata(background, x -> !(sqrt(4.) <= x <= sqrt(30.))), 2sum(presencelayer))
+
+# ::: info More on pseudo-absences
+#
+# There is a vignette with all the [pseudo-absence generation
+# methods](/manual/generation/pseudoabsences/). A lot of them are built into the
+# package, and adding custom ones is not very difficult!
+#
+# :::
 
 # We can take a minute to visualize the dataset, as well as the location of
 # presences and pseudo-absences:
@@ -60,94 +262,394 @@ bgpoints = backgroundpoints(nodata(background, d -> d < 4), 2sum(presencelayer))
 #figure pseudoabsences
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-poly!(ax, CHE; color = :grey90, strokecolor = :black, strokewidth = 1)
+poly!(ax, aoi; color = :grey90, strokecolor = :black, strokewidth = 1)
 scatter!(ax, presencelayer; color = :black)
 scatter!(ax, bgpoints; color = :red, markersize = 4)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
 
+# We now have enough information to set-up the actual species distribution
+# model!
+
 # ## Setting up the model
 
-# These steps are documented as part of the `SDeMo` documentation. The only
-# difference here is that rather than passing a matrix of features and a vector
-# of labels, we give a vector of layers (features), and the two layers for
-# presences and absences:
+# We will use a model with a PCA for variable transformation, and then use
+# logistic regression with all interactions between variables (_i.e._ both xᵢ²
+# and xᵢxⱼ) to make the actual prediction. Note that we build this model by
+# passing first the data transformation and the classifier, and then the vector
+# of covariates, the layer with the presences, and the layer with the absences.
 
-sdm = SDM(RawData, Logistic, L, presencelayer, bgpoints)
-hyperparameters!(classifier(sdm), :η, 1e-4);
-hyperparameters!(classifier(sdm), :interactions, :all);
-hyperparameters!(classifier(sdm), :epochs, 10_000);
+model = SDM(PCATransform, Logistic, L, presencelayer, bgpoints)
+
+# ::: info More on models
+#
+# There is a vignette on [model training](/manual/sdm/pipeline/) that covers all
+# of the options, as well as the method to generate ensemble and boosted models.
+# It is is _strongly advised_ to read it after this one. Or do you prefer to use
+# Maxent? [You can!](/manual/usecases/maxent/).
+#
+# :::
+
+# We can tweak the hyperparameters of this model. We can check the default
+# values for this classifier:
+
+hyperparameters(classifier(model))
+
+# ::: info Hyper-parameters
+#
+# There is a [vignette on hyper-parameters](/manual/sdm/hyperparameters/) that
+# covers all of the functions to get and modify the hyper-parameters of a model.
+#
+# :::
+
+# We will set different hyper-parameters, to ensure that the learning rate is
+# slower, the regularization is higher, and we do more training epochs:
+
+hyperparameters!(classifier(model), :η, 1e-4);
+hyperparameters!(classifier(model), :λ, 2e-1);
+hyperparameters!(classifier(model), :epochs, 10_000);
 
 # Note that, because we are generating the SDM from a series of layers, it is
-# georeferenced. We can confirm this with:
+# georeferenced. A georeferenced model can be plotted directly, as well as used
+# to define spatial cross-validation blocks. We can confirm that the model is
+# georeferenced:
 
-isgeoreferenced(sdm)
+isgeoreferenced(model)
 
-# We will now train the model on all the training data.
+# Our model is now ready to be trained. Before we train it, we will perform
+# cross-validation and variable selection.
 
-train!(sdm)
+# ## Variable selection
 
-# In order to make sure we have a robust threshold for the model, we will also
-# re-estimate it on cross-validation samples. This is a slightly more reliable
-# version than the thresholding done as part of `train!`.
+# In this section, we will use cross-validation to identify the optimal set of
+# variables for the model. The optimal set of variables is defined as the one
+# that gives the best performance on average over the _validation_ sets.
 
-threshold!(sdm)
+# ::: info More on cross-validation
+#
+# Both [cross-validation](/manual/sdm/crossvalidation/) and [feature
+# selection](/manual/sdm/variableselection/) are covered in their own vignettes.
+#
+# :::
 
-# ## Making the first prediction
+# We start by splitting the dataset into training and validation data. We will
+# use _k_-fold cross-validation using five splits (the default is ten). By
+# default, the splits are _always_ balanced, so that the training and validation
+# data have the same prevalence of presences.
+
+folds = kfold(model; k=5)
+
+# We will perform variable selection by adding variables one at a time, but we
+# will constrain the model to start with BIO1. 
+
+variables!(model, ForwardSelection, folds; included=[1])
+
+# The call to `variables!` will modify the model in two significant ways: it
+# will select a subset of the variables, and then it will train the model using
+# _all_ the data available for training. 
+
+# We can check that the model is trained:
+
+istrained(model)
+
+# We can also inspect the list of selected variables:
+
+variables(model)
+
+# ::: warning Index of variables
+#
+# Models can be reset at any time, which means that dropped variables can be
+# re-included. Therefore, the index of a variable in a model _never_ refers to
+# the list of included variables, but to the entire pool of variables that the
+# model had access to when it was created.
+#
+# :::
+
+# At this point, we have a trained model, that is ready to be used.
+
+# ## Measuring the model performance
+
+# Now that we have identified the optimal set of variables, it is important to
+# report the expected performance of this model. This is done internally when
+# selecting the variables, but it is always a good idea to report on multiple
+# measures of model performance, as they will indicate what type of predictions
+# the model does well.
+
+cval, ctrn = crossvalidate(model);
+
+# This function returns a series of `ConfusionMatrix` vectors, which can be
+# given as arguments to many measures of classifier performance. Different pages
+# in the manual will use different approaches for validation, but the default
+# that is enforced throughout the package is that Matthew's Correlation
+# Coefficient is _the_ best measure of performance. Whenever a function needs to
+# decide on a "best" model, it will likely have a keyword to change this if
+# necessary.
+
+# We can look at the first confusion matrix for the first split on the
+# validation data:
+
+cval[1]
+
+# This gives the number of true/false positive/negatives for this specific split
+# of the data.
+
+# ::: info PR and ROC curves
+#
+# If you want to visualize these curves, there is [a vignette on how to measure
+# them](/manual/sdm/pr-roc/). 
+#
+# :::
+
+# The `crossvalidate` method may also take a second argument, which is a split
+# of the dataset according to different criteria. The output of `kfold` we used
+# earlier is one example, and the package offers several more.
+
+# To see how the model performs across a variety of measures, we will look at
+# the averaged value of a few of them over the training and validation data.
+
+ms = [mcc, tpr, fpr, fnr, tnr, ppv, npv]
+M = permutedims([
+    m(c) for m in ms, c in [cval, ctrn]
+]);
+M = hcat(["Training", "Validation"], M);
+pretty_table(
+    M;
+    alignment = [:l, :c, :c, :c, :c, :c, :c, :c],
+    backend = :markdown,
+    column_labels = ["Dataset"; uppercase.(string.(ms))],
+    formatters = [fmt__printf("%5.3f", [2, 3, 4, 5, 6, 7, 8])],
+)
+
+# This provides us with an estimate of the performance of our model, which will
+# be useful to guide interpretation.
+
+# ## Prediction on the testing data
+
+# Back at the data collection step, we had also downloaded some testing data. We
+# we will use them to make predictions on the environmental conditions
+# associated to these observations. Note that we are indexing a vector of layers
+# by a vector of occurrences, and this will return a matrix.
+
+Xₜ = L[test_records];
+
+# This matrix can be passed to the model (and the `predict` function) to
+# generate the presence/absence prediction for this testing data. Note that the
+# `Xₜ` matrix has the instances on the columns, which is more memory efficient
+# _and_ respect the convention of storing instances as vectors.
+
+yₜ = predict(model, Xₜ);
+
+# ::: warning Dimension of input variables
+#
+# Because the model keeps the variables that are not included, it must be given
+# the full list of variables in order to make a prediction. In this case, even
+# though we have selected variables, we are passing _all 19 BioClim_ variables
+# to make the prediction. This allows us to change the list of included
+# variables at any point in the future.
+#
+# :::
+
+# We can calculate the accuracy of this prediction (which is appropriate to do
+# here since the testing data are presence-only, so we do not really have class
+# balance issues):
+
+accuracy(yₜ, ones(Bool, length(yₜ)))
+
+# This indicates the proportion of presences that our model has correctly
+# predicted. This model is doing a much better job at predicting the presences
+# from the testing data than we should have expected based on the
+# cross-validation results alone, which is great!
+
+#figure presence-data-train-test
+f = Figure(; size = (600, 300))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+poly!(ax, aoi; color = :grey95)
+scatter!(ax, test_records[findall(yₜ)]; color = :black, label = "Correct prediction")
+scatter!(ax, test_records[findall(!, yₜ)]; color = :red, label = "Error")
+hidedecorations!(ax)
+hidespines!(ax)
+lines!(ax, aoi; color = :grey10)
+axislegend(ax; position = :lt, framevisible = false)
+current_figure() #hide
+
+# ## Understanding the model
+
+# Before moving on to making spatial predictions, it is important to understand
+# what the model is doing to move from a value of the covariates to a
+# prediction. For this, we can realy on functions that perform model
+# explanations.
+
+# ::: info Model interpretability
+#
+# Both [model interpretability](/manual/sdm/interpretability/) and [feature
+# importance](/manual/sdm/featureimportance/) have their own vignettes, which
+# cover the essential options. There are additional techniques for model
+# explanation that are not covered in this vignette.
+#
+# :::
+
+# We will estimate the importance of variables through the `PartialDependence`
+# measure, which captures the variable that, on average across all training
+# data, has the most different effect on prediction when its value is varied.
+
+vimp = [featureimportance(PartialDependence, model, v) for v in variables(model)]
+vimp ./= sum(vimp)
+vord = sortperm(vimp, rev=true)
+Dict(zip(layers(chelsa_bioclim)[variables(model)], vimp))
+
+#figure variable-importance
+f = Figure()
+ax = Axis(f[1,1], ylabel="Relative feature importance")
+lines!(ax, 1:length(vimp), vimp[vord], color=:black, linestyle=:dash)
+textlabel!(ax, 1:length(vimp), vimp[vord], layers(chelsa_bioclim)[variables(model)[vord]])
+ylims!(ax, low=0.0)
+hidexdecorations!(ax)
+xlims!(ax, 0.5, length(variables(model)) + 0.5)
+current_figure() #hide
+
+# We will limit our analysis to the two most important variables:
+
+v1, v2 = variables(model)[vord[1:2]]
+
+# If we want to get more information about which these two are, we can use the
+# `layerdescriptions` function to get plain-text information:
+
+varnames = [
+    layerdescriptions(chelsa_bioclim)[l]
+    for l in layers(chelsa_bioclim)[[v1, v2]]
+]
+
+# To start with, we can look at the partial response of the model to the most
+# important variables (the rugplots for the presences is at the bottom, and the
+# one for the pseudo-absences at the top).
+
+#figure partial-response-figure
+f = Figure()
+ax = Axis(f[1, 1]; xlabel=varnames[1], ylabel="Model response")
+lines!(ax, explainmodel(PartialResponse, model, v1, 100; threshold=false)..., color=:black)
+vlines!(ax, features(model, v1)[findall(labels(model))], ymax=0.025, color=:grey70)
+vlines!(ax, features(model, v1)[findall(.!labels(model))], ymin=1-0.025, color=:red)
+ylims!(ax, 0, 1)
+tightlimits!(ax)
+current_figure() #hide
+
+# We can also look at the combination of the two most important variables. This
+# is not a statement about their importance as much as it is a statement about
+# the fact that we are limited in the number of dimensions we can examine at
+# once: a single variable is a line, two variables are a surface, and after this
+# it gets complicated.
+
+#figure partial-two-most
+f = Figure()
+ax = Axis(f[1,1], xlabel=varnames[1], ylabel=varnames[2])
+hm = heatmap!(ax,
+explainmodel(PartialResponse, model, (v1, v2), 25; threshold=false)...,
+colormap=Reverse(:batlowW), colorrange=(0, 1)
+)
+Colorbar(f[1,2], hm, label="Model response")
+current_figure() #hide
+
+# Note that these responses do not provide the full picture of why the model
+# makes a specific prediction. If we are interested in the effect of a variable
+# on a specific prediction, the right tool is to use Shapley values. They link
+# the value of a given variable to a _departure_ from the average prediction.
+
+#figure partial-response-figure
+f = Figure()
+ax = Axis(f[1, 1]; xlabel=varnames[1], ylabel="Model response")
+scatter!(ax, explainmodel(ShapleyMC, model, v1; threshold=false)..., color=:black)
+current_figure() #hide
+
+# Shapley values are a little more informative, because they account for the
+# value of all other variables at the point for which we ask for an explanation.
+# For now, this is enough model explanation, and we will move on to making the
+# first spatial prediction.
+
+# ## Spatial predictions
 
 # We can predict using the model by giving a vector of layers as an input. This
-# will return the output *as a layer* as well:
+# will return the output _as a layer_ as well:
 
-prd = predict(sdm, L; threshold = false)
+P = predict(model, L; threshold = false)
 
-# Because this prediction is a layer, we can plot it directly:
-
-#figure initial-map
+#figure model-output-map
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-hm = heatmap!(ax, prd; colormap = :linear_worb_100_25_c53_n256, colorrange = (0, 1))
-contour!(ax, predict(sdm, L); color = :black, linewidth = 0.5)
-Colorbar(f[1, 2], hm)
-lines!(ax, CHE; color = :black)
-bbox = SpeciesDistributionToolkit.boundingbox(CHE)
-silhouetteplot!(
-    ax,
-    bbox.left + 0.3,
-    bbox.top - 0.2,
-    Phylopic.imagesof(ouzel; items = 1);
-    markersize = 70,
+hm = heatmap!(ax, P; colormap = Reverse(:batlowW), colorrange = (0, 1))
+Colorbar(f[1, 2], hm, label="Model score")
+lines!(ax, aoi; color = :grey10)
+hidedecorations!(ax)
+hidespines!(ax)
+current_figure() #hide
+
+# ::: info Model score and probabilities
+#
+# Whether this model score is an actual probability depends on whether the model
+# is well calibrated. Refer to the [vignette on
+# calibration](/manual/sdm/calibration/) for more. Logistic regression tends to
+# give pretty-well calibrated models.
+#
+# :::
+
+# We can look at the median suitability using [zonal
+# statistics](/manual/polygons/zonal-statistics/) for this species across the
+# bioregions that are covering this territory, to identify the more favorable
+# region:
+
+bioregions = getpolygon(PolygonData(OneEarth, Bioregions))["Region" => "Western Eurasia"]
+score_by_zone = byzone(
+    x -> isempty(x) ? NaN : median(x),
+    P,
+    bioregions,
+    "Name"
 )
-hidedecorations!(ax)
-hidespines!(ax)
-current_figure() #hide
+filter(v -> !isnan(v.second), score_by_zone)
 
-# As a rule, most relevant function in `SDeMo` will, when given layers as an
-# argument, return the output as layers:
+# In the above prediction, we have requested the model _score_, as opposed to
+# the predicted presence. We can get the presence by not changing the
+# `threshold` argument:
 
-partial1 = partialresponse(sdm, L, 1; threshold = false)
+R = predict(model, L)
 
-# The output can be visualised as well. Partial responses are given in the same
-# units as the prediction.
-
-#figure partial-resp
+#figure model-range-map-with-presences
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-hm = heatmap!(ax, partial1; colormap = :tempo, colorrange = (0, 1))
-contour!(ax, predict(sdm, L); color = :black, linewidth = 0.5)
-Colorbar(f[1, 2], hm)
-lines!(ax, CHE; color = :black)
+poly!(ax, aoi; color = :grey95)
+heatmap!(ax, R; colormap = [:transparent, :forestgreen])
+scatter!(ax, records, color=:black, markersize=4)
+lines!(ax, aoi; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
 
-# This, naturally, is also true for Shapley values:
+# ## Spatial explanations
 
-shapley1 = explain(sdm, L, 1; threshold = false)
+# When called with a vector of layers as additional arguments, the methods for
+# model explanation will return a spatial version of the model response. For
+# example, we can look at the effect of the most important variable on the
+# prediction:
+
+partial1 = explainmodel(PartialResponse, model, v1, L; threshold = false)
+
+#figure partial-response-in-space
+f = Figure(; size = (600, 300))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+hm = heatmap!(ax, partial1; colormap = Reverse(:batlowW), colorrange = (0, 1))
+Colorbar(f[1, 2], hm, label="Effect of $(layers(chelsa_bioclim)[v1])")
+lines!(ax, aoi; color = :grey10)
+hidedecorations!(ax)
+hidespines!(ax)
+current_figure() #hide
+
+# This is particularly important to look at the _local_ effect of the variables
+# on each prediction, for example using Shapley values:
+
+shapley1 = explainmodel(ShapleyMC, model, v1, L; threshold = false)
 
 # Note that the Shapley values are expressed as a deviation from the average
 # prediction, and so positive values correspond to the presence class being more
-# likely.
+# likely compared to the baseline.
 
 # Both the `explain` and `partialresponse` functions can accept keywords that
 # are passed to `predict` - in this tutorial, we use `threshold=false` to
@@ -155,54 +657,144 @@ shapley1 = explain(sdm, L, 1; threshold = false)
 # request an explanation of the binary response (this is usually less
 # informative).
 
-#figure shapley-resp
+#figure shapley-response-in-space
 col_lims = maximum(abs.(quantile(shapley1, [0.1, 0.9]))) .* (-1, 1)
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
-hm = heatmap!(ax, shapley1; colormap = :roma, colorrange = col_lims)
-contour!(ax, predict(sdm, L); color = :black, linewidth = 0.5)
-Colorbar(f[1, 2], hm)
-lines!(ax, CHE; color = :black)
+hm = heatmap!(ax, shapley1; colormap = :managua, colorrange = col_lims)
+Colorbar(f[1, 2], hm, label="Effect of BIO$(v1)")
+lines!(ax, aoi; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
 current_figure() #hide
 
-# When given a vector of layers, the `explain` function will return a layer with
-# the explanation for each input variable:
+# We will now identify which of these variables is the most locally important to
+# make the final prediction:
 
-S = explain(sdm, L; threshold = false)
+S = explainmodel(ShapleyMC, model, L; threshold = false)
 
-# We can then put this object into the `mosaic` function to get the index of
-# which variable is the most important for each pixel:
+# We can rely on the `mosaic` function to find the variable that has the largest
+# absolute contribution to moving the prediction away from the average. This
+# serves as a way to identify the most locally important variable:
 
-#figure sdm-mosaicplot
+keyvariable = mosaic(argmax, map(x -> abs.(x), S))
+
+# It is important to notice that, even though our model relies on a PCA to
+# transform the variables, we are looking at the importance of the variables
+# _before_ the transformation. We can, therefore, think biologically about the
+# result of this analysis, regardless of the optimal way to project these raw
+# covariates into latent variables for the classifier.
+
+# Because this too is returned as a layer, it can be mapped as well (after a
+# little bit of mischief with the color palette):
+
+#figure model-mosaicplot
 f = Figure(; size = (600, 300))
-mostimp = mosaic(argmax, map(x -> abs.(x), S))
-colmap = [
-    colorant"#E69F00",
-    colorant"#56B4E9",
-    colorant"#009E73",
-    colorant"#D55E00",
-    colorant"#CC79A7",
-]
+colors = Makie.wong_colors()
+n_var = length(variables(model))
+n_col = length(colors)
+if n_var > n_col
+    append!(colors, fill(colorant"#ececec", n_var - n_col))
+end
+palette = cgrad(colors[1:n_var], n_var, categorical=true)
 ax = Axis(f[1, 1]; aspect = DataAspect())
-heatmap!(ax, mostimp; colormap = colmap)
-contour!(
-    ax,
-    predict(sdm, L);
-    color = :black,
-    linewidth = 0.5,
-)
-lines!(ax, CHE; color = :black)
+heatmap!(ax, keyvariable; colormap = palette)
+lines!(ax, aoi; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)
 Legend(
     f[2, 1],
-    [PolyElement(; color = colmap[i]) for i in 1:length(bio_vars)],
-    ["BIO$(b)" for b in bio_vars];
+    [PolyElement(; color = colors[i]) for i in 1:length(variables(model))],
+    ["BIO$(b)" for b in variables(model)];
     orientation = :horizontal,
     nbanks = 1,
     framevisible = false,
     vertical = false,
 )
 current_figure() #hide
+
+# ## Bootstrap for uncertainty
+
+# As the last step, we will attempt to quantify the uncertainty of our model
+# using non-parametric bootstrap. This is simply achieved by wrapping our model
+# into a new constructor:
+
+bootstrap = Bagging(model, 100)
+train!(bootstrap)
+
+# All of these models have the same training data, but different training
+# instances. We can measure the balanced out-of-bag error on this model:
+
+outofbag(bootstrap) |> M -> 1 - balancedaccuracy(M) 
+
+# More importantly for this use-case, the bootstrapped model can make
+# predictions using different information to aggregate the results of all
+# models. A good measure of uncertainty is, for example, to use the
+# inter-quartile range:
+
+uncertainty = predict(bootstrap, L; threshold=false, consensus=iqr)
+
+# ::: info Conformal prediction
+#
+# The package offers functions for [conformal
+# prediction](/manual/sdm/conformal/), and a more fully worked-out example of
+# [spatial projection of uncertainty](/manual/usecases/conformal/). This is a
+# more advanced feature, and for now we will be quite happy with good old
+# non-parametric bootstrap. See also the vignette on [covariate
+# shift](/manual/usecases/covariate-shift/) to measure how far away the
+# prediction data are from the training data.
+#
+# :::
+
+# We can now map this uncertainty, to identify where the models in the
+# bootstrapped ensemble disagree the most, and by how much they disagree:
+
+#figure uncertainty-in-space
+f = Figure(; size = (600, 300))
+ax = Axis(f[1, 1]; aspect = DataAspect())
+hm = heatmap!(ax, uncertainty; colormap = Reverse(:lipari))
+Colorbar(f[1, 2], hm, label="IQR")
+lines!(ax, aoi; color = :black)
+hidedecorations!(ax)
+hidespines!(ax)
+current_figure() #hide
+
+# This information can be jointly visualized with the prediction, using the
+# functions for [bivariate maps](/manual/dataviz/bivariate/) or
+# [value-suppressing uncertainty palettes](/manual/dataviz/vsup/).
+
+# ## Conclusion
+
+# This vignette has covered quite a lot of ground, starting from collecting open
+# biodiversity data, and ending at providing interpretable explanations for the
+# output of a species distribution model. There are more functionalities in the
+# package that are not documented here, and notably the integration with other
+# Julia packages.
+
+# If there are elements in this tutorial, or in the rest of the documentation,
+# that are not clear, feel free to [reach
+# out](https://github.com/PoisotLab/SpeciesDistributionToolkit.jl/discussions)
+# using the GitHub discussions!
+
+# ## Related documentation
+
+# ```@meta
+# CollapsedDocStrings = true
+# ```
+
+# ```@docs; canonical=false
+# crossvalidate
+# outofbag
+# explainmodel
+# featureimportance
+# pseudoabsencemask
+# backgroundpoints
+# taxon
+# mosaic
+# hyperparameters
+# hyperparameters!
+# SDMLayer
+# SDM
+# Bagging
+# ```
+

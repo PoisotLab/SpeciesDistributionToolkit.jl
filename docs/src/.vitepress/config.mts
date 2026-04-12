@@ -162,6 +162,7 @@ export default defineConfig({
                             items: [
                                 { text: "Neutral landscapes", link: "/manual/generation/neutral-landscapes/" },
                                 { text: "Pseudo-absences", link: "/manual/generation/pseudoabsences/" },
+                                { text: "Spatial thinning", link: "/manual/generation/thinning/" },
                                 { text: "Fauxcurrences", link: "/manual/generation/fauxcurrences/" },
                                 { text: "Virtual species", link: "/manual/generation/virtual-species/" },
                                 { text: "Occurrences from layers", link: "/manual/generation/occurrences-from-layer/"},

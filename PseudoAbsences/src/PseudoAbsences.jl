@@ -2,7 +2,6 @@ module PseudoAbsences
 
 using OccurrencesInterface
 using SimpleSDMLayers
-using SimpleSDMPolygons
 using TestItems
 import Distances
 import StatsBase

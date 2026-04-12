@@ -1,4 +1,5 @@
 function Dᵢⱼ(records)
+
     D = fill(Inf16, length(records), length(records))
 
     for i in axes(D, 1)
@@ -27,16 +28,22 @@ function thin(
     records::T,
     d::Float64;
     nmin::Integer=30,
+    maxiter=100
 ) where {T<:OccurrencesInterface.AbstractOccurrenceCollection}
 
     D = Dᵢⱼ(records)
 
     too_close = D .< d
     n_violations = vec(sum(too_close, dims=1))
+    counter = 0
     while count(iszero, n_violations) < nmin
         d *= 0.99
         too_close = D .< d
         n_violations = vec(sum(too_close, dims=1))
+        counter += 1
+        if counter > maxiter
+            break
+        end
     end
 
     kept = findall(iszero, n_violations)
@@ -68,6 +75,16 @@ end
     @test minimum(Dᵢⱼ(records)) == Float16(0.0)
 
     thinned = thin(records, 25.)
-    
+
     @test minimum(Dᵢⱼ(thinned)) >= Float16(25.)
+end
+
+@testitem "We do not loose clusters of overlapping points when thinning" begin
+    using PseudoAbsences.OccurrencesInterface
+    cluster1 = [Occurrence(where=(0.0, 0.0)) for _ in Base.OneTo(10)]
+    cluster2 = [Occurrence(where=(90., 90.)) for _ in Base.OneTo(10)]
+    records = Occurrences([cluster1; cluster2])
+
+    thinned = thin(records, 25.; nmin=2)
+    @test length(thinned) == 2
 end

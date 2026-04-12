@@ -47,7 +47,7 @@ function thin(
         n_violations = vec(sum(D, dims=1))
 
         # Next we pick a random record with many possible adjacent records
-        candidtae = StatsBase.sample(Weights(n_violations))
+        candidate = StatsBase.sample(StatsBase.Weights(n_violations))
 
         # We keep this point!
         keep[candidate] = true
@@ -89,19 +89,18 @@ end
             (30. <= place(e)[2] <= 50.), elements(records)
     ))
 
-    @test minimum(Dᵢⱼ(records)) == Float16(0.0)
-
     thinned = thin(records, 25.)
 
-    @test minimum(Dᵢⱼ(thinned)) >= Float16(25.)
+    @test sum(PseudoAbsences.adjacency(thinned, 24.9)) == 0
+    @test sum(PseudoAbsences.adjacency(thinned, 150.0)) > 0
 end
 
-@testitem "We do not loose clusters of overlapping points when thinning" begin
+@testitem "We do not lose clusters of overlapping points when thinning" begin
     using PseudoAbsences.OccurrencesInterface
     cluster1 = [Occurrence(where=(0.0, 0.0)) for _ in Base.OneTo(10)]
     cluster2 = [Occurrence(where=(90., 90.)) for _ in Base.OneTo(10)]
     records = Occurrences([cluster1; cluster2])
 
-    thinned = thin(records, 25.; nmin=2)
+    thinned = thin(records, 25.)
     @test length(thinned) == 2
 end

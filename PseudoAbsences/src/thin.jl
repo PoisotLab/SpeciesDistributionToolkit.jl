@@ -1,53 +1,70 @@
-function Dᵢⱼ(records)
+function adjacency(records, threshold)
 
-    D = fill(Inf16, length(records), length(records))
+    n = length(records)
+    A = sparse([], [], Bool[], n, n)
 
-    for i in axes(D, 1)
-        for j in axes(D, 2)
+    for i in axes(A, 1)
+        for j in axes(A, 2)
             if j > i
-                dᵢⱼ = PseudoAbsences._distancefunction(place(records[i]), place(records[j]))
-                D[j, i] = D[i, j] = dᵢⱼ
+                d = PseudoAbsences._distancefunction(place(records[i]), place(records[j]))
+                if d < threshold
+                    A[i, j] = true
+                    A[j, i] = true
+                end
             end
         end
     end
 
-    return D
+    return A
 end
 
 """
-    thin( records::T, d::Float64; nmin::Integer = 30, ) where {T <: AbstractOccurrenceCollection}
+    thin(records::T, d::Float64) where {T <: AbstractOccurrenceCollection}
 
 Returns a spatially thinned collection of occurrences so that no points are
-closer than `d` kilometers from one another. The `nmin` keyword (default to 30)
-can also be set to ensure that there are at least that many points, regardless
-of the distance between points at the end. If there are fewer than `nmin` points
-at the specified distance, the minimum distance will be changed to allow points
-that are closer, until the `nmin` condition is met.
+closer than `d` kilometers from one another. This function works by picking
+points that have the largest number of neighbors (points within a distance `d`),
+and pruning all their neighbors at the same time, until the desired thinning is
+achieved. This approach ensures that the list of thinned points can be produced
+as rapidly as possible.
 """
 function thin(
     records::T,
-    d::Float64;
-    nmin::Integer=30,
-    maxiter=100
+    d::Float64
 ) where {T<:OccurrencesInterface.AbstractOccurrenceCollection}
 
-    D = Dᵢⱼ(records)
+    D = PseudoAbsences.adjacency(records, d)
 
-    too_close = D .< d
-    n_violations = vec(sum(too_close, dims=1))
-    counter = 0
-    while count(iszero, n_violations) < nmin
-        d *= 0.99
-        too_close = D .< d
-        n_violations = vec(sum(too_close, dims=1))
-        counter += 1
-        if counter > maxiter
-            break
-        end
+    keep = BitVector(zeros(Bool, length(records)))
+
+    # We start by getting the records with adjacent records (they must be
+    # pruned)
+    n_violations = vec(sum(D, dims=1))
+    keep[findall(iszero, n_violations)] .= true
+
+    while sum(D) != 0
+
+        n_violations = vec(sum(D, dims=1))
+
+        # Next we pick a random record with many possible adjacent records
+        candidtae = StatsBase.sample(Weights(n_violations))
+
+        # We keep this point!
+        keep[candidate] = true
+
+        # We identify the neighbors of this record
+        neighbors = findall(D[:, candidate])
+
+        # We do not keep these neighbors
+        keep[neighbors] .= false
+        D[neighbors, :] .= false
+        D[:, neighbors] .= false
+
+        # We update the sparsity structure of the matrix
+        dropzeros!(D)
     end
 
-    kept = findall(iszero, n_violations)
-    return records[kept]
+    return records[findall(keep)]
 end
 
 @testitem "We can spatially thin the reduced demo dataset" begin

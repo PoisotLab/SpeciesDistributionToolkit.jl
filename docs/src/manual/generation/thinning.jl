@@ -35,6 +35,19 @@ lines!(ax, aoi, color=:grey10)
 scatter!(ax, thinned, color=:darkgreen, markersize=6)
 current_figure() #hide
 
+# results are differentso good idea to replicate
+
+#figure thinned-datapoints-replicated
+f = Figure()
+ax = Axis(f[1,1], aspect=DataAspect())
+poly!(ax, aoi, color=:grey98)
+scatter!(ax, records, color=:grey80, markersize=12)
+lines!(ax, aoi, color=:grey10)
+for _ in 1:5
+    scatter!(ax, thin(records, 80.), markersize=6)
+end
+current_figure() #hide
+
 # effect of distance on number points
 
 #figure effect-distance-n-points

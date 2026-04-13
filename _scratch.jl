@@ -28,18 +28,18 @@ f(X, θ, β) = θ' * X + β
 ∂R(θ) = (1 - α) .* ∂Ridge(θ) .+ α .* ∂Lasso(θ)
 
 # Hinge
-#L(X, θ, β, Y) = max(0, 1 - Y * f(X, θ, β))
-#∂θ(X, Ŷ, Y) = Y * Ŷ < 1 ? -(Y * X) : 0.0
-#∂β(X, Ŷ, Y) = Y * Ŷ < 1 ? -Y : 0.0
-#relink(x) = clamp(0.5 * (x + 1), 0, 1)
+L(X, θ, β, Y) = max(0, 1 - Y * f(X, θ, β))
+∂θ(X, Ŷ, Y) = Y * Ŷ < 1 ? -(Y * X) : 0.0
+∂β(X, Ŷ, Y) = Y * Ŷ < 1 ? -Y : 0.0
+relink(x) = clamp(0.5 * (x + 1), 0, 1)
 
 # Log-loss
-L(X, θ, β, Y) = log(1 + exp(-Y * f(X, θ, β)))
-∂θ(X, θ, β, Y) = -Y * X / (1 + exp(Y * f(X, θ, β)))
-∂β(X, θ, β, Y) = -Y / (1 + exp(Y * f(X, θ, β)))
-relink(x) = 1 / (1 + exp(-x))
+#L(X, θ, β, Y) = log(1 + exp(-Y * f(X, θ, β)))
+#∂θ(X, θ, β, Y) = -Y * X / (1 + exp(Y * f(X, θ, β)))
+#∂β(X, θ, β, Y) = -Y / (1 + exp(Y * f(X, θ, β)))
+#relink(x) = 1 / (1 + exp(-x))
 
-iters = 100
+iters = 300
 out = zeros(Float64, iters)
 loss = zeros(Float64, iters)
 c = 1
@@ -49,7 +49,7 @@ Y = 2 .* y .- 1
 intercept = true
 
 for it in Base.OneTo(iters)
-    ηₜ = 0.9^(it - 1) * η / length(y)
+    ηₜ = 0.99^(it - 1) * η / length(y)
     for i in Random.shuffle(eachindex(y))
         Ŷ = f(Z[:,i], θ, β)
         θ .-= ηₜ .* (∂θ(Z[:, i], Ŷ, Y[i]) .+ λ .* ∂R(θ))
@@ -62,7 +62,7 @@ for it in Base.OneTo(iters)
     c += 1
 end
 
-scatter(loss; color = :grey50, markersize = 6)
+scatter(out; color = :grey50, markersize = 6)
 
 output = vec(θ' * Z .+ β)
 pred = relink.(output)

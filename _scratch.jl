@@ -20,11 +20,12 @@ Z = (X .- μ) ./ σ
 f(X, θ, β) = θ' * X + β
 
 # Lasso
-∂R(θ) = sign.(θ)
+∂Lasso(θ) = sign.(θ)
 # Ridge
-∂R(θ) = 2 .* θ
+∂Ridge(θ) = 2 .* θ
 # Elasticnet
-#∂R(θ, α) = (1 - α) .* ( 2 .* θ) .+ α .* sign.(θ)
+α = 0.5
+∂R(θ) = (1 - α) .* ∂Ridge(θ) .+ α .* ∂Lasso(θ)
 
 # Hinge
 #L(X, θ, β, Y) = max(0, 1 - Y * f(X, θ, β))
@@ -38,7 +39,7 @@ L(X, θ, β, Y) = log(1 + exp(-Y * f(X, θ, β)))
 ∂β(X, θ, β, Y) = -Y / (1 + exp(Y * f(X, θ, β)))
 relink(x) = 1 / (1 + exp(-x))
 
-iters = 2000
+iters = 100
 out = zeros(Float64, iters)
 loss = zeros(Float64, iters)
 c = 1
@@ -48,16 +49,16 @@ Y = 2 .* y .- 1
 intercept = true
 
 for it in Base.OneTo(iters)
-    ηₜ = 0.99^(it - 1) * η / length(y)
+    ηₜ = 0.9^(it - 1) * η / length(y)
     for i in Random.shuffle(eachindex(y))
         Ŷ = f(Z[:,i], θ, β)
-        θ .-= η .* (∂θ(Z[:, i], Ŷ, Y[i]) .+ λ .* ∂R(θ))
+        θ .-= ηₜ .* (∂θ(Z[:, i], Ŷ, Y[i]) .+ λ .* ∂R(θ))
         if intercept
-            β -= η * ∂β(Z[:, i], Ŷ, Y[i])
+            β -= ηₜ * ∂β(Z[:, i], Ŷ, Y[i])
         end
     end
     loss[c] = sum([L(Z[:, i], θ, β, Y[i]) for i in eachindex(y)]) / length(y)
-    out[c] = β
+    out[c] = θ[1]
     c += 1
 end
 
@@ -69,11 +70,11 @@ pred = relink.(output)
 scatter(output[sortperm(output)] .+ randn(length(output)) .* 1e-2; color = y[sortperm(output)])
 current_figure()
 
-T = LinRange(0.0, 1.0, 120)
-lc = [mcc(pred .>= t, y) for t in T]
-id = lc |> findmax |> last
+T = LinRange(0.0, 1.0, 250)
+lc = [mcc(pred .> t, y) for t in T]
+bestmcc, id = lc |> findmax
 
-mcc(pred, y, T[id])
+bestmcc
 
 lines(T, lc)
 vlines!(current_axis(), [T[id]])

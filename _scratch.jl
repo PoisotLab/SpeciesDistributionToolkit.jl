@@ -30,13 +30,14 @@ Y = 2 .* y .- 1
 for it in Base.OneTo(iters)
     for i in Random.shuffle(eachindex(y))
         θ .-= η .* __hinge_gradient(θ, Z[:,i], Y[i])
-        out[c] = θ[2]
+        out[c] = θ[1]
         c += 1
     end
 end
 
-scatter(out)
+scatter(out, color=:grey50, markersize=6)
 
+output = vec(θ' * Z)
 pred = SDeMo.__sigmoid.(vec(θ' * Z))
 
 T = LinRange(0.0, 1.0, 120)

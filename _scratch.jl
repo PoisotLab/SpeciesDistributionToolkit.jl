@@ -28,18 +28,18 @@ f(X, θ, β) = θ' * X + β
 ∂R(θ) = (1 - α) .* ∂Ridge(θ) .+ α .* ∂Lasso(θ)
 
 # Hinge
-L(X, θ, β, Y) = max(0, 1 - Y * f(X, θ, β))
-∂θ(X, Ŷ, Y) = Y * Ŷ < 1 ? -(Y * X) : 0.0
-∂β(X, Ŷ, Y) = Y * Ŷ < 1 ? -Y : 0.0
-relink(x) = clamp(0.5 * (x + 1), 0, 1)
+# L(X, θ, β, Y) = max(0, 1 - Y * f(X, θ, β))
+# ∂θ(X, Ŷ, Y) = Y * Ŷ < 1 ? -(Y * X) : 0.0
+# ∂β(X, Ŷ, Y) = Y * Ŷ < 1 ? -Y : 0.0
+# relink(x) = clamp(0.5 * (x + 1), 0, 1)
 
 # Log-loss
-#L(X, θ, β, Y) = log(1 + exp(-Y * f(X, θ, β)))
-#∂θ(X, θ, β, Y) = -Y * X / (1 + exp(Y * f(X, θ, β)))
-#∂β(X, θ, β, Y) = -Y / (1 + exp(Y * f(X, θ, β)))
-#relink(x) = 1 / (1 + exp(-x))
+L(X, θ, β, Y) = log(1 + exp(-Y * f(X, θ, β)))
+∂θ(X, θ, β, Y) = -Y * X / (1 + exp(Y * f(X, θ, β)))
+∂β(X, θ, β, Y) = -Y / (1 + exp(Y * f(X, θ, β)))
+relink(x) = 1 / (1 + exp(-x))
 
-iters = 300
+iters = 3000
 out = zeros(Float64, iters)
 loss = zeros(Float64, iters)
 c = 1
@@ -87,3 +87,10 @@ current_figure()
 scatter(X[1, :], pred; color = y)
 hlines!(current_axis(), [T[id]])
 current_figure()
+
+model = SDM(RawData, Logistic, X, y, C)
+hyperparameters!(classifier(model), :interactions, :none)
+train!(model)
+
+scatter(predict(model; threshold=false), pred)
+mcc(predict(model), labels(model))

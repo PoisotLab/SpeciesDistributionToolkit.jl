@@ -12,7 +12,7 @@ Z = (X .- μ) ./ σ
 
 Z = vcat(ones(1, length(y)), Z)
 
-η = 0.01
+η = 0.001
 
 θ = randn(size(Z, 1)) .* 1e-3
 
@@ -40,15 +40,18 @@ scatter(out, color=:grey50, markersize=6)
 output = vec(θ' * Z)
 pred = SDeMo.__sigmoid.(vec(θ' * Z))
 
+
 T = LinRange(0.0, 1.0, 120)
 lc = [mcc(pred .> t, y) for t in T]
 id = lc |> findmax |> last
+
+mcc(pred, y, T[id])
 
 lines(T, lc)
 vlines!(current_axis(), [T[id]])
 current_figure()
 
-scatter(sort(pred), color=y)
+scatter(pred[sortperm(pred)] .+ randn(length(pred)).*1e-2, color=y[sortperm(pred)])
 hlines!(current_axis(), [T[id]])
 current_figure()
 

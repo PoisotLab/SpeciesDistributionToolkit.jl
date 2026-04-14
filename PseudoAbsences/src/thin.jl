@@ -19,6 +19,19 @@ function adjacency(records, threshold)
 end
 
 """
+    _window_size_in_degrees(d, records)
+
+From a distance in km, returns the size of the window in degrees within which
+occurrences will be thinned.
+"""
+function _window_size_in_degrees(d, records)
+    lats = last.(places(records))
+    medlat = (maximum(lats) - minimum(lats))/ 2
+    km_per_deg = cos(medlat * π / 180) * 111325.0
+    return d / km_per_deg    
+end
+
+"""
     thin(records::T, d::Float64) where {T <: AbstractOccurrenceCollection}
 
 Returns a spatially thinned collection of occurrences so that no points are

@@ -27,7 +27,6 @@ occurrences will be thinned. A buffer of 5% is applied to the box.
 function _window_size_in_degrees(d, records)
     lats = last.(OccurrencesInterface.place(records))
     medlat = (maximum(lats) - minimum(lats))/ 2
-    @info medlat
     km_per_deg = cos(medlat * π / 180) * 111325.0 / 1000.0
     return 1.05 * (d / km_per_deg)
 end
@@ -36,84 +35,61 @@ end
     thin(records::T, d::Float64) where {T <: AbstractOccurrenceCollection}
 
 Returns a spatially thinned collection of occurrences so that no points are
-closer than `d` kilometers from one another. This function works by picking
-points that have the largest number of neighbors (points within a distance `d`),
-and pruning all their neighbors at the same time, until the desired thinning is
-achieved. This approach ensures that the list of thinned points can be produced
-as rapidly as possible.
+closer than `d` kilometers from one another. This function works on an on-line
+approach, by picking points at random, then identifying a square bounding box of
+the correct size, and finally removing all points within this box that are too
+close to the focal point. This is repeated until all points have been removed or
+visited. Because points are removed as soon as possible (and are never visited
+again), this method will usually converge before having evaluated `n` pairwise
+distances (where`n` is the number of records), and most importantly does not
+require to measure the entire distance matrix.
 """
 function thin(
     records::T,
     d::Float64
 ) where {T<:OccurrencesInterface.AbstractOccurrenceCollection}
 
+    # Number of records
     n = length(records)
-    D = sparse([], [], Bool[], n, n)
 
     # Radius for the search
     r = PseudoAbsences._window_size_in_degrees(d, records)
 
-    # This is useful to keep track of the potential starting points for a
-    # thinning operation
-    keep = BitVector(zeros(Bool, n))
-    visited = BitVector(zeros(Bool, n))
+    # Track eligibility and removal
+    eligible = BitVector(ones(Bool, n))
     removed = BitVector(zeros(Bool, n))
 
-    eligible = findall(.!visited .& .!removed)
+    while sum(eligible) > 0
 
-    focal = StatsBase.sample(eligible)
+        # From these, we pick a random focal sample
+        focal = StatsBase.sample(findall(eligible))
 
-    # Records to look at here
-    candidates = findall(
-        e ->
-            (abs(place(e)[1] - place(records[focal])[1]) <= r) &
-            (abs(place(e)[2] - place(records[focal])[2]) <= r), elements(records)
-    )
+        # The candidates for deletion are all the records in the boundingbox of the
+        # point
+        candidates = findall(
+            e ->
+                (abs(place(e)[1] - place(records[focal])[1]) <= r) &
+                (abs(place(e)[2] - place(records[focal])[2]) <= r), elements(records)
+        )
 
-    # We get their distances
-    D = [
-        PseudoAbsences._distancefunction(place(records[focal]), place(records[i]))
-        for i in candidates
-        ]
-
-    # Then we updated
-    visited[focal] = true
-    for i in eachindex(D)
-        if candidates[i] != focal
-            if D[i] <= D
-                removed[i] = true
+        eligible[focal] = false
+        if length(candidates) > 1
+            for candidate in candidates
+                if candidate != focal
+                    if eligible[candidate]
+                        D = PseudoAbsences._distancefunction(place(records[candidate]), place(records[focal]))
+                        if D <= d
+                            removed[candidate] = true
+                            eligible[candidate] = false
+                        end
+                    end
+                end
             end
         end
+
     end
 
-    # We start by getting the records with adjacent records (they must be
-    # pruned)
-    n_violations = vec(sum(D, dims=1))
-    keep[findall(iszero, n_violations)] .= true
-
-    while sum(D) != 0
-
-        n_violations = vec(sum(D, dims=1))
-
-        # Next we pick a random record with many possible adjacent records
-        candidate = StatsBase.sample(StatsBase.Weights(n_violations))
-
-        # We keep this point!
-        keep[candidate] = true
-
-        # We identify the neighbors of this record
-        neighbors = findall(D[:, candidate])
-
-        # We do not keep these neighbors
-        keep[neighbors] .= false
-        D[neighbors, :] .= false
-        D[:, neighbors] .= false
-
-        # We update the sparsity structure of the matrix
-        dropzeros!(D)
-    end
-
-    return records[findall(keep)]
+    return records[findall(.! removed)]
 end
 
 @testitem "We can spatially thin the reduced demo dataset" begin

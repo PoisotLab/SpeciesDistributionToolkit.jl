@@ -33,6 +33,7 @@ f(X, θ, β) = θ' * X + β
 # ∂β(X, Ŷ, Y) = Y * Ŷ < 1 ? -Y : 0.0
 # relink(x) = clamp(0.5 * (x + 1), 0, 1)
 
+
 # Log-loss
 L(X, θ, β, Y) = log(1 + exp(-Y * f(X, θ, β)))
 ∂θ(X, θ, β, Y) = -Y * X / (1 + exp(Y * f(X, θ, β)))

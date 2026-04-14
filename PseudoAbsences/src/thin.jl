@@ -22,13 +22,14 @@ end
     _window_size_in_degrees(d, records)
 
 From a distance in km, returns the size of the window in degrees within which
-occurrences will be thinned.
+occurrences will be thinned. A buffer of 5% is applied to the box.
 """
 function _window_size_in_degrees(d, records)
-    lats = last.(places(records))
+    lats = last.(OccurrencesInterface.place(records))
     medlat = (maximum(lats) - minimum(lats))/ 2
-    km_per_deg = cos(medlat * π / 180) * 111325.0
-    return d / km_per_deg    
+    @info medlat
+    km_per_deg = cos(medlat * π / 180) * 111325.0 / 1000.0
+    return 1.05 * (d / km_per_deg)
 end
 
 """
@@ -46,9 +47,44 @@ function thin(
     d::Float64
 ) where {T<:OccurrencesInterface.AbstractOccurrenceCollection}
 
-    D = PseudoAbsences.adjacency(records, d)
+    n = length(records)
+    D = sparse([], [], Bool[], n, n)
 
-    keep = BitVector(zeros(Bool, length(records)))
+    # Radius for the search
+    r = PseudoAbsences._window_size_in_degrees(d, records)
+
+    # This is useful to keep track of the potential starting points for a
+    # thinning operation
+    keep = BitVector(zeros(Bool, n))
+    visited = BitVector(zeros(Bool, n))
+    removed = BitVector(zeros(Bool, n))
+
+    eligible = findall(.!visited .& .!removed)
+
+    focal = StatsBase.sample(eligible)
+
+    # Records to look at here
+    candidates = findall(
+        e ->
+            (abs(place(e)[1] - place(records[focal])[1]) <= r) &
+            (abs(place(e)[2] - place(records[focal])[2]) <= r), elements(records)
+    )
+
+    # We get their distances
+    D = [
+        PseudoAbsences._distancefunction(place(records[focal]), place(records[i]))
+        for i in candidates
+        ]
+
+    # Then we updated
+    visited[focal] = true
+    for i in eachindex(D)
+        if candidates[i] != focal
+            if D[i] <= D
+                removed[i] = true
+            end
+        end
+    end
 
     # We start by getting the records with adjacent records (they must be
     # pruned)

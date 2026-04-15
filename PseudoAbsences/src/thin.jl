@@ -1,37 +1,3 @@
-function adjacency(records, threshold)
-
-    n = length(records)
-    A = sparse([], [], Bool[], n, n)
-
-    for i in axes(A, 1)
-        for j in axes(A, 2)
-            if j > i
-                d = PseudoAbsences._distancefunction(place(records[i]), place(records[j]))
-                if d < threshold
-                    A[i, j] = true
-                    A[j, i] = true
-                end
-            end
-        end
-    end
-
-    return A
-end
-
-"""
-    _window_size_in_degrees(d, records)
-
-From a distance in km, returns the size of the window in degrees within which
-occurrences will be thinned. This is returned as the size for longitudes and the
-size for latitudes. The distance in degrees is increased by 2%.
-"""
-function _window_size_in_degrees(d, records)
-    lats = last.(OccurrencesInterface.place(records))
-    medlat = (maximum(lats) - minimum(lats))/ 2
-    km_per_deg = cos(medlat * π / 180) * 111325.0 / 1000.0
-    return 1.05 * (d / km_per_deg)
-end
-
 """
     thin(records::T, d::Float64) where {T <: AbstractOccurrenceCollection}
 
@@ -53,48 +19,58 @@ function thin(
     # Number of records
     n = length(records)
 
-    # Radius for the search
-    r = PseudoAbsences._window_size_in_degrees(d, records)
-
-    # Track eligibility and removal
+    # Track eligibility and removal. An eligible point is one that can be
+    # visited by the algorithm at a future iteration. A removed point has
+    # already been found to be too close to an eligible point, and will not be
+    # visited.
     eligible = BitVector(ones(Bool, n))
     removed = BitVector(zeros(Bool, n))
 
+    # While there is at least one relevant point to visit...
     while sum(eligible) > 0
 
-        # From these, we pick a random focal sample
+        # We pick a random eligible point.
         focal = StatsBase.sample(findall(eligible))
 
-        # We measure the window around this point
+        # We measure the window around this point. This is a conversion from
+        # kilometers to degree, and accounts for the latitude of the point. This
+        # step is important because we want to measure as little distance pairs
+        # as possible, and so we will look at points only within this bounding
+        # box around the candidate.
         lon_span = 1.015 * (d / (cos(place(records[focal])[2] * π / 180) * 111325.0 / 1000.0))
         lat_span = 1.015 * (d / (111325.0 / 1000.0))
 
-        # The candidates for deletion are all the records in the boundingbox of the
-        # point
-        candidates = findall(
-            e ->
-                (abs(place(e)[1] - place(records[focal])[1]) <= lon_span) &
-                (abs(place(e)[2] - place(records[focal])[2]) <= lat_span), elements(records)
-        )
-
+        # We remove the focal point from the pool of eligible points
         eligible[focal] = false
-        if length(candidates) > 1
-            for candidate in candidates
-                if candidate != focal
-                    if eligible[candidate]
-                        D = PseudoAbsences._distancefunction(place(records[candidate]), place(records[focal]))
-                        if D <= d
-                            removed[candidate] = true
-                            eligible[candidate] = false
-                        end
+        pf = place(records[focal])
+
+        # This is the main loop        
+        for i in eachindex(eligible)
+            if eligible[i] & (i != focal)
+              
+                # We can skip over non-eligible points because, when a point is
+                # marked as removed, it is also removed from the pool of
+                # eligible points.
+                pl = place(records[i])
+              
+                # This checks whether the point is within the boundingbox.
+                in_lon = abs(pl[1] - pf[1]) <= lon_span
+                in_lat = abs(pl[2] - pf[2]) <= lat_span
+              
+                # If both are true, we calculate the distance, and remove the
+                # points as needed
+                if in_lon & in_lat
+                    D = PseudoAbsences._distancefunction(pl, place(records[focal]))
+                    if D <= d
+                        removed[i] = true
+                        eligible[i] = false
                     end
                 end
             end
         end
-
     end
 
-    return records[findall(.! removed)]
+    return records[findall(.!removed)]
 end
 
 @testitem "We can spatially thin the reduced demo dataset" begin

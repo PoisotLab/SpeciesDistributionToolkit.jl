@@ -22,7 +22,8 @@ end
     _window_size_in_degrees(d, records)
 
 From a distance in km, returns the size of the window in degrees within which
-occurrences will be thinned. A buffer of 5% is applied to the box.
+occurrences will be thinned. This is returned as the size for longitudes and the
+size for latitudes. The distance in degrees is increased by 2%.
 """
 function _window_size_in_degrees(d, records)
     lats = last.(OccurrencesInterface.place(records))
@@ -35,7 +36,7 @@ end
     thin(records::T, d::Float64) where {T <: AbstractOccurrenceCollection}
 
 Returns a spatially thinned collection of occurrences so that no points are
-closer than `d` kilometers from one another. This function works on an on-line
+closer than `d` kilometers from one another. This function works with an on-line
 approach, by picking points at random, then identifying a square bounding box of
 the correct size, and finally removing all points within this box that are too
 close to the focal point. This is repeated until all points have been removed or
@@ -64,12 +65,16 @@ function thin(
         # From these, we pick a random focal sample
         focal = StatsBase.sample(findall(eligible))
 
+        # We measure the window around this point
+        lon_span = 1.015 * (d / (cos(place(records[focal])[2] * π / 180) * 111325.0 / 1000.0))
+        lat_span = 1.015 * (d / (111325.0 / 1000.0))
+
         # The candidates for deletion are all the records in the boundingbox of the
         # point
         candidates = findall(
             e ->
-                (abs(place(e)[1] - place(records[focal])[1]) <= r) &
-                (abs(place(e)[2] - place(records[focal])[2]) <= r), elements(records)
+                (abs(place(e)[1] - place(records[focal])[1]) <= lon_span) &
+                (abs(place(e)[2] - place(records[focal])[2]) <= lat_span), elements(records)
         )
 
         eligible[focal] = false

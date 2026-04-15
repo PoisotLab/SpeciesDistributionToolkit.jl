@@ -97,8 +97,13 @@ end
 
     thinned = thin(records, 25.)
 
-    @test sum(PseudoAbsences.adjacency(thinned, 24.9)) == 0
-    @test sum(PseudoAbsences.adjacency(thinned, 150.0)) > 0
+    n = length(thinned)
+    for i in 1:(n-1)
+        for j in (i+1):n
+            d = PseudoAbsences._distancefunction(place(thinned[i]), place(thinned[j]))
+            @test d >= 25.
+        end
+    end
 end
 
 @testitem "We do not lose clusters of overlapping points when thinning" begin

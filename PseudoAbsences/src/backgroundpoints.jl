@@ -1,4 +1,3 @@
-
 """
     backgroundpoints(layer::T, n::Int; kwargs...) where {T <: SimpleSDMLayer}
 

@@ -26,4 +26,7 @@ export pseudoabsencemask
 include("backgroundpoints.jl")
 export backgroundpoints
 
+include("thin.jl")
+export thin
+
 end # module PseudoAbsences

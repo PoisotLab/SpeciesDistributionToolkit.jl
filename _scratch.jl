@@ -40,7 +40,7 @@ L(X, θ, β, Y) = log(1 + exp(-Y * f(X, θ, β)))
 ∂β(X, θ, β, Y) = -Y / (1 + exp(Y * f(X, θ, β)))
 relink(x) = 1 / (1 + exp(-x))
 
-iters = 3000
+iters = 5000
 out = zeros(Float64, iters)
 loss = zeros(Float64, iters)
 c = 1
@@ -50,7 +50,7 @@ Y = 2 .* y .- 1
 intercept = true
 
 for it in Base.OneTo(iters)
-    ηₜ = 0.99^(it - 1) * η / length(y)
+    ηₜ = 0.9999^(it - 1) * η / length(y)
     for i in Random.shuffle(eachindex(y))
         Ŷ = f(Z[:,i], θ, β)
         θ .-= ηₜ .* (∂θ(Z[:, i], θ, β, Y[i]) .+ λ .* ∂R(θ))
@@ -59,11 +59,16 @@ for it in Base.OneTo(iters)
         end
     end
     loss[c] = sum([L(Z[:, i], θ, β, Y[i]) for i in eachindex(y)]) / length(y)
-    out[c] = θ[1]
+    out[c] = β
     c += 1
 end
 
-scatter(out; color = :grey50, markersize = 6)
+fg = Figure()
+a1 = Axis(fg[1,1]; ylabel="Intercept")
+a2 = Axis(fg[2,1]; ylabel="Loss")
+lines!(a1, out; color = :black)
+lines!(a2, loss; color = :black)
+current_figure()
 
 output = vec(θ' * Z .+ β)
 pred = relink.(output)

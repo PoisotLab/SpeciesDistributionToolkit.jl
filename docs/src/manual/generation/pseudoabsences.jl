@@ -15,6 +15,13 @@ landmass = getpolygon(PolygonData(OpenStreetMap, Places); place = "Idaho")
 records = Occurrences(mask(records, landmass))
 spatial_extent = SpeciesDistributionToolkit.boundingbox(landmass)
 
+# ::: info Spatial thinning
+#
+# There is a function to perform spatial thinning on a list of occurrences, see
+# [the associated vignette](/manual/generation/thinning/).
+#
+# :::
+
 # We will get a single layer for the illustration:
 
 dataprovider = RasterData(CHELSA2, AverageTemperature)

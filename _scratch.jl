@@ -53,9 +53,9 @@ for it in Base.OneTo(iters)
     ηₜ = 0.99^(it - 1) * η / length(y)
     for i in Random.shuffle(eachindex(y))
         Ŷ = f(Z[:,i], θ, β)
-        θ .-= ηₜ .* (∂θ(Z[:, i], Ŷ, Y[i]) .+ λ .* ∂R(θ))
+        θ .-= ηₜ .* (∂θ(Z[:, i], θ, β, Y[i]) .+ λ .* ∂R(θ))
         if intercept
-            β -= ηₜ * ∂β(Z[:, i], Ŷ, Y[i])
+            β -= ηₜ * ∂β(Z[:, i], θ, β, Y[i])
         end
     end
     loss[c] = sum([L(Z[:, i], θ, β, Y[i]) for i in eachindex(y)]) / length(y)

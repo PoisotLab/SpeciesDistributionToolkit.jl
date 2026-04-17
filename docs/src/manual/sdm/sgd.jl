@@ -39,26 +39,42 @@ hyperparameters!(classifier(model), :intercept, true)
 
 train!(model)
 
-# And check its [PR and ROC curves](/manual/sdm/pr-roc/):
+# And check its [PR and ROC curves](/manual/sdm/pr-roc/) - note that the plots
+# are zoomed in on the parts of the curve where the models are actually
+# evaluated.
 
 thresholds = LinRange(0.01, 0.99, 50)
 cv = [crossvalidate(model, montecarlo(model; n = 5); thr = t) for t in thresholds];
 
 #figure pr-sgd-figure
-f = Figure()
+f = Figure(; size = (600, 300))
 ax =
     Axis(f[1, 1]; aspect = 1, xlabel = "False positive rate", ylabel = "True positive rate")
-scatter!(ax, [fpr(s.validation) for s in cv], [tpr(s.validation) for s in cv])
+lines!(ax, [fpr(s.training) for s in cv], [tpr(s.training) for s in cv]; color = :black)
+scatter!(
+    ax,
+    [fpr(s.validation) for s in cv],
+    [tpr(s.validation) for s in cv];
+    color = :grey50,
+    markersize = 4,
+)
 ax2 = Axis(f[1, 2]; aspect = 1, xlabel = "Precision", ylabel = "Recall")
+lines!(
+    ax2,
+    [SDeMo.precision(s.training) for s in cv],
+    [SDeMo.recall(s.training) for s in cv];
+    color = :black,
+)
 scatter!(
     ax2,
     [SDeMo.precision(s.validation) for s in cv],
-    [SDeMo.recall(s.validation) for s in cv],
+    [SDeMo.recall(s.validation) for s in cv];
+    color = :grey50, markersize = 4,
 )
-xlims!(ax, 0.0, 1.0)
-ylims!(ax, 0.0, 1.0)
-xlims!(ax2, 0.0, 1.0)
-ylims!(ax2, 0.0, 1.0)
+xlims!(ax, 0.0, 0.5)
+ylims!(ax, 0.5, 1.0)
+xlims!(ax2, 0.5, 1.0)
+ylims!(ax2, 0.5, 1.0)
 current_figure() #hide
 
 # ## Related documentation

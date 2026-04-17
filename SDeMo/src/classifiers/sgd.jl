@@ -73,11 +73,6 @@ function _sgd_gradient_logloss!(∂, β, X, θ, Y)
     return ∂β
 end
 
-# ∂θ(X, Ŷ, Y) = Y * Ŷ < 1 ? -(Y * X) : 0.0
-# ∂β(X, Ŷ, Y) = Y * Ŷ < 1 ? -Y : 0.0
-# relink(x) = clamp(0.5 * (x + 1), 0, 1)
-
-
 function _sgd_gradient_hinge!(∂, β, X, θ, Y)
     # Make prediction
     ŷ = β
@@ -103,7 +98,7 @@ function train!(sgd::SGD, y::Vector{Bool}, X::Matrix{T}; kwargs...) where {T <: 
         regul! = elasticnet!
     elseif sgd.L1
         regul! = lasso!
-    else
+    elseif sgd.L2
         regul! = ridge!
     end 
 

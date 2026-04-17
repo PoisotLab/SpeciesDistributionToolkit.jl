@@ -119,7 +119,7 @@ function train!(sgd::SGD, y::Vector{Bool}, X::Matrix{T}; kwargs...) where {T <: 
 
     # Main loop
     for epoch in Base.OneTo(sgd.epochs)
-        ηₜ = 0.9999^(epoch - 1) * sgd.η / length(Y)
+        ηₜ = 0.999^(epoch - 1) * sgd.η
         Random.shuffle!(positions)
         for position in positions
             ∂β = gradient!(∂g, sgd.β, Z[:, position], sgd.θ, Y[position])

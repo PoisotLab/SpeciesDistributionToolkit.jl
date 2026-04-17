@@ -16,12 +16,27 @@ mask!(layers, pol)
 
 model = SDM(PCATransform, SGD, X, y, C)
 hyperparameters!(classifier(model), :loss, :logloss)
-hyperparameters!(classifier(model), :λ, 0.1)
+hyperparameters!(classifier(model), :epochs, 5000)
+hyperparameters!(classifier(model), :λ, 0.05)
 hyperparameters!(classifier(model), :intercept, true)
-train!(model)
+@profview train!(model)
+
+ti, vi = holdout(model)
+Lt = zeros(Float64, 50)
+Lv = zeros(Float64, length(Lt))
+e = round.(Int64, LinRange(15, 6000, length(Lt)))
+for i in eachindex(Lv)
+    model = SDM(PCATransform, SGD, X, y, C)
+    hyperparameters!(classifier(model), :epochs, e[i])
+    hyperparameters!(classifier(model), :L1, true)
+    train!(model; training=ti)
+    Lv[i] = crossentropyloss(predict(model; threshold=false)[vi], labels(model)[vi])
+    Lt[i] = crossentropyloss(predict(model; threshold=false)[ti], labels(model)[ti])
+end
+
+scatter(e, Lt .- Lv, color=:black)
 
 @info classifier(model).β
-@info classifier(model).θ
 
 fi = [featureimportance(PartialDependence, model, v; threshold=false) for v in variables(model)]
 

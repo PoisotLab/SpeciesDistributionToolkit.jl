@@ -43,7 +43,7 @@ train!(model)
 # are zoomed in on the parts of the curve where the models are actually
 # evaluated.
 
-thresholds = LinRange(0.01, 0.99, 50)
+thresholds = LinRange(0.01, 0.99, 30)
 cv = [crossvalidate(model, montecarlo(model; n = 5); thr = t) for t in thresholds];
 
 #figure pr-sgd-figure

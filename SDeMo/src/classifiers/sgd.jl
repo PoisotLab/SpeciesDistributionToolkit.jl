@@ -149,3 +149,23 @@ function StatsAPI.predict(sgd::SGD, X::Matrix{T}) where {T <: Number}
     Z = (X .- sgd.μ) ./ sgd.σ
     return vec(link.(sgd.θ' * Z .+ sgd.β))
 end
+
+function Base.show(io::IO, sgd::SGD)
+    str_show = "Stoch. Gr. Desc. classifier"
+    if sgd.loss == :logloss
+        str_show *= " (log loss"
+    end
+    if sgd.loss == :hinge
+        str_show *= " (hinge loss"
+    end
+    if sgd.L1 & sgd.L2
+        str_show *= " + elasticnet)"
+    end
+    if sgd.L1 & !sgd.L2
+        str_show *= " + LASSO)"
+    end
+    if !sgd.L1 & sgd.L2
+        str_show *= " + ridge)"
+    end
+    return print(io, str_show)
+end

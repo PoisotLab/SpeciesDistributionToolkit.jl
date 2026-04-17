@@ -122,7 +122,7 @@ function train!(sgd::SGD, y::Vector{Bool}, X::Matrix{T}; kwargs...) where {T <: 
         ηₜ = 0.999^(epoch - 1) * sgd.η
         Random.shuffle!(positions)
         for position in positions
-            ∂β = gradient!(∂g, sgd.β, Z[:, position], sgd.θ, Y[position])
+            ∂β = gradient!(∂g, sgd.β, view(Z, :, position), sgd.θ, Y[position])
             regul!(∂r, sgd.θ, sgd.α)
             for i in eachindex(sgd.θ)
                 sgd.θ[i] -= ηₜ * (∂g[i] + sgd.λ * ∂r[i])

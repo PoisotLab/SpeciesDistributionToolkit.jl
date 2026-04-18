@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## `v1.11.0` - unreleased
 
 - **added** `SGD`, the stochastic gradient descent classifier
+- **improved** the memory use of training `DecisionTree` and `NaiveBayes` classifiers
 
 ## `v1.10.0` - 2026-04-05
 

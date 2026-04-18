@@ -165,7 +165,9 @@ current_figure() #hide
 # We will now grab a dataset from GBIF, which is a list of all observations of
 # _Turdus torquatus_ in Switzerland according to *eBird*. We will also grab a
 # second dataset to test the model, which is the same species and country but
-# uses *iNaturalist* data. Finally, we will get a representation of the 
+# uses *iNaturalist* data. Finally, we will get a representation of the species
+# according to the GBIF database, which will be useful to collect info about it
+# later on.
 
 records = GBIF.download("10.15468/dl.wye52h")
 test_records = GBIF.download("10.15468/dl.m6b3wg")

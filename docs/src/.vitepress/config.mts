@@ -197,6 +197,7 @@ export default defineConfig({
                                 { text: "Interpretability", link: "/manual/sdm/interpretability/" },
                                 { text: "Counterfactuals", link: "/manual/sdm/counterfactuals/" },
                                 { text: "Calibration", link: "/manual/sdm/calibration/" },
+                                { text: "Stochastic gradient descent", link: "/manual/sdm/sgd/" },
                                 { text: "Conformal", link: "/manual/sdm/conformal/" },
                             ]
                         },

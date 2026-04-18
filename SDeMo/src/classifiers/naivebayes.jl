@@ -40,7 +40,7 @@ function train!(
     return nbc
 end
 
-function StatsAPI.predict(nbc::NaiveBayes, x::Vector{T}) where {T <: Number}
+function StatsAPI.predict(nbc::NaiveBayes, x::Vector{T}) where {T <: Real}
     pᵢ₊ = zeros(length(x))
     pᵢ₋ = zeros(length(x))
     for i in eachindex(x)
@@ -53,8 +53,12 @@ function StatsAPI.predict(nbc::NaiveBayes, x::Vector{T}) where {T <: Number}
     return (p₊ * nbc.prior) / pₓ
 end
 
-function StatsAPI.predict(nbc::NaiveBayes, X::Matrix{T}) where {T <: Number}
-    return vec(mapslices(x -> predict(nbc, x), X; dims = 1))
+function StatsAPI.predict(nbc::NaiveBayes, X::Matrix{T}) where {T <: Real}
+    p = zeros(size(X, 2))
+    for i in eachindex(p)
+        p[i] = predict(nbc, X[:, i])
+    end
+    return p
 end
 
 @testitem "We can declare a NBC SDM" begin

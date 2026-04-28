@@ -40,7 +40,7 @@ function __copernify(str)
         "Built-up" => "BuiltUp-CoverFraction-layer",
         "Crops" => "Crops-CoverFraction-layer",
         "Grass" => "Grass-CoverFraction-layer",
-        "Moss and Lichen" => "MossLichen-CoverFraction-layer",
+        "Moss and lichen" => "MossLichen-CoverFraction-layer",
         "Permanent water" => "PermanentWater-CoverFraction-layer",
         "Seasonal water" => "SeasonalWater-CoverFraction-layer",
         "Shrubs" => "Shrub-CoverFraction-layer",

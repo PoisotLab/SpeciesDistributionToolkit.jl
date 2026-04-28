@@ -24,7 +24,7 @@ layers(::RasterData{Copernicus, LandCover}) = [
     "Built-up",
     "Crops",
     "Grass",
-    "Moss and lichen",
+    "Moss and Lichen",
     "Permanent water",
     "Seasonal water",
     "Shrubs",

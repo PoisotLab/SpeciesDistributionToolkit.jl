@@ -110,7 +110,7 @@ const _SDMPOLY_TYPES = Union{
 }
 
 function boundingbox(fc::T; kwargs...) where {T <: _SDMPOLY_TYPES}
-    return SimpleSDMPolygons.boundingbox(fc.geometry; kwargs...)
+    return SimpleSDMPolygons.boundingbox(fc; kwargs...)
 end
 
 function boundingbox(fc::SimpleSDMPolygons.FeatureCollection; kwargs...)

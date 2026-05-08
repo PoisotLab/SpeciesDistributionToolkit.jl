@@ -85,27 +85,13 @@ function change_inclusion!(inclusion, layer, polygon::P) where {P}
     chunk_size = max(1, length(grid) ÷ (10 * Threads.nthreads()))
     data_chunks = Base.Iterators.partition(grid, chunk_size)
 
-    coords = SimpleSDMPolygons.GI.coordinates(transformed_polygon.geometry)
 
     tasks = map(data_chunks) do chunk
         Threads.@spawn begin
             for position in chunk
                 coord = (E[position[2]], N[position[1]])
-                val = false
-                if polygon isa MultiPolygon
-                    inpoly = [
-                        [PolygonOps.inpolygon(coord, ci) for ci in c] for
-                        c in coords
-                    ]
-                else
-                    inpoly = [PolygonOps.inpolygon(coord, c) for c in coords]
-                end
-                val = if eltype(inpoly) <: Vector
-                    any(isone, vcat(inpoly...))
-                else
-                    any(isone, inpoly)
-                end
-                inclusion[position] = val
+                inpoly = SimpleSDMPolygons.AG.contains(transformed_polygon.geometry, SimpleSDMPolygons.AG.createpoint(coord))
+                inclusion[position] = inpoly
             end
         end
     end

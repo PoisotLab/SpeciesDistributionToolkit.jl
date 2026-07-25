@@ -82,21 +82,19 @@ function change_inclusion!(inclusion, layer, polygon::P) where {P}
     ))
 
     # Thread-safe structure
+    # (NOTE: threading has been removed for now, see Issue #594)
     chunk_size = max(1, length(grid) ÷ (10 * Threads.nthreads()))
     data_chunks = Base.Iterators.partition(grid, chunk_size)
 
 
-    tasks = map(data_chunks) do chunk
-        Threads.@spawn begin
-            for position in chunk
-                coord = (E[position[2]], N[position[1]])
-                inpoly = SimpleSDMPolygons.AG.contains(transformed_polygon.geometry, SimpleSDMPolygons.AG.createpoint(coord))
-                inclusion[position] = inpoly
-            end
+    for chunk in data_chunks 
+        for position in chunk
+            coord = (E[position[2]], N[position[1]])
+            inpoly = SimpleSDMPolygons.AG.contains(transformed_polygon.geometry, SimpleSDMPolygons.AG.createpoint(coord))
+            inclusion[position] = inpoly
         end
     end
 
-    inclusions_batched = fetch.(tasks)
     return inclusion
 end
 

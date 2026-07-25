@@ -7,8 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.9.3`
 
-- **fixed** an issue where threading in polygon masking was causing slow down by invokes
-GDAL many times
+- **fixed** an issue where threading in polygon masking was causing slow down by invoking GDAL many times #594
 
 ## `v1.9.2` 
 

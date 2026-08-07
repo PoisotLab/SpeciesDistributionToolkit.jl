@@ -67,7 +67,7 @@ P = interpolate(T; dest = T.crs, newsize = NS)
 
 C = trim(mask(P, aoi))
 
-# figure Full area
+#figure Full area
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, P; colormap = :batlowW, alpha = 0.5, colorrange = extrema(P))
@@ -104,7 +104,7 @@ current_figure() #hide
 # The next figure shows the original layer, as well as the coordinates of the
 # points from which its replacement values will be drawn.
 
-# figure Full area with rotation
+#figure Full area with rotation
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, P; colormap = :batlowW, alpha = 0.4)
@@ -295,7 +295,8 @@ cvc = crossvalidate(cnull, folds);
 
 ms = [mcc, ppv, npv, f1]
 CVM = permutedims([
-    m(c) for m in ms, c in [
+    m(c) for m in ms,
+    c in [
         cvm.training,
         cvm.validation,
         cvn.training,

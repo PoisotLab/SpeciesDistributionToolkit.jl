@@ -157,7 +157,9 @@ current_figure() #hide
 
 # ## Dealing with different values distributions
 
-# compare the distributions
+# In this section, we will compare the distributions of the values in the original layer (what was in the raw data) to the values we got in the shifted and roated layer. These are expected to differ for three reasons. First, the range of values (extrema) may not be the same. Second, the shape of the distribution may not be the same, even if we rescale values to have the same extrema. Finally, the spatial distribution of the values is different. Arguably, only this later difference is relevant, so we can go look for a way to align the distribution of values while retaining the spatial differences.
+
+# Before we do this, let's compare the value distributions we are currently dealing with.
 
 #figure Density of the two layers
 f = Figure()
@@ -184,8 +186,8 @@ axislegend(ax; position = :lt)
 ylims!(ax; low = 0)
 current_figure() #hide
 
-# Now, also ensure that although the spatial structure of this layer has
-# changed, it should have the same distribution of values as the original layer.
+# At this stage, we can ensure that although the spatial structure of this layer has
+# changed, it will have the same distribution of values as the original layer.
 # This can be done with the quantile transfer function:
 
 Q = quantiletransfer(M, X);

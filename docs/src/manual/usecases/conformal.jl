@@ -89,11 +89,14 @@ current_figure() #hide
 
 # ## Calibrating the conformal classifier
 
-# The first step is to train a conformal wrapper around our `model`, with an α value (risk) of 5%:
+# The first step is to train a conformal wrapper around our `model`, with an α
+# value (risk) of 5%:
 
 conformal = train!(Conformal(0.05), model)
 
-# This model uses the same interface for prediction as any other model, so we can call `predict` on a vector of layers. Note that in this case, we get four different outputs, corresponding to Boolean layers for all possible outcomes.
+# This model uses the same interface for prediction as any other model, so we
+# can call `predict` on a vector of layers. Note that in this case, we get four
+# different outputs, corresponding to Boolean layers for all possible outcomes.
 
 present, absent, unsure, undetermined = predict(conformal, Y)
 

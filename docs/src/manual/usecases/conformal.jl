@@ -89,16 +89,16 @@ current_figure() #hide
 
 # ## Calibrating the conformal classifier
 
-# train a conformal with alpha 0.05
+# The first step is to train a conformal wrapper around our `model`, with an α value (risk) of 5%:
 
 conformal = train!(Conformal(0.05), model)
 
-# apply conformal
+# This model uses the same interface for prediction as any other model, so we can call `predict` on a vector of layers. Note that in this case, we get four different outputs, corresponding to Boolean layers for all possible outcomes.
 
 present, absent, unsure, undetermined = predict(conformal, Y)
 
-# note that if we want to get a single outcome, for example only the unsure
-# predictions, we can pass it as a final argument there
+# Note that if we want to get a single outcome, for example only the unsure
+# predictions, we can pass it as a final argument to `predict` (this is not a keyword!):
 
 unsure = predict(conformal, Y, Set([true, false]))
 

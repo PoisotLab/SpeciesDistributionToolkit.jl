@@ -172,8 +172,8 @@ current_figure() #hide
 
 # When generated from a collection of occurrences, the tiles wil get a
 # `"__presences"` and `"__absences"` property, with the number of presences and
-# absences. Note that this also works with `AbstractSDM` models, as they can
-# supporting the occurrences interface.
+# absences. Note that this also works with `AbstractSDM` models, as they are
+# also supporting the occurrences interface.
 
 T = tessellate(records, r; tile = :hexagons, proj = proj)
 

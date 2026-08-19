@@ -67,7 +67,7 @@ P = interpolate(T; dest = T.crs, newsize = NS)
 
 C = trim(mask(P, aoi))
 
-# figure Full area
+#figure Full area
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, P; colormap = :batlowW, alpha = 0.5, colorrange = extrema(P))
@@ -104,7 +104,7 @@ current_figure() #hide
 # The next figure shows the original layer, as well as the coordinates of the
 # points from which its replacement values will be drawn.
 
-# figure Full area with rotation
+#figure Full area with rotation
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, P; colormap = :batlowW, alpha = 0.4)
@@ -157,7 +157,17 @@ current_figure() #hide
 
 # ## Dealing with different values distributions
 
-# compare the distributions
+# In this section, we will compare the distributions of the values in the
+# original layer (what was in the raw data) to the values we got in the shifted
+# and roated layer. These are expected to differ for three reasons. First, the
+# range of values (extrema) may not be the same. Second, the shape of the
+# distribution may not be the same, even if we rescale values to have the same
+# extrema. Finally, the spatial distribution of the values is different.
+# Arguably, only this later difference is relevant, so we can go look for a way
+# to align the distribution of values while retaining the spatial differences.
+
+# Before we do this, let's compare the value distributions we are currently
+# dealing with.
 
 #figure Density of the two layers
 f = Figure()
@@ -184,9 +194,9 @@ axislegend(ax; position = :lt)
 ylims!(ax; low = 0)
 current_figure() #hide
 
-# Now, also ensure that although the spatial structure of this layer has
-# changed, it should have the same distribution of values as the original layer.
-# This can be done with the quantile transfer function:
+# At this stage, we can ensure that although the spatial structure of this
+# layer has changed, it will have the same distribution of values as the
+# original layer. This can be done with the quantile transfer function:
 
 Q = quantiletransfer(M, X);
 
@@ -295,7 +305,8 @@ cvc = crossvalidate(cnull, folds);
 
 ms = [mcc, ppv, npv, f1]
 CVM = permutedims([
-    m(c) for m in ms, c in [
+    m(c) for m in ms,
+    c in [
         cvm.training,
         cvm.validation,
         cvn.training,

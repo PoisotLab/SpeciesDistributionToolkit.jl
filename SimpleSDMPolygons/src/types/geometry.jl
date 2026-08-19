@@ -196,3 +196,8 @@ end
 function _polygonize(geocollec::GJ.GeometryCollection)
   return FeatureCollection(_polygonize.(geocollec.geometries))
 end
+
+@testitem "We can polygonize a geometry collection" begin
+  # Bauchi region in Nigeria used to cause problems
+  bauchi = getpolygon(PolygonProvider(OpenStreetMap, Places); place="Bauchi")
+end

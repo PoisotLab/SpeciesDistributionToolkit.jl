@@ -152,35 +152,16 @@ current_figure() #hide
 # location for pseudo-absences, which then formally become background points.
 # This is what MaxEnt (for example) assumes.
 
-# For example, we can compare the output of the surface range envelope method with `background` set to `false`:
+# For example, we can compare the output of the surface range envelope method
+# with `background` set to `false`:
 
-#figure background-mask-with-pr-excluded
 sre_pa = pseudoabsencemask(SurfaceRangeEnvelope, presencelayer; background = false)
-heatmap(
-    layer;
-    colormap = :darkterrain,
-    axis = (; aspect = DataAspect()),
-    figure = (; size = (800, 500)),
-)
-heatmap!(sre_pa; colormap = cgrad([:transparent, :white]; alpha = 0.3))
-hidespines!(current_axis())
-hidedecorations!(current_axis())
-current_figure() #hide
+sum(sre_pa)
 
 # And the same method but with `background` set to `true`:
 
-#figure background-mask-with-pr-included
 sre_bg = pseudoabsencemask(SurfaceRangeEnvelope, presencelayer; background = true)
-heatmap(
-    layer;
-    colormap = :darkterrain,
-    axis = (; aspect = DataAspect()),
-    figure = (; size = (800, 500)),
-)
-heatmap!(sre_bg; colormap = cgrad([:transparent, :white]; alpha = 0.3))
-hidespines!(current_axis())
-hidedecorations!(current_axis())
-current_figure() #hide
+sum(sre_bg)
 
 # ## Related documentation
 

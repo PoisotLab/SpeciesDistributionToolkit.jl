@@ -146,6 +146,42 @@ hidespines!(current_axis())
 hidedecorations!(current_axis())
 current_figure() #hide
 
+# Note that the `pseudoabsencemask` function always accepts a `background`
+# argument, the default of which is `false`. When `background` is `true`, cells
+# with a documented presence _will_ be selected as part of the possible
+# location for pseudo-absences, which then formally become background points.
+# This is what MaxEnt (for example) assumes.
+
+# For example, we can compare the output of the surface range envelope method with `background` set to `false`:
+
+#figure background-mask-with-pr-excluded
+sre_pa = pseudoabsencemask(SurfaceRangeEnvelope, presencelayer; background = false)
+heatmap(
+    layer;
+    colormap = :darkterrain,
+    axis = (; aspect = DataAspect()),
+    figure = (; size = (800, 500)),
+)
+heatmap!(sre_pa; colormap = cgrad([:transparent, :white]; alpha = 0.3))
+hidespines!(current_axis())
+hidedecorations!(current_axis())
+current_figure() #hide
+
+# And the same method but with `background` set to `true`:
+
+#figure background-mask-with-pr-included
+sre_bg = pseudoabsencemask(SurfaceRangeEnvelope, presencelayer; background = true)
+heatmap(
+    layer;
+    colormap = :darkterrain,
+    axis = (; aspect = DataAspect()),
+    figure = (; size = (800, 500)),
+)
+heatmap!(sre_bg; colormap = cgrad([:transparent, :white]; alpha = 0.3))
+hidespines!(current_axis())
+hidedecorations!(current_axis())
+current_figure() #hide
+
 # ## Related documentation
 
 # ```@meta

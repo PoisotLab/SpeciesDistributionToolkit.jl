@@ -88,7 +88,7 @@ prd = predict(model, L; threshold = false)
 
 #figure bioclim-output
 f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
+ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, prd; colormap = :tempo, colorrange = (0, 1))
 lines!(ax, aoi; color = :grey20)
 hidedecorations!(ax)
@@ -144,7 +144,7 @@ brd = predict(bst, L; threshold = false)
 
 #figure boosted-map
 f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
+ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, brd; colormap = :tempo, colorrange = (0, 1))
 lines!(ax, aoi; color = :grey20)
 hidedecorations!(ax)
@@ -213,11 +213,11 @@ current_figure() #hide
 
 C = calibrate(bst)
 
-# This step uses the [plat99proba](@citet) scaling approach, where
-# the outputs from the model are regressed against the true class probabilities,
-# to attempt to bring the model prediction more in line with true probabilities
-# [niculescu-mizil2005obtaining](@cite). Internally, the package uses the fast
-# and robust algorithm of [li07not](@citet).
+# This step uses the [plat99proba](@citet) scaling approach, where the outputs
+# from the model are regressed against the true class probabilities, to attempt
+# to bring the model prediction more in line with true probabilities
+# [nicu05obtai](@cite). Internally, the package uses the fast and robust
+# algorithm of [li07not](@citet).
 
 # These parameters can be turned into a correction function:
 
@@ -267,7 +267,7 @@ current_figure() #hide
 
 #figure boosted-proba
 f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
+ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, calfunc.(brd); colormap = :tempo, colorrange = (0, 1))
 lines!(ax, aoi; color = :grey20)
 hidedecorations!(ax)

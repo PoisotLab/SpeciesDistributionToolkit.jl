@@ -6,7 +6,7 @@
 # to the predicted suitability.
 
 # Note that the generation of virtual species is its own domain of research
-# [meyn13usin](@cite), and this tutorial is only meant to show how the
+# [meyn13using](@cite), and this tutorial is only meant to show how the
 # functions in the package can be made to work together.
 
 using SpeciesDistributionToolkit
@@ -159,7 +159,7 @@ hidespines!(ax)
 current_figure() #hide
 
 # We can now transform these data into a partition of the contribution of each
-# species and location to the total beta-diversity [lege13bet](@cite):
+# species and location to the total beta-diversity [lege13beta](@cite):
 
 function LCBD(ranges::Vector{SDMLayer{Bool}}; transformation::Function = identity)
     Y = transformation(hcat(values.(ranges)...))

@@ -163,6 +163,11 @@ sum(sre_pa)
 sre_bg = pseudoabsencemask(SurfaceRangeEnvelope, presencelayer; background = true)
 sum(sre_bg)
 
+# We can check that the difference between the two corresponds to the number of
+# occupied cells in the presence layer:
+
+sum(presencelayer)
+
 # ## Related documentation
 
 # ```@meta

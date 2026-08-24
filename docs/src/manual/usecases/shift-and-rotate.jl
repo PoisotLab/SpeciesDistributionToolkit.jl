@@ -1,7 +1,7 @@
 # # Shift and rotate
 
 # In this tutorial, we will apply the "Shift and Rotate" technique
-# [ridder2024generating](@cite) to generate realistic maps of predictors to
+# [ridd24gener](@cite) to generate realistic maps of predictors to
 # provide a null sample for the performance of an SDM. We will also look at the
 # quantile mapping function, which ensures that the null sample has the exact
 # same distribution of values compared to the original data.

@@ -49,7 +49,7 @@ current_figure() #hide
 
 # Before building the boosting model, we need to construct a weak learner.
 
-# The BIOCLIM model [booth2014bioclim](@cite) is one of the first SDM that was
+# The BIOCLIM model [boot14biocl](@cite) is one of the first SDM that was
 # ever published. Because it is a climate envelope model (locations within the
 # extrema of environmental variables for observed presences are assumed
 # suitable, more or less), it does not usually give really good predictions.
@@ -59,7 +59,7 @@ current_figure() #hide
 # they learn from the data, they rarely excel at any single prediction.
 
 # The traditional lore is that AdaBoost should be used only with really weak
-# classifiers, but [wyner2017explaining](@citet) have convincing arguments in
+# classifiers, but [wyne17expla](@citet) have convincing arguments in
 # favor of treating it more like a random forest, by showing that it also works
 # with comparatively stronger learners. In keeping with this idea, we will train
 # a moderately deep tree as our base classifier.
@@ -213,11 +213,11 @@ current_figure() #hide
 
 C = calibrate(bst)
 
-# This step uses the [platt1999probabilistic](@citet) scaling approach, where
+# This step uses the [plat99proba](@citet) scaling approach, where
 # the outputs from the model are regressed against the true class probabilities,
 # to attempt to bring the model prediction more in line with true probabilities
 # [niculescu-mizil2005obtaining](@cite). Internally, the package uses the fast
-# and robust algorithm of [lin2007note](@citet).
+# and robust algorithm of [li07not](@citet).
 
 # These parameters can be turned into a correction function:
 
@@ -262,7 +262,7 @@ current_figure() #hide
 
 # Of course the calibration function can (like any other function) be applied to
 # a layer, so we can now use AdaBoost to estimate the probability of species
-# presence. [dormann2020calibration](@citet) has several strong arguments in
+# presence. [dorm20calib](@citet) has several strong arguments in
 # favor of this approach.
 
 #figure boosted-proba

@@ -1,8 +1,8 @@
 # # Integration with SpatialBoundaries
 
 # In this tutorial, we will use methods from `SpatialBoundaries`
-# [strydom2023spatialboundariesjl](@cite) to estimate boundaries for the
-# presence of the trees in the landscape.
+# [stry23spati](@cite) to estimate boundaries for the presence of the trees in
+# the landscape.
 
 using SpeciesDistributionToolkit
 using StatsBase

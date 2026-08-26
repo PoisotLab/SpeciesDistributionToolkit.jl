@@ -230,7 +230,7 @@ function SimpleSDMLayers.mask(
     coords = SimpleSDMPolygons.GI.coordinates(polygon.geometry)
     places = place(occ)
     for i in eachindex(elements(occ))
-        polygon[i] = __point_in(places[i], coords, typeof(polygon))
+        inclusion[i] = __point_in(places[i], coords, typeof(polygon))
     end
     return elements(occ)[findall(inclusion)]
 end
@@ -280,4 +280,11 @@ end
     @test layer[-73.8, 45.6] === nothing # Outside polygon
     @test layer[-73.6, 45.46] === nothing # Inside polygon and inside hole
     @test layer[-73.6, 45.6] !== nothing # Inside polygon and outside hole
+end
+
+@testitem "We can mask Occurrences with a Polygon" begin
+    POL = getpolygon(PolygonData(OpenStreetMap, Places); place = "Idaho")
+    occ = OccurrencesInterface.__demodata()
+    maskedocc = mask(occ, POL)
+    @test length(maskedocc) < length(elements(occ))
 end

@@ -265,3 +265,19 @@ SimpleSDMLayers.mask(
     @test typeof(L) <: SDMLayer
     @test count(L) <= Lc
 end
+
+@testitem "We can deal with polygons with holes correctly" begin
+    POL = getpolygon(PolygonData(OpenStreetMap, Places); place = "Montreal")
+    bbox = SimpleSDMPolygons.boundingbox(POL)
+    layer = SDMLayer(
+        ones(Bool, (100, 100));
+        x = (Float64(bbox.left), Float64(bbox.right)),
+        y = (Float64(bbox.bottom), Float64(bbox.top)),
+    )
+    # We have masked the polygon
+    @test count(layer) < 100*100
+    # Points with known inclusions
+    @test layer[-73.8, 45.6] === nothing # Outside polygon
+    @test layer[-73.6, 45.46] === nothing # Inside polygon and inside hole
+    @test layer[-73.6, 45.6] !== nothing # Inside polygon and outside hole
+end

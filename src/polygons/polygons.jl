@@ -274,6 +274,7 @@ end
         x = (Float64(bbox.left), Float64(bbox.right)),
         y = (Float64(bbox.bottom), Float64(bbox.top)),
     )
+    mask!(layer, POL) # Turns out, this line is important to the test
     # We have masked the polygon
     @test count(layer) < 100*100
     # Points with known inclusions

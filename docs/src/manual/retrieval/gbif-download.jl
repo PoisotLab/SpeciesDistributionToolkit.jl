@@ -45,6 +45,12 @@ hexbin!(
 lines!(ax, coast; color = :grey)
 current_figure() #hide
 
+# Instead of the DOI, it is advised to refer to the datasets by their unique
+# GBIF identifier. This has two advantages. First, we do not need to hit the
+# GBIF API to get the ID. Second, if the archive is already here, `download`
+# will not query it again, and directly open the local version (this can be
+# changed with the `force=true` keyword).
+
 # ## Related documentation
 
 # ```@meta

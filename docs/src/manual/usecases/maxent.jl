@@ -5,9 +5,9 @@ const SDT = SpeciesDistributionToolkit
 using PrettyTables
 using CairoMakie
 
-# In this vignette, we will use the Maxent model [phillips2006maximum](@cite) to
+# In this vignette, we will use the Maxent model [phil06maxim](@cite) to
 # predict the distribution of a bird species. Specifically, we rely on the more
-# modern maxnet version [phillips2017opening](@cite).
+# modern maxnet version [phil17openi](@cite).
 
 # ::: tip Model training
 #

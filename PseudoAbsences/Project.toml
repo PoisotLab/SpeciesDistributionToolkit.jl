@@ -1,6 +1,6 @@
 name = "PseudoAbsences"
 uuid = "68905d83-288d-4570-b05e-f7eb6299ad2c"
-version = "1.2.0"
+version = "1.3.0"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
 
 [deps]

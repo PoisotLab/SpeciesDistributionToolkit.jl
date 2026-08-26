@@ -5,11 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.9.4` - 2026-08-27
+
+- **fixed** the performance for masking
+
 ## `v1.9.3`
 
 - **fixed** an issue where threading in polygon masking was causing slow down by invoking GDAL many times #594
 
-## `v1.9.2` 
+## `v1.9.2`
 
 - **fixed** a bug for masking layers with polygons with holes
 
@@ -35,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **added** Makie extensions for bivariate and VSUP figures [#124]
 - **added** `clamp` and `clamp!` for layers
 
-## `v1.8.1` 
+## `v1.8.1`
 
 - **added** a `MakieExtension` for graticules
 - **changed** some internal projection operations to use the new `projection` function in SimpleSDMLayers [#557]

@@ -279,8 +279,8 @@ end
     @test count(layer) < 100*100
     # Points with known inclusions
     @test layer[-73.8, 45.6] === nothing # Outside polygon
-    @test layer[-73.6, 45.46] === nothing # Inside polygon and inside hole
-    @test layer[-73.6, 45.6] !== nothing # Inside polygon and outside hole
+    @test layer[-73.6, 45.46] !== nothing # Inside polygon and outside hole
+    @test layer[-73.6, 45.48] === nothing # Inside polygon and inside hole
 end
 
 @testitem "We can mask Occurrences with a Polygon" begin

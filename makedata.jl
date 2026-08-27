@@ -16,16 +16,17 @@ end
 # Training data at global scale for the nested SDM
 @info "Getting GBIF data"
 global_doi = "10.15468/dl.aefk4v"
-records = GBIF.download(global_doi, path=_data_folder);
+records = GBIF.download(global_doi; path = _data_folder);
 
 # Clip for Corsica
 @info "Getting ESRI polygon"
-region = getpolygon(PolygonData(ESRI, Places))["Country" => "France"]["Place name" => "Corse"]
+region =
+    getpolygon(PolygonData(ESRI, Places))["Country" => "France"]["Place name" => "Corse"]
 
 # CHELSA2 data
 @info "Getting CHELSA2 data"
 provider = RasterData(CHELSA2, BioClim)
-L = SDMLayer{Float32}[SDMLayer(provider; layer=l, SDT.boundingbox(region)...) for l in layers(provider)]
+L = Vector{SDMLayer{Float32}}(provider, region)
 mask!(L, region)
 
 # Generate training pseudo-absences

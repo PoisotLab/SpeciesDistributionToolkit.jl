@@ -35,10 +35,7 @@ variables!(model, ForwardSelection)
 # trained, as a series of layers:
 
 pol = getpolygon(PolygonData(OpenStreetMap, Places); place = "Corse")
-L = SDMLayer{Float32}[
-    SDMLayer(RasterData(CHELSA2, BioClim); SDT.boundingbox(pol)..., layer = i) for
-    i in 1:19
-]
+L = Vector{SDMLayer{Float32}}(RasterData(CHELSA2, BioClim), pol)
 mask!(L, pol)
 
 # ::: tip Reconciling a stack of layers
@@ -58,9 +55,9 @@ reconcile!(L)
 # with a dataset with variables on different scales, we will transform all the
 # variables so that they have a mean of 0 and unit variance.
 
-X = features(model)[variables(model),:]
-μ = vec(mean(X, dims=2))
-σ = vec(mean(X, dims=2))
+X = features(model)[variables(model), :]
+μ = vec(mean(X; dims = 2))
+σ = vec(mean(X; dims = 2))
 X = (X .- μ) ./ σ;
 
 # We can now fit a PCA on this matrix. The package supports [fitting directly
@@ -74,13 +71,13 @@ M = fit(PCA, X)
 # transformed using the same operations that gave us a training dataset with
 # mean of 0 and unit variance.
 
-K = (L[variables(model)] .- μ)./σ
+K = (L[variables(model)] .- μ) ./ σ
 
 # To measure the covariate shift, we are going to take the layers, project them
 # using the PCA we trained on the model training data; we will then attempt to
 # reconstruct the original data from their projection:
 
-Y = reconstruct(M,  predict(M, K));
+Y = reconstruct(M, predict(M, K));
 
 # Note that this is returned as a series of layers.
 
@@ -102,7 +99,7 @@ LinearAlgebra.norm(P)
 # We will now look at the distance between the actual value and the
 # reconstructed value, for each cell in the layer. 
 
-D = mosaic(x -> sqrt(sum(x.^2)), (Y .- K))
+D = mosaic(x -> sqrt(sum(x .^ 2)), (Y .- K))
 
 # ::: tip When should layers become matrices?
 #
@@ -119,9 +116,9 @@ D = mosaic(x -> sqrt(sum(x.^2)), (Y .- K))
 
 #figure Mapping of covariate shift across the different pixels
 f = Figure()
-ax = Axis(f[1,1]; aspect=DataAspect())
-hm = heatmap!(ax, D, colormap=Reverse(:navia))
-Colorbar(f[1,2], hm)
+ax = Axis(f[1, 1]; aspect = DataAspect())
+hm = heatmap!(ax, D; colormap = Reverse(:navia))
+Colorbar(f[1, 2], hm)
 current_figure() #hide
 
 # ## Related documentation

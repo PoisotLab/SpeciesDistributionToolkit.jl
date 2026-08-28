@@ -111,4 +111,3 @@ function Base.Vector{T}(
         for layer in _pool
     ]
 end
-

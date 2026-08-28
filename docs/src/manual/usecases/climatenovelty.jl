@@ -59,6 +59,11 @@ layers_code = findall(
 # annual precipitation, by specifying the layer and the spatial extent:
 
 historical = [SDMLayer(dataprovider; layer = l, spatial_extent...) for l in layers_code];
+
+# Note that we can use the `layers` argument to directly retrieve these layers
+# in a vector, which is a simpler notation:
+
+historical = Vector{SDMLayer}(dataprovider, POL; layers = layers_code)
 mask!(historical, POL)
 
 # Although we specificed a bounding box, the entire layer has been downloaded, so if we want
@@ -103,17 +108,16 @@ available_timeperiods = SimpleSDMDatasets.timespans(dataprovider, projection)
 # If we do not specify an argument, the data retrieved will be the ones for the
 # closest timespan. Getting the projected temperature is the *same* call as
 # before, except we now pass additional arguments -- the projection and the
-# timespan.
+# timespan. Again, note that we are using the shorthand `Vector{SDMLayer}`
+# constructor to avoid having to write a loop:
 
-projected = [
-    SDMLayer(
-        dataprovider,
-        projection; # [!code highlight]
-        layer = l,
-        spatial_extent...,
-        timespan = last(available_timeperiods), # [!code highlight]
-    ) for l in layers_code
-];
+projected = Vector{SDMLayer}(
+    dataprovider,
+    projection, # [!code highlight]
+    POL;
+    layers = layers_code,
+    timespan = last(available_timeperiods), # [!code highlight]
+)
 mask!(projected, POL)
 
 # ## Re-scaling the variables

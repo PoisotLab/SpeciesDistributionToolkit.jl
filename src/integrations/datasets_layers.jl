@@ -101,9 +101,15 @@ function Base.Vector{T}(
     args...;
     kwargs...,
 )::Vector{T} where {T <: SDMLayer, D <: RasterData}
+    if :layers in keys(kwargs)
+        _layers_pool = kwargs[:layers]
+        delete!(kwargs, :layers)
+    else
+        _layers_pool = layers(provider)
+    end
     return T[
         SDMLayer(provider, args...; kwargs..., layer = layer)
-        for layer in layers(provider)
+        for layer in _layers_pool
     ]
 end
 

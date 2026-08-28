@@ -36,7 +36,7 @@ records = Occurrences(mask(OccurrencesInterface.__demodata(), pol))
 
 # We will also grab some landcover variables over this area to train the model on:
 
-L = Vector{SDMLayer{Floa32}}(RasterData(EarthEnv, LandCover), pol)
+L = Vector{SDMLayer{Float32}}(RasterData(EarthEnv, LandCover), pol)
 mask!(L, pol)
 
 # ## Creating the tiles

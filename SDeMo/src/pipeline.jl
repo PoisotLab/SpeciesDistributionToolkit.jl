@@ -12,7 +12,9 @@ The three keyword arguments are:
     returning the one that is optimal
   - `optimality`: defaults to `mcc`, and is the function applied to the
     confusion matrix to evaluate which value of the threshold is the best
-  - `absences`: defaults to `false`, and indicates whether the (pseudo) absences are used to train the transformer; when using actual absences, this should be set to `true`
+  - `absences`: defaults to `false`, and indicates whether the (pseudo) absences
+    are used to train the transformer; when using actual absences, this should
+    be set to `true`
 
 Internally, this function trains the transformer, then projects the data, then
 trains the classifier. If `threshold` is ` true`, the threshold is then

@@ -51,7 +51,7 @@ end
   wild_collection = olm["wilderness_li2022.human.footprint"]
   wild_item = wild_collection.items["wilderness_li2022.human.footprint_20180101_20181231"]
   wild_assets = wild_item.assets["wilderness_li2022.human.footprint_p_1km_s"]
-  L = SDMLayer(wild_assets; SpeciesDistributionToolkit.boundingbox(aoi, padding=1.0)...)
+  L = SDMLayer(wild_assets; left=12.5, right=23.75, bottom=45.5, top=51.0)
   @test L isa SDMLayer
 end
 
@@ -61,6 +61,6 @@ end
   wild_collection = olm["wilderness_li2022.human.footprint"]
   wild_item = wild_collection.items["wilderness_li2022.human.footprint_20180101_20181231"]
   wild_assets = wild_item.assets["wilderness_li2022.human.footprint_p_1km_s"]
-  L = SDMLayer(wild_assets; store=false, SpeciesDistributionToolkit.boundingbox(aoi, padding=1.0)...)
+  L = SDMLayer(wild_assets; store=false, left=12.5, right=23.75, bottom=45.5, top=51.0)
   @test L isa SDMLayer
 end

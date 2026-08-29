@@ -74,7 +74,13 @@ the raster.
 
 All other `kwargs...` are passed to `explainmodel`.
 """
-function SDeMo.explainmodel(::Type{E}, model::M, variable::Int, layers::Vector{<:SDMLayer}; kwargs...) where {E <: LayerExplanation, M <: AbstractSDM}
+function SDeMo.explainmodel(
+    ::Type{E},
+    model::M,
+    variable::Int,
+    layers::Vector{<:SDMLayer};
+    kwargs...,
+) where {E <: LayerExplanation, M <: AbstractSDM}
     _, explanation = explainmodel(E, model, variable, values(layers[variable]); kwargs...)
     output = zeros(layers[variable], eltype(explanation))
     if explanation isa BitVector
@@ -84,7 +90,13 @@ function SDeMo.explainmodel(::Type{E}, model::M, variable::Int, layers::Vector{<
     return output
 end
 
-function SDeMo.explainmodel(::Type{ShapleyMC}, model::M, variable::Int, layers::Vector{<:SDMLayer}; kwargs...) where {M <: AbstractSDM}
+function SDeMo.explainmodel(
+    ::Type{ShapleyMC},
+    model::M,
+    variable::Int,
+    layers::Vector{<:SDMLayer};
+    kwargs...,
+) where {M <: AbstractSDM}
     _, explanation = explainmodel(ShapleyMC, model, variable, Matrix(layers); kwargs...)
     output = zeros(layers[variable], eltype(explanation))
     burnin!(output, explanation)
@@ -104,7 +116,12 @@ the raster.
 
 All other `kwargs...` are passed to `explainmodel`.
 """
-function SDeMo.explainmodel(::Type{E}, model::M, layers::Vector{<:SDMLayer}; kwargs...) where {E <: LayerExplanation, M <: AbstractSDM}
+function SDeMo.explainmodel(
+    ::Type{E},
+    model::M,
+    layers::Vector{<:SDMLayer};
+    kwargs...,
+) where {E <: LayerExplanation, M <: AbstractSDM}
     return [
         explainmodel(E, model, i, layers; kwargs...) for i in eachindex(layers)
     ]

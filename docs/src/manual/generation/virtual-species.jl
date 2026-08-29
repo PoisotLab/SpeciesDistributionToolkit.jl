@@ -30,7 +30,7 @@ extent = SpeciesDistributionToolkit.boundingbox(place)
 # floating point values.
 
 provider = RasterData(CHELSA2, BioClim)
-L = SDMLayer{Float32}[SDMLayer(provider; layer = l, extent...) for l in ["BIO1", "BIO12"]]
+L = Vector{SDMLayer{Float32}}(provider; layers = ["BIO1", "BIO12"], extent...)
 
 # We now mask the layers using the polygons we downloaded initially. At the same
 # time, we will transform their values so that they are all in the unit range.

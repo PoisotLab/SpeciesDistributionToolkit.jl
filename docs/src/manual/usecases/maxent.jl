@@ -39,7 +39,7 @@ landmass = clip(borders, bb)
 # area of interest:
 
 provider = RasterData(CHELSA2, BioClim)
-L = SDMLayer{Float32}[SDMLayer(provider; bb..., layer = i) for i in 1:19]
+L = Vector{SDMLayer{Float32}}(provider; bb...)
 mask!(L, aoi)
 
 # ## Pseudo-absences

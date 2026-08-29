@@ -36,9 +36,7 @@ records = Occurrences(mask(OccurrencesInterface.__demodata(), pol))
 
 # We will also grab some landcover variables over this area to train the model on:
 
-L = SDMLayer{Float32}[
-    SDMLayer(RasterData(EarthEnv, LandCover); bb..., layer = i) for i in 1:12
-]
+L = Vector{SDMLayer{Float32}}(RasterData(EarthEnv, LandCover), pol)
 mask!(L, pol)
 
 # ## Creating the tiles
@@ -52,7 +50,7 @@ T = tessellate(pol, 30.0; tile = :hexagons, pointy = true, proj = proj, densify 
 #figure Hexagonal tiling over the polygon
 f = Figure()
 ax = Axis(f[1, 1]; aspect = DataAspect())
-lines!(ax, pol, color=:grey30)
+lines!(ax, pol; color = :grey30)
 lines!(ax, T; color = :teal)
 hidespines!(ax)
 hidedecorations!(ax)
@@ -232,7 +230,7 @@ model = SDM(RawData, NaiveBayes, L, O)
 
 # We generate
 
-folds = spatialfold(model, S); 
+folds = spatialfold(model, S);
 
 # ::: tip Spatial fold function
 #
@@ -280,7 +278,6 @@ extrema(pr_by_fold ./ (pr_by_fold .+ ab_by_fold))
 # The splits we have used cover a large range of balances, which means that the
 # model will be both trained and evaluated on very different balances when
 # compared to the actual dataset.
-
 
 # ## Creating folds with balance
 

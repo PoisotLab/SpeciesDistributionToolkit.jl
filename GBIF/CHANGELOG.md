@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## `v1.2.1` - Unreleased
 
-- **changed** the compat entry for `CSV` from `0.1` to `0.1, 1`
+- **changed** the compat entry for `julia` from `1.8` to `1.10`
+- **changed** the compat entry for `HTTP` from `1` to `2`
+- **changed** the compat entry for `CSV` from `0.1` to `1`
 
 ## `v1.2.0`
 

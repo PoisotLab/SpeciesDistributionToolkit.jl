@@ -176,19 +176,12 @@ end
 _materialize(::Type{CSV.File}, records::CSV.File) = records
 
 function _materialize(::Type{OccurrencesInterface.Occurrences}, records::CSV.File)
-    @info "We are reaching the CSV.File materializer"
     return OccurrencesInterface.Occurrences(
         GBIF._materialize.(OccurrencesInterface.Occurrence, records),
     )
 end
 
-function _materialize(::Type{OccurrencesInterface.Occurrences}, records::CSV.FileRow)
-    @info "We are reaching the CSV.FileRow materializer"
-    @info records
-end
-
-function _materialize(::Type{OccurrencesInterface.Occurrence}, row::CSV.Row)
-    @info "We are reaching the CSV.Row materializer"
+function _materialize(::Type{OccurrencesInterface.Occurrence}, row::CSV.FileRow)
     date = missing
     if !ismissing(row.eventDate)
         try

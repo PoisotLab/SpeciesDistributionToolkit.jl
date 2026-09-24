@@ -15,7 +15,7 @@ ZipArchives = "49080126-0e18-4c2a-b176-c102e4b3760c"
 
 [compat]
 Base64 = "1"
-CSV = "0.10"
+CSV = "0.10, 1"
 HTTP = "1"
 JSON = "0.21, 1"
 OccurrencesInterface = "1"

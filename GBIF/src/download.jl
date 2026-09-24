@@ -41,7 +41,7 @@ Convert a GBIF occurrence archive into an object. This function is equivalent to
 argument is a type, which defaults to `Occurrences`. Currently, `CSV.File` is
 also supported, to read into a `DataFrame`.
 """
-function localarchive(path::AbstractString, T::Type=OccurrencesInterface.Occurrences)
+function localarchive(path::AbstractString, T::Type = OccurrencesInterface.Occurrences)
     csv = _csv_from_archive(path)
     records = GBIF._materialize(T, csv)
     return records
@@ -147,7 +147,11 @@ The second positional argument is a type, which defaults to `Occurrences`.
 Currently, `CSV.File` is also supported, to read into a `DataFrame`. Internally,
 this function uses `localarchive` to read the data.
 """
-function download(key::AbstractString, T::Type=OccurrencesInterface.Occurrences; path=nothing)
+function download(
+    key::AbstractString,
+    T::Type = OccurrencesInterface.Occurrences;
+    path = nothing,
+)
     # If this is a DOI, we start by getting the correct key
     if contains(key, "/dl.")
         key = GBIF.doi(key)["key"]
@@ -172,12 +176,19 @@ end
 _materialize(::Type{CSV.File}, records::CSV.File) = records
 
 function _materialize(::Type{OccurrencesInterface.Occurrences}, records::CSV.File)
+    @info "We are reaching the CSV.File materializer"
     return OccurrencesInterface.Occurrences(
-        GBIF._materialize.(OccurrencesInterface.Occurrence, records)
+        GBIF._materialize.(OccurrencesInterface.Occurrence, records),
     )
 end
 
+function _materialize(::Type{OccurrencesInterface.Occurrences}, records::CSV.FileRow)
+    @info "We are reaching the CSV.FileRow materializer"
+    @info records
+end
+
 function _materialize(::Type{OccurrencesInterface.Occurrence}, row::CSV.Row)
+    @info "We are reaching the CSV.Row materializer"
     date = missing
     if !ismissing(row.eventDate)
         try

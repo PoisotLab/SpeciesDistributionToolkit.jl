@@ -10,14 +10,8 @@ import CSV
 import OccurrencesInterface
 
 function safeget(endpoint)
-    body = UInt8[]
-    rsp = HTTP.open("GET", endpoint) do http
-        while !eof(http)
-            append!(body, readavailable(http))
-        end
-        return close(HTTP.Connections.getrawstream(http))
-    end
-    return rsp.status, String(body)
+    resp = HTTP.get(endpoint)
+    return resp.status, String(resp.body)
 end
 
 const gbifurl = "https://api.gbif.org/v1/"
@@ -92,6 +86,5 @@ include("occurrencesinterface.jl")
 
 # Read from a local archive and downloading from GBIF
 include("download.jl")
-
 
 end # module

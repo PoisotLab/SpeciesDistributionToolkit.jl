@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## `v1.10.0` - Unreleased
 
 - **removed** the compat entry for `HTTP` #621
+- **removed** the compat entry for `ZipArchives` #621
 - **increased** `julia` compat entry to 1
 
 ## `v1.9.5` - 2028-08-29

@@ -204,7 +204,6 @@ export default defineConfig({
                             text: "Data visualization",
                             collapsed: true,
                             items: [
-                                { text: "Layers", link: "/manual/dataviz/layers/" },
                                 { text: "Occurrences", link: "/manual/dataviz/occurrences/" },
                                 { text: "Polygons", link: "/manual/dataviz/polygons/" },
                                 { text: "Models", link: "/manual/dataviz/models/" },

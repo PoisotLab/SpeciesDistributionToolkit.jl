@@ -4,6 +4,7 @@ using Test
 global anyerrors = false
 
 tests = [
+    "download API" => "download.jl",
     "species retrieval" => "taxon.jl",
     "single occurrence functions" => "occurrence.jl",
     "multiple occurrences" => "occurrences.jl",
@@ -14,7 +15,6 @@ tests = [
     "tables interface" => "tables.jl",
     "edge cases" => "edgecases.jl",
     "occurrences interface" => "occurrencesinterface.jl",
-    "download API" => "download.jl",
 ]
 
 for test in tests

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.3.0` - Unreleased
+
+- **changed** the compat entry for `julia` from `1.8` to `1`
+- **changed** the compat entry for `HTTP` from `1` to `2`
+- **changed** the compat entry for `CSV` from `0.1` to `1`
+
 ## `v1.2.0`
 
 - **silenced** the info messages for wrongly formatted dates in `_materialize`
@@ -33,4 +39,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## `v1.0.0`
 
 - **added** support for `OccurrencesInterface` at version 1
-

@@ -1,4 +1,5 @@
 Manifest.toml
+GBIF/test/*.zip
 docs/src/manual/*.md
 !docs/src/manual/index.md
 docs/src/references.bib

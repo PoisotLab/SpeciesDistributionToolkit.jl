@@ -23,10 +23,8 @@ const _distance_function = Fauxcurrences._distancefunction
 
 import GeoJSON
 import PolygonOps
-import ZipArchives
 import Downloads
 import Statistics
-import HTTP
 
 # Functions to get latitudes/longitudes
 include("latlon.jl")

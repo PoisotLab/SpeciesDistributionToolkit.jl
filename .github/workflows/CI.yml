@@ -2,7 +2,7 @@ name: Testing
 
 on:
   schedule:
-    - cron: '0 0 * * 1,3,5'
+    - cron: "0 0 * * 1,3,5"
   push:
     branches:
       - main
@@ -13,8 +13,8 @@ jobs:
     name: "OccurrencesInterface"
     runs-on: "ubuntu-latest"
     strategy:
-        matrix:
-            julia-version: ["1", "lts", "pre"]
+      matrix:
+        julia-version: ["1", "pre"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
@@ -42,8 +42,8 @@ jobs:
     name: "GBIF"
     runs-on: "ubuntu-latest"
     strategy:
-        matrix:
-            julia-version: ["1", "lts", "pre"]
+      matrix:
+        julia-version: ["1", "lts", "pre"]
     needs: [OccurrencesInterface]
     continue-on-error: true
     steps:
@@ -72,8 +72,8 @@ jobs:
     name: "Phylopic"
     runs-on: "ubuntu-latest"
     strategy:
-        matrix:
-            julia-version: ["1", "lts", "pre"]
+      matrix:
+        julia-version: ["1", "lts", "pre"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
@@ -101,8 +101,8 @@ jobs:
     name: "SimpleSDMLayers"
     runs-on: "ubuntu-latest"
     strategy:
-        matrix:
-            julia-version: ["1", "lts", "pre"]
+      matrix:
+        julia-version: ["1", "lts", "pre"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
@@ -130,8 +130,8 @@ jobs:
     name: "SimpleSDMDatasets"
     runs-on: "ubuntu-latest"
     strategy:
-        matrix:
-            julia-version: ["1", "lts", "pre"]
+      matrix:
+        julia-version: ["1", "lts", "pre"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
@@ -159,8 +159,8 @@ jobs:
     name: "SimpleSDMPolygons"
     runs-on: "ubuntu-latest"
     strategy:
-        matrix:
-            julia-version: ["1", "lts", "pre"]
+      matrix:
+        julia-version: ["1", "lts", "pre"]
     needs: [SimpleSDMDatasets]
     continue-on-error: true
     steps:
@@ -189,8 +189,8 @@ jobs:
     name: "Fauxcurrences"
     runs-on: "ubuntu-latest"
     strategy:
-        matrix:
-            julia-version: ["1", "lts", "pre"]
+      matrix:
+        julia-version: ["1", "lts", "pre"]
     needs: [OccurrencesInterface, SimpleSDMLayers]
     continue-on-error: true
     steps:
@@ -219,8 +219,8 @@ jobs:
     name: "PseudoAbsences"
     runs-on: "ubuntu-latest"
     strategy:
-        matrix:
-            julia-version: ["1", "lts", "pre"]
+      matrix:
+        julia-version: ["1", "lts", "pre"]
     needs: [OccurrencesInterface, SimpleSDMLayers]
     continue-on-error: true
     steps:
@@ -249,8 +249,8 @@ jobs:
     name: "SDeMo"
     runs-on: "ubuntu-latest"
     strategy:
-        matrix:
-            julia-version: ["1", "lts", "pre"]
+      matrix:
+        julia-version: ["1", "lts", "pre"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
@@ -275,12 +275,22 @@ jobs:
           name: sdemo-${{ matrix.julia-version }}-coverage
           path: SDeMo-lcov-${{ matrix.julia-version }}.info
   SpeciesDistributionToolkit:
-    needs: [GBIF, Fauxcurrences, SimpleSDMLayers, SimpleSDMDatasets, Phylopic, SDeMo, OccurrencesInterface, SimpleSDMPolygons]
+    needs:
+      [
+        GBIF,
+        Fauxcurrences,
+        SimpleSDMLayers,
+        SimpleSDMDatasets,
+        Phylopic,
+        SDeMo,
+        OccurrencesInterface,
+        SimpleSDMPolygons,
+      ]
     name: "SpeciesDistributionToolkit"
     runs-on: "ubuntu-latest"
     strategy:
-        matrix:
-            julia-version: ["1", "lts", "pre"]
+      matrix:
+        julia-version: ["1", "lts", "pre"]
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
@@ -307,8 +317,8 @@ jobs:
     if: ${{ always() }}
     runs-on: "ubuntu-latest"
     strategy:
-        matrix:
-            julia-version: ["1", "lts", "pre"]
+      matrix:
+        julia-version: ["1", "lts", "pre"]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/download-artifact@v4

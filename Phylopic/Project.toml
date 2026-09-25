@@ -1,7 +1,7 @@
 name = "Phylopic"
 uuid = "c889285c-44aa-4473-b1e1-56f5d4e3ccf5"
 authors = ["Timothée Poisot <timothee.poisot@umontreal.ca>"]
-version = "1.0.5"
+version = "1.1.0"
 
 [deps]
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
@@ -21,8 +21,8 @@ MakieExtension = "Makie"
 [compat]
 Downloads = "1.6"
 FileIO = "1.17"
-HTTP = "1"
-JSON = "0.21, 1"
-Makie = "0.21 - 0.24"
+HTTP = "2"
+JSON = "1"
+Makie = "0.24"
 TestItems = "1"
-julia = "1.8"
+julia = "1"

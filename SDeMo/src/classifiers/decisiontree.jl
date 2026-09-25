@@ -49,7 +49,7 @@ function train!(dn::DecisionNode, X, y; kwargs...)
         found = false
         pl, pr = (0.0, 0.0)
         for vᵢ in axes(X, 1)
-            for xᵢ in unique(X[vᵢ, :])
+            for xᵢ in unique(view(X, vᵢ, :))
                 n_left = 0
                 s_left = 0
                 for k in axes(X, 2)

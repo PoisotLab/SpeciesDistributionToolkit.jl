@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.11.0` - unreleased
+
+- **added** `SGD`, the stochastic gradient descent classifier
+- **improved** the memory use of training `DecisionTree` and `NaiveBayes` classifiers
+
 ## `v1.10.0` - 2026-04-05
 
 - **added** the `explainmodel` function for model explanations

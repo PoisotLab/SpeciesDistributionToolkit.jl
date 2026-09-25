@@ -69,6 +69,10 @@ export maxnodes!, maxdepth!
 include("classifiers/maxent.jl")
 export Maxent
 
+# Stochastic Gradient Descent
+include("classifiers/sgd.jl")
+export SGD
+
 # Bagging and ensembles
 include("ensembles/bagging.jl")
 export Bagging, outofbag, bootstrap, bagfeatures!

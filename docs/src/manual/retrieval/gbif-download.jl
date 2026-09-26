@@ -5,7 +5,9 @@ using CairoMakie
 
 # The correct way to consume a large amount of GBIF data is to get them through
 # the download mechanism, in particular to ensure that the data contributors can
-# be cited. We will get a downloaded dataset by using its DOI:
+# be cited.
+
+# We can retrieve a downloaded dataset by using its DOI:
 
 occ = GBIF.download("10.15468/dl.ttnmj9")
 
@@ -16,8 +18,9 @@ occ = GBIF.download("10.15468/dl.ttnmj9")
 
 # ::: tip A note about format
 #
-# The `download` function accepts both the "Simple" and "Darwin Core" formats of
-# datasets.
+# The `download` function accepts both the "Simple" and "Darwin Core" formats
+# of datasets. In the case of "Darwin Core" downloads, only the occurrence
+# table is returned.
 #
 # :::
 
@@ -45,6 +48,18 @@ hexbin!(
 lines!(ax, coast; color = :grey)
 current_figure() #hide
 
+# Instead of the DOI, it is advised to refer to the datasets by their unique
+# GBIF identifier. This has two advantages. First, we do not need to hit the
+# GBIF API to get the ID. Second, if the archive is already here, `download`
+# will not query it again, and directly open the local version (this can be
+# changed with the `force=true` keyword).
+
+# It is possible to get the GBIF key (unique identifier) for a given GBIF DOI
+# by using the unexported `doi` function:
+
+dataset_info = GBIF.doi("10.15468/dl.ttnmj9")
+@info dataset_info["key"]
+
 # ## Related documentation
 
 # ```@meta
@@ -53,4 +68,5 @@ current_figure() #hide
 
 # ```@docs; canonical=false
 # GBIF.download
+# GBIF.doi
 # ```

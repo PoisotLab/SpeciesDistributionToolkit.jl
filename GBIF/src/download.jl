@@ -41,7 +41,7 @@ Convert a GBIF occurrence archive into an object. This function is equivalent to
 argument is a type, which defaults to `Occurrences`. Currently, `CSV.File` is
 also supported, to read into a `DataFrame`.
 """
-function localarchive(path::AbstractString, T::Type=OccurrencesInterface.Occurrences)
+function localarchive(path::AbstractString, T::Type = OccurrencesInterface.Occurrences)
     csv = _csv_from_archive(path)
     records = GBIF._materialize(T, csv)
     return records
@@ -130,7 +130,7 @@ function request(query::Pair...; notification::Bool = false)
 end
 
 """
-    download(key, ::Type; path=nothing)
+    download( key::AbstractString, T::Type = OccurrencesInterface.Occurrences; path = nothing, force::Bool = false,)
 
 Download the GBIF occurrence download archive for the given `key` (or DOI),
 extract and return the parsed records as `Occurrences`. The `key`
@@ -143,11 +143,22 @@ files will be downloaded. The default is the working directory. If the `path`
 does not exist, it will be created using `mkpath`. The intended use-case is to
 put the downloaded files in a git-ignored folder.
 
+The `force` keyword (defaults to `false`) will be used to force the download of
+the dataset. The intended usecase is that, if a dataset is already downloaded,
+it makes no sense to request it again. If `force=true`, the dataset will be
+downloaded again regardless of whether it is here (and the local archive will
+be overwritten).
+
 The second positional argument is a type, which defaults to `Occurrences`.
 Currently, `CSV.File` is also supported, to read into a `DataFrame`. Internally,
 this function uses `localarchive` to read the data.
 """
-function download(key::AbstractString, T::Type=OccurrencesInterface.Occurrences; path=nothing)
+function download(
+    key::AbstractString,
+    T::Type = OccurrencesInterface.Occurrences;
+    path = nothing,
+    force::Bool = false,
+)
     # If this is a DOI, we start by getting the correct key
     if contains(key, "/dl.")
         key = GBIF.doi(key)["key"]
@@ -158,6 +169,11 @@ function download(key::AbstractString, T::Type=OccurrencesInterface.Occurrences;
     archive = isnothing(path) ? "$(key).zip" : joinpath(path, "$(key).zip")
     if !ispath(dirname(archive))
         mkpath(dirname(archive))
+    end
+    if isfile(archive)
+        if !force
+            return GBIF.localarchive(archive, T)
+        end
     end
     request_url = GBIF.gbifurl * "occurrence/download/request/$(key)"
     dl_req = HTTP.get(request_url)
@@ -173,7 +189,7 @@ _materialize(::Type{CSV.File}, records::CSV.File) = records
 
 function _materialize(::Type{OccurrencesInterface.Occurrences}, records::CSV.File)
     return OccurrencesInterface.Occurrences(
-        GBIF._materialize.(OccurrencesInterface.Occurrence, records)
+        GBIF._materialize.(OccurrencesInterface.Occurrence, records),
     )
 end
 

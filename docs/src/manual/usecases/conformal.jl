@@ -18,14 +18,7 @@ spatial_extent = SpeciesDistributionToolkit.boundingbox(landmass)
 # We will train the model will all 19 BioClim variables from CHELSA2:
 
 provider = RasterData(CHELSA2, BioClim)
-L = SDMLayer{Float32}[
-    SDMLayer(
-        provider;
-        layer = x,
-        spatial_extent...,
-    ) for x in eachindex(layers(provider))
-];
-
+L = Vector{SDMLayer{Float32}}(provider, landmass)
 mask!(L, landmass)
 
 # We will generate pseudo-absences at random in a radius around each known

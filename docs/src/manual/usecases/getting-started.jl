@@ -104,13 +104,7 @@ layers(chelsa_bioclim)[1:5]
 # of interest (a polygon) as the second argument, so that the raster will only
 # be returned within the boundingbox of this geometry.
 
-L = SDMLayer{Float32}[
-    SDMLayer(
-        chelsa_bioclim,
-        aoi;
-        layer = v
-    ) for v in layers(chelsa_bioclim)
-];
+L = Vector{SDMLayer{Float32}}(chelsa_bioclim, aoi);
 
 # ::: info Accessing raster data
 #
@@ -246,7 +240,10 @@ background = sqrt.(pseudoabsencemask(DistanceToEvent, presencelayer))
 # twice as many pseudo-absences cells as we have presence cells in the presence
 # layer:
 
-bgpoints = backgroundpoints(nodata(background, x -> !(sqrt(4.) <= x <= sqrt(30.))), 2sum(presencelayer))
+bgpoints = backgroundpoints(
+    nodata(background, x -> !(sqrt(4.0) <= x <= sqrt(30.0))),
+    2sum(presencelayer),
+)
 
 # ::: info More on pseudo-absences
 #
@@ -338,12 +335,12 @@ isgeoreferenced(model)
 # default, the splits are _always_ balanced, so that the training and validation
 # data have the same prevalence of presences.
 
-folds = kfold(model; k=5)
+folds = kfold(model; k = 5)
 
 # We will perform variable selection by adding variables one at a time, but we
 # will constrain the model to start with BIO1. 
 
-variables!(model, ForwardSelection, folds; included=[1])
+variables!(model, ForwardSelection, folds; included = [1])
 
 # The call to `variables!` will modify the model in two significant ways: it
 # will select a subset of the variables, and then it will train the model using
@@ -495,15 +492,15 @@ current_figure() #hide
 
 vimp = [featureimportance(PartialDependence, model, v) for v in variables(model)]
 vimp ./= sum(vimp)
-vord = sortperm(vimp, rev=true)
+vord = sortperm(vimp; rev = true)
 Dict(zip(layers(chelsa_bioclim)[variables(model)], vimp))
 
 #figure variable-importance
 f = Figure()
-ax = Axis(f[1,1], ylabel="Relative feature importance")
-lines!(ax, 1:length(vimp), vimp[vord], color=:black, linestyle=:dash)
+ax = Axis(f[1, 1]; ylabel = "Relative feature importance")
+lines!(ax, 1:length(vimp), vimp[vord]; color = :black, linestyle = :dash)
 textlabel!(ax, 1:length(vimp), vimp[vord], layers(chelsa_bioclim)[variables(model)[vord]])
-ylims!(ax, low=0.0)
+ylims!(ax; low = 0.0)
 hidexdecorations!(ax)
 xlims!(ax, 0.5, length(variables(model)) + 0.5)
 current_figure() #hide
@@ -526,10 +523,14 @@ varnames = [
 
 #figure partial-response-figure
 f = Figure()
-ax = Axis(f[1, 1]; xlabel=varnames[1], ylabel="Model response")
-lines!(ax, explainmodel(PartialResponse, model, v1, 100; threshold=false)..., color=:black)
-vlines!(ax, features(model, v1)[findall(labels(model))], ymax=0.025, color=:grey70)
-vlines!(ax, features(model, v1)[findall(.!labels(model))], ymin=1-0.025, color=:red)
+ax = Axis(f[1, 1]; xlabel = varnames[1], ylabel = "Model response")
+lines!(
+    ax,
+    explainmodel(PartialResponse, model, v1, 100; threshold = false)...;
+    color = :black,
+)
+vlines!(ax, features(model, v1)[findall(labels(model))]; ymax = 0.025, color = :grey70)
+vlines!(ax, features(model, v1)[findall(.!labels(model))]; ymin = 1-0.025, color = :red)
 ylims!(ax, 0, 1)
 tightlimits!(ax)
 current_figure() #hide
@@ -542,12 +543,12 @@ current_figure() #hide
 
 #figure partial-two-most
 f = Figure()
-ax = Axis(f[1,1], xlabel=varnames[1], ylabel=varnames[2])
+ax = Axis(f[1, 1]; xlabel = varnames[1], ylabel = varnames[2])
 hm = heatmap!(ax,
-explainmodel(PartialResponse, model, (v1, v2), 25; threshold=false)...,
-colormap=Reverse(:batlowW), colorrange=(0, 1)
+    explainmodel(PartialResponse, model, (v1, v2), 25; threshold = false)...;
+    colormap = Reverse(:batlowW), colorrange = (0, 1),
 )
-Colorbar(f[1,2], hm, label="Model response")
+Colorbar(f[1, 2], hm; label = "Model response")
 current_figure() #hide
 
 # Note that these responses do not provide the full picture of why the model
@@ -557,8 +558,8 @@ current_figure() #hide
 
 #figure partial-response-figure
 f = Figure()
-ax = Axis(f[1, 1]; xlabel=varnames[1], ylabel="Model response")
-scatter!(ax, explainmodel(ShapleyMC, model, v1; threshold=false)..., color=:black)
+ax = Axis(f[1, 1]; xlabel = varnames[1], ylabel = "Model response")
+scatter!(ax, explainmodel(ShapleyMC, model, v1; threshold = false)...; color = :black)
 current_figure() #hide
 
 # Shapley values are a little more informative, because they account for the
@@ -577,7 +578,7 @@ P = predict(model, L; threshold = false)
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, P; colormap = Reverse(:batlowW), colorrange = (0, 1))
-Colorbar(f[1, 2], hm, label="Model score")
+Colorbar(f[1, 2], hm; label = "Model score")
 lines!(ax, aoi; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)
@@ -602,7 +603,7 @@ score_by_zone = byzone(
     x -> isempty(x) ? NaN : median(x),
     P,
     bioregions,
-    "Name"
+    "Name",
 )
 filter(v -> !isnan(v.second), score_by_zone)
 
@@ -617,7 +618,7 @@ f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 poly!(ax, aoi; color = :grey95)
 heatmap!(ax, R; colormap = [:transparent, :forestgreen])
-scatter!(ax, records, color=:black, markersize=4)
+scatter!(ax, records; color = :black, markersize = 4)
 lines!(ax, aoi; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)
@@ -636,7 +637,7 @@ partial1 = explainmodel(PartialResponse, model, v1, L; threshold = false)
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, partial1; colormap = Reverse(:batlowW), colorrange = (0, 1))
-Colorbar(f[1, 2], hm, label="Effect of $(layers(chelsa_bioclim)[v1])")
+Colorbar(f[1, 2], hm; label = "Effect of $(layers(chelsa_bioclim)[v1])")
 lines!(ax, aoi; color = :grey10)
 hidedecorations!(ax)
 hidespines!(ax)
@@ -662,7 +663,7 @@ col_lims = maximum(abs.(quantile(shapley1, [0.1, 0.9]))) .* (-1, 1)
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, shapley1; colormap = :managua, colorrange = col_lims)
-Colorbar(f[1, 2], hm, label="Effect of BIO$(v1)")
+Colorbar(f[1, 2], hm; label = "Effect of BIO$(v1)")
 lines!(ax, aoi; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)
@@ -696,7 +697,7 @@ n_col = length(colors)
 if n_var > n_col
     append!(colors, fill(colorant"#ececec", n_var - n_col))
 end
-palette = cgrad(colors[1:n_var], n_var, categorical=true)
+palette = cgrad(colors[1:n_var], n_var; categorical = true)
 ax = Axis(f[1, 1]; aspect = DataAspect())
 heatmap!(ax, keyvariable; colormap = palette)
 lines!(ax, aoi; color = :grey10)
@@ -725,14 +726,14 @@ train!(bootstrap)
 # All of these models have the same training data, but different training
 # instances. We can measure the balanced out-of-bag error on this model:
 
-outofbag(bootstrap) |> M -> 1 - balancedaccuracy(M) 
+outofbag(bootstrap) |> M -> 1 - balancedaccuracy(M)
 
 # More importantly for this use-case, the bootstrapped model can make
 # predictions using different information to aggregate the results of all
 # models. A good measure of uncertainty is, for example, to use the
 # inter-quartile range:
 
-uncertainty = predict(bootstrap, L; threshold=false, consensus=iqr)
+uncertainty = predict(bootstrap, L; threshold = false, consensus = iqr)
 
 # ::: info Conformal prediction
 #
@@ -753,7 +754,7 @@ uncertainty = predict(bootstrap, L; threshold=false, consensus=iqr)
 f = Figure(; size = (600, 300))
 ax = Axis(f[1, 1]; aspect = DataAspect())
 hm = heatmap!(ax, uncertainty; colormap = Reverse(:lipari))
-Colorbar(f[1, 2], hm, label="IQR")
+Colorbar(f[1, 2], hm; label = "IQR")
 lines!(ax, aoi; color = :black)
 hidedecorations!(ax)
 hidespines!(ax)

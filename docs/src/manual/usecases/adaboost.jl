@@ -14,13 +14,7 @@ using CairoMakie
 
 aoi = getpolygon(PolygonData(OpenStreetMap, Places); place = "Corse")
 provider = RasterData(CHELSA2, BioClim)
-L = SDMLayer{Float32}[
-    SDMLayer(
-        provider;
-        layer = x,
-        SDT.boundingbox(aoi)...,
-    ) for x in 1:19
-];
+L = Vector{SDMLayer{Float32}}(provider, aoi)
 mask!(L, aoi)
 
 # ::: info Fundamental of model use

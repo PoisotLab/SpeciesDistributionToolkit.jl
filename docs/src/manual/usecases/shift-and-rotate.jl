@@ -39,7 +39,7 @@ landmass = clip(land, extent)
 # mask them _to the landmass_ we have selected before.
 
 provider = RasterData(CHELSA2, BioClim)
-L = SDMLayer{Float32}[SDMLayer(provider; extent..., layer = i) for i in 1:19]
+L = Vector{SDMLayer{Float32}}(provider, landmass)
 mask!(L, landmass)
 
 # Note that are not masking the layer to the _area of interest_ (Belize, the

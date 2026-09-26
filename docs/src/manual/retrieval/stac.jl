@@ -10,13 +10,23 @@ using SpeciesDistributionToolkit
 using CairoMakie
 using STAC # [!code highlight]
 
-# The support is currently very bare-bones, and can return a layer when given an
-# asset. To demonstrate, we will get the time to the nearest city (in minutes)
-# from the BON in a Box STAC catalogue:
+# The support is currently very bare-bones, and can return a layer when given
+# an asset. To demonstrate, we will get data from the
+# [OpenLandMap](https://stac.openlandmap.org/) STAC catalogue. The OLM catalog
+# contains quite a lot of information, and for this analysis we will grab a
+# layer about human pressure:
 
-biab = STAC.Catalog("https://stac.geobon.org/")
-access = biab["accessibility_to_cities"].items["accessibility"].assets["data"]
-L = SDMLayer(access; left = -76.0, right = -72.0, bottom = 45.1, top = 47.5)
+countries = getpolygon(PolygonData(NaturalEarth, Countries); resolution=10)
+aoi = add(
+  countries["Ireland"],
+  countries["United Kingdom"]
+)
+
+olm = STAC.Catalog("https://s3.eu-central-1.wasabisys.com/stac/openlandmap/catalog.json")
+wild_collection = olm["wilderness_li2022.human.footprint"]
+wild_item = wild_collection.items["wilderness_li2022.human.footprint_20180101_20181231"]
+wild_assets = wild_item.assets["wilderness_li2022.human.footprint_p_1km_s"]
+L = SDMLayer(wild_assets; SpeciesDistributionToolkit.boundingbox(aoi, padding=1.0)...)
 
 # Note that the first argument is a STAC asset, but the usual keywords arguments
 # to crop a layer apply here. The ability to crop is important, because the STAC
@@ -29,5 +39,8 @@ L = SDMLayer(access; left = -76.0, right = -72.0, bottom = 45.1, top = 47.5)
 # We can visualize the resulting layer:
 
 #figure ghmts
-heatmap(L; colormap = :tempo)
+f = Figure()
+ax = Axis(f[1, 1], aspect=DataAspect())
+heatmap!(ax, L; colormap=:tempo)
+lines!(ax, aoi, color=:black)
 current_figure() #hide

@@ -1,8 +1,44 @@
+function __point_in(pt, mpl, ::Type{MultiPolygon})
+    for pl in mpl
+        if __point_in(pt, pl, Polygon)
+            return true
+        end
+    end
+    return false
+end
+
+function __point_in(pt, pl, ::Type{Polygon})
+    # We check that the point is in the first entry of the geometry
+    is_in = isone(PolygonOps.inpolygon(pt, first(pl)))
+    if !is_in
+        # If the point is not in the polygon, it's fine, we return the answer
+        return false
+    else
+        # If the point is in the polygon, we need to check the potential holes
+        if isone(length(pl))
+            # If there is only one geometry entry, we can return this directly
+            return is_in
+        else
+            # Otherwise, the polygon has holes, so we need to loop through them
+            for i in 2:length(pl)
+                if isone(PolygonOps.inpolygon(pt, pl[i]))
+                    # If there is a match we know the point is not
+                    # in the polygon and we return early
+                    return false
+                end
+            end
+            # If the point is not in any holes, we can return the output
+            return is_in
+        end
+    end
+end
+
 """
     trim(layer::SDMLayer)
 
-Returns a layer in which there are no empty rows/columns around the valued cells.
-This returns a *new* object. This will only remove the *terminal* empty rows/columns, so that gaps *inside* the layer are not affected.
+Returns a layer in which there are no empty rows/columns around the valued
+cells. This returns a *new* object. This will only remove the *terminal* empty
+rows/columns, so that gaps *inside* the layer are not affected.
 """
 function trim(layer::SDMLayer)
     nx = vec(sum(layer.indices; dims = 1))
@@ -24,10 +60,11 @@ function trim(layer::SDMLayer)
 end
 
 """
-    trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT}
+     trim(layer::SDMLayer, feature::T) where {T <: GeoJSON.GeoJSONT}
 
-Return a trimmed version of a layer, according to the feature defined a
-`GeoJSON` object. The object is first masked according to the `feature`, and then trimmed.
+Return a trimmed version of a layer, according to the feature defined as a
+`GeoJSON` object. The object is first masked according to the `feature`, and
+then trimmed.
 """
 trim(
     layer::SDMLayer,
@@ -61,7 +98,7 @@ function _match_crs(layer, polygon)
     return _reproject(xytrans, polygon)
 end
 
-function change_inclusion!(inclusion, layer, polygon::P) where {P}
+function include!(inclusion, layer, polygon::P) where {P}
     transformed_polygon = _match_crs(layer, polygon)
     E, N = eastings(layer), northings(layer)
 
@@ -81,41 +118,39 @@ function change_inclusion!(inclusion, layer, polygon::P) where {P}
         valid_eastings[1]:valid_eastings[end],
     ))
 
-    # Thread-safe structure
-    # (NOTE: threading has been removed for now, see Issue #594)
+    # This is threaded again because I'm the G.O.A.T.
     chunk_size = max(1, length(grid) ÷ (10 * Threads.nthreads()))
     data_chunks = Base.Iterators.partition(grid, chunk_size)
+    coords = SimpleSDMPolygons.GI.coordinates(transformed_polygon.geometry)
 
-
-    for chunk in data_chunks 
-        for position in chunk
-            coord = (E[position[2]], N[position[1]])
-            inpoly = SimpleSDMPolygons.AG.contains(transformed_polygon.geometry, SimpleSDMPolygons.AG.createpoint(coord))
-            inclusion[position] = inpoly
+    tasks = map(data_chunks) do chunk
+        Threads.@spawn begin
+            for position in chunk
+                coord = (E[position[2]], N[position[1]])
+                val = __point_in(coord, coords, typeof(polygon))
+                inclusion[position] = val
+            end
         end
     end
+
+    # We get the tasks that are running in parallel
+    fetch.(tasks)
 
     return inclusion
 end
 
-_get_inclusion_from_polygon!(
-    inclusion,
-    layer,
-    poly::T,
-) where {T <: Union{Polygon, MultiPolygon}} =
-    change_inclusion!(inclusion, layer, poly)
-
 """
     SimpleSDMLayers.mask!(layer::SDMLayer, poly::T) where T<:Union{Polygon,MultiPolygon}
 
-Turns off all the cells outside the polygon (or within holes in the polygon). This modifies the object.
+Turns off all the cells outside the polygon (or within holes in the polygon).
+This modifies the object.
 """
 function SimpleSDMLayers.mask!(
     layer::SDMLayer,
     poly::T,
 ) where {T <: Union{Polygon, MultiPolygon}}
     inclusion = zeros(eltype(layer.indices), size(layer))
-    _get_inclusion_from_polygon!(inclusion, layer, poly)
+    include!(inclusion, layer, poly)
     layer.indices .&= inclusion
     return layer
 end
@@ -125,7 +160,7 @@ function SimpleSDMLayers.mask!(
     poly::T,
 ) where {T <: Union{Polygon, MultiPolygon}}
     inclusion = .!reduce(.|, [l.indices for l in layers])
-    _get_inclusion_from_polygon!(inclusion, first(layers), poly)
+    include!(inclusion, first(layers), poly)
     for layer in layers
         layer.indices .&= inclusion
     end
@@ -183,7 +218,7 @@ SimpleSDMLayers.mask(
 end
 
 """
-    SimpleSDMLayers.mask(occ::T, poly::P) where {T <: AbstractOccurrenceCollection, P<:Union{Polygon,MultiPolygon}}
+SimpleSDMLayers.mask(occ::T, poly::P) where {T <: AbstractOccurrenceCollection, P<:Union{Polygon,MultiPolygon}}
 
 Returns a copy of the occurrences that are within the polygon.
 """
@@ -195,21 +230,7 @@ function SimpleSDMLayers.mask(
     coords = SimpleSDMPolygons.GI.coordinates(polygon.geometry)
     places = place(occ)
     for i in eachindex(elements(occ))
-        val = false
-        if polygon isa MultiPolygon
-            inpoly = [
-                [PolygonOps.inpolygon(places[i], ci) for ci in c] for
-                c in coords
-            ]
-        else
-            inpoly = [PolygonOps.inpolygon(places[i], c) for c in coords]
-        end
-        val = if eltype(inpoly) <: Vector
-            any(isone, vcat(inpoly...))
-        else
-            any(isone, inpoly)
-        end
-        inclusion[i] = val
+        inclusion[i] = __point_in(places[i], coords, typeof(polygon))
     end
     return elements(occ)[findall(inclusion)]
 end
@@ -238,12 +259,33 @@ SimpleSDMLayers.mask(
 
 @testitem "We can mask with a polygon (multi-threaded)" begin
     POL = getpolygon(PolygonData(OpenStreetMap, Places); place = "Switzerland")
-    L = SDMLayer(
-        RasterData(CHELSA1, MinimumTemperature);
-        SpeciesDistributionToolkit.boundingbox(POL; padding = 1.0)...,
-    )
+    L = SDMLayer(RasterData(CHELSA1, MinimumTemperature), POL)
     Lc = count(L)
     mask!(L, POL)
     @test typeof(L) <: SDMLayer
     @test count(L) <= Lc
+end
+
+@testitem "We can deal with polygons with holes correctly" begin
+    POL = getpolygon(PolygonData(OpenStreetMap, Places); place = "Montreal")
+    bbox = SimpleSDMPolygons.boundingbox(POL)
+    layer = SDMLayer(
+        ones(Bool, (100, 100));
+        x = (Float64(bbox.left), Float64(bbox.right)),
+        y = (Float64(bbox.bottom), Float64(bbox.top)),
+    )
+    mask!(layer, POL) # Turns out, this line is important to the test
+    # We have masked the polygon
+    @test count(layer) < 100*100
+    # Points with known inclusions
+    @test layer[-73.8, 45.6] === nothing # Outside polygon
+    @test layer[-73.6, 45.46] !== nothing # Inside polygon and outside hole
+    @test layer[-73.6, 45.48] === nothing # Inside polygon and inside hole
+end
+
+@testitem "We can mask Occurrences with a Polygon" begin
+    POL = getpolygon(PolygonData(OpenStreetMap, Places); place = "Idaho")
+    occ = OccurrencesInterface.__demodata()
+    maskedocc = mask(occ, POL)
+    @test length(maskedocc) < length(elements(occ))
 end

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## `v1.2.1` - 2026-08-26
 
 - **added** a `force=false` keyword to `download` to read a local archive if already there #606
+- **improved** the documentation for GBIF local downloads and DOI metadata
 
 ## `v1.2.0`
 

@@ -49,7 +49,11 @@ Read a layer as a `SDMLayer` from a `RasterData` and a source of keywords, but
 limited to the boundingbox of a given geometry. The allowed keywords are listed
 for each `RasterData`.
 """
-function SimpleSDMLayers.SDMLayer(data::R, geom::G; kwargs...) where {R <: RasterData, G <: SimpleSDMPolygons.AbstractGeometry}
+function SimpleSDMLayers.SDMLayer(
+    data::R,
+    geom::G;
+    kwargs...,
+) where {R <: RasterData, G <: SimpleSDMPolygons.AbstractGeometry}
     return SimpleSDMLayers.SDMLayer(data; boundingbox(geom)..., kwargs...)
 end
 
@@ -60,10 +64,14 @@ Read a future projection layer as a `SDMLayer` from a `RasterData` and a source
 of keywords, but limited to the boundingbox of a given geometry. The allowed
 keywords are listed for each `RasterData`.
 """
-function SimpleSDMLayers.SDMLayer(data::R, future::F, geom::G; kwargs...) where {R <: RasterData, G <: SimpleSDMPolygons.AbstractGeometry, F <: Projection}
+function SimpleSDMLayers.SDMLayer(
+    data::R,
+    future::F,
+    geom::G;
+    kwargs...,
+) where {R <: RasterData, G <: SimpleSDMPolygons.AbstractGeometry, F <: Projection}
     return SimpleSDMLayers.SDMLayer(data, future; boundingbox(geom)..., kwargs...)
 end
-
 
 """
     _boundingbox_out_of_kwargs(kwargs)
@@ -86,4 +94,20 @@ function _boundingbox_out_of_kwargs(kwargs)
     end
     return NamedTuple{Tuple(_bbox_keys)}(_bbox_vals),
     NamedTuple{Tuple(_args_keys)}(_args_vals)
+end
+
+function Base.Vector{T}(
+    provider::D,
+    args...;
+    kwargs...,
+)::Vector{T} where {T <: SDMLayer, D <: RasterData}
+    _pool = layers(provider)
+    if :layers in keys(kwargs)
+        _pool = kwargs[:layers]
+        kwargs = filter(p -> p.first != :layers, kwargs)
+    end
+    return T[
+        SDMLayer(provider, args...; kwargs..., layer = layer)
+        for layer in _pool
+    ]
 end

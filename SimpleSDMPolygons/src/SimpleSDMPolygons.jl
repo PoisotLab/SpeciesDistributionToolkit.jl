@@ -1,8 +1,8 @@
 module SimpleSDMPolygons
 
 const _data_storage_folders = first([
-    Base.DEPOT_PATH...,
-    homedir(),
+  Base.DEPOT_PATH...,
+  homedir(),
 ])
 
 const _POLYGON_PATH = get(ENV, "SDMLAYERS_PATH", joinpath(_data_storage_folders, "SimpleSDMPolygons"))
@@ -67,8 +67,12 @@ include(joinpath("operations", "clip.jl"))
 include(joinpath("operations", "intersect.jl"))
 export add, subtract, intersect, invert, clip
 
-# Utility function
+# Utility function to download a polygon
 getpolygon(pd::T, args...; kwargs...) where {T<:PolygonData} = SimpleSDMDatasets.downloader(pd, args...; kwargs...)
 export getpolygon
+
+# Utility function to read GeoJSON
+geojson(f) = SimpleSDMPolygons._polygonize(GJ.read(f))
+export geojson
 
 end # module PolygonInterface

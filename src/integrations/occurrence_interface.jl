@@ -38,7 +38,10 @@ function Base.getindex(layer::SDMLayer, occ::T) where {T <: AbstractOccurrenceCo
     )
 end
 
-function Base.getindex(layer::Vector{<:SDMLayer}, occ::T) where {T <: AbstractOccurrenceCollection}
+function Base.getindex(
+    layer::Vector{<:SDMLayer},
+    occ::T,
+) where {T <: AbstractOccurrenceCollection}
     return permutedims(hcat([l[occ] for l in layer]...))
 end
 
@@ -57,7 +60,7 @@ end
 function SimpleSDMLayers.mask(
     layer::SDMLayer,
     occ::T,
-    f=presences
+    f = presences,
 ) where {T <: AbstractOccurrenceCollection}
     out = zeros(layer, Bool)
     for record in f(occ)
@@ -101,7 +104,7 @@ function OccurrencesInterface.Occurrences(
 )
     # Check layer compatibility
     @assert SimpleSDMLayers._layers_are_compatible([L₊, L₋])
-    
+
     A₊ = nodata(L₊, false)
 
     if length(unique(L₋)) == 2
@@ -115,5 +118,5 @@ function OccurrencesInterface.Occurrences(
     A₊.grid[findall(A₋.indices)] .= false
     A₊.indices[findall(A₋.indices)] .= true
 
-    return Occurrences(A₊; entity=entity)
+    return Occurrences(A₊; entity = entity)
 end

@@ -26,14 +26,7 @@ spatialextent = SDT.boundingbox(pol; padding = 0.1)
 # We will get a series of layers here for illustrations:
 
 provider = RasterData(CHELSA2, BioClim)
-L = SDMLayer{Float32}[
-    SDMLayer(
-        provider;
-        layer = i,
-        spatialextent...,
-    ) for i in layers(provider)
-]
-
+L = Vector{SDMLayer{Float32}}(provider, pol)
 mask!(L, pol)
 
 # ## Bivariate

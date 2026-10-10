@@ -21,7 +21,7 @@ MakieExtension = "Makie"
 [compat]
 Downloads = "1.6"
 FileIO = "1.17"
-HTTP = "1"
+HTTP = "1, 2"
 JSON = "0.21, 1"
 Makie = "0.21 - 0.24"
 TestItems = "1"

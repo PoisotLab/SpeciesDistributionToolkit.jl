@@ -30,7 +30,7 @@ This output can be passed to `DataFrame` if the package is loaded by the user.
 """
 function _csv_from_archive(path::AbstractString)
     content = _io_from_archive(path)
-    return CSV.File(content; delim = '\t')
+    return CSV.File(content; delim=('\t'))
 end
 
 """
@@ -103,7 +103,7 @@ function _predicate(query::Pair...)
     query = (query..., "format" => "simpleCsv")
     querystring = pairs_to_querystring(query...)
     predicate_url = GBIF.gbifurl * "occurrence/download/request/predicate"
-    pre_s_req = HTTP.get(predicate_url; query = querystring, headers = GBIF.apiauth())
+    pre_s_req = HTTP.get(predicate_url; query=querystring, headers=GBIF.apiauth())
     if pre_s_req.status == 200
         return JSON.parse(String(pre_s_req.body))
     end
@@ -114,7 +114,7 @@ end
 
 Prepares a request for a download through the GBIF API
 """
-function request(query::Pair...; notification::Bool = false)
+function request(query::Pair...; notification::Bool=false)
     # Get the predicates
     predicates = GBIF._predicate(query...)
     if notification
@@ -124,7 +124,7 @@ function request(query::Pair...; notification::Bool = false)
     # Make the request
     request_url = GBIF.gbifurl * "occurrence/download/request"
     @info request_url
-    request_resp = HTTP.post(request_url; body = predicates, headers = GBIF.apiauth())
+    request_resp = HTTP.post(request_url; body=predicates, headers=GBIF.apiauth())
     @info request_resp
     return nothing
 end
@@ -146,8 +146,11 @@ put the downloaded files in a git-ignored folder.
 The second positional argument is a type, which defaults to `Occurrences`.
 Currently, `CSV.File` is also supported, to read into a `DataFrame`. Internally,
 this function uses `localarchive` to read the data.
+
+The `force` argument (default to `false`) can be used to re-download the
+dataset, rather than reading it from the disk directly.
 """
-function download(key::AbstractString, T::Type=OccurrencesInterface.Occurrences; path=nothing)
+function download(key::AbstractString, T::Type=OccurrencesInterface.Occurrences; path=nothing, force::Bool=false)
     # If this is a DOI, we start by getting the correct key
     if contains(key, "/dl.")
         key = GBIF.doi(key)["key"]
@@ -159,14 +162,18 @@ function download(key::AbstractString, T::Type=OccurrencesInterface.Occurrences;
     if !ispath(dirname(archive))
         mkpath(dirname(archive))
     end
-    request_url = GBIF.gbifurl * "occurrence/download/request/$(key)"
-    dl_req = HTTP.get(request_url)
-    if dl_req.status == 200
-        open(archive, "w") do f
-            return write(f, dl_req.body)
+    # Now we look at whether the file already exists. If it does not exist or if
+    # we have forced the download, we will re-download the dataset
+    if (!isfile(archive))|(!force)
+        request_url = GBIF.gbifurl * "occurrence/download/request/$(key)"
+        dl_req = HTTP.get(request_url)
+        if dl_req.status == 200
+            open(archive, "w") do f
+                return write(f, dl_req.body)
+            end
         end
-        return GBIF.localarchive(archive, T)
     end
+    return GBIF.localarchive(archive, T)
 end
 
 _materialize(::Type{CSV.File}, records::CSV.File) = records
@@ -199,22 +206,22 @@ function _materialize(::Type{OccurrencesInterface.Occurrence}, row::CSV.Row)
         "Unknown taxon"
     end
     return OccurrencesInterface.Occurrence(;
-        presence = row.occurrenceStatus == "PRESENT",
-        what = whatis,
-        when = date,
-        where = place,
+        presence=row.occurrenceStatus in ["PRESENT", "DETECTED"],
+        what=whatis,
+        when=date,
+        where=place,
     )
 end
 
 function mydownloads(;
-    preparing = true,
-    running = true,
-    succeeded = true,
-    cancelled = true,
-    killed = true,
-    failed = true,
-    suspended = true,
-    erased = true,
+    preparing=true,
+    running=true,
+    succeeded=true,
+    cancelled=true,
+    killed=true,
+    failed=true,
+    suspended=true,
+    erased=true,
 )
     statuses = String[]
     preparing && push!(statuses, "PREPARING")
@@ -229,8 +236,8 @@ function mydownloads(;
     request_url = GBIF.gbifurl * "occurrence/download/user/$(GBIF.username())"
     request_resp = HTTP.get(
         request_url;
-        query = "status=$(join(statuses, ','))",
-        headers = GBIF.apiauth(),
+        query="status=$(join(statuses, ','))",
+        headers=GBIF.apiauth(),
     )
     if request_resp.status == 200
         return JSON.parse(String(request_resp.body))

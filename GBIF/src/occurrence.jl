@@ -84,7 +84,7 @@ The arguments accepted as queries are documented on the
 
 **Note that** this function will return even observations where the "occurrenceStatus"
 is "ABSENT"; therefore, for the majority of uses, your query will *at least* contain
-`"occurrenceStatus" => "PRESENT"`.
+`"occurrenceStatus" => "PRESENT"` (or `"DETECTED"`).
 """
 function occurrences(query::Pair...)
     retrieved, _, of_max = _internal_occurrences_getter(query...)

@@ -127,7 +127,7 @@ function GBIFRecord(o::AbstractDict)
         get(o, "scientificName", missing),
         get(o, "recordedBy", missing),
         get(o, "license", missing),
-        get(o, "occurrenceStatus", "PRESENT") == "PRESENT",
+        get(o, "occurrenceStatus", "PRESENT") in ["PRESENT", "DETECTED"],
     )
     return formatted_record
 end

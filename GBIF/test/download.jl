@@ -49,4 +49,13 @@ csv_from_local = GBIF.localarchive("$(id).zip", CSV.File)
 
 rm("$(id).zip")
 
+# We can download something with `DETECTED` instead of `PRESENT`
+id = "0002389-261118162104854"
+from_gbif = GBIF.download(id)
+@test isfile("$(id).zip")
+from_local = GBIF.localarchive("$(id).zip")
+@test sum(presence(from_gbif)) == length(from_gbif)
+
+rm("$(id).zip")
+
 end

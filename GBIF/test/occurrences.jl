@@ -46,4 +46,7 @@ o = occurrences("occurrenceStatus" => "ABSENT")
 o = occurrences("occurrenceStatus" => "PRESENT")
 @test o[1].presence == true
 
+o = occurrences("occurrenceStatus" => "DETECTED")
+@test o[1].presence == true
+
 end

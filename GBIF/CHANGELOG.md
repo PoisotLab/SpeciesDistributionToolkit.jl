@@ -5,12 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `v1.2.1` - 2026-11-20
+
+- **updated** reading from GBIF archives to use `DETECTED` as `PRESENT` 
+- **added** a `force` keyword to `download` to re-download the dataset [#606]
+
 ## `v1.2.0`
 
 - **silenced** the info messages for wrongly formatted dates in `_materialize`
 - **added** a `format` keyword to `localarchive` and `download` to return in different types
 - **added** support to read from a local GBIF archive (h/t @jeetsukumaran) [#504]
-- **changed** the compat entry of `JSON` from `0.21` to `0.21, 1` [508]
+- **changed** the compat entry of `JSON` from `0.21` to `0.21, 1` [#508]
 
 ## `v1.1.1`
 

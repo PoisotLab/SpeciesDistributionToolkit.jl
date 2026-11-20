@@ -56,4 +56,6 @@ from_gbif = GBIF.download(id)
 from_local = GBIF.localarchive("$(id).zip")
 @test sum(presence(from_gbif)) == length(from_gbif)
 
+rm("$(id).zip")
+
 end
